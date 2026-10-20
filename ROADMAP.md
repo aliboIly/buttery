@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 2 is done. Next: Phase 3, the motion system.
+**Now:** Phase 3 is done. Next: Phase 4, controls.
 
 ---
 
@@ -22,10 +22,10 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] `new-component` generator
 
 ## v0.3 — Motion (Phase 3)
-- [ ] Motion tokens, presets, `useButteryTransition`
-- [ ] `Morph`, `Presence`, `SharedIndicator`, `Reveal`, `Stagger`, `Loop`, `Confetti`
-- [ ] `buttery` factory (`buttery.div`, `buttery(Component)`)
-- [ ] Settle times verified against the spec
+- [x] Motion tokens, presets, `useButteryTransition`
+- [x] `Morph`, `Presence`, `SharedIndicator`, `Reveal`, `Stagger`, `Loop`, `Confetti`
+- [x] `buttery` factory (`buttery.div`, `buttery(Component)`)
+- [x] Settle times verified against the spec
 
 ## v0.4 — Controls (Phase 4)
 - [ ] Button family, IconButton, SplitButton, with the forward/back arrow shared with ArrowLink
