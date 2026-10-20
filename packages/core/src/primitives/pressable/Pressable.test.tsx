@@ -81,6 +81,23 @@ describe("Pressable", () => {
     );
   });
 
+  it("presses at once with reduced motion, by the nearest motion setting", () => {
+    render(
+      <div data-bt-motion="reduced">
+        <Pressable>Reduced</Pressable>
+        <div data-bt-motion="full" style={{ display: "contents" }}>
+          <Pressable>Full</Pressable>
+        </div>
+      </div>,
+    );
+    const pressDuration = (name: string): string | undefined =>
+      getComputedStyle(
+        screen.getByRole("button", { name }),
+      ).transitionDuration.split(", ")[0];
+    expect(pressDuration("Reduced")).toBe("0s");
+    expect(pressDuration("Full")).toBe("0.12s");
+  });
+
   it('keeps type="button" on a button child', () => {
     render(
       <Pressable asChild>

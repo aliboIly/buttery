@@ -46,4 +46,23 @@
     :is(button, [role="button"], a[href], summary, label, .bt-press) {
     cursor: default;
   }
+
+  /* 1 with full motion and 0 with reduced, from the nearest provider (the OS without one), so CSS can scale by it. */
+  :root {
+    --bt-motion: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --bt-motion: 0;
+    }
+  }
+
+  [data-bt-motion="full"] {
+    --bt-motion: 1;
+  }
+
+  [data-bt-motion="reduced"] {
+    --bt-motion: 0;
+  }
 }

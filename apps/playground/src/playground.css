@@ -80,6 +80,9 @@
 
 .pg-menu-button,
 .pg-icon-button {
+  --bt-transition-hover: background-color var(--bt-dur-fast)
+    var(--bt-ease-standard);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -88,7 +91,6 @@
   block-size: var(--bt-h-button);
   border-radius: var(--bt-r-full);
   color: var(--bt-text-secondary);
-  transition: background-color var(--bt-dur-fast) var(--bt-ease-standard);
 }
 
 .pg-menu-button {

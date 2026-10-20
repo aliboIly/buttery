@@ -5,27 +5,16 @@
 
 @layer bt.recipes {
   .bt-press {
-    --bt-transition-press: scale var(--bt-dur-fast) var(--bt-ease-out);
+    --bt-transition-press: scale calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-out);
 
     cursor: pointer;
   }
 
-  /* :where keeps this as specific as .bt-press, so the reduced-motion rules below win while pressed too. */
-  .bt-press:where(
-    :active:not(:disabled, [aria-disabled="true"], [data-disabled])
-  ) {
-    --bt-transition-press: scale var(--bt-dur-press) var(--bt-ease-out);
+  .bt-press:active:not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    --bt-transition-press: scale calc(var(--bt-dur-press) * var(--bt-motion))
+      var(--bt-ease-out);
 
     scale: var(--bt-press-scale);
-  }
-
-  [data-bt-motion="reduced"] .bt-press {
-    --bt-transition-press: scale 0s;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :root:not([data-bt-motion="full"]) .bt-press {
-      --bt-transition-press: scale 0s;
-    }
   }
 }

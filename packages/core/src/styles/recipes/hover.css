@@ -6,7 +6,7 @@
 @layer bt.recipes {
   .bt-hover-lift {
     --bt-transition-hover:
-      translate var(--bt-dur-fast) var(--bt-ease-out),
+      translate calc(var(--bt-dur-fast) * var(--bt-motion)) var(--bt-ease-out),
       box-shadow var(--bt-dur-fast) var(--bt-ease-out);
   }
 
@@ -18,22 +18,12 @@
 
   @media (hover: hover) {
     .bt-hover-lift:hover {
-      translate: 0 calc(var(--bt-space-0_5) * -1);
+      translate: 0 calc(var(--bt-space-0_5) * -1 * var(--bt-motion));
       box-shadow: var(--bt-shadow-raised);
     }
 
     .bt-hover-tint:hover {
       background-color: var(--bt-bg-item-hover);
-    }
-  }
-
-  [data-bt-motion="reduced"] .bt-hover-lift:hover {
-    translate: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :root:not([data-bt-motion="full"]) .bt-hover-lift:hover {
-      translate: none;
     }
   }
 

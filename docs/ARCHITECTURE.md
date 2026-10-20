@@ -95,7 +95,7 @@ CSS cascade layers, declared once in `@buttery/core/styles.css`:
 ```css
 @layer bt.reset, bt.tokens, bt.base, bt.recipes, bt.primitives, bt.components, bt.patterns, bt.utilities;
 ```
-App CSS is unlayered, so it **always wins** over buttery without `!important` — overriding is trivial.
+App CSS is unlayered, so it **always wins** over buttery without `!important` — overriding is trivial. The one property to leave alone on a pressable element is `transition`: the press and hover recipes compose theirs from `--bt-transition-press` and `--bt-transition-hover`, and a plain `transition` replaces both, so presses snap. To fade an element's own hover color, set `--bt-transition-hover` instead (`--bt-transition-hover: background-color var(--bt-dur-fast) var(--bt-ease-standard)`). CSS that moves things reads the motion setting from `--bt-motion`, 1 with full motion and 0 with reduced, set by the nearest provider (the OS without one): scale durations and distances by it.
 
 ## Tokens and generated files
 

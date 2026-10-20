@@ -103,6 +103,9 @@ describe("OverflowCluster", () => {
     const more = await screen.findByRole("button", { name: "More actions" });
     const rect = more.getBoundingClientRect();
     expect([rect.width, rect.height]).toEqual([28, 28]);
+    expect(getComputedStyle(more).transitionProperty.split(", ")).toEqual(
+      expect.arrayContaining(["scale", "background-color", "color"]),
+    );
   });
 
   it("passes refs and props through to an item's element", () => {
