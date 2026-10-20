@@ -83,7 +83,7 @@ function BurstPieces({ burst }: { readonly burst: Burst }): ReactElement {
           transition={{
             duration: LIFE,
             ease: "linear",
-            opacity: { duration: LIFE, times: [0, 0.7, 1] },
+            opacity: { duration: LIFE, times: [0, 0.7, 1], ease: "linear" },
           }}
         />
       ))}
