@@ -6,6 +6,7 @@
   }
 
   :where([data-bt-layer] > :not([data-bt-layer])) {
+    position: relative;
     pointer-events: auto;
   }
 }

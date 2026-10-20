@@ -37,6 +37,27 @@ describe("Scrim", () => {
     ).toBe("blur(10px)");
   });
 
+  it("sits under the content that follows it in the layer", () => {
+    render(
+      <Layer band="modal">
+        <Scrim />
+        <div
+          style={{ display: "grid", placeItems: "center", blockSize: "100%" }}
+        >
+          <button type="button">Keep editing</button>
+        </div>
+      </Layer>,
+    );
+    const button = screen.getByRole("button", { name: "Keep editing" });
+    const rect = button.getBoundingClientRect();
+    expect(
+      document.elementFromPoint(
+        rect.left + rect.width / 2,
+        rect.top + rect.height / 2,
+      ),
+    ).toBe(button);
+  });
+
   it("takes clicks so it can close what it belongs to", async () => {
     const onClick = vi.fn();
     render(
