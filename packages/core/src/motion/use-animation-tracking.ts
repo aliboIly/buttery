@@ -20,36 +20,43 @@ export interface AnimationTracking {
   readonly onLayoutAnimationComplete: () => void;
 }
 
+interface Releases {
+  values: (() => void) | null;
+  layout: (() => void) | null;
+}
+
 /**
  * Reports a Motion component's animations to buttery's settled flag: spread the handlers onto the
- * component, and layout checks wait until it comes to rest. Unmounting mid-animation ends the report.
+ * component, and layout checks wait until it comes to rest. Its own animations and its layout animation
+ * are reported apart, so one finishing doesn't settle the other. Unmounting mid-animation ends both.
  */
 export function useAnimationTracking(): AnimationTracking {
   const tracked = use(AnimationTrackingContext);
-  const release = useRef<(() => void) | null>(null);
+  const releases = useRef<Releases>({ values: null, layout: null });
 
   useEffect(
     () => () => {
-      release.current?.();
-      release.current = null;
+      releases.current.values?.();
+      releases.current.layout?.();
+      releases.current = { values: null, layout: null };
     },
     [],
   );
 
   return useMemo((): AnimationTracking => {
     if (!tracked) return UNTRACKED;
-    const start = (): void => {
-      release.current ??= trackAnimation();
+    const start = (kind: keyof Releases) => (): void => {
+      releases.current[kind] ??= trackAnimation();
     };
-    const complete = (): void => {
-      release.current?.();
-      release.current = null;
+    const complete = (kind: keyof Releases) => (): void => {
+      releases.current[kind]?.();
+      releases.current[kind] = null;
     };
     return {
-      onAnimationStart: start,
-      onAnimationComplete: complete,
-      onLayoutAnimationStart: start,
-      onLayoutAnimationComplete: complete,
+      onAnimationStart: start("values"),
+      onAnimationComplete: complete("values"),
+      onLayoutAnimationStart: start("layout"),
+      onLayoutAnimationComplete: complete("layout"),
     };
   }, [tracked]);
 }
