@@ -7,7 +7,9 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { createRef } from "react";
+import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 import { MotionPreferenceContext } from "../../motion/preference.ts";
 import { publishSettled } from "../../motion/settle.ts";
 import { Presence } from "../presence/Presence.tsx";
@@ -86,6 +88,31 @@ describe("Loop", () => {
     screen.getByRole("button").blur();
     await waitFor(() => {
       expect(step()).not.toBe(focused);
+    });
+  });
+
+  it("stays held when it unpauses under the pointer or with focus inside it", async () => {
+    function Demo({ paused }: { readonly paused: boolean }): ReactElement {
+      return (
+        <Loop steps={3} interval={60} paused={paused} data-testid="loop">
+          {(current) => (
+            <button type="button">{`Step ${String(current)}`}</button>
+          )}
+        </Loop>
+      );
+    }
+    const { rerender } = render(<Demo paused />);
+    screen.getByRole("button").focus();
+    rerender(<Demo paused={false} />);
+    await holds();
+    screen.getByRole("button").blur();
+    rerender(<Demo paused />);
+    await userEvent.hover(screen.getByTestId("loop"));
+    rerender(<Demo paused={false} />);
+    const held = await holds();
+    await userEvent.unhover(screen.getByTestId("loop"));
+    await waitFor(() => {
+      expect(step()).not.toBe(held);
     });
   });
 

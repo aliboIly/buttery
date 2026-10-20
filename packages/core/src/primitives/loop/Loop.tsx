@@ -66,8 +66,8 @@ export function Loop({
     if (!node || reduced || paused || steps < 2) return undefined;
     let timer = 0;
     let onScreen = false;
-    let pointer = false;
-    let focus = false;
+    let pointer = node.matches(":hover");
+    let focus = node.contains(document.activeElement);
     const update = (): void => {
       const run =
         onScreen && !pointer && !focus && document.visibilityState !== "hidden";
