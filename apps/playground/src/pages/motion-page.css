@@ -8,6 +8,7 @@
   grid-template-columns:
     var(--bt-space-24) minmax(0, var(--bt-motion-page-track))
     auto;
+  justify-content: start;
   align-items: center;
   gap: var(--bt-space-4);
 }
