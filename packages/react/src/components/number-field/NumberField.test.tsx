@@ -132,6 +132,36 @@ describe("NumberField", () => {
     expect(change.mock.lastCall?.[0]).toBeGreaterThan(100);
   });
 
+  it("puts its label above a field that fills its column when asked", () => {
+    render(
+      <div style={{ inlineSize: "240px" }}>
+        <NumberField label="Width" labelPosition="top" defaultValue={1600} />
+      </div>,
+    );
+    const label = screen.getByText("Width");
+    const field = document.querySelector('[data-bt-part="field"]');
+    expect(field).not.toBeNull();
+    const box = field?.getBoundingClientRect();
+    expect(box?.top ?? 0).toBeGreaterThan(label.getBoundingClientRect().bottom);
+    expect(Math.round(box?.width ?? 0)).toBe(240);
+  });
+
+  it("drops its stepper when the field is too narrow to show the number beside it", () => {
+    render(
+      <>
+        <div style={{ inlineSize: "86px" }}>
+          <NumberField label="Width" labelPosition="top" defaultValue={1600} />
+        </div>
+        <NumberField label="Height" defaultValue={900} />
+      </>,
+    );
+    const [narrow, roomy] = [
+      ...document.querySelectorAll<HTMLElement>('[data-bt-part="stepper"]'),
+    ];
+    expect(narrow && getComputedStyle(narrow).display).toBe("none");
+    expect(roomy && getComputedStyle(roomy).display).not.toBe("none");
+  });
+
   it("is 34px tall", () => {
     render(<NumberField label="W" />);
     const box = field().closest('[data-bt-part="field"]');

@@ -10,6 +10,17 @@
     min-inline-size: 0;
   }
 
+  .bt-number-field[data-label-position="top"] {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--bt-space-1_5);
+  }
+
+  .bt-number-field[data-label-position="top"] > [data-bt-part="field"] {
+    inline-size: auto;
+  }
+
   .bt-number-field > [data-bt-part="label"] {
     cursor: ew-resize;
     touch-action: none;
@@ -31,6 +42,7 @@
     border: var(--bt-number-field-line) solid var(--bt-control-border);
     border-radius: var(--bt-r-lg);
     background-color: var(--bt-bg-surface);
+    container-type: inline-size;
   }
 
   .bt-number-field[data-disabled] > [data-bt-part="field"] {
@@ -118,5 +130,12 @@
 
   .bt-number-field [data-bt-part="step"]:disabled {
     color: var(--bt-icon-disabled);
+  }
+
+  /* A narrow field keeps its room for the number: arrow keys and the label's scrub still step it. */
+  @container (inline-size < 112px) {
+    .bt-number-field [data-bt-part="stepper"] {
+      display: none;
+    }
   }
 }

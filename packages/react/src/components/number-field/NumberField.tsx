@@ -37,6 +37,11 @@ export interface NumberFieldProps extends Omit<
   readonly step?: number | undefined;
   /** A unit shown after the number, such as `"px"`. */
   readonly unit?: string | undefined;
+  /**
+   * Where the label sits: `"side"` (the default), before a 128px field, or `"top"`, above a field that
+   * fills its column, as in a pair of width and height fields.
+   */
+  readonly labelPosition?: "side" | "top" | undefined;
 }
 
 const SCRUB_PIXELS_PER_STEP = 2;
@@ -62,6 +67,7 @@ export function NumberField({
   max,
   step = 1,
   unit,
+  labelPosition = "side",
   disabled,
   readOnly,
   className,
@@ -152,6 +158,7 @@ export function NumberField({
       className={cx("bt-number-field", className)}
       style={style}
       data-bt="NumberField"
+      data-label-position={labelPosition}
       data-disabled={disabled ? "" : undefined}
     >
       <label
