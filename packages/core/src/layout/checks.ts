@@ -97,6 +97,8 @@ export function createLayoutToolkit(): LayoutToolkit {
   interface Position {
     readonly x: number;
     readonly y: number;
+    /** Whether it had no box, so there was nothing to see move. */
+    readonly empty: boolean;
     /** Offsets of the scroll containers around the element, nearest first, then the window's. */
     readonly scrolls: readonly ScrollOffset[];
   }
@@ -202,6 +204,16 @@ export function createLayoutToolkit(): LayoutToolkit {
       opacityProperty: true,
       visibilityProperty: true,
     });
+  }
+
+  /** A screen-reader-only element: a box of 1px or less with its overflow hidden. */
+  function isVisuallyHidden(element: Element): boolean {
+    const rect = element.getBoundingClientRect();
+    return (
+      rect.width <= 1 &&
+      rect.height <= 1 &&
+      styleOf(element).overflow === "hidden"
+    );
   }
 
   function isTooling(element: Element): boolean {
@@ -829,6 +841,8 @@ export function createLayoutToolkit(): LayoutToolkit {
           continue;
         }
         if (element.closest('[data-bt-target="group"]')) continue;
+        // Screen-reader-only targets, such as a toast region's focus proxies, are reached by keyboard only.
+        if (isVisuallyHidden(element)) continue;
         if (!isVisible(element)) continue;
         if (
           element.tagName === "A" &&
@@ -1082,7 +1096,12 @@ export function createLayoutToolkit(): LayoutToolkit {
       }
       if (!fixed)
         scrolls.push({ container: null, x: window.scrollX, y: window.scrollY });
-      result.set(element, { x: rect.left, y: rect.top, scrolls });
+      result.set(element, {
+        x: rect.left,
+        y: rect.top,
+        empty: rect.width === 0 && rect.height === 0,
+        scrolls,
+      });
     }
     return result;
   }
@@ -1132,6 +1151,8 @@ export function createLayoutToolkit(): LayoutToolkit {
     for (const [element, before] of positions) {
       const after = now.get(element);
       if (!after) continue;
+      // With no box before or after, it appeared or went: a list that was empty and hidden isn't a shift.
+      if (before.empty || after.empty) continue;
       if (allowed && element.closest(allowed)) continue;
       if (element.closest('[data-bt="Loop"], [data-bt-layer="dev"]')) continue;
       const shift = movementOf(before, after);

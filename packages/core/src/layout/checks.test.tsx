@@ -334,6 +334,16 @@ describe("target size", () => {
     ]);
   });
 
+  it("doesn't count screen-reader-only focus targets, which no one can tap", () => {
+    expect(
+      check(
+        `<span tabindex="0" style="position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Toasts</span>
+         <button type="button" style="inline-size: 1px; block-size: 1px; padding: 0; border: 0" data-testid="tiny"></button>`,
+        ["target-size"],
+      ).map((violation) => violation.a),
+    ).toEqual(['[data-testid="tiny"]']);
+  });
+
   it("doesn't count tab panels or focusable scroll regions as targets", () => {
     expect(
       check(
@@ -470,6 +480,21 @@ describe("moved", () => {
         message: "moved 0px across and 20px down after Load more",
       }),
     ]);
+  });
+
+  it("doesn't count an element that appears from no box, or goes to none, as movement", () => {
+    document.body.innerHTML = `
+      <div data-testid="region" style="display: none"><ol data-bt="Toaster"></ol></div>
+      <div data-bt="Banner" data-testid="banner">Promo</div>`;
+    const toolkit = createLayoutToolkit();
+    toolkit.snapshot();
+    document
+      .querySelector<HTMLElement>('[data-testid="region"]')
+      ?.style.setProperty("display", "block");
+    document
+      .querySelector<HTMLElement>('[data-testid="banner"]')
+      ?.style.setProperty("display", "none");
+    expect(toolkit.moved({ during: "after Show a toast" })).toEqual([]);
   });
 
   it("doesn't count scrolling or a stuck sticky bar as movement", () => {
