@@ -26,7 +26,7 @@ It's early. The tokens, recipes and theming are in place, components come next, 
 
 ### Tokens
 
-Color, type, spacing, heights, radii, shadows, layers and motion as `--bt-*` variables and typed TypeScript. Light, dark and a compact density are built in.
+Color, type, spacing, heights, radii, shadows, layers and motion as CSS variables and typed TypeScript. Light, dark and a compact density are built in.
 
 </td>
 <td width="33%" valign="top">
