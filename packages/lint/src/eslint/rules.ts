@@ -368,3 +368,63 @@ export const tailwindTokens: Rule.RuleModule = {
     };
   },
 };
+
+const MOTION_NAMESPACES = new Set(["motion", "m"]);
+const LAYOUT_PROPS = new Set(["layout", "layoutId"]);
+
+/**
+ * Motion elements take their layout animation from `useLayoutAnimation`, which turns it off with reduced
+ * motion, instead of a `layout` or `layoutId` written out.
+ */
+export const noRawMotionLayout: Rule.RuleModule = {
+  meta: {
+    type: "problem",
+    docs: {
+      description:
+        "Disallow layout and layoutId written out on motion elements; spread useLayoutAnimation() so reduced motion turns the animation off.",
+    },
+    schema: [],
+    messages: {
+      raw: "{{prop}} on <{{element}}> runs a layout animation even with reduced motion, where Motion snaps it with a zero-length animation that WebKit can leave half done. Fix: spread useLayoutAnimation() (<{{element}} {...useLayoutAnimation()} />), and set a layoutId only while its layout is true.",
+    },
+  },
+  create(context) {
+    return {
+      JSXAttribute(node: unknown) {
+        if (!hasType(node, "JSXAttribute")) return;
+        const name = node["name"];
+        if (!isObject(name) || typeof name["name"] !== "string") return;
+        if (!LAYOUT_PROPS.has(name["name"])) return;
+        const opening = node["parent"];
+        if (!hasType(opening, "JSXOpeningElement")) return;
+        const element = opening["name"];
+        if (!hasType(element, "JSXMemberExpression")) return;
+        const namespace = element["object"];
+        const tag = element["property"];
+        if (
+          !hasType(namespace, "JSXIdentifier") ||
+          typeof namespace["name"] !== "string" ||
+          !MOTION_NAMESPACES.has(namespace["name"]) ||
+          !hasType(tag, "JSXIdentifier") ||
+          typeof tag["name"] !== "string"
+        )
+          return;
+        const value = node["value"];
+        if (
+          hasType(value, "JSXExpressionContainer") &&
+          hasType(value["expression"], "Literal") &&
+          value["expression"]["value"] === false
+        )
+          return;
+        context.report({
+          loc: node.loc,
+          messageId: "raw",
+          data: {
+            prop: name["name"],
+            element: `${namespace["name"]}.${tag["name"]}`,
+          },
+        });
+      },
+    };
+  },
+};

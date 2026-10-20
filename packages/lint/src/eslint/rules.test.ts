@@ -4,6 +4,7 @@ import tseslint from "typescript-eslint";
 import { describe, it } from "vitest";
 import {
   noLiteralLayoutStyle,
+  noRawMotionLayout,
   spreadRestProps,
   tailwindTokens,
 } from "./rules.ts";
@@ -17,6 +18,38 @@ const tester = new RuleTester({
     parser: tseslint.parser,
     parserOptions: { ecmaFeatures: { jsx: true } },
   },
+});
+
+tester.run("no-raw-motion-layout", noRawMotionLayout, {
+  valid: [
+    {
+      code: "<motion.div {...useLayoutAnimation()} />",
+      filename: "page.tsx",
+    },
+    { code: "<motion.div layout={false} />", filename: "page.tsx" },
+    {
+      code: '<motion.span {...(layout ? { layoutId: "pill" } : {})} />',
+      filename: "page.tsx",
+    },
+    { code: "<Card layout />", filename: "page.tsx" },
+  ],
+  invalid: [
+    {
+      code: "<motion.div layout />",
+      filename: "page.tsx",
+      errors: [{ messageId: "raw" }],
+    },
+    {
+      code: '<motion.span layoutId="pill" />',
+      filename: "page.tsx",
+      errors: [{ messageId: "raw" }],
+    },
+    {
+      code: '<m.li layout="position" />',
+      filename: "page.tsx",
+      errors: [{ messageId: "raw" }],
+    },
+  ],
 });
 
 tester.run("no-literal-layout-style", noLiteralLayoutStyle, {

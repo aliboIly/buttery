@@ -1,6 +1,7 @@
 import type { ESLint, Linter } from "eslint";
 import {
   noLiteralLayoutStyle,
+  noRawMotionLayout,
   spreadRestProps,
   tailwindTokens,
 } from "./rules.ts";
@@ -10,6 +11,7 @@ export const butteryEslintPlugin: ESLint.Plugin = {
   meta: { name: "@buttery/lint" },
   rules: {
     "no-literal-layout-style": noLiteralLayoutStyle,
+    "no-raw-motion-layout": noRawMotionLayout,
     "spread-rest-props": spreadRestProps,
     "tailwind-tokens": tailwindTokens,
   },
@@ -29,9 +31,9 @@ export interface ButteryEslintOptions {
 }
 
 /**
- * buttery's ESLint config: no literal margins, z-index, position or sizes in inline styles, Tailwind
- * classes that go through the tokens, and components that accept DOM props spread the rest onto their
- * root element.
+ * buttery's ESLint config: no literal margins, z-index, position or sizes in inline styles, layout
+ * animation on motion elements only through `useLayoutAnimation`, Tailwind classes that go through the
+ * tokens, and components that accept DOM props spread the rest onto their root element.
  *
  * @example
  * // eslint.config.js
@@ -60,6 +62,7 @@ export function butteryEslintConfig(
       plugins: { buttery: butteryEslintPlugin },
       rules: {
         "buttery/no-literal-layout-style": "error",
+        "buttery/no-raw-motion-layout": "error",
         ...(options.tailwind === false
           ? {}
           : { "buttery/tailwind-tokens": "error" }),
