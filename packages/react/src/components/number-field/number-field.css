@@ -27,7 +27,7 @@
     gap: var(--bt-space-1);
     inline-size: var(--bt-number-field-width);
     block-size: var(--bt-h-control);
-    padding-inline: var(--bt-space-3) var(--bt-space-1);
+    padding-inline: 0 var(--bt-space-1);
     border: var(--bt-number-field-line) solid var(--bt-border-strong);
     border-radius: var(--bt-r-lg);
     background-color: var(--bt-bg-surface);
@@ -38,10 +38,13 @@
     outline-offset: var(--bt-focus-offset);
   }
 
+  /* The input fills the field's height and reaches its start edge, so a press anywhere but the stepper lands in it. */
   .bt-number-field [data-bt-part="input"] {
     flex: 1;
+    align-self: stretch;
     min-inline-size: 0;
-    padding: 0;
+    padding-block: 0;
+    padding-inline: var(--bt-space-3) 0;
     border: 0;
     background: none;
     color: var(--bt-text);
@@ -60,6 +63,7 @@
 
   .bt-number-field [data-bt-part="unit"] {
     color: var(--bt-text-tertiary);
+    pointer-events: none;
     font-size: var(--bt-text-control-size);
     line-height: var(--bt-text-control-line);
   }
@@ -80,6 +84,7 @@
   }
 
   .bt-number-field [data-bt-part="step"] {
+    position: relative;
     display: inline-grid;
     place-items: center;
     inline-size: var(--bt-number-field-step);
@@ -99,6 +104,11 @@
       background-color: var(--bt-bg-control);
       color: var(--bt-text);
     }
+  }
+
+  .bt-number-field [data-bt-part="step"] > [data-bt-part="hit"] {
+    position: absolute;
+    inset: 0;
   }
 
   .bt-number-field [data-bt-part="step"]:disabled {

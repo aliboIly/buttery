@@ -210,6 +210,7 @@ export function NumberField({
             data-bt-part="step"
           >
             <Icon icon={Minus} />
+            <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -222,6 +223,7 @@ export function NumberField({
             data-bt-part="step"
           >
             <Icon icon={Plus} />
+            <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />
           </button>
         </span>
       </span>

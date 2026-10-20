@@ -49,6 +49,14 @@ describe("NumberField", () => {
     expect(field().labels?.[0]?.querySelector("button")).toBeNull();
   });
 
+  it("focuses the input from a press anywhere in the field but the stepper", async () => {
+    render(<NumberField label="W" defaultValue={1080} unit="px" />);
+    const box = field().closest('[data-bt-part="field"]');
+    if (!box) throw new Error("No field.");
+    await browser.click(box, { position: { x: 4, y: 17 } });
+    expect(document.activeElement).toBe(field());
+  });
+
   it("steps from what's typed when it's a number", async () => {
     const change = vi.fn();
     render(<NumberField label="W" defaultValue={128} onValueChange={change} />);
