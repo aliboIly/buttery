@@ -16,7 +16,8 @@
     "apps/*/*.config.ts",
     "apps/*/package.json",
     "apps/*/e2e/**/*.ts",
-    "packages/*/e2e/**/*.ts"
+    "packages/*/e2e/**/*.ts",
+    "apps/playground/src/routes.ts"
   ],
   "references": [
     {

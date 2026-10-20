@@ -5,7 +5,7 @@ const pages = [
   { route: "surfaces", landmark: "Inspector" },
   { route: "levels", landmark: "dark surfaces" },
   { route: "palettes", landmark: "Gradients" },
-  { route: "text", landmark: "Make it yours" },
+  { route: "text-stacks", landmark: "Make it yours" },
 ] as const;
 
 for (const { route, landmark } of pages) {
