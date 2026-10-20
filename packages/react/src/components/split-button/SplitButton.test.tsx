@@ -85,7 +85,7 @@ describe("SplitButton", () => {
     });
   });
 
-  it("works from the keyboard and returns focus to the chevron", async () => {
+  it("works from the keyboard: arrows move through the items, Enter picks one, Escape closes", async () => {
     const jpg = vi.fn();
     renderExport({ jpg });
     const menuButton = screen.getByRole("button", {
@@ -94,11 +94,31 @@ describe("SplitButton", () => {
     menuButton.focus();
     await keyboard.keyboard("{Enter}");
     await screen.findByRole("menu");
+    const jpgItem = screen.getByRole("menuitem", { name: "Export as JPG" });
+    const copyItem = screen.getByRole("menuitem", {
+      name: "Copy to clipboard",
+    });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(jpgItem);
+    });
+    await keyboard.keyboard("{ArrowDown}");
+    expect(document.activeElement).toBe(copyItem);
+    await keyboard.keyboard("{ArrowUp}");
+    expect(document.activeElement).toBe(jpgItem);
+    await keyboard.keyboard("{Enter}");
+    expect(jpg).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    expect(document.activeElement).toBe(menuButton);
+    await keyboard.keyboard("{Enter}");
+    await screen.findByRole("menu");
     await keyboard.keyboard("{Escape}");
     await waitFor(() => {
       expect(screen.queryByRole("menu")).toBeNull();
     });
     expect(document.activeElement).toBe(menuButton);
+    expect(jpg).toHaveBeenCalledTimes(1);
   });
 
   it("disables both halves", () => {

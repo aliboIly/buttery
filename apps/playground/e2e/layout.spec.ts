@@ -55,10 +55,36 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     escape,
     { name: "show the blur scrim", run: press("Show blur") },
   ],
+  "number-field": [
+    {
+      name: "focus a field, which shows its stepper",
+      run: async (page: Page) => {
+        await page
+          .getByRole("spinbutton", { name: "W", exact: true })
+          .first()
+          .focus();
+      },
+    },
+  ],
+  "split-button": [
+    { name: "open the export menu", run: press("More export options") },
+  ],
   surfaces: [
     {
       name: "open the header's More menu",
       run: pressIfShown("button", "More actions"),
+    },
+  ],
+  tooltip: [
+    {
+      name: "show a tooltip from the keyboard",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Export", exact: true })
+          .first()
+          .focus();
+        await page.getByRole("tooltip").first().waitFor();
+      },
     },
   ],
   toaster: [
