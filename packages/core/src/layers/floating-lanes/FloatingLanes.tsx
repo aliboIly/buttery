@@ -151,9 +151,9 @@ const registerObstacle: RefCallback<HTMLElement> = (element) =>
   element ? addObstacle(element) : undefined;
 
 /**
- * Registers an element, such as a toolbar anchored under a crop box, that floating lanes must stay clear
- * of: lane items move above or below it instead of covering it. Returns a callback ref for the element;
- * combine it with another ref through `useMergedRefs`.
+ * Registers an element that floating lanes must stay clear of, such as a toolbar anchored under a crop
+ * box. Lane items move above or below it instead of covering it. Returns a callback ref for the element,
+ * which `useMergedRefs` combines with another ref.
  *
  * @example
  * const obstacle = useFloatingObstacle();
