@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 0 is done and waiting for review. Next: Phase 1.
+**Now:** Phase 1 is done and waiting for review. Next: Phase 2.
 
 ---
 
@@ -10,9 +10,9 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Agent files merged (`AGENTS.md` ← `AGENTS.buttery.md`), `CLAUDE.md` import, `.gemini/settings.json`
 - [x] Monorepo, tooling, scripts, VS Code tasks
 - [x] Playground + starter running on web; starter running as a desktop app
-- [ ] All tokens (light, dark, compact) + `tokens.json` + contrast test
-- [ ] Recipes, `ButteryProvider`, `createTheme`, palettes, Tailwind bridge
-- [ ] Tokens + Surfaces playground pages
+- [x] All tokens (light, dark, compact) + `tokens.json` + contrast test
+- [x] Recipes, `ButteryProvider`, `createTheme`, palettes, Tailwind bridge
+- [x] Tokens + Surfaces playground pages
 
 ## v0.2 — Guardrails (Phase 2)
 - [ ] Layout primitives + layer system

@@ -17,12 +17,12 @@ Targets: web apps and desktop apps (Tauri v2 wraps the same web code).
 | Motion | `motion` (`motion/react`) |
 | Icons | `lucide-react` (16px, stroke 1.75) |
 | Styling | Plain CSS + CSS custom properties, in cascade layers. No CSS-in-JS runtime. Optional Tailwind v4 bridge. |
-| Font | Inter Variable via `@fontsource-variable/inter`, a dependency of `@buttery/core` (bundled, so desktop apps work offline) |
+| Font | Inter Variable via `@fontsource-variable/inter`, a dependency of `@buttery/core` (bundled, so desktop apps work offline), with a local Arial fallback adjusted to Inter's metrics so text doesn't move when Inter swaps in |
 | Library build | `tsdown` (ESM + `.d.ts`), CSS concatenated per package |
 | App build | Vite 8 with `@vitejs/plugin-react` |
 | React Compiler | On in the apps (`babel-plugin-react-compiler` through `@rolldown/plugin-babel`, which needs `@babel/core`); library code stays compiler-compatible through `eslint-plugin-react-hooks` |
 | Desktop | Tauri v2 |
-| Tests | Vitest + Testing Library (`@testing-library/react`, `@testing-library/user-event`): pure logic in Node, components in browser mode (`@vitest/browser-playwright`, Chromium and WebKit). Playwright in Chromium **and WebKit** for app smoke tests, layout, visual and a11y (`@axe-core/playwright`) |
+| Tests | Vitest + Testing Library (`@testing-library/react`, `@testing-library/user-event`): pure logic in Node, components in browser mode (`@vitest/browser-playwright`, Chromium and WebKit). Playwright in Chromium **and WebKit** for app smoke tests, layout, visual and a11y (`@axe-core/playwright`). Smoke tests start a fresh server for each app on its dev port + 1000 |
 | Formatting / lint | Prettier, ESLint 10 (typescript-eslint, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`, `@eslint/js`, `globals`), stylelint |
 | Tooling | `@types/node` for configs and scripts |
 | Agent tooling | `@modelcontextprotocol/sdk` (for `@buttery/mcp`) |
@@ -92,6 +92,27 @@ CSS cascade layers, declared once in `@buttery/core/styles.css`:
 ```
 App CSS is unlayered, so it **always wins** over buttery without `!important` — overriding is trivial.
 
+## Tokens and generated files
+
+Tokens are plain TypeScript tables in `packages/core/src/tokens/`. Colors and shadows carry a light value, a dark value and a description; heights carry a comfortable and a compact value. `pnpm tokens` renders the tables into the files everything else reads:
+
+| Generated file (in `packages/core/src/`) | Contents |
+|---|---|
+| `tokens/tokens.css` | The `--bt-*` variables for light, dark (set explicitly or taken from the OS) and both densities |
+| `tokens/tokens.json` | Every token with its values and description, and the contrast ratio of each declared text pair, for tools and agents |
+| `styles/recipes/surface.css`, `styles/recipes/text.css` | The surface levels and text roles |
+| `styles/tailwind.css` | The Tailwind v4 bridge |
+
+The generated files are committed and Prettier skips them; a unit test fails when one is out of date. The package entry points:
+
+| Import | Contents |
+|---|---|
+| `@buttery/core` | The token tables as typed data, the OKLCH color helpers, `createTheme` |
+| `@buttery/core/palettes` | Gradient and solid presets, `gradientCss` |
+| `@buttery/core/styles.css` | Layer order, reset, Inter, tokens, base styles and recipes in one file |
+| `@buttery/core/tailwind.css` | The Tailwind v4 bridge |
+| `@buttery/core/tokens.json` | The token data as JSON |
+
 ## "Make anything buttery" — four levels of effort
 
 ### Level 0 — zero effort
@@ -113,7 +134,7 @@ import { buttery } from "@buttery/react";
 <buttery.button press focus>…</buttery.button>
 const ButteryThing = buttery(ThirdPartyCard, { surface: "raised", press: true, layout: true });
 ```
-Props (all optional, all token-typed so wrong values fail type-checking): `surface` (a `SurfaceLevel`: `panel|section|card|raised|floating|dialog|inset`; the prop is named after the recipe it applies, `.bt-surface[data-level]`, and takes the same type as `Surface`'s `level`, so it isn't a synonym), `radius` (`auto` = concentric from parent), `pad`, `gap` (spacing-scale steps), `stack`/`inline`/`grid`, `press`, `focus`, `hover` (`lift|tint`), `enter` (`fade|rise|pop|stagger`), `layout` (animate layout changes), `truncate`.
+Props (all optional, all token-typed so wrong values fail type-checking): `surface` (a `SurfaceLevel`: `app|panel|section|card|raised|floating|dialog|inset`; the prop is named after the recipe it applies, `.bt-surface[data-level]`, and takes the same type as `Surface`'s `level`, so it isn't a synonym), `radius` (`auto` = concentric from parent), `pad`, `gap` (spacing-scale steps), `stack`/`inline`/`grid`, `press`, `focus`, `hover` (`lift|tint`), `enter` (`fade|rise|pop|stagger`), `layout` (animate layout changes), `truncate`.
 
 Same thing without React — recipes are plain classes/attributes:
 ```html
@@ -152,10 +173,11 @@ Same thing without React — recipes are plain classes/attributes:
 
 ## Theming & extension
 
-- `createTheme({ accent, primary, neutral: "gray" | "warm" | "cool", radius: "soft" | "default" | "crisp", density })` → returns a CSS-variable map; `ButteryProvider theme={…}` applies it. Dark is derived automatically and can be overridden token by token.
-- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion`.
-- Tailwind v4 users: `@import "@buttery/core/tailwind.css";` maps tokens to `@theme` (e.g. `bg-surface`, `rounded-card`, `shadow-floating`, `h-control`, `ease-buttery`).
-- Palettes (gradient + solid presets) are data in `@buttery/core/palettes` — swap or extend per app.
+- `createTheme({ accent, primary, neutral: "gray" | "warm" | "cool", radius: "soft" | "default" | "crisp", density, overrides })` returns `{ light, dark, shared, density }`, holding only the `--bt-*` variables that differ from the defaults; `ButteryProvider theme={…}` applies it. Dark values are derived (the accent is lightened until it clears 4.5:1 on the dark surface), and `overrides.light` / `overrides.dark` win token by token.
+- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`, default `system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion` (`user | always | never`, default `user`). The outermost provider writes `data-bt-theme`, `data-bt-density`, `data-bt-platform`, `data-bt-motion` and the theme's variables onto `<html>`, so portals and scrollbars follow; a nested provider scopes them to a `display: contents` wrapper. `useButtery()` returns the resolved values.
+- The stylesheet works without a provider: it follows the OS color scheme until `data-bt-theme` says otherwise.
+- Tailwind v4 users: `@import "@buttery/core/tailwind.css";` after `@import "tailwindcss";` maps tokens to `@theme` (e.g. `bg-surface`, `rounded-card`, `shadow-floating`, `h-control`, `ease-buttery`). It uses `@theme inline`, so the utilities read the live `--bt-*` variables and follow the theme and density. Text colors are named `fg` (`text-fg`, `text-fg-secondary`).
+- Palettes (gradient + solid presets) are data in `@buttery/core/palettes` — swap or extend per app. Colors are defined in OKLCH with gamut-mapped hex beside them, and `gradientCss(preset)` renders a gradient blended in OKLab.
 
 ## Desktop (Tauri v2)
 

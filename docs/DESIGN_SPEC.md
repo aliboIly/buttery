@@ -18,7 +18,9 @@ Never copy either product's branding, names, icons, illustrations, copy or gradi
 | Token | Value | Used for |
 |---|---|---|
 | `--bt-bg-app` | `#f3f3f4` | Page / stage background behind everything |
-| `--bt-bg-surface` | `#ffffff` | Cards: header bar, inspector panel, inner rows, dialogs, menus, toolbars |
+| `--bt-bg-surface` | `#ffffff` | Cards: header bar, inspector panel, inner rows, dialogs |
+| `--bt-bg-raised` | `#ffffff` | Raised elements on a surface or control track: the active segment, secondary buttons. Same as surface in light; lighter than the track in dark. |
+| `--bt-bg-floating` | `#ffffff` | Menus, popovers, floating toolbars. Same as surface in light; a step lighter in dark. |
 | `--bt-bg-section` | `#f7f7f7` | Group "wells" (section backgrounds in the inspector) |
 | `--bt-bg-inset` | `#fefefe` | Small recessed controls: tilt pad, anchor-grid box. Measured on the anchor box; the tilt pad reads `#fcfcfc`–`#fdfdfd` under its knob's shadow. |
 | `--bt-bg-control` | `#f1f1f1` | Segmented track, value badge, soft button, hover fill |
@@ -40,6 +42,7 @@ Never copy either product's branding, names, icons, illustrations, copy or gradi
 | `--bt-on-primary` | `#ffffff` | Text on primary |
 | `--bt-inverse-bg` / `--bt-inverse-text` / `--bt-inverse-text-secondary` | `#1a1a1a` / `#ffffff` / `#a3a3a3` | Tooltip, toast |
 | `--bt-accent` | `#2862e0` | Focus ring, tilt-direction arc, selection highlights |
+| `--bt-selection` | `rgba(40,98,224,0.2)` | Text selection (_derived_: the accent at 20%) |
 | `--bt-overlay` | `rgba(0,0,0,0.32)` | Dialog scrim (no blur) |
 | `--bt-wash` | `rgba(255,255,255,0.55)` | Blur scrim wash behind menus |
 | `--bt-dot` / `--bt-dot-active` | `#e8e8e8` / `#303030` | Page dots, idle anchor dots |
@@ -65,7 +68,7 @@ Decorative (onboarding illustrations, brand mark):
 
 ### Palettes (`@buttery/core/palettes`)
 
-18 two-stop gradients (135°, top-left → bottom-right) and 12 solids. Phase 1 tunes buttery's own set; the values measured from the references stay in the local reference notes, not in the repo.
+buttery's own set, derived in OKLCH rather than taken from the references: 18 two-stop gradients and 12 solids. Six hue families (butter, apricot, rose, lilac, sky, mint) run across three rows: cream pastels (L 0.95 → 0.87), fresh mids (L 0.84 → 0.66, more chroma) and a deep row (espresso, slate, ink, forest, plum, graphite). Each gradient's second stop shifts lightness, chroma and hue a little toward a neighbor; `gradientCss` blends them in OKLab at 135°, top-left → bottom-right, which keeps the midpoints from going gray. The solids are the OKLab midpoints of the cream and deep rows. Hex values are gamut-mapped from the OKLCH source, so CSS and canvas export draw the same color. The set has no light neutrals yet (the references had three).
 
 ### Dark (_derived_ — references are light-only)
 
@@ -81,8 +84,15 @@ Decorative (onboarding illustrations, brand mark):
 | knob | same gradients, border `#000`, plus a 1px `rgba(255,255,255,.08)` outer ring |
 | overlay / wash | `rgba(0,0,0,.55)` / `rgba(15,15,16,.55)` |
 | ring-selected / dot / dot-active | `#4a4a50` / `#2e2e32` / `#ececed` |
+| raised / floating (Phase 1) | `#2c2c30` / `#1f1f22`: lighter than the surface, so raised and floating layers still read as raised |
+| accent / selection (Phase 1) | `#4f89ff` (the light accent at OKLCH L 0.65, 5.3:1 on the surface) / `rgba(79,137,255,0.3)` |
+| text-disabled-subtle (Phase 1) | `#4d4d53`: one step closer to the background than `text-disabled` (`#55555b`), as in light |
+| skeleton / skeleton-strong (Phase 1) | `#232326` / `#2a2a2d` |
+| shadow-card (Phase 1) | `0 0 0 1px rgba(255,255,255,.06), 0 1px 2px rgba(0,0,0,.24)`: a light ring replaces the black one, which disappears on `#19191b`, and the drop stays soft so a card's well reads evenly |
+| shadow-raised / floating / dialog (Phase 1) | light ring at 9%, 9% and 10% over drops at 60%, 50% + 30%, and 60% black |
+| shadow-inset (Phase 1) | `inset 0 0 0 1px rgba(255,255,255,.06)` |
 
-Phase 1 derives the rest and marks it _derived_: surface edges and shadows (a light ring replaces the black one, which disappears on `#19191b`), `accent`, the skeleton colors and `text-disabled-subtle`.
+Every dark value is _derived_; they need a visual pass on real screens.
 
 Every **active** text/background pair passes WCAG AA in both themes. Disabled states are exempt (WCAG 1.4.3). Phase 1 verifies this with a unit test that computes contrast for every declared token pair.
 
@@ -96,11 +106,12 @@ Every **active** text/background pair passes WCAG AA in both themes. Disabled st
 
 | Role token | Size / line-height | Weight | Color | Where |
 |---|---|---|---|---|
-| `title` | 16 / 22 | 600 | text | Empty-state title |
+| `title` | 15 / 20 | 600, tight | text | Empty-state title (re-measured in Phase 1; the first spec said 16 / 22) |
 | `dialog-title` | 15 / 20 | 600 | text-strong | Dialog title |
 | `title-sm` | 14 / 20 | 600 | text | App/document title in the header |
 | `label` | 14 / 20 | 500 | text | Inspector row labels |
-| `body` | 14 / 22 | 400 | text-secondary | Dialog body, empty-state description |
+| `body` | 14 / 22 | 400 | text-secondary | Dialog body |
+| `body-sm` | 13 / 20 | 400 | text-secondary | Empty-state description (re-measured in Phase 1) |
 | `button` | 14 / 20 | 500 | — | Pill buttons |
 | `button-lg` | 15 / 20 | 600 | — | 48px CTA buttons |
 | `control` | 13 / 18 | 500 | secondary / text when active | Segmented items, section titles, reset links |
@@ -111,7 +122,7 @@ Every **active** text/background pair passes WCAG AA in both themes. Disabled st
 
 Page display roles (`display`, `heading-1`, `heading-2`, `body-lg`) are tokens too — values in `LAYOUT_RULES.md` §4.
 
-Text stacks (a title, body and caption under each other in dialogs, empty states and page sections) trim their line boxes with `text-box: trim-both cap alphabetic` where the engine supports it (WebKit 18.2+, Chromium 133+, so the macOS desktop app has it). The spacing token between two text blocks is then the gap you see. Gaps stay on the 4px scale; engines without support show them a few px larger, which is fine. Control text (buttons, segments, rows) is centered by its control and isn't trimmed, and trimmed text never sits in a box that clips overflow, because its descenders would be cut. Phase 1 re-derives the text-stack gaps in §5 (onboarding, empty state) against trimmed boxes: rebuilt literally from the current numbers, the onboarding text block is 238px tall against 227px in the capture.
+Text stacks (a title, body and caption under each other in dialogs, empty states and page sections) trim their line boxes with `text-box: trim-both cap alphabetic` where the engine supports it (WebKit 18.2+, Chromium 133+, so the macOS desktop app has it). The spacing token between two text blocks is then the gap you see. Gaps stay on the 4px scale; engines without support show them a few px larger, which is fine. Control text (buttons, segments, rows) is centered by its control and isn't trimmed, and trimmed text never sits in a box that clips overflow, because its descenders would be cut. The text-stack gaps in §5 were re-derived this way in Phase 1, and the trimmed onboarding block lands within 1px of the capture. Without `text-box` support the same tokens make that block about 28px taller, because every line box keeps its half-leading.
 
 ---
 
@@ -119,7 +130,7 @@ Text stacks (a title, body and caption under each other in dialogs, empty states
 
 ### Spacing scale (4px grid)
 `0, 2, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64, 96, 128` → tokens `--bt-space-0, -0_5, -1, -1_5, -2, -3, -4, -5, -6, -8, -10, -12, -16, -24, -32` (number = px ÷ 4; props accept `"0.5"`, `"1.5"`, `4`, …).
-One named exception: `--bt-space-well: 3px` (inset between a section well and its inner card).
+The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px; widened by the maintainer's call so the inner card reads as sitting inside its section).
 
 ### Control heights
 
@@ -159,7 +170,7 @@ Component-internal dimensions (thumb 24, tilt pad 32, anchor box 43, color dot 2
 | `--bt-r-md` | 10 | Anchor grid box, menu item, dialog media (18 − 8) |
 | `--bt-r-lg` | 12 | Inner row card, inputs, segmented item, CTA buttons, stage canvas |
 | `--bt-r-xl` | 14 | Segmented track |
-| `--bt-r-2xl` | 15 | Section well (12 + 3) |
+| `--bt-r-2xl` | 16 | Section well (card 12 + well 4) |
 | `--bt-r-3xl` | 16 | Header bar, inspector panel, menu |
 | `--bt-r-dialog` | 18 | Dialog |
 | `--bt-r-full` | 9999 | Pill buttons, toast, floating toolbar, dots |
@@ -175,7 +186,7 @@ Component-internal dimensions (thumb 24, tilt pad 32, anchor box 43, color dot 2
 | `--bt-shadow-dialog` | `0 0 0 1px rgba(0,0,0,.08), 0 16px 48px rgba(0,0,0,.16)` | Dialog |
 | `--bt-shadow-inset` | `inset 0 0 0 1px rgba(0,0,0,.06)` | Swatches, color dots |
 | `--bt-ring-select` | `0 0 0 2px var(--bt-bg-surface), 0 0 0 3.5px var(--bt-ring-selected)` | Selected swatch |
-| `--bt-ring-focus` | `0 0 0 2px var(--bt-bg-surface), 0 0 0 4px var(--bt-accent)` | `:focus-visible` everywhere |
+| `--bt-ring-focus` | `0 0 0 2px var(--bt-bg-surface), 0 0 0 4px var(--bt-accent)` | Focus ring as a shadow, for components that can't use the outline. `:focus-visible` everywhere else draws an outline: 2px `accent`, 2px offset (`--bt-focus-width`, `--bt-focus-offset`), which composes with surface shadows. |
 
 ### Z layers (never use raw z-index)
 
@@ -194,12 +205,14 @@ The signature look is **nested surfaces with concentric corners**:
 ```
 app bg #f3f3f4
 └─ Panel        white, r16, shadow-card, padding 8, gap 8
-   └─ Section   #f7f7f7, r15, 1px border, header 36px (title left, a reset action right), padding 0 3 3
-      └─ Card   white, r12 (= 15 − 3), shadow-card (its 1px ring is the edge; no border), rows divided by 1px border
+   └─ Section   #f7f7f7, r16, 1px border, header 36px padded 16 (title left, a reset action right), padding 0 4 4
+      └─ Card   white, r12 (= 16 − 4), shadow-card (its 1px ring is the edge; no border), rows divided by 1px border
          └─ Row 50px, padding-x 16
 ```
 
-Concentric rule: **a child's radius = its parent's radius − the parent's padding.** Section → Card follows it (15 − 3 = 12). **Panel → Section is the one deliberate exception**: sections are sized from the inside out (card 12 + well 3 = 15), so `Section` sets `r15` explicitly instead of `auto`.
+Concentric rule: **a child's radius = its parent's radius − the parent's padding.** Section → Card follows it (16 − 4 = 12). **Panel → Section is the one deliberate exception**: sections are sized from the inside out (card 12 + well 4 = 16), so `Section` sets `r16` explicitly instead of `auto`.
+
+A nested surface sits evenly inside its parent: the same inset on every open side, and its title (a section header) on the same left edge as the rows inside it. That's why the section header is padded 16, matching the rows, rather than 12.
 
 `Surface` levels: `app · panel · section · card · raised · floating · dialog · inset`. Each level sets background, border, shadow, radius and padding. In React, `radius="auto"` computes `parentRadius − parentPadding` (min 4px) from context. Don't implement this with self-referencing CSS custom properties — they form a cycle on the same element. The CSS-only recipes carry pre-computed values.
 
@@ -269,7 +282,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 
 ### Onboarding (StepDialog)
 - Media: 384×200, r10, per-step gradient background, holding a small scene whose elements morph between steps.
-- Title `dialog-title` (24px below media) · body `body` (8px below) · caption `caption` (12px below).
+- Title `dialog-title` (24px below media) · body `body` (16px below) · caption `caption` (20px below). Gaps are between trimmed text boxes (see §2).
 - PageDots 20px below caption: dots 6px, gap 6, inactive `dot`, active = 18×6 pill `dot-active`. Dots are indicators, not buttons.
 - Buttons 16px below the dots: two equal columns (`Inline uniform`), gap 8, 48h, r12. The back button is soft (disabled on the first step) and the forward button is primary; on the last step its label changes (e.g. "Continue" → "Finish"). Bottom padding 24.
 - Scenes: each step's media is a small scene built from buttery parts whose shared elements morph between steps. Card Studio designs its own scenes around its features.
@@ -287,7 +300,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 340w panel (padding 8, gap 8 between sections) with a sticky footer: 1px divider, padding 12, buttons 36h gap 8 (a soft button with an icon, and a primary SplitButton filling the rest). The body scrolls internally with 12px fade masks at scrolled edges.
 
 ### EmptyState / DropZone
-Centered in the stage. Title `title`, description `body` 8px below, actions 20px below (primary pill + secondary pill, gap 8). The whole stage accepts drops; paste `⌘V`, open `⌘O`. Drag-over (_derived_): bg tints to `bg-control-active`, 2px dashed `ring-selected` inset 16px, r16, label "Drop to add".
+Centered in the stage. Title `title`, description `body-sm` 12px below, actions 24px below (primary pill + secondary pill, gap 8); gaps are between trimmed text boxes. The whole stage accepts drops; paste `⌘V`, open `⌘O`. Drag-over (_derived_): bg tints to `bg-control-active`, 2px dashed `ring-selected` inset 16px, r16, label "Drop to add".
 
 ### Stage (canvas)
 Content box fits the available space at the chosen aspect ratio (`FitBox`: never overflows, always centered, 32px minimum margin), r12, shadow-card. Artwork inside is `data-bt-allow-overlap`. Crop mode: background fades out, the image scales to fit, 8 handles (12px `bg-surface` circles, 1px `ring-selected` border, 24px hit areas) on a 1px frame, FloatingToolbar below.

@@ -34,7 +34,7 @@ Page layout follows a strict grid with a consistent section rhythm: split heroes
 
 - **One left edge.** Everything inside a container aligns to its padding edge. Section titles, row labels, card titles — same x.
 - **Equal siblings are equal.** Groups of peers share size: `Grid` with equal columns; `Inline uniform` for equal-width buttons (a dialog's back and forward buttons).
-- **Concentric corners.** Nested surface radius = parent radius − parent padding (`Surface radius="auto"`). The one deliberate exception is Panel → Section (sections are sized inside-out: card 12 + well 3 = 15) — see DESIGN_SPEC §4.
+- **Concentric corners.** Nested surface radius = parent radius − parent padding (`Surface radius="auto"`). The one deliberate exception is Panel → Section (sections are sized inside-out: card 12 + well 4 = 16) — see DESIGN_SPEC §4.
 - **Hit areas.** Every interactive element has a hit area of at least 24×24 (WCAG 2.5.8); standalone buttons are at least 28 tall. Small visuals (thumb, color dot, chip, crop handle) get an invisible `[data-bt-hit]` element that extends their hit area without changing layout.
 - **One gap per relationship.** Use the relationship tokens, not ad-hoc numbers:
 
@@ -132,7 +132,7 @@ Runs in Playwright against every playground route and every app built on buttery
 | **Overlap** | Two visible boxes (`[data-bt]` elements and text runs) **in the same layer** (page, or the same portal) intersect by > 1px — unless one contains the other, one is a `data-bt-part` of the other's component (thumb over track, indicator under items), or either is inside `[data-bt-allow-overlap]` (stage artwork, a dialog's close button over its media). Each open layer is checked on its own. |
 | **Overflow** | An element with `overflow: visible` has `scrollWidth > clientWidth + 1` or `scrollHeight > clientHeight + 1`; or the document scrolls horizontally. Elements with `data-bt-truncate` or a declared clip (`data-bt-clip`: bleed visuals, stage, rounded media) are exempt. |
 | **Clipping** | Text is ellipsized without `data-bt-truncate` and an accessible full text (tooltip or `title`). |
-| **Scale** | A computed gap or padding on a `[data-bt]` element isn't on the spacing scale, or a control root (`[data-bt-control]`) has a height that isn't a `--bt-h-*` token. Allow-list: 1px hairlines, the 3px well. Content-sized elements (text blocks, cards, tooltips) aren't height-checked. |
+| **Scale** | A computed gap or padding on a `[data-bt]` element isn't on the spacing scale, or a control root (`[data-bt-control]`) has a height that isn't a `--bt-h-*` token. Allow-list: 1px hairlines. Content-sized elements (text blocks, cards, tooltips) aren't height-checked. |
 | **Target size** | An interactive element's hit area (the element, or its `[data-bt-hit]` child) is smaller than 24×24, or a standalone button is shorter than 28. Inline text links inside a sentence and `data-bt-target="group"` members are exempt. |
 | **Viewport fit** | A floating layer extends past the viewport minus 8px. |
 | **Layering** | A z-index that isn't a `--bt-z-*` token. |
