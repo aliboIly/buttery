@@ -8,6 +8,13 @@
     font: inherit;
     text-align: inherit;
   }
+
+  /* Links are inline, which the press scale doesn't apply to and a surface can't size. */
+  a.bt-pressable {
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 @layer bt.primitives {

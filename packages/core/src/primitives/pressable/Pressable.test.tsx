@@ -53,6 +53,24 @@ describe("Pressable", () => {
     expect(link.hasAttribute("type")).toBe(false);
   });
 
+  it("makes a link press like a button: a box that scales, no underline, the text color around it", () => {
+    render(
+      <div style={{ color: "rgb(30, 40, 50)" }}>
+        <Surface asChild level="card" pad={4}>
+          <Pressable asChild>
+            <a href="#/surface">Spring launch</a>
+          </Pressable>
+        </Surface>
+      </div>,
+    );
+    const link = screen.getByRole("link", { name: "Spring launch" });
+    const style = getComputedStyle(link);
+    expect(style.display).toBe("inline-block");
+    expect(style.textDecorationLine).toBe("none");
+    expect(style.color).toBe("rgb(30, 40, 50)");
+    expect(link.getBoundingClientRect().height).toBeGreaterThan(30);
+  });
+
   it('keeps type="button" on a button child', () => {
     render(
       <Pressable asChild>
