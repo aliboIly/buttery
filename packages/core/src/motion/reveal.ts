@@ -44,31 +44,45 @@ function isInView(element: HTMLElement): boolean {
 }
 
 // IntersectionObserver's ratio is a share of the element's area, which an element taller than the viewport
-// can't reach, so the threshold is checked against visible height instead.
+// can't reach, so the threshold is checked against visible height instead. Ratios arrive in 1% steps, too far
+// apart for content many screens tall, so a second observer with the viewport's outer 15% cut off catches
+// that as soon as it reaches the middle.
 function whenInView(element: HTMLElement, onEnter: () => void): () => void {
-  const observer = new IntersectionObserver(
+  const enough = new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) {
-        if (
+      const entered = entries.some(
+        (entry) =>
           entry.isIntersecting &&
           isEnough(
             entry.intersectionRect.height,
             entry.boundingClientRect.height,
             entry.rootBounds?.height ?? window.innerHeight,
-          )
-        ) {
-          observer.disconnect();
-          onEnter();
-          return;
-        }
-      }
+          ),
+      );
+      if (entered) enter();
     },
     { threshold: THRESHOLDS },
   );
-  observer.observe(element);
-  return () => {
-    observer.disconnect();
+  const middle = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) enter();
+    },
+    { rootMargin: `-${String(AMOUNT * 100)}% 0px` },
+  );
+  let entered = false;
+  const stop = (): void => {
+    enough.disconnect();
+    middle.disconnect();
   };
+  function enter(): void {
+    if (entered) return;
+    entered = true;
+    stop();
+    onEnter();
+  }
+  enough.observe(element);
+  middle.observe(element);
+  return stop;
 }
 
 /**

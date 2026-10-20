@@ -107,6 +107,30 @@ describe("Reveal", () => {
     });
   });
 
+  it("rises in content a hundred and fifty screens tall", async () => {
+    render(
+      <>
+        <div style={{ blockSize: "3000px" }} />
+        <Reveal
+          data-testid="tall"
+          style={{ blockSize: `${String(window.innerHeight * 150)}px` }}
+        >
+          A very long article
+        </Reveal>
+      </>,
+    );
+    expect(opacity("tall")).toBe(0);
+    const top =
+      screen.getByTestId("tall").getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, top - window.innerHeight * 0.95);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(opacity("tall")).toBe(0);
+    window.scrollTo(0, top - window.innerHeight * 0.25);
+    await waitFor(() => {
+      expect(opacity("tall")).toBe(1);
+    });
+  });
+
   it("waits and rises in under Strict Mode, and keeps its own inline styles", async () => {
     render(
       <StrictMode>
