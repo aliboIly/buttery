@@ -148,7 +148,7 @@ function OverflowClusterRoot({
                     align="end"
                     sideOffset={space["2"]}
                     collisionPadding={space["2"]}
-                    className="bt-surface bt-overflow-cluster-menu"
+                    className="bt-surface bt-menu"
                     data-level="floating"
                     data-bt-part="menu"
                   >

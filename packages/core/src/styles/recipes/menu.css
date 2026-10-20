@@ -1,0 +1,35 @@
+@layer bt.recipes {
+  .bt-menu {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: var(--bt-w-menu-min);
+    max-inline-size: var(--radix-dropdown-menu-content-available-width);
+    max-block-size: var(--radix-dropdown-menu-content-available-height);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bt-menu:focus {
+    outline: none;
+  }
+
+  .bt-menu > [data-bt-part="menu-item"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-md);
+    cursor: default;
+    outline: none;
+  }
+
+  .bt-menu > [data-bt-part="menu-item"][data-highlighted] {
+    background-color: var(--bt-bg-item-hover);
+  }
+
+  .bt-menu > [data-bt-part="menu-item"][data-disabled] {
+    color: var(--bt-text-disabled);
+  }
+}
