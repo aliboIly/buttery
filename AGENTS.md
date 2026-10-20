@@ -52,7 +52,7 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 ## How to work
 - Work **one phase at a time** from `docs/BUILD_PLAN.md`; tick items in `ROADMAP.md` as they land. At the end of each phase, stop, show screenshots and a short summary, and wait for the go-ahead.
 - Before saying anything is done:
-  1. `pnpm check` is green. From Phase 2 on it includes `expectButtery` on the pages you changed, at 390 and 1280, light and dark, comfortable density, in Chromium and WebKit.
+  1. `pnpm check` is green. From Phase 2 on it includes `expectButtery` on every playground page (with the chrome and the overlays their tests open), the starter, at 390 and 1280, light and dark, comfortable density, in Chromium and WebKit.
   2. At every phase stop, `pnpm test:layout` (`expectButtery` across the full viewport × theme × density matrix, Chromium and WebKit) is green. Use `--reporter=json` and fix every violation at the root.
   3. You took screenshots and compared them with the relevant `reference/` images. List visible differences honestly; never claim a match you didn't check.
   4. At every phase stop, you also did a short manual pass in the real desktop app (`pnpm --filter starter tauri dev`). Playwright's WebKit is its own build, not the system WebKit the app runs in.
@@ -64,7 +64,7 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 ## Commands
 - `pnpm dev` — playground
 - `pnpm build` — all packages and apps
-- `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, unit tests and app smoke tests (+ layout checks on changed pages from Phase 2)
+- `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, unit and browser tests, app smoke tests, and `expectButtery` on every playground page and the starter at 390 and 1280
 - `pnpm test:layout` — `expectButtery` across the full matrix (from Phase 2)
 - `pnpm new-component <Name>` — scaffold a compliant component (from Phase 2)
 - `pnpm new-app <name>` — new app from `apps/starter`

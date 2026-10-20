@@ -3,7 +3,7 @@
 Nine phases (0–8). Each ends with a **hard stop**: the agent shows screenshots + a short summary and waits for the go-ahead. Guardrails (Phase 2) come *before* components, so every component after is checked automatically. `ROADMAP.md` mirrors these phases as checkboxes — tick them as items land.
 
 Definition of done for every phase:
-- `pnpm check` passes (authorship and private-path checks, typecheck, lint, stylelint, format, unit and smoke tests; from Phase 2 on, also `expectButtery` on changed pages at 390 and 1280, light and dark, comfortable, in Chromium + WebKit).
+- `pnpm check` passes (authorship and private-path checks, typecheck, lint, stylelint, format, unit and smoke tests; from Phase 2 on, also `expectButtery` on every playground page and the starter at 390 and 1280, light and dark, comfortable, in Chromium + WebKit).
 - From Phase 2 on, `pnpm test:layout` passes the full matrix. A short manual pass in the real desktop app finds nothing wrong.
 - Playground pages for everything built in the phase, light + dark, comfortable + compact.
 - Side-by-side screenshots against the relevant `reference/` images, with differences listed honestly.
