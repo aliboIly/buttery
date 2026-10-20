@@ -11,4 +11,17 @@
   .bt-sticky[data-edge="bottom"] {
     inset-block-end: var(--bt-sticky-offset, 0);
   }
+
+  /*
+   * An aside fits between the sticky bars and scrolls inside. Its scroll chains to the page, because
+   * whatever follows it (a footer, page padding) pushes it up past the bars near the end of the page, and
+   * only scrolling the page brings its top back.
+   */
+  .bt-sticky[data-variant="aside"] {
+    max-block-size: calc(
+      100dvh - var(--bt-sticky-top, 0px) - var(--bt-sticky-bottom, 0px)
+    );
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
 }

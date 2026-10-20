@@ -13,7 +13,9 @@ export interface StickyProps extends ComponentPropsWithRef<"div"> {
   /**
    * `"bar"` (the default) runs across the scroll container, such as a nav bar or a panel footer, and
    * counts toward the published height. `"aside"` is a column beside the content, such as a sidebar or a
-   * table of contents: it sits under the bars and doesn't count.
+   * table of contents: it sits under the bars, doesn't count, and fits the space between the bars,
+   * scrolling inside when its content is taller. Start it right under the bars (a sticky header above it)
+   * so its whole box is on screen from the first frame.
    */
   readonly variant?: StickyVariant | undefined;
   /** Render the single child element instead of a `div`, with Sticky's props merged onto it. */
