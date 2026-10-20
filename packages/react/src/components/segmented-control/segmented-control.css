@@ -12,7 +12,6 @@
   }
 
   .bt-segmented-control > [data-bt-part="segment"] {
-    --bt-shared-indicator-background: var(--bt-bg-surface);
     --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
 
     display: grid;

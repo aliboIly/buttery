@@ -64,7 +64,7 @@
   }
 
   .bt-button[data-variant="secondary"] {
-    --bt-button-bg: var(--bt-bg-surface);
+    --bt-button-bg: var(--bt-bg-raised);
   }
 
   .bt-button[data-variant="ghost"] {
