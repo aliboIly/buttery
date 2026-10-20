@@ -1,21 +1,28 @@
+@property --bt-transition-press {
+  syntax: "*";
+  inherits: false;
+}
+
 @layer bt.recipes {
   .bt-press {
+    --bt-transition-press: scale var(--bt-dur-fast) var(--bt-ease-out);
+
     cursor: pointer;
-    transition: scale var(--bt-dur-fast) var(--bt-ease-out);
   }
 
   .bt-press:active:not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    --bt-transition-press: scale var(--bt-dur-press) var(--bt-ease-out);
+
     scale: var(--bt-press-scale);
-    transition-duration: var(--bt-dur-press);
   }
 
   [data-bt-motion="reduced"] .bt-press {
-    transition: none;
+    --bt-transition-press: scale 0s;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bt-press {
-      transition: none;
+    :root:not([data-bt-motion="full"]) .bt-press {
+      --bt-transition-press: scale 0s;
     }
   }
 }

@@ -71,6 +71,16 @@ describe("Pressable", () => {
     expect(link.getBoundingClientRect().height).toBeGreaterThan(30);
   });
 
+  it("keeps its press easing next to hover feedback", () => {
+    render(<Pressable className="bt-hover-tint">Open</Pressable>);
+    const properties = getComputedStyle(
+      screen.getByRole("button", { name: "Open" }),
+    ).transitionProperty.split(", ");
+    expect(properties).toEqual(
+      expect.arrayContaining(["scale", "background-color", "color"]),
+    );
+  });
+
   it('keeps type="button" on a button child', () => {
     render(
       <Pressable asChild>

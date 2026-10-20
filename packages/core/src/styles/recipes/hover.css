@@ -1,12 +1,19 @@
+@property --bt-transition-hover {
+  syntax: "*";
+  inherits: false;
+}
+
 @layer bt.recipes {
   .bt-hover-lift {
-    transition:
+    --bt-transition-hover:
       translate var(--bt-dur-fast) var(--bt-ease-out),
       box-shadow var(--bt-dur-fast) var(--bt-ease-out);
   }
 
   .bt-hover-tint {
-    transition: background-color var(--bt-dur-fast) var(--bt-ease-standard);
+    --bt-transition-hover:
+      background-color var(--bt-dur-fast) var(--bt-ease-standard),
+      color var(--bt-dur-fast) var(--bt-ease-standard);
   }
 
   @media (hover: hover) {
@@ -25,8 +32,15 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bt-hover-lift:hover {
+    :root:not([data-bt-motion="full"]) .bt-hover-lift:hover {
       translate: none;
     }
+  }
+
+  /* Each recipe adds its own transition, so an element with press and hover feedback keeps both. */
+  :where(.bt-press, .bt-hover-lift, .bt-hover-tint) {
+    transition:
+      var(--bt-transition-press, scale 0s),
+      var(--bt-transition-hover, translate 0s);
   }
 }
