@@ -60,6 +60,18 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     escape,
     { name: "open the view menu", run: press("View") },
   ],
+  "app-shell": [
+    {
+      name: "open the inspector sheet on the narrow example",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Adjust card", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog", { name: "Card settings" }).waitFor();
+      },
+    },
+  ],
   "number-field": [
     {
       name: "focus a field, which shows its stepper",

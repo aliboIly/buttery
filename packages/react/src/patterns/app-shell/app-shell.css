@@ -1,0 +1,78 @@
+@layer bt.patterns {
+  .bt-app-shell {
+    --bt-app-shell-gap: var(--bt-space-2);
+
+    display: grid;
+    grid-template-areas:
+      "header inspector"
+      "stage inspector";
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) var(--bt-w-inspector);
+    gap: var(--bt-app-shell-gap);
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 0;
+    padding-block: var(--bt-app-shell-gap);
+    padding-inline: max(
+      var(--bt-app-shell-gap),
+      calc((100% - var(--bt-w-shell-max)) / 2)
+    );
+    background-color: var(--bt-bg-app);
+  }
+
+  .bt-app-shell[data-narrow] {
+    grid-template-areas:
+      "header"
+      "stage"
+      "sheet-bar";
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bt-app-shell > [data-bt-part="header"] {
+    grid-area: header;
+    min-inline-size: 0;
+  }
+
+  .bt-app-shell > [data-bt-part="stage"] {
+    display: grid;
+    grid-area: stage;
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+
+  .bt-app-shell > [data-bt-part="inspector"] {
+    display: grid;
+    grid-area: inspector;
+    min-block-size: 0;
+  }
+
+  .bt-app-shell > [data-bt-part="inspector"] > .bt-inspector {
+    block-size: 100%;
+  }
+
+  .bt-app-shell > [data-bt-part="sheet-bar"] {
+    display: grid;
+    grid-area: sheet-bar;
+  }
+
+  /* The sheet rises from the bottom, 8px in from the edges, and the inspector inside it fills it. */
+  [data-bt-part="sheet-scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-bt-part="sheet"] {
+    position: absolute;
+    inset-block-end: var(--bt-space-2);
+    inset-inline: var(--bt-space-2);
+    display: grid;
+    max-block-size: calc(100dvh - var(--bt-space-16));
+    outline: none;
+  }
+
+  [data-bt-part="sheet"] > .bt-inspector {
+    inline-size: 100%;
+    min-block-size: 0;
+  }
+}
