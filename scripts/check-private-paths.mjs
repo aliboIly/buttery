@@ -2,7 +2,7 @@
 import { execFileSync } from "node:child_process";
 import process from "node:process";
 
-const PRIVATE_PATHS = ["reference", "PROMPTS.md"];
+const PRIVATE_PATHS = ["reference", "notes", "PROMPTS.md"];
 
 const tracked = execFileSync(
   "git",

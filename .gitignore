@@ -1,6 +1,7 @@
 # Private build material, never tracked
 /reference/
 /PROMPTS.md
+/notes/
 
 # Agent files are part of the project, even where a global ignore hides them
 !/CLAUDE.md
