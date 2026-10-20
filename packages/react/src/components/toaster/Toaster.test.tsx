@@ -18,7 +18,7 @@ afterEach(() => {
 function toasts(): HTMLElement[] {
   return [
     ...document.querySelectorAll<HTMLElement>(
-      '.bt-toaster > [data-bt-part="toast"]',
+      '.bt-toaster > [data-bt-part="list"] > [data-bt-part="toast"]',
     ),
   ];
 }
@@ -175,25 +175,44 @@ describe("Toaster", () => {
     expect(getToasts()).toHaveLength(3);
   });
 
-  it("lets a toast with the same id take the earlier one over, as the newest, instead of stacking a copy", async () => {
+  it("updates a toast with the same id in its place, with its time started over, instead of stacking a copy", async () => {
     renderApp();
     expect(show("Uploading 3 photos", { id: "upload" })).toBe("upload");
     show("Card deleted");
     await waitFor(() => {
       expect(shown()).toEqual(["Uploading 3 photos", "Card deleted"]);
     });
+    const upload = toasts()[0];
     show("3 photos uploaded", { id: "upload" });
-    expect(messages(toasts())).toEqual(["Card deleted", "3 photos uploaded"]);
-    expect(getComputedStyle(toasts()[1] ?? document.body).opacity).toBe("1");
+    expect(messages(toasts())).toEqual(["3 photos uploaded", "Card deleted"]);
+    expect(toasts()[0]).toBe(upload);
     await waitFor(() => {
       expect(
-        [...document.querySelectorAll('[role="status"][aria-live="assertive"]')]
-          .map((region) => region.textContent)
-          .includes("Notification 3 photos uploaded"),
-      ).toBe(true);
+        document.querySelector('[role="status"][aria-live="assertive"]')
+          ?.textContent,
+      ).toBe("Notification 3 photos uploaded");
     });
+  });
+
+  it("lets the toast shown or updated longest ago go first", () => {
+    renderApp();
+    for (const name of ["Card deleted", "Link copied", "Card archived"]) {
+      show(name, { id: name });
+    }
+    show("Card deleted", { id: "Card deleted" });
+    show("Card exported");
+    expect(shown()).toEqual(["Card deleted", "Card archived", "Card exported"]);
+  });
+
+  it("keeps focus on a toast while it's updated", async () => {
+    renderApp();
+    show("Uploading 3 photos", { id: "upload" });
+    await screen.findByText("Uploading 3 photos");
+    toasts()[0]?.focus();
+    const focused = document.activeElement;
     show("3 photos uploaded", { id: "upload" });
-    expect(messages(toasts())).toEqual(["Card deleted", "3 photos uploaded"]);
+    expect(document.activeElement).toBe(focused);
+    expect(messages(toasts())).toEqual(["3 photos uploaded"]);
   });
 
   it("stays 3s, or 5s with an action, unless told otherwise", () => {
@@ -226,13 +245,20 @@ describe("Toaster", () => {
   });
 
   it("waits while focus is on it: F8 moves focus there, Tab reaches the action and Escape closes it", async () => {
-    renderApp();
+    render(
+      <ButteryProvider layoutGuard={false}>
+        <button type="button">Delete a card</button>
+      </ButteryProvider>,
+    );
+    const before = screen.getByRole("button", { name: "Delete a card" });
+    before.focus();
     const onAction = vi.fn();
     show("Card deleted", { duration: 300, action: { ...undo, onAction } });
     await screen.findByText("Card deleted");
     await userEvent.keyboard("{F8}");
-    const list = document.querySelector<HTMLElement>(".bt-toaster");
-    expect(document.activeElement).toBe(list);
+    expect(document.activeElement).toBe(
+      screen.getByRole("region", { name: "Notifications (F8)" }),
+    );
     await pause(600);
     expect(shown()).toEqual(["Card deleted"]);
     await userEvent.keyboard("{Tab}");
@@ -242,10 +268,45 @@ describe("Toaster", () => {
       screen.getByRole("button", { name: "Undo" }),
     );
     await userEvent.keyboard("{Escape}");
-    await waitFor(() => {
-      expect(toasts()).toEqual([]);
-    });
+    expect(shown()).toEqual([]);
+    expect(document.activeElement).toBe(before);
     expect(onAction).not.toHaveBeenCalled();
+  });
+
+  it("gives focus back to where it was when its action closes the last toast", async () => {
+    render(
+      <ButteryProvider layoutGuard={false}>
+        <button type="button">Delete a card</button>
+      </ButteryProvider>,
+    );
+    const before = screen.getByRole("button", { name: "Delete a card" });
+    before.focus();
+    const onAction = vi.fn();
+    show("Card deleted", { action: { ...undo, onAction } });
+    await screen.findByText("Card deleted");
+    await userEvent.keyboard("{F8}");
+    await userEvent.keyboard("{Tab}");
+    await userEvent.keyboard("{Tab}");
+    await userEvent.keyboard("{Enter}");
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(before);
+  });
+
+  it("closes the newest toast on Escape while the region has focus, and leaves Escape elsewhere alone", async () => {
+    render(
+      <ButteryProvider layoutGuard={false}>
+        <button type="button">Crop</button>
+      </ButteryProvider>,
+    );
+    show("Card deleted");
+    show("Link copied");
+    await screen.findByText("Link copied");
+    screen.getByRole("button", { name: "Crop" }).focus();
+    await userEvent.keyboard("{Escape}");
+    expect(shown()).toEqual(["Card deleted", "Link copied"]);
+    await userEvent.keyboard("{F8}");
+    await userEvent.keyboard("{Escape}");
+    expect(shown()).toEqual(["Card deleted"]);
   });
 
   it("runs its action once and closes", async () => {
@@ -288,13 +349,15 @@ describe("Toaster", () => {
     });
   });
 
-  it("hands focus to the toasts' list when the focused toast is pushed out", async () => {
+  it("hands focus to the region when the focused toast is pushed out", async () => {
     renderApp();
     show("Message 1");
     await screen.findByText("Message 1");
     toasts()[0]?.focus();
     for (const count of [2, 3, 4]) show(`Message ${String(count)}`);
-    expect(document.activeElement).toBe(document.querySelector(".bt-toaster"));
+    expect(document.activeElement).toBe(
+      screen.getByRole("region", { name: "Notifications (F8)" }),
+    );
   });
 
   it("takes no room and leaves the region out while there's nothing to show", async () => {
@@ -387,13 +450,13 @@ describe("Toaster", () => {
     );
   });
 
-  it("warns, with the fix, about an action without its alternative", () => {
+  it("warns, with the fix, about an action without its alternative, and still shows the button", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
     renderApp();
     show("Card deleted", { action: { ...undo, altText: " " } });
     expect(warn).toHaveBeenCalledWith(
-      '[buttery:Toaster] The "Undo" action in a toast has no altText, so the button is left out. Fix: describe another way to do the same, such as "Undo with Command Z".',
+      '[buttery:Toaster] The "Undo" action in a toast has no altText, so screen readers hear the message without a way to act on it. Fix: describe another way to do the same, such as "Undo with Command Z".',
     );
+    expect(screen.getByRole("button", { name: "Undo" })).toBeTruthy();
   });
 });

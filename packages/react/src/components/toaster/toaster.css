@@ -1,5 +1,18 @@
 @layer bt.components {
   .bt-toaster {
+    --bt-toaster-hit: 24px;
+
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    border-radius: var(--bt-r-2xl);
+  }
+
+  /* With nothing to show, the region leaves its lane and the accessibility tree. */
+  .bt-toaster:has(> [data-bt-part="list"]:empty) {
+    display: none;
+  }
+
+  .bt-toaster > [data-bt-part="list"] {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -10,11 +23,6 @@
     list-style: none;
   }
 
-  /* With nothing to show, the region takes no room in its lane, so it adds no gap beside other items. */
-  [role="region"]:has(> .bt-toaster:empty) {
-    display: none;
-  }
-
   /* The toast fades and keeps its place in the stack; its pill rises, so the stack measures where toasts sit. */
   .bt-toast {
     display: flex;
@@ -22,6 +30,9 @@
     max-inline-size: 100%;
     border-radius: var(--bt-r-full);
     cursor: default;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .bt-toast > [data-bt-part="pill"] {
@@ -43,8 +54,8 @@
     white-space: nowrap;
   }
 
-  .bt-toast[data-swipe="move"] {
-    translate: 0 var(--radix-toast-swipe-move-y);
+  .bt-toast:is([data-swipe="move"], [data-swipe="end"]) {
+    translate: 0 var(--bt-toaster-swipe, 0);
   }
 
   .bt-toast[data-swipe="cancel"] {
@@ -52,14 +63,11 @@
       var(--bt-ease-out);
   }
 
-  .bt-toast[data-swipe="end"] {
-    translate: 0 var(--radix-toast-swipe-end-y);
-  }
-
   .bt-toast [data-bt-part="action"] {
     --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
 
     flex: none;
+    min-inline-size: var(--bt-toaster-hit);
     padding-block: var(--bt-space-0_5);
     padding-inline: 0;
     border: 0;

@@ -17,6 +17,6 @@ export const meta: ComponentMeta = {
     "Messages longer than one line: they truncate",
   ],
   related: ["FloatingLanes", "Presence", "Button"],
-  a11y: 'Screen readers read each toast out as it arrives, as "Notification" and the message, and an action\'s altText in place of its button; background toasts wait for a pause. F8 moves focus to the toasts, Tab moves through them and their actions, newest first, and Escape closes the focused one. The timer stops while the pointer or focus is on the toasts or the window is in the background. With reduced motion they only fade.',
+  a11y: 'Screen readers hear each toast as it arrives or updates, as "Notification", the message and the action\'s altText; background toasts wait for a pause. F8 moves focus to the toasts, Tab moves through them newest first, each followed by its action, and Escape closes the focused toast (the newest with the region focused). Escape elsewhere is left alone. When the last toast leaves, focus goes back to where it was. The timer stops while the pointer or focus is on the toasts or the window is in the background. With reduced motion they only fade.',
   motion: "presence",
 };

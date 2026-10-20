@@ -27,7 +27,7 @@ function stubMatchMedia(matching: readonly string[]): void {
 function Probe(): ReactElement {
   const { colorScheme, density, platform, reducedMotion } = useButtery();
   return (
-    <output>
+    <output aria-label="Settings">
       {[colorScheme, density, platform, String(reducedMotion)].join(" ")}
     </output>
   );
@@ -116,7 +116,7 @@ describe("ButteryProvider", () => {
         <Probe />
       </ButteryProvider>,
     );
-    expect(screen.getByRole("status").textContent).toBe(
+    expect(screen.getByRole("status", { name: "Settings" }).textContent).toBe(
       "dark comfortable web true",
     );
     expect(root.dataset["btMotion"]).toBe("reduced");
@@ -132,7 +132,7 @@ describe("ButteryProvider", () => {
         <Probe />
       </ButteryProvider>,
     );
-    expect(screen.getByRole("status").textContent).toBe(
+    expect(screen.getByRole("status", { name: "Settings" }).textContent).toBe(
       "light comfortable web false",
     );
   });

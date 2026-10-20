@@ -5,7 +5,7 @@ export interface ToastAction {
   /** Runs when the button is pressed. The toast closes after it. */
   readonly onAction: () => void;
   /**
-   * Another way to do the same thing, read to screen readers in place of the button, such as
+   * Another way to do the same thing, read to screen readers after the message, such as
    * `"Undo with Command Z"`: people who hear the message can't always reach the button before it goes.
    */
   readonly altText: string;
@@ -14,8 +14,8 @@ export interface ToastAction {
 /** Options for `toast()`. */
 export interface ToastOptions {
   /**
-   * Names the toast. A new toast with the same id takes it over, as the newest, instead of stacking a
-   * copy, and `toast.dismiss(id)` closes it.
+   * Names the toast. A new toast with the same id updates it in its place, with its time started over,
+   * instead of stacking a copy, and `toast.dismiss(id)` closes it.
    */
   readonly id?: string | undefined;
   /** A button after the message, such as Undo. */
@@ -34,9 +34,9 @@ export interface ToastOptions {
 
 /** One toast in the store. */
 export interface ToastRecord {
-  /** Identifies the toast on screen, and stays when a toast with the same id takes it over. */
+  /** Identifies the toast on screen, and stays when a toast with the same id updates it. */
   readonly key: number;
-  /** Unique to one `toast()` call, so a toast taken over starts its time over and is read out again. */
+  /** Unique to one `toast()` call, so an updated toast starts its time over and is read out again. */
   readonly version: number;
   /** Whether it arrived under other toasts, so it pushes them up as it rises in. */
   readonly stacked: boolean;
@@ -52,13 +52,14 @@ export interface ToastRecord {
   readonly background: boolean;
 }
 
-/** The most toasts on screen at once. One more lets the oldest go. */
+/** The most toasts on screen at once. One more lets the one shown longest ago go. */
 export const TOAST_LIMIT = 3;
 
 const listeners = new Set<() => void>();
 let toasts: readonly ToastRecord[] = [];
+let announcement: ToastRecord | null = null;
 let hosts = 0;
-let nextKey = 1;
+let nextVersion = 1;
 
 function notify(): void {
   for (const listener of listeners) listener();
@@ -79,6 +80,15 @@ const NO_TOASTS: readonly ToastRecord[] = [];
 
 export function getServerToasts(): readonly ToastRecord[] {
   return NO_TOASTS;
+}
+
+/** The toast shown or updated last, for screen readers to hear. */
+export function getAnnouncement(): ToastRecord | null {
+  return announcement;
+}
+
+export function getServerAnnouncement(): ToastRecord | null {
+  return null;
 }
 
 /** Registers a mounted `Toaster`. Returns the function that unregisters it. */
@@ -104,36 +114,52 @@ export interface NewToast extends Omit<
 }
 
 /**
- * Adds a toast after the others, letting the oldest go past `TOAST_LIMIT`. A toast with the id of one
- * already showing takes it over instead, as the newest. Returns its id.
+ * Adds a toast after the others. Past `TOAST_LIMIT`, the toast shown or updated longest ago goes. A toast
+ * with the id of one already showing updates it in its place instead. Returns its id.
  */
 export function addToast(toast: NewToast): string {
-  const version = nextKey;
-  nextKey += 1;
+  const version = nextVersion;
+  nextVersion += 1;
   const id = toast.id ?? `toast-${String(version)}`;
-  const replaced = toasts.find((current) => current.id === id);
-  const others = toasts.filter((current) => current !== replaced);
-  toasts = replaced
-    ? [...others, { ...replaced, ...toast, id, version }]
-    : [
-        ...others,
-        { ...toast, id, key: version, version, stacked: others.length > 0 },
-      ].slice(-TOAST_LIMIT);
+  const updated = toasts.find((current) => current.id === id);
+  if (updated) {
+    const record = { ...updated, ...toast, id, version };
+    toasts = toasts.map((current) => (current === updated ? record : current));
+    announcement = record;
+  } else {
+    const record = {
+      ...toast,
+      id,
+      key: version,
+      version,
+      stacked: toasts.length > 0,
+    };
+    let next = [...toasts, record];
+    while (next.length > TOAST_LIMIT) {
+      const stalest = next.reduce((oldest, current) =>
+        current.version < oldest.version ? current : oldest,
+      );
+      next = next.filter((current) => current !== stalest);
+    }
+    toasts = next;
+    announcement = record;
+  }
   notify();
   return id;
 }
 
-/** Removes the toast from one `toast()` call, once it has closed. */
+/** Removes the toast with `key`, once it has closed. */
 export function removeToast(key: number): void {
   if (!toasts.some((toast) => toast.key === key)) return;
   toasts = toasts.filter((toast) => toast.key !== key);
   notify();
 }
 
-/** Removes the toast with `id`, or every toast without one. */
+/** Removes the toast with `id`, or every toast, and anything left to read out, without one. */
 export function dismissToasts(id?: string): void {
   const next =
     id === undefined ? NO_TOASTS : toasts.filter((toast) => toast.id !== id);
+  if (id === undefined) announcement = null;
   if (next.length === toasts.length) return;
   toasts = next;
   notify();

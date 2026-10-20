@@ -44,7 +44,7 @@ const FRAME = 17;
  */
 const STACK_LAG = 25;
 
-const TOASTS = '.bt-toaster > [data-bt-part="toast"]';
+const TOASTS = '.bt-toaster > [data-bt-part="list"] > [data-bt-part="toast"]';
 const PILLS = `${TOASTS} > [data-bt-part="pill"]`;
 const SAMPLED = `${TOASTS}, ${PILLS}`;
 
@@ -298,6 +298,76 @@ test.describe("toasts", () => {
     ).toEqual([GAP, GAP]);
     const last = rest.at(-1);
     expect(last && viewport.height - (last.top + last.height)).toBe(EDGE);
+  });
+
+  test("a toast leaving the middle fades where it is, then the toast above closes the gap on spring.snappy", async ({
+    page,
+  }) => {
+    await open(page, "full");
+    for (const count of [1, 2, 3]) {
+      await showToast(page);
+      await settled(page, count);
+    }
+    await page.locator(TOASTS).nth(1).focus();
+    await startSampling(page, SAMPLED);
+    await page.keyboard.press("Escape");
+    const run = await finishSampling(page, 700);
+    const toasts = toastsIn(run);
+    const [top, middle, bottom] = toasts;
+    if (!top || !middle || !bottom) throw new Error("Expected three toasts.");
+    expectNoOverlap(pillsOf(run, toasts));
+    const faded = expectTween(
+      "middle fading out",
+      progress(
+        traceOf(run, middle.item, (reading) => reading.opacity),
+        1,
+        0,
+      ),
+      EASE_IN,
+      FADE_OUT,
+    );
+    const resting = readingAtEnd(run, middle.pill);
+    for (const { reading } of readingsOf(run, middle.pill)) {
+      expect([reading.top, reading.left]).toEqual([resting.top, resting.left]);
+    }
+    const gone = goneAt(run, middle.item);
+    const tops = traceOf(run, top.pill, (reading) => reading.top);
+    const from = tops[0]?.value ?? Number.NaN;
+    expect(
+      tops.filter(({ t }) => t < gone).every(({ value }) => value === from),
+    ).toBe(true);
+    const closing = expectSnappy(
+      "top closing the gap",
+      progress(tops, from, from + HEIGHT + GAP),
+    );
+    expect(closing).toBeGreaterThanOrEqual(faded + FADE_OUT - FRAME);
+    const below = traceOf(run, bottom.pill, (reading) => reading.top);
+    expect(new Set(below.map(({ value }) => value)).size).toBe(1);
+  });
+
+  test("a toast updated by id changes in place: nothing moves or overlaps", async ({
+    page,
+  }) => {
+    await open(page, "full");
+    await page
+      .getByRole("button", { name: "Start the upload", exact: true })
+      .click();
+    await settled(page, 1);
+    await showToast(page);
+    await settled(page, 2);
+    await startSampling(page, SAMPLED);
+    await page.getByRole("button", { name: "Finish it", exact: true }).click();
+    const run = await finishSampling(page, 400);
+    const toasts = toastsIn(run);
+    expect(toasts).toHaveLength(2);
+    expectNoOverlap(pillsOf(run, toasts));
+    for (const { pill } of toasts) {
+      const tops = traceOf(run, pill, (reading) => reading.top);
+      expect(new Set(tops.map(({ value }) => value)).size).toBe(1);
+    }
+    await expect(page.locator(TOASTS).first()).toContainText(
+      "3 photos uploaded",
+    );
   });
 
   test("a swipe down closes a toast, and a short one lets it spring back", async ({
