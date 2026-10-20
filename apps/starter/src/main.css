@@ -1,18 +1,7 @@
-body {
-  margin: 0;
-  font-family:
-    "Inter Variable",
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
-}
-
-main {
+.starter {
   display: grid;
   place-items: center;
-  min-height: 100dvh;
+  min-block-size: 100dvh;
   -webkit-user-select: none;
   user-select: none;
 }

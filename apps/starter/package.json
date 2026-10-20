@@ -13,7 +13,8 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "catalog:",
+    "@buttery/core": "workspace:*",
+    "@buttery/react": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
