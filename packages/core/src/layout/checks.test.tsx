@@ -143,6 +143,27 @@ describe("runLayoutChecks", () => {
     ).toEqual([]);
   });
 
+  it("doesn't flag containers of trimmed text, but still catches real overflow in them", () => {
+    expect(
+      check(
+        `<div data-bt="Stack" style="display: flex; flex-direction: column; gap: 12px">
+           <p class="bt-text" data-role="caption" data-bt="Text">primitive</p>
+           <p class="bt-text" data-role="heading-1" data-bt="Text">Stack</p>
+           <p class="bt-text" data-role="body-lg" data-bt="Text">Lays children out in a column.</p>
+         </div>`,
+        ["overflow"],
+      ),
+    ).toEqual([]);
+    expect(
+      check(
+        `<div data-bt="Card" data-testid="narrow" style="inline-size: 60px">
+           <p class="bt-text" data-role="title" data-bt="Text" style="white-space: nowrap">A title that cannot wrap</p>
+         </div>`,
+        ["overflow"],
+      ).map((violation) => violation.a),
+    ).toContain('[data-bt="Text"]');
+  });
+
   it("ignores overlaps inside a component, inside data-bt-allow-overlap, and across layers", () => {
     expect(
       check(

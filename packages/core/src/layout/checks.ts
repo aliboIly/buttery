@@ -296,17 +296,66 @@ export function createLayoutToolkit(): LayoutToolkit {
         "EMBED",
         "PICTURE",
       ]);
-      const overflowing: { element: Element; excess: number; axis: string }[] =
+      const isTrimmed = (element: Element): boolean => {
+        const trim = styleOf(element).getPropertyValue("text-box-trim");
+        return trim !== "" && trim !== "none";
+      };
+      const hiddenWithin = (node: Element, container: Element): boolean => {
+        for (
+          let current: Element | null = node;
+          current && current !== container;
+          current = current.parentElement
+        ) {
+          const style = styleOf(current);
+          if (
+            style.overflowX !== "visible" ||
+            style.overflowY !== "visible" ||
+            style.position === "fixed" ||
+            current.hasAttribute("data-bt-hit")
+          ) {
+            return true;
+          }
+        }
+        return false;
+      };
+      const extentOf = (
+        element: Element,
+      ): { right: number; bottom: number } => {
+        let right = Number.NEGATIVE_INFINITY;
+        let bottom = Number.NEGATIVE_INFINITY;
+        const visit = (node: Element): void => {
+          for (const child of node.children) {
+            if (child.hasAttribute("data-bt-hit")) continue;
+            const style = styleOf(child);
+            if (style.display === "none" || style.position === "fixed")
+              continue;
+            const box = child.getBoundingClientRect();
+            if (box.width > 0 || box.height > 0) {
+              right = Math.max(right, box.right);
+              bottom = Math.max(bottom, box.bottom);
+            }
+            const clips =
+              style.overflowX !== "visible" || style.overflowY !== "visible";
+            if (!clips && child.tagName.toLowerCase() !== "svg") visit(child);
+          }
+        };
+        visit(element);
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const parent = node.parentElement;
+          if (!parent || !node.textContent?.trim()) continue;
+          if (parent !== element && hiddenWithin(parent, element)) continue;
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          const box = range.getBoundingClientRect();
+          if (box.width === 0 && box.height === 0) continue;
+          right = Math.max(right, box.right);
+          if (!isTrimmed(parent)) bottom = Math.max(bottom, box.bottom);
+        }
+        return { right, bottom };
+      };
+      const overflowing: { element: Element; wide: number; tall: number }[] =
         [];
-      const hitAreas = [
-        ...document.querySelectorAll<HTMLElement>("[data-bt-hit]"),
-      ].map((element) => ({
-        element,
-        display: element.style.getPropertyValue("display"),
-      }));
-      for (const { element } of hitAreas) {
-        element.style.setProperty("display", "none");
-      }
       for (const element of document.body.querySelectorAll("*")) {
         if (skippedTags.has(element.tagName) || element.closest("svg"))
           continue;
@@ -319,48 +368,44 @@ export function createLayoutToolkit(): LayoutToolkit {
         ) {
           continue;
         }
-        const wide =
-          style.overflowX === "visible"
-            ? element.scrollWidth - element.clientWidth
-            : 0;
-        let tall =
-          style.overflowY === "visible"
-            ? element.scrollHeight - element.clientHeight
-            : 0;
-        if (
-          tall > 1 &&
-          element instanceof HTMLElement &&
-          style.getPropertyValue("text-box-trim") !== "none" &&
-          style.getPropertyValue("text-box-trim") !== ""
-        ) {
-          const previous = element.style.getPropertyValue("text-box-trim");
-          element.style.setProperty("text-box-trim", "none");
-          tall = element.scrollHeight - element.clientHeight;
-          if (previous) element.style.setProperty("text-box-trim", previous);
-          else element.style.removeProperty("text-box-trim");
-        }
-        if (wide <= 1 && tall <= 1) continue;
+        const scrollsWide =
+          style.overflowX === "visible" &&
+          element.scrollWidth > element.clientWidth + 1;
+        const scrollsTall =
+          style.overflowY === "visible" &&
+          element.scrollHeight > element.clientHeight + 1;
+        if (!scrollsWide && !scrollsTall) continue;
         if (!isVisible(element)) continue;
-        overflowing.push({
-          element,
-          excess: Math.max(wide, tall),
-          axis: wide > 1 && tall > 1 ? "both" : wide > 1 ? "width" : "height",
-        });
-      }
-      for (const { element, display } of hitAreas) {
-        if (display) element.style.setProperty("display", display);
-        else element.style.removeProperty("display");
+        const rect = element.getBoundingClientRect();
+        const extent = extentOf(element);
+        const wide = scrollsWide
+          ? extent.right -
+            (rect.right - Number.parseFloat(style.borderRightWidth))
+          : 0;
+        const tall = scrollsTall
+          ? extent.bottom -
+            (rect.bottom - Number.parseFloat(style.borderBottomWidth))
+          : 0;
+        if (wide <= 1 && tall <= 1) continue;
+        overflowing.push({ element, wide, tall });
       }
       for (const item of overflowing) {
         const containsAnother = overflowing.some(
           (other) => other !== item && item.element.contains(other.element),
         );
         if (containsAnother) continue;
+        const axis =
+          item.wide > 1 && item.tall > 1
+            ? "width and height"
+            : item.wide > 1
+              ? "width"
+              : "height";
+        const excess = Math.max(item.wide, item.tall);
         report({
           rule: "overflow",
           a: selectorFor(item.element),
-          px: Math.round(item.excess),
-          message: `content overflows its ${item.axis === "both" ? "width and height" : item.axis} by ${px(item.excess)}`,
+          px: Math.round(excess),
+          message: `content overflows its ${axis} by ${px(excess)}`,
           fix: "Give it room, let it shrink (min-width: 0 comes with Stack, Inline and Grid), wrap the text, or truncate it with <Text truncate>.",
         });
       }
