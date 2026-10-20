@@ -377,7 +377,9 @@ export function createLayoutToolkit(): LayoutToolkit {
           const box = range.getBoundingClientRect();
           if (box.width === 0 && box.height === 0) continue;
           right = Math.max(right, box.right);
-          if (!isTrimmed(parent)) bottom = Math.max(bottom, box.bottom);
+          const trimmed =
+            isTrimmed(parent) || hasTrimmedAncestor(parent, element);
+          if (!trimmed) bottom = Math.max(bottom, box.bottom);
         }
         return { right, bottom };
       };
