@@ -24,6 +24,7 @@ const LAYOUT_RULES: readonly LayoutRule[] = [
   "target-size",
   "viewport-fit",
   "layering",
+  "reach",
 ];
 
 /**

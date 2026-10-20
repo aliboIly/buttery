@@ -6,7 +6,8 @@ export type LayoutRule =
   | "scale"
   | "target-size"
   | "viewport-fit"
-  | "layering";
+  | "layering"
+  | "reach";
 
 /** Every rule `expectButtery` reports. */
 export type ButteryRule = LayoutRule | "accessibility" | "stability";
@@ -379,6 +380,7 @@ export function createLayoutToolkit(): LayoutToolkit {
       "target-size",
       "viewport-fit",
       "layering",
+      "reach",
     ];
     const enabled = new Set(options.rules ?? allRules);
     const { tokens } = options;
@@ -871,6 +873,96 @@ export function createLayoutToolkit(): LayoutToolkit {
             px: Math.round(rect.height),
             message: `standalone button is ${px(rect.height)} tall, under 28`,
             fix: 'Standalone buttons are at least 28 tall: use size "sm" (28) or larger. Small inline actions like chips get a [data-bt-hit] child instead.',
+          });
+        }
+      }
+    }
+
+    if (enabled.has("reach")) {
+      const pinned = (element: Element): Element | null => {
+        for (
+          let node: Element | null = element;
+          node && node !== html;
+          node = node.parentElement
+        ) {
+          const { position } = styleOf(node);
+          if (position === "sticky" || position === "fixed") return node;
+        }
+        return null;
+      };
+      const pastViewport = (top: number, bottom: number): number =>
+        Math.max(bottom - viewportHeight, -top, 0);
+      for (const element of document.body.querySelectorAll("*")) {
+        if (isTooling(element) || element.closest(LAYER_FURNITURE)) continue;
+        const style = styleOf(element);
+        if (style.display === "none" || !isVisible(element)) continue;
+        const rect = element.getBoundingClientRect();
+        if (rect.height < 1) continue;
+        if (style.position === "sticky" || style.position === "fixed") {
+          let top = rect.top;
+          if (style.position === "sticky") {
+            const stickTop = Number.parseFloat(style.top);
+            const stickBottom = Number.parseFloat(style.bottom);
+            if (!Number.isNaN(stickTop)) top = stickTop;
+            else if (!Number.isNaN(stickBottom))
+              top = viewportHeight - stickBottom - rect.height;
+          }
+          const past = pastViewport(top, top + rect.height);
+          if (past > 1) {
+            report({
+              rule: "reach",
+              a: selectorFor(element),
+              px: Math.round(past),
+              message: `this ${style.position} box runs ${px(past)} past the viewport where it stays put, so no one can scroll to its end`,
+              fix: 'Cap its height to the space it has and let it scroll inside. <Sticky variant="aside"> does that for sidebars: max-block-size: calc(100dvh - var(--bt-sticky-top) - var(--bt-sticky-bottom)) with overflow-y: auto.',
+            });
+            continue;
+          }
+        }
+        const scrollsY =
+          style.overflowY === "auto" || style.overflowY === "scroll";
+        const scrollsX =
+          style.overflowX === "auto" || style.overflowX === "scroll";
+        if (scrollsY || scrollsX) {
+          const originTop =
+            rect.top +
+            Number.parseFloat(style.borderTopWidth) -
+            element.scrollTop;
+          const originLeft =
+            rect.left +
+            Number.parseFloat(style.borderLeftWidth) -
+            element.scrollLeft;
+          let before = 0;
+          for (const child of element.children) {
+            if (styleOf(child).position === "fixed") continue;
+            const box = child.getBoundingClientRect();
+            if (scrollsY) before = Math.max(before, originTop - box.top);
+            if (scrollsX && style.direction !== "rtl")
+              before = Math.max(before, originLeft - box.left);
+          }
+          if (before > 1) {
+            report({
+              rule: "reach",
+              a: selectorFor(element),
+              px: Math.round(before),
+              message: `its content starts ${px(before)} before the point this scroll area can scroll back to, so that part can't be reached`,
+              fix: "Don't center or end-align content that can overflow a scroll area (align-items: center, justify-content: center or end push it past the start). Align it to the start, or use margin-block: auto on the content instead.",
+            });
+            continue;
+          }
+        }
+        const scrolls =
+          scrollsY && element.scrollHeight > element.clientHeight + 1;
+        if (!scrolls || style.overscrollBehaviorY === "auto") continue;
+        if (!pinned(element)) continue;
+        const hidden = pastViewport(rect.top, rect.bottom);
+        if (hidden > 1) {
+          report({
+            rule: "reach",
+            a: selectorFor(element),
+            px: Math.round(hidden),
+            message: `this scroll area stays put and runs ${px(hidden)} past the viewport, and overscroll-behavior keeps the page from scrolling to its end`,
+            fix: 'Keep a contained scroll area inside the viewport: put a sidebar in <Sticky variant="aside"> under a sticky header so it starts where it sticks, or size the shell to 100dvh.',
           });
         }
       }

@@ -12,7 +12,12 @@ interface Mark {
   readonly rect: DOMRect;
 }
 
-const GUARD_RULES: readonly LayoutRule[] = ["overlap", "overflow", "scale"];
+const GUARD_RULES: readonly LayoutRule[] = [
+  "overlap",
+  "overflow",
+  "scale",
+  "reach",
+];
 const QUIET_MS = 300;
 const MAX_WAIT_MS = 1000;
 

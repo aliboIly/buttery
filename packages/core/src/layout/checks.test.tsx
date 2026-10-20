@@ -39,6 +39,7 @@ const BROKEN = `
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown)">
       <div data-bt="Panel" data-testid="edge" style="position: absolute; inset-inline-start: 2px; inset-block-start: 40px; inline-size: 120px; block-size: 40px; background: white"></div>
     </div>
+    <nav data-testid="pinned" style="position: sticky; inset-block-start: 0; block-size: 3000px">Pages</nav>
   </main>`;
 
 const FIXED = `
@@ -74,6 +75,7 @@ describe("runLayoutChecks", () => {
       "layering",
       "overflow",
       "overlap",
+      "reach",
       "scale",
       "target-size",
       "viewport-fit",
@@ -338,6 +340,59 @@ describe("target size", () => {
         `<div role="tabpanel" tabindex="0" style="block-size: 10px">The card as people will see it.</div>
          <div tabindex="0" style="block-size: 12px; overflow-y: auto"><div style="block-size: 40px"></div></div>`,
         ["target-size"],
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("reach", () => {
+  it("reports a sticky box taller than the space where it sticks", () => {
+    const violations = check(
+      `<nav data-testid="pages" style="position: sticky; inset-block-start: 0; block-size: 3000px">Pages</nav>`,
+      ["reach"],
+    );
+    expect(violations.map((violation) => violation.a)).toEqual([
+      '[data-testid="pages"]',
+    ]);
+  });
+
+  it("reports a contained list that stays put with its end out of view", () => {
+    const violations = check(
+      `<div style="block-size: 200px"></div>
+       <nav data-testid="pages" style="position: sticky; inset-block-start: 0; max-block-size: 100dvh; overflow-y: auto; overscroll-behavior: contain">
+         <div style="block-size: 3000px"></div>
+       </nav>
+       <div style="block-size: 2000px"></div>`,
+      ["reach"],
+    );
+    expect(violations.map((violation) => violation.a)).toEqual([
+      '[data-testid="pages"]',
+    ]);
+  });
+
+  it("reports content centered past the start of a scroll area", () => {
+    const violations = check(
+      `<nav data-testid="pages" style="display: flex; align-items: center; block-size: 200px; overflow-y: auto">
+         <div style="block-size: 600px">Pages</div>
+       </nav>`,
+      ["reach"],
+    );
+    expect(violations).toMatchObject([
+      { rule: "reach", a: '[data-testid="pages"]', px: 200 },
+    ]);
+  });
+
+  it("passes an aside that fits where it sticks, and contained lists in the flow", () => {
+    expect(
+      check(
+        `<nav style="position: sticky; inset-block-start: 0; max-block-size: 100dvh; overflow-y: auto; overscroll-behavior: contain">
+           <div style="block-size: 3000px"></div>
+         </nav>
+         <div style="block-size: 2000px"></div>
+         <div style="max-block-size: 200px; overflow-y: auto; overscroll-behavior: contain">
+           <div style="block-size: 600px"></div>
+         </div>`,
+        ["reach"],
       ),
     ).toEqual([]);
   });

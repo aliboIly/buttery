@@ -37,6 +37,7 @@ const BROKEN = fixture(`
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown); pointer-events: none">
       <div data-bt="Panel" style="${PANEL}; inset-inline-start: 2px"></div>
     </div>
+    <nav id="pinned" style="position: sticky; inset-block-start: 0; block-size: 3000px">Pages</nav>
   </main>
   <script>
     document.getElementById("load").addEventListener("click", () => {
@@ -64,6 +65,7 @@ const FIXED = fixture(`
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown); pointer-events: none">
       <div data-bt="Panel" style="${PANEL}; inset-inline-start: 8px"></div>
     </div>
+    <nav id="pinned" style="position: sticky; inset-block-start: 0; block-size: 40px">Pages</nav>
   </main>
   <script>
     document.getElementById("load").addEventListener("click", () => {
@@ -129,6 +131,7 @@ test("fails each broken element under its rule, with a fix", async ({
       { rule: "layering", a: "#raised" },
       { rule: "clipping", a: "#clipped" },
       { rule: "viewport-fit", a: '[data-bt="Panel"]' },
+      { rule: "reach", a: "#pinned" },
       { rule: "stability", a: "#first" },
     ]),
   );
