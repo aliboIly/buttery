@@ -8,3 +8,8 @@ test-results/
 apps/*/src-tauri/target/
 apps/*/src-tauri/gen/
 reference/
+packages/core/src/tokens/tokens.css
+packages/core/src/tokens/tokens.json
+packages/core/src/styles/recipes/text.css
+packages/core/src/styles/tailwind.css
+packages/core/src/styles/recipes/surface.css

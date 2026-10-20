@@ -14,15 +14,37 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./palettes": {
+      "@buttery/source": "./src/palettes/index.ts",
+      "types": "./dist/palettes.d.ts",
+      "default": "./dist/palettes.js"
+    },
+    "./styles.css": {
+      "@buttery/source": "./src/styles/index.css",
+      "default": "./dist/styles.css"
+    },
+    "./tailwind.css": {
+      "@buttery/source": "./src/styles/tailwind.css",
+      "default": "./dist/tailwind.css"
+    },
+    "./tokens.json": {
+      "@buttery/source": "./src/tokens/tokens.json",
+      "default": "./dist/tokens.json"
+    },
     "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown && node scripts/build-css.ts",
+    "tokens": "node scripts/generate-tokens.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "catalog:"
   },
   "devDependencies": {
+    "tailwindcss": "^4.3.3",
     "tsdown": "catalog:"
   }
 }

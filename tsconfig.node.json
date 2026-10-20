@@ -12,8 +12,14 @@
   "include": [
     "*.config.ts",
     "packages/*/*.config.ts",
+    "packages/*/scripts/**/*.ts",
     "apps/*/*.config.ts",
     "apps/*/package.json",
     "apps/*/e2e/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "./packages/core"
+    }
   ]
 }

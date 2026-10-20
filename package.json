@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "pnpm --filter playground dev",
     "build": "pnpm -r build",
+    "tokens": "pnpm --filter @buttery/core tokens",
     "typecheck": "node node_modules/typescript-native/bin/tsc -b",
     "lint": "eslint . --max-warnings=0",
     "lint:css": "stylelint \"**/*.css\" --max-warnings=0 --allow-empty-input",
