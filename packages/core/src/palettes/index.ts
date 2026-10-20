@@ -45,9 +45,9 @@ function gradient(
 }
 
 /**
- * buttery's 18 gradient presets: a cream row, a fresh row and a deep row over the same six hue families
- * (butter, apricot, rose, lilac, sky, mint). Each stop shifts lightness, chroma and hue a little toward its
- * neighbor, so the blends stay soft.
+ * buttery's 20 gradient presets: a cream row, a fresh row and a deep row over the same six hue families
+ * (butter, apricot, rose, lilac, sky, mint), then a light neutral pair (paper, stone). Each stop shifts
+ * lightness, chroma and hue a little toward its neighbor, so the blends stay soft.
  */
 export const gradients: readonly GradientPreset[] = [
   gradient("cream", "Cream", [0.965, 0.035, 95], [0.9, 0.075, 75]),
@@ -68,6 +68,8 @@ export const gradients: readonly GradientPreset[] = [
   gradient("forest", "Forest", [0.46, 0.06, 160], [0.3, 0.045, 175]),
   gradient("plum", "Plum", [0.42, 0.07, 340], [0.27, 0.05, 325]),
   gradient("graphite", "Graphite", [0.38, 0.006, 260], [0.22, 0.004, 260]),
+  gradient("paper", "Paper", [0.975, 0.01, 85], [0.905, 0.022, 72]),
+  gradient("stone", "Stone", [0.955, 0.006, 250], [0.85, 0.014, 245]),
 ];
 
 const SOLID_SOURCES = [
@@ -83,9 +85,11 @@ const SOLID_SOURCES = [
   "forest",
   "plum",
   "graphite",
+  "paper",
+  "stone",
 ];
 
-/** buttery's 12 solid presets: the OKLab midpoints of the cream and deep gradients. */
+/** buttery's 14 solid presets: the OKLab midpoints of the cream, deep and neutral gradients. */
 export const solids: readonly SolidPreset[] = gradients
   .filter((preset) => SOLID_SOURCES.includes(preset.id))
   .map((preset) => {

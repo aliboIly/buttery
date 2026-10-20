@@ -68,7 +68,7 @@ Decorative (onboarding illustrations, brand mark):
 
 ### Palettes (`@buttery/core/palettes`)
 
-buttery's own set, derived in OKLCH rather than taken from the references: 18 two-stop gradients and 12 solids. Six hue families (butter, apricot, rose, lilac, sky, mint) run across three rows: cream pastels (L 0.95 → 0.87), fresh mids (L 0.84 → 0.66, more chroma) and a deep row (espresso, slate, ink, forest, plum, graphite). Each gradient's second stop shifts lightness, chroma and hue a little toward a neighbor; `gradientCss` blends them in OKLab at 135°, top-left → bottom-right, which keeps the midpoints from going gray. The solids are the OKLab midpoints of the cream and deep rows. Hex values are gamut-mapped from the OKLCH source, so CSS and canvas export draw the same color. The set has no light neutrals yet (the references had three).
+buttery's own set, derived in OKLCH rather than taken from the references: 20 two-stop gradients and 14 solids. Six hue families (butter, apricot, rose, lilac, sky, mint) run across three rows: cream pastels (L 0.95 → 0.87), fresh mids (L 0.84 → 0.66, more chroma) and a deep row (espresso, slate, ink, forest, plum, graphite). A fourth row holds a light neutral pair: paper (warm, C ≤ 0.022) and stone (cool, C ≤ 0.014). Each gradient's second stop shifts lightness, chroma and hue a little toward a neighbor; `gradientCss` blends them in OKLab at 135°, top-left → bottom-right, which keeps the midpoints from going gray. The solids are the OKLab midpoints of the cream, deep and neutral rows. Hex values are gamut-mapped from the OKLCH source, so CSS and canvas export draw the same color.
 
 ### Dark (_derived_ — references are light-only)
 

@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { gradientCss, gradients, solids } from "./index.ts";
 
 describe("palettes", () => {
-  it("has 18 gradients and 12 solids with unique ids", () => {
-    expect(gradients).toHaveLength(18);
-    expect(solids).toHaveLength(12);
-    expect(new Set(gradients.map((preset) => preset.id)).size).toBe(18);
+  it("has 20 gradients and 14 solids with unique ids", () => {
+    expect(gradients).toHaveLength(20);
+    expect(solids).toHaveLength(14);
+    expect(new Set(gradients.map((preset) => preset.id)).size).toBe(20);
   });
 
   it("runs every gradient from lighter top-left to darker bottom-right", () => {
