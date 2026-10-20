@@ -181,7 +181,8 @@ Component-internal dimensions (thumb 24, tilt pad 32, anchor box 43, color dot 2
 | Token | Value | Used by |
 |---|---|---|
 | `--bt-shadow-card` | `0 0 0 1px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04)` | Header bar, inspector panel, inner row card |
-| `--bt-shadow-raised` | `0 0 0 1px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.08)` | Active segment, secondary button, hovered card |
+| `--bt-shadow-raised` | `0 0 0 1px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.08)` | Secondary button, hovered card |
+| `--bt-shadow-selected` | Same as raised in light; dark rings it with `rgba(255,255,255,.16)` | The selected pill on a control track (segmented items, shared indicators) |
 | `--bt-shadow-knob` | `0 1px 2px rgba(0,0,0,.25), 0 2px 6px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.18)` | Slider thumb, tilt knob |
 | `--bt-shadow-floating` | `0 0 0 1px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.04)` | Menu, floating toolbar, toast |
 | `--bt-shadow-dialog` | `0 0 0 1px rgba(0,0,0,.08), 0 16px 48px rgba(0,0,0,.16)` | Dialog |
