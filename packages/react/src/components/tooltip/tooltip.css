@@ -1,0 +1,26 @@
+@layer bt.components {
+  .bt-tooltip {
+    max-inline-size: min(
+      var(--bt-w-inspector),
+      var(--radix-tooltip-content-available-width)
+    );
+    padding-block: var(--bt-space-1);
+    padding-inline: var(--bt-space-2);
+    border-radius: var(--bt-r-sm);
+    background-color: var(--bt-inverse-bg);
+    color: var(--bt-inverse-text);
+    font-size: var(--bt-text-badge-size);
+    font-weight: var(--bt-text-badge-weight);
+    line-height: var(--bt-text-badge-line);
+    letter-spacing: var(--bt-text-badge-tracking);
+    text-wrap: balance;
+    animation: bt-tooltip-in calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-out);
+  }
+
+  @keyframes bt-tooltip-in {
+    from {
+      opacity: 0;
+    }
+  }
+}

@@ -16,6 +16,7 @@ import type {
   Density,
 } from "@buttery/core";
 import { Confetti } from "../components/confetti/Confetti.tsx";
+import { TooltipProvider } from "../components/tooltip/Tooltip.tsx";
 import { ButteryContext } from "./context.ts";
 import type { ButteryContextValue, Platform } from "./context.ts";
 import { useMediaQuery } from "./use-media-query.ts";
@@ -184,12 +185,12 @@ export function ButteryProvider({
     return (
       <ButteryContext value={value}>
         {motion(
-          <>
+          <TooltipProvider>
             {children}
             <FloatingLanes />
             <Confetti />
             {isDevelopment && layoutGuard ? <LayoutGuard /> : null}
-          </>,
+          </TooltipProvider>,
         )}
       </ButteryContext>
     );

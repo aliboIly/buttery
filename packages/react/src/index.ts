@@ -26,3 +26,8 @@ export type {
 export type { ArrowDirection } from "./parts/arrow/Arrow.tsx";
 export { ArrowLink } from "./components/arrow-link/ArrowLink.tsx";
 export type { ArrowLinkProps } from "./components/arrow-link/ArrowLink.tsx";
+export { Tooltip } from "./components/tooltip/Tooltip.tsx";
+export type {
+  TooltipProps,
+  TooltipSide,
+} from "./components/tooltip/Tooltip.tsx";
