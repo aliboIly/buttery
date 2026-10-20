@@ -32,7 +32,11 @@ function DimDemo(): ReactElement {
           </Dialog.Overlay>
           <Center pad={4} style={{ blockSize: "100%" }}>
             <Dialog.Content asChild aria-describedby={undefined}>
-              <Surface level="dialog" pad={6}>
+              <Surface
+                level="dialog"
+                pad={6}
+                style={{ maxInlineSize: "var(--bt-w-dialog)" }}
+              >
                 <Dialog.Title asChild>
                   <Text variant="label">
                     The dim scrim. Escape or a click outside closes it.

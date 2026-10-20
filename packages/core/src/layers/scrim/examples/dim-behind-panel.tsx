@@ -31,7 +31,11 @@ export function DimBehindPanel(): ReactElement {
           </Dialog.Overlay>
           <Center pad={4} style={{ blockSize: "100%" }}>
             <Dialog.Content asChild>
-              <Surface level="dialog" pad={6}>
+              <Surface
+                level="dialog"
+                pad={6}
+                style={{ maxInlineSize: "var(--bt-w-dialog)" }}
+              >
                 <Stack gap={4}>
                   <Dialog.Title asChild>
                     <Text variant="dialog-title" asChild>
