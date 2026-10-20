@@ -159,8 +159,8 @@ Same thing without React — recipes are plain classes/attributes:
 
 ## Desktop (Tauri v2)
 
-- `apps/starter` includes `src-tauri/` (generated with `pnpm tauri init`). Window: 1280×820 default, min 960×640, macOS overlay title bar (`titleBarStyle: "Overlay"`, `hiddenTitle: true`) with `trafficLightPosition` placing the window controls inside the 56px header. macOS first: other platforms get native window decorations.
-- `HeaderBar dragRegion` → `data-tauri-drag-region` + `--bt-inset-titlebar` for the traffic lights.
+- `apps/starter` includes `src-tauri/` (generated with `pnpm tauri init`). Window: 1280×820 default, min 960×640, macOS overlay title bar (`titleBarStyle: "Overlay"`, `hiddenTitle: true`) with `trafficLightPosition` (x 28, y 46) placing the window controls on the 56px header's middle line. macOS first: other platforms get native window decorations.
+- `HeaderBar dragRegion` → `data-tauri-drag-region="deep"` + `--bt-inset-titlebar` for the traffic lights. In Tauri 2.12 a bare attribute only drags on clicks on the element itself; `"deep"` drags from anywhere in the header while buttons and links stay clickable. The drag needs the `core:window:allow-start-dragging` permission.
 - No network fonts or CDN assets anywhere (desktop must work offline).
 - Shortcuts use a shared `useShortcut("mod+o", …)` that maps `mod` to ⌘/Ctrl per platform.
 - Layout checks run in WebKit too, because Tauri on macOS renders with WKWebView. Playwright's WebKit is its own build, so every phase stop also includes a short manual pass in the real desktop app.

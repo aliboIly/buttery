@@ -73,7 +73,7 @@ height: 100dvh; overflow: hidden;
 ```
 - The inspector is full-height (it runs alongside the header). Its body scrolls; its footer is sticky.
 - `< 900px` container width: the inspector becomes a bottom sheet toggled from the header; stage takes full width. (A desktop window never gets this narrow; its minimum width is 960.)
-- Desktop (Tauri): `HeaderBar dragRegion` adds `data-tauri-drag-region` and reserves `--bt-inset-titlebar` on the left for macOS traffic lights when the window uses an overlay title bar. Minimum window 960×640.
+- Desktop (Tauri): `HeaderBar dragRegion` adds `data-tauri-drag-region="deep"` (the whole header drags the window, buttons stay clickable) and reserves `--bt-inset-titlebar` on the left for macOS traffic lights when the window uses an overlay title bar. Minimum window 960×640.
 
 ### Inspector rows
 - Row: 50h, `grid-template-columns: minmax(0,1fr) auto`, padding-x 16, 1px divider between rows.

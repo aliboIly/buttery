@@ -144,7 +144,7 @@ One named exception: `--bt-space-well: 3px` (inset between a section well and it
 | `--bt-w-row-control` | 164 (slider width in a row) |
 | `--bt-w-page` | 1200 (page content max width) |
 | `--bt-bento-row` | 320 (bento row unit) |
-| `--bt-inset-titlebar` | 72 (left inset for macOS traffic lights in desktop apps) |
+| `--bt-inset-titlebar` | 84 (HeaderBar's left padding in desktop apps, measured from its own left edge: the macOS window controls span x 28–88 of the window, so content starts at 100, 12px clear) |
 
 Component-internal dimensions (thumb 24, tilt pad 32, anchor box 43, color dot 22, handle 12, dot 6…) are declared as component-scoped variables at the top of that component's CSS (`--bt-slider-thumb: 24px`), not as global tokens.
 

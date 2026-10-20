@@ -2,14 +2,14 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 0
+**Now:** Phase 0 is done and waiting for review. Next: Phase 1.
 
 ---
 
 ## v0.1 — Foundation (Phases 0–1)
-- [ ] Agent files merged (`AGENTS.md` ← `AGENTS.buttery.md`), `CLAUDE.md` import, `.gemini/settings.json`
-- [ ] Monorepo, tooling, scripts, VS Code tasks
-- [ ] Playground + starter running on web; starter running as a desktop app
+- [x] Agent files merged (`AGENTS.md` ← `AGENTS.buttery.md`), `CLAUDE.md` import, `.gemini/settings.json`
+- [x] Monorepo, tooling, scripts, VS Code tasks
+- [x] Playground + starter running on web; starter running as a desktop app
 - [ ] All tokens (light, dark, compact) + `tokens.json` + contrast test
 - [ ] Recipes, `ButteryProvider`, `createTheme`, palettes, Tailwind bridge
 - [ ] Tokens + Surfaces playground pages
