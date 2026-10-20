@@ -175,3 +175,5 @@ export type {
   DropZoneOpenProps,
   DropZoneProps,
 } from "./patterns/drop-zone/DropZone.tsx";
+export { Stage } from "./patterns/stage/Stage.tsx";
+export type { StageProps, StageSize } from "./patterns/stage/Stage.tsx";

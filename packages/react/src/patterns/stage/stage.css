@@ -1,0 +1,150 @@
+@layer bt.patterns {
+  .bt-stage {
+    --bt-stage-margin: var(--bt-space-8);
+    --bt-stage-handle: 12px;
+    --bt-stage-handle-hit: 24px;
+    --bt-stage-line: 1px;
+
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    block-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
+    padding: var(--bt-stage-margin);
+    container-type: size;
+  }
+
+  /* The largest box of the canvas's shape that fits inside the margin. */
+  .bt-stage > [data-bt-part="canvas"] {
+    position: relative;
+    inline-size: min(100cqi, 100cqb * var(--bt-stage-ratio, 1));
+    aspect-ratio: var(--bt-stage-ratio, 1);
+    border-radius: var(--bt-r-lg);
+    box-shadow: var(--bt-shadow-card);
+    transition: box-shadow calc(var(--bt-dur-base) * var(--bt-motion))
+      var(--bt-ease-standard);
+  }
+
+  .bt-stage[data-cropping] > [data-bt-part="canvas"] {
+    box-shadow: none;
+  }
+
+  .bt-stage > [data-bt-part="canvas"] > [data-bt-part="background"] {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: var(--bt-bg-surface);
+    transition: opacity calc(var(--bt-dur-base) * var(--bt-motion))
+      var(--bt-ease-standard);
+  }
+
+  .bt-stage[data-cropping]
+    > [data-bt-part="canvas"]
+    > [data-bt-part="background"] {
+    opacity: 0;
+  }
+
+  .bt-stage > [data-bt-part="canvas"] > [data-bt-part="artwork"] {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    overflow: clip;
+    border-radius: inherit;
+  }
+
+  /* The crop frame and its handles arrive a beat after the background starts to fade. */
+  .bt-stage > [data-bt-part="canvas"] > [data-bt-part="crop"] {
+    position: absolute;
+    inset: 0;
+    border: var(--bt-stage-line) solid var(--bt-ring-selected);
+    animation: bt-stage-crop-in calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-out) calc(var(--bt-delay-follow) * var(--bt-motion)) both;
+  }
+
+  .bt-stage
+    > [data-bt-part="canvas"]
+    > [data-bt-part="crop"]
+    > [data-bt-part="handle"] {
+    position: absolute;
+    inline-size: var(--bt-stage-handle);
+    block-size: var(--bt-stage-handle);
+    border: var(--bt-stage-line) solid var(--bt-ring-selected);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-surface);
+    translate: -50% -50%;
+    touch-action: none;
+  }
+
+  .bt-stage
+    > [data-bt-part="canvas"]
+    > [data-bt-part="crop"]
+    > [data-bt-part="handle"]
+    > [data-bt-part="hit"] {
+    position: absolute;
+    inset: calc(
+      (var(--bt-stage-handle) - var(--bt-stage-handle-hit)) / 2 -
+        var(--bt-stage-line)
+    );
+  }
+
+  .bt-stage
+    [data-bt-part="handle"]:is(
+      [data-handle="nw"],
+      [data-handle="n"],
+      [data-handle="ne"]
+    ) {
+    inset-block-start: 0;
+  }
+
+  .bt-stage [data-bt-part="handle"]:is([data-handle="w"], [data-handle="e"]) {
+    inset-block-start: 50%;
+    cursor: ew-resize;
+  }
+
+  .bt-stage
+    [data-bt-part="handle"]:is(
+      [data-handle="sw"],
+      [data-handle="s"],
+      [data-handle="se"]
+    ) {
+    inset-block-start: 100%;
+  }
+
+  .bt-stage
+    [data-bt-part="handle"]:is(
+      [data-handle="nw"],
+      [data-handle="w"],
+      [data-handle="sw"]
+    ) {
+    inset-inline-start: 0;
+  }
+
+  .bt-stage [data-bt-part="handle"]:is([data-handle="n"], [data-handle="s"]) {
+    inset-inline-start: 50%;
+    cursor: ns-resize;
+  }
+
+  .bt-stage
+    [data-bt-part="handle"]:is(
+      [data-handle="ne"],
+      [data-handle="e"],
+      [data-handle="se"]
+    ) {
+    inset-inline-start: 100%;
+  }
+
+  .bt-stage [data-bt-part="handle"]:is([data-handle="nw"], [data-handle="se"]) {
+    cursor: nwse-resize;
+  }
+
+  .bt-stage [data-bt-part="handle"]:is([data-handle="ne"], [data-handle="sw"]) {
+    cursor: nesw-resize;
+  }
+
+  @keyframes bt-stage-crop-in {
+    from {
+      opacity: 0;
+    }
+  }
+}
