@@ -242,20 +242,20 @@ A nested surface sits evenly inside its parent: the same inset on every open sid
 A text link with the same arrow part as `Button`: `label` role in `primary`, hover `primary-hover`, arrow 16px after the label, gap 4. Its arrow box is 3px wider than a button's, since a link has no padding for the head to nudge into. Underlined only on keyboard focus, beside the focus ring.
 
 ### IconButton
-Ghost, square, r-full: `md` 36×36 (header, default) · `sm` 28×28 (dialog close, inline). Icon 16 `text-secondary`, disabled `icon-disabled`, hover bg `bg-control`. Requires `label` (tooltip + aria-label).
+Ghost, square, r-full: `md` 36×36 (header, default) · `sm` 28×28 (dialog close, inline). Icon 16 `text-secondary`, disabled `icon-disabled`, hover bg `bg-control`. Requires `label` (tooltip + aria-label): every icon button carries its own `Tooltip`. For a toggle, pass `aria-pressed`; the hover background stays on while it's pressed.
 
 ### SplitButton
 Primary pill 36h. Main segment + 1px `divider-on-primary` divider, half the button's height (18; measured 17.5) and centered, + 36px chevron segment that opens a Menu. Both halves share hover/disabled visuals but are separate focus targets.
 
 ### SegmentedControl
-Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12, `control` type. Re-measured in Phase 1: the track and items are full pills (the first spec said r14 and r12). The capture insets its items 3px; buttery keeps the 2px step, so its active item is 2px taller. Inactive text `text-secondary`; active = `bg-surface` + shadow-raised, text `text`. Exactly one item is always selected: Radix `ToggleGroup type="single"` lets users deselect, so ignore empty values in `onValueChange` (or build on `RadioGroup`). The active background is one shared element that slides.
+Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12, `control` type. Re-measured in Phase 1: the track and items are full pills (the first spec said r14 and r12). The capture insets its items 3px; buttery keeps the 2px step, so its active item is 2px taller. Inactive text `text-secondary`; active = `bg-surface` + shadow-raised, text `text`. Exactly one item is always selected: Radix `ToggleGroup type="single"` lets users deselect, so ignore empty values in `onValueChange` (or build on `RadioGroup`). The active background is one shared element that slides. Segments share the track equally (equal grid columns), so the pill keeps its width as it slides; built on Radix `RadioGroup`, so arrow keys move the selection.
 
 ### Slider row
 - Row grid: `[label + badge] [track]`. Label `label` role, gap 8 to badge.
 - Value badge: 20h, r6, bg `bg-control`, padding-x 6, `badge` role, min-width reserved for the longest formatted value (e.g. `-180°`) so it never jitters.
 - Track: 164w × 14h, r7, 1px `border-strong`, fill `bg-surface`. **No filled range** (reference). Optional `showRange`.
 - Thumb: 24×24, r7, knob gradient + border + highlight, two 1.5×8 grip lines 3px apart, shadow-knob. Hit area 36×36 via a `[data-bt-hit]` element.
-- Behaviors: click/drag anywhere on the track · arrows step, Shift = ×10 · double-click label or badge = reset to default · optional `detents` (soft snap within ±2% to e.g. 0°) · value formatter (`%`, `°`, px).
+- Behaviors: click/drag anywhere on the track · arrows step, Shift = ×10 · double-click label or badge, or Backspace/Delete on the thumb = reset to default · optional `detents` (soft snap within ±2% to e.g. 0°, while dragging only, so keyboard steps pass through) · value formatter (`%`, `°`, px), also read to screen readers as the thumb's value text. The badge reserves the formatted min and max.
 
 ### Chip (a small reset action next to a control)
 20h, r6, `badge` role, hit area 24. Disabled: bg `bg-control-subtle`, text `text-disabled-subtle`. Enabled: bg `bg-control`, text `text-secondary`, hover text `text`.
@@ -280,10 +280,10 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 - Footer slot (e.g. a pair of number fields): labels `control` role in `text-secondary`, inputs 34h r12 1px `border-strong`, tabular, with a stepper.
 
 ### NumberField
-34h, r12, 1px `border-strong`, padding-x 12, tabular, stepper on hover/focus, optional scrub-to-change by dragging the label.
+34h, 128w (`--bt-number-field-width`), r12, 1px `border-strong`, padding-x 12, tabular, stepper on hover/focus, optional scrub-to-change by dragging the label (one change per frame). The whole field is the label. Typing edits a draft: Enter or leaving commits, Escape puts back the value; arrows step, Shift = ×10. The stepper buttons stay out of the tab order, since the arrow keys do the same.
 
 ### Tooltip
-`inverse-bg` pill, `inverse-text` 12/500, padding 4×8, r8, 500ms open delay, no arrow. Content-sized (not height-checked).
+`inverse-bg` pill, `inverse-text` 12/500, padding 4×8, r8, 500ms open delay, no arrow. Content-sized (not height-checked). Opens at once on keyboard focus, closes on Escape, renders in the tooltip band above dialogs. The root `ButteryProvider` hosts one provider for all tooltips, so moving between them skips the delay.
 
 ### Dialog
 400w, r18, padding 8 (media) / 24 (text), shadow-dialog, scrim `overlay`. Close: `IconButton sm` at the media's top-right, centered 24px from the top and right edges (designed overlap — marked `data-bt-allow-overlap`).
