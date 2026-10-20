@@ -14,6 +14,7 @@
   --bt-surfaces-page-anchor-gap: 5.5px;
   --bt-surfaces-page-mark: 24px;
   --bt-surfaces-page-stage: 360px;
+  --bt-surfaces-page-split-divider: 18px;
 
   padding: var(--bt-space-4);
   container-type: inline-size;
@@ -230,7 +231,7 @@
 .sf-split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  block-size: var(--bt-h-row);
+  block-size: var(--bt-h-row-split);
 }
 
 .sf-split-cell {
@@ -273,7 +274,7 @@
   border: 1px solid var(--bt-knob-border);
   border-radius: var(--bt-r-full);
   background: radial-gradient(
-    circle at 50% 40%,
+    circle farthest-side at 50% 30%,
     var(--bt-knob-center),
     var(--bt-knob-edge)
   );
@@ -305,7 +306,7 @@
   inline-size: var(--bt-surfaces-page-anchor-active);
   block-size: var(--bt-surfaces-page-anchor-active);
   background: radial-gradient(
-    circle at 50% 40%,
+    circle farthest-side at 50% 30%,
     var(--bt-knob-center),
     var(--bt-knob-edge)
   );
@@ -350,6 +351,7 @@
 }
 
 .sf-button-soft {
+  padding-inline: var(--bt-space-8);
   background-color: var(--bt-bg-control);
 }
 
@@ -380,6 +382,8 @@
 }
 
 .sf-split-divider {
+  align-self: center;
+  block-size: var(--bt-surfaces-page-split-divider);
   border-inline-start: 1px solid
     color-mix(in srgb, var(--bt-on-primary) 18%, transparent);
 }

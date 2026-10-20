@@ -37,10 +37,12 @@
 
 .es-secondary {
   background-color: var(--bt-bg-raised);
-  box-shadow: var(--bt-shadow-raised);
   color: var(--bt-text);
+  transition:
+    transform var(--bt-dur-fast) var(--bt-ease-out),
+    box-shadow var(--bt-dur-fast) var(--bt-ease-standard);
 }
 
 .es-secondary:hover {
-  background-color: var(--bt-bg-inset);
+  box-shadow: var(--bt-shadow-raised);
 }
