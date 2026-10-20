@@ -15,6 +15,6 @@ export const meta: ComponentMeta = {
     "Animating width: only height is a sanctioned size animation",
   ],
   related: ["Presence", "SharedIndicator", "Stack"],
-  a11y: "No role of its own. Focus stays where it was: put a live region inside when the swap needs announcing.",
+  a11y: 'No role of its own. Swapped-out content takes focus with it when it leaves, so after a swap the user started, move focus to the new content. Keep a live region (role="status") outside the Morph when the swap needs announcing.',
   motion: "morph",
 };

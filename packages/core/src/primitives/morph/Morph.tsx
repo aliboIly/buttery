@@ -1,6 +1,6 @@
-import { AnimatePresence, motion } from "motion/react";
-import type { Transition } from "motion/react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { AnimatePresence, animate, motion, useMotionValue } from "motion/react";
+import type { AnimationPlaybackControls, Transition } from "motion/react";
+import { useLayoutEffect, useRef } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { useMotionPreference } from "../../motion/preference.ts";
 import type { MotionElementProps } from "../../motion/props.ts";
@@ -9,7 +9,7 @@ import {
   useButteryTransition,
 } from "../../motion/transitions.ts";
 import { useAnimationTracking } from "../../motion/use-animation-tracking.ts";
-import { durations, easingCurves, spring } from "../../tokens/motion.ts";
+import { durations, easingCurves } from "../../tokens/motion.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 
@@ -18,9 +18,17 @@ const crossfade: Transition = {
   ease: easingCurves.standard,
 };
 
-interface MorphHeight {
-  readonly height: number;
-  readonly animate: boolean;
+interface Busy {
+  growing: boolean;
+  leaving: boolean;
+}
+
+// The content stays clipped while the height moves and until swapped-out content has faded away.
+function syncClip(
+  element: HTMLElement | null,
+  { growing, leaving }: Busy,
+): void {
+  element?.toggleAttribute("data-animating", growing || leaving);
 }
 
 function MorphView({
@@ -56,8 +64,9 @@ export interface MorphProps extends MotionElementProps<"div"> {
 
 /**
  * One container whose content can swap or grow: its height follows the content with `spring.smooth` and
- * swapped content crossfades in place. Resizing the window changes the height at once. With reduced motion
- * the height jumps and the crossfade takes 100ms.
+ * swapped content crossfades in place. Between changes it sits at its natural height, so text that
+ * rewraps when the window resizes never spills out. With reduced motion the height jumps and the
+ * crossfade takes 100ms.
  *
  * @example
  * <Morph contentKey={fill}>
@@ -67,6 +76,7 @@ export interface MorphProps extends MotionElementProps<"div"> {
 export function Morph({
   contentKey,
   className,
+  style,
   ref,
   children,
   ...rest
@@ -74,31 +84,68 @@ export function Morph({
   const reduced = useMotionPreference() === "reduced";
   const transition = useButteryTransition("smooth");
   const tracking = useAnimationTracking();
+  const height = useMotionValue<number | string>("auto");
   const outer = useRef<HTMLDivElement>(null);
   const merged = useMergedRefs(ref, outer);
   const content = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState<MorphHeight | null>(null);
+  const busy = useRef<Busy>({ growing: false, leaving: false });
+  const shownKey = useRef(contentKey);
 
   useLayoutEffect(() => {
-    const element = content.current;
-    if (!element) return undefined;
-    let width = element.getBoundingClientRect().width;
+    if (shownKey.current === contentKey) return;
+    shownKey.current = contentKey;
+    busy.current.leaving = true;
+    syncClip(outer.current, busy.current);
+  });
+
+  useLayoutEffect(() => {
+    const node = content.current;
+    const box = outer.current;
+    if (!node || !box) return undefined;
+    let { width, height: last } = node.getBoundingClientRect();
+    let running: AnimationPlaybackControls | null = null;
+    const settle = (): void => {
+      running = null;
+      height.set("auto");
+      busy.current.growing = false;
+      syncClip(box, busy.current);
+      tracking.onAnimationComplete();
+    };
+    // ResizeObserver runs after layout and before paint, so the old height goes back on before anyone sees
+    // the new one.
     const observer = new ResizeObserver(([entry]) => {
-      const box = entry?.borderBoxSize[0];
-      if (!box) return;
-      const resized = Math.abs(box.inlineSize - width) > 0.5;
-      width = box.inlineSize;
-      setSize((current) =>
-        current?.height === box.blockSize
-          ? current
-          : { height: box.blockSize, animate: current !== null && !resized },
-      );
+      const size = entry?.borderBoxSize[0];
+      if (!size) return;
+      const resized = Math.abs(size.inlineSize - width) > 0.5;
+      const from = running ? box.getBoundingClientRect().height : last;
+      const to = size.blockSize;
+      width = size.inlineSize;
+      last = to;
+      running?.stop();
+      if (resized || reduced || Math.abs(to - from) < 0.5) {
+        if (running) settle();
+        return;
+      }
+      box.style.height = `${String(from)}px`;
+      height.jump(from);
+      busy.current.growing = true;
+      syncClip(box, busy.current);
+      tracking.onAnimationStart();
+      const controls = animate(height, to, transition);
+      running = controls;
+      void controls.finished.then(() => {
+        if (running === controls) settle();
+      });
     });
-    observer.observe(element);
+    observer.observe(node);
     return () => {
       observer.disconnect();
+      if (running) {
+        running.stop();
+        settle();
+      }
     };
-  }, []);
+  }, [reduced, transition, height, tracking]);
 
   return (
     <motion.div
@@ -106,20 +153,17 @@ export function Morph({
       ref={merged}
       className={cx("bt-morph", className)}
       data-bt="Morph"
-      initial={false}
-      animate={size ? { height: size.height } : {}}
-      transition={size?.animate ? transition : spring.instant}
-      onAnimationStart={() => {
-        outer.current?.setAttribute("data-animating", "");
-        tracking.onAnimationStart();
-      }}
-      onAnimationComplete={() => {
-        outer.current?.removeAttribute("data-animating");
-        tracking.onAnimationComplete();
-      }}
+      style={{ ...style, height }}
     >
       <div ref={content} data-bt-part="content">
-        <AnimatePresence initial={false} mode="popLayout">
+        <AnimatePresence
+          initial={false}
+          mode="popLayout"
+          onExitComplete={() => {
+            busy.current.leaving = false;
+            syncClip(outer.current, busy.current);
+          }}
+        >
           <MorphView key={contentKey ?? "content"} reduced={reduced}>
             {children}
           </MorphView>

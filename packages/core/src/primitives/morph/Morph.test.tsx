@@ -38,9 +38,15 @@ function height(): number {
   return screen.getByTestId("morph").getBoundingClientRect().height;
 }
 
+async function nextFrames(count: number): Promise<void> {
+  for (let frame = 0; frame < count; frame += 1) {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+  }
+}
+
 async function measured(value: number): Promise<void> {
   await waitFor(() => {
-    expect(screen.getByTestId("morph").style.height).toBe(`${String(value)}px`);
+    expect(height()).toBe(value);
   });
 }
 
@@ -61,11 +67,10 @@ describe("Morph", () => {
     const { rerender } = render(<Panel tall={false} />);
     await measured(40);
     rerender(<Panel tall />);
-    await waitFor(() => {
-      expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
-        true,
-      );
-    });
+    await nextFrames(2);
+    expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
+      true,
+    );
     expect(height()).toBeLessThan(120);
     expect(screen.getByTestId("short")).toBeTruthy();
     expect(root.hasAttribute("data-bt-settled")).toBe(false);
@@ -108,6 +113,58 @@ describe("Morph", () => {
     expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
       false,
     );
+  });
+
+  it("sits at its natural height between changes, so rewrapped text never spills out", async () => {
+    const paragraph = (
+      <p style={{ margin: 0, lineHeight: "20px" }}>
+        Every card starts on a blank canvas and grows as you add to it.
+      </p>
+    );
+    const { rerender } = render(
+      <div style={{ inlineSize: "200px" }}>
+        <Morph data-testid="morph">{paragraph}</Morph>
+      </div>,
+    );
+    await waitFor(() => {
+      expect(height()).toBeGreaterThan(20);
+    });
+    rerender(
+      <div style={{ inlineSize: "120px" }}>
+        <Morph data-testid="morph">{paragraph}</Morph>
+      </div>,
+    );
+    const content = screen
+      .getByTestId("morph")
+      .querySelector('[data-bt-part="content"]');
+    expect(height()).toBe(content?.getBoundingClientRect().height);
+    expect(screen.getByTestId("morph").style.height).toBe("auto");
+  });
+
+  it("keeps swapped-out content clipped until it has faded, with reduced motion too", async () => {
+    function Reduced({ tall }: { readonly tall: boolean }): ReactElement {
+      return (
+        <MotionPreferenceContext value="reduced">
+          <Panel tall={tall} />
+        </MotionPreferenceContext>
+      );
+    }
+    const { rerender } = render(<Reduced tall />);
+    await measured(120);
+    rerender(<Reduced tall={false} />);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(screen.getByTestId("tall")).toBeTruthy();
+    expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
+      true,
+    );
+    await waitFor(() => {
+      expect(screen.queryByTestId("tall")).toBeNull();
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
+        false,
+      );
+    });
   });
 
   it("jumps to the new height when motion is reduced", async () => {
