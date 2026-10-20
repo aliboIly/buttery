@@ -10,6 +10,7 @@ import { useControllableState } from "../../hooks/use-controllable-state.ts";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
 import { Layer } from "../layer/Layer.tsx";
+import { Scrim } from "../scrim/Scrim.tsx";
 
 const PopoverOpenContext: Context<boolean | null> = createContext<
   boolean | null
@@ -75,10 +76,16 @@ export function PopoverClose(props: PopoverCloseProps): ReactElement {
   return <RadixPopover.Close {...props} />;
 }
 
-export type PopoverContentProps = Omit<
+export interface PopoverContentProps extends Omit<
   ComponentPropsWithRef<typeof RadixPopover.Content>,
   "sideOffset" | "collisionPadding" | "avoidCollisions" | "forceMount"
->;
+> {
+  /**
+   * Covers the page behind the open popover: `"blur"` for menus that open over content, `"dim"` to set
+   * it apart further. Clicking the scrim closes the popover. Defaults to no scrim.
+   */
+  readonly scrim?: "dim" | "blur" | undefined;
+}
 
 /**
  * The floating panel. It sits 8px from its trigger, flips or shifts to stay 8px inside the viewport,
@@ -88,6 +95,7 @@ export function PopoverContent({
   className,
   side = "bottom",
   align = "center",
+  scrim,
   ...rest
 }: PopoverContentProps): ReactElement | null {
   const open = use(PopoverOpenContext);
@@ -99,6 +107,7 @@ export function PopoverContent({
   if (!open) return null;
   return (
     <Layer band="dropdown">
+      {scrim ? <Scrim variant={scrim} /> : null}
       <RadixPopover.Content
         {...rest}
         side={side}

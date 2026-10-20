@@ -86,6 +86,34 @@ describe("Popover", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it("puts a scrim under the content that closes it", async () => {
+    render(
+      <Popover defaultOpen>
+        <Popover.Trigger>Products</Popover.Trigger>
+        <Popover.Content scrim="blur" aria-label="Products">
+          <p>Card Studio</p>
+        </Popover.Content>
+      </Popover>,
+    );
+    const content = await screen.findByRole("dialog", { name: "Products" });
+    const scrim = content
+      .closest("[data-bt-layer]")
+      ?.querySelector<HTMLElement>('[data-bt="Scrim"]');
+    expect(scrim?.dataset["variant"]).toBe("blur");
+    expect(
+      scrim &&
+        scrim.compareDocumentPosition(content) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    const corner = {
+      x: window.innerWidth - 4,
+      y: window.innerHeight - 4,
+    };
+    expect(document.elementFromPoint(corner.x, corner.y)).toBe(scrim);
+    await userEvent.pointer({ keys: "[MouseLeft]", coords: corner });
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
   it("says how to fix content rendered outside a Popover", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     expect(() =>
