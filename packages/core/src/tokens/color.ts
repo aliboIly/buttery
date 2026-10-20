@@ -71,6 +71,12 @@ export const colors = {
     dark: "#333338",
     description: "Slider track, inputs, anchor grid, tilt pad.",
   },
+  "control-border": {
+    light: "#858585",
+    dark: "#75757c",
+    description:
+      "The edge that marks a control where nothing else does: a checkbox's box, a switch's track. 3:1 on every surface.",
+  },
   "text-strong": {
     light: "#1a1a1a",
     dark: "#f5f5f6",
@@ -356,6 +362,11 @@ export const contrastPairs: readonly ContrastPair[] = [
     "warning-subtle",
   ]),
   { text: "accent", on: "accent-subtle", minimum: 4.5 },
+  ...[...TONE_SURFACES, "bg-raised" as const].map((on): ContrastPair => ({
+    text: "control-border",
+    on,
+    minimum: 3,
+  })),
   { text: "accent", on: "bg-surface", minimum: 3 },
   { text: "accent", on: "bg-app", minimum: 3 },
   { text: "dot-active", on: "bg-surface", minimum: 3 },
