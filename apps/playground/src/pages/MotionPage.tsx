@@ -20,7 +20,7 @@ import {
   useLayoutAnimation,
 } from "@buttery/core";
 import type { PresencePreset, SpringToken } from "@buttery/core";
-import { celebrate } from "@buttery/react";
+import { ArrowLink, Button as ButteryButton, celebrate } from "@buttery/react";
 import "./motion-page.css";
 
 const SPRINGS = Object.keys(spring) as SpringToken[];
@@ -247,8 +247,21 @@ export function MotionPage(): ReactElement {
             <Stack gap={4} align="start">
               <Text variant="body">
                 Everything pressable presses in to 97%. Cards that open
-                something also lift 2px under the pointer.
+                something also lift 2px under the pointer, and steps forward
+                grow their chevron into an arrow.
               </Text>
+              <Inline gap={4} align="center" wrap>
+                <ButteryButton
+                  variant="primary"
+                  arrow="forward"
+                  data-testid="arrow-button"
+                >
+                  Get started
+                </ButteryButton>
+                <ArrowLink href="#/button" data-testid="arrow-link">
+                  More about buttons
+                </ArrowLink>
+              </Inline>
               <Surface asChild level="card" pad={4} className="mo-card">
                 <Pressable asChild className="bt-hover-lift">
                   <a href="#/pressable" data-testid="lift-card">
