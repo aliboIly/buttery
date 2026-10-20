@@ -109,6 +109,16 @@ export function createLayoutToolkit(): LayoutToolkit {
   }
 
   const html = document.documentElement;
+  /** Roles that make a button one item of a larger control, held to the 24px minimum but not to 28. */
+  const ITEM_ROLES = new Set([
+    "radio",
+    "tab",
+    "menuitem",
+    "menuitemradio",
+    "menuitemcheckbox",
+    "option",
+  ]);
+
   const INTERACTIVE = [
     "a[href]",
     "button",
@@ -877,10 +887,11 @@ export function createLayoutToolkit(): LayoutToolkit {
           });
           continue;
         }
-        // A segment, tab or menu item is a <button> with another role: part of a control, not a standalone button.
+        // A segment, tab, menu item or option is a <button> with an item's role: part of a control, not a standalone button.
         const role = element.getAttribute("role");
         const isButton =
-          role === "button" || (role === null && element.tagName === "BUTTON");
+          role === "button" ||
+          (element.tagName === "BUTTON" && !ITEM_ROLES.has(role ?? ""));
         if (isButton && !hit && rect.height < 27.5) {
           report({
             rule: "target-size",

@@ -142,11 +142,13 @@ describe("runLayoutChecks", () => {
          <button type="button" role="radio" aria-checked="true" style="block-size: 26px; inline-size: 64px">Solid</button>
          <button type="button" role="radio" aria-checked="false" style="block-size: 26px; inline-size: 64px">Image</button>
        </div>
-       <div role="button" tabindex="0" data-testid="short" style="block-size: 26px; inline-size: 64px">Save</div>`,
+       <div role="button" tabindex="0" data-testid="short" style="block-size: 26px; inline-size: 64px">Save</div>
+       <button type="button" role="combobox" aria-expanded="false" data-testid="select" style="block-size: 26px; inline-size: 64px">Square</button>`,
       ["target-size"],
     );
     expect(violations.map((violation) => violation.a)).toEqual([
       '[data-testid="short"]',
+      '[data-testid="select"]',
     ]);
   });
 
