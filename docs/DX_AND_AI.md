@@ -58,9 +58,13 @@ Resources: every doc in `docs/`. Transport: stdio (`npx @buttery/mcp`). Phase 8 
 ### 4. Parseable feedback
 `LayoutGuard` console output and `buttery check --json` share one format:
 ```json
-{ "rule": "overlap", "a": "[data-bt=Button]:nth-of-type(2)", "b": "[data-bt=Chip]", "px": 12,
-  "viewport": "390x844", "theme": "dark", "fix": "Put both in <Inline gap={2}> or move the chip into OverflowCluster." }
+{ "rule": "overlap", "a": "[data-bt=\"Inline\"] > [data-bt=\"Button\"]:nth-child(2)", "b": "[data-bt=\"Chip\"]", "px": 12,
+  "message": "overlaps [data-bt=\"Chip\"] by 12px × 20px",
+  "fix": "Lay them out with Stack, Inline or Grid and a gap, or move extra items into OverflowCluster. …",
+  "page": "settings", "viewport": "390x844", "theme": "dark", "density": "comfortable", "engine": "webkit" }
 ```
+
+`a` is always the offending element and `b` the second one for overlaps; `px` is how far off it is where that applies. `LayoutGuard` logs the same objects without the page and conditions.
 
 ### 5. Skill
 `.claude/skills/make-it-buttery/SKILL.md` is the step-by-step procedure for building or converting UI. Claude Code loads it as a skill; `AGENTS.md` points every other agent at the same file.

@@ -22,7 +22,7 @@ Targets: web apps and desktop apps (Tauri v2 wraps the same web code).
 | App build | Vite 8 with `@vitejs/plugin-react` |
 | React Compiler | On in the apps (`babel-plugin-react-compiler` through `@rolldown/plugin-babel`, which needs `@babel/core`); library code stays compiler-compatible through `eslint-plugin-react-hooks` |
 | Desktop | Tauri v2 |
-| Tests | Vitest + Testing Library (`@testing-library/react`, `@testing-library/user-event`): pure logic in Node, components in browser mode (`@vitest/browser-playwright`, Chromium and WebKit). Playwright in Chromium **and WebKit** for app smoke tests, layout, visual and a11y (`@axe-core/playwright`). Smoke tests start a fresh server for each app on its dev port + 1000 |
+| Tests | Vitest + Testing Library (`@testing-library/react`, `@testing-library/user-event`): pure logic in Node, components in browser mode (`@vitest/browser-playwright`, Chromium and WebKit). Playwright in Chromium **and WebKit** for app smoke tests, layout, visual and a11y (`@axe-core/playwright`). Smoke tests start a fresh server for each app on its dev port + 1000, and Playwright runs under `node --conditions=@buttery/source` so tests use workspace sources without a build |
 | Formatting / lint | Prettier, ESLint 10 (typescript-eslint, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`, `@eslint/js`, `globals`), stylelint |
 | Tooling | `@types/node` for configs and scripts |
 | Agent tooling | `@modelcontextprotocol/sdk` (for `@buttery/mcp`) |
@@ -43,7 +43,7 @@ buttery/
 ├─ docs/                         # ARCHITECTURE, DESIGN_SPEC, MOTION_SPEC, LAYOUT_RULES, DX_AND_AI, BRAND, BUILD_PLAN, DECISIONS
 ├─ reference/                    # local only, never committed: screenshots, frames, motion strips
 ├─ packages/
-│  ├─ core/    @buttery/core     # tokens, themes, recipes CSS, primitives, layers/, motion presets, layout engine, LayoutGuard, docs (shipped)
+│  ├─ core/    @buttery/core     # tokens, themes, recipes CSS, primitives/, layers/, layout/ (checker + LayoutGuard), motion presets, docs (shipped)
 │  ├─ react/   @buttery/react    # components + patterns, built only on core; ships manifest.json + examples
 │  ├─ test/    @buttery/test     # expectButtery() Playwright checks (human + JSON reports)
 │  ├─ lint/    @buttery/lint     # stylelint + eslint configs
@@ -56,6 +56,8 @@ buttery/
 │  ├─ check-ai-tells.mjs         # authorship checks (pnpm check + commit-msg hook)
 │  ├─ check-private-paths.mjs    # fails if reference/ or PROMPTS.md is tracked
 │  ├─ new-component.mjs          # scaffolds a component that already follows every rule
+│  ├─ component-contract.test.mjs # fails until every component folder is complete
+│  ├─ test-layout.mjs            # expectButtery across the full matrix (--reporter=json)
 │  └─ new-app.mjs                # copies apps/starter → apps/<name>
 ├─ .githooks/                    # commit-msg and pre-commit, installed by pnpm install
 └─ tooling/                      # shared tsconfig presets
@@ -86,6 +88,8 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
 
 Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, Select, Tooltip, Dialog, Toast, FloatingToolbar) are built on the layer primitives.
 
+Every open layer renders into its own container, `[data-bt-layer="<band>"]`, fixed over the viewport with clicks passing through, at its band's z token. A layer opened inside another layer of the same or a higher band (a Select inside a Dialog) mounts inside that layer's container, so it stacks above it by order; a layer in a higher band (a Tooltip inside a Dialog) mounts at the root. Every z-index in the page stays a token. Scrims render first in their layer's container, under its content.
+
 CSS cascade layers, declared once in `@buttery/core/styles.css`:
 ```css
 @layer bt.reset, bt.tokens, bt.base, bt.recipes, bt.primitives, bt.components, bt.patterns, bt.utilities;
@@ -102,12 +106,14 @@ Tokens are plain TypeScript tables in `packages/core/src/tokens/`. Colors and sh
 | `tokens/tokens.json` | Every token with its values and description, and the contrast ratio of each declared text pair, for tools and agents |
 | `styles/recipes/surface.css`, `styles/recipes/text.css` | The surface levels and text roles |
 | `styles/tailwind.css` | The Tailwind v4 bridge |
+| `styles/primitives/layout.css` | The `data-gap`, `data-pad`, `data-pad-x` and `data-pad-y` rules the flow primitives use, and the z-index of each layer band |
 
 The generated files are committed and Prettier skips them; a unit test fails when one is out of date. The package entry points:
 
 | Import | Contents |
 |---|---|
-| `@buttery/core` | The token tables as typed data, the OKLCH color helpers, `createTheme` |
+| `@buttery/core` | The token tables as typed data, the OKLCH color helpers, `createTheme`, the primitives, the layers, `LayoutGuard` and `useControllableState` |
+| `@buttery/core/layout` | The in-page layout checker (`createLayoutToolkit`, `runLayoutChecks`), without React, for test runners |
 | `@buttery/core/palettes` | Gradient and solid presets, `gradientCss` |
 | `@buttery/core/styles.css` | Layer order, reset, Inter, tokens, base styles and recipes in one file |
 | `@buttery/core/tailwind.css` | The Tailwind v4 bridge |
@@ -169,12 +175,23 @@ Same thing without React — recipes are plain classes/attributes:
 - Every exported component and prop has a short, factual JSDoc comment (what it is, when to use it, the default). No other comments unless a non-obvious *why* needs one — see the authorship section of `AGENTS.md`.
 - Ships with: playground page (variants × states × themes × densities), 2–4 canonical examples in `examples/`, Vitest behavior tests, `expectButtery` coverage, and an entry in `manifest.json` (generated).
 
-`scripts/new-component.mjs <Name>` generates all of that from a template, so new components start compliant.
+Each component lives in its own folder, which is what the playground, the manifest generator and the contract test read:
+
+| File | Holds |
+|---|---|
+| `Name.tsx` | The component, with JSDoc on the export and every prop |
+| `name.css` | Its styles in its cascade layer, component variables (`--bt-name-*`) on top |
+| `Name.test.tsx` | Behavior tests, run in Chromium and WebKit |
+| `Name.meta.ts` | What the types can't say: purpose, use and avoid lists, related components, keyboard and screen-reader behavior, motion class |
+| `Name.playground.tsx` | `export const demos`: titled demos the playground renders on the component's page |
+| `examples/*.tsx` | 2–4 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would |
+
+`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer` and `--package react|core`) writes that folder and wires the exports and stylesheet. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, JSDoc on the export, tests, demos, 2–4 examples and a filled-in manifest entry.
 
 ## Theming & extension
 
 - `createTheme({ accent, primary, neutral: "gray" | "warm" | "cool", radius: "soft" | "default" | "crisp", density, overrides })` returns `{ light, dark, shared, density }`, holding only the `--bt-*` variables that differ from the defaults; `ButteryProvider theme={…}` applies it. Dark values are derived (the accent is lightened until it clears 4.5:1 on the dark surface), and `overrides.light` / `overrides.dark` win token by token.
-- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`, default `system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion` (`user | always | never`, default `user`). The outermost provider writes `data-bt-theme`, `data-bt-density`, `data-bt-platform`, `data-bt-motion` and the theme's variables onto `<html>`, so portals and scrollbars follow; a nested provider scopes them to a `display: contents` wrapper. `useButtery()` returns the resolved values.
+- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`, default `system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion` (`user | always | never`, default `user`). The outermost provider writes `data-bt-theme`, `data-bt-density`, `data-bt-platform`, `data-bt-motion` and the theme's variables onto `<html>`, so portals and scrollbars follow; a nested provider scopes them to a `display: contents` wrapper. `useButtery()` returns the resolved values. The outermost provider also hosts the floating lanes, publishes `data-bt-settled`, and shows `LayoutGuard` in Vite development builds (`layoutGuard={false}` turns it off; production builds never include it).
 - The stylesheet works without a provider: it follows the OS color scheme until `data-bt-theme` says otherwise.
 - Tailwind v4 users: `@import "@buttery/core/tailwind.css";` after `@import "tailwindcss";` maps tokens to `@theme` (e.g. `bg-surface`, `rounded-card`, `shadow-floating`, `h-control`, `ease-buttery`). It uses `@theme inline`, so the utilities read the live `--bt-*` variables and follow the theme and density. Text colors are named `fg` (`text-fg`, `text-fg-secondary`).
 - Palettes (gradient + solid presets) are data in `@buttery/core/palettes` — swap or extend per app. Colors are defined in OKLCH with gamut-mapped hex beside them, and `gradientCss(preset)` renders a gradient blended in OKLab.
