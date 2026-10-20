@@ -28,7 +28,7 @@ import {
   SplitButton,
 } from "@buttery/react";
 import type { SliderProps } from "@buttery/react";
-import { EmptyStateDemo } from "../demo/EmptyStateDemo.tsx";
+import { StarterEmptyState } from "../demo/StarterEmptyState.tsx";
 import "./surfaces-page.css";
 
 const SELECTED_GRADIENT = "lilac";
@@ -264,7 +264,7 @@ export function SurfacesPage(): ReactElement {
         <div className="sf-workspace">
           <Header />
           <section className="sf-stage" aria-label="Canvas">
-            <EmptyStateDemo />
+            <StarterEmptyState />
           </section>
         </div>
         <Inspector />
