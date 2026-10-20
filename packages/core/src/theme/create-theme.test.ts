@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { contrastRatio, hexToOklch } from "../color/color.ts";
-import { colors } from "../tokens/index.ts";
+import { colors, contrastPairs } from "../tokens/index.ts";
 import { createTheme } from "./create-theme.ts";
 
 describe("createTheme", () => {
@@ -75,6 +75,35 @@ describe("createTheme", () => {
         10,
       ),
     );
+  });
+
+  it("keeps every declared contrast pair under custom accents and neutrals", () => {
+    const themes = [
+      createTheme({ accent: "#7c3aed" }),
+      createTheme({ accent: "#0f766e", neutral: "warm" }),
+      createTheme({ accent: "#c2410c", neutral: "cool" }),
+      createTheme({ neutral: "warm" }),
+    ];
+    for (const [index, theme] of themes.entries()) {
+      for (const scheme of ["light", "dark"] as const) {
+        const value = (token: keyof typeof colors): string =>
+          theme[scheme][`--bt-${token}`] ?? colors[token][scheme];
+        for (const pair of contrastPairs) {
+          expect(
+            contrastRatio(value(pair.text), value(pair.on)),
+            `theme ${String(index)}, ${scheme}: ${pair.text} on ${pair.on}`,
+          ).toBeGreaterThanOrEqual(pair.minimum);
+        }
+      }
+    }
+  });
+
+  it("derives the info tint from a custom accent", () => {
+    const theme = createTheme({ accent: "#7c3aed" });
+    const tint = hexToOklch(theme.light["--bt-accent-subtle"] ?? "");
+    expect(tint.h).toBeCloseTo(hexToOklch("#7c3aed").h, -1);
+    expect(tint.l).toBeGreaterThan(0.9);
+    expect(theme.dark["--bt-accent-subtle"]).toBeDefined();
   });
 
   it("lets overrides win", () => {

@@ -1,9 +1,11 @@
 import {
   contrastRatio,
   hexToOklch,
+  mixOklab,
   oklchToHex,
   parseHex,
   formatHex,
+  relativeLuminance,
 } from "../color/color.ts";
 import type { Oklch } from "../color/color.ts";
 import { colors, radii, spaceWell } from "../tokens/index.ts";
@@ -69,6 +71,7 @@ const NEUTRAL_TOKENS: readonly ColorToken[] = [
   "bg-control-active",
   "border",
   "border-strong",
+  "control-border",
   "text-strong",
   "text",
   "text-secondary",
@@ -122,10 +125,32 @@ function rgba(hex: string, alpha: number): string {
   return `rgba(${String(Math.round(r * 255))}, ${String(Math.round(g * 255))}, ${String(Math.round(b * 255))}, ${String(alpha)})`;
 }
 
+/** Tints a gray toward `hue`, keeping its luminance so every contrast ratio stays where the default had it. */
 function tint(hex: string, hue: number): string {
   const { l } = hexToOklch(hex);
   const chroma = 0.003 + 0.009 * (1 - Math.abs(2 * l - 1));
-  return oklchToHex({ l, c: chroma, h: hue });
+  const target = relativeLuminance(hex);
+  let low = Math.max(0, l - 0.05);
+  let high = Math.min(1, l + 0.05);
+  for (let step = 0; step < 24; step += 1) {
+    const middle = (low + high) / 2;
+    if (
+      relativeLuminance(oklchToHex({ l: middle, c: chroma, h: hue })) < target
+    ) {
+      low = middle;
+    } else {
+      high = middle;
+    }
+  }
+  const candidates = [low, high].map((lightness) =>
+    oklchToHex({ l: lightness, c: chroma, h: hue }),
+  );
+  return candidates.reduce((best, candidate) =>
+    Math.abs(relativeLuminance(candidate) - target) <
+    Math.abs(relativeLuminance(best) - target)
+      ? candidate
+      : best,
+  );
 }
 
 function neutralColors(neutral: Neutral, scheme: ColorScheme): ColorValues {
@@ -136,21 +161,69 @@ function neutralColors(neutral: Neutral, scheme: ColorScheme): ColorValues {
   );
 }
 
+/**
+ * The accent's tint for info callouts: a tenth of the accent over the light surface, and a dark surface
+ * a step lighter with a little of the accent's hue. It fades toward the surface until the accent and
+ * secondary text both hold 4.5:1 on it.
+ */
+function accentTint(
+  accent: string,
+  surface: string,
+  secondaryText: string,
+  scheme: ColorScheme,
+): string {
+  const base = hexToOklch(accent);
+  const ground = hexToOklch(surface);
+  const full =
+    scheme === "light"
+      ? mixOklab(ground, base, 0.1)
+      : { l: ground.l + 0.03, c: Math.min(base.c * 0.25, 0.05), h: base.h };
+  for (let strength = 1; strength > 0; strength -= 0.1) {
+    const tinted = oklchToHex(mixOklab(ground, full, strength));
+    if (
+      contrastRatio(accent, tinted) >= 4.5 &&
+      contrastRatio(secondaryText, tinted) >= 4.5
+    ) {
+      return tinted;
+    }
+  }
+  return surface;
+}
+
 function accentColors(
   accent: string,
-  darkSurface: string,
+  surfaces: Readonly<Record<ColorScheme, string>>,
+  secondaryText: Readonly<Record<ColorScheme, string>>,
 ): { light: ColorValues; dark: ColorValues } {
   const light = normalizeHex(accent);
   const base = hexToOklch(light);
   let lightness = Math.max(base.l, 0.65);
   let dark = withLightness(base, lightness);
-  while (contrastRatio(dark, darkSurface) < 4.5 && lightness < 0.9) {
+  while (contrastRatio(dark, surfaces.dark) < 4.5 && lightness < 0.9) {
     lightness += 0.02;
     dark = withLightness(base, lightness);
   }
   return {
-    light: { accent: light, selection: rgba(light, 0.2) },
-    dark: { accent: dark, selection: rgba(dark, 0.3) },
+    light: {
+      accent: light,
+      "accent-subtle": accentTint(
+        light,
+        surfaces.light,
+        secondaryText.light,
+        "light",
+      ),
+      selection: rgba(light, 0.2),
+    },
+    dark: {
+      accent: dark,
+      "accent-subtle": accentTint(
+        dark,
+        surfaces.dark,
+        secondaryText.dark,
+        "dark",
+      ),
+      selection: rgba(dark, 0.3),
+    },
   };
 }
 
@@ -237,7 +310,14 @@ export function createTheme(options: ThemeOptions = {}): ButteryTheme {
   if (options.accent !== undefined) {
     const accent = accentColors(
       options.accent,
-      dark["bg-surface"] ?? colors["bg-surface"].dark,
+      {
+        light: light["bg-surface"] ?? colors["bg-surface"].light,
+        dark: dark["bg-surface"] ?? colors["bg-surface"].dark,
+      },
+      {
+        light: light["text-secondary"] ?? colors["text-secondary"].light,
+        dark: dark["text-secondary"] ?? colors["text-secondary"].dark,
+      },
     );
     Object.assign(light, accent.light);
     Object.assign(dark, accent.dark);
