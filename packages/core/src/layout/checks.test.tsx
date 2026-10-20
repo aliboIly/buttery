@@ -108,6 +108,23 @@ describe("runLayoutChecks", () => {
     ).toBe(200);
   });
 
+  it("lets content marked data-bt-allow-overlap ride past its parent's edges, as crop handles do", () => {
+    const violations = check(
+      `<div data-testid="frame" style="position: relative; inline-size: 120px; block-size: 80px">
+         <div data-bt-allow-overlap style="position: absolute; inset: 0">
+           <span style="position: absolute; inset-inline-start: 100%; inline-size: 12px; block-size: 12px; translate: -50% 0"></span>
+         </div>
+       </div>
+       <div data-testid="plain" style="position: relative; inline-size: 120px; block-size: 80px">
+         <span style="position: absolute; inset-inline-start: 100%; inline-size: 12px; block-size: 12px"></span>
+       </div>`,
+      ["overflow"],
+    );
+    expect(violations.map((violation) => violation.a)).toEqual([
+      '[data-testid="plain"]',
+    ]);
+  });
+
   it("suggests the nearest steps for off-scale spacing and control heights", () => {
     const violations = check(BROKEN, ["scale"]);
     const gap = violations.find((violation) =>

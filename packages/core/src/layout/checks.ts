@@ -579,7 +579,12 @@ export function createLayoutToolkit(): LayoutToolkit {
         let bottom = Number.NEGATIVE_INFINITY;
         const visit = (node: Element): void => {
           for (const child of node.children) {
-            if (child.hasAttribute("data-bt-hit")) continue;
+            if (
+              child.hasAttribute("data-bt-hit") ||
+              child.hasAttribute("data-bt-allow-overlap")
+            ) {
+              continue;
+            }
             const style = styleOf(child);
             if (style.display === "none" || style.position === "fixed")
               continue;
@@ -619,7 +624,13 @@ export function createLayoutToolkit(): LayoutToolkit {
         if (skippedTags.has(element.tagName) || element.closest("svg"))
           continue;
         if (isTooling(element)) continue;
-        if (element.closest("[data-bt-truncate], [data-bt-clip]")) continue;
+        if (
+          element.closest(
+            "[data-bt-truncate], [data-bt-clip], [data-bt-allow-overlap]",
+          )
+        ) {
+          continue;
+        }
         const style = styleOf(element);
         if (
           style.display === "inline" ||
