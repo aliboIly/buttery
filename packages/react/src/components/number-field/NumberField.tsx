@@ -1,6 +1,6 @@
 import { Icon, cx, useControllableState } from "@buttery/core";
 import { Minus, Plus } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type {
   ComponentPropsWithRef,
   KeyboardEvent,
@@ -8,7 +8,7 @@ import type {
   ReactElement,
 } from "react";
 
-/** Props for `NumberField`. `ref` and other input props go to the input; `className` and `style` to the field. */
+/** Props for `NumberField`. `ref`, `id` and other input props go to the input; `className` and `style` to the field. */
 export interface NumberFieldProps extends Omit<
   ComponentPropsWithRef<"input">,
   | "value"
@@ -68,8 +68,11 @@ export function NumberField({
   style,
   onKeyDown,
   onBlur,
+  id,
   ...rest
 }: NumberFieldProps): ReactElement {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
   const [current, setCurrent] = useControllableState({
     value,
     defaultValue: defaultValue ?? min ?? 0,
@@ -105,8 +108,13 @@ export function NumberField({
     if (Number.isNaN(parsed)) setDraft(null);
     else commit(parsed);
   };
+  const typed = (): number => {
+    if (draft === null) return current;
+    const parsed = Number.parseFloat(draft.replace(",", "."));
+    return Number.isNaN(parsed) ? current : parsed;
+  };
   const stepBy = (direction: 1 | -1, large: boolean): void => {
-    if (!locked) commit(current + direction * step * (large ? 10 : 1));
+    if (!locked) commit(typed() + direction * step * (large ? 10 : 1));
   };
 
   const keyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -120,12 +128,12 @@ export function NumberField({
     }
   };
 
-  const startScrub = (event: PointerEvent<HTMLSpanElement>): void => {
+  const startScrub = (event: PointerEvent<HTMLLabelElement>): void => {
     if (locked || event.button !== 0) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     scrub.current = { x: event.clientX, from: current };
   };
-  const moveScrub = (event: PointerEvent<HTMLSpanElement>): void => {
+  const moveScrub = (event: PointerEvent<HTMLLabelElement>): void => {
     const start = scrub.current;
     if (!start) return;
     const steps = Math.round((event.clientX - start.x) / SCRUB_PIXELS_PER_STEP);
@@ -140,13 +148,14 @@ export function NumberField({
   };
 
   return (
-    <label
+    <div
       className={cx("bt-number-field", className)}
       style={style}
       data-bt="NumberField"
       data-disabled={disabled ? "" : undefined}
     >
-      <span
+      <label
+        htmlFor={inputId}
         className="bt-text bt-truncate"
         data-role="control"
         data-bt-part="label"
@@ -158,10 +167,11 @@ export function NumberField({
         onLostPointerCapture={endScrub}
       >
         {label}
-      </span>
+      </label>
       <span data-bt-part="field" data-bt-control="">
         <input
           {...rest}
+          id={inputId}
           type="text"
           inputMode="decimal"
           role="spinbutton"
@@ -215,6 +225,6 @@ export function NumberField({
           </button>
         </span>
       </span>
-    </label>
+    </div>
   );
 }

@@ -2,7 +2,7 @@ import "@buttery/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { userEvent as browser } from "vitest/browser";
+import { page, userEvent as browser } from "vitest/browser";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NumberField } from "./NumberField.tsx";
@@ -38,6 +38,24 @@ describe("NumberField", () => {
     expect(field().value).toBe("1080");
     expect(field().getAttribute("aria-valuenow")).toBe("1080");
     expect(field().getAttribute("aria-valuetext")).toBe("1080 px");
+  });
+
+  it("is named by its label alone in the browser, its stepper buttons outside the label", async () => {
+    render(<NumberField label="W" defaultValue={1080} unit="px" />);
+    await expect
+      .element(page.getByRole("spinbutton", { name: "W", exact: true }))
+      .toBeInTheDocument();
+    expect(field().labels?.[0]?.textContent).toBe("W");
+    expect(field().labels?.[0]?.querySelector("button")).toBeNull();
+  });
+
+  it("steps from what's typed when it's a number", async () => {
+    const change = vi.fn();
+    render(<NumberField label="W" defaultValue={128} onValueChange={change} />);
+    await userEvent.clear(field());
+    await userEvent.type(field(), "300{ArrowUp}");
+    expect(change).toHaveBeenLastCalledWith(301);
+    expect(field().value).toBe("301");
   });
 
   it("commits typing on Enter, clamped to its range, and puts the old value back on Escape", async () => {

@@ -64,15 +64,19 @@
     line-height: var(--bt-text-control-line);
   }
 
+  /* Hidden, the stepper takes no taps, so a touch near the field's edge never changes the value. */
   .bt-number-field [data-bt-part="stepper"] {
     display: inline-flex;
     flex: none;
     opacity: 0;
-    transition: opacity var(--bt-dur-fast) var(--bt-ease-standard);
+    pointer-events: none;
+    transition: opacity calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-standard);
   }
 
   .bt-number-field:is(:hover, :focus-within) [data-bt-part="stepper"] {
     opacity: 1;
+    pointer-events: auto;
   }
 
   .bt-number-field [data-bt-part="step"] {

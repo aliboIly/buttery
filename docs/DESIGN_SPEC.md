@@ -280,7 +280,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 - Footer slot (e.g. a pair of number fields): labels `control` role in `text-secondary`, inputs 34h r12 1px `border-strong`, tabular, with a stepper.
 
 ### NumberField
-34h, 128w (`--bt-number-field-width`), r12, 1px `border-strong`, padding-x 12, tabular, stepper on hover/focus, optional scrub-to-change by dragging the label (one change per frame). The whole field is the label. Typing edits a draft: Enter or leaving commits, Escape puts back the value; arrows step, Shift = ×10. The stepper buttons stay out of the tab order, since the arrow keys do the same.
+34h, 128w (`--bt-number-field-width`), r12, 1px `border-strong`, padding-x 12, tabular, stepper on hover/focus, optional scrub-to-change by dragging the label (one change per frame). The label names the input and is the scrub handle; the stepper sits outside it, so the input's name is the label alone. Typing edits a draft: Enter or leaving commits, Escape puts back the value; arrows step from what's typed, Shift = ×10. The stepper buttons stay out of the tab order, since the arrow keys do the same, and take no taps while hidden.
 
 ### Tooltip
 `inverse-bg` pill, `inverse-text` 12/500, padding 4×8, r8, 500ms open delay, no arrow. Content-sized (not height-checked). Opens at once on keyboard focus, closes on Escape, renders in the tooltip band above dialogs. The root `ButteryProvider` hosts one provider for all tooltips, so moving between them skips the delay.
