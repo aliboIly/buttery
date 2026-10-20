@@ -36,6 +36,7 @@
   }
 
   .bt-split-button > [data-bt-part="main"] {
+    flex: 1 1 auto;
     padding-inline: var(--bt-space-5) var(--bt-space-4);
     border-start-start-radius: var(--bt-r-full);
     border-end-start-radius: var(--bt-r-full);

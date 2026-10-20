@@ -1,8 +1,9 @@
-import type { CSSProperties, ReactElement, ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import {
   ArrowLeftRight,
   ChevronDown,
   CircleHelp,
+  Clipboard,
   Copy,
   Redo2,
   Undo2,
@@ -17,8 +18,16 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { CssVariables } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
+import {
+  Button,
+  Chip,
+  IconButton,
+  SegmentedControl,
+  Slider,
+  SplitButton,
+} from "@buttery/react";
+import type { SliderProps } from "@buttery/react";
 import { EmptyStateDemo } from "../demo/EmptyStateDemo.tsx";
 import "./surfaces-page.css";
 
@@ -54,69 +63,26 @@ function Section({
   );
 }
 
-interface RowProps {
+function Row({
+  label,
+  children,
+}: {
   readonly label: string;
-  readonly badge?: string;
   readonly children?: ReactNode;
-}
-
-function Row({ label, badge, children }: RowProps): ReactElement {
+}): ReactElement {
   return (
     <div className="sf-row">
-      <Inline gap={2}>
-        <Text truncate>{label}</Text>
-        {badge === undefined ? null : (
-          <Text variant="badge" className="sf-badge">
-            {badge}
-          </Text>
-        )}
-      </Inline>
+      <Text truncate>{label}</Text>
       {children}
     </div>
   );
 }
 
-function SegmentedPlaceholder({
-  items,
-  active,
-}: {
-  readonly items: readonly string[];
-  readonly active: string;
-}): ReactElement {
+function SliderRow(props: SliderProps): ReactElement {
   return (
-    <span className="sf-segmented">
-      {items.map((item) => (
-        <Text
-          key={item}
-          variant="control"
-          className="sf-segment"
-          data-active={item === active ? "" : undefined}
-        >
-          {item}
-        </Text>
-      ))}
-    </span>
-  );
-}
-
-function SliderPlaceholder({
-  value,
-}: {
-  readonly value: number;
-}): ReactElement {
-  const style: CSSProperties & CssVariables = {
-    "--bt-surfaces-page-value": String(value),
-  };
-  return (
-    <span className="sf-slider" style={style}>
-      <span className="sf-track" />
-      <span className="sf-thumb">
-        <span className="sf-grip">
-          <span />
-          <span />
-        </span>
-      </span>
-    </span>
+    <div className="sf-row sf-row-slider">
+      <Slider {...props} />
+    </div>
   );
 }
 
@@ -158,37 +124,37 @@ function Inspector(): ReactElement {
         <Stack gap={2} pad={2} className="sf-inspector-body">
           <Section title="Card">
             <Row label="Edge">
-              <SegmentedPlaceholder
-                items={["Plain", "Outline", "Glow"]}
-                active="Outline"
+              <SegmentedControl
+                label="Edge"
+                options={["Plain", "Outline", "Glow"]}
+                defaultValue="Outline"
               />
             </Row>
-            <Row label="Scale" badge="75%">
-              <SliderPlaceholder value={0.45} />
-            </Row>
-            <Row label="Corners" badge="16">
-              <SliderPlaceholder value={0.25} />
-            </Row>
-            <Row label="Spacing" badge="8">
-              <SliderPlaceholder value={0.1} />
-            </Row>
-            <Row label="Depth" badge="30%">
-              <SliderPlaceholder value={0.3} />
-            </Row>
+            <SliderRow
+              label="Scale"
+              min={25}
+              max={200}
+              defaultValue={75}
+              format="%"
+            />
+            <SliderRow label="Corners" max={48} defaultValue={16} />
+            <SliderRow label="Spacing" max={48} defaultValue={8} />
+            <SliderRow label="Depth" defaultValue={30} format="%" />
           </Section>
           <Section title="Placement" resettable>
-            <Row label="Turn" badge="−8°">
-              <SliderPlaceholder value={0.48} />
-            </Row>
+            <SliderRow
+              label="Turn"
+              min={-180}
+              max={180}
+              defaultValue={-8}
+              format="°"
+              detents={[0]}
+            />
             <div className="sf-split">
               <span className="sf-split-cell">
                 <Inline gap={2}>
                   <Text truncate>Lean</Text>
-                  <Pressable className="sf-chip" disabled>
-                    <Text variant="badge" tone="disabled">
-                      Reset
-                    </Text>
-                  </Pressable>
+                  <Chip disabled>Reset</Chip>
                 </Inline>
                 <span className="sf-tilt">
                   <span className="sf-knob" />
@@ -202,7 +168,7 @@ function Inspector(): ReactElement {
           </Section>
           <Section title="Backdrop" resettable>
             <Row label="Fill">
-              <SegmentedPlaceholder items={["Blend", "Flat"]} active="Blend" />
+              <SegmentedControl label="Fill" options={["Blend", "Flat"]} />
             </Row>
             <div className="sf-row sf-row-full">
               <SwatchesPlaceholder />
@@ -217,41 +183,30 @@ function Inspector(): ReactElement {
                   className="sf-dot"
                   style={{ background: selected?.toHex }}
                 />
-                <Pressable
-                  className="sf-icon-button sf-icon-button-sm"
-                  aria-label="Swap hues"
-                >
-                  <Icon icon={ArrowLeftRight} />
-                </Pressable>
+                <IconButton icon={ArrowLeftRight} label="Swap hues" size="sm" />
               </Inline>
             </Row>
-            <Row label="Sweep" badge="135°">
-              <SliderPlaceholder value={0.375} />
-            </Row>
+            <SliderRow label="Sweep" max={360} defaultValue={135} format="°" />
           </Section>
         </Stack>
         <Inline gap={2} pad={3} className="sf-footer">
-          <Pressable className="sf-button sf-button-soft" disabled>
-            <Icon icon={Copy} />
-            <Text variant="button" tone="disabled">
-              Copy
-            </Text>
-          </Pressable>
-          <span className="sf-split-button">
-            <Pressable className="sf-split-main" disabled>
-              <Text variant="button" className="sf-on-primary">
-                Export PNG
-              </Text>
-            </Pressable>
-            <span className="sf-split-divider" />
-            <Pressable
-              className="sf-split-menu"
-              aria-label="Export options"
-              disabled
-            >
-              <Icon icon={ChevronDown} />
-            </Pressable>
-          </span>
+          <Button iconStart={Copy} disabled className="sf-copy">
+            Copy
+          </Button>
+          <SplitButton
+            disabled
+            menuLabel="Export options"
+            className="sf-export"
+            items={[
+              {
+                label: "Copy to clipboard",
+                icon: Clipboard,
+                onSelect: () => undefined,
+              },
+            ]}
+          >
+            Export PNG
+          </SplitButton>
         </Inline>
       </aside>
     </Surface>
@@ -293,14 +248,7 @@ function Header(): ReactElement {
               priority={priority}
               menuItem={{ label, icon, disabled, onSelect: () => undefined }}
             >
-              <Pressable
-                className="sf-icon-button"
-                aria-label={label}
-                title={label}
-                disabled={disabled}
-              >
-                <Icon icon={icon} />
-              </Pressable>
+              <IconButton icon={icon} label={label} disabled={disabled} />
             </OverflowCluster.Item>
           ))}
         </OverflowCluster>
