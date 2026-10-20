@@ -33,3 +33,5 @@ export type {
 } from "./components/tooltip/Tooltip.tsx";
 export { IconButton } from "./components/icon-button/IconButton.tsx";
 export type { IconButtonProps } from "./components/icon-button/IconButton.tsx";
+export { Chip } from "./components/chip/Chip.tsx";
+export type { ChipProps } from "./components/chip/Chip.tsx";

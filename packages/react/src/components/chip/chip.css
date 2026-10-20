@@ -1,0 +1,44 @@
+@layer bt.components {
+  .bt-chip {
+    --bt-chip-hit: 24px;
+    --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
+
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    block-size: var(--bt-h-badge);
+    padding-inline: var(--bt-space-1_5);
+    border: 0;
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text-secondary);
+    font-family: inherit;
+    font-size: var(--bt-text-badge-size);
+    font-weight: var(--bt-text-badge-weight);
+    line-height: var(--bt-text-badge-line);
+    letter-spacing: var(--bt-text-badge-tracking);
+    white-space: nowrap;
+    appearance: none;
+  }
+
+  .bt-chip > [data-bt-part="hit"] {
+    position: absolute;
+    inset-block: calc((var(--bt-h-badge) - var(--bt-chip-hit)) / 2);
+    inset-inline: 0;
+  }
+
+  @media (hover: hover) {
+    .bt-chip:not(:disabled):hover {
+      color: var(--bt-text);
+    }
+  }
+
+  .bt-chip:disabled {
+    background-color: var(--bt-bg-control-subtle);
+    color: var(--bt-text-disabled-subtle);
+    cursor: default;
+  }
+}
