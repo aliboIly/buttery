@@ -1,7 +1,7 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { createRef } from "react";
+import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OverflowCluster } from "./OverflowCluster.tsx";
@@ -106,6 +106,59 @@ describe("OverflowCluster", () => {
     expect(getComputedStyle(more).transitionProperty.split(", ")).toEqual(
       expect.arrayContaining(["scale", "background-color", "color"]),
     );
+  });
+
+  it("keeps one observer while its items re-render with new menu entries", async () => {
+    const Native = window.ResizeObserver;
+    let built = 0;
+    window.ResizeObserver = class extends Native {
+      constructor(callback: ResizeObserverCallback) {
+        super(callback);
+        built += 1;
+      }
+    };
+    function Ticking(): ReactElement {
+      const [count, setCount] = useState(0);
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setCount(count + 1);
+            }}
+          >
+            Tick
+          </button>
+          <OverflowCluster
+            moreLabel="More actions"
+            style={{ inlineSize: "400px" }}
+          >
+            {ACTIONS.map(({ label, priority }) => (
+              <OverflowCluster.Item
+                key={label}
+                priority={priority}
+                menuItem={{
+                  label: `${label} ${String(count)}`,
+                  onSelect: () => undefined,
+                }}
+              >
+                <button type="button">{label}</button>
+              </OverflowCluster.Item>
+            ))}
+          </OverflowCluster>
+        </>
+      );
+    }
+    try {
+      render(<Ticking />);
+      const before = built;
+      for (let tick = 0; tick < 6; tick += 1) {
+        await userEvent.click(screen.getByRole("button", { name: "Tick" }));
+      }
+      expect(built - before).toBe(0);
+    } finally {
+      window.ResizeObserver = Native;
+    }
   });
 
   it("passes refs and props through to an item's element", () => {

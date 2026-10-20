@@ -81,12 +81,21 @@ function OverflowClusterRoot({
   const [menuOpen, setMenuOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const widths = useRef(new Map<string, number>());
+  const latest = useRef(entries);
   const merged = useMergedRefs(ref, root);
+  const lineup = entries
+    .map((entry) => `${entry.id}:${String(entry.priority)}`)
+    .join(" ");
+
+  useLayoutEffect(() => {
+    latest.current = entries;
+  });
 
   useLayoutEffect(() => {
     const element = root.current;
     if (!element) return undefined;
     const observer = new ResizeObserver(() => {
+      const entries = latest.current;
       for (const entry of entries) {
         const width = entry.element.getBoundingClientRect().width;
         if (width > 0) widths.current.set(entry.id, width);
@@ -106,11 +115,11 @@ function OverflowClusterRoot({
       });
     });
     observer.observe(element);
-    for (const entry of entries) observer.observe(entry.element);
+    for (const entry of latest.current) observer.observe(entry.element);
     return () => {
       observer.disconnect();
     };
-  }, [entries]);
+  }, [lineup]);
 
   const overflowed = entries.filter((entry) => hidden.has(entry.id));
 
