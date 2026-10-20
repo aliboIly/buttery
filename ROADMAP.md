@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 4 is done. Next: Phase 4.5, forms and text, then Phase 5.
+**Now:** Phase 4.5 (forms and text) is done. Next: Phase 5, inspector and app patterns.
 
 ---
 
@@ -34,10 +34,10 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Compare page vs references
 
 ## v0.4.5 — Forms and text (Phase 4.5)
-- [ ] TextField, PasswordField, TextArea, Field
-- [ ] Checkbox, Switch, Callout
-- [ ] TextStack
-- [ ] SignInForm and SignUpForm patterns, with an original sign-in demo page
+- [x] TextField, PasswordField, TextArea, Field
+- [x] Checkbox, Switch, Callout
+- [x] TextStack
+- [x] SignInForm and SignUpForm patterns, with an original sign-in demo page
 
 ## v0.5 — App patterns (Phase 5)
 - [ ] SwatchGrid, ColorDot, TiltPad, AnchorGrid
