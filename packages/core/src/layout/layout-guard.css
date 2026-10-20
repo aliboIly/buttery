@@ -1,7 +1,7 @@
 @layer bt.primitives {
   [data-bt-layer] > [data-bt="LayoutGuard"] {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    block-size: 100%;
     pointer-events: none;
     container-type: inline-size;
   }
@@ -9,7 +9,6 @@
   [data-bt="LayoutGuard"] > [data-bt-part="mark"] {
     position: absolute;
     outline: 2px solid var(--bt-traffic-red);
-    outline-offset: -1px;
   }
 
   [data-bt="LayoutGuard"] [data-bt-part="label"] {
