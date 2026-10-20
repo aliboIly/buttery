@@ -42,13 +42,17 @@ describe("component contract", () => {
 
       it("stamps data-bt and documents the export", () => {
         const source = read(`${name}.tsx`);
-        expect(source, `${name}.tsx must stamp data-bt="${name}"`).toMatch(
-          new RegExp(`data-bt(?:"\\s*:\\s*|=)"${name}"`),
+        const folderSource = readdirSync(folder)
+          .filter((file) => /\.tsx?$/.test(file) && !/\.(test|meta|playground)\.tsx?$/.test(file))
+          .map((file) => read(file))
+          .join("\n");
+        expect(folderSource, `${name} must stamp data-bt="${name}" on its root element`).toMatch(
+          new RegExp(`data-bt(?:"\\s*:\\s*|=|",\\s*)"${name}"`),
         );
         expect(
           source,
-          `${name} needs a JSDoc comment right before "export function ${name}"`,
-        ).toMatch(new RegExp(`\\*/\\s*export function ${name}\\(`));
+          `${name} needs a JSDoc comment right before "export function ${name}" (or "export const ${name}:" for compound components)`,
+        ).toMatch(new RegExp(`\\*/\\s*export (?:function ${name}\\(|const ${name}: )`));
       });
 
       it("ships tests, a playground page and at least two examples", () => {
