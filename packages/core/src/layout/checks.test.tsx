@@ -136,6 +136,20 @@ describe("runLayoutChecks", () => {
     ).toContain("under 28");
   });
 
+  it("holds only standalone buttons to 28, not the segments, tabs and items of a control", () => {
+    const violations = check(
+      `<div role="radiogroup" aria-label="Fill" style="display: flex">
+         <button type="button" role="radio" aria-checked="true" style="block-size: 26px; inline-size: 64px">Solid</button>
+         <button type="button" role="radio" aria-checked="false" style="block-size: 26px; inline-size: 64px">Image</button>
+       </div>
+       <div role="button" tabindex="0" data-testid="short" style="block-size: 26px; inline-size: 64px">Save</div>`,
+      ["target-size"],
+    );
+    expect(violations.map((violation) => violation.a)).toEqual([
+      '[data-testid="short"]',
+    ]);
+  });
+
   it("doesn't flag text trimmed to its cap height as overflow", () => {
     expect(
       check(

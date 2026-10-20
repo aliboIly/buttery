@@ -877,9 +877,10 @@ export function createLayoutToolkit(): LayoutToolkit {
           });
           continue;
         }
+        // A segment, tab or menu item is a <button> with another role: part of a control, not a standalone button.
+        const role = element.getAttribute("role");
         const isButton =
-          element.tagName === "BUTTON" ||
-          element.getAttribute("role") === "button";
+          role === "button" || (role === null && element.tagName === "BUTTON");
         if (isButton && !hit && rect.height < 27.5) {
           report({
             rule: "target-size",
