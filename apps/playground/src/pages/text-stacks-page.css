@@ -1,0 +1,87 @@
+.ts-stage {
+  --bt-demo-media-height: 200px;
+  --bt-demo-page-dot: 6px;
+  --bt-demo-page-dot-active: 18px;
+
+  display: grid;
+  grid-template-columns: var(--bt-w-dialog) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--bt-space-12);
+}
+
+.ts-empty {
+  display: grid;
+  place-items: center;
+  min-block-size: var(--bt-bento-row);
+}
+
+.ob-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-6);
+  inline-size: var(--bt-w-dialog);
+}
+
+.ob-media {
+  block-size: var(--bt-demo-media-height);
+  border-radius: var(--bt-r-md);
+}
+
+.ob-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-4);
+  padding: 0 var(--bt-space-4) var(--bt-space-4);
+}
+
+.ob-lead,
+.ob-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-5);
+}
+
+.ob-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-4);
+}
+
+.ob-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--bt-space-1_5);
+}
+
+.ob-dot {
+  inline-size: var(--bt-demo-page-dot);
+  block-size: var(--bt-demo-page-dot);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-dot);
+}
+
+.ob-dot[data-active] {
+  inline-size: var(--bt-demo-page-dot-active);
+  background-color: var(--bt-dot-active);
+}
+
+.ob-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bt-space-2);
+}
+
+.ob-button {
+  border: 0;
+  border-radius: var(--bt-r-lg);
+}
+
+.ob-soft {
+  background-color: var(--bt-bg-control);
+  color: var(--bt-text);
+}
+
+.ob-primary {
+  background-color: var(--bt-primary);
+  color: var(--bt-on-primary);
+}

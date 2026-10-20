@@ -1,0 +1,112 @@
+.pg-chrome {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--bt-space-4);
+  min-block-size: 100dvh;
+  padding: var(--bt-space-4);
+}
+
+.pg-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-space-6);
+  min-block-size: var(--bt-h-header);
+  padding-inline: var(--bt-space-4);
+}
+
+.pg-nav {
+  display: flex;
+  flex: 1 1 auto;
+  gap: var(--bt-space-1);
+  min-inline-size: 0;
+  overflow-x: auto;
+}
+
+.pg-nav-link {
+  display: inline-flex;
+  align-items: center;
+  block-size: var(--bt-h-sm);
+  padding-inline: var(--bt-space-3);
+  border-radius: var(--bt-r-full);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--bt-dur-fast) var(--bt-ease-standard),
+    color var(--bt-dur-fast) var(--bt-ease-standard);
+}
+
+.pg-nav-link:hover {
+  background-color: var(--bt-bg-control);
+  color: var(--bt-text);
+}
+
+.pg-nav-link[aria-current="page"] {
+  background-color: var(--bt-bg-control-active);
+  color: var(--bt-text);
+}
+
+.pg-settings {
+  display: flex;
+  flex: none;
+  gap: var(--bt-space-2);
+}
+
+.pg-toggle {
+  display: inline-flex;
+  gap: var(--bt-space-0_5);
+  padding: var(--bt-space-0_5);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-control);
+}
+
+.pg-toggle-option {
+  block-size: var(--bt-h-badge);
+  padding-inline: var(--bt-space-3);
+  border: 0;
+  border-radius: var(--bt-r-full);
+  background-color: transparent;
+}
+
+.pg-toggle-option[aria-checked="true"] {
+  background-color: var(--bt-bg-raised);
+  box-shadow: var(--bt-shadow-raised);
+  color: var(--bt-text);
+}
+
+.pg-main {
+  display: grid;
+  grid-template-columns: minmax(0, var(--bt-w-page));
+  justify-content: center;
+  min-inline-size: 0;
+}
+
+.pg-page {
+  --bt-demo-tile: 220px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-8);
+}
+
+.pg-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-4);
+}
+
+.pg-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, var(--bt-demo-tile)), 1fr)
+  );
+  gap: var(--bt-space-4);
+}
+
+.pg-mono {
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-badge-size);
+  line-height: var(--bt-text-badge-line);
+  color: var(--bt-text-tertiary);
+  overflow-wrap: anywhere;
+}

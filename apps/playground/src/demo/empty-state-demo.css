@@ -1,0 +1,46 @@
+.es-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bt-space-6);
+  text-align: center;
+}
+
+.es-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bt-space-3);
+}
+
+.es-actions {
+  display: flex;
+  gap: var(--bt-space-2);
+}
+
+.es-button {
+  border: 0;
+  border-radius: var(--bt-r-full);
+  transition:
+    transform var(--bt-dur-fast) var(--bt-ease-out),
+    background-color var(--bt-dur-fast) var(--bt-ease-standard);
+}
+
+.es-primary {
+  background-color: var(--bt-primary);
+  color: var(--bt-on-primary);
+}
+
+.es-primary:hover {
+  background-color: var(--bt-primary-hover);
+}
+
+.es-secondary {
+  background-color: var(--bt-bg-raised);
+  box-shadow: var(--bt-shadow-raised);
+  color: var(--bt-text);
+}
+
+.es-secondary:hover {
+  background-color: var(--bt-bg-inset);
+}

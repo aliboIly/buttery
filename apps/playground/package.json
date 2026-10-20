@@ -12,7 +12,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "catalog:",
+    "@buttery/core": "workspace:*",
+    "@buttery/react": "workspace:*",
+    "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

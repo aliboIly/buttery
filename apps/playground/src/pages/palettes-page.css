@@ -1,0 +1,25 @@
+.pl-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--bt-space-4);
+}
+
+.pl-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-2);
+  min-inline-size: 0;
+}
+
+.pl-swatch {
+  aspect-ratio: 1;
+  border-radius: var(--bt-r-lg);
+  box-shadow: var(--bt-shadow-inset);
+}
+
+.pl-caption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-0_5);
+  min-inline-size: 0;
+}

@@ -1,0 +1,57 @@
+.lv-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bt-space-4);
+}
+
+.lv-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-6);
+  padding: var(--bt-space-6);
+  border-radius: var(--bt-r-dialog);
+  box-shadow: var(--bt-shadow-inset);
+  color: var(--bt-text);
+}
+
+.lv-levels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bt-space-4);
+}
+
+.lv-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-1);
+  min-block-size: var(--bt-h-cta);
+  padding: var(--bt-space-4);
+}
+
+.lv-nesting {
+  display: flex;
+  flex-direction: column;
+}
+
+.lv-nested {
+  display: flex;
+  flex-direction: column;
+}
+
+.lv-nested-title {
+  display: flex;
+  align-items: center;
+  block-size: var(--bt-h-button);
+  padding-inline: var(--bt-space-4);
+}
+
+.lv-nested-row {
+  display: flex;
+  align-items: center;
+  block-size: var(--bt-h-row);
+  padding-inline: var(--bt-space-4);
+}
+
+.lv-nested-row:not(:last-child) {
+  border-block-end: 1px solid var(--bt-border);
+}
