@@ -5,6 +5,7 @@
     gap: var(--bt-space-1);
     min-inline-size: 0;
     max-inline-size: 100%;
+    padding-block: var(--bt-space-0_5);
     color: var(--bt-primary);
     font-size: var(--bt-text-label-size);
     font-weight: var(--bt-text-label-weight);

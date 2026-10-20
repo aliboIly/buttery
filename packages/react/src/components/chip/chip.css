@@ -10,6 +10,7 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     block-size: var(--bt-h-badge);
+    padding-block: 0;
     padding-inline: var(--bt-space-1_5);
     border: 0;
     border-radius: var(--bt-r-xs);

@@ -8,7 +8,7 @@ export function CropSize(): ReactElement {
   const [width, setWidth] = useState(1200);
   const [height, setHeight] = useState(630);
   return (
-    <Inline gap={4}>
+    <Inline gap={4} wrap>
       <NumberField
         label="W"
         unit="px"

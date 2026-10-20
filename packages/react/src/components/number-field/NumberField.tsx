@@ -151,6 +151,7 @@ export function NumberField({
         data-role="control"
         data-bt-part="label"
         data-bt-truncate=""
+        title={label}
         onPointerDown={startScrub}
         onPointerMove={moveScrub}
         onPointerUp={endScrub}

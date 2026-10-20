@@ -17,6 +17,7 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     block-size: var(--bt-h-button);
+    padding-block: 0;
     padding-inline: var(--bt-button-padding);
     border: 0;
     border-radius: var(--bt-r-full);
