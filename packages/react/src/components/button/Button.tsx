@@ -48,7 +48,9 @@ export interface ButtonProps extends ComponentPropsWithRef<"button"> {
 
 /**
  * A button for actions: four variants, three sizes, a loading state, icons and a navigation arrow. It
- * presses in on pointer-down, defaults to `type="button"`, and never changes size between states.
+ * presses in on pointer-down, defaults to `type="button"`, and never changes size between states. Pass
+ * `aria-disabled` instead of `disabled` to keep it focusable while it can't act, such as Back on a first
+ * step: it looks disabled and ignores presses, and keyboard focus stays where it was.
  *
  * @example
  * <Button variant="primary" arrow="forward" onClick={next}>Continue</Button>
@@ -70,7 +72,9 @@ export function Button({
   children,
   ...rest
 }: ButtonProps): ReactElement {
-  const blocked = loading || (asChild && disabled === true);
+  const unavailable =
+    rest["aria-disabled"] === true || rest["aria-disabled"] === "true";
+  const blocked = loading || unavailable || (asChild && disabled === true);
   const press = (event: MouseEvent<HTMLButtonElement>): void => {
     if (blocked) {
       event.preventDefault();

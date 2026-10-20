@@ -25,19 +25,20 @@
     appearance: none;
   }
 
+  /* The hit area reaches 24px both ways, so a chip with a one-letter label is still easy to hit. */
   .bt-chip > [data-bt-part="hit"] {
     position: absolute;
     inset-block: calc((var(--bt-h-badge) - var(--bt-chip-hit)) / 2);
-    inset-inline: 0;
+    inset-inline: min(0px, calc((100% - var(--bt-chip-hit)) / 2));
   }
 
   @media (hover: hover) {
-    .bt-chip:not(:disabled):hover {
+    .bt-chip:not(:disabled, [aria-disabled="true"]):hover {
       color: var(--bt-text);
     }
   }
 
-  .bt-chip:disabled {
+  .bt-chip:is(:disabled, [aria-disabled="true"]) {
     background-color: var(--bt-bg-control-subtle);
     color: var(--bt-text-disabled-subtle);
     cursor: default;

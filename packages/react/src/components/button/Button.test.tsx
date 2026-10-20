@@ -198,6 +198,32 @@ describe("Button", () => {
     }
   });
 
+  it("stays focusable but ignores presses and looks disabled with aria-disabled", async () => {
+    const press = vi.fn();
+    const { rerender } = render(<Button onClick={press}>Back</Button>);
+    const button = screen.getByRole("button", { name: "Back" });
+    const enabled = getComputedStyle(button).backgroundColor;
+    rerender(
+      <Button aria-disabled onClick={press}>
+        Back
+      </Button>,
+    );
+    button.focus();
+    await user.click(button);
+    await user.keyboard("{Enter}");
+    expect(press).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(button);
+    await afterTransitions();
+    expect(getComputedStyle(button).backgroundColor).not.toBe(enabled);
+    rerender(
+      <Button aria-disabled loading onClick={press}>
+        Back
+      </Button>,
+    );
+    await afterTransitions();
+    expect(getComputedStyle(button).backgroundColor).toBe(enabled);
+  });
+
   it("leaves the arrow alone on a disabled button", async () => {
     render(
       <Button arrow="forward" disabled>

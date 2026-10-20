@@ -103,24 +103,45 @@
     }
   }
 
-  .bt-button:is(:disabled, [data-disabled]) {
+  /* aria-disabled looks the same but keeps focus; a loading button keeps its colors under the spinner. */
+  .bt-button:is(
+    :disabled,
+    [data-disabled],
+    [aria-disabled="true"]:not([data-loading])
+  ) {
     cursor: default;
   }
 
-  .bt-button[data-variant="primary"]:is(:disabled, [data-disabled]) {
+  .bt-button[data-variant="primary"]:is(
+      :disabled,
+      [data-disabled],
+      [aria-disabled="true"]:not([data-loading])
+    ) {
     --bt-button-bg: var(--bt-primary-disabled);
   }
 
-  .bt-button[data-variant="secondary"]:is(:disabled, [data-disabled]) {
+  .bt-button[data-variant="secondary"]:is(
+      :disabled,
+      [data-disabled],
+      [aria-disabled="true"]:not([data-loading])
+    ) {
     --bt-button-fg: var(--bt-text-disabled);
   }
 
-  .bt-button[data-variant="soft"]:is(:disabled, [data-disabled]) {
+  .bt-button[data-variant="soft"]:is(
+      :disabled,
+      [data-disabled],
+      [aria-disabled="true"]:not([data-loading])
+    ) {
     --bt-button-bg: var(--bt-bg-control-subtle);
     --bt-button-fg: var(--bt-text-disabled);
   }
 
-  .bt-button[data-variant="ghost"]:is(:disabled, [data-disabled]) {
+  .bt-button[data-variant="ghost"]:is(
+      :disabled,
+      [data-disabled],
+      [aria-disabled="true"]:not([data-loading])
+    ) {
     --bt-button-fg: var(--bt-icon-disabled);
   }
 
