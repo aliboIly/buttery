@@ -64,7 +64,8 @@ export interface ButteryRecipe {
   readonly enter?: "fade" | "rise" | "pop" | "stagger" | undefined;
   /**
    * Animates its own position and size changes with `spring.smooth`, through Motion's layout animation.
-   * With reduced motion it simply moves.
+   * With reduced motion it simply moves. Switch it with `layout={!dragging}` rather than adding and
+   * removing the prop, so the element keeps its state.
    */
   readonly layout?: boolean | undefined;
   /**
@@ -95,7 +96,7 @@ interface ButteryRenderProps extends ButteryRecipe {
   readonly ref?: Ref<Element> | undefined;
 }
 
-function useButtery(
+function useButteryElement(
   Base: ElementType,
   MotionBase: ElementType,
   name: string,
@@ -113,7 +114,7 @@ function useButtery(
     focus = false,
     hover,
     enter,
-    layout = false,
+    layout,
     layoutDependency,
     truncate = false,
     className,
@@ -129,6 +130,8 @@ function useButtery(
   const element = useRef<Element>(null);
   const merged = useMergedRefs(ref, element);
 
+  const laidOut = stack || inline || grid !== undefined;
+
   useLayoutEffect(() => {
     if (!isDevelopment || !press || !element.current) return;
     if (isPressableElement(element.current)) return;
@@ -138,18 +141,26 @@ function useButtery(
     );
   }, [press]);
 
+  useLayoutEffect(() => {
+    if (gap === undefined || laidOut) return;
+    warnOnce(
+      "buttery",
+      `gap={${String(gap)}} on ${name} does nothing without a layout. Fix: add stack for a column, inline for a row or grid={columns}.`,
+    );
+  }, [gap, laidOut, name]);
+
   const arrival =
     enter === undefined || enter === "stagger"
       ? null
       : reduced
         ? reducedPresence
         : presencePresets[enter];
-  const laidOut = stack || inline || grid !== undefined;
   const own: Record<string, unknown> = {
     ...(Base === "button" ? { type: "button" } : {}),
     ...rest,
     ref: merged,
     className: cx(
+      Base === "button" && "bt-pressable",
       press && "bt-press",
       focus && "bt-focus",
       hover && `bt-hover-${hover}`,
@@ -166,15 +177,17 @@ function useButtery(
       : {}),
   };
 
+  // A Motion element whenever enter or layout is set at all, so turning layout off and on keeps the
+  // element (and its children's state) instead of swapping in a plain one.
   let node =
-    arrival || layout
+    enter !== undefined || layout !== undefined
       ? createElement(
           MotionBase,
           {
             ...own,
             ...tracking,
-            layout: layout && layoutAnimation.layout,
-            ...(layout && layoutDependency !== undefined
+            layout: layout === true && layoutAnimation.layout,
+            ...(layout === true && layoutDependency !== undefined
               ? { layoutDependency }
               : {}),
             transition: layoutAnimation.transition,
@@ -233,7 +246,7 @@ function intrinsic<Tag extends keyof JSX.IntrinsicElements>(
   const MotionTag = motion.create(tag);
   const name = `buttery.${tag}`;
   return function ButteryIntrinsic(props) {
-    return useButtery(tag, MotionTag, name, props);
+    return useButteryElement(tag, MotionTag, name, props);
   };
 }
 
@@ -274,7 +287,9 @@ function wrap<Props extends object>(
   const MotionComponent = motion.create(component);
   const name = `buttery(${component.displayName ?? component.name})`;
   return function ButteryComponent(props) {
-    return useButtery(component, MotionComponent, name, {
+    // Props is generic, so TypeScript can't see that it carries className, title and children; the factory
+    // only reads those, and passes everything else on untouched.
+    return useButteryElement(component, MotionComponent, name, {
       ...recipe,
       ...(props as ButteryRenderProps),
     });
@@ -285,8 +300,8 @@ function wrap<Props extends object>(
  * Makes any element or component buttery: token-typed props for surfaces, spacing, layout, press, focus
  * and hover feedback, and motion on arrival or on layout change. `buttery.div`, `buttery.section` and the
  * other elements take the recipe as props; `buttery(Component, recipe)` wraps your own or a third-party
- * component, with the recipe as defaults. The component has to pass `ref`, `className` and `style` to its
- * element.
+ * component, with the recipe as defaults. The component has to pass `ref`, `className`, `style` and its
+ * other props to its element: surfaces and spacing arrive as `data-*` attributes.
  *
  * @example
  * <buttery.section surface="card" pad={4} stack gap={3} enter="rise">…</buttery.section>

@@ -10,7 +10,7 @@
   }
 
   /* Links are inline, which the press scale doesn't apply to and a surface can't size. */
-  a.bt-pressable {
+  a:is(.bt-pressable, .bt-press) {
     display: inline-block;
     color: inherit;
     text-decoration: none;

@@ -108,7 +108,7 @@ describe("buttery", () => {
     );
     const button = screen.getByRole("button", { name: "Export" });
     expect(button.getAttribute("type")).toBe("button");
-    expect(button.className).toBe("bt-press bt-focus");
+    expect(button.className).toBe("bt-pressable bt-press bt-focus");
     expect(warn).toHaveBeenCalledOnce();
     expect(warn).toHaveBeenCalledWith(
       expect.stringContaining(
@@ -172,6 +172,64 @@ describe("buttery", () => {
       expect(getComputedStyle(card).translate).not.toBe("none");
       expect(box.top).toBeLessThan(resting);
     });
+  });
+
+  it("drops the browser's button look from buttery.button", () => {
+    render(
+      <buttery.button surface="raised" padX={4} padY={2}>
+        Save the card
+      </buttery.button>,
+    );
+    const style = getComputedStyle(
+      screen.getByRole("button", { name: "Save the card" }),
+    );
+    expect(style.borderTopWidth).toBe("0px");
+    expect(style.fontFamily).toBe(getComputedStyle(document.body).fontFamily);
+  });
+
+  it("presses a link like a button, without the underline", () => {
+    render(
+      <buttery.a href="#/surface" surface="card" pad={4} press focus>
+        Spring launch
+      </buttery.a>,
+    );
+    const style = getComputedStyle(
+      screen.getByRole("link", { name: "Spring launch" }),
+    );
+    expect(style.textDecorationLine).toBe("none");
+    expect(style.display).toBe("inline-block");
+  });
+
+  it("keeps its element, and what's inside, when layout turns off and on", () => {
+    const { rerender } = render(
+      <buttery.div layout data-testid="box">
+        <input aria-label="Title" />
+      </buttery.div>,
+    );
+    const box = screen.getByTestId("box");
+    const field = screen.getByRole("textbox", { name: "Title" });
+    rerender(
+      <buttery.div layout={false} data-testid="box">
+        <input aria-label="Title" />
+      </buttery.div>,
+    );
+    expect(screen.getByTestId("box")).toBe(box);
+    expect(screen.getByRole("textbox", { name: "Title" })).toBe(field);
+  });
+
+  it("says how to fix a gap with no layout to space", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <buttery.div gap={3}>
+        <span>One</span>
+        <span>Two</span>
+      </buttery.div>,
+    );
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "[buttery:buttery] gap={3} on buttery.div does nothing without a layout. Fix: add stack",
+      ),
+    );
   });
 
   it("brings its children in one after another with enter=stagger", async () => {
