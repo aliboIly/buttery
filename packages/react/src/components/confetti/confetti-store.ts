@@ -26,6 +26,7 @@ export interface Burst {
 
 /** A mounted `Confetti` host and whether it plays bursts. */
 export interface ConfettiHost {
+  /** Whether motion is reduced where the host is mounted, so it shows no bursts. */
   readonly reduced: boolean;
 }
 
