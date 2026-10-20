@@ -335,14 +335,6 @@ const TEXT_SURFACES: readonly ColorToken[] = [
   "bg-control-active",
 ];
 
-/** Where tone text sits: forms and callouts on the app, its surfaces and its controls. */
-const TONE_SURFACES: readonly ColorToken[] = [
-  "bg-app",
-  "bg-surface",
-  "bg-section",
-  "bg-control",
-];
-
 export const contrastPairs: readonly ContrastPair[] = [
   ...textOn("text-strong", TEXT_SURFACES),
   ...textOn("text", TEXT_SURFACES),
@@ -352,9 +344,9 @@ export const contrastPairs: readonly ContrastPair[] = [
   { text: "on-primary", on: "primary-hover", minimum: 4.5 },
   { text: "inverse-text", on: "inverse-bg", minimum: 4.5 },
   { text: "inverse-text-secondary", on: "inverse-bg", minimum: 4.5 },
-  ...textOn("danger", [...TONE_SURFACES, "danger-subtle"]),
-  ...textOn("success", [...TONE_SURFACES, "success-subtle"]),
-  ...textOn("warning", [...TONE_SURFACES, "warning-subtle"]),
+  ...textOn("danger", [...TEXT_SURFACES, "danger-subtle"]),
+  ...textOn("success", [...TEXT_SURFACES, "success-subtle"]),
+  ...textOn("warning", [...TEXT_SURFACES, "warning-subtle"]),
   ...textOn("text", [
     "accent-subtle",
     "danger-subtle",
@@ -368,7 +360,7 @@ export const contrastPairs: readonly ContrastPair[] = [
     "warning-subtle",
   ]),
   { text: "accent", on: "accent-subtle", minimum: 4.5 },
-  ...[...TONE_SURFACES, "bg-raised" as const].map((on): ContrastPair => ({
+  ...TEXT_SURFACES.map((on): ContrastPair => ({
     text: "control-border",
     on,
     minimum: 3,
