@@ -1,0 +1,17 @@
+[package]
+name = "app"
+version = "0.0.0"
+description = "Desktop shell for the buttery starter app"
+license = "MIT"
+edition = "2024"
+rust-version = "1.90"
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.3", features = [] }
+
+[dependencies]
+tauri = { version = "2.12.4", features = [] }
