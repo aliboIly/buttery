@@ -63,7 +63,7 @@
       var(--bt-ease-out);
   }
 
-  .bt-toast [data-bt-part="action"] {
+  .bt-toast > [data-bt-part="pill"] > [data-bt-part="action"] {
     --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
 
     flex: none;
@@ -82,7 +82,7 @@
   }
 
   @media (hover: hover) {
-    .bt-toast [data-bt-part="action"]:hover {
+    .bt-toast > [data-bt-part="pill"] > [data-bt-part="action"]:hover {
       color: var(--bt-inverse-text);
     }
   }
