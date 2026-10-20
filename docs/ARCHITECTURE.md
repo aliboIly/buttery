@@ -80,7 +80,8 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                FloatingLanes
 4. Components  Button, IconButton, SplitButton, SegmentedControl, Slider, ValueBadge, Chip,
                SwatchGrid, ColorDot, TiltPad, AnchorGrid, Menu, Select, NumberField,
-               Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti, BrandMark
+               Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti, BrandMark,
+               Field, TextField, PasswordField, TextArea, Checkbox, Switch, Callout
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,
                EmptyState/DropZone, FloatingToolbar, Onboarding (StepDialog),
                NavBar + MorphMenu, SubNav, Page/Section/Container, SplitHero, CenteredHero,

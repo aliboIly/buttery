@@ -1,0 +1,5 @@
+@layer bt.components {
+  .bt-field {
+    min-inline-size: 0;
+  }
+}

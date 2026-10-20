@@ -1,0 +1,89 @@
+import { cx } from "@buttery/core";
+import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import {
+  FormFieldCaption,
+  FormFieldError,
+  hasContent,
+  useFormFieldIds,
+} from "../../parts/form-field/FormFieldParts.tsx";
+
+/** What a field's control needs to be labelled and described: spread it onto the control. */
+export interface FieldControlProps {
+  /** Ties the label to the control. */
+  readonly id: string;
+  /** The hint and the error, while they show. */
+  readonly "aria-describedby": string | undefined;
+  /** Set while there's an error. */
+  readonly "aria-invalid": true | undefined;
+  /** Set when the control needs an answer. */
+  readonly "aria-required": true | undefined;
+}
+
+/** Props for `Field`. */
+export interface FieldProps extends Omit<
+  ComponentPropsWithRef<"div">,
+  "children"
+> {
+  /** What the control asks for, shown above it. */
+  readonly label: string;
+  /** A hint under the label, such as the format expected. */
+  readonly hint?: ReactNode;
+  /** What's wrong, shown under the control and read with it. Leave it out while nothing is. */
+  readonly error?: ReactNode;
+  /** Whether the control needs an answer; screen readers say so. */
+  readonly required?: boolean | undefined;
+  /** The control's id, when it needs a particular one. */
+  readonly controlId?: string | undefined;
+  /** Renders the control, given the props that label and describe it. */
+  readonly children: (control: FieldControlProps) => ReactNode;
+}
+
+/**
+ * A label, an optional hint and an error wired to a control you bring, for controls buttery doesn't wrap
+ * itself. `TextField`, `PasswordField` and `TextArea` already do this.
+ *
+ * @example
+ * <Field label="Card size" hint="In pixels" error={sizeError}>
+ *   {(control) => <input {...control} type="range" min={100} max={2000} />}
+ * </Field>
+ */
+export function Field({
+  label,
+  hint,
+  error,
+  required = false,
+  controlId,
+  className,
+  children,
+  ...rest
+}: FieldProps): ReactElement {
+  const invalid = hasContent(error);
+  const ids = useFormFieldIds({
+    id: controlId,
+    describedBy: undefined,
+    hint: hasContent(hint),
+    error: invalid,
+  });
+  return (
+    <div
+      {...rest}
+      className={cx("bt-field bt-form-field", className)}
+      data-bt="Field"
+      data-invalid={invalid ? "" : undefined}
+    >
+      <FormFieldCaption
+        htmlFor={ids.control}
+        label={label}
+        hint={hint}
+        hintId={ids.hint}
+      />
+      {children({
+        id: ids.control,
+        "aria-describedby": ids.describedBy,
+        "aria-invalid": invalid || undefined,
+        "aria-required": required || undefined,
+      })}
+      <FormFieldError id={ids.error}>{error}</FormFieldError>
+    </div>
+  );
+}

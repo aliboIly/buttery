@@ -1,0 +1,14 @@
+@layer bt.components {
+  .bt-text-area [data-bt-part="box"] {
+    align-items: stretch;
+    block-size: auto;
+    padding-inline-end: 0;
+  }
+
+  .bt-text-area [data-bt-part="input"] {
+    padding-block: var(--bt-space-2);
+    padding-inline-end: var(--bt-space-3);
+    line-height: var(--bt-text-body-line);
+    resize: none;
+  }
+}

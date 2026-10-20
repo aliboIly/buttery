@@ -289,6 +289,13 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 ### NumberField
 34h, 128w (`--bt-number-field-width`), r12, 1px `border-strong`, padding-x 12, tabular, stepper on hover/focus, optional scrub-to-change by dragging the label (one change per frame). The label names the input and is the scrub handle; the stepper sits outside it, so the input's name is the label alone. Typing edits a draft: Enter or leaving commits, Escape puts back the value; arrows step from what's typed, Shift = ×10. The stepper buttons stay out of the tab order, since the arrow keys do the same, and take no taps while hidden.
 
+### Form fields (Field, TextField, PasswordField, TextArea) (_derived_, Phase 4.5)
+- Layout, top to bottom, 8 apart: the label (`label` role, `text`), the hint 6 under it (`caption`), the box, the error (`caption` in `danger` with a 16px alert icon, so it doesn't rest on color). The hint and the error describe the control (`aria-describedby`, after any description of the caller's own); an error sets `aria-invalid` and turns the box's border `danger`.
+- Box: `bg-surface`, 1px `border-strong`, r12, the input filling it with 12px of padding (16 at `lg`), so a press anywhere in it lands in the input; icons sit over that padding and let presses through. Focus shows the accent ring on the box. `md` is 34 (`h-control`) with `body` text; `lg` is 48 (`h-cta`) with 16px text, for sign-in pages, so phones don't zoom in on focus. Disabled: `bg-control-subtle`, text `text-disabled`.
+- PasswordField: a `sm` IconButton (eye) at the end of the box, a toggle named "Show password" with `aria-pressed`; it fills in a saved password unless `autoComplete="new-password"`; requirements list under it, 6 apart, a tick in `success` named "Met" for each one met.
+- TextArea: grows from `rows` (3) to `maxRows` (8) lines by measuring its text, never animating its height, then scrolls inside itself with faded edges.
+- Field: the same label, hint and error for a control you bring, through a render prop that hands it `id`, `aria-describedby`, `aria-invalid` and `aria-required`.
+
 ### Tooltip
 `inverse-bg` pill, `inverse-text` 12/500, padding 4×8, r8, 500ms open delay, no arrow. Content-sized (not height-checked). Opens at once on keyboard focus, closes on Escape, renders in the tooltip band above dialogs. The root `ButteryProvider` hosts one provider for all tooltips, so moving between them skips the delay.
 

@@ -2,6 +2,7 @@
 
 @import "./parts/arrow/arrow.css";
 @import "./parts/spinner/spinner.css";
+@import "./parts/form-field/form-field.css";
 @import "./components/confetti/confetti.css";
 @import "./components/button/button.css";
 @import "./components/arrow-link/arrow-link.css";
@@ -14,3 +15,7 @@
 @import "./components/slider/slider.css";
 @import "./components/number-field/number-field.css";
 @import "./components/toaster/toaster.css";
+@import "./components/field/field.css";
+@import "./components/text-field/text-field.css";
+@import "./components/password-field/password-field.css";
+@import "./components/text-area/text-area.css";
