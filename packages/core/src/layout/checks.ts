@@ -179,7 +179,7 @@ export function createLayoutToolkit(): LayoutToolkit {
   }
 
   function layerOf(element: Element): Element | null {
-    return element.closest('[data-bt-layer], [data-bt="Sticky"]');
+    return element.closest("[data-bt-layer], .bt-sticky");
   }
 
   function componentOf(element: Element): Element | null {

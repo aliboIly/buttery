@@ -2,6 +2,7 @@ import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Surface } from "../surface/Surface.tsx";
 import { Stack } from "./Stack.tsx";
 
 afterEach(cleanup);
@@ -63,10 +64,29 @@ describe("Stack", () => {
       </>,
     );
     expect(ref.current?.getAttribute("aria-label")).toBe("Settings");
-    expect(ref.current?.className).toBe("custom");
+    expect(ref.current?.className).toBe("bt-stack custom");
     const list = screen.getByTestId("list");
     expect(list.tagName).toBe("UL");
     expect(list.dataset["bt"]).toBe("Stack");
     expect(getComputedStyle(list).rowGap).toBe("8px");
+  });
+
+  it("keeps its layout when composed onto another primitive", () => {
+    render(
+      <Stack asChild gap={3}>
+        <Surface level="card" pad={4} data-testid="card">
+          <span>Title</span>
+          <span>Body</span>
+        </Surface>
+      </Stack>,
+    );
+    const card = screen.getByTestId("card");
+    const style = getComputedStyle(card);
+    expect(card.dataset["bt"]).toBe("Surface");
+    expect(style.display).toBe("flex");
+    expect(style.flexDirection).toBe("column");
+    expect(style.rowGap).toBe("12px");
+    expect(style.paddingTop).toBe("16px");
+    expect(style.borderTopLeftRadius).toBe("12px");
   });
 });

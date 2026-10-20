@@ -1,4 +1,5 @@
 import type { ComponentType, ReactElement, Ref, SVGProps } from "react";
+import { cx } from "../../utils/cx.ts";
 
 /** Props `Icon` passes to the icon component. lucide-react icons accept them, as does any component that renders an `svg`. */
 export type IconComponentProps = SVGProps<SVGSVGElement>;
@@ -27,6 +28,7 @@ export function Icon({
   icon: IconComponent,
   size = "sm",
   label,
+  className,
   ...rest
 }: IconProps): ReactElement {
   return (
@@ -35,6 +37,7 @@ export function Icon({
       {...(label === undefined
         ? { "aria-hidden": true }
         : { role: "img", "aria-label": label })}
+      className={cx("bt-icon", className)}
       data-bt="Icon"
       data-size={size}
     />

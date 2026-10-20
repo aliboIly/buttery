@@ -1,6 +1,7 @@
 import { Slot } from "radix-ui";
 import { useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
+import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 import { joinStickyStack } from "./sticky-stack.ts";
 import type { StickyEdge, StickyVariant } from "./sticky-stack.ts";
@@ -37,6 +38,7 @@ export function Sticky({
   variant = "bar",
   asChild = false,
   ref,
+  className,
   ...rest
 }: StickyProps): ReactElement {
   const element = useRef<HTMLDivElement>(null);
@@ -52,6 +54,7 @@ export function Sticky({
     <Root
       {...rest}
       ref={merged}
+      className={cx("bt-sticky", className)}
       data-bt="Sticky"
       data-edge={edge}
       data-variant={variant}

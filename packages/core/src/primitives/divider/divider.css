@@ -1,18 +1,18 @@
 @layer bt.primitives {
-  [data-bt="Divider"] {
+  .bt-divider {
     flex: none;
     align-self: stretch;
   }
 
-  [data-bt="Divider"][data-orientation="horizontal"] {
+  .bt-divider[data-orientation="horizontal"] {
     border-block-start: 1px solid var(--bt-border);
   }
 
-  [data-bt="Divider"][data-orientation="vertical"] {
+  .bt-divider[data-orientation="vertical"] {
     border-inline-start: 1px solid var(--bt-border);
   }
 
-  [data-bt="Divider"][data-orientation="vertical"][data-length] {
+  .bt-divider[data-orientation="vertical"][data-length] {
     align-self: center;
     block-size: var(--bt-divider-length);
   }

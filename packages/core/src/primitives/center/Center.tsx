@@ -1,5 +1,6 @@
 import { Slot } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement } from "react";
+import { cx } from "../../utils/cx.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
 
@@ -22,12 +23,14 @@ export function Center({
   padX,
   padY,
   asChild = false,
+  className,
   ...rest
 }: CenterProps): ReactElement {
   const Root = asChild ? Slot.Root : "div";
   return (
     <Root
       {...rest}
+      className={cx("bt-center", className)}
       data-bt="Center"
       {...spacingAttributes({ pad, padX, padY })}
     />

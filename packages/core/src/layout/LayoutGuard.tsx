@@ -149,7 +149,7 @@ export function LayoutGuard({
   if (!visible && !showGrid) return null;
   return (
     <Layer band="dev">
-      <div data-bt="LayoutGuard" aria-hidden="true">
+      <div className="bt-layout-guard" data-bt="LayoutGuard" aria-hidden="true">
         {showGrid ? (
           <div data-bt-part="grid">
             {Array.from({ length: 12 }, (_, index) => (

@@ -22,7 +22,7 @@ export function Pressable({
   type,
   ...rest
 }: PressableProps): ReactElement {
-  const classes = cx("bt-press bt-focus", className);
+  const classes = cx("bt-pressable bt-press bt-focus", className);
   if (asChild)
     return <Slot.Root {...rest} className={classes} data-bt="Pressable" />;
   return (

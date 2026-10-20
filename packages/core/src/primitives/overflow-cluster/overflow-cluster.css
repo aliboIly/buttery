@@ -1,25 +1,25 @@
 @layer bt.primitives {
-  [data-bt="OverflowCluster"] {
+  .bt-overflow-cluster {
     display: flex;
     flex: 1 1 0;
     align-items: center;
     min-inline-size: 0;
   }
 
-  [data-bt="OverflowCluster"][data-justify="end"] {
+  .bt-overflow-cluster[data-justify="end"] {
     justify-content: flex-end;
   }
 
-  [data-bt="OverflowCluster"] > [data-bt-part="item"] {
+  .bt-overflow-cluster > [data-bt-part="item"] {
     display: flex;
     flex: none;
   }
 
-  [data-bt="OverflowCluster"] > [data-bt-part="item"][hidden] {
+  .bt-overflow-cluster > [data-bt-part="item"][hidden] {
     display: none;
   }
 
-  [data-bt="OverflowCluster"] > [data-bt-part="more"] {
+  .bt-overflow-cluster > [data-bt-part="more"] {
     display: inline-flex;
     flex: none;
     align-items: center;
@@ -36,13 +36,13 @@
       color var(--bt-dur-fast) var(--bt-ease-standard);
   }
 
-  [data-bt="OverflowCluster"] > [data-bt-part="more"]:hover,
-  [data-bt="OverflowCluster"] > [data-bt-part="more"][data-state="open"] {
+  .bt-overflow-cluster > [data-bt-part="more"]:hover,
+  .bt-overflow-cluster > [data-bt-part="more"][data-state="open"] {
     background-color: var(--bt-bg-control);
     color: var(--bt-text);
   }
 
-  [data-bt-part="menu"] {
+  .bt-overflow-cluster-menu {
     display: flex;
     flex-direction: column;
     min-inline-size: var(--bt-w-menu-min);
@@ -52,11 +52,11 @@
     overscroll-behavior: contain;
   }
 
-  [data-bt-part="menu"]:focus {
+  .bt-overflow-cluster-menu:focus {
     outline: none;
   }
 
-  [data-bt-part="menu-item"] {
+  .bt-overflow-cluster-menu > [data-bt-part="menu-item"] {
     display: flex;
     align-items: center;
     gap: var(--bt-space-1_5);
@@ -68,11 +68,11 @@
     outline: none;
   }
 
-  [data-bt-part="menu-item"][data-highlighted] {
+  .bt-overflow-cluster-menu > [data-bt-part="menu-item"][data-highlighted] {
     background-color: var(--bt-bg-item-hover);
   }
 
-  [data-bt-part="menu-item"][data-disabled] {
+  .bt-overflow-cluster-menu > [data-bt-part="menu-item"][data-disabled] {
     color: var(--bt-text-disabled);
   }
 }

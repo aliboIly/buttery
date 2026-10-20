@@ -62,6 +62,31 @@ describe("component contract", () => {
         );
       });
 
+      it("styles itself through its bt- class", () => {
+        const className = `bt-${kebabCase(name)}`;
+        const css = readdirSync(folder)
+          .filter((file) => file.endsWith(".css"))
+          .map((file) => read(file))
+          .join("\n");
+        expect(
+          css,
+          `${name}'s CSS: select .${className} instead of [data-bt="…"], so components composed with asChild keep both sets of styles`,
+        ).not.toMatch(/\[data-bt="/);
+        if (!css.includes(`.${className}`)) return;
+        const sources = readdirSync(folder)
+          .filter(
+            (file) =>
+              /\.tsx?$/.test(file) &&
+              !/\.(test|meta|playground)\.tsx?$/.test(file),
+          )
+          .map((file) => read(file))
+          .join("\n");
+        expect(
+          sources,
+          `${name} must add the ${className} class to its root element, merged with className`,
+        ).toMatch(new RegExp(`["\\s]${className}["\\s]`));
+      });
+
       it("ships tests, a playground page and at least two examples", () => {
         expect(
           existsSync(join(folder, `${name}.test.tsx`)),

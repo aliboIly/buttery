@@ -101,7 +101,7 @@ function Lanes(): ReactElement {
     [layer],
   );
   return (
-    <div data-bt="FloatingLanes">
+    <div className="bt-floating-lanes" data-bt="FloatingLanes">
       {laneNames.map((name) => (
         <div
           key={name}

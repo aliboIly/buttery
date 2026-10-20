@@ -1,6 +1,7 @@
 import { Slot } from "radix-ui";
 import type { ComponentPropsWithRef, CSSProperties, ReactElement } from "react";
 import type { CssVariables } from "../../theme/create-theme.ts";
+import { cx } from "../../utils/cx.ts";
 import type { FlowAlign } from "../flow.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
@@ -36,6 +37,7 @@ export function Grid({
   padY,
   align,
   asChild = false,
+  className,
   style,
   ...rest
 }: GridProps): ReactElement {
@@ -47,6 +49,7 @@ export function Grid({
   return (
     <Root
       {...rest}
+      className={cx("bt-grid", className)}
       style={merged}
       data-bt="Grid"
       data-align={align}

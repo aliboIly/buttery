@@ -1,5 +1,5 @@
 @layer bt.primitives {
-  [data-bt="FitBox"] {
+  .bt-fit-box {
     display: grid;
     place-items: center;
     inline-size: 100%;
@@ -9,13 +9,13 @@
     container-type: size;
   }
 
-  [data-bt="FitBox"] > [data-bt-part="content"] {
+  .bt-fit-box > [data-bt-part="content"] {
     display: grid;
     inline-size: min(100cqi, 100cqb * var(--bt-fitbox-ratio));
     aspect-ratio: var(--bt-fitbox-ratio);
   }
 
-  [data-bt="FitBox"] > [data-bt-part="content"] > * {
+  .bt-fit-box > [data-bt-part="content"] > * {
     min-inline-size: 0;
     min-block-size: 0;
   }

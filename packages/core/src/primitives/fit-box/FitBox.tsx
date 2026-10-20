@@ -6,6 +6,7 @@ import type {
 } from "react";
 import type { CssVariables } from "../../theme/create-theme.ts";
 import type { SpaceValue } from "../../tokens/space.ts";
+import { cx } from "../../utils/cx.ts";
 import { spacingAttributes } from "../spacing.ts";
 
 export interface FitBoxProps extends ComponentPropsWithRef<"div"> {
@@ -33,6 +34,7 @@ export function FitBox({
   inset,
   contentProps,
   children,
+  className,
   style,
   ...rest
 }: FitBoxProps): ReactElement {
@@ -48,6 +50,7 @@ export function FitBox({
   return (
     <div
       {...rest}
+      className={cx("bt-fit-box", className)}
       style={merged}
       data-bt="FitBox"
       {...spacingAttributes({ pad: inset })}

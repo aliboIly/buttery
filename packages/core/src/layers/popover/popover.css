@@ -1,5 +1,5 @@
 @layer bt.primitives {
-  [data-bt="Popover"] {
+  .bt-popover {
     max-inline-size: var(--radix-popover-content-available-width);
     max-block-size: var(--radix-popover-content-available-height);
     overflow-y: auto;
@@ -7,7 +7,7 @@
     transform-origin: var(--radix-popover-content-transform-origin);
   }
 
-  [data-bt="Popover"]:focus {
+  .bt-popover:focus {
     outline: none;
   }
 }

@@ -1,5 +1,5 @@
-@layer bt.primitives {
-  button[data-bt="Pressable"] {
+@layer bt.reset {
+  button.bt-pressable {
     appearance: none;
     padding: 0;
     border: 0;
@@ -8,8 +8,10 @@
     font: inherit;
     text-align: inherit;
   }
+}
 
-  [data-bt="Pressable"]:disabled {
+@layer bt.primitives {
+  .bt-pressable:disabled {
     cursor: default;
   }
 }

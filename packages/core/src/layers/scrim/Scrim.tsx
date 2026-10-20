@@ -1,4 +1,5 @@
 import type { ComponentPropsWithRef, ReactElement } from "react";
+import { cx } from "../../utils/cx.ts";
 
 export interface ScrimProps extends Omit<
   ComponentPropsWithRef<"div">,
@@ -22,8 +23,18 @@ export interface ScrimProps extends Omit<
  *   <Surface level="dialog">…</Surface>
  * </Layer>
  */
-export function Scrim({ variant = "dim", ...rest }: ScrimProps): ReactElement {
+export function Scrim({
+  variant = "dim",
+  className,
+  ...rest
+}: ScrimProps): ReactElement {
   return (
-    <div aria-hidden="true" {...rest} data-bt="Scrim" data-variant={variant} />
+    <div
+      aria-hidden="true"
+      {...rest}
+      className={cx("bt-scrim", className)}
+      data-bt="Scrim"
+      data-variant={variant}
+    />
   );
 }

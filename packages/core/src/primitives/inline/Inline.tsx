@@ -1,5 +1,6 @@
 import { Slot } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement } from "react";
+import { cx } from "../../utils/cx.ts";
 import type { FlowAlign, FlowJustify } from "../flow.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
@@ -40,12 +41,14 @@ export function Inline({
   uniform = false,
   wrap = false,
   asChild = false,
+  className,
   ...rest
 }: InlineProps): ReactElement {
   const Root = asChild ? Slot.Root : "div";
   return (
     <Root
       {...rest}
+      className={cx("bt-inline", className)}
       data-bt="Inline"
       data-align={align}
       data-justify={justify}

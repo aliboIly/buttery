@@ -17,6 +17,7 @@ import type {
 import { flushSync } from "react-dom";
 import { Layer } from "../../layers/layer/Layer.tsx";
 import { space } from "../../tokens/space.ts";
+import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 import { Icon } from "../icon/Icon.tsx";
 import type { IconComponentProps } from "../icon/Icon.tsx";
@@ -61,6 +62,7 @@ function OverflowClusterRoot({
   moreLabel = "More",
   justify = "start",
   ref,
+  className,
   children,
   ...rest
 }: OverflowClusterProps): ReactElement {
@@ -111,6 +113,7 @@ function OverflowClusterRoot({
         <div
           {...rest}
           ref={merged}
+          className={cx("bt-overflow-cluster", className)}
           data-bt="OverflowCluster"
           data-justify={justify}
           {...spacingAttributes({ gap })}
@@ -131,7 +134,7 @@ function OverflowClusterRoot({
                     align="end"
                     sideOffset={space["2"]}
                     collisionPadding={space["2"]}
-                    className="bt-surface"
+                    className="bt-surface bt-overflow-cluster-menu"
                     data-level="floating"
                     data-bt-part="menu"
                   >

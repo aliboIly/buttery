@@ -44,7 +44,7 @@ describe("Pressable", () => {
       </Pressable>,
     );
     const link = screen.getByRole("link", { name: "Card" });
-    expect(link.className).toBe("bt-press bt-focus custom");
+    expect(link.className).toBe("bt-pressable bt-press bt-focus custom");
     expect(link.dataset["bt"]).toBe("Pressable");
   });
 });

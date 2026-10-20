@@ -1,11 +1,11 @@
 @layer bt.primitives {
-  [data-bt="Center"] {
+  .bt-center {
     display: grid;
     place-items: center;
     min-inline-size: 0;
   }
 
-  [data-bt="Center"] > * {
+  .bt-center > * {
     min-inline-size: 0;
     max-inline-size: 100%;
   }

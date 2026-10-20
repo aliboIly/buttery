@@ -106,7 +106,7 @@ export function PopoverContent({
         sideOffset={space["2"]}
         collisionPadding={space["2"]}
         avoidCollisions
-        className={cx("bt-surface", className)}
+        className={cx("bt-surface bt-popover", className)}
         data-level="floating"
         data-bt="Popover"
       />

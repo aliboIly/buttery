@@ -2,6 +2,7 @@ import type { ComponentPropsWithRef, CSSProperties, ReactElement } from "react";
 import { spaceStep, spaceVar } from "../../tokens/space.ts";
 import type { SpaceValue } from "../../tokens/space.ts";
 import type { CssVariables } from "../../theme/create-theme.ts";
+import { cx } from "../../utils/cx.ts";
 
 export interface DividerProps extends Omit<
   ComponentPropsWithRef<"div">,
@@ -35,6 +36,7 @@ export function Divider({
   orientation = "horizontal",
   length,
   decorative = false,
+  className,
   style,
   ...rest
 }: DividerProps): ReactElement {
@@ -51,6 +53,7 @@ export function Divider({
         ? { role: "none" }
         : { role: "separator", "aria-orientation": orientation })}
       {...rest}
+      className={cx("bt-divider", className)}
       style={merged}
       data-bt="Divider"
       data-orientation={orientation}

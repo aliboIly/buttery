@@ -1,17 +1,17 @@
 @layer bt.primitives {
-  [data-bt-layer] > [data-bt="LayoutGuard"] {
+  [data-bt-layer] > .bt-layout-guard {
     position: relative;
     block-size: 100%;
     pointer-events: none;
     container-type: inline-size;
   }
 
-  [data-bt="LayoutGuard"] > [data-bt-part="mark"] {
+  .bt-layout-guard > [data-bt-part="mark"] {
     position: absolute;
     outline: 2px solid var(--bt-traffic-red);
   }
 
-  [data-bt="LayoutGuard"] [data-bt-part="label"] {
+  .bt-layout-guard [data-bt-part="label"] {
     position: absolute;
     inset-block-end: 100%;
     inset-inline-start: 0;
@@ -28,7 +28,7 @@
     text-overflow: ellipsis;
   }
 
-  [data-bt="LayoutGuard"] > [data-bt-part="grid"] {
+  .bt-layout-guard > [data-bt-part="grid"] {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--bt-space-4);
@@ -38,12 +38,12 @@
     padding-inline: var(--bt-space-4);
   }
 
-  [data-bt="LayoutGuard"] [data-bt-part="column"] {
+  .bt-layout-guard [data-bt-part="column"] {
     background-color: color-mix(in srgb, var(--bt-accent) 8%, transparent);
   }
 
   @container (width >= 640px) {
-    [data-bt="LayoutGuard"] > [data-bt-part="grid"] {
+    .bt-layout-guard > [data-bt-part="grid"] {
       grid-template-columns: repeat(8, minmax(0, 1fr));
       gap: var(--bt-space-6);
       padding-inline: var(--bt-space-6);
@@ -51,7 +51,7 @@
   }
 
   @container (width >= 1024px) {
-    [data-bt="LayoutGuard"] > [data-bt-part="grid"] {
+    .bt-layout-guard > [data-bt-part="grid"] {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       padding-inline: var(--bt-space-8);
     }

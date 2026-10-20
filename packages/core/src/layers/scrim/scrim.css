@@ -1,14 +1,14 @@
 @layer bt.primitives {
-  [data-bt="Scrim"] {
+  .bt-scrim {
     position: absolute;
     inset: 0;
   }
 
-  [data-bt="Scrim"][data-variant="dim"] {
+  .bt-scrim[data-variant="dim"] {
     background-color: var(--bt-overlay);
   }
 
-  [data-bt="Scrim"][data-variant="blur"] {
+  .bt-scrim[data-variant="blur"] {
     background-color: var(--bt-wash);
     backdrop-filter: blur(var(--bt-blur-scrim));
   }

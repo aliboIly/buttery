@@ -1,5 +1,6 @@
 import { Slot } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement } from "react";
+import { cx } from "../../utils/cx.ts";
 import type { FlowAlign, FlowJustify } from "../flow.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
@@ -31,12 +32,14 @@ export function Stack({
   align,
   justify,
   asChild = false,
+  className,
   ...rest
 }: StackProps): ReactElement {
   const Root = asChild ? Slot.Root : "div";
   return (
     <Root
       {...rest}
+      className={cx("bt-stack", className)}
       data-bt="Stack"
       data-align={align}
       data-justify={justify}

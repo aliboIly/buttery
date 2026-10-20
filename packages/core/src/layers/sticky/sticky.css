@@ -1,14 +1,14 @@
 @layer bt.primitives {
-  [data-bt="Sticky"] {
+  .bt-sticky {
     position: sticky;
     z-index: var(--bt-z-sticky);
   }
 
-  [data-bt="Sticky"][data-edge="top"] {
+  .bt-sticky[data-edge="top"] {
     inset-block-start: var(--bt-sticky-offset, 0);
   }
 
-  [data-bt="Sticky"][data-edge="bottom"] {
+  .bt-sticky[data-edge="bottom"] {
     inset-block-end: var(--bt-sticky-offset, 0);
   }
 }
