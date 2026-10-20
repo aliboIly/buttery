@@ -1,0 +1,70 @@
+@layer bt.components {
+  .bt-tilt-pad {
+    --bt-tilt-pad-size: 32px;
+    --bt-tilt-pad-knob: 24px;
+    --bt-tilt-pad-line: 1px;
+    --bt-tilt-pad-arc: 2px;
+    --bt-tilt-pad-travel: calc(
+      (var(--bt-tilt-pad-size) - var(--bt-tilt-pad-knob)) / 2
+    );
+
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-tilt-pad-size);
+    block-size: var(--bt-tilt-pad-size);
+    border: var(--bt-tilt-pad-line) solid var(--bt-border-strong);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-inset);
+    touch-action: none;
+    user-select: none;
+  }
+
+  .bt-tilt-pad:has(> input:focus-visible) {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-tilt-pad[data-disabled] {
+    opacity: 0.4;
+  }
+
+  /* The knob moves by the x and y Motion animates; the arc's angle and strength follow from them. */
+  .bt-tilt-pad > [data-bt-part="knob"] {
+    --bt-tilt-pad-x: 0;
+    --bt-tilt-pad-y: 0;
+
+    position: relative;
+    inline-size: var(--bt-tilt-pad-knob);
+    block-size: var(--bt-tilt-pad-knob);
+    border: var(--bt-tilt-pad-line) solid var(--bt-knob-border);
+    border-radius: var(--bt-r-full);
+    background: radial-gradient(
+      circle at 50% 35%,
+      var(--bt-knob-center),
+      var(--bt-knob-edge)
+    );
+    box-shadow: var(--bt-shadow-knob);
+    translate: calc(var(--bt-tilt-pad-x) * var(--bt-tilt-pad-travel))
+      calc(var(--bt-tilt-pad-y) * var(--bt-tilt-pad-travel));
+  }
+
+  /* A 50° slice of a ring over the knob's edge, facing the tilt, drawn without a transform so it stays inside the knob. */
+  .bt-tilt-pad > [data-bt-part="knob"] > [data-bt-part="arc"] {
+    position: absolute;
+    inset: calc(-1 * var(--bt-tilt-pad-line));
+    border-radius: var(--bt-r-full);
+    background: conic-gradient(
+      from calc(atan2(var(--bt-tilt-pad-y), var(--bt-tilt-pad-x)) + 65deg),
+      var(--bt-accent) 0deg 50deg,
+      transparent 50deg
+    );
+    mask: radial-gradient(
+      closest-side,
+      transparent calc(100% - var(--bt-tilt-pad-arc)),
+      var(--bt-accent) calc(100% - var(--bt-tilt-pad-arc))
+    );
+    opacity: min(1, hypot(var(--bt-tilt-pad-x), var(--bt-tilt-pad-y)));
+  }
+}
