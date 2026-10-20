@@ -1,11 +1,10 @@
-import { cx, useControllableState } from "@buttery/core";
+import { cx, hasContent, useControllableState } from "@buttery/core";
 import { useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { useMergedRefs } from "@buttery/core";
 import {
   FormFieldCaption,
   FormFieldError,
-  hasContent,
   useFormFieldIds,
 } from "../../parts/form-field/FormFieldParts.tsx";
 
@@ -30,6 +29,11 @@ export interface TextAreaProps extends Omit<
   readonly rows?: number | undefined;
   /** The most lines it grows to before it scrolls. Defaults to 8. */
   readonly maxRows?: number | undefined;
+  /**
+   * Whether a new error is read out as it appears. Defaults to `true`; turn it off when an error summary
+   * that takes focus reads the errors instead.
+   */
+  readonly announceError?: boolean | undefined;
 }
 
 /**
@@ -49,6 +53,7 @@ export function TextArea({
   onChange,
   rows = 3,
   maxRows = 8,
+  announceError = true,
   id,
   className,
   style,
@@ -119,7 +124,9 @@ export function TextArea({
           data-bt-part="input"
         />
       </div>
-      <FormFieldError id={ids.error}>{error}</FormFieldError>
+      <FormFieldError id={ids.error} announce={announceError}>
+        {error}
+      </FormFieldError>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import {
   cx,
+  hasContent,
   useAnimationTracking,
   useControllableState,
   useLayoutAnimation,
@@ -7,10 +8,7 @@ import {
 import { motion } from "motion/react";
 import { Switch as RadixSwitch } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
-import {
-  hasContent,
-  useFormFieldIds,
-} from "../../parts/form-field/FormFieldParts.tsx";
+import { useFormFieldIds } from "../../parts/form-field/FormFieldParts.tsx";
 
 /** Props for `Switch`. `ref` and other button props go to the switch; `className` and `style` to the field. */
 export interface SwitchProps extends Omit<

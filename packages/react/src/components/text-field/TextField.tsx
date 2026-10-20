@@ -1,4 +1,4 @@
-import { Icon, cx, useControllableState } from "@buttery/core";
+import { Icon, cx, hasContent, useControllableState } from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
 import type {
   ComponentPropsWithRef,
@@ -9,7 +9,6 @@ import type {
 import {
   FormFieldCaption,
   FormFieldError,
-  hasContent,
   useFormFieldIds,
 } from "../../parts/form-field/FormFieldParts.tsx";
 
@@ -39,6 +38,11 @@ export interface TextFieldProps extends Omit<
   readonly iconStart?: ComponentType<IconComponentProps> | undefined;
   /** An icon at the end of the box. Decorative. */
   readonly iconEnd?: ComponentType<IconComponentProps> | undefined;
+  /**
+   * Whether a new error is read out as it appears. Defaults to `true`; turn it off when an error summary
+   * that takes focus reads the errors instead.
+   */
+  readonly announceError?: boolean | undefined;
 }
 
 /** Props for the field `TextField` and `PasswordField` both draw. */
@@ -72,6 +76,7 @@ export function TextFieldShell({
   size = "md",
   iconStart,
   iconEnd,
+  announceError = true,
   id,
   className,
   style,
@@ -133,9 +138,11 @@ export function TextFieldShell({
             <Icon icon={iconEnd} />
           </span>
         ) : null}
-        {end}
+        {end === undefined ? null : <span data-bt-part="end">{end}</span>}
       </div>
-      <FormFieldError id={ids.error}>{error}</FormFieldError>
+      <FormFieldError id={ids.error} announce={announceError}>
+        {error}
+      </FormFieldError>
       {after}
     </div>
   );

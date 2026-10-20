@@ -1,5 +1,6 @@
-import { Icon } from "@buttery/core";
+import { Icon, hasContent } from "@buttery/core";
 import { CircleAlert } from "lucide-react";
+import { VisuallyHidden } from "radix-ui";
 import { useId } from "react";
 import type { ReactElement, ReactNode } from "react";
 
@@ -7,6 +8,8 @@ import type { ReactElement, ReactNode } from "react";
 export interface FormFieldIds {
   /** The control's id, for the label's `htmlFor`. */
   readonly control: string;
+  /** The label's id, for controls a `<label>` can't name. */
+  readonly label: string;
   /** The hint's id. */
   readonly hint: string;
   /** The error's id. */
@@ -41,25 +44,23 @@ export function useFormFieldIds(shown: FormFieldShown): FormFieldIds {
     .join(" ");
   return {
     control: shown.id ?? `${base}control`,
+    label: `${base}label`,
     hint,
     error,
     describedBy: describedBy === "" ? undefined : describedBy,
   };
 }
 
-/** Whether a hint or an error has something to show. */
-export function hasContent(node: ReactNode): boolean {
-  return node !== undefined && node !== null && node !== false && node !== "";
-}
-
 /** A field's label and, under it, its hint. */
 export function FormFieldCaption({
   htmlFor,
+  labelId,
   label,
   hint,
   hintId,
 }: {
   readonly htmlFor: string;
+  readonly labelId?: string | undefined;
   readonly label: string;
   readonly hint: ReactNode;
   readonly hintId: string;
@@ -67,6 +68,7 @@ export function FormFieldCaption({
   return (
     <div data-bt-part="caption">
       <label
+        id={labelId}
         htmlFor={htmlFor}
         className="bt-text"
         data-role="label"
@@ -88,21 +90,34 @@ export function FormFieldCaption({
   );
 }
 
-/** A field's error, under its control, with an icon so it doesn't rest on color alone. */
+/**
+ * A field's error, under its control, with an icon so it doesn't rest on color alone. Screen readers get
+ * it from a copy in a live region that's always there, so a new error is read out as it appears, even on a
+ * field that was just left; the error you see is hidden from them, so it isn't read twice.
+ */
 export function FormFieldError({
   id,
+  announce,
   children,
 }: {
   readonly id: string;
+  readonly announce: boolean;
   readonly children: ReactNode;
-}): ReactElement | null {
-  if (!hasContent(children)) return null;
+}): ReactElement {
+  const shown = hasContent(children);
   return (
-    <p id={id} data-bt-part="error">
-      <Icon icon={CircleAlert} />
-      <span className="bt-text" data-role="caption">
-        {children}
-      </span>
-    </p>
+    <>
+      <VisuallyHidden.Root aria-live={announce ? "polite" : "off"}>
+        {shown ? children : null}
+      </VisuallyHidden.Root>
+      {shown ? (
+        <p id={id} aria-hidden="true" data-bt-part="error">
+          <Icon icon={CircleAlert} />
+          <span className="bt-text" data-role="caption">
+            {children}
+          </span>
+        </p>
+      ) : null}
+    </>
   );
 }

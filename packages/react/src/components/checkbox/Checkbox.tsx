@@ -1,10 +1,9 @@
-import { Icon, cx, useControllableState } from "@buttery/core";
+import { Icon, cx, hasContent, useControllableState } from "@buttery/core";
 import { Check, Minus } from "lucide-react";
 import { Checkbox as RadixCheckbox } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import {
   FormFieldError,
-  hasContent,
   useFormFieldIds,
 } from "../../parts/form-field/FormFieldParts.tsx";
 
@@ -30,6 +29,11 @@ export interface CheckboxProps extends Omit<
   readonly onCheckedChange?: ((checked: CheckboxState) => void) | undefined;
   /** What it submits in a form while ticked. Defaults to `"on"`. */
   readonly value?: string | undefined;
+  /**
+   * Whether a new error is read out as it appears. Defaults to `true`; turn it off when an error summary
+   * that takes focus reads the errors instead.
+   */
+  readonly announceError?: boolean | undefined;
 }
 
 /**
@@ -46,6 +50,7 @@ export function Checkbox({
   checked,
   defaultChecked,
   onCheckedChange,
+  announceError = true,
   id,
   className,
   style,
@@ -109,7 +114,9 @@ export function Checkbox({
           {hint}
         </p>
       ) : null}
-      <FormFieldError id={ids.error}>{error}</FormFieldError>
+      <FormFieldError id={ids.error} announce={announceError}>
+        {error}
+      </FormFieldError>
     </div>
   );
 }

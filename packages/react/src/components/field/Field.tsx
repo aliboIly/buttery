@@ -1,16 +1,17 @@
-import { cx } from "@buttery/core";
+import { cx, hasContent } from "@buttery/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import {
   FormFieldCaption,
   FormFieldError,
-  hasContent,
   useFormFieldIds,
 } from "../../parts/form-field/FormFieldParts.tsx";
 
 /** What a field's control needs to be labelled and described: spread it onto the control. */
 export interface FieldControlProps {
-  /** Ties the label to the control. */
+  /** Ties the label to a native control through its `htmlFor`. */
   readonly id: string;
+  /** Names any control, native or not, by the label. */
+  readonly "aria-labelledby": string;
   /** The hint and the error, while they show. */
   readonly "aria-describedby": string | undefined;
   /** Set while there's an error. */
@@ -34,13 +35,18 @@ export interface FieldProps extends Omit<
   readonly required?: boolean | undefined;
   /** The control's id, when it needs a particular one. */
   readonly controlId?: string | undefined;
+  /**
+   * Whether a new error is read out as it appears. Defaults to `true`; turn it off when an error summary
+   * that takes focus reads the errors instead.
+   */
+  readonly announceError?: boolean | undefined;
   /** Renders the control, given the props that label and describe it. */
   readonly children: (control: FieldControlProps) => ReactNode;
 }
 
 /**
- * A label, an optional hint and an error wired to a control you bring, for controls buttery doesn't wrap
- * itself. `TextField`, `PasswordField` and `TextArea` already do this.
+ * A label, an optional hint and an error wired to a control you bring, native or not, for controls buttery
+ * doesn't wrap itself. `TextField`, `PasswordField` and `TextArea` already do this.
  *
  * @example
  * <Field label="Card size" hint="In pixels" error={sizeError}>
@@ -53,6 +59,7 @@ export function Field({
   error,
   required = false,
   controlId,
+  announceError = true,
   className,
   children,
   ...rest
@@ -73,17 +80,21 @@ export function Field({
     >
       <FormFieldCaption
         htmlFor={ids.control}
+        labelId={ids.label}
         label={label}
         hint={hint}
         hintId={ids.hint}
       />
       {children({
         id: ids.control,
+        "aria-labelledby": ids.label,
         "aria-describedby": ids.describedBy,
         "aria-invalid": invalid || undefined,
         "aria-required": required || undefined,
       })}
-      <FormFieldError id={ids.error}>{error}</FormFieldError>
+      <FormFieldError id={ids.error} announce={announceError}>
+        {error}
+      </FormFieldError>
     </div>
   );
 }
