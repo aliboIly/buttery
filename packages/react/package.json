@@ -24,7 +24,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown && node scripts/build-css.ts"
   },
   "devDependencies": {
     "@testing-library/dom": "catalog:",
