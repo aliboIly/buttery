@@ -38,6 +38,27 @@ export {
   PopoverContent,
   PopoverTrigger,
 } from "./layers/popover/Popover.tsx";
+export {
+  Menu,
+  MenuContent,
+  MenuGroup,
+  MenuItem,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSeparator,
+  MenuTrigger,
+} from "./layers/menu/Menu.tsx";
+export type {
+  MenuComponent,
+  MenuContentProps,
+  MenuGroupProps,
+  MenuItemProps,
+  MenuProps,
+  MenuRadioGroupProps,
+  MenuRadioItemProps,
+  MenuSeparatorProps,
+  MenuTriggerProps,
+} from "./layers/menu/Menu.tsx";
 export type {
   PopoverAnchorProps,
   PopoverCloseProps,

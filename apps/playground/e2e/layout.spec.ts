@@ -55,6 +55,11 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     escape,
     { name: "show the blur scrim", run: press("Show blur") },
   ],
+  menu: [
+    { name: "open the actions menu", run: press("Card actions") },
+    escape,
+    { name: "open the view menu", run: press("View") },
+  ],
   "number-field": [
     {
       name: "focus a field, which shows its stepper",

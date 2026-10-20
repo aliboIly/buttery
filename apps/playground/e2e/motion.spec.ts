@@ -387,6 +387,48 @@ test.describe("full motion", () => {
     });
   }
 
+  test("a menu grows in from its trigger on spring.snappy and leaves with a dur-fast fade", async ({
+    page,
+  }) => {
+    const menu = '[data-bt="Menu"]';
+    await page.goto("/?chrome=0&motion=full#/menu");
+    const trigger = page
+      .getByRole("button", { name: "Card actions", exact: true })
+      .first();
+    await trigger.focus();
+    await startSampling(page, menu);
+    await page.keyboard.press("Enter");
+    const enter = await finishSampling(page, 700);
+    const fading = expectTween(
+      "menu fading in",
+      progress(trace(enter, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.base,
+    );
+    const growing = expectSpring(
+      "menu growing",
+      progress(
+        trace(enter, (reading) => reading.scale),
+        ENTER_SCALE,
+        1,
+      ),
+      "snappy",
+    );
+    expect(Math.abs(growing.start - fading.start)).toBeLessThanOrEqual(3);
+    await startSampling(page, menu);
+    await page.keyboard.press("Escape");
+    const exit = await finishSampling(page, 400);
+    await expect(trigger).toBeFocused();
+    const leaving = expectTween(
+      "menu fading out",
+      progress(trace(exit, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+    expectGoneSoonAfter(exit, leaving.start + DURATIONS.fast);
+    expectAtRest(exit);
+  });
+
   test("pressing scales to 97% over dur-press and lets go over dur-fast", async ({
     page,
   }) => {

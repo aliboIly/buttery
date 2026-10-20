@@ -1,0 +1,91 @@
+@layer bt.primitives {
+  .bt-menu {
+    --bt-menu-line: 1px;
+
+    display: flex;
+    flex-direction: column;
+    min-inline-size: var(--bt-w-menu-min);
+    max-inline-size: var(--radix-dropdown-menu-content-available-width);
+    max-block-size: var(--radix-dropdown-menu-content-available-height);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bt-menu:focus {
+    outline: none;
+  }
+
+  /* While it fades out, the menu lets presses through to whatever is under it. */
+  .bt-menu[data-state="closed"] {
+    pointer-events: none;
+  }
+
+  .bt-menu > [data-bt-part="menu-group"] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bt-menu > [data-bt-part="menu-item"],
+  .bt-menu > [data-bt-part="menu-group"] > [data-bt-part="menu-item"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-md);
+    cursor: default;
+    outline: none;
+  }
+
+  .bt-menu > [data-bt-part="menu-item"][data-highlighted],
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"][data-highlighted] {
+    background-color: var(--bt-bg-item-hover);
+  }
+
+  .bt-menu > [data-bt-part="menu-item"][data-disabled],
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"][data-disabled] {
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-menu > [data-bt-part="menu-item"] > [data-bt-part="label"],
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"]
+    > [data-bt-part="label"] {
+    flex: 1;
+  }
+
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"]
+    > [data-bt-part="check"],
+  .bt-menu > [data-bt-part="menu-item"] > [data-bt-part="check"] {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-icon-sm);
+    block-size: var(--bt-icon-sm);
+  }
+
+  .bt-menu > [data-bt-part="menu-group"] > [data-bt-part="menu-group-label"] {
+    display: flex;
+    align-items: center;
+    block-size: var(--bt-h-sm);
+    padding-inline: var(--bt-space-3);
+    color: var(--bt-text-secondary);
+  }
+
+  /* One element: the 1px line sits centered in 6px of space above and below. */
+  .bt-menu > [data-bt-part="menu-separator"] {
+    flex: none;
+    block-size: calc(var(--bt-menu-line) + 2 * var(--bt-space-1_5));
+    background: linear-gradient(var(--bt-border), var(--bt-border)) center /
+      100% var(--bt-menu-line) no-repeat;
+  }
+}

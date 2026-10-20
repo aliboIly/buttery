@@ -284,7 +284,10 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 - Trigger: ghost pill; while open, bg `bg-control-active`.
 - Content: `bg-surface`, r16, padding 6, shadow-floating, min-width 200, side offset 8, align end.
 - Item: 36h, r10, padding-x 12 (measured ~14), `menu` role; highlight `bg-item-hover`; selected shows a 16px check on the right.
-- Separator: 1px `border`, margin 6 0.
+- Separator: 1px `border` with 6px above and below it, drawn as one 13px element so the list needs no margins.
+- Group heading (`Menu.Group`, `Menu.RadioGroup` with `label`): 28h (`h-sm`), padding-x 12, `caption` role in `text-secondary`; it names the group.
+- In a radio group the chosen item shows a 16px check at its end; the space is kept on every item so labels line up.
+- Motion (MOTION_SPEC §3, "Menu open"): the content grows from 97% on the trigger's side on `spring.snappy` with a `dur-base` fade and leaves with a `dur-fast` fade, letting presses through while it fades. Popover content moves the same way. Focus goes back to the trigger as it starts to close, unless a press elsewhere closed it.
 - Footer slot (e.g. a pair of number fields): labels `control` role in `text-secondary`, inputs 34h r12 1px `control-border` (measured `border-strong`, raised to 3:1 like every text input), tabular, with a stepper.
 
 ### NumberField
