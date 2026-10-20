@@ -16,7 +16,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 
 Wrap an app in buttery and it gets the tokens, type, surfaces, motion and layout rules written up in [`docs/`](docs), plus checks that fail when something overlaps, overflows or drifts off the scale. People and coding agents work from the same small vocabulary, and a wrong value fails type-checking instead of shipping.
 
-It's early. The tokens, recipes and theming are in place, components come next, and nothing is on npm yet. [ROADMAP.md](ROADMAP.md) shows where things stand.
+It's early. The tokens, layout primitives, layers and layout checks are in place; motion and components come next, and nothing is on npm yet. [ROADMAP.md](ROADMAP.md) shows where things stand.
 
 ## What's in it
 
@@ -90,6 +90,29 @@ Coding agents get the rules people get: `AGENTS.md`, the make-it-buttery skill, 
 
 </td>
 </tr>
+<tr>
+<td width="33%" valign="top">
+
+### Primitives
+
+`Stack`, `Inline`, `Grid`, `Surface`, `Text`, `Icon`, `FitBox` and the rest lay things out with spacing steps instead of margins, and `OverflowCluster` folds actions into a menu instead of wrapping.
+
+</td>
+<td width="33%" valign="top">
+
+### Layers
+
+`Popover`, `Layer`, `Scrim`, `Sticky` and `FloatingLanes` own everything out of flow, so z-indexes stay on the bands and floating UI stays inside the viewport.
+
+</td>
+<td width="33%" valign="top">
+
+### Layout checks
+
+`expectButtery` fails a Playwright test on overlap, overflow, off-scale spacing, small targets, contrast and layout shift, with a fix for each. `LayoutGuard` shows the same problems while you work.
+
+</td>
+</tr>
 </table>
 
 ## A quick look
@@ -149,7 +172,8 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 | `pnpm build` | Builds every package and app |
 | `pnpm tokens` | Regenerates the CSS, JSON and Tailwind files from the token source |
 | `pnpm check` | Authorship and private-path checks, typecheck, lint, stylelint, format check, unit and smoke tests |
-| `pnpm test:layout` | Layout checks across the full viewport, theme and density matrix (from Phase 2) |
+| `pnpm test:layout` | Layout checks across the full viewport, theme and density matrix; `--reporter=json` prints one report |
+| `pnpm new-component <Name> --purpose "…"` | Scaffolds a component folder that passes the contract once it's filled in |
 | `pnpm --filter starter tauri dev` | Runs the starter as a desktop app |
 | `pnpm new-app <name>` | Copies `apps/starter` to `apps/<name>` |
 
@@ -157,12 +181,12 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 
 | Path | Contents |
 | --- | --- |
-| `packages/core` | Tokens, recipes, themes and palettes; primitives, layers and motion presets to come |
+| `packages/core` | Tokens, recipes, themes, palettes, layout primitives, layers and the layout checker; motion presets to come |
 | `packages/react` | `ButteryProvider` now; components and patterns to come |
-| `packages/test` | `expectButtery()` layout checks for Playwright |
-| `packages/lint` | ESLint and stylelint configs |
+| `packages/test` | `expectButtery()`: layout, accessibility and stability checks for Playwright |
+| `packages/lint` | ESLint and stylelint rules that keep values on tokens and positioning owned |
 | `packages/cli`, `packages/mcp` | The command line and the MCP server (not started) |
-| `apps/playground` | Every token, surface and text stack in every theme; the layout checks run against it |
+| `apps/playground` | A page for every component with its demos and examples; the layout checks run against it |
 | `apps/starter` | The template for new apps, with a Tauri v2 shell |
 | `docs/` | Architecture, design, motion and layout specs |
 
