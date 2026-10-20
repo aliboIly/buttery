@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { CircleHelp, Redo2, Share2, Undo2 } from "lucide-react";
 import {
+  Center,
   Icon,
   Inline,
   OverflowCluster,
@@ -40,17 +41,27 @@ export function HeaderActions(): ReactElement {
               },
             }}
           >
-            <Pressable
-              aria-label={label}
-              title={label}
-              onClick={() => {
-                run(label);
+            <Surface
+              asChild
+              level="raised"
+              radius="full"
+              style={{
+                inlineSize: "var(--bt-h-button)",
+                blockSize: "var(--bt-h-button)",
               }}
             >
-              <Surface level="raised" pad={2} radius="full">
-                <Icon icon={icon} />
-              </Surface>
-            </Pressable>
+              <Center asChild>
+                <Pressable
+                  aria-label={label}
+                  title={label}
+                  onClick={() => {
+                    run(label);
+                  }}
+                >
+                  <Icon icon={icon} />
+                </Pressable>
+              </Center>
+            </Surface>
           </OverflowCluster.Item>
         ))}
       </OverflowCluster>

@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import {
   Inline,
   Popover,
@@ -8,19 +9,15 @@ import {
 } from "@buttery/core";
 import type { DemoSection } from "@buttery/core";
 
-function Trigger({
-  label,
-}: {
-  readonly label: string;
-}): ReturnType<typeof Pressable> {
+function Trigger({ label }: { readonly label: string }): ReactElement {
   return (
-    <Popover.Trigger asChild>
-      <Pressable>
-        <Surface level="raised" padX={4} padY={2}>
+    <Surface asChild level="raised" padX={4} padY={2}>
+      <Popover.Trigger asChild>
+        <Pressable>
           <Text variant="button">{label}</Text>
-        </Surface>
-      </Pressable>
-    </Popover.Trigger>
+        </Pressable>
+      </Popover.Trigger>
+    </Surface>
   );
 }
 
@@ -56,6 +53,22 @@ export const demos: readonly DemoSection[] = [
                 Option {index + 1}
               </Text>
             ))}
+          </Stack>
+        </Popover.Content>
+      </Popover>
+    ),
+  },
+  {
+    title: "Scrim",
+    description:
+      "A blurred scrim under a menu that opens over content; clicking it closes the menu.",
+    render: () => (
+      <Popover>
+        <Trigger label="Products" />
+        <Popover.Content scrim="blur" align="start" aria-label="Products">
+          <Stack gap={1} padX={2} padY={1}>
+            <Text variant="menu">Card Studio</Text>
+            <Text variant="menu">Templates</Text>
           </Stack>
         </Popover.Content>
       </Popover>

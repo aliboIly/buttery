@@ -7,17 +7,17 @@ export function Toast(): ReactElement {
   const [visible, setVisible] = useState(false);
   return (
     <>
-      <Pressable
-        onClick={() => {
-          setVisible((current) => !current);
-        }}
-      >
-        <Surface level="raised" padX={4} padY={2} radius="full">
+      <Surface asChild level="raised" padX={4} padY={2} radius="full">
+        <Pressable
+          onClick={() => {
+            setVisible((current) => !current);
+          }}
+        >
           <Text variant="button">
             {visible ? "Hide the message" : "Delete the card"}
           </Text>
-        </Surface>
-      </Pressable>
+        </Pressable>
+      </Surface>
       {visible ? (
         <FloatingLanes.Item>
           <Surface level="floating" padX={4} padY={2} role="status">

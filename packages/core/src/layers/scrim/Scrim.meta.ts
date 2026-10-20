@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "Behind popovers that don't block the page",
   ],
   related: ["Layer", "Popover"],
-  a11y: "Hidden from assistive technology (aria-hidden). The layer's own component handles focus and Escape; the scrim only takes pointer clicks.",
+  a11y: "Hidden from assistive technology (aria-hidden). The component inside the layer (a Radix Dialog, or Popover with its scrim prop) moves focus in, closes on Escape and treats a click on the scrim as a click outside.",
   motion: "presence",
 };

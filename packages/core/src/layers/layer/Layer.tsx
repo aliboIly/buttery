@@ -37,10 +37,16 @@ export interface LayerProps {
  * viewport but lets clicks through. Layers opened from inside another layer stack above it.
  *
  * @example
- * <Layer band="modal">
- *   <Scrim onClick={close} />
- *   <Surface level="dialog">…</Surface>
- * </Layer>
+ * {open ? (
+ *   <Layer band="modal">
+ *     <Dialog.Overlay asChild>
+ *       <Scrim />
+ *     </Dialog.Overlay>
+ *     <Dialog.Content asChild>
+ *       <Surface level="dialog">…</Surface>
+ *     </Dialog.Content>
+ *   </Layer>
+ * ) : null}
  */
 export function Layer({ band, children }: LayerProps): ReactElement | null {
   const parent = useCurrentLayer();

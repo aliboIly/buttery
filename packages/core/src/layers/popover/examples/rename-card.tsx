@@ -16,13 +16,13 @@ export function RenameCard(): ReactElement {
   const inputId = useId();
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <Popover.Trigger asChild>
-        <Pressable aria-label={`Rename ${title}`}>
-          <Surface level="raised" padX={4} padY={2} radius="full">
+      <Surface asChild level="raised" padX={4} padY={2} radius="full">
+        <Popover.Trigger asChild>
+          <Pressable aria-label={`Rename ${title}`}>
             <Text variant="title-sm">{title}</Text>
-          </Surface>
-        </Pressable>
-      </Popover.Trigger>
+          </Pressable>
+        </Popover.Trigger>
+      </Surface>
       <Popover.Content aria-label="Rename the card">
         <form
           onSubmit={(event) => {
@@ -41,11 +41,11 @@ export function RenameCard(): ReactElement {
               <input id={inputId} name="title" defaultValue={title} />
             </Stack>
             <Inline justify="end">
-              <Pressable type="submit">
-                <Surface level="raised" padX={4} padY={2} radius="full">
+              <Surface asChild level="raised" padX={4} padY={2} radius="full">
+                <Pressable type="submit">
                   <Text variant="button">Save</Text>
-                </Surface>
-              </Pressable>
+                </Pressable>
+              </Surface>
             </Inline>
           </Stack>
         </form>

@@ -7,23 +7,30 @@ const SIZES = ["Square", "Portrait", "Story", "Wide"] as const;
 export function CanvasSize(): ReactElement {
   return (
     <Popover>
-      <Popover.Trigger asChild>
-        <Pressable>
-          <Surface level="raised" padX={4} padY={2} radius="full">
+      <Surface asChild level="raised" padX={4} padY={2} radius="full">
+        <Popover.Trigger asChild>
+          <Pressable>
             <Text variant="button">Canvas size</Text>
-          </Surface>
-        </Pressable>
-      </Popover.Trigger>
+          </Pressable>
+        </Popover.Trigger>
+      </Surface>
       <Popover.Content align="start" aria-label="Canvas sizes">
         <Stack gap={1}>
           {SIZES.map((size) => (
-            <Popover.Close key={size} asChild>
-              <Pressable>
-                <Surface level="app" padX={3} padY={2} radius="md">
+            <Surface
+              key={size}
+              asChild
+              level="app"
+              padX={3}
+              padY={2}
+              radius="md"
+            >
+              <Popover.Close asChild>
+                <Pressable>
                   <Text variant="menu">{size}</Text>
-                </Surface>
-              </Pressable>
-            </Popover.Close>
+                </Pressable>
+              </Popover.Close>
+            </Surface>
           ))}
         </Stack>
       </Popover.Content>

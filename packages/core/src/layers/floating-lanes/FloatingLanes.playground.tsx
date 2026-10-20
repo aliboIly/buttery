@@ -18,29 +18,28 @@ function LaneDemo(): ReactElement {
     <>
       <Inline gap={2} wrap>
         {laneNames.map((lane) => (
+          <Surface key={lane} asChild level="raised" padX={4} padY={2}>
+            <Pressable
+              onClick={() => {
+                setItems((current) => [
+                  ...current,
+                  { id: current.length + 1, lane },
+                ]);
+              }}
+            >
+              <Text variant="button">Add to {lane}</Text>
+            </Pressable>
+          </Surface>
+        ))}
+        <Surface asChild level="raised" padX={4} padY={2}>
           <Pressable
-            key={lane}
             onClick={() => {
-              setItems((current) => [
-                ...current,
-                { id: current.length + 1, lane },
-              ]);
+              setItems([]);
             }}
           >
-            <Surface level="raised" padX={4} padY={2}>
-              <Text variant="button">Add to {lane}</Text>
-            </Surface>
-          </Pressable>
-        ))}
-        <Pressable
-          onClick={() => {
-            setItems([]);
-          }}
-        >
-          <Surface level="raised" padX={4} padY={2}>
             <Text variant="button">Clear</Text>
-          </Surface>
-        </Pressable>
+          </Pressable>
+        </Surface>
       </Inline>
       {items.map((item) => (
         <FloatingLanes.Item key={item.id} lane={item.lane}>

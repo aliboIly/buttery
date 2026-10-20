@@ -5,7 +5,7 @@ export const meta: ComponentMeta = {
   kind: "layer",
   purpose: "Renders its children above the page in a z band from the tokens.",
   useWhen: [
-    "Building an overlay that isn't covered by an existing one: a custom panel, a drawer, a dev tool",
+    "Building an overlay that isn't covered by an existing one: a modal panel, a drawer, a blocking progress panel",
   ],
   avoidWhen: [
     "Menus, popovers and floating panels: use Popover",

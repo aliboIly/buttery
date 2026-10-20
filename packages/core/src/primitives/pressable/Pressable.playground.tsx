@@ -7,18 +7,18 @@ export const demos: readonly DemoSection[] = [
     description: "Scales to 0.97 while pressed; Tab shows the focus ring.",
     render: () => (
       <Inline gap={2}>
-        <Pressable>
-          <Surface level="raised" padX={4} padY={2}>
+        <Surface asChild level="raised" padX={4} padY={2}>
+          <Pressable>
             <Text variant="button">Press me</Text>
-          </Surface>
-        </Pressable>
-        <Pressable disabled>
-          <Surface level="raised" padX={4} padY={2}>
+          </Pressable>
+        </Surface>
+        <Surface asChild level="raised" padX={4} padY={2}>
+          <Pressable disabled>
             <Text variant="button" tone="disabled">
               Disabled
             </Text>
-          </Surface>
-        </Pressable>
+          </Pressable>
+        </Surface>
       </Inline>
     ),
   },

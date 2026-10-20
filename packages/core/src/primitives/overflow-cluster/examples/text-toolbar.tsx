@@ -34,15 +34,15 @@ export function TextToolbar(): ReactElement {
               },
             }}
           >
-            <Pressable
-              onClick={() => {
-                setLast(tool);
-              }}
-            >
-              <Surface level="raised" padX={4} padY={2} radius="full">
+            <Surface asChild level="raised" padX={4} padY={2} radius="full">
+              <Pressable
+                onClick={() => {
+                  setLast(tool);
+                }}
+              >
                 <Text variant="button">{tool}</Text>
-              </Surface>
-            </Pressable>
+              </Pressable>
+            </Surface>
           </OverflowCluster.Item>
         ))}
       </OverflowCluster>

@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Sticky, Surface, Text } from "@buttery/core";
+import { Inline, Pressable, Stack, Sticky, Surface, Text } from "@buttery/core";
 
 /** Actions that stay at the bottom of a scrolling panel. */
 export function PanelFooter(): ReactElement {
@@ -19,7 +19,11 @@ export function PanelFooter(): ReactElement {
       <Sticky edge="bottom">
         <Surface level="card" padX={4} padY={3}>
           <Inline justify="end">
-            <Text variant="button">Export</Text>
+            <Surface asChild level="raised" padX={4} padY={2} radius="full">
+              <Pressable>
+                <Text variant="button">Export</Text>
+              </Pressable>
+            </Surface>
           </Inline>
         </Surface>
       </Sticky>

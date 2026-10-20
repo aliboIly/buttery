@@ -14,13 +14,16 @@ export interface ScrimProps extends Omit<
 
 /**
  * Covers the viewport behind a layer's content. Put it first inside a `Layer` so it sits under the
- * content it belongs to. It's hidden from assistive technology; give it an `onClick` to close on outside
- * clicks.
+ * content it belongs to. It's hidden from assistive technology, so the component it sits under handles
+ * focus and Escape, and treats a click on the scrim as a click outside. `Popover.Content` draws one with
+ * its `scrim` prop.
  *
  * @example
  * <Layer band="modal">
- *   <Scrim onClick={close} />
- *   <Surface level="dialog">…</Surface>
+ *   <Dialog.Overlay asChild>
+ *     <Scrim />
+ *   </Dialog.Overlay>
+ *   <Dialog.Content>…</Dialog.Content>
  * </Layer>
  */
 export function Scrim({
