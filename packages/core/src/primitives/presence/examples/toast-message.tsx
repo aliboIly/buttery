@@ -1,3 +1,4 @@
+import { VisuallyHidden } from "radix-ui";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import {
@@ -8,7 +9,10 @@ import {
   Text,
 } from "@buttery/core";
 
-/** A message in the toast lane that slides up as it arrives and fades as it leaves. */
+/**
+ * A message in the toast lane that slides up as it arrives and fades as it leaves. Screen readers hear it
+ * from a status region that stays mounted, since the toast itself comes and goes.
+ */
 export function ToastMessage(): ReactElement {
   const [visible, setVisible] = useState(false);
   return (
@@ -25,8 +29,11 @@ export function ToastMessage(): ReactElement {
           </Text>
         </Pressable>
       </Surface>
+      <VisuallyHidden.Root role="status">
+        {visible ? "Card exported" : ""}
+      </VisuallyHidden.Root>
       <FloatingLanes.Item>
-        <Presence show={visible} preset="toast" role="status">
+        <Presence show={visible} preset="toast">
           <Surface level="floating" padX={4} padY={2}>
             <Text>Card exported</Text>
           </Surface>

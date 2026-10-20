@@ -15,6 +15,6 @@ export const meta: ComponentMeta = {
     "Selection indicators: use SharedIndicator",
   ],
   related: ["Morph", "Reveal", "FloatingLanes"],
-  a11y: 'No role of its own: put a live region (role="status") inside when the change needs announcing. With reduced motion it only fades, in 100ms.',
+  a11y: 'No role of its own. When the change needs announcing, keep a live region (role="status") mounted outside the Presence: a region that mounts along with its content often goes unannounced. With reduced motion it only fades, in 100ms.',
   motion: "presence",
 };
