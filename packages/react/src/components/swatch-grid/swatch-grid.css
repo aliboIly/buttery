@@ -1,0 +1,30 @@
+@layer bt.components {
+  .bt-swatch-grid {
+    --bt-swatch-grid-columns: 6;
+
+    display: grid;
+    grid-template-columns: repeat(
+      var(--bt-swatch-grid-columns),
+      minmax(0, 1fr)
+    );
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-swatch-grid > [data-bt-part="swatch"] {
+    aspect-ratio: 1;
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--bt-r-sm);
+    box-shadow: var(--bt-shadow-inset);
+  }
+
+  .bt-swatch-grid > [data-bt-part="swatch"][aria-checked="true"] {
+    box-shadow: var(--bt-ring-select), var(--bt-shadow-inset);
+  }
+
+  .bt-swatch-grid > [data-bt-part="swatch"]:disabled {
+    opacity: 0.4;
+  }
+}
