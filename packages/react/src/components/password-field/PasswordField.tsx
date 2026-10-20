@@ -1,6 +1,6 @@
-import { Icon } from "@buttery/core";
+import { Icon, useMergedRefs } from "@buttery/core";
 import { Check, Circle, Eye, EyeOff } from "lucide-react";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { IconButton } from "../icon-button/IconButton.tsx";
 import { TextFieldShell } from "../text-field/TextField.tsx";
@@ -25,12 +25,15 @@ export interface PasswordFieldProps extends Omit<
   readonly requirements?: readonly PasswordRequirement[] | undefined;
   /** What a met rule is called for screen readers. Defaults to `"Met"`. */
   readonly metLabel?: string | undefined;
+  /** What a rule not met yet is called for screen readers. Defaults to `"Not met"`. */
+  readonly unmetLabel?: string | undefined;
 }
 
 /**
  * A labelled password box with a button that shows or hides what's typed, and optional requirements
  * under it. It fills in a saved password by default; pass `autoComplete="new-password"` on sign-up and
- * password-change forms.
+ * password-change forms. A shown password is never corrected, capitalized or spell-checked, and it hides
+ * again when its form is submitted, so the browser can offer to save it.
  *
  * @example
  * <PasswordField label="Password" value={password} onValueChange={setPassword} error={passwordError} />
@@ -39,17 +42,38 @@ export function PasswordField({
   revealLabel = "Show password",
   requirements,
   metLabel = "Met",
+  unmetLabel = "Not met",
   autoComplete,
+  ref,
   ...rest
 }: PasswordFieldProps): ReactElement {
   const [visible, setVisible] = useState(false);
+  const input = useRef<HTMLInputElement>(null);
+  const refs = useMergedRefs(ref, input);
   const requirementsId = useId();
   const listed = requirements !== undefined && requirements.length > 0;
+
+  useEffect(() => {
+    const form = input.current?.form;
+    if (!form) return undefined;
+    const hide = (): void => {
+      setVisible(false);
+    };
+    form.addEventListener("submit", hide);
+    return () => {
+      form.removeEventListener("submit", hide);
+    };
+  }, []);
+
   return (
     <TextFieldShell
       {...rest}
+      ref={refs}
       type={visible ? "text" : "password"}
       autoComplete={autoComplete ?? "current-password"}
+      spellCheck={false}
+      autoCapitalize="none"
+      autoCorrect="off"
       root={{ className: "bt-password-field", "data-bt": "PasswordField" }}
       afterId={listed ? requirementsId : undefined}
       end={
@@ -75,7 +99,7 @@ export function PasswordField({
                 {requirement.met ? (
                   <Icon icon={Check} label={metLabel} />
                 ) : (
-                  <Icon icon={Circle} />
+                  <Icon icon={Circle} label={unmetLabel} />
                 )}
                 <span className="bt-text" data-role="caption">
                   {requirement.label}

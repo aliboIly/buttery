@@ -66,5 +66,40 @@ describe("PasswordField", () => {
       false,
     ]);
     expect(screen.getByRole("img", { name: "Met" })).toBeTruthy();
+    expect(screen.getByRole("img", { name: "Not met" })).toBeTruthy();
+  });
+
+  it("toggles from the keyboard", async () => {
+    render(<PasswordField label="Password" defaultValue="butter-2026" />);
+    await userEvent.tab();
+    await userEvent.tab();
+    const reveal = screen.getByRole("button", { name: "Show password" });
+    expect(document.activeElement).toBe(reveal);
+    await userEvent.keyboard("{Enter}");
+    expect(input().type).toBe("text");
+    await userEvent.keyboard(" ");
+    expect(input().type).toBe("password");
+  });
+
+  it("never corrects or capitalizes a shown password, and hides it when its form is submitted", async () => {
+    render(
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+        }}
+      >
+        <PasswordField label="Password" defaultValue="butter-2026" />
+        <button type="submit">Save</button>
+      </form>,
+    );
+    expect(input().getAttribute("spellcheck")).toBe("false");
+    expect(input().getAttribute("autocapitalize")).toBe("none");
+    expect(input().getAttribute("autocorrect")).toBe("off");
+    await userEvent.click(
+      screen.getByRole("button", { name: "Show password" }),
+    );
+    expect(input().type).toBe("text");
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(input().type).toBe("password");
   });
 });
