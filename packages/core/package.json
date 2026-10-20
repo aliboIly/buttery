@@ -19,6 +19,11 @@
       "types": "./dist/palettes.d.ts",
       "default": "./dist/palettes.js"
     },
+    "./layout": {
+      "@buttery/source": "./src/layout/index.ts",
+      "types": "./dist/layout.d.ts",
+      "default": "./dist/layout.js"
+    },
     "./styles.css": {
       "@buttery/source": "./src/styles/index.css",
       "default": "./dist/styles.css"

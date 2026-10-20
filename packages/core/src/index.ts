@@ -54,6 +54,8 @@ export type { ScrimProps } from "./layers/scrim/Scrim.tsx";
 export { Sticky } from "./layers/sticky/Sticky.tsx";
 export type { StickyProps } from "./layers/sticky/Sticky.tsx";
 export type { StickyEdge } from "./layers/sticky/sticky-stack.ts";
+export { LayoutGuard } from "./layout/LayoutGuard.tsx";
+export type { LayoutGuardProps } from "./layout/LayoutGuard.tsx";
 export type {
   ComponentKind,
   ComponentMeta,
