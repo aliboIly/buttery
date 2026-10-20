@@ -45,6 +45,15 @@
   gap: var(--bt-space-4);
   min-block-size: var(--bt-h-button);
   margin: 0;
+  padding-block: var(--bt-space-2);
+}
+
+@container (width < 640px) {
+  .tk-row,
+  .tk-def {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-2);
+  }
 }
 
 .tk-row + .tk-row,

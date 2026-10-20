@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 import {
   ArrowLeftRight,
   ChevronDown,
@@ -7,11 +7,21 @@ import {
   Redo2,
   Undo2,
 } from "lucide-react";
+import {
+  Divider,
+  Icon,
+  Inline,
+  OverflowCluster,
+  Pressable,
+  Stack,
+  Surface,
+  Text,
+} from "@buttery/core";
+import type { CssVariables } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { EmptyStateDemo } from "../demo/EmptyStateDemo.tsx";
 import "./surfaces-page.css";
 
-const ICON = { size: 16, strokeWidth: 1.75, "aria-hidden": true } as const;
 const SELECTED_GRADIENT = "lilac";
 
 interface SectionProps {
@@ -26,25 +36,21 @@ function Section({
   children,
 }: SectionProps): ReactElement {
   return (
-    <section
-      className="sf-section bt-surface"
-      data-level="section"
-      aria-label={title}
-    >
-      <header className="sf-section-header">
-        <h3 className="bt-text" data-role="control">
-          {title}
-        </h3>
-        {resettable ? (
-          <button type="button" className="sf-link bt-text" data-role="control">
-            Reset
-          </button>
-        ) : null}
-      </header>
-      <div className="sf-card bt-surface" data-level="card">
-        {children}
-      </div>
-    </section>
+    <Surface level="section" asChild>
+      <section className="sf-section" aria-label={title}>
+        <Inline justify="between" padX={4} className="sf-section-header">
+          <Text variant="control" asChild>
+            <h3>{title}</h3>
+          </Text>
+          {resettable ? (
+            <Pressable className="sf-link">
+              <Text variant="control">Reset</Text>
+            </Pressable>
+          ) : null}
+        </Inline>
+        <Surface className="sf-card">{children}</Surface>
+      </section>
+    </Surface>
   );
 }
 
@@ -57,16 +63,14 @@ interface RowProps {
 function Row({ label, badge, children }: RowProps): ReactElement {
   return (
     <div className="sf-row">
-      <span className="sf-row-label">
-        <span className="bt-text bt-truncate" data-role="label">
-          {label}
-        </span>
+      <Inline gap={2}>
+        <Text truncate>{label}</Text>
         {badge === undefined ? null : (
-          <span className="sf-badge bt-text" data-role="badge">
+          <Text variant="badge" className="sf-badge">
             {badge}
-          </span>
+          </Text>
         )}
-      </span>
+      </Inline>
       {children}
     </div>
   );
@@ -82,14 +86,14 @@ function SegmentedPlaceholder({
   return (
     <span className="sf-segmented">
       {items.map((item) => (
-        <span
+        <Text
           key={item}
-          className="sf-segment bt-text"
-          data-role="control"
+          variant="control"
+          className="sf-segment"
           data-active={item === active ? "" : undefined}
         >
           {item}
-        </span>
+        </Text>
       ))}
     </span>
   );
@@ -100,15 +104,18 @@ function SliderPlaceholder({
 }: {
   readonly value: number;
 }): ReactElement {
+  const style: CSSProperties & CssVariables = {
+    "--bt-demo-value": String(value),
+  };
   return (
-    <span className="sf-slider">
-      <span
-        className="sf-thumb"
-        data-bt-part="thumb"
-        style={{
-          insetInlineStart: `calc(${String(value)} * (100% - var(--bt-demo-thumb)))`,
-        }}
-      />
+    <span className="sf-slider" style={style}>
+      <span className="sf-track" />
+      <span className="sf-thumb">
+        <span className="sf-grip">
+          <span />
+          <span />
+        </span>
+      </span>
     </span>
   );
 }
@@ -146,125 +153,159 @@ function AnchorPlaceholder(): ReactElement {
 function Inspector(): ReactElement {
   const selected = gradients.find((preset) => preset.id === SELECTED_GRADIENT);
   return (
-    <aside
-      className="sf-inspector bt-surface"
-      data-level="panel"
-      aria-label="Inspector"
-    >
-      <div className="sf-inspector-body">
-        <Section title="Card">
-          <Row label="Edge">
-            <SegmentedPlaceholder
-              items={["Plain", "Outline", "Glow"]}
-              active="Outline"
-            />
-          </Row>
-          <Row label="Scale" badge="75%">
-            <SliderPlaceholder value={0.45} />
-          </Row>
-          <Row label="Corners" badge="16">
-            <SliderPlaceholder value={0.25} />
-          </Row>
-          <Row label="Spacing" badge="8">
-            <SliderPlaceholder value={0.1} />
-          </Row>
-          <Row label="Depth" badge="30%">
-            <SliderPlaceholder value={0.3} />
-          </Row>
-        </Section>
-        <Section title="Placement" resettable>
-          <Row label="Turn" badge="−8°">
-            <SliderPlaceholder value={0.48} />
-          </Row>
-          <div className="sf-split">
-            <span className="sf-split-cell">
-              <span className="sf-row-label">
-                <span className="bt-text" data-role="label">
-                  Lean
+    <Surface level="panel" pad={0} asChild>
+      <aside className="sf-inspector" aria-label="Inspector">
+        <Stack gap={2} pad={2} className="sf-inspector-body">
+          <Section title="Card">
+            <Row label="Edge">
+              <SegmentedPlaceholder
+                items={["Plain", "Outline", "Glow"]}
+                active="Outline"
+              />
+            </Row>
+            <Row label="Scale" badge="75%">
+              <SliderPlaceholder value={0.45} />
+            </Row>
+            <Row label="Corners" badge="16">
+              <SliderPlaceholder value={0.25} />
+            </Row>
+            <Row label="Spacing" badge="8">
+              <SliderPlaceholder value={0.1} />
+            </Row>
+            <Row label="Depth" badge="30%">
+              <SliderPlaceholder value={0.3} />
+            </Row>
+          </Section>
+          <Section title="Placement" resettable>
+            <Row label="Turn" badge="−8°">
+              <SliderPlaceholder value={0.48} />
+            </Row>
+            <div className="sf-split">
+              <span className="sf-split-cell">
+                <Inline gap={2}>
+                  <Text>Lean</Text>
+                  <Pressable className="sf-chip" disabled>
+                    <Text variant="badge" tone="disabled">
+                      Reset
+                    </Text>
+                  </Pressable>
+                </Inline>
+                <span className="sf-tilt">
+                  <span className="sf-knob" />
                 </span>
-                <button
-                  type="button"
-                  className="sf-chip bt-text"
-                  data-role="badge"
-                  disabled
+              </span>
+              <span className="sf-split-cell">
+                <Text>Anchor</Text>
+                <AnchorPlaceholder />
+              </span>
+            </div>
+          </Section>
+          <Section title="Backdrop" resettable>
+            <Row label="Fill">
+              <SegmentedPlaceholder items={["Blend", "Flat"]} active="Blend" />
+            </Row>
+            <div className="sf-row sf-row-full">
+              <SwatchesPlaceholder />
+            </div>
+            <Row label="Hues">
+              <Inline gap={1.5}>
+                <span
+                  className="sf-dot"
+                  style={{ background: selected?.fromHex }}
+                />
+                <span
+                  className="sf-dot"
+                  style={{ background: selected?.toHex }}
+                />
+                <Pressable
+                  className="sf-icon-button sf-icon-button-sm"
+                  aria-label="Swap hues"
                 >
-                  Reset
-                </button>
-              </span>
-              <span className="sf-tilt">
-                <span className="sf-knob" data-bt-part="knob" />
-              </span>
-            </span>
-            <span className="sf-split-cell">
-              <span className="bt-text" data-role="label">
-                Anchor
-              </span>
-              <AnchorPlaceholder />
-            </span>
-          </div>
-        </Section>
-        <Section title="Backdrop" resettable>
-          <Row label="Fill">
-            <SegmentedPlaceholder items={["Blend", "Flat"]} active="Blend" />
-          </Row>
-          <div className="sf-row sf-row-full">
-            <SwatchesPlaceholder />
-          </div>
-          <Row label="Hues">
-            <span className="sf-hues">
-              <span
-                className="sf-dot"
-                style={{ background: selected?.fromHex }}
-              />
-              <span
-                className="sf-dot"
-                style={{ background: selected?.toHex }}
-              />
-              <button
-                type="button"
+                  <Icon icon={ArrowLeftRight} />
+                </Pressable>
+              </Inline>
+            </Row>
+            <Row label="Sweep" badge="135°">
+              <SliderPlaceholder value={0.375} />
+            </Row>
+          </Section>
+        </Stack>
+        <Inline gap={2} pad={3} className="sf-footer">
+          <Pressable className="sf-button sf-button-soft" disabled>
+            <Icon icon={Copy} />
+            <Text variant="button" tone="disabled">
+              Copy
+            </Text>
+          </Pressable>
+          <span className="sf-split-button">
+            <Pressable className="sf-split-main" disabled>
+              <Text variant="button" className="sf-on-primary">
+                Export PNG
+              </Text>
+            </Pressable>
+            <span className="sf-split-divider" />
+            <Pressable
+              className="sf-split-menu"
+              aria-label="Export options"
+              disabled
+            >
+              <Icon icon={ChevronDown} />
+            </Pressable>
+          </span>
+        </Inline>
+      </aside>
+    </Surface>
+  );
+}
+
+const ACTIONS = [
+  { label: "Undo", icon: Undo2, priority: 3, disabled: false },
+  { label: "Redo", icon: Redo2, priority: 3, disabled: true },
+  { label: "Help", icon: CircleHelp, priority: 1, disabled: false },
+] as const;
+
+function Header(): ReactElement {
+  return (
+    <Surface level="panel" padX={4} asChild>
+      <header className="sf-header">
+        <span className="sf-mark" aria-hidden="true" />
+        <Text variant="title-sm" truncate className="sf-title">
+          Spring launch
+        </Text>
+        <OverflowCluster gap={1} justify="end" moreLabel="More actions">
+          <OverflowCluster.Item
+            priority={2}
+            menuItem={{ label: "Canvas: Square", onSelect: () => undefined }}
+          >
+            <Inline gap={1}>
+              <Pressable className="sf-select">
+                <Text variant="button" tone="secondary">
+                  Square
+                </Text>
+                <Icon icon={ChevronDown} />
+              </Pressable>
+              <Divider orientation="vertical" length={6} decorative />
+            </Inline>
+          </OverflowCluster.Item>
+          {ACTIONS.map(({ label, icon, priority, disabled }) => (
+            <OverflowCluster.Item
+              key={label}
+              priority={priority}
+              menuItem={{ label, icon, disabled, onSelect: () => undefined }}
+            >
+              <Pressable
                 className="sf-icon-button"
-                aria-label="Swap hues"
+                aria-label={label}
+                title={label}
+                disabled={disabled}
               >
-                <ArrowLeftRight {...ICON} />
-              </button>
-            </span>
-          </Row>
-          <Row label="Sweep" badge="135°">
-            <SliderPlaceholder value={0.375} />
-          </Row>
-        </Section>
-      </div>
-      <footer className="sf-footer">
-        <button
-          type="button"
-          className="sf-button sf-button-soft bt-text"
-          data-role="button"
-          disabled
-        >
-          <Copy {...ICON} />
-          Copy
-        </button>
-        <span className="sf-split-button" data-disabled="">
-          <button
-            type="button"
-            className="sf-split-main bt-text"
-            data-role="button"
-            disabled
-          >
-            Export PNG
-          </button>
-          <span className="sf-split-divider" />
-          <button
-            type="button"
-            className="sf-split-menu"
-            aria-label="Export options"
-            disabled
-          >
-            <ChevronDown {...ICON} />
-          </button>
-        </span>
-      </footer>
-    </aside>
+                <Icon icon={icon} />
+              </Pressable>
+            </OverflowCluster.Item>
+          ))}
+        </OverflowCluster>
+      </header>
+    </Surface>
   );
 }
 
@@ -273,45 +314,7 @@ export function SurfacesPage(): ReactElement {
     <div className="sf-app">
       <div className="sf-shell">
         <div className="sf-workspace">
-          <header className="sf-header bt-surface" data-level="panel">
-            <span className="sf-mark" aria-hidden="true" />
-            <span className="sf-title bt-text bt-truncate" data-role="title-sm">
-              Spring launch
-            </span>
-            <span className="sf-header-actions">
-              <button
-                type="button"
-                className="sf-select bt-text"
-                data-role="button"
-              >
-                Square
-                <ChevronDown {...ICON} />
-              </button>
-              <span className="sf-separator" />
-              <button
-                type="button"
-                className="sf-icon-button"
-                aria-label="Undo"
-              >
-                <Undo2 {...ICON} />
-              </button>
-              <button
-                type="button"
-                className="sf-icon-button"
-                aria-label="Redo"
-                disabled
-              >
-                <Redo2 {...ICON} />
-              </button>
-              <button
-                type="button"
-                className="sf-icon-button"
-                aria-label="Help"
-              >
-                <CircleHelp {...ICON} />
-              </button>
-            </span>
-          </header>
+          <Header />
           <section className="sf-stage" aria-label="Canvas">
             <EmptyStateDemo />
           </section>

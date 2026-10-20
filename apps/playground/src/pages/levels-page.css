@@ -55,3 +55,15 @@
 .lv-nested-row:not(:last-child) {
   border-block-end: 1px solid var(--bt-border);
 }
+
+@container (width < 960px) {
+  .lv-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (width < 480px) {
+  .lv-levels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
