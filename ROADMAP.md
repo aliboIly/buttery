@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 1 is done and waiting for review. Next: Phase 2.
+**Now:** Phase 2 is done. Next: Phase 3, the motion system.
 
 ---
 
@@ -15,11 +15,11 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Tokens + Surfaces playground pages
 
 ## v0.2 — Guardrails (Phase 2)
-- [ ] Layout primitives + layer system
-- [ ] `expectButtery` (all checks, JSON reports, Chromium + WebKit)
-- [ ] `LayoutGuard` + grid overlay
-- [ ] `@buttery/lint` enforced repo-wide
-- [ ] `new-component` generator
+- [x] Layout primitives + layer system
+- [x] `expectButtery` (all checks, JSON reports, Chromium + WebKit)
+- [x] `LayoutGuard` + grid overlay
+- [x] `@buttery/lint` enforced repo-wide
+- [x] `new-component` generator
 
 ## v0.3 — Motion (Phase 3)
 - [ ] Motion tokens, presets, `useButteryTransition`
