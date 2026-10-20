@@ -274,11 +274,11 @@ export function MotionPage(): ReactElement {
               <Grid columns={3} gap={4} asChild>
                 <Stagger data-testid="stagger">
                   {["Templates", "Brand kits", "Exports"].map((title) => (
-                    <Stagger.Item key={title}>
-                      <Surface level="card" pad={4}>
+                    <Surface key={title} asChild level="card" pad={4}>
+                      <Stagger.Item>
                         <Text variant="label">{title}</Text>
-                      </Surface>
-                    </Stagger.Item>
+                      </Stagger.Item>
+                    </Surface>
                   ))}
                 </Stagger>
               </Grid>
