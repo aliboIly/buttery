@@ -1,10 +1,10 @@
 .pl-grid {
-  --bt-pl-tile: 132px;
+  --bt-palettes-page-tile: 132px;
 
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    minmax(min(100%, var(--bt-pl-tile)), 1fr)
+    minmax(min(100%, var(--bt-palettes-page-tile)), 1fr)
   );
   gap: var(--bt-space-4);
 }

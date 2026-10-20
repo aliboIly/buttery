@@ -105,7 +105,7 @@ function SliderPlaceholder({
   readonly value: number;
 }): ReactElement {
   const style: CSSProperties & CssVariables = {
-    "--bt-demo-value": String(value),
+    "--bt-surfaces-page-value": String(value),
   };
   return (
     <span className="sf-slider" style={style}>

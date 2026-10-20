@@ -89,11 +89,36 @@ describe("buttery/raw-length", () => {
     ]);
   });
 
+  it("allows raw lengths only in the file's own variables, in its first rule", async () => {
+    expect(
+      await lint(
+        ".bt-slider { --bt-slider-thumb: 24px; } .bt-slider-thumb { inline-size: var(--bt-slider-thumb); }",
+        COMPONENT,
+      ),
+    ).toEqual([]);
+    expect(await lint(".a { --bt-x: 13px; }")).toEqual(["buttery/raw-length"]);
+    expect(
+      await lint(".bt-slider { --bt-other-thumb: 24px; }", COMPONENT),
+    ).toEqual(["buttery/raw-length"]);
+    expect(
+      await lint(
+        ".bt-slider { display: flex; } .bt-slider[data-size='sm'] { --bt-slider-thumb: 20px; }",
+        COMPONENT,
+      ),
+    ).toEqual(["buttery/raw-length"]);
+    expect(
+      await lint(
+        "@layer bt.components { .bt-slider { --bt-slider-thumb: 24px; } }",
+        COMPONENT,
+      ),
+    ).toEqual([]);
+  });
+
   it("allows tokens, component variables, hairlines and fluid units", async () => {
     expect(
       await lint(
         `.a {
-          --bt-slider-thumb: 24px;
+          --bt-page-thumb: 24px;
           padding: var(--bt-space-3) 0;
           border-block-start: 1px solid var(--bt-border);
           outline: 2px solid var(--bt-accent);

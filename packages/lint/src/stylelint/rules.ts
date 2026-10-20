@@ -12,6 +12,7 @@ import {
 type Root = Parameters<ReturnType<Rule>>[0];
 type Result = Parameters<ReturnType<Rule>>[1];
 type Declaration = Parameters<Parameters<Root["walkDecls"]>[0]>[0];
+type CssRule = Parameters<Parameters<Root["walkRules"]>[0]>[0];
 
 /** Where token files, layer primitives and component sources live, as path patterns. */
 export interface ButteryPaths {
@@ -34,6 +35,20 @@ const { utils } = stylelint;
 
 function fileOf(root: Root): string {
   return (root.source?.input.file ?? "").replaceAll("\\", "/");
+}
+
+function stemOf(file: string): string {
+  const name = file.slice(file.lastIndexOf("/") + 1);
+  return name.endsWith(".css") ? name.slice(0, -".css".length) : name;
+}
+
+function firstRuleOf(root: Root): CssRule | undefined {
+  let first: CssRule | undefined;
+  root.walkRules((rule) => {
+    first = rule;
+    return false;
+  });
+  return first;
 }
 
 function matches(file: string, patterns: readonly RegExp[]): boolean {
@@ -181,10 +196,14 @@ const positionOwned = createRule({
 const rawLength = createRule({
   name: "raw-length",
   check(root, complain, paths) {
-    if (matches(fileOf(root), paths.tokens)) return;
+    const file = fileOf(root);
+    if (matches(file, paths.tokens)) return;
+    const prefix = `--bt-${stemOf(file)}-`;
+    const top = firstRuleOf(root);
     root.walkDecls((declaration) => {
       const property = declaration.prop.toLowerCase();
-      if (property.startsWith("--bt-") || inFontFace(declaration)) return;
+      if (inFontFace(declaration)) return;
+      if (property.startsWith(prefix) && declaration.parent === top) return;
       for (const token of scanValue(declaration.value)) {
         if (token.kind !== "number" || token.value === 0) continue;
         if (FLUID_UNITS.has(token.unit)) continue;
@@ -206,8 +225,8 @@ const rawLength = createRule({
         complain(
           declaration,
           property.startsWith("--")
-            ? `"${declaration.prop}" holds a raw length (${token.text}). Name component variables --bt-<component>-* and declare them at the top of the component's CSS.`
-            : `"${declaration.prop}: ${declaration.value}" uses a raw length (${token.text}). Use a token (var(--bt-space-*), var(--bt-h-*), var(--bt-w-*), var(--bt-r-*)) or a --bt-<component>-* variable declared at the top of the component's CSS.`,
+            ? `"${declaration.prop}" holds a raw length (${token.text}). Raw lengths belong in tokens, or in ${prefix}* variables declared in the first rule of this file.`
+            : `"${declaration.prop}: ${declaration.value}" uses a raw length (${token.text}). Use a token (var(--bt-space-*), var(--bt-h-*), var(--bt-w-*), var(--bt-r-*)) or a ${prefix}* variable declared in the first rule of this file.`,
         );
         return;
       }
