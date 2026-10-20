@@ -3,6 +3,7 @@ import { compile } from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import { colors } from "./index.ts";
 import {
+  renderLayoutCss,
   renderSurfaceRecipeCss,
   renderTailwindCss,
   renderTextRecipeCss,
@@ -23,6 +24,7 @@ describe("generated files", () => {
     );
     expect(file("../styles/recipes/text.css")).toBe(renderTextRecipeCss());
     expect(file("../styles/tailwind.css")).toBe(renderTailwindCss());
+    expect(file("../styles/primitives/layout.css")).toBe(renderLayoutCss());
   });
 
   it("emit every color in both themes", () => {

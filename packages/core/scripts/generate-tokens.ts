@@ -1,7 +1,9 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import {
+  renderLayoutCss,
   renderSurfaceRecipeCss,
   renderTailwindCss,
   renderTextRecipeCss,
@@ -17,6 +19,7 @@ const outputs = [
   ["src/styles/recipes/surface.css", renderSurfaceRecipeCss()],
   ["src/styles/recipes/text.css", renderTextRecipeCss()],
   ["src/styles/tailwind.css", renderTailwindCss()],
+  ["src/styles/primitives/layout.css", renderLayoutCss()],
 ] as const;
 
 function current(path: string): string | undefined {
@@ -34,7 +37,10 @@ if (process.argv.includes("--check")) {
     process.exitCode = 1;
   }
 } else {
-  for (const [path, content] of stale) writeFileSync(`${root}${path}`, content);
+  for (const [path, content] of stale) {
+    mkdirSync(dirname(`${root}${path}`), { recursive: true });
+    writeFileSync(`${root}${path}`, content);
+  }
   process.stdout.write(
     stale.length > 0
       ? `Wrote ${stale.map(([path]) => path).join(", ")}.\n`

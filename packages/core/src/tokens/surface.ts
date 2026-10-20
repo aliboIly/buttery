@@ -8,7 +8,7 @@ export interface SurfaceDefinition {
   readonly radius: RadiusToken | "none";
   readonly shadow?: ShadowToken;
   readonly border?: ColorToken;
-  /** Padding as spacing steps, in CSS shorthand order. `well` is the 3px section inset. */
+  /** Padding as spacing steps, in CSS shorthand order. `well` is the section inset (`spaceWell`). */
   readonly padding?: readonly (SpaceStep | "well")[];
   readonly description: string;
 }

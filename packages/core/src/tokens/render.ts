@@ -8,6 +8,7 @@ import {
   easings,
   fontFamilies,
   heights,
+  iconStroke,
   pressScale,
   radii,
   shadows,
@@ -130,6 +131,7 @@ function sharedDeclarations(): Declaration[] {
       ms(value),
     ]),
     ["--bt-press-scale", String(pressScale)],
+    ["--bt-icon-stroke", String(iconStroke)],
     ...Object.entries(textRoles).flatMap(([name, role]) =>
       textRoleDeclarations(name, role),
     ),
@@ -530,6 +532,36 @@ export function renderSurfaceRecipeCss(): string {
     ]),
     "",
     levels.join("\n\n"),
+    "}",
+    "",
+  ].join("\n");
+}
+
+/** Attribute rules for the flow primitives' spacing props and the layer bands. */
+export function renderLayoutCss(): string {
+  const steps = (Object.keys(space) as SpaceStep[]).sort(
+    (a, b) => space[a] - space[b],
+  );
+  const spacing: readonly (readonly [attribute: string, property: string])[] = [
+    ["data-gap", "gap"],
+    ["data-pad", "padding"],
+    ["data-pad-x", "padding-inline"],
+    ["data-pad-y", "padding-block"],
+  ];
+  const spacingBlocks = spacing.flatMap(([attribute, property]) =>
+    steps.map((step) =>
+      block(`[data-bt][${attribute}="${step}"]`, [
+        [property, `var(${spaceVar(step)})`],
+      ]),
+    ),
+  );
+  const layerBlocks = Object.keys(zIndex).map((band) =>
+    block(`[data-bt-layer="${band}"]`, [["z-index", `var(--bt-z-${band})`]]),
+  );
+  return [
+    HEADER,
+    "@layer bt.primitives {",
+    [...spacingBlocks, ...layerBlocks].join("\n\n"),
     "}",
     "",
   ].join("\n");

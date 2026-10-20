@@ -19,6 +19,16 @@ export const space = {
 
 export type SpaceStep = keyof typeof space;
 
+type NumericStep<Step> = Step extends `${infer N extends number}` ? N : never;
+
+/** A spacing step as a prop: `4`, `"4"` or `"0.5"`. */
+export type SpaceValue = SpaceStep | NumericStep<SpaceStep>;
+
+/** The step key for a spacing prop, as used in `data-gap` and `--bt-space-*`. */
+export function spaceStep(value: SpaceValue): SpaceStep {
+  return String(value) as SpaceStep;
+}
+
 /** The inset between a section well and its card, on the three open sides. */
 export const spaceWell = 4;
 

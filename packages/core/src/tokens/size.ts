@@ -104,4 +104,22 @@ export const widths = {
     value: 2,
     description: "Gap between an element and its focus ring.",
   },
+  "icon-sm": {
+    cssVar: "--bt-icon-sm",
+    value: 16,
+    description: "Icons inside controls.",
+  },
+  "icon-md": {
+    cssVar: "--bt-icon-md",
+    value: 20,
+    description: "Icons in empty states.",
+  },
+  "blur-scrim": {
+    cssVar: "--bt-blur-scrim",
+    value: 10,
+    description: "Backdrop blur behind menus that open over content.",
+  },
 } as const;
+
+/** Icon stroke width, emitted as `--bt-icon-stroke`. */
+export const iconStroke = 1.75;

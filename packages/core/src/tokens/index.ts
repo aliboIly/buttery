@@ -6,15 +6,15 @@ export { radii } from "./radius.ts";
 export type { RadiusToken } from "./radius.ts";
 export { shadows } from "./shadow.ts";
 export type { ShadowDefinition, ShadowToken } from "./shadow.ts";
-export { heights, widths } from "./size.ts";
+export { heights, iconStroke, widths } from "./size.ts";
 export type {
   Density,
   HeightDefinition,
   HeightToken,
   WidthDefinition,
 } from "./size.ts";
-export { space, spaceVar, spaceWell } from "./space.ts";
-export type { SpaceStep } from "./space.ts";
+export { space, spaceStep, spaceVar, spaceWell } from "./space.ts";
+export type { SpaceStep, SpaceValue } from "./space.ts";
 export {
   displayBreakpoints,
   displayRoles,
