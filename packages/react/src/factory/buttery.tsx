@@ -280,6 +280,27 @@ export interface ButteryFactory extends ButteryIntrinsics {
   ): (props: ButteryComponentProps<Props>) => ReactElement;
 }
 
+/** Whether a wrapped component's props carry the few the factory reads in the types it reads them as. */
+function isRenderProps(props: object): props is ButteryRenderProps {
+  const className: unknown = Reflect.get(props, "className");
+  const title: unknown = Reflect.get(props, "title");
+  const ref: unknown = Reflect.get(props, "ref");
+  return (
+    (className === undefined || typeof className === "string") &&
+    (title === undefined || typeof title === "string") &&
+    (ref === undefined ||
+      ref === null ||
+      typeof ref === "function" ||
+      typeof ref === "object")
+  );
+}
+
+function rejectProps(name: string): never {
+  throw new TypeError(
+    `[buttery:${name}] className and title have to be strings and ref a ref. Fix: pass them as the element would take them, or leave them out.`,
+  );
+}
+
 function wrap<Props extends object>(
   component: ComponentType<Props>,
   recipe: ButteryRecipe = {},
@@ -287,11 +308,12 @@ function wrap<Props extends object>(
   const MotionComponent = motion.create(component);
   const name = `buttery(${component.displayName ?? component.name})`;
   return function ButteryComponent(props) {
-    // Props is generic, so TypeScript can't see that it carries className, title and children; the factory
-    // only reads those, and passes everything else on untouched.
+    const renderProps: ButteryRenderProps = isRenderProps(props)
+      ? props
+      : rejectProps(name);
     return useButteryElement(component, MotionComponent, name, {
       ...recipe,
-      ...(props as ButteryRenderProps),
+      ...renderProps,
     });
   };
 }
