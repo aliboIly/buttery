@@ -12,7 +12,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) var(--bt-w-row-control);
     align-items: center;
-    gap: var(--bt-space-4);
+    gap: var(--bt-space-2);
     min-inline-size: 0;
   }
 

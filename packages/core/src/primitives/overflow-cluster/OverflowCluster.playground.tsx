@@ -52,7 +52,7 @@ function Cluster(): ReactElement {
 
 const WIDTHS = [
   { width: "var(--bt-w-dialog)", label: "Wide, 400px" },
-  { width: "var(--bt-w-row-control)", label: "Medium, 164px" },
+  { width: "var(--bt-w-row-control)", label: "Medium, 160px" },
   { width: "var(--bt-space-32)", label: "Narrow, 128px" },
 ] as const;
 

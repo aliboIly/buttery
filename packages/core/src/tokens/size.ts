@@ -91,7 +91,7 @@ export const widths = {
   },
   "row-control": {
     cssVar: "--bt-w-row-control",
-    value: 164,
+    value: 160,
     description: "Slider width in an inspector row.",
   },
   page: {
