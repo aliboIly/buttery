@@ -34,20 +34,15 @@ function marks(): NodeListOf<Element> {
 describe("LayoutGuard", () => {
   it("outlines offenders and logs them once in the shared JSON format", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const group = vi
-      .spyOn(console, "groupCollapsed")
-      .mockImplementation(() => undefined);
-    vi.spyOn(console, "groupEnd").mockImplementation(() => undefined);
     render(<LayoutGuard />);
     act(() => {
       vi.advanceTimersByTime(300);
     });
     expect(marks()).toHaveLength(1);
     expect(marks()[0]?.textContent).toContain("overlap");
-    expect(group).toHaveBeenCalledWith(
-      expect.stringContaining("1 layout problem"),
-    );
-    const logged: unknown = JSON.parse(String(warn.mock.calls[0]?.[0]));
+    const [summary, json] = String(warn.mock.calls[0]?.[0]).split("\n");
+    expect(summary).toContain("1 layout problem");
+    const logged: unknown = JSON.parse(json ?? "");
     expect(logged).toMatchObject({
       rule: "overlap",
       a: '[data-bt="Chip"]',
@@ -56,13 +51,11 @@ describe("LayoutGuard", () => {
     act(() => {
       vi.advanceTimersByTime(1000);
     });
-    expect(group).toHaveBeenCalledOnce();
+    expect(warn).toHaveBeenCalledOnce();
   });
 
   it("toggles the outlines with ⌥⇧L and the grid with ⌥⇧G", () => {
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    vi.spyOn(console, "groupCollapsed").mockImplementation(() => undefined);
-    vi.spyOn(console, "groupEnd").mockImplementation(() => undefined);
     render(<LayoutGuard />);
     act(() => {
       vi.advanceTimersByTime(300);
@@ -71,6 +64,8 @@ describe("LayoutGuard", () => {
     fireEvent.keyDown(window, { code: "KeyL", altKey: true, shiftKey: true });
     expect(marks()).toHaveLength(0);
     fireEvent.keyDown(window, { code: "KeyG", altKey: true, shiftKey: true });
-    expect(document.querySelectorAll('[data-bt-part="column"]')).toHaveLength(12);
+    expect(document.querySelectorAll('[data-bt-part="column"]')).toHaveLength(
+      12,
+    );
   });
 });

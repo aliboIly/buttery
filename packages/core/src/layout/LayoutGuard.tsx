@@ -23,11 +23,12 @@ function isInsideGuard(node: Node): boolean {
 function report(violations: readonly LayoutViolation[]): void {
   if (violations.length === 0) return;
   const noun = violations.length === 1 ? "problem" : "problems";
-  console.groupCollapsed(
-    `[buttery:LayoutGuard] ${String(violations.length)} layout ${noun}. ⌥⇧L hides the outlines.`,
+  console.warn(
+    [
+      `[buttery:LayoutGuard] ${String(violations.length)} layout ${noun}. ⌥⇧L hides the outlines.`,
+      ...violations.map((violation) => JSON.stringify(violation)),
+    ].join("\n"),
   );
-  for (const violation of violations) console.warn(JSON.stringify(violation));
-  console.groupEnd();
 }
 
 export interface LayoutGuardProps {
