@@ -1,5 +1,6 @@
 import stylelint from "stylelint";
 import type { Plugin, Rule } from "stylelint";
+import { tailwindProblem } from "../tailwind.ts";
 import { scanValue } from "./scan-value.ts";
 import {
   BORDER_WIDTH_PROPERTIES,
@@ -13,6 +14,7 @@ type Root = Parameters<ReturnType<Rule>>[0];
 type Result = Parameters<ReturnType<Rule>>[1];
 type Declaration = Parameters<Parameters<Root["walkDecls"]>[0]>[0];
 type CssRule = Parameters<Parameters<Root["walkRules"]>[0]>[0];
+type AtRule = Extract<Root["nodes"][number], { type: "atrule" }>;
 
 /** Where token files, layer primitives and component sources live, as path patterns. */
 export interface ButteryPaths {
@@ -76,7 +78,11 @@ interface RuleSpec {
   readonly name: string;
   readonly check: (
     root: Root,
-    complain: (declaration: Declaration, message: string) => void,
+    complain: (
+      node: Declaration | AtRule,
+      message: string,
+      word?: string,
+    ) => void,
     paths: ButteryPaths,
   ) => void;
 }
@@ -96,13 +102,13 @@ function createRule({
       const paths = { ...defaultButteryPaths, ...overrides };
       check(
         root,
-        (declaration, message) => {
+        (node, message, word) => {
           utils.report({
             ruleName,
             result,
-            node: declaration,
+            node,
             message: messages.rejected(message),
-            word: declaration.value,
+            word: word ?? (node.type === "decl" ? node.value : node.params),
           });
         },
         paths,
@@ -234,20 +240,35 @@ const rawLength = createRule({
   },
 });
 
-/** buttery's stylelint rules, as plugins. */
-export const butteryStylelintPlugins: readonly Plugin[] = [
+const tailwindTokens = createRule({
+  name: "tailwind-tokens",
+  check(root, complain) {
+    root.walkAtRules("apply", (atRule) => {
+      for (const className of atRule.params.split(/\s+/)) {
+        if (!className) continue;
+        const problem = tailwindProblem(className);
+        if (problem)
+          complain(atRule, `@apply ${className}: ${problem}`, className);
+      }
+    });
+  },
+});
+
+const RULES = [
   noRawColor,
   zIndexToken,
   noNegativeMargin,
   positionOwned,
   rawLength,
-].map((rule) => stylelint.createPlugin(rule.ruleName, rule));
+  tailwindTokens,
+];
+
+/** buttery's stylelint rules, as plugins. */
+export const butteryStylelintPlugins: readonly Plugin[] = RULES.map((rule) =>
+  stylelint.createPlugin(rule.ruleName, rule),
+);
 
 /** The names of buttery's stylelint rules. */
-export const butteryStylelintRuleNames: readonly string[] = [
-  noRawColor,
-  zIndexToken,
-  noNegativeMargin,
-  positionOwned,
-  rawLength,
-].map((rule) => rule.ruleName);
+export const butteryStylelintRuleNames: readonly string[] = RULES.map(
+  (rule) => rule.ruleName,
+);

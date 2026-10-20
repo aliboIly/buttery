@@ -147,7 +147,7 @@ Default matrix: viewports `390×844, 768×1024, 960×640, 1280×800, 1440×900, 
 Mounted by `ButteryProvider` in Vite development builds (`layoutGuard={false}` turns it off). Re-checks overlap, overflow and off-scale values on resize, scroll and DOM changes, ignoring its own overlay: once the page has been quiet for 300ms, at least once a second while it keeps changing, and only while buttery reports settled. It outlines offenders in red with a label and logs each new set of problems as one `console.warn`: a summary line, then one JSON violation per line in the shared format. `⌥⇧L` toggles the outlines and `⌥⇧G` the 12-column page grid, except while typing in a field. Production builds don't include it.
 
 ### `@buttery/lint`
-- **stylelint** (`@buttery/lint/stylelint`, rules `buttery/no-raw-color`, `buttery/z-index-token`, `buttery/no-negative-margin`, `buttery/position-owned`, `buttery/raw-length`):
+- **stylelint** (`@buttery/lint/stylelint`, rules `buttery/no-raw-color`, `buttery/z-index-token`, `buttery/no-negative-margin`, `buttery/position-owned`, `buttery/raw-length`, and `buttery/tailwind-tokens`, which checks the classes an `@apply` pulls in the same way the ESLint rule checks `className`):
   - No raw colors outside token files.
   - z-index only `var(--bt-z-*)`.
   - No negative margins.
@@ -157,5 +157,5 @@ Mounted by `ButteryProvider` in Vite development builds (`layoutGuard={false}` t
   - Out-of-flow positioning in a component file is allowed only in rules that target `[data-bt-part]` internals.
 - **ESLint** (`@buttery/lint/eslint`):
   - `buttery/no-literal-layout-style` rejects inline `style` margins, z-index, position and sizes with literal values (tokens, percentages, `auto` and computed values pass), and custom properties set to raw lengths.
-  - `buttery/tailwind-tokens` keeps Tailwind classes on the tokens: no `absolute`/`fixed`/`sticky`, no z-index but `z-(--bt-z-*)`, no negative margins, no arbitrary values holding raw lengths, durations or colors, no `transition-all` or raw durations, none of Tailwind's own palette, type scale or shadows, and spacing only in steps on buttery's scale. `butteryEslintConfig({ tailwind: false })` turns it off.
+  - `buttery/tailwind-tokens` keeps Tailwind classes on the tokens: no `absolute`/`fixed`/`sticky`, no z-index but `z-(--bt-z-*)`, no negative margins, no arbitrary values holding raw lengths, durations or colors, no `transition-all` or raw durations, none of Tailwind's own palette, type scale or shadows, and spacing only in steps on buttery's scale. Arbitrary properties (`[position:absolute]`) get the same checks. `butteryEslintConfig({ tailwind: false })` turns it off.
   - `buttery/spread-rest-props` makes components whose props accept a DOM element's props (function or arrow components; interfaces, aliases or imported types) collect `...rest` and spread it onto what they render (React 19 passes `ref` through it). With type information it reads the props' type; without it, the props declaration in the same file.

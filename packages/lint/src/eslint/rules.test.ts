@@ -137,6 +137,10 @@ tester.run("tailwind-tokens", tailwindTokens, {
       filename: "page.tsx",
     },
     {
+      code: '<div className="[z-index:var(--bt-z-raised)] [position:relative]" />',
+      filename: "page.tsx",
+    },
+    {
       code: '<div className="max-w-[var(--bt-w-dialog)] duration-(--bt-dur-fast)" />',
       filename: "page.tsx",
     },
@@ -158,6 +162,16 @@ tester.run("tailwind-tokens", tailwindTokens, {
     },
     {
       code: '<div className={cx("text-sm shadow-lg", wide ? "p-7" : "w-64")} />',
+      filename: "page.tsx",
+      errors: [
+        { messageId: "utility" },
+        { messageId: "utility" },
+        { messageId: "utility" },
+        { messageId: "utility" },
+      ],
+    },
+    {
+      code: '<div className="[position:absolute] [z-index:50] [margin-top:-4px] [transition:all_120ms]" />',
       filename: "page.tsx",
       errors: [
         { messageId: "utility" },

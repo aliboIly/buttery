@@ -135,6 +135,17 @@ describe("buttery/raw-length", () => {
   });
 });
 
+describe("buttery/tailwind-tokens", () => {
+  it("checks the classes an @apply pulls in", async () => {
+    expect(await lint(".a { @apply flex gap-4 bg-surface; }")).toEqual([]);
+    expect(await lint(".a { @apply absolute z-50 p-[13px]; }")).toEqual([
+      "buttery/tailwind-tokens",
+      "buttery/tailwind-tokens",
+      "buttery/tailwind-tokens",
+    ]);
+  });
+});
+
 describe("scanValue", () => {
   it("reads functions, words, hashes and numbers with units", () => {
     expect(scanValue("calc(100% - 2px) #fff solid -0.5em 'red'")).toEqual([
