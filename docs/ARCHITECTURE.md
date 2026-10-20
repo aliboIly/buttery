@@ -71,7 +71,8 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
 1. Tokens      --bt-* CSS variables + typed TS exports (colors, type, space, heights, widths, radii,
                shadows, z, motion)
 2. Recipes     CSS classes that bundle tokens: .bt-surface[data-level], .bt-press, .bt-focus,
-               .bt-control[data-size], .bt-text[data-role], .bt-truncate
+               .bt-control[data-size], .bt-text[data-role], .bt-truncate, .bt-hover-lift,
+               .bt-hover-tint, .bt-scroll-fade
 3. Primitives  Surface, Pressable, Stack, Inline, Grid, Center, Divider, Text, Icon, Kbd,
                FitBox, OverflowCluster, Morph (auto-height + crossfade), Presence (enter/exit presets),
                SharedIndicator, Reveal, Stagger, Loop
