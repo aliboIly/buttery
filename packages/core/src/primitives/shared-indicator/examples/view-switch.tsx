@@ -1,37 +1,70 @@
+import { Tabs } from "radix-ui";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import {
+  Center,
   Inline,
   Pressable,
   SharedIndicator,
-  Surface,
+  Stack,
   Text,
 } from "@buttery/core";
 
-const VIEWS = ["Canvas", "Layers", "History"] as const;
+const VIEWS = [
+  { value: "canvas", label: "Canvas", body: "The card as people will see it." },
+  {
+    value: "layers",
+    label: "Layers",
+    body: "Everything on the card, top to bottom.",
+  },
+  {
+    value: "history",
+    label: "History",
+    body: "Every change since you opened it.",
+  },
+] as const;
 
-/** Tabs whose highlight slides to the tab you pick. */
+/** Tabs in one track whose highlight slides to the tab you pick, with their panels below. */
 export function ViewSwitch(): ReactElement {
-  const [view, setView] = useState<(typeof VIEWS)[number]>("Canvas");
+  const [view, setView] = useState("canvas");
   return (
-    <Inline gap={1} role="tablist" aria-label="Views">
-      <SharedIndicator.Group>
-        {VIEWS.map((option) => (
-          <SharedIndicator key={option} active={option === view} asChild>
-            <Surface asChild level="app" padX={4} padY={2} radius="full">
-              <Pressable
-                role="tab"
-                aria-selected={option === view}
-                onClick={() => {
-                  setView(option);
-                }}
-              >
-                <Text variant="button">{option}</Text>
-              </Pressable>
-            </Surface>
-          </SharedIndicator>
+    <Tabs.Root value={view} onValueChange={setView} asChild>
+      <Stack gap={3} align="start">
+        <Tabs.List aria-label="Views" asChild>
+          <Inline
+            gap="0.5"
+            pad="0.5"
+            style={{
+              borderRadius: "var(--bt-r-full)",
+              backgroundColor: "var(--bt-bg-control)",
+            }}
+          >
+            <SharedIndicator.Group>
+              {VIEWS.map(({ value, label }) => (
+                <Tabs.Trigger key={value} value={value} asChild>
+                  <SharedIndicator active={value === view} asChild>
+                    <Center asChild padX={4}>
+                      <Pressable
+                        style={{
+                          blockSize: "var(--bt-h-button)",
+                          borderRadius: "var(--bt-r-full)",
+                        }}
+                      >
+                        <Text variant="button">{label}</Text>
+                      </Pressable>
+                    </Center>
+                  </SharedIndicator>
+                </Tabs.Trigger>
+              ))}
+            </SharedIndicator.Group>
+          </Inline>
+        </Tabs.List>
+        {VIEWS.map(({ value, body }) => (
+          <Tabs.Content key={value} value={value}>
+            <Text variant="body">{body}</Text>
+          </Tabs.Content>
         ))}
-      </SharedIndicator.Group>
-    </Inline>
+      </Stack>
+    </Tabs.Root>
   );
 }

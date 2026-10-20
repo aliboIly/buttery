@@ -1,6 +1,8 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { RadioGroup } from "radix-ui";
+import { userEvent as keyboard } from "vitest/browser";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -103,6 +105,44 @@ describe("SharedIndicator", () => {
     expect(screen.getByRole("button", { name: "Layers" }).classList).toContain(
       "bt-center",
     );
+  });
+
+  it("works around and inside Radix triggers, which keep their arrow keys", async () => {
+    function Edges(): ReactElement {
+      const [edge, setEdge] = useState("Plain");
+      return (
+        <RadioGroup.Root value={edge} onValueChange={setEdge} aria-label="Edge">
+          <SharedIndicator.Group>
+            <SharedIndicator active={edge === "Plain"} asChild>
+              <RadioGroup.Item value="Plain" asChild>
+                <button type="button">Plain</button>
+              </RadioGroup.Item>
+            </SharedIndicator>
+            <RadioGroup.Item value="Glow" asChild>
+              <SharedIndicator active={edge === "Glow"} asChild>
+                <button type="button">Glow</button>
+              </SharedIndicator>
+            </RadioGroup.Item>
+          </SharedIndicator.Group>
+        </RadioGroup.Root>
+      );
+    }
+    render(<Edges />);
+    const plain = screen.getByRole("radio", { name: "Plain" });
+    const glow = screen.getByRole("radio", { name: "Glow" });
+    expect(indicator().parentElement).toBe(plain);
+    expect(plain.classList).toContain("bt-shared-indicator");
+    expect(glow.classList).toContain("bt-shared-indicator");
+    plain.focus();
+    // Radix checks the radio that an arrow key focuses only while the key is still down, as a person holds it.
+    await keyboard.keyboard("{ArrowRight>}");
+    await waitFor(() => {
+      expect(glow.getAttribute("aria-checked")).toBe("true");
+    });
+    await keyboard.keyboard("{/ArrowRight}");
+    await waitFor(() => {
+      expect(indicator().parentElement).toBe(glow);
+    });
   });
 
   it("slides to the item that becomes active", async () => {

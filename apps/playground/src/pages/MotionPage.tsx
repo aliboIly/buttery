@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { RadioGroup } from "radix-ui";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import {
@@ -141,33 +142,31 @@ function MorphDemo(): ReactElement {
 const EDGES = ["Plain", "Outline", "Glow"] as const;
 
 function IndicatorDemo(): ReactElement {
-  const [edge, setEdge] = useState<(typeof EDGES)[number]>("Plain");
+  const [edge, setEdge] = useState<string>("Plain");
   return (
-    <Inline
-      gap="0.5"
-      pad="0.5"
-      className="mo-segmented"
-      role="radiogroup"
+    <RadioGroup.Root
+      value={edge}
+      onValueChange={setEdge}
       aria-label="Edge"
+      asChild
     >
-      <SharedIndicator.Group>
-        {EDGES.map((option) => (
-          <SharedIndicator key={option} active={option === edge} asChild>
-            <Pressable
-              role="radio"
-              aria-checked={option === edge}
-              className="mo-segment"
-              data-testid={`edge-${option}`}
-              onClick={() => {
-                setEdge(option);
-              }}
-            >
-              <Text variant="control">{option}</Text>
-            </Pressable>
-          </SharedIndicator>
-        ))}
-      </SharedIndicator.Group>
-    </Inline>
+      <Inline gap="0.5" pad="0.5" className="mo-segmented">
+        <SharedIndicator.Group>
+          {EDGES.map((option) => (
+            <RadioGroup.Item key={option} value={option} asChild>
+              <SharedIndicator active={option === edge} asChild>
+                <Pressable
+                  className="mo-segment"
+                  data-testid={`edge-${option}`}
+                >
+                  <Text variant="control">{option}</Text>
+                </Pressable>
+              </SharedIndicator>
+            </RadioGroup.Item>
+          ))}
+        </SharedIndicator.Group>
+      </Inline>
+    </RadioGroup.Root>
   );
 }
 
