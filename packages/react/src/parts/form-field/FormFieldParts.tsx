@@ -1,7 +1,7 @@
-import { Icon, hasContent } from "@buttery/core";
+import { Icon, hasContent, timing } from "@buttery/core";
 import { CircleAlert } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
-import { useId } from "react";
+import { isValidElement, useEffect, useId, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 
 /** The ids that tie a field's label, hint and error to its control. */
@@ -90,28 +90,65 @@ export function FormFieldCaption({
   );
 }
 
+/** The words in a node: its strings and numbers, and those of the elements in it, in order. */
+function textOf(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  if (isValidElement<{ readonly children?: ReactNode }>(node)) {
+    return textOf(node.props.children);
+  }
+  return "";
+}
+
 /**
- * A field's error, under its control, with an icon so it doesn't rest on color alone. Screen readers get
- * it from a copy in a live region that's always there, so a new error is read out as it appears, even on a
- * field that was just left; the error you see is hidden from them, so it isn't read twice.
+ * A field's error, under its control, with an icon so it doesn't rest on color alone. It describes the
+ * control, and a new error's words are also read out politely as it appears, with the field's name, so an
+ * error shown on a field that was just left is heard. The live region empties again after a moment, so
+ * reading the page later finds the error once.
  */
 export function FormFieldError({
   id,
+  name,
   announce,
   children,
 }: {
   readonly id: string;
+  readonly name: string | undefined;
   readonly announce: boolean;
   readonly children: ReactNode;
 }): ReactElement {
   const shown = hasContent(children);
+  const text = shown ? textOf(children) : "";
+  const words =
+    !announce || text === ""
+      ? ""
+      : name === undefined
+        ? text
+        : `${name}: ${text}`;
+  const [heard, setHeard] = useState("");
+
+  useEffect(() => {
+    if (words === heard) return undefined;
+    const timer = window.setTimeout(
+      () => {
+        setHeard(words);
+      },
+      words === "" ? 0 : timing["announcement-life"],
+    );
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [words, heard]);
+
   return (
     <>
-      <VisuallyHidden.Root aria-live={announce ? "polite" : "off"}>
-        {shown ? children : null}
-      </VisuallyHidden.Root>
+      {announce ? (
+        <VisuallyHidden.Root aria-live="polite">
+          {words === heard ? "" : words}
+        </VisuallyHidden.Root>
+      ) : null}
       {shown ? (
-        <p id={id} aria-hidden="true" data-bt-part="error">
+        <p id={id} data-bt-part="error">
           <Icon icon={CircleAlert} />
           <span className="bt-text" data-role="caption">
             {children}

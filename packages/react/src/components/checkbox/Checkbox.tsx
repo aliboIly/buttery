@@ -114,7 +114,11 @@ export function Checkbox({
           {hint}
         </p>
       ) : null}
-      <FormFieldError id={ids.error} announce={announceError}>
+      <FormFieldError
+        id={ids.error}
+        name={typeof label === "string" ? label : undefined}
+        announce={announceError}
+      >
         {error}
       </FormFieldError>
     </div>

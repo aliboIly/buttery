@@ -63,7 +63,7 @@ describe("Field", () => {
       .toBeInTheDocument();
   });
 
-  it("reads a new error out politely, and describes the control with it once", async () => {
+  it("reads a new error out politely with the field's name, then empties the live region", async () => {
     const { rerender } = render(
       <Field label="Email">{(control) => <input {...control} />}</Field>,
     );
@@ -74,27 +74,48 @@ describe("Field", () => {
         {(control) => <input {...control} />}
       </Field>,
     );
-    expect(region?.textContent).toBe("Enter an email address");
-    expect(
-      document
-        .querySelector('[data-bt-part="error"]')
-        ?.getAttribute("aria-hidden"),
-    ).toBe("true");
+    await expect
+      .poll(() => region?.textContent)
+      .toBe("Email: Enter an email address");
     await expect
       .element(page.getByRole("textbox", { name: "Email", exact: true }))
       .toHaveAccessibleDescription("Enter an email address");
+    await expect.poll(() => region?.textContent, { timeout: 3000 }).toBe("");
   });
 
-  it("leaves reading errors out to a summary when told", () => {
+  it("shows an error with a link in it once, where it can be reached", () => {
     render(
+      <Field
+        label="Email"
+        error={
+          <>
+            That email has an account. <a href="/sign-in">Sign in</a>
+          </>
+        }
+      >
+        {(control) => <input {...control} />}
+      </Field>,
+    );
+    const links = screen.getAllByRole("link", { name: "Sign in" });
+    expect(links).toHaveLength(1);
+    expect(links[0]?.closest('[aria-hidden="true"]')).toBeNull();
+  });
+
+  it("leaves reading errors out to a summary when told", async () => {
+    const { rerender } = render(
+      <Field label="Email" announceError={false}>
+        {(control) => <input {...control} />}
+      </Field>,
+    );
+    rerender(
       <Field label="Email" error="Enter an email address" announceError={false}>
         {(control) => <input {...control} />}
       </Field>,
     );
-    expect(document.querySelector('[aria-live="polite"]')).toBeNull();
-    expect(document.querySelector('[aria-live="off"]')?.textContent).toBe(
-      "Enter an email address",
-    );
+    expect(document.querySelector("[aria-live]")).toBeNull();
+    await expect
+      .element(page.getByRole("textbox", { name: "Email", exact: true }))
+      .toHaveAccessibleDescription("Enter an email address");
   });
 
   it("leaves the error and its description out while there's nothing wrong", () => {

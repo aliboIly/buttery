@@ -140,7 +140,7 @@ export function TextFieldShell({
         ) : null}
         {end === undefined ? null : <span data-bt-part="end">{end}</span>}
       </div>
-      <FormFieldError id={ids.error} announce={announceError}>
+      <FormFieldError id={ids.error} name={label} announce={announceError}>
         {error}
       </FormFieldError>
       {after}

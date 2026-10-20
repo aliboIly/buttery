@@ -92,7 +92,7 @@ export function Field({
         "aria-invalid": invalid || undefined,
         "aria-required": required || undefined,
       })}
-      <FormFieldError id={ids.error} announce={announceError}>
+      <FormFieldError id={ids.error} name={label} announce={announceError}>
         {error}
       </FormFieldError>
     </div>

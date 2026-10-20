@@ -29,7 +29,7 @@
     background-color: var(--bt-bg-surface);
     color: var(--bt-on-primary);
     scroll-margin-block-start: calc(
-      var(--bt-sticky-top, 0px) + var(--bt-space-8)
+      var(--bt-sticky-top, 0px) + var(--bt-space-12)
     );
   }
 

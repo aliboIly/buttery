@@ -4,6 +4,7 @@
     --bt-form-field-inset: var(--bt-space-3);
     --bt-form-field-end: var(--bt-space-1);
 
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-2);
@@ -89,7 +90,7 @@
     inset-inline-end: var(--bt-form-field-inset);
   }
 
-  /* A button at the end, such as a password's reveal toggle, keeps a small inset; the input runs up to it. */
+  /* The reveal toggle keeps a small inset from the edge while the input runs up to it, so presses beside it still land in the input. */
   .bt-form-field > [data-bt-part="box"] > [data-bt-part="end"] {
     display: flex;
     flex: none;
@@ -110,7 +111,7 @@
     letter-spacing: inherit;
     outline: none;
     scroll-margin-block-start: calc(
-      var(--bt-sticky-top, 0px) + var(--bt-space-8)
+      var(--bt-sticky-top, 0px) + var(--bt-space-12)
     );
   }
 
@@ -134,6 +135,8 @@
     > [data-bt-part="box"]:has(> [data-bt-part="end"])
     > [data-bt-part="input"] {
     padding-inline-end: var(--bt-space-2);
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
   }
 
   .bt-form-field > [data-bt-part="box"] > [data-bt-part="input"]::placeholder {

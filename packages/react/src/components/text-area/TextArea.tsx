@@ -166,7 +166,11 @@ export function TextArea({
           data-bt-part="measure"
         />
       </div>
-      <FormFieldError id={ids.error} announce={announceError}>
+      <FormFieldError
+        id={ids.error}
+        name={label}
+        announce={announceError}
+      >
         {error}
       </FormFieldError>
     </div>
