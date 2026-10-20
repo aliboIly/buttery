@@ -41,35 +41,34 @@
   }
 
   /* The body holds text, lists and links, so it takes body-sm's size without trimming its lines. */
-  .bt-callout [data-bt-part="body"] {
+  .bt-callout > [data-bt-part="content"] > [data-bt-part="body"] {
     color: var(--bt-text-secondary);
     font-size: var(--bt-text-body-sm-size);
     font-weight: var(--bt-text-body-sm-weight);
     line-height: var(--bt-text-body-sm-line);
   }
 
-  .bt-callout [data-bt-part="body"] :is(ul, ol) {
+  .bt-callout > [data-bt-part="content"] > [data-bt-part="body"] :is(ul, ol) {
     display: flex;
     flex-direction: column;
     margin: 0;
     padding-inline-start: var(--bt-space-4);
   }
 
-  .bt-callout [data-bt-part="body"] a {
+  .bt-callout > [data-bt-part="content"] > [data-bt-part="body"] a {
     color: var(--bt-callout-ink);
     text-decoration: underline;
   }
 
   /* A link on a line of its own, as in an error summary, gets a 24px target. */
-  .bt-callout [data-bt-part="body"] li > a {
+  .bt-callout > [data-bt-part="content"] > [data-bt-part="body"] li > a {
     display: inline-block;
     padding-block: var(--bt-space-0_5);
   }
 
-  .bt-callout [data-bt-part="action"] {
+  .bt-callout > [data-bt-part="content"] > [data-bt-part="action"] {
     display: flex;
     flex-wrap: wrap;
     gap: var(--bt-space-2);
-    padding-block-start: var(--bt-space-1_5);
   }
 }

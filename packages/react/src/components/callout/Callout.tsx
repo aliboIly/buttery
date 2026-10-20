@@ -1,4 +1,4 @@
-import { Icon, cx } from "@buttery/core";
+import { Icon, cx, hasContent } from "@buttery/core";
 import { CircleAlert, CircleCheck, Info, TriangleAlert } from "lucide-react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 
@@ -52,17 +52,15 @@ export function Callout({
     >
       <Icon icon={ICONS[tone]} />
       <div data-bt-part="content">
-        {title === undefined ? null : (
+        {hasContent(title) ? (
           <p className="bt-text" data-role="label" data-bt-part="title">
             {title}
           </p>
-        )}
-        {children === undefined ? null : (
+        ) : null}
+        {hasContent(children) ? (
           <div data-bt-part="body">{children}</div>
-        )}
-        {action === undefined ? null : (
-          <div data-bt-part="action">{action}</div>
-        )}
+        ) : null}
+        {hasContent(action) ? <div data-bt-part="action">{action}</div> : null}
       </div>
     </div>
   );
