@@ -52,8 +52,8 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-dur-press` | 80ms (pointer-down scale) |
 | `--bt-dur-reduced` | 100ms (the longest fade with reduced motion) |
 | `--bt-dur-fast` | 120ms (hover color and arrows, exits, text crossfade, the nav panel folding and its blur) |
-| `--bt-dur-base` | 200ms (enters: menu, toast, dialog opacity) |
-| `--bt-dur-slow` | 300ms (modal scrim in, crop-mode bg fade) |
+| `--bt-dur-base` | 200ms (enters: menu, toast, dialog opacity, the modal scrim) |
+| `--bt-dur-slow` | 300ms (crop-mode bg fade) |
 | `--bt-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` (enters) |
 | `--bt-ease-in` | `cubic-bezier(0.4, 0, 1, 1)` (exits) |
 | `--bt-ease-standard` | `cubic-bezier(0.2, 0, 0, 1)` (everything else) |
@@ -106,14 +106,14 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 
 ### 4.1 Nav bar and morphing menu (`NavBar`, `MorphMenu`)
 Measured from a local 30fps recording of a marketing site's top bar (`reference/inspiration-nav/`, not in the repo). Moving between top-level items never closes the panel: one floating surface **resizes and repositions** to fit each section. Build it on Radix `NavigationMenu`: its shared `Viewport` exposes the active content's size as CSS variables, and it handles hover intent and keyboard navigation.
-- **Open:** the pointer rests on a trigger for `--bt-delay-hover-open` (150ms). Then the panel unfolds downward from the bar, the viewport growing from the bar's height to the content's in `dur-fast` with `ease-out` (measured ~100ms), while its columns fade in. The page behind blurs and washes in over `dur-fast` (measured ~100–150ms).
-- **Switch:** moving to another trigger while the panel is open starts at once, with no hover delay (measured within ~70ms), and settles with `spring.snappy` (measured ~170–200ms). Old columns fade out over `dur-fast`; new ones fade in sliding 8–12px **from the direction of travel**; the panel's width, height and x morph. It never closes in between. The viewport's width, height and x are the second sanctioned size animation: Radix exposes the active content's size as CSS variables, and Motion animates that one element.
-- **Close:** moving onto a plain link (one without a menu) or out of the bar waits `--bt-delay-hover-close` (100ms). Then the panel folds up in `dur-fast` with `ease-in` (measured ~70–120ms) and the blur clears in `dur-fast` (measured ~150ms).
+- **Open:** the pointer rests on a trigger for `--bt-delay-hover-open` (150ms). Then the panel unfolds downward from the bar, the viewport growing from the bar's height to the content's in `dur-fast` with `ease-out` (measured ~100ms), while its columns fade in over `dur-fast`. The page behind blurs and washes in over `dur-fast` (measured ~100–150ms).
+- **Switch:** moving to another trigger while the panel is open starts at once, with no hover delay (measured within ~70ms), and settles with `spring.snappy` (measured ~170–200ms). Old columns fade out over `dur-fast`; new ones fade in over `dur-fast`, sliding `travel.rise` (8px; measured 8–12) **from the direction of travel**; the panel's width, height and x morph. It never closes in between. The viewport's width, height and x are the second sanctioned size animation: Radix exposes the active content's size as CSS variables, and Motion animates that one element.
+- **Close:** moving onto a plain link (one without a menu) or out of the bar waits `--bt-delay-hover-close` (100ms). Then the panel folds up in `dur-fast` with `ease-in` (measured ~70–120ms) and the blur clears in `dur-fast` (measured ~150ms). Folding is no quicker than unfolding, because the recording's close is no quicker than its open: the one exception to rule 7, logged in DECISIONS. Radix's own close timer is fixed at 150ms, so `NavBar` controls the open `value` and closes on its own `--bt-delay-hover-close` timer.
 - **Trigger:** the open trigger's chevron turns 180° with `spring.snappy` and its label goes to `text-strong`.
-- **One surface:** the open panel's floating surface reaches up behind the bar row, so the nav items sit inside its top edge. At rest over a colorful hero the bar has no background.
-- **Scrolling:** `behavior="static"` (the default, as recorded) scrolls away with the page; `sticky` stays pinned; `auto-hide` slides out as the page scrolls down and back as it scrolls up, with `spring.smooth`, and once past the hero it takes the `panel` surface with `shadow-card` (no background at the top of the page).
+- **One surface:** the open panel's floating surface reaches up behind the bar row, so the nav items sit inside its top edge without the panel ever painting over them. At rest over a colorful hero the bar has no background. The bar stacks at `--bt-z-sticky` whatever its `behavior` (a static bar is positioned so its z-index applies), and the panel lives in the bar's stacking context, so both stay above the blur scrim (`--bt-z-scrim-nav`).
+- **Scrolling:** `behavior="static"` (the default, as recorded) scrolls away with the page; `sticky` stays pinned; `auto-hide` slides out as the page scrolls down and back as it scrolls up, with `spring.smooth`, and once past the hero it takes the `panel` surface with `shadow-card` (no background at the top of the page). While it's slid away it keeps reserving its height in `--bt-sticky-top` and publishes how far it has slid as `--bt-sticky-shift`, which sticky followers (`SubNav`, asides) add as a translate, so they move up with it instead of leaving a gap or jumping.
 - **Keyboard and touch:** arrow keys move between triggers; Enter, Space or ArrowDown opens; Esc closes and returns focus to the trigger. A tap toggles a panel.
-- **Reduced motion:** the panel appears and leaves with a 100ms fade, a switch swaps the columns without sliding, the chevron turns at once and the blur fades in 100ms.
+- **Reduced motion:** the panel appears and leaves with a 100ms fade, a switch swaps the columns without sliding while the viewport takes its new size and position at once, the chevron turns at once, and the blur fades in and out in 100ms. `auto-hide` shows and hides the bar at once.
 - buttery look: the `floating` surface, r16, buttery tokens.
 
 ### 4.2 Card → modal (`ExpandableCard`)
@@ -146,7 +146,7 @@ Measured from the same local recording at 10fps. At rest the label is followed b
 Marketing numbers (not user values) count up once when revealed, 800ms ease-out, tabular-nums, width reserved for the final value. Screen readers get the final value immediately (`aria-label`); with reduced motion the final value renders directly.
 
 ### 4.8 Context blur (`Scrim`)
-Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). The blur scrim fades in and out over `--bt-dur-fast` (measured ~100–150ms each way behind the nav menu); the dim scrim comes in over `--bt-dur-slow` and leaves over `--bt-dur-fast`. The blur scrim sits below the sticky nav (`--bt-z-scrim-nav`) so the nav and menu stay crisp.
+Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). The blur scrim fades in and out over `--bt-dur-fast` (measured ~100–150ms each way behind the nav menu); the dim scrim comes in over `--bt-dur-base` (with the dialog, §3) and leaves over `--bt-dur-fast`. The blur scrim sits below the nav bar (`--bt-z-scrim-nav`, under the bar's `--bt-z-sticky`), so the bar and its open menu stay crisp.
 
 ---
 

@@ -195,7 +195,7 @@ Component-internal dimensions (thumb 24, tilt pad 32, anchor box 43, color dot 2
 `base 0 · raised 10 · scrim-nav 15 · sticky 20 · floating 30 · dropdown 40 · overlay 50 · modal 60 · toast 70 · tooltip 80 · dev 90`
 
 - A scrim belongs to its owning layer and renders directly beneath that layer's content (a dialog's scrim is at `modal − 1`).
-- The menu blur scrim (`scrim-nav`) sits **below** the sticky nav, so the nav and the open menu stay crisp while the page blurs.
+- The menu blur scrim (`scrim-nav`) sits **below** the nav bar, which stacks at `sticky` whatever its `behavior`; the open menu panel sits in the bar's stacking context, so the bar and the menu stay crisp while the page blurs.
 - Overlays opened from inside another overlay (a Select inside a Dialog) stack above their parent: the layer manager assigns increasing z within the band, in open order.
 
 ---
@@ -290,7 +290,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 - Media: 384×200, r10, per-step gradient background, holding a small scene whose elements morph between steps.
 - Title `dialog-title` (24px below media) · body `body` (16px below) · caption `caption` (20px below). Gaps are between trimmed text boxes (see §2).
 - PageDots 20px below caption: dots 6px, gap 6, inactive `dot`, active = 18×6 pill `dot-active`. Dots are indicators, not buttons.
-- Buttons 16px below the dots: two equal columns (`Inline uniform`), gap 8, 48h, r12. The back button is soft with `arrow="back"` (disabled on the first step) and the forward button is primary with `arrow="forward"`; on the last step its label changes (e.g. "Continue" → "Finish") and the arrow goes, since finishing isn't moving on. Bottom padding 24.
+- Buttons 16px below the dots: two equal columns (`Inline uniform`), gap 8, 48h, r12. The back button is soft with `arrow="back"` (disabled on the first step) and the forward button is primary with `arrow="forward"`; on the last step its label changes (e.g. "Continue" → "Finish") and the arrow goes, since finishing isn't moving on; the button keeps its width, as the two columns are equal. Bottom padding 24.
 - Scenes: each step's media is a small scene built from buttery parts whose shared elements morph between steps. Card Studio designs its own scenes around its features.
 
 ### Toast
@@ -305,7 +305,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 ### NavBar + MorphMenu (_derived_ from buttery's tokens; behavior in MOTION_SPEC §4.1)
 - Bar: 64h, aligned to the page container. Left: `BrandMark` (24) and the nav items, ghost pills 36h, padding-x 12, `control` role in `text-secondary` (hover `text`); triggers add a 16px chevron, gap 4; plain links have none. Right: a `secondary` pill and a `primary` call to action with `arrow="forward"`, gap 8. At rest over a colorful hero the bar has no background.
 - Open trigger: label `text-strong`, chevron turned 180°.
-- Panel: the `floating` surface (r16, shadow-floating) reaching up behind the bar row, so the nav items sit inside its top edge. Padding 24; columns laid out with `Grid`, gap 32. A column has a group heading (`control` role, `text-secondary`) and items 8 apart, each a title (`label`, `text`) over a one-line caption (`caption`, `text-secondary`), r10, hover background `bg-item-hover`. An optional featured column sits on the `section` level (r12, padding 16). A footer row under a 1px `border` divider holds a "See all" `ArrowLink`. Max width: the container, never wider than the viewport minus 16px.
+- Panel: the `floating` surface (r16, shadow-floating) reaching up behind the bar row, so the nav items sit inside its top edge. Padding 24; columns laid out with `Grid`, gap 32. A column has a group heading (`control` role, `text-secondary`) and items 8 apart, each a title (`label`, `text`) over a one-line caption (`caption`, `text-secondary`), r10, hover background `bg-item-hover`. An optional featured column fills the panel's end edge to edge on the `section` level, padding 24, clipped by the panel's corners rather than given a radius of its own (so the concentric rule keeps its one exception). A footer row under a 1px `border` divider holds a "See all" `ArrowLink`. Max width: the container, never wider than the viewport minus 16px.
 - Below 640px of container width: a menu button (`IconButton md`) opens a full-height sheet in which each menu becomes an accordion section.
 - `behavior`: `static` (default) · `sticky` · `auto-hide`. Pinned past the hero, the bar takes the `panel` surface with `shadow-card`.
 

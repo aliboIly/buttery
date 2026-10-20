@@ -25,7 +25,7 @@ Page layout follows a strict grid with a consistent section rhythm: split heroes
 9. **Container queries, not viewport queries.** Components respond to the space they're given, so the same component works in a 340px inspector and a 1200px page.
 10. **Priority overflow instead of wrapping.** Toolbars, header bars and nav bars use `OverflowCluster`: when items don't fit, the lowest-priority ones move into a "More" (`…`) menu. They never wrap to two lines, never overlap, never shrink text.
 11. **Scroll is contained.** The shell never scrolls horizontally. Panels scroll internally (`overscroll-behavior: contain`, `scrollbar-gutter: stable`, 12px fade masks at the edges with `.bt-scroll-fade`), and a contained panel fits inside the viewport: if its end sits below the fold, containment keeps the page from scrolling to it. `<Sticky variant="aside">` fits a sidebar between the sticky bars and scrolls it inside without containment, because what follows an aside can push it up past the bars near the end of the page, and only a scroll that reaches the page brings it back.
-12. **Sticky things reserve space.** Sticky headers publish their height as `--bt-sticky-top`; anchors use `scroll-margin-top: var(--bt-sticky-top)`.
+12. **Sticky things reserve space.** Sticky headers publish their height as `--bt-sticky-top`; anchors use `scroll-margin-top: var(--bt-sticky-top)`. A bar that slides away (`NavBar behavior="auto-hide"`) keeps reserving its height and publishes how far it has slid as `--bt-sticky-shift`, which sticky followers add as a translate.
 13. **Zero layout shift on interaction.** Loading states, skeletons and label swaps (e.g. "Continue" → "Finish") keep exact dimensions. Fonts are bundled and preloaded with a metric-matched fallback.
 
 ---
@@ -100,14 +100,14 @@ height: 100dvh; overflow: hidden;
 - Dev overlay: `⌥⇧G` toggles a column overlay (dev only — not a visual feature).
 
 ### Patterns
-- **NavBar**: 64h, aligned to the page container. Brand mark on the left, the nav items next to it (triggers carry a chevron, plain links don't), and a right cluster with a secondary pill and a primary call to action with a forward arrow. The nav items go through `OverflowCluster`; below 640px of container width everything collapses into a menu button that opens a full-height sheet with accordion sections. `behavior` is `static` (the default: it scrolls away with the page), `sticky` or `auto-hide`; while it can stay on screen it publishes its height as `--bt-sticky-top`. Its menus share one `MorphMenu` panel (MOTION_SPEC §4.1) laid out with `Grid`, never wider than the container or than the viewport minus 16px, and never over the bar's own items.
+- **NavBar**: 64h, aligned to the page container. Brand mark on the left, the nav items next to it (triggers carry a chevron, plain links don't), and a right cluster with a secondary pill and a primary call to action with a forward arrow. The nav items go through `OverflowCluster`; below 640px of container width everything collapses into a menu button that opens a full-height sheet with accordion sections. `behavior` is `static` (the default: it scrolls away with the page), `sticky` or `auto-hide`; while it can stay on screen it publishes its height as `--bt-sticky-top`. It stacks at `--bt-z-sticky` whatever its `behavior`. Its menus share one `MorphMenu` panel (MOTION_SPEC §4.1) laid out with `Grid`, which reaches up behind the bar row but never paints over the bar's own items, and is never wider than the container or than the viewport minus 16px.
 - **SubNav**: sticky under NavBar, 48h, scroll-spy highlight.
 - **SplitHero**: text 6–7 cols / visual 5–6 cols, vertically centered; headline is two-tone (strong + secondary continuation) ≤ 22ch; actions 24 below body.
 - **CenteredHero**: centered text (≤ 8 cols) above a full-width visual stage.
 - **Bento**: 12-col grid, cards span 4/6/8/12 cols and 1–2 row units (`--bt-bento-row: 320px`), gap 16. Card anatomy: title top-left, affordance top-right, visual anchored to the bottom and allowed to bleed to the card edges. Cards can expand to a modal (`ExpandableCard`).
 - **StatStrip**: 2 or 4 equal columns; each stat has a 1px left hairline, number (display, tabular) and label.
 - **LogoStrip**: N equal cells, logos optically normalized into a 120×24 box, monochrome.
-- **ArticleLayout**: main 8 cols + aside 3 cols (1 col gap). Aside is sticky (`top: calc(var(--bt-sticky-top) + 24px)`) and stops at the end of the article — never overlaps the footer.
+- **ArticleLayout**: main 8 cols + aside 3 cols (1 col gap). The aside is a `<Sticky variant="aside">`, so it sticks right under the bars and fits between them, with its 24px gap as padding inside it; it stops at the end of the article and never overlaps the footer.
 - **Footer**: multi-column link grid on the same 12-col grid.
 
 ### Display type (pages only)

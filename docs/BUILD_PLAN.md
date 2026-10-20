@@ -52,7 +52,7 @@ Definition of done for every phase:
 ## Phase 4 — Controls
 - `Button` (primary/secondary/soft/ghost, sm/md/cta, pill/rounded, loading, icon slots, `arrow="forward" | "back"`, the same arrow part `ArrowLink` uses), `IconButton`, `SplitButton`, `SegmentedControl`, `Slider` (+ `ValueBadge`, detents, double-click reset), `Chip`, `Tooltip`, `Kbd`, `ArrowLink`, `NumberField`.
 
-**Accept:** a Compare page with each control next to its crop from the references (light + dark). The page is local only: it reads from `reference/`, hides itself when the folder is missing, and is left out of builds and CI. Keyboard + screen-reader tests; `expectButtery` green. The arrow (MOTION_SPEC §4.5): unit tests for its states, zero width change on hover, reduced motion and no arrow on touch; Playwright samples it per frame against §4.5 and proves zero layout shift on hover; side-by-side frames against `reference/inspiration-nav/` with the differences listed.
+**Accept:** a Compare page with each control next to its crop from the references (light + dark). The page is local only: it reads from `reference/`, hides itself when the folder is missing, and is left out of builds and CI. Keyboard + screen-reader tests; `expectButtery` green. The arrow (MOTION_SPEC §4.5): unit tests for its states, zero width change on hover, reduced motion and only the chevron on touch; Playwright samples it per frame against §4.5 and proves zero layout shift on hover; side-by-side frames against `reference/inspiration-nav/` with the differences listed.
 
 ## Phase 5 — Inspector & app patterns
 - `SwatchGrid`, `ColorDot`, `TiltPad`, `AnchorGrid`, `Menu`, `Select` (footer slot), `Toast`, `FloatingToolbar`, `EmptyState`/`DropZone`, `Stage`, `Inspector` (Section/Row/Row.Split/Footer), `HeaderBar` (`OverflowCluster`, `dragRegion`), `AppShell`.
@@ -62,10 +62,10 @@ Definition of done for every phase:
 
 ## Phase 6 — Overlays & choreography
 - `Dialog`, `Onboarding` (StepDialog: morphing media scene, page dots, back and forward buttons with a last-step label, confetti, first-run persistence), `PageDots`.
-- `NavBar` + `MorphMenu` (Radix NavigationMenu; `behavior` static, sticky or auto-hide; a sheet below 640), `SubNav`, `ExpandableCard`, `Bento`, `Page`/`Section`/`Container`/`Grid`, `SplitHero`, `CenteredHero`, `StatStrip`, `Stat`, `LogoStrip`, `ArticleLayout`, `Footer`.
+- `NavBar` + `MorphMenu` (Radix NavigationMenu; `behavior` static, sticky or auto-hide; a sheet below 640), `SubNav`, `ExpandableCard`, `Bento`, `Page`/`Section`/`Container`/`Grid`, `SplitHero` and `CenteredHero` (with the hero assembly, MOTION_SPEC §4.3), `StatStrip`, `Stat`, `LogoStrip`, `ArticleLayout`, `Footer`.
 - Demo: an original marketing page for Card Studio using the page patterns and `NavBar`; Card Studio gets a 4-step onboarding; the playground's docs shell moves onto `NavBar`.
 
-**Accept:** onboarding compared frame-by-frame with `reference/motion/`; menu morph and card → modal compared with the local choreography strips (behavior, not look); matrix green. `NavBar`: Playwright samples the panel per frame and reports open, switch and close times against MOTION_SPEC §4.1, and the panel never overlaps the bar's items or overflows the viewport at 390, 960 and 1440; side-by-side frames against `reference/inspiration-nav/` with the differences listed.
+**Accept:** onboarding compared frame-by-frame with `reference/motion/`; menu morph and card → modal compared with the local choreography strips (behavior, not look); matrix green. `NavBar`: Playwright samples the panel per frame and reports open, switch and close times against MOTION_SPEC §4.1, and the panel never paints over the bar's items or overflows the viewport at 390, 960 and 1440; side-by-side frames against `reference/inspiration-nav/` with the differences listed.
 
 ## Phase 7 — Hardening & brand
 - Accessibility audit (axe + manual keyboard pass), dark-mode tuning, compact density pass, visual-regression baselines.
