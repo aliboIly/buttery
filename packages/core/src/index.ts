@@ -50,7 +50,10 @@ export { Scrim } from "./layers/scrim/Scrim.tsx";
 export type { ScrimProps } from "./layers/scrim/Scrim.tsx";
 export { Sticky } from "./layers/sticky/Sticky.tsx";
 export type { StickyProps } from "./layers/sticky/Sticky.tsx";
-export type { StickyEdge } from "./layers/sticky/sticky-stack.ts";
+export type {
+  StickyEdge,
+  StickyVariant,
+} from "./layers/sticky/sticky-stack.ts";
 export { LayoutGuard } from "./layout/LayoutGuard.tsx";
 export type { LayoutGuardProps } from "./layout/LayoutGuard.tsx";
 export type {
@@ -158,4 +161,5 @@ export type {
   ZToken,
 } from "./tokens/index.ts";
 export { cx } from "./utils/cx.ts";
+export { isDevelopment, warnOnce } from "./utils/dev.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";

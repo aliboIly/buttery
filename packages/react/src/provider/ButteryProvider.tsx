@@ -1,6 +1,11 @@
 import { use, useLayoutEffect, useMemo, useSyncExternalStore } from "react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
-import { FloatingLanes, LayoutGuard, publishSettled } from "@buttery/core";
+import {
+  FloatingLanes,
+  isDevelopment,
+  LayoutGuard,
+  publishSettled,
+} from "@buttery/core";
 import type {
   ButteryTheme,
   ColorScheme,
@@ -10,10 +15,6 @@ import type {
 import { ButteryContext } from "./context.ts";
 import type { ButteryContextValue, Platform } from "./context.ts";
 import { useMediaQuery } from "./use-media-query.ts";
-
-const DEVELOPMENT =
-  (import.meta as { readonly env?: { readonly DEV?: boolean } }).env?.DEV ===
-  true;
 
 /** A color scheme, or `"system"` to follow the OS. */
 export type ColorSchemePreference = ColorScheme | "system";
@@ -154,7 +155,7 @@ export function ButteryProvider({
       <ButteryContext value={value}>
         {children}
         <FloatingLanes />
-        {DEVELOPMENT && layoutGuard ? <LayoutGuard /> : null}
+        {isDevelopment && layoutGuard ? <LayoutGuard /> : null}
       </ButteryContext>
     );
   }
