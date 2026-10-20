@@ -1,6 +1,6 @@
 import "../styles/index.css";
 import { afterEach, describe, expect, it } from "vitest";
-import { runLayoutChecks } from "./checks.ts";
+import { createLayoutToolkit, runLayoutChecks } from "./checks.ts";
 import type { LayoutRule, LayoutViolation } from "./checks.ts";
 import { layoutCheckTokens } from "./tokens.ts";
 
@@ -161,5 +161,34 @@ describe("runLayoutChecks", () => {
         ["overlap"],
       ),
     ).toEqual([]);
+  });
+});
+
+describe("moved", () => {
+  it("reports buttery elements that shifted, once per moving group, and skips allowed ones", () => {
+    document.body.innerHTML = `
+      <div data-bt="Stack" style="display: flex; flex-direction: column">
+        <div data-testid="spacer" style="block-size: 0"></div>
+        <div data-bt="Row" data-testid="row"><span data-bt="Text">Label</span></div>
+        <div data-bt="Banner" data-testid="banner">Promo</div>
+        <div data-bt="Loop" data-testid="loop"><span data-bt="Dot">•</span></div>
+      </div>`;
+    const toolkit = createLayoutToolkit();
+    toolkit.snapshot();
+    document
+      .querySelector<HTMLElement>('[data-testid="spacer"]')
+      ?.style.setProperty("block-size", "20px");
+    const shifts = toolkit.moved({
+      during: "after Load more",
+      allow: ['[data-testid="banner"]'],
+    });
+    expect(shifts).toEqual([
+      expect.objectContaining({
+        rule: "stability",
+        a: '[data-testid="row"]',
+        px: 20,
+        message: "moved 0px across and 20px down after Load more",
+      }),
+    ]);
   });
 });
