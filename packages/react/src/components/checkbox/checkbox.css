@@ -4,6 +4,7 @@
     --bt-checkbox-mark: 12px;
     --bt-checkbox-hit: 24px;
     --bt-checkbox-line: 1px;
+    --bt-checkbox-stroke: 3;
 
     gap: var(--bt-space-1_5);
   }
@@ -15,7 +16,7 @@
     min-inline-size: 0;
   }
 
-  .bt-checkbox [data-bt-part="check"] {
+  .bt-checkbox > [data-bt-part="row"] > [data-bt-part="check"] {
     position: relative;
     display: inline-grid;
     flex: none;
@@ -27,10 +28,14 @@
     border-radius: var(--bt-r-xs);
     background-color: var(--bt-bg-surface);
     color: var(--bt-on-primary);
+    scroll-margin-block-start: calc(
+      var(--bt-sticky-top, 0px) + var(--bt-space-8)
+    );
   }
 
   .bt-checkbox
-    [data-bt-part="check"]:is(
+    > [data-bt-part="row"]
+    > [data-bt-part="check"]:is(
       [data-state="checked"],
       [data-state="indeterminate"]
     ) {
@@ -38,29 +43,41 @@
     background-color: var(--bt-primary);
   }
 
-  .bt-checkbox[data-invalid] [data-bt-part="check"][data-state="unchecked"] {
+  .bt-checkbox[data-invalid]
+    > [data-bt-part="row"]
+    > [data-bt-part="check"][data-state="unchecked"] {
     border-color: var(--bt-danger);
   }
 
-  .bt-checkbox [data-bt-part="check"]:disabled {
+  .bt-checkbox > [data-bt-part="row"] > [data-bt-part="check"]:disabled {
     border-color: var(--bt-border-strong);
     background-color: var(--bt-bg-control-subtle);
     color: var(--bt-text-disabled);
   }
 
-  .bt-checkbox [data-bt-part="mark"] {
+  .bt-checkbox
+    > [data-bt-part="row"]
+    > [data-bt-part="check"]
+    > [data-bt-part="mark"] {
     display: grid;
     place-items: center;
   }
 
-  .bt-checkbox [data-bt-part="mark"] svg {
+  .bt-checkbox
+    > [data-bt-part="row"]
+    > [data-bt-part="check"]
+    > [data-bt-part="mark"]
+    > svg {
     inline-size: var(--bt-checkbox-mark);
     block-size: var(--bt-checkbox-mark);
-    stroke-width: 3;
+    stroke-width: var(--bt-checkbox-stroke);
   }
 
   /* Measured from inside the box's border, so the target comes out 24px. */
-  .bt-checkbox [data-bt-part="check"] > [data-bt-part="hit"] {
+  .bt-checkbox
+    > [data-bt-part="row"]
+    > [data-bt-part="check"]
+    > [data-bt-part="hit"] {
     position: absolute;
     inset: calc(
       (var(--bt-checkbox-size) - var(--bt-checkbox-hit)) / 2 -

@@ -1,6 +1,8 @@
 @layer bt.components {
   .bt-form-field {
     --bt-form-field-line: 1px;
+    --bt-form-field-inset: var(--bt-space-3);
+    --bt-form-field-end: var(--bt-space-1);
 
     display: flex;
     flex-direction: column;
@@ -8,15 +10,16 @@
     min-inline-size: 0;
   }
 
+  .bt-form-field[data-size="lg"] {
+    --bt-form-field-inset: var(--bt-space-4);
+    --bt-form-field-end: var(--bt-space-2);
+  }
+
   .bt-form-field > [data-bt-part="caption"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-1_5);
     min-inline-size: 0;
-  }
-
-  .bt-form-field [data-bt-part="label"] {
-    color: var(--bt-text);
   }
 
   .bt-form-field > [data-bt-part="error"] {
@@ -31,36 +34,46 @@
     color: inherit;
   }
 
-  /* The box a field types into: the input fills it, so a press anywhere in it lands in the input. */
-  .bt-form-field [data-bt-part="box"] {
+  /* The box a field types into: the input fills it edge to edge, so a press anywhere in it lands in the input. */
+  .bt-form-field > [data-bt-part="box"] {
     position: relative;
     display: flex;
     align-items: center;
-    gap: var(--bt-space-2);
     min-inline-size: 0;
     block-size: var(--bt-h-control);
-    padding-inline: 0 var(--bt-space-1);
-    border: var(--bt-form-field-line) solid var(--bt-border-strong);
+    border: var(--bt-form-field-line) solid var(--bt-control-border);
     border-radius: var(--bt-r-lg);
     background-color: var(--bt-bg-surface);
     color: var(--bt-text-tertiary);
+    font-size: var(--bt-text-body-size);
+    font-weight: var(--bt-text-body-weight);
+    letter-spacing: var(--bt-text-body-tracking);
   }
 
-  .bt-form-field [data-bt-part="box"]:focus-within {
+  /* 16px text, so phones don't zoom in on focus. */
+  .bt-form-field[data-size="lg"] > [data-bt-part="box"] {
+    block-size: var(--bt-h-cta);
+    font-size: var(--bt-text-body-lg-size-sm);
+  }
+
+  .bt-form-field > [data-bt-part="box"]:focus-within {
     outline: var(--bt-focus-width) solid var(--bt-accent);
     outline-offset: var(--bt-focus-offset);
   }
 
-  .bt-form-field[data-invalid] [data-bt-part="box"] {
+  .bt-form-field[data-invalid] > [data-bt-part="box"] {
     border-color: var(--bt-danger);
   }
 
-  .bt-form-field[data-disabled] [data-bt-part="box"] {
+  .bt-form-field[data-disabled] > [data-bt-part="box"] {
+    border-color: var(--bt-border-strong);
     background-color: var(--bt-bg-control-subtle);
   }
 
   /* Icons sit over the input's padding and let presses through, so the whole box is the input. */
-  .bt-form-field :is([data-bt-part="icon-start"], [data-bt-part="icon-end"]) {
+  .bt-form-field
+    > [data-bt-part="box"]
+    > :is([data-bt-part="icon-start"], [data-bt-part="icon-end"]) {
     position: absolute;
     inset-block: 0;
     display: flex;
@@ -68,63 +81,67 @@
     pointer-events: none;
   }
 
-  .bt-form-field [data-bt-part="icon-start"] {
-    inset-inline-start: var(--bt-space-3);
+  .bt-form-field > [data-bt-part="box"] > [data-bt-part="icon-start"] {
+    inset-inline-start: var(--bt-form-field-inset);
   }
 
-  .bt-form-field [data-bt-part="icon-end"] {
-    inset-inline-end: var(--bt-space-3);
+  .bt-form-field > [data-bt-part="box"] > [data-bt-part="icon-end"] {
+    inset-inline-end: var(--bt-form-field-inset);
   }
 
-  .bt-form-field [data-bt-part="input"] {
+  /* A button at the end, such as a password's reveal toggle, keeps a small inset; the input runs up to it. */
+  .bt-form-field > [data-bt-part="box"] > [data-bt-part="end"] {
+    display: flex;
+    flex: none;
+    padding-inline-end: var(--bt-form-field-end);
+  }
+
+  .bt-form-field > [data-bt-part="box"] > [data-bt-part="input"] {
     flex: 1;
     align-self: stretch;
     min-inline-size: 0;
     padding-block: 0;
-    padding-inline: var(--bt-space-3) 0;
+    padding-inline: var(--bt-form-field-inset);
     border: 0;
+    border-radius: calc(var(--bt-r-lg) - var(--bt-form-field-line));
     background: none;
     color: var(--bt-text);
-    font-family: inherit;
-    font-size: var(--bt-text-body-size);
-    font-weight: var(--bt-text-body-weight);
-    letter-spacing: var(--bt-text-body-tracking);
+    font: inherit;
+    letter-spacing: inherit;
     outline: none;
+    scroll-margin-block-start: calc(
+      var(--bt-sticky-top, 0px) + var(--bt-space-8)
+    );
   }
 
   .bt-form-field
-    [data-bt-part="box"]:has([data-bt-part="icon-start"])
-    [data-bt-part="input"] {
+    > [data-bt-part="box"]:has(> [data-bt-part="icon-start"])
+    > [data-bt-part="input"] {
     padding-inline-start: calc(
-      var(--bt-space-3) + var(--bt-icon-sm) + var(--bt-space-2)
+      var(--bt-form-field-inset) + var(--bt-icon-sm) + var(--bt-space-2)
     );
   }
 
   .bt-form-field
-    [data-bt-part="box"]:has([data-bt-part="icon-end"])
-    [data-bt-part="input"] {
+    > [data-bt-part="box"]:has(> [data-bt-part="icon-end"])
+    > [data-bt-part="input"] {
     padding-inline-end: calc(
-      var(--bt-space-3) + var(--bt-icon-sm) + var(--bt-space-2)
+      var(--bt-form-field-inset) + var(--bt-icon-sm) + var(--bt-space-2)
     );
   }
 
-  .bt-form-field [data-bt-part="input"]::placeholder {
+  .bt-form-field
+    > [data-bt-part="box"]:has(> [data-bt-part="end"])
+    > [data-bt-part="input"] {
+    padding-inline-end: var(--bt-space-2);
+  }
+
+  .bt-form-field > [data-bt-part="box"] > [data-bt-part="input"]::placeholder {
     color: var(--bt-text-tertiary);
     opacity: 1;
   }
 
-  .bt-form-field [data-bt-part="input"]:disabled {
+  .bt-form-field > [data-bt-part="box"] > [data-bt-part="input"]:disabled {
     color: var(--bt-text-disabled);
-  }
-
-  /* Large fields, for sign-in pages: 16px text, so phones don't zoom in on focus. */
-  .bt-form-field[data-size="lg"] [data-bt-part="box"] {
-    block-size: var(--bt-h-cta);
-    padding-inline-end: var(--bt-space-2);
-  }
-
-  .bt-form-field[data-size="lg"] [data-bt-part="input"] {
-    padding-inline-start: var(--bt-space-4);
-    font-size: var(--bt-text-body-lg-size-sm);
   }
 }

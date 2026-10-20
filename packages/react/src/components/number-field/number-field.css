@@ -28,9 +28,14 @@
     inline-size: var(--bt-number-field-width);
     block-size: var(--bt-h-control);
     padding-inline: 0 var(--bt-space-1);
-    border: var(--bt-number-field-line) solid var(--bt-border-strong);
+    border: var(--bt-number-field-line) solid var(--bt-control-border);
     border-radius: var(--bt-r-lg);
     background-color: var(--bt-bg-surface);
+  }
+
+  .bt-number-field[data-disabled] > [data-bt-part="field"] {
+    border-color: var(--bt-border-strong);
+    background-color: var(--bt-bg-control-subtle);
   }
 
   .bt-number-field > [data-bt-part="field"]:focus-within {
