@@ -137,6 +137,7 @@ function Placed({
               data-role="control"
               data-bt-part="meta"
               data-bt-truncate=""
+              title={typeof meta === "string" ? meta : undefined}
             >
               {meta}
             </span>
