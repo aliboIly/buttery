@@ -84,7 +84,7 @@ describe("component contract", () => {
           source,
           `${name} needs a JSDoc comment right before "export function ${name}" (or "export const ${name}:" for compound components)`,
         ).toMatch(
-          new RegExp(`\\*/\\s*export (?:function ${name}\\(|const ${name}: )`),
+          new RegExp(`\\*/\\s*export (?:function ${name}[<(]|const ${name}: )`),
         );
       });
 
