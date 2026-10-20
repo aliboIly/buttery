@@ -1,6 +1,13 @@
 import { useId, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Popover, Pressable, Stack, Text } from "@buttery/core";
+import {
+  Inline,
+  Popover,
+  Pressable,
+  Stack,
+  Surface,
+  Text,
+} from "@buttery/core";
 
 /** A controlled popover holding a small form. */
 export function RenameCard(): ReactElement {
@@ -10,8 +17,10 @@ export function RenameCard(): ReactElement {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <Pressable>
-          <Text variant="title-sm">{title}</Text>
+        <Pressable aria-label={`Rename ${title}`}>
+          <Surface level="raised" padX={4} padY={2} radius="full">
+            <Text variant="title-sm">{title}</Text>
+          </Surface>
         </Pressable>
       </Popover.Trigger>
       <Popover.Content aria-label="Rename the card">
@@ -33,7 +42,9 @@ export function RenameCard(): ReactElement {
             </Stack>
             <Inline justify="end">
               <Pressable type="submit">
-                <Text variant="button">Save</Text>
+                <Surface level="raised" padX={4} padY={2} radius="full">
+                  <Text variant="button">Save</Text>
+                </Surface>
               </Pressable>
             </Inline>
           </Stack>

@@ -20,7 +20,9 @@ export function DimBehindPanel(): ReactElement {
           setOpen(true);
         }}
       >
-        <Text variant="button">Show the panel</Text>
+        <Surface level="raised" padX={4} padY={2} radius="full">
+          <Text variant="button">Show the panel</Text>
+        </Surface>
       </Pressable>
       {open ? (
         <Layer band="modal">
@@ -31,7 +33,7 @@ export function DimBehindPanel(): ReactElement {
           />
           <Center style={{ blockSize: "100%" }}>
             <Surface level="dialog" pad={6} role="status">
-              <Stack gap={2}>
+              <Stack gap={4}>
                 <Text variant="dialog-title">Your card is ready</Text>
                 <Text variant="body">Click anywhere outside to close.</Text>
               </Stack>

@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Popover, Pressable, Stack, Text } from "@buttery/core";
+import { Popover, Pressable, Stack, Surface, Text } from "@buttery/core";
 
 const SIZES = ["Square", "Portrait", "Story", "Wide"] as const;
 
@@ -9,7 +9,9 @@ export function CanvasSize(): ReactElement {
     <Popover>
       <Popover.Trigger asChild>
         <Pressable>
-          <Text variant="button">Canvas size</Text>
+          <Surface level="raised" padX={4} padY={2} radius="full">
+            <Text variant="button">Canvas size</Text>
+          </Surface>
         </Pressable>
       </Popover.Trigger>
       <Popover.Content align="start" aria-label="Canvas sizes">
@@ -17,7 +19,9 @@ export function CanvasSize(): ReactElement {
           {SIZES.map((size) => (
             <Popover.Close key={size} asChild>
               <Pressable>
-                <Text variant="menu">{size}</Text>
+                <Surface level="app" padX={3} padY={2} radius="md">
+                  <Text variant="menu">{size}</Text>
+                </Surface>
               </Pressable>
             </Popover.Close>
           ))}

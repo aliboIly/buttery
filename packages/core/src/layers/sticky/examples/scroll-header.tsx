@@ -6,6 +6,9 @@ export function ScrollHeader(): ReactElement {
   return (
     <Surface
       level="card"
+      role="region"
+      aria-label="Recent cards"
+      tabIndex={0}
       style={{ blockSize: "var(--bt-bento-row)", overflowY: "auto" }}
     >
       <Sticky>

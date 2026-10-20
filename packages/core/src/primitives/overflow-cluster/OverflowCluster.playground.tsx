@@ -51,7 +51,7 @@ export const demos: readonly DemoSection[] = [
     description:
       "The same six actions at three widths. Help goes first, then Share and Download; Undo and Redo stay longest.",
     render: () => (
-      <Stack gap={4} align="start">
+      <Stack gap={4}>
         {WIDTHS.map((width) => (
           <Stack key={width} gap={2}>
             <Text variant="caption">{width}</Text>
@@ -59,7 +59,11 @@ export const demos: readonly DemoSection[] = [
               level="card"
               padX={2}
               padY={2}
-              style={{ inlineSize: width, display: "flex" }}
+              style={{
+                inlineSize: width,
+                maxInlineSize: "100%",
+                display: "flex",
+              }}
             >
               <Cluster />
             </Surface>

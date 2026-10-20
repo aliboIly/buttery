@@ -15,7 +15,9 @@ export function SavingOverlay(): ReactElement {
           }, 1500);
         }}
       >
-        <Text variant="button">Save the card</Text>
+        <Surface level="raised" padX={4} padY={2} radius="full">
+          <Text variant="button">Save the card</Text>
+        </Surface>
       </Pressable>
       {saving ? (
         <Layer band="modal">

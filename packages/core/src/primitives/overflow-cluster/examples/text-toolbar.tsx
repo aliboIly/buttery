@@ -1,6 +1,12 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { OverflowCluster, Pressable, Stack, Text } from "@buttery/core";
+import {
+  OverflowCluster,
+  Pressable,
+  Stack,
+  Surface,
+  Text,
+} from "@buttery/core";
 
 const TOOLS = [
   "Crop",
@@ -15,7 +21,7 @@ const TOOLS = [
 export function TextToolbar(): ReactElement {
   const [last, setLast] = useState("None yet");
   return (
-    <Stack gap={2}>
+    <Stack gap={3}>
       <OverflowCluster gap={2} moreLabel="More tools">
         {TOOLS.map((tool, index) => (
           <OverflowCluster.Item
@@ -33,7 +39,9 @@ export function TextToolbar(): ReactElement {
                 setLast(tool);
               }}
             >
-              <Text variant="button">{tool}</Text>
+              <Surface level="raised" padX={4} padY={2} radius="full">
+                <Text variant="button">{tool}</Text>
+              </Surface>
             </Pressable>
           </OverflowCluster.Item>
         ))}

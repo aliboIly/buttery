@@ -1,6 +1,13 @@
 import type { ReactElement } from "react";
 import { CircleHelp, Redo2, Share2, Undo2 } from "lucide-react";
-import { Icon, Inline, OverflowCluster, Pressable, Text } from "@buttery/core";
+import {
+  Icon,
+  Inline,
+  OverflowCluster,
+  Pressable,
+  Surface,
+  Text,
+} from "@buttery/core";
 
 const ACTIONS = [
   { label: "Undo", icon: Undo2, priority: 3 },
@@ -40,7 +47,9 @@ export function HeaderActions(): ReactElement {
                 run(label);
               }}
             >
-              <Icon icon={icon} />
+              <Surface level="raised" pad={2} radius="full">
+                <Icon icon={icon} />
+              </Surface>
             </Pressable>
           </OverflowCluster.Item>
         ))}

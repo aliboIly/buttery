@@ -13,7 +13,9 @@ export function BlurBehindMenu(): ReactElement {
           setOpen((current) => !current);
         }}
       >
-        <Text variant="button">Products</Text>
+        <Surface level="raised" padX={4} padY={2} radius="full">
+          <Text variant="button">Products</Text>
+        </Surface>
       </Pressable>
       {open ? (
         <Layer band="dropdown">

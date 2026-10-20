@@ -6,6 +6,9 @@ export function PanelFooter(): ReactElement {
   return (
     <Surface
       level="card"
+      role="region"
+      aria-label="Layers"
+      tabIndex={0}
       style={{ blockSize: "var(--bt-bento-row)", overflowY: "auto" }}
     >
       <Stack gap={3} padX={4} padY={3}>

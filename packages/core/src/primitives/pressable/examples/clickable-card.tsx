@@ -5,17 +5,13 @@ import { Pressable, Stack, Surface, Text } from "@buttery/core";
 export function ClickableCard(): ReactElement {
   return (
     <Pressable asChild>
-      <Surface
-        level="card"
-        pad={4}
-        role="button"
-        tabIndex={0}
-        aria-label="Open Spring launch"
-      >
-        <Stack gap={1}>
-          <Text variant="label">Spring launch</Text>
-          <Text variant="caption">Edited today</Text>
-        </Stack>
+      <Surface level="card" pad={4} asChild>
+        <a href="#/surface">
+          <Stack gap={2}>
+            <Text variant="label">Spring launch</Text>
+            <Text variant="caption">Edited today</Text>
+          </Stack>
+        </a>
       </Surface>
     </Pressable>
   );

@@ -9,6 +9,9 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Surface
         level="card"
+        role="region"
+        aria-label="Stacked stickies demo"
+        tabIndex={0}
         style={{ blockSize: "var(--bt-bento-row)", overflowY: "auto" }}
       >
         <Sticky>

@@ -12,9 +12,11 @@ export function Toast(): ReactElement {
           setVisible((current) => !current);
         }}
       >
-        <Text variant="button">
-          {visible ? "Hide the message" : "Delete the card"}
-        </Text>
+        <Surface level="raised" padX={4} padY={2} radius="full">
+          <Text variant="button">
+            {visible ? "Hide the message" : "Delete the card"}
+          </Text>
+        </Surface>
       </Pressable>
       {visible ? (
         <FloatingLanes.Item>

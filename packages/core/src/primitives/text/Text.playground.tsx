@@ -21,7 +21,7 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Stack gap={4}>
         {ROLES.map((role) => (
-          <Stack key={role} gap={1}>
+          <Stack key={role} gap={3}>
             <Text variant="caption">{role}</Text>
             <Text variant={role}>Round the corners and add depth</Text>
           </Stack>
@@ -32,12 +32,15 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Tones",
     render: () => (
-      <Stack gap={2}>
-        {TONES.map((tone) => (
+      <Stack gap={2} align="start">
+        {TONES.filter((tone) => tone !== "disabled").map((tone) => (
           <Text key={tone} tone={tone}>
             {tone}
           </Text>
         ))}
+        <button type="button" disabled>
+          <Text tone="disabled">disabled (only inside disabled controls)</Text>
+        </button>
       </Stack>
     ),
   },

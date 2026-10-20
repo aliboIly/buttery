@@ -1,22 +1,24 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Layer, Surface, Text } from "@buttery/core";
+import { Grid, Inline, Layer, Surface, Text } from "@buttery/core";
 
 /** A non-interactive overlay in the dev layer that shows twelve columns over the page. */
 export function DesignGrid(): ReactElement {
   const [visible, setVisible] = useState(false);
   return (
     <>
-      <label>
-        <input
-          type="checkbox"
-          checked={visible}
-          onChange={(event) => {
-            setVisible(event.target.checked);
-          }}
-        />{" "}
-        <Text>Show columns</Text>
-      </label>
+      <Inline gap={2} padY={1} asChild>
+        <label>
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={(event) => {
+              setVisible(event.target.checked);
+            }}
+          />
+          <Text>Show columns</Text>
+        </label>
+      </Inline>
       {visible ? (
         <Layer band="dev">
           <Grid
