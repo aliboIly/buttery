@@ -2,7 +2,7 @@ import "@buttery/core/styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { colors, createTheme } from "@buttery/core";
+import { colors, createTheme, useMotionPreference } from "@buttery/core";
 import { ButteryProvider } from "./ButteryProvider.tsx";
 import { useButtery } from "./context.ts";
 
@@ -129,6 +129,23 @@ describe("ButteryProvider", () => {
     expect(screen.getByRole("status").textContent).toBe(
       "light comfortable web false",
     );
+  });
+
+  it("tells buttery's motion primitives whether to reduce motion", () => {
+    function Motion(): ReactElement {
+      return <output aria-label="motion">{useMotionPreference()}</output>;
+    }
+    render(
+      <ButteryProvider reducedMotion="always">
+        <Motion />
+        <ButteryProvider reducedMotion="never">
+          <Motion />
+        </ButteryProvider>
+      </ButteryProvider>,
+    );
+    expect(
+      screen.getAllByLabelText("motion").map((element) => element.textContent),
+    ).toEqual(["reduced", "full"]);
   });
 
   it("detects the desktop app", () => {

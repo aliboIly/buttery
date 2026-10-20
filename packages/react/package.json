@@ -14,6 +14,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./styles.css": {
+      "@buttery/source": "./src/styles.css",
+      "default": "./dist/styles.css"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -33,7 +37,8 @@
     "tsdown": "catalog:"
   },
   "dependencies": {
-    "@buttery/core": "workspace:*"
+    "@buttery/core": "workspace:*",
+    "motion": "catalog:"
   },
   "peerDependencies": {
     "react": "^19.0.0",

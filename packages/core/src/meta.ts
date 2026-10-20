@@ -2,7 +2,13 @@ import type { ReactElement } from "react";
 
 /** How a component moves. The manifest groups components by it. */
 export type MotionClass =
-  "none" | "press" | "indicator" | "presence" | "morph" | "loop";
+  | "none"
+  | "press"
+  | "indicator"
+  | "presence"
+  | "morph"
+  | "loop"
+  | "celebration";
 
 /** What kind of building block a component is. */
 export type ComponentKind = "primitive" | "layer" | "component" | "pattern";

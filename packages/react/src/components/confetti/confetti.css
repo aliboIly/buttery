@@ -1,0 +1,21 @@
+@layer bt.components {
+  .bt-confetti {
+    --bt-confetti-piece-width: 8px;
+    --bt-confetti-piece-height: 12px;
+
+    pointer-events: none;
+  }
+
+  .bt-confetti[data-bt-part="burst"] {
+    position: absolute;
+  }
+
+  .bt-confetti > [data-bt-part="piece"] {
+    position: absolute;
+    inline-size: var(--bt-confetti-piece-width);
+    block-size: var(--bt-confetti-piece-height);
+    inset-inline-start: calc(var(--bt-confetti-piece-width) / -2);
+    inset-block-start: calc(var(--bt-confetti-piece-height) / -2);
+    border-radius: var(--bt-r-xs);
+  }
+}

@@ -1,10 +1,13 @@
+import { MotionConfig } from "motion/react";
 import { use, useLayoutEffect, useMemo, useSyncExternalStore } from "react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import {
   FloatingLanes,
   isDevelopment,
   LayoutGuard,
+  MotionPreferenceContext,
   publishSettled,
+  spring,
 } from "@buttery/core";
 import type {
   ButteryTheme,
@@ -12,6 +15,7 @@ import type {
   CssVariables,
   Density,
 } from "@buttery/core";
+import { Confetti } from "../components/confetti/Confetti.tsx";
 import { ButteryContext } from "./context.ts";
 import type { ButteryContextValue, Platform } from "./context.ts";
 import { useMediaQuery } from "./use-media-query.ts";
@@ -165,12 +169,28 @@ export function ButteryProvider({
   useRootAttribute("data-bt-motion", attributes["data-bt-motion"], isRoot);
   useRootVariables(variables, isRoot);
 
+  const motion = (content: ReactNode): ReactElement => (
+    <MotionPreferenceContext value={resolvedMotion ? "reduced" : "full"}>
+      <MotionConfig
+        reducedMotion={resolvedMotion ? "always" : "never"}
+        transition={spring.smooth}
+      >
+        {content}
+      </MotionConfig>
+    </MotionPreferenceContext>
+  );
+
   if (isRoot) {
     return (
       <ButteryContext value={value}>
-        {children}
-        <FloatingLanes />
-        {isDevelopment && layoutGuard ? <LayoutGuard /> : null}
+        {motion(
+          <>
+            {children}
+            <FloatingLanes />
+            <Confetti />
+            {isDevelopment && layoutGuard ? <LayoutGuard /> : null}
+          </>,
+        )}
       </ButteryContext>
     );
   }
@@ -181,7 +201,7 @@ export function ButteryProvider({
   return (
     <ButteryContext value={value}>
       <div {...attributes} style={style}>
-        {children}
+        {motion(children)}
       </div>
     </ButteryContext>
   );

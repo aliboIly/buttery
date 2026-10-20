@@ -1,3 +1,4 @@
+export { celebrate, Confetti } from "./components/confetti/Confetti.tsx";
 export { ButteryProvider } from "./provider/ButteryProvider.tsx";
 export type {
   ButteryProviderProps,

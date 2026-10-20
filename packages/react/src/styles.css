@@ -1,0 +1,3 @@
+@layer bt.reset, bt.tokens, bt.base, bt.recipes, bt.primitives, bt.components, bt.patterns, bt.utilities;
+
+@import "./components/confetti/confetti.css";
