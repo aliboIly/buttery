@@ -46,3 +46,5 @@ export { ValueBadge } from "./components/value-badge/ValueBadge.tsx";
 export type { ValueBadgeProps } from "./components/value-badge/ValueBadge.tsx";
 export { Slider } from "./components/slider/Slider.tsx";
 export type { SliderFormat, SliderProps } from "./components/slider/Slider.tsx";
+export { NumberField } from "./components/number-field/NumberField.tsx";
+export type { NumberFieldProps } from "./components/number-field/NumberField.tsx";

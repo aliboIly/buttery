@@ -1,0 +1,103 @@
+@layer bt.components {
+  .bt-number-field {
+    --bt-number-field-width: 128px;
+    --bt-number-field-step: 24px;
+    --bt-number-field-line: 1px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-number-field > [data-bt-part="label"] {
+    cursor: ew-resize;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .bt-number-field[data-disabled] > [data-bt-part="label"] {
+    cursor: default;
+  }
+
+  .bt-number-field > [data-bt-part="field"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1);
+    inline-size: var(--bt-number-field-width);
+    block-size: var(--bt-h-control);
+    padding-inline: var(--bt-space-3) var(--bt-space-1);
+    border: var(--bt-number-field-line) solid var(--bt-border-strong);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-number-field > [data-bt-part="field"]:focus-within {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-number-field [data-bt-part="input"] {
+    flex: 1;
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bt-text);
+    font-family: inherit;
+    font-size: var(--bt-text-label-size);
+    font-weight: var(--bt-text-label-weight);
+    line-height: var(--bt-text-label-line);
+    letter-spacing: var(--bt-text-label-tracking);
+    font-variant-numeric: tabular-nums;
+    outline: none;
+  }
+
+  .bt-number-field [data-bt-part="input"]:disabled {
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-number-field [data-bt-part="unit"] {
+    color: var(--bt-text-tertiary);
+    font-size: var(--bt-text-control-size);
+    line-height: var(--bt-text-control-line);
+  }
+
+  .bt-number-field [data-bt-part="stepper"] {
+    display: inline-flex;
+    flex: none;
+    opacity: 0;
+    transition: opacity var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  .bt-number-field:is(:hover, :focus-within) [data-bt-part="stepper"] {
+    opacity: 1;
+  }
+
+  .bt-number-field [data-bt-part="step"] {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--bt-number-field-step);
+    block-size: var(--bt-number-field-step);
+    padding: 0;
+    border: 0;
+    border-radius: var(--bt-r-xs);
+    background: none;
+    color: var(--bt-text-secondary);
+    transition:
+      background-color var(--bt-dur-fast) var(--bt-ease-standard),
+      color var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  @media (hover: hover) {
+    .bt-number-field [data-bt-part="step"]:not(:disabled):hover {
+      background-color: var(--bt-bg-control);
+      color: var(--bt-text);
+    }
+  }
+
+  .bt-number-field [data-bt-part="step"]:disabled {
+    color: var(--bt-icon-disabled);
+  }
+}
