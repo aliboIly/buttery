@@ -98,6 +98,7 @@ export function SegmentedControl<Value extends string = string>({
                   className="bt-truncate"
                   data-bt-part="label"
                   data-bt-truncate=""
+                  title={item.label}
                 >
                   {item.label}
                 </span>

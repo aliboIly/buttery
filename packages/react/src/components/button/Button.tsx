@@ -138,7 +138,12 @@ export function Button({
       data-loading={loading ? "" : undefined}
     >
       {before}
-      <span className="bt-truncate" data-bt-part="label" data-bt-truncate="">
+      <span
+        className="bt-truncate"
+        data-bt-part="label"
+        data-bt-truncate=""
+        title={typeof children === "string" ? children : undefined}
+      >
         {children}
       </span>
       {after}

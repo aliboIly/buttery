@@ -33,7 +33,12 @@ export function Chip({
       data-bt="Chip"
       data-bt-control=""
     >
-      <span className="bt-truncate" data-bt-part="label" data-bt-truncate="">
+      <span
+        className="bt-truncate"
+        data-bt-part="label"
+        data-bt-truncate=""
+        title={typeof children === "string" ? children : undefined}
+      >
         {children}
       </span>
       <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />

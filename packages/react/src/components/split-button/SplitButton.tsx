@@ -87,7 +87,12 @@ export function SplitButton({
         className="bt-press bt-focus"
         data-bt-part="main"
       >
-        <span className="bt-truncate" data-bt-part="label" data-bt-truncate="">
+        <span
+          className="bt-truncate"
+          data-bt-part="label"
+          data-bt-truncate=""
+          title={typeof children === "string" ? children : undefined}
+        >
           {children}
         </span>
       </button>

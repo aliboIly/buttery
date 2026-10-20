@@ -224,6 +224,19 @@ describe("Button", () => {
     expect(getComputedStyle(button).backgroundColor).toBe(enabled);
   });
 
+  it("truncates a long label in a narrow row and keeps its full text in a title", () => {
+    render(
+      <div style={{ inlineSize: "120px" }}>
+        <Button>Export every card in this collection</Button>
+      </div>,
+    );
+    const label = screen
+      .getByRole("button", { name: "Export every card in this collection" })
+      .querySelector<HTMLElement>('[data-bt-part="label"]');
+    expect(label?.title).toBe("Export every card in this collection");
+    expect(label && label.scrollWidth > label.clientWidth).toBe(true);
+  });
+
   it("leaves the arrow alone on a disabled button", async () => {
     render(
       <Button arrow="forward" disabled>

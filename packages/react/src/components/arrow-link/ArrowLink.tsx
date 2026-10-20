@@ -46,7 +46,12 @@ export function ArrowLink({
   return (
     <a {...rest} className={classes} data-bt="ArrowLink" data-arrow={arrow}>
       {back}
-      <span className="bt-truncate" data-bt-part="label" data-bt-truncate="">
+      <span
+        className="bt-truncate"
+        data-bt-part="label"
+        data-bt-truncate=""
+        title={typeof children === "string" ? children : undefined}
+      >
         {children}
       </span>
       {forward}
