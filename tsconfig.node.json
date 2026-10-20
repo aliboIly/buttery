@@ -1,0 +1,19 @@
+{
+  "extends": "./tooling/tsconfig/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": ".",
+    "outDir": "./.tsbuild/node",
+    "tsBuildInfoFile": "./.tsbuild/node/tsconfig.tsbuildinfo",
+    "types": ["node"]
+  },
+  "include": [
+    "*.config.ts",
+    "packages/*/*.config.ts",
+    "apps/*/*.config.ts",
+    "apps/*/package.json",
+    "apps/*/e2e/**/*.ts"
+  ]
+}

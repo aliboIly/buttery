@@ -1,0 +1,26 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/react"
+    },
+    {
+      "path": "./packages/test"
+    },
+    {
+      "path": "./packages/lint"
+    },
+    {
+      "path": "./apps/playground"
+    },
+    {
+      "path": "./apps/starter"
+    }
+  ]
+}
