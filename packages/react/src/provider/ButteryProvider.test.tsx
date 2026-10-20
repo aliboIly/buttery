@@ -40,6 +40,30 @@ afterEach(() => {
 });
 
 describe("ButteryProvider", () => {
+  it("reports settled, hosts the floating lanes and shows LayoutGuard in development", () => {
+    const { unmount } = render(
+      <ButteryProvider>
+        <Probe />
+      </ButteryProvider>,
+    );
+    expect(root.hasAttribute("data-bt-settled")).toBe(true);
+    expect(document.querySelectorAll('[data-bt-part="lane"]')).toHaveLength(3);
+    unmount();
+    expect(root.hasAttribute("data-bt-settled")).toBe(false);
+    expect(document.querySelector('[data-bt="FloatingLanes"]')).toBeNull();
+  });
+
+  it("leaves LayoutGuard out when asked", () => {
+    render(
+      <ButteryProvider layoutGuard={false}>
+        <ButteryProvider colorScheme="dark">
+          <Probe />
+        </ButteryProvider>
+      </ButteryProvider>,
+    );
+    expect(document.querySelectorAll('[data-bt="FloatingLanes"]')).toHaveLength(1);
+  });
+
   it("writes its settings onto <html> and removes them on unmount", () => {
     const { unmount } = render(
       <ButteryProvider colorScheme="dark" density="compact">

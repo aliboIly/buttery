@@ -1,5 +1,6 @@
 import { use, useLayoutEffect, useMemo, useSyncExternalStore } from "react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
+import { FloatingLanes, LayoutGuard, publishSettled } from "@buttery/core";
 import type {
   ButteryTheme,
   ColorScheme,
@@ -9,6 +10,10 @@ import type {
 import { ButteryContext } from "./context.ts";
 import type { ButteryContextValue, Platform } from "./context.ts";
 import { useMediaQuery } from "./use-media-query.ts";
+
+const DEVELOPMENT =
+  (import.meta as { readonly env?: { readonly DEV?: boolean } }).env?.DEV ===
+  true;
 
 /** A color scheme, or `"system"` to follow the OS. */
 export type ColorSchemePreference = ColorScheme | "system";
@@ -28,6 +33,11 @@ export interface ButteryProviderProps {
   readonly platform?: Platform;
   /** Whether to reduce motion. Defaults to `"user"`, which follows the OS. */
   readonly reducedMotion?: ReducedMotionPreference;
+  /**
+   * Show the `LayoutGuard` overlay (⌥⇧L) in development. Defaults to `true`. It's never included in
+   * production builds.
+   */
+  readonly layoutGuard?: boolean;
 }
 
 type Attributes = Readonly<Record<`data-bt-${string}`, string>>;
@@ -61,6 +71,14 @@ function useRootSync(
 ): void {
   useLayoutEffect(() => {
     if (!enabled) return undefined;
+    publishSettled();
+    return () => {
+      document.documentElement.removeAttribute("data-bt-settled");
+    };
+  }, [enabled]);
+
+  useLayoutEffect(() => {
+    if (!enabled) return undefined;
     const root = document.documentElement;
     const previous = Object.keys(attributes).map(
       (name) => [name, root.getAttribute(name)] as const,
@@ -82,7 +100,8 @@ function useRootSync(
 
 /**
  * Applies buttery's theme, density, platform and motion settings. The outermost provider writes them onto
- * `<html>` so portals and scrollbars follow; a nested provider scopes them to its subtree.
+ * `<html>` so portals and scrollbars follow, hosts the floating lanes, reports when animations have
+ * settled, and shows `LayoutGuard` in development. A nested provider scopes its settings to its subtree.
  */
 export function ButteryProvider({
   children,
@@ -91,6 +110,7 @@ export function ButteryProvider({
   density,
   platform,
   reducedMotion = "user",
+  layoutGuard = true,
 }: ButteryProviderProps): ReactElement {
   const parent = use(ButteryContext);
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
@@ -130,7 +150,13 @@ export function ButteryProvider({
   useRootSync(attributes, variables, isRoot);
 
   if (isRoot) {
-    return <ButteryContext value={value}>{children}</ButteryContext>;
+    return (
+      <ButteryContext value={value}>
+        {children}
+        <FloatingLanes />
+        {DEVELOPMENT && layoutGuard ? <LayoutGuard /> : null}
+      </ButteryContext>
+    );
   }
   const style: CSSProperties & CssVariables = {
     display: "contents",
