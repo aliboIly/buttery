@@ -35,7 +35,7 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | Token | Config | Use |
 |---|---|---|
 | `spring.instant` | `{ type: "tween", duration: 0.001 }` | Direct manipulation, reduced motion. Lands on the next frame; 1ms rather than 0 (§5) |
-| `spring.snappy` | `{ visualDuration: 0.18, bounce: 0 }` | Selection indicators (segmented thumb, page dots, anchor dot), press release |
+| `spring.snappy` | `{ visualDuration: 0.18, bounce: 0 }` | Selection indicators (segmented thumb, page dots, anchor dot) |
 | `spring.smooth` | `{ visualDuration: 0.25, bounce: 0 }` | **Default.** Position/aspect/reset, layout morphs, height changes, dialogs |
 | `spring.morph` | `{ visualDuration: 0.38, bounce: 0 }` | Big surfaces changing shape: menu morph, card → modal |
 | `spring.gentle` | `{ visualDuration: 0.45, bounce: 0.08 }` | Choreographed entrances only |
@@ -83,7 +83,7 @@ Never use `transition: all`. Transition only `opacity`, `transform`, `background
 | Enter crop mode | Stage bg fades out (200ms); image scales to fit; handles + floating toolbar fade/slide in after ~80ms | 200–250ms |
 | Item deleted | Stage swaps to the empty state instantly; a toast with undo slides up 8px + fades in | slide `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~200 / ~130ms); auto-dismiss 3s, paused on hover |
 | Menu open (select) | Trigger gets active bg; menu fades + scales from trigger origin (0.97 → 1) | scale `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~150–200ms in) |
-| Button press | Scale 0.97 on pointer-down | down `dur-press`, release `spring.snappy` |
+| Button press | Scale 0.97 on pointer-down | down `dur-press`, release `dur-fast`, both `ease-out` (a CSS recipe, so no spring); at once with reduced motion |
 | Primary hover | `#1a1a1a` → `#2b2b2b` | `dur-fast` |
 
 ### Onboarding (step dialog)

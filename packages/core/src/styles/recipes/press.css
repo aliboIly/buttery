@@ -10,7 +10,10 @@
     cursor: pointer;
   }
 
-  .bt-press:active:not(:disabled, [aria-disabled="true"], [data-disabled]) {
+  /* :where keeps this as specific as .bt-press, so the reduced-motion rules below win while pressed too. */
+  .bt-press:where(
+    :active:not(:disabled, [aria-disabled="true"], [data-disabled])
+  ) {
     --bt-transition-press: scale var(--bt-dur-press) var(--bt-ease-out);
 
     scale: var(--bt-press-scale);
