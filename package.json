@@ -16,7 +16,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "node --conditions=@buttery/source node_modules/@playwright/test/cli.js test",
     "test:layout": "node scripts/test-layout.mjs",
     "check:private": "node scripts/check-private-paths.mjs",
     "check:tells": "node scripts/check-ai-tells.mjs",

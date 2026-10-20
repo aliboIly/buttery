@@ -36,6 +36,12 @@ const browsers = [
   { name: "webkit", device: devices["Desktop Safari"] },
 ] as const;
 
+const packages = readdirSync("packages", { withFileTypes: true })
+  .filter(
+    (entry) => entry.isDirectory() && existsSync(`packages/${entry.name}/e2e`),
+  )
+  .map((entry) => entry.name);
+
 const ci = Boolean(process.env["CI"]);
 
 function testPort(app: App): number {
@@ -45,16 +51,25 @@ function testPort(app: App): number {
 export default defineConfig({
   forbidOnly: ci,
   reporter: ci ? "github" : "list",
-  projects: apps.flatMap((app) =>
-    browsers.map((browser) => ({
-      name: `${app.name}-${browser.name}`,
-      testDir: `apps/${app.name}/e2e`,
-      use: {
-        ...browser.device,
-        baseURL: `http://localhost:${String(testPort(app))}`,
-      },
-    })),
-  ),
+  projects: [
+    ...apps.flatMap((app) =>
+      browsers.map((browser) => ({
+        name: `${app.name}-${browser.name}`,
+        testDir: `apps/${app.name}/e2e`,
+        use: {
+          ...browser.device,
+          baseURL: `http://localhost:${String(testPort(app))}`,
+        },
+      })),
+    ),
+    ...packages.flatMap((name) =>
+      browsers.map((browser) => ({
+        name: `${name}-${browser.name}`,
+        testDir: `packages/${name}/e2e`,
+        use: { ...browser.device },
+      })),
+    ),
+  ],
   webServer: apps.map((app) => ({
     command: `pnpm --filter ${app.name} exec vite --port ${String(testPort(app))} --strictPort`,
     url: `http://localhost:${String(testPort(app))}`,
