@@ -71,18 +71,30 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "submit it empty, showing the errors",
       run: press("Sign in"),
       allowMove: ["main"],
+      acrossMatrix: true,
     },
-    { name: "show the password", run: press("Show password") },
+    {
+      name: "show the password",
+      run: press("Show password"),
+      acrossMatrix: true,
+    },
   ],
   "sign-up-form": [
     {
       name: "submit it empty, showing the errors",
       run: press("Create account"),
       allowMove: ["main"],
+      acrossMatrix: true,
+    },
+    {
+      name: "show the password",
+      run: press("Show password"),
+      acrossMatrix: true,
     },
     {
       name: "type a long name",
       allowMove: ["main"],
+      acrossMatrix: true,
       run: async (page: Page) => {
         await page
           .getByLabel("Name", { exact: true })

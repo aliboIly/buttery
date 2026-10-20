@@ -38,6 +38,11 @@ export interface ButteryInteraction {
   readonly run: (page: Page) => Promise<void>;
   /** Selectors of elements that are meant to move: the target and whatever it animates. */
   readonly allowMove?: readonly string[] | undefined;
+  /**
+   * Also run every check on the state it leaves at each viewport, theme and density of the matrix, for
+   * states that last, such as a form's errors. What moved is compared at the first one only.
+   */
+  readonly acrossMatrix?: boolean | undefined;
 }
 
 /** Options for `expectButtery`: the matrix, the rules, scripted interactions and the settle timeout. */
@@ -48,7 +53,8 @@ export interface ExpectButteryOptions extends Partial<ButteryMatrix> {
   readonly rules?: readonly ButteryRule[] | undefined;
   /**
    * Interactions to run in order, once, at the first viewport, theme and density. Each state they leave
-   * gets every check, and the stability check compares positions before and after.
+   * gets every check there (and across the matrix with `acrossMatrix`), and the stability check compares
+   * positions before and after.
    */
   readonly interactions?: readonly ButteryInteraction[] | undefined;
   /** How long to wait for buttery to report settled, in ms. Defaults to 5000. */
@@ -352,6 +358,7 @@ export async function expectButtery(
           })),
         );
       }
+      const suffix = `-${interaction.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
       await record(
         found,
         {
@@ -360,8 +367,29 @@ export async function expectButtery(
           density: firstDensity,
           state,
         },
-        `-${interaction.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+        suffix,
       );
+      if (interaction.acrossMatrix !== true) continue;
+      for (const viewport of viewports) {
+        for (const theme of themes) {
+          for (const density of densities) {
+            if (
+              viewport === firstViewport &&
+              theme === firstTheme &&
+              density === firstDensity
+            ) {
+              continue;
+            }
+            await setConditions(viewport, theme, density);
+            await record(
+              await checkState(),
+              { viewport, theme, density, state },
+              suffix,
+            );
+          }
+        }
+      }
+      await setConditions(firstViewport, firstTheme, firstDensity);
     }
   }
 
