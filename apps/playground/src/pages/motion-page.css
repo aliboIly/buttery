@@ -1,0 +1,53 @@
+.mo-page {
+  --bt-motion-page-track: 240px;
+  --bt-motion-page-dot: 24px;
+}
+
+.mo-row {
+  display: grid;
+  grid-template-columns:
+    var(--bt-space-24) minmax(0, var(--bt-motion-page-track))
+    auto;
+  align-items: center;
+  gap: var(--bt-space-4);
+}
+
+.mo-track {
+  display: flex;
+  justify-content: flex-start;
+  padding: var(--bt-space-0_5);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-control);
+}
+
+.mo-track[data-end] {
+  justify-content: flex-end;
+}
+
+.mo-dot {
+  inline-size: var(--bt-motion-page-dot);
+  block-size: var(--bt-motion-page-dot);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-primary);
+}
+
+.mo-slot {
+  min-block-size: var(--bt-h-cta);
+}
+
+.mo-morph {
+  max-inline-size: var(--bt-w-dialog);
+}
+
+.mo-segmented {
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-control);
+}
+
+.mo-segment {
+  display: grid;
+  place-items: center;
+  block-size: var(--bt-h-sm);
+  padding-inline: var(--bt-space-3);
+  border-radius: var(--bt-r-full);
+}

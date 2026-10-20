@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import type { ComponentKind } from "@buttery/core";
 import { ComponentPage } from "./ComponentPage.tsx";
 import { LevelsPage } from "./pages/LevelsPage.tsx";
+import { MotionPage } from "./pages/MotionPage.tsx";
 import { PalettesPage } from "./pages/PalettesPage.tsx";
 import { SurfacesPage } from "./pages/SurfacesPage.tsx";
 import { TextStacksPage } from "./pages/TextStacksPage.tsx";
@@ -28,6 +29,7 @@ const FOUNDATIONS: Readonly<
   levels: () => <LevelsPage />,
   palettes: () => <PalettesPage />,
   "text-stacks": () => <TextStacksPage />,
+  motion: () => <MotionPage />,
 };
 
 const KINDS: readonly (readonly [ComponentKind, string])[] = [

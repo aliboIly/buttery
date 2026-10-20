@@ -73,6 +73,14 @@ function SettingsControls({
           setSetting("density", value);
         }}
       />
+      <Toggle
+        label="Motion"
+        options={["system", "full", "reduced"]}
+        value={settings.motion}
+        onChange={(value) => {
+          setSetting("motion", value);
+        }}
+      />
     </>
   );
   return stacked ? (

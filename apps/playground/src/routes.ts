@@ -5,6 +5,7 @@ export const foundationPages = [
   { route: "levels", title: "Levels" },
   { route: "palettes", title: "Palettes" },
   { route: "text-stacks", title: "Text stacks" },
+  { route: "motion", title: "Motion" },
 ] as const;
 
 /** The playground route for a component: `fit-box` for FitBox. */
