@@ -40,6 +40,7 @@ Never copy either product's branding, names, icons, illustrations, copy or gradi
 | `--bt-primary-hover` | `#2b2b2b` | Primary hover (lightens, doesn't darken) |
 | `--bt-primary-disabled` | `#a3a3a3` | Disabled primary background (text stays white) |
 | `--bt-on-primary` | `#ffffff` | Text on primary |
+| `--bt-divider-on-primary` | `rgba(255,255,255,.18)` | Hairline between a split button's halves |
 | `--bt-inverse-bg` / `--bt-inverse-text` / `--bt-inverse-text-secondary` | `#1a1a1a` / `#ffffff` / `#a3a3a3` | Tooltip, toast |
 | `--bt-accent` | `#2862e0` | Focus ring, tilt-direction arc, selection highlights |
 | `--bt-selection` | `rgba(40,98,224,0.2)` | Text selection (_derived_: the accent at 20%) |
@@ -80,6 +81,7 @@ buttery's own set, derived in OKLCH rather than taken from the references: 20 tw
 | text-strong / text / secondary / tertiary | `#f5f5f6` / `#ececed` / `#a0a0a6` / `#93939a` (tertiary raised from `#8e8e95` in Phase 2, which measured 4.27:1 on the raised surface) |
 | text-disabled / icon-disabled | `#55555b` / `#4a4a50` |
 | primary / primary-hover / primary-disabled / on-primary | `#f2f2f3` / `#ffffff` / `#4a4a50` / `#111111` |
+| divider-on-primary | `rgba(17,17,17,.18)` |
 | inverse-bg / inverse-text / inverse-text-secondary | `#f2f2f3` / `#111111` / `#6b6b6b` |
 | knob | same gradients, border `#000`, plus a 1px `rgba(255,255,255,.08)` outer ring |
 | overlay / wash | `rgba(0,0,0,.55)` / `rgba(15,15,16,.55)` |
@@ -243,7 +245,7 @@ A text link with the same arrow part as `Button`: `label` role in `primary`, hov
 Ghost, square, r-full: `md` 36×36 (header, default) · `sm` 28×28 (dialog close, inline). Icon 16 `text-secondary`, disabled `icon-disabled`, hover bg `bg-control`. Requires `label` (tooltip + aria-label).
 
 ### SplitButton
-Primary pill 36h. Main segment + 1px divider `rgba(255,255,255,.18)`, 18 tall and centered (measured 17.5), + 36px chevron segment that opens a Menu. Both halves share hover/disabled visuals but are separate focus targets.
+Primary pill 36h. Main segment + 1px `divider-on-primary` divider, half the button's height (18; measured 17.5) and centered, + 36px chevron segment that opens a Menu. Both halves share hover/disabled visuals but are separate focus targets.
 
 ### SegmentedControl
 Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12, `control` type. Re-measured in Phase 1: the track and items are full pills (the first spec said r14 and r12). The capture insets its items 3px; buttery keeps the 2px step, so its active item is 2px taller. Inactive text `text-secondary`; active = `bg-surface` + shadow-raised, text `text`. Exactly one item is always selected: Radix `ToggleGroup type="single"` lets users deselect, so ignore empty values in `onValueChange` (or build on `RadioGroup`). The active background is one shared element that slides.

@@ -26,6 +26,7 @@
     --bt-primary-hover: #2b2b2b;
     --bt-primary-disabled: #a3a3a3;
     --bt-on-primary: #ffffff;
+    --bt-divider-on-primary: rgba(255, 255, 255, 0.18);
     --bt-inverse-bg: #1a1a1a;
     --bt-inverse-text: #ffffff;
     --bt-inverse-text-secondary: #a3a3a3;
@@ -276,6 +277,7 @@
     --bt-primary-hover: #ffffff;
     --bt-primary-disabled: #4a4a50;
     --bt-on-primary: #111111;
+    --bt-divider-on-primary: rgba(17, 17, 17, 0.18);
     --bt-inverse-bg: #f2f2f3;
     --bt-inverse-text: #111111;
     --bt-inverse-text-secondary: #6b6b6b;
@@ -338,6 +340,7 @@
       --bt-primary-hover: #ffffff;
       --bt-primary-disabled: #4a4a50;
       --bt-on-primary: #111111;
+      --bt-divider-on-primary: rgba(17, 17, 17, 0.18);
       --bt-inverse-bg: #f2f2f3;
       --bt-inverse-text: #111111;
       --bt-inverse-text-secondary: #6b6b6b;

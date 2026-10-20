@@ -1,0 +1,80 @@
+@layer bt.components {
+  .bt-split-button {
+    --bt-split-button-divider: 1px;
+
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    block-size: var(--bt-h-button);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-primary);
+    color: var(--bt-on-primary);
+  }
+
+  .bt-split-button > :is([data-bt-part="main"], [data-bt-part="menu-button"]) {
+    --bt-transition-hover: background-color var(--bt-dur-fast)
+      var(--bt-ease-standard);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 0;
+    block-size: 100%;
+    padding-block: 0;
+    border: 0;
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: var(--bt-text-button-size);
+    font-weight: var(--bt-text-button-weight);
+    line-height: var(--bt-text-button-line);
+    letter-spacing: var(--bt-text-button-tracking);
+    white-space: nowrap;
+    appearance: none;
+  }
+
+  .bt-split-button > [data-bt-part="main"] {
+    padding-inline: var(--bt-space-5) var(--bt-space-4);
+    border-start-start-radius: var(--bt-r-full);
+    border-end-start-radius: var(--bt-r-full);
+  }
+
+  .bt-split-button > [data-bt-part="menu-button"] {
+    flex: none;
+    inline-size: var(--bt-h-button);
+    padding-inline: 0;
+    border-start-end-radius: var(--bt-r-full);
+    border-end-end-radius: var(--bt-r-full);
+  }
+
+  .bt-split-button > [data-bt-part="divider"] {
+    flex: none;
+    inline-size: var(--bt-split-button-divider);
+    block-size: calc(var(--bt-h-button) / 2);
+    background-color: var(--bt-divider-on-primary);
+  }
+
+  @media (hover: hover) {
+    .bt-split-button
+      > :is([data-bt-part="main"], [data-bt-part="menu-button"]):not(
+        :disabled
+      ):hover {
+      background-color: var(--bt-primary-hover);
+    }
+  }
+
+  .bt-split-button > [data-bt-part="menu-button"][data-state="open"] {
+    background-color: var(--bt-primary-hover);
+  }
+
+  .bt-split-button[data-disabled] {
+    background-color: var(--bt-primary-disabled);
+  }
+
+  .bt-split-button
+    > :is([data-bt-part="main"], [data-bt-part="menu-button"]):disabled {
+    cursor: default;
+  }
+}

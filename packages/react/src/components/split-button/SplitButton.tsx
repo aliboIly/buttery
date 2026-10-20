@@ -1,0 +1,139 @@
+import { Icon, Layer, cx, space, useControllableState } from "@buttery/core";
+import type { IconComponentProps } from "@buttery/core";
+import { ChevronDown } from "lucide-react";
+import { DropdownMenu } from "radix-ui";
+import type {
+  ComponentPropsWithRef,
+  ComponentType,
+  MouseEventHandler,
+  ReactElement,
+  ReactNode,
+} from "react";
+
+/** One entry in a `SplitButton`'s menu. */
+export interface SplitButtonItem {
+  /** What the entry says. */
+  readonly label: string;
+  /** Runs when the entry is chosen. The menu closes afterwards. */
+  readonly onSelect: () => void;
+  /** An icon before the label. */
+  readonly icon?: ComponentType<IconComponentProps> | undefined;
+  /** Keeps the entry from being chosen. */
+  readonly disabled?: boolean | undefined;
+}
+
+/** Props for `SplitButton`. */
+export interface SplitButtonProps extends Omit<
+  ComponentPropsWithRef<"div">,
+  "onClick"
+> {
+  /** The main half's label. */
+  readonly children: ReactNode;
+  /** The main action. */
+  readonly onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
+  /** The related actions in the menu. */
+  readonly items: readonly SplitButtonItem[];
+  /** Names the menu half for screen readers, such as "More export options". */
+  readonly menuLabel: string;
+  /** Disables both halves. */
+  readonly disabled?: boolean | undefined;
+  /** Whether the menu is open. Pair with `onOpenChange` to control it. */
+  readonly open?: boolean | undefined;
+  /** Whether the menu starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
+  /** Called when the menu opens or closes. */
+  readonly onOpenChange?: ((open: boolean) => void) | undefined;
+}
+
+/**
+ * A primary action with a menu of related ones beside it: two halves of one pill, each its own button and
+ * focus stop. The chevron half opens the menu, which arrow keys move through.
+ *
+ * @example
+ * <SplitButton onClick={exportPng} menuLabel="More export options" items={[{ label: "Export as JPG", onSelect: exportJpg }]}>
+ *   Export
+ * </SplitButton>
+ */
+export function SplitButton({
+  children,
+  onClick,
+  items,
+  menuLabel,
+  disabled,
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  className,
+  ...rest
+}: SplitButtonProps): ReactElement {
+  const [isOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+  return (
+    <div
+      {...rest}
+      role="group"
+      className={cx("bt-split-button", className)}
+      data-bt="SplitButton"
+      data-bt-control=""
+      data-disabled={disabled ? "" : undefined}
+    >
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={onClick}
+        className="bt-press bt-focus"
+        data-bt-part="main"
+      >
+        <span className="bt-truncate" data-bt-part="label" data-bt-truncate="">
+          {children}
+        </span>
+      </button>
+      <span data-bt-part="divider" aria-hidden="true" />
+      <DropdownMenu.Root open={isOpen} onOpenChange={setOpen} modal={false}>
+        <DropdownMenu.Trigger
+          disabled={disabled}
+          aria-label={menuLabel}
+          className="bt-press bt-focus"
+          data-bt-part="menu-button"
+        >
+          <Icon icon={ChevronDown} />
+        </DropdownMenu.Trigger>
+        {isOpen ? (
+          <Layer band="dropdown">
+            <DropdownMenu.Content
+              align="end"
+              sideOffset={space["2"]}
+              collisionPadding={space["2"]}
+              className="bt-surface bt-menu"
+              data-level="floating"
+              data-bt-part="menu"
+            >
+              {items.map((item) => (
+                <DropdownMenu.Item
+                  key={item.label}
+                  disabled={item.disabled}
+                  onSelect={item.onSelect}
+                  className="bt-text"
+                  data-role="menu"
+                  data-bt-part="menu-item"
+                >
+                  {item.icon ? <Icon icon={item.icon} /> : null}
+                  <span
+                    className="bt-truncate"
+                    data-bt-truncate=""
+                    title={item.label}
+                  >
+                    {item.label}
+                  </span>
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </Layer>
+        ) : null}
+      </DropdownMenu.Root>
+    </div>
+  );
+}

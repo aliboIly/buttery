@@ -128,6 +128,11 @@ export const colors = {
     dark: "#111111",
     description: "Text on primary.",
   },
+  "divider-on-primary": {
+    light: "rgba(255, 255, 255, 0.18)",
+    dark: "rgba(17, 17, 17, 0.18)",
+    description: "The hairline between a split button's halves.",
+  },
   "inverse-bg": {
     light: "#1a1a1a",
     dark: "#f2f2f3",
