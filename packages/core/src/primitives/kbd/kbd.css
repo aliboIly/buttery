@@ -1,0 +1,29 @@
+@layer bt.primitives {
+  .bt-kbd {
+    --bt-kbd-edge: 2px;
+
+    display: inline-flex;
+    flex: none;
+    gap: var(--bt-space-0_5);
+    font-family: inherit;
+  }
+
+  .bt-kbd > [data-bt-part="key"] {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: var(--bt-h-badge);
+    block-size: var(--bt-h-badge);
+    padding-inline: var(--bt-space-1);
+    border: 1px solid var(--bt-border-strong);
+    border-block-end-width: var(--bt-kbd-edge);
+    border-radius: var(--bt-r-kbd);
+    background-color: var(--bt-bg-surface);
+    color: var(--bt-text-secondary);
+    font-family: inherit;
+    font-size: var(--bt-text-kbd-size);
+    font-weight: var(--bt-text-kbd-weight);
+    line-height: var(--bt-text-kbd-line);
+    letter-spacing: var(--bt-text-kbd-tracking);
+    white-space: nowrap;
+  }
+}

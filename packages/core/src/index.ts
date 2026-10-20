@@ -215,3 +215,5 @@ export { isDevelopment, warnOnce } from "./utils/dev.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement } from "./utils/pressable.ts";
 export { Slot } from "./utils/slot.tsx";
+export { Kbd } from "./primitives/kbd/Kbd.tsx";
+export type { KbdKey, KbdProps } from "./primitives/kbd/Kbd.tsx";
