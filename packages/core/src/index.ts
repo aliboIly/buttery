@@ -12,6 +12,12 @@ export {
 } from "./color/color.ts";
 export type { Oklch, Rgb } from "./color/color.ts";
 export { useControllableState } from "./hooks/use-controllable-state.ts";
+export {
+  matchesShortcut,
+  parseShortcut,
+  useShortcut,
+} from "./hooks/use-shortcut.ts";
+export type { Shortcut, ShortcutOptions } from "./hooks/use-shortcut.ts";
 export type {
   ControllableStateOptions,
   ControllableStateSetter,
