@@ -1,7 +1,7 @@
 @layer bt.components {
   .bt-confetti {
-    --bt-confetti-piece-width: 8px;
-    --bt-confetti-piece-height: 12px;
+    --bt-confetti-piece-width: 5px;
+    --bt-confetti-piece-height: 8px;
 
     pointer-events: none;
   }

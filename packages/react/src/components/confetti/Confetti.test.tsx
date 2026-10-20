@@ -3,6 +3,7 @@ import "../../styles.css";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MotionPreferenceContext, publishSettled } from "@buttery/core";
+import { gradients } from "@buttery/core/palettes";
 import { celebrate, Confetti } from "./Confetti.tsx";
 
 const root = document.documentElement;
@@ -44,6 +45,32 @@ describe("Confetti", () => {
       burst?.closest("[data-bt-layer]")?.getAttribute("data-bt-layer"),
     ).toBe("toast");
     expect(burst?.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("uses the palette's fresh colors, never its neutrals or deeps", () => {
+    render(<Confetti />);
+    act(() => {
+      celebrate();
+    });
+    const probe = document.createElement("span");
+    document.body.append(probe);
+    const rgb = (color: string): string => {
+      probe.style.backgroundColor = color;
+      return getComputedStyle(probe).backgroundColor;
+    };
+    const fresh = new Set(
+      gradients
+        .filter((preset) =>
+          ["honey", "apricot", "rose", "violet", "sky", "sea"].includes(
+            preset.id,
+          ),
+        )
+        .flatMap((preset) => [rgb(preset.fromHex), rgb(preset.toHex)]),
+    );
+    probe.remove();
+    for (const piece of pieces()) {
+      expect(fresh).toContain(getComputedStyle(piece).backgroundColor);
+    }
   });
 
   it("throws the pieces up, then clears them after about 900ms", async () => {

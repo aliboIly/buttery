@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { useEffect, useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
 import { Layer, trackAnimation, useMotionPreference } from "@buttery/core";
-import { solids } from "@buttery/core/palettes";
+import { gradients } from "@buttery/core/palettes";
 import {
   addBurst,
   getBursts,
@@ -11,6 +11,11 @@ import {
   subscribe,
 } from "./confetti-store.ts";
 import type { Burst, Piece } from "./confetti-store.ts";
+
+const FRESH = new Set(["honey", "apricot", "rose", "violet", "sky", "sea"]);
+const COLORS = gradients
+  .filter((preset) => FRESH.has(preset.id))
+  .flatMap((preset) => [preset.fromHex, preset.toHex]);
 
 const LIFE = 0.9;
 const GRAVITY = 1800;
@@ -29,7 +34,7 @@ function throwPieces(): readonly Piece[] {
     const vx = Math.cos(angle) * speed;
     const vy = Math.sin(angle) * speed;
     return {
-      color: solids[index % solids.length]?.hex ?? "currentColor",
+      color: COLORS[index % COLORS.length] ?? "currentColor",
       x: times.map((t) => vx * t),
       y: times.map((t) => vy * t + (GRAVITY * t * t) / 2),
       rotate: (Math.random() * 2 - 1) * 540,
@@ -102,7 +107,7 @@ export function Confetti(): ReactElement | null {
 
 /**
  * Bursts confetti from the middle of `from` (the viewport's middle without it): 28–40 small pieces in the
- * palette's colors, thrown up in a ±60° cone and falling for 900ms. Save it for a genuine finish, such as
+ * palette's fresh colors, thrown up in a ±60° cone and falling for 900ms. Save it for a genuine finish, such as
  * the last onboarding step or a first export, never routine actions. Does nothing with reduced motion.
  *
  * @example
