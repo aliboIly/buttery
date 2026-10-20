@@ -1,14 +1,30 @@
 @layer bt.components {
-  .bt-text-area [data-bt-part="box"] {
+  .bt-text-area > [data-bt-part="box"] {
     align-items: stretch;
     block-size: auto;
-    padding-inline-end: 0;
   }
 
-  .bt-text-area [data-bt-part="input"] {
+  .bt-text-area
+    > [data-bt-part="box"]
+    > :is([data-bt-part="input"], [data-bt-part="measure"]) {
     padding-block: var(--bt-space-2);
-    padding-inline-end: var(--bt-space-3);
     line-height: var(--bt-text-body-line);
     resize: none;
+  }
+
+  /* A copy the height is measured from, so measuring never collapses the box and scrolls the page. */
+  .bt-text-area > [data-bt-part="box"] > [data-bt-part="measure"] {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    block-size: 0;
+    padding-inline: var(--bt-form-field-inset);
+    border: 0;
+    font: inherit;
+    letter-spacing: inherit;
+    line-height: var(--bt-text-body-line);
+    overflow: hidden;
+    visibility: hidden;
+    pointer-events: none;
   }
 }

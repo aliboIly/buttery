@@ -47,4 +47,42 @@ describe("TextArea", () => {
     expect(Math.round(capped - empty)).toBe(Math.round(line * 2));
     expect(getComputedStyle(area()).overflowY).toBe("auto");
   });
+
+  it("fits its text again when its width changes", async () => {
+    render(
+      <div data-testid="frame" style={{ inlineSize: "640px" }}>
+        <TextArea
+          label="Note"
+          rows={1}
+          defaultValue="A note long enough to wrap onto several lines once the field gets narrow, with a few more words after that."
+        />
+      </div>,
+    );
+    const wide = area().getBoundingClientRect().height;
+    screen.getByTestId("frame").style.inlineSize = "200px";
+    await expect
+      .poll(() => area().getBoundingClientRect().height)
+      .toBeGreaterThan(wide);
+    expect(area().scrollHeight).toBeLessThanOrEqual(area().clientHeight + 1);
+  });
+
+  it("leaves a scrolled panel where it is as it measures", async () => {
+    render(
+      <div
+        data-testid="panel"
+        style={{ blockSize: "240px", overflowY: "auto" }}
+      >
+        <div style={{ blockSize: "600px" }} />
+        <TextArea
+          label="Note"
+          defaultValue={"One\nTwo\nThree\nFour\nFive\nSix"}
+        />
+      </div>,
+    );
+    const panel = screen.getByTestId("panel");
+    panel.scrollTop = panel.scrollHeight;
+    const end = panel.scrollTop;
+    await userEvent.type(area(), "!");
+    expect(panel.scrollTop).toBe(end);
+  });
 });

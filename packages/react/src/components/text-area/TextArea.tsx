@@ -1,7 +1,11 @@
-import { cx, hasContent, useControllableState } from "@buttery/core";
-import { useLayoutEffect, useRef } from "react";
+import {
+  cx,
+  hasContent,
+  useControllableState,
+  useMergedRefs,
+} from "@buttery/core";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
-import { useMergedRefs } from "@buttery/core";
 import {
   FormFieldCaption,
   FormFieldError,
@@ -38,7 +42,8 @@ export interface TextAreaProps extends Omit<
 
 /**
  * A labelled box for longer text, such as a note or a description. It grows with what's typed from `rows`
- * lines up to `maxRows`, then scrolls inside itself. It never animates its height.
+ * lines up to `maxRows`, then scrolls inside itself, and fits again when its width changes. It never
+ * animates its height.
  *
  * @example
  * <TextArea label="Note" hint="Shown under the card" value={note} onValueChange={setNote} />
@@ -77,20 +82,48 @@ export function TextArea({
     error: invalid,
   });
 
+  const fit = useRef<() => void>(() => undefined);
+  const measure = useRef<HTMLTextAreaElement>(null);
+
   useLayoutEffect(() => {
-    const node = element.current;
-    if (!node) return;
-    const style = getComputedStyle(node);
-    const line = Number.parseFloat(style.lineHeight);
-    const frame =
-      Number.parseFloat(style.paddingTop) +
-      Number.parseFloat(style.paddingBottom);
-    node.style.height = "auto";
-    const tallest = line * maxRows + frame;
-    const wanted = Math.max(node.scrollHeight, line * rows + frame);
-    node.style.height = `${String(Math.min(wanted, tallest))}px`;
-    node.style.overflowY = wanted > tallest ? "auto" : "hidden";
+    const fitHeight = (): void => {
+      const node = element.current;
+      const copy = measure.current;
+      if (!node || !copy) return;
+      copy.value = node.value;
+      const computed = getComputedStyle(node);
+      const line = Number.parseFloat(computed.lineHeight);
+      const frame =
+        Number.parseFloat(computed.paddingTop) +
+        Number.parseFloat(computed.paddingBottom);
+      const tallest = line * maxRows + frame;
+      const wanted = Math.max(copy.scrollHeight, line * rows + frame);
+      node.style.height = `${String(Math.min(wanted, tallest))}px`;
+      node.style.overflowY = wanted > tallest ? "auto" : "hidden";
+    };
+    fit.current = fitHeight;
+    fitHeight();
   }, [current, rows, maxRows]);
+
+  useEffect(() => {
+    const node = element.current;
+    if (!node) return undefined;
+    let width = node.offsetWidth;
+    let live = true;
+    const observer = new ResizeObserver(() => {
+      if (node.offsetWidth === width) return;
+      width = node.offsetWidth;
+      fit.current();
+    });
+    observer.observe(node);
+    void document.fonts.ready.then(() => {
+      if (live) fit.current();
+    });
+    return () => {
+      live = false;
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <div
@@ -122,6 +155,15 @@ export function TextArea({
           }}
           className="bt-scroll-fade"
           data-bt-part="input"
+        />
+        <textarea
+          ref={measure}
+          rows={1}
+          tabIndex={-1}
+          readOnly
+          inert
+          aria-hidden="true"
+          data-bt-part="measure"
         />
       </div>
       <FormFieldError id={ids.error} announce={announceError}>
