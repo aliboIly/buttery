@@ -45,11 +45,14 @@ export function ${name}({ asChild = false, ...rest }: ${name}Props): ReactElemen
 }
 
 function cssSource(name, layer) {
+  const prefix = `--bt-${kebabCase(name)}`;
   return `@layer ${layer} {
   [data-bt="${name}"] {
+    ${prefix}-gap: var(--bt-space-2);
+
     display: flex;
     align-items: center;
-    gap: var(--bt-space-2);
+    gap: var(${prefix}-gap);
     min-inline-size: 0;
   }
 }

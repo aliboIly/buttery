@@ -85,12 +85,12 @@ describe("createComponent", () => {
       "./styles.css",
       "./package.json",
     ]);
-    expect(
-      readFileSync(
-        join(root, "packages/react/src/components/value-badge/value-badge.css"),
-        "utf8",
-      ),
-    ).toContain("@layer bt.components {");
+    const css = readFileSync(
+      join(root, "packages/react/src/components/value-badge/value-badge.css"),
+      "utf8",
+    );
+    expect(css).toContain("@layer bt.components {");
+    expect(css).toContain("--bt-value-badge-gap: var(--bt-space-2);");
   });
 
   it("puts primitives in core's primitives layer and stylesheet", () => {
