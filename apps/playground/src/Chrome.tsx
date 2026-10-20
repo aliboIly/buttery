@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Menu, Settings2 } from "lucide-react";
 import { RadioGroup } from "radix-ui";
@@ -6,6 +7,7 @@ import {
   Inline,
   Popover,
   Pressable,
+  SharedIndicator,
   Stack,
   Sticky,
   Surface,
@@ -94,25 +96,33 @@ function SettingsControls({
 
 function PageLinks({ current }: { readonly current: string }): ReactElement {
   return (
-    <Stack gap={5}>
+    <Stack gap={6}>
       {pageGroups.map((group) => (
         <Stack key={group.title} gap={1}>
           <Text variant="caption" className="pg-nav-group">
             {group.title}
           </Text>
-          {group.pages.map((page) => (
-            <Pressable key={page.route} asChild>
-              <a
-                href={`#/${page.route}`}
-                className="pg-nav-link"
-                aria-current={page.route === current ? "page" : undefined}
+          <SharedIndicator.Group>
+            {group.pages.map((page) => (
+              <SharedIndicator
+                key={page.route}
+                active={page.route === current}
+                asChild
               >
-                <Text variant="control" truncate>
-                  {page.title}
-                </Text>
-              </a>
-            </Pressable>
-          ))}
+                <Pressable asChild className="bt-hover-tint">
+                  <a
+                    href={`#/${page.route}`}
+                    className="pg-nav-link"
+                    aria-current={page.route === current ? "page" : undefined}
+                  >
+                    <Text variant="control" truncate>
+                      {page.title}
+                    </Text>
+                  </a>
+                </Pressable>
+              </SharedIndicator>
+            ))}
+          </SharedIndicator.Group>
         </Stack>
       ))}
     </Stack>
@@ -133,59 +143,69 @@ export function Chrome({
 }: ChromeProps): ReactElement {
   const title = pages.find((page) => page.route === current)?.title ?? "Pages";
   const obstacle = useFloatingObstacle();
+  const nav = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    nav.current
+      ?.querySelector('[aria-current="page"]')
+      ?.scrollIntoView({ block: "nearest" });
+  }, [current]);
+
   return (
     <div className="pg-shell">
-      <Surface level="card" padX={3} asChild>
-        <header ref={obstacle} className="pg-header">
-          <Text variant="title-sm" truncate className="pg-brand">
-            🧈 buttery playground
-          </Text>
-          <span className="pg-narrow">
-            <Popover>
-              <Popover.Trigger asChild>
-                <Pressable className="pg-menu-button">
-                  <Icon icon={Menu} />
-                  <Text variant="control" truncate>
-                    {title}
-                  </Text>
-                </Pressable>
-              </Popover.Trigger>
-              <Popover.Content
-                align="start"
-                aria-label="Pages"
-                className="pg-menu"
-              >
-                <PageLinks current={current} />
-              </Popover.Content>
-            </Popover>
-          </span>
-          <span className="pg-wide">
-            <SettingsControls settings={settings} stacked={false} />
-          </span>
-          <span className="pg-narrow">
-            <Popover>
-              <Popover.Trigger asChild>
-                <Pressable
-                  className="pg-icon-button"
-                  aria-label="Display settings"
+      <Sticky className="pg-top">
+        <Surface level="card" padX={3} asChild>
+          <header ref={obstacle} className="pg-header">
+            <Text variant="title-sm" truncate className="pg-brand">
+              🧈 buttery playground
+            </Text>
+            <span className="pg-narrow">
+              <Popover>
+                <Popover.Trigger asChild>
+                  <Pressable className="pg-menu-button">
+                    <Icon icon={Menu} />
+                    <Text variant="control" truncate>
+                      {title}
+                    </Text>
+                  </Pressable>
+                </Popover.Trigger>
+                <Popover.Content
+                  align="start"
+                  aria-label="Pages"
+                  className="pg-menu"
                 >
-                  <Icon icon={Settings2} />
-                </Pressable>
-              </Popover.Trigger>
-              <Popover.Content
-                align="end"
-                aria-label="Display settings"
-                className="pg-menu"
-              >
-                <SettingsControls settings={settings} stacked />
-              </Popover.Content>
-            </Popover>
-          </span>
-        </header>
-      </Surface>
+                  <PageLinks current={current} />
+                </Popover.Content>
+              </Popover>
+            </span>
+            <span className="pg-wide">
+              <SettingsControls settings={settings} stacked={false} />
+            </span>
+            <span className="pg-narrow">
+              <Popover>
+                <Popover.Trigger asChild>
+                  <Pressable
+                    className="pg-icon-button"
+                    aria-label="Display settings"
+                  >
+                    <Icon icon={Settings2} />
+                  </Pressable>
+                </Popover.Trigger>
+                <Popover.Content
+                  align="end"
+                  aria-label="Display settings"
+                  className="pg-menu"
+                >
+                  <SettingsControls settings={settings} stacked />
+                </Popover.Content>
+              </Popover>
+            </span>
+          </header>
+        </Surface>
+      </Sticky>
       <div className="pg-body">
-        <Sticky variant="aside" className="pg-sidebar pg-wide">
-          <nav aria-label="Pages">
+        <Sticky variant="aside" className="pg-sidebar bt-scroll-fade">
+          <nav ref={nav} aria-label="Pages">
             <PageLinks current={current} />
           </nav>
         </Sticky>
