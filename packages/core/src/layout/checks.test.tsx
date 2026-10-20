@@ -382,6 +382,24 @@ describe("reach", () => {
     ]);
   });
 
+  it("measures a scroll area by the boxes inside it, and lets reversed lists overflow their start", () => {
+    expect(
+      check(
+        `<div style="block-size: 400px"></div>
+         <div style="block-size: 200px; overflow-y: auto">
+           <div hidden>Draft</div>
+           <div style="display: none">Archived</div>
+           <div style="display: contents"><p style="margin: 0">Pages</p></div>
+         </div>
+         <div style="display: flex; flex-direction: column-reverse; block-size: 200px; overflow-y: auto">
+           <div style="flex: none; block-size: 600px">Messages</div>
+         </div>
+         <div style="block-size: 2000px"></div>`,
+        ["reach"],
+      ),
+    ).toEqual([]);
+  });
+
   it("passes an aside that fits where it sticks, and contained lists in the flow", () => {
     expect(
       check(

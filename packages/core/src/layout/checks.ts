@@ -892,6 +892,16 @@ export function createLayoutToolkit(): LayoutToolkit {
       };
       const pastViewport = (top: number, bottom: number): number =>
         Math.max(bottom - viewportHeight, -top, 0);
+      // A child with display: contents has no box of its own, so its children stand in for it.
+      const contentBoxes = (parent: Element): DOMRect[] =>
+        [...parent.children].flatMap((child) => {
+          const childStyle = styleOf(child);
+          if (childStyle.position === "fixed") return [];
+          if (childStyle.display === "contents") return contentBoxes(child);
+          return child.getClientRects().length > 0
+            ? [child.getBoundingClientRect()]
+            : [];
+        });
       for (const element of document.body.querySelectorAll("*")) {
         if (isTooling(element) || element.closest(LAYER_FURNITURE)) continue;
         const style = styleOf(element);
@@ -932,13 +942,18 @@ export function createLayoutToolkit(): LayoutToolkit {
             rect.left +
             Number.parseFloat(style.borderLeftWidth) -
             element.scrollLeft;
+          // Reversed flows scroll from their far end, where overflowing content is still reachable.
+          const flex = style.display.includes("flex");
+          const checksY =
+            scrollsY && !(flex && style.flexDirection === "column-reverse");
+          const checksX =
+            scrollsX &&
+            style.direction !== "rtl" &&
+            !(flex && style.flexDirection === "row-reverse");
           let before = 0;
-          for (const child of element.children) {
-            if (styleOf(child).position === "fixed") continue;
-            const box = child.getBoundingClientRect();
-            if (scrollsY) before = Math.max(before, originTop - box.top);
-            if (scrollsX && style.direction !== "rtl")
-              before = Math.max(before, originLeft - box.left);
+          for (const box of contentBoxes(element)) {
+            if (checksY) before = Math.max(before, originTop - box.top);
+            if (checksX) before = Math.max(before, originLeft - box.left);
           }
           if (before > 1) {
             report({
