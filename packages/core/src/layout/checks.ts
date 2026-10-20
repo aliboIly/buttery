@@ -137,7 +137,17 @@ export function createLayoutToolkit(): LayoutToolkit {
     });
   }
 
-  function visibleBox(element: Element, rect: DOMRect): Box | null {
+  function isTooling(element: Element): boolean {
+    return (
+      element.closest('[data-bt-layer="dev"], [data-bt-annotations]') !== null
+    );
+  }
+
+  function visibleBox(
+    element: Element,
+    rect: DOMRect,
+    clipBySelf = false,
+  ): Box | null {
     const box: Box = {
       left: rect.left,
       top: rect.top,
@@ -146,7 +156,7 @@ export function createLayoutToolkit(): LayoutToolkit {
     };
     if (styleOf(element).position !== "fixed") {
       for (
-        let node = element.parentElement;
+        let node = clipBySelf ? element : element.parentElement;
         node && node !== html && !node.hasAttribute("data-bt-layer");
         node = node.parentElement
       ) {
@@ -210,7 +220,7 @@ export function createLayoutToolkit(): LayoutToolkit {
         const name = element.getAttribute("data-bt");
         if (name && skip.has(name)) continue;
         if (element.getAttribute("data-bt-part") === "lane") continue;
-        if (!isVisible(element)) continue;
+        if (isTooling(element) || !isVisible(element)) continue;
         const box = visibleBox(element, element.getBoundingClientRect());
         if (!box) continue;
         measured.push({
@@ -228,10 +238,10 @@ export function createLayoutToolkit(): LayoutToolkit {
         const parent = node.parentElement;
         if (!parent || !node.textContent?.trim()) continue;
         if (parent.closest("script, style, template, svg, noscript")) continue;
-        if (!isVisible(parent)) continue;
+        if (isTooling(parent) || !isVisible(parent)) continue;
         const range = document.createRange();
         range.selectNodeContents(node);
-        const box = visibleBox(parent, range.getBoundingClientRect());
+        const box = visibleBox(parent, range.getBoundingClientRect(), true);
         if (!box) continue;
         measured.push({
           element: parent,
@@ -318,6 +328,20 @@ export function createLayoutToolkit(): LayoutToolkit {
         }
         return false;
       };
+      const hasTrimmedAncestor = (
+        node: Element,
+        container: Element,
+      ): boolean => {
+        for (
+          let current = node.parentElement;
+          current;
+          current = current.parentElement
+        ) {
+          if (isTrimmed(current)) return true;
+          if (current === container) break;
+        }
+        return false;
+      };
       const extentOf = (
         element: Element,
       ): { right: number; bottom: number } => {
@@ -332,7 +356,10 @@ export function createLayoutToolkit(): LayoutToolkit {
             const box = child.getBoundingClientRect();
             if (box.width > 0 || box.height > 0) {
               right = Math.max(right, box.right);
-              bottom = Math.max(bottom, box.bottom);
+              const insideTrimmedText =
+                style.display === "inline" &&
+                hasTrimmedAncestor(child, element);
+              if (!insideTrimmedText) bottom = Math.max(bottom, box.bottom);
             }
             const clips =
               style.overflowX !== "visible" || style.overflowY !== "visible";
@@ -359,6 +386,7 @@ export function createLayoutToolkit(): LayoutToolkit {
       for (const element of document.body.querySelectorAll("*")) {
         if (skippedTags.has(element.tagName) || element.closest("svg"))
           continue;
+        if (isTooling(element)) continue;
         if (element.closest("[data-bt-truncate], [data-bt-clip]")) continue;
         const style = styleOf(element);
         if (
@@ -422,6 +450,7 @@ export function createLayoutToolkit(): LayoutToolkit {
 
     if (enabled.has("clipping")) {
       for (const element of document.body.querySelectorAll("*")) {
+        if (isTooling(element)) continue;
         const style = styleOf(element);
         const ellipsized =
           style.textOverflow === "ellipsis" &&
@@ -468,7 +497,7 @@ export function createLayoutToolkit(): LayoutToolkit {
           .join(" or ");
       };
       for (const element of document.querySelectorAll("[data-bt]")) {
-        if (!isVisible(element)) continue;
+        if (isTooling(element) || !isVisible(element)) continue;
         const style = styleOf(element);
         const checks: [string, string][] = [
           ["padding-top", style.paddingTop],
@@ -532,6 +561,7 @@ export function createLayoutToolkit(): LayoutToolkit {
         '[tabindex]:not([tabindex="-1"])',
       ].join(", ");
       for (const element of document.querySelectorAll(interactive)) {
+        if (isTooling(element)) continue;
         if (element.matches(":disabled, [aria-disabled=true]")) continue;
         if (element.closest('[data-bt-target="group"]')) continue;
         if (!isVisible(element)) continue;
@@ -609,6 +639,7 @@ export function createLayoutToolkit(): LayoutToolkit {
     if (enabled.has("layering")) {
       const allowed = new Set(tokens.zIndex.map(String));
       for (const element of document.querySelectorAll("*")) {
+        if (isTooling(element)) continue;
         const { zIndex } = styleOf(element);
         if (zIndex === "auto" || allowed.has(zIndex)) continue;
         report({
