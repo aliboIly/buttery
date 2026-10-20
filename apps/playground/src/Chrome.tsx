@@ -10,6 +10,7 @@ import {
   Sticky,
   Surface,
   Text,
+  useFloatingObstacle,
 } from "@buttery/core";
 import { setSetting } from "./location.ts";
 import type { Settings } from "./location.ts";
@@ -123,10 +124,11 @@ export function Chrome({
   children,
 }: ChromeProps): ReactElement {
   const title = pages.find((page) => page.route === current)?.title ?? "Pages";
+  const obstacle = useFloatingObstacle();
   return (
     <div className="pg-shell">
       <Surface level="card" padX={3} asChild>
-        <header className="pg-header">
+        <header ref={obstacle} className="pg-header">
           <Text variant="title-sm" truncate className="pg-brand">
             🧈 buttery playground
           </Text>
