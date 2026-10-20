@@ -41,7 +41,12 @@ export interface ButteryProviderProps {
   readonly layoutGuard?: boolean;
 }
 
-type Attributes = Readonly<Record<`data-bt-${string}`, string>>;
+interface Attributes {
+  readonly "data-bt-theme": ColorScheme;
+  readonly "data-bt-density": Density;
+  readonly "data-bt-platform": Platform;
+  readonly "data-bt-motion": "reduced" | "full";
+}
 
 const subscribeNever = (): (() => void) => () => undefined;
 
@@ -65,11 +70,7 @@ function variablesOf(
   return theme ? { ...theme.shared, ...theme[colorScheme] } : {};
 }
 
-function useRootSync(
-  attributes: Attributes,
-  variables: CssVariables,
-  enabled: boolean,
-): void {
+function useSettledFlag(enabled: boolean): void {
   useLayoutEffect(() => {
     if (!enabled) return undefined;
     publishSettled();
@@ -77,26 +78,33 @@ function useRootSync(
       document.documentElement.removeAttribute("data-bt-settled");
     };
   }, [enabled]);
+}
 
+/** Keeps one attribute on `<html>` in sync, so changing one setting never rewrites the others. */
+function useRootAttribute(name: string, value: string, enabled: boolean): void {
   useLayoutEffect(() => {
     if (!enabled) return undefined;
     const root = document.documentElement;
-    const previous = Object.keys(attributes).map(
-      (name) => [name, root.getAttribute(name)] as const,
-    );
-    for (const [name, value] of Object.entries(attributes))
-      root.setAttribute(name, value);
+    const previous = root.getAttribute(name);
+    root.setAttribute(name, value);
+    return () => {
+      if (previous === null) root.removeAttribute(name);
+      else root.setAttribute(name, previous);
+    };
+  }, [name, value, enabled]);
+}
+
+function useRootVariables(variables: CssVariables, enabled: boolean): void {
+  useLayoutEffect(() => {
+    if (!enabled) return undefined;
+    const root = document.documentElement;
     for (const [name, value] of Object.entries(variables))
       root.style.setProperty(name, value);
     return () => {
-      for (const [name, value] of previous) {
-        if (value === null) root.removeAttribute(name);
-        else root.setAttribute(name, value);
-      }
       for (const name of Object.keys(variables))
         root.style.removeProperty(name);
     };
-  }, [attributes, variables, enabled]);
+  }, [variables, enabled]);
 }
 
 /**
@@ -148,7 +156,12 @@ export function ButteryProvider({
   );
   const isRoot = parent === null;
 
-  useRootSync(attributes, variables, isRoot);
+  useSettledFlag(isRoot);
+  useRootAttribute("data-bt-theme", attributes["data-bt-theme"], isRoot);
+  useRootAttribute("data-bt-density", attributes["data-bt-density"], isRoot);
+  useRootAttribute("data-bt-platform", attributes["data-bt-platform"], isRoot);
+  useRootAttribute("data-bt-motion", attributes["data-bt-motion"], isRoot);
+  useRootVariables(variables, isRoot);
 
   if (isRoot) {
     return (

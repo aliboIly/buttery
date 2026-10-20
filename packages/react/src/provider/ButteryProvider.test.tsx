@@ -84,6 +84,22 @@ describe("ButteryProvider", () => {
     expect(root.dataset["btTheme"]).toBeUndefined();
   });
 
+  it("rewrites only the setting that changed", () => {
+    const { rerender } = render(
+      <ButteryProvider colorScheme="light">
+        <Probe />
+      </ButteryProvider>,
+    );
+    root.setAttribute("data-bt-density", "compact");
+    rerender(
+      <ButteryProvider colorScheme="dark">
+        <Probe />
+      </ButteryProvider>,
+    );
+    expect(root.dataset["btTheme"]).toBe("dark");
+    expect(root.dataset["btDensity"]).toBe("compact");
+  });
+
   it("follows the OS color scheme and reduced-motion setting by default", () => {
     stubMatchMedia([
       "(prefers-color-scheme: dark)",
