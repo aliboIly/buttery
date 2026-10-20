@@ -1,9 +1,13 @@
 import type { ReactElement } from "react";
 
-/** How a component moves. The manifest groups components by it. */
+/**
+ * How a component moves. The manifest groups components by it. `"hover"` is a small change while the
+ * pointer is on it or it has keyboard focus, such as the navigation arrow growing its stem.
+ */
 export type MotionClass =
   | "none"
   | "press"
+  | "hover"
   | "indicator"
   | "presence"
   | "morph"

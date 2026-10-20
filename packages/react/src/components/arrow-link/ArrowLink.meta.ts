@@ -16,5 +16,5 @@ export const meta: ComponentMeta = {
   ],
   related: ["Button", "Pressable"],
   a11y: "A native link (or the element you give it with asChild), named by its label; the arrow is hidden from assistive technology. Keyboard focus shows the focus ring and an underline.",
-  motion: "press",
+  motion: "hover",
 };
