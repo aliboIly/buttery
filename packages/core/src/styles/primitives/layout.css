@@ -240,10 +240,6 @@
     padding-block: var(--bt-space-32);
   }
 
-  [data-bt-layer="base"] {
-    z-index: var(--bt-z-base);
-  }
-
   [data-bt-layer="raised"] {
     z-index: var(--bt-z-raised);
   }

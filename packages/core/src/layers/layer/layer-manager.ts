@@ -1,10 +1,9 @@
 import { createContext, use, useLayoutEffect, useState } from "react";
 import type { Context } from "react";
 import { zIndex } from "../../tokens/z.ts";
-import type { ZToken } from "../../tokens/z.ts";
+import type { LayerBand } from "../../tokens/z.ts";
 
-/** A z band from the tokens. Every layer renders in one. */
-export type LayerBand = Exclude<ZToken, "base">;
+export type { LayerBand } from "../../tokens/z.ts";
 
 /** The layer a component renders inside: its band and its container element. */
 export interface LayerInfo {

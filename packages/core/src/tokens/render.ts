@@ -9,12 +9,14 @@ import {
   fontFamilies,
   heights,
   iconStroke,
+  layerBands,
   pressScale,
   radii,
   shadows,
   space,
   spaceVar,
   spaceWell,
+  spring,
   surfaces,
   textRoles,
   timing,
@@ -346,6 +348,7 @@ export function renderTokensJson(): string {
         { cssVar: `--bt-${name}`, value: ms(value) },
       ]),
     ),
+    spring,
     font: Object.fromEntries(
       Object.entries(fontFamilies).map(([name, value]) => [
         name,
@@ -556,7 +559,7 @@ export function renderLayoutCss(): string {
       ]),
     ),
   );
-  const layerBlocks = Object.keys(zIndex).map((band) =>
+  const layerBlocks = layerBands.map((band) =>
     block(`[data-bt-layer="${band}"]`, [["z-index", `var(--bt-z-${band})`]]),
   );
   return [

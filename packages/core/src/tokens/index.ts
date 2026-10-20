@@ -1,7 +1,16 @@
 export { colors, contrastPairs } from "./color.ts";
 export type { ColorDefinition, ColorToken, ContrastPair } from "./color.ts";
-export { durations, easings, pressScale, timing } from "./motion.ts";
-export type { DurationToken, EasingToken } from "./motion.ts";
+export {
+  durations,
+  easingCurves,
+  easings,
+  enterScale,
+  pressScale,
+  spring,
+  timing,
+  travel,
+} from "./motion.ts";
+export type { DurationToken, EasingToken, SpringToken } from "./motion.ts";
 export { radii } from "./radius.ts";
 export type { RadiusToken } from "./radius.ts";
 export { shadows } from "./shadow.ts";
@@ -31,8 +40,8 @@ export type {
   TextRoleDefinition,
   TrackingToken,
 } from "./type.ts";
-export { zIndex } from "./z.ts";
-export type { ZToken } from "./z.ts";
+export { layerBands, zIndex } from "./z.ts";
+export type { LayerBand, ZToken } from "./z.ts";
 
 export { surfaces } from "./surface.ts";
 export type { SurfaceDefinition } from "./surface.ts";
