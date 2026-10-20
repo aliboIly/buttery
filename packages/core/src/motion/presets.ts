@@ -68,11 +68,17 @@ export const presencePresets: Readonly<Record<PresencePreset, PresenceMotion>> =
   };
 
 /**
- * Every preset under reduced motion: a 100ms fade. It still names the resting transform, so content that
- * was mid-entrance when motion became reduced lands in place.
+ * Every preset under reduced motion: a 100ms fade. Its targets start from wherever the values are, because
+ * Motion only restarts a value whose target changes: content that was mid-entrance when motion became
+ * reduced lands in place instead of finishing its spring.
  */
 export const reducedPresence: PresenceMotion = {
   initial: { opacity: 0 },
-  animate: { opacity: 1, y: 0, scale: 1, transition: reducedTransition },
+  animate: {
+    opacity: [null, 1],
+    y: [null, 0],
+    scale: [null, 1],
+    transition: reducedTransition,
+  },
   exit: { opacity: 0, transition: reducedTransition },
 };

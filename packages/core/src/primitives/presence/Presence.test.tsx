@@ -85,9 +85,14 @@ describe("Presence", () => {
         </Presence>
       </MotionPreferenceContext>,
     );
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => {
+        requestAnimationFrame(resolve);
+      }),
+    );
+    const { transform } = getComputedStyle(screen.getByTestId("note"));
+    expect(transform === "none" ? 0 : new DOMMatrix(transform).m42).toBe(0);
     await waitFor(() => {
-      const { transform } = getComputedStyle(screen.getByTestId("note"));
-      expect(transform === "none" ? 0 : new DOMMatrix(transform).m42).toBe(0);
       expect(root.hasAttribute("data-bt-settled")).toBe(true);
     });
   });
