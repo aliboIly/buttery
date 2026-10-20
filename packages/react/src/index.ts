@@ -44,3 +44,5 @@ export { SplitButton } from "./components/split-button/SplitButton.tsx";
 export type { SplitButtonProps } from "./components/split-button/SplitButton.tsx";
 export { ValueBadge } from "./components/value-badge/ValueBadge.tsx";
 export type { ValueBadgeProps } from "./components/value-badge/ValueBadge.tsx";
+export { Slider } from "./components/slider/Slider.tsx";
+export type { SliderFormat, SliderProps } from "./components/slider/Slider.tsx";
