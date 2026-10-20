@@ -7,15 +7,27 @@
     "rootDir": ".",
     "outDir": "./.tsbuild/test",
     "tsBuildInfoFile": "./.tsbuild/test/tsconfig.tsbuildinfo",
-    "types": ["node", "vite/client"]
+    "types": [
+      "node",
+      "vite/client"
+    ]
   },
-  "include": ["packages/*/src/**/*.test.ts", "packages/*/src/**/*.test.tsx"],
+  "include": [
+    "packages/*/src/**/*.test.ts",
+    "packages/*/src/**/*.test.tsx"
+  ],
   "references": [
     {
       "path": "./packages/core"
     },
     {
       "path": "./packages/react"
+    },
+    {
+      "path": "./packages/lint"
+    },
+    {
+      "path": "./packages/test"
     }
   ]
 }

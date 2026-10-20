@@ -1,9 +1,8 @@
 import { RuleTester } from "eslint";
 import tseslint from "typescript-eslint";
-import { afterAll, describe, it } from "vitest";
+import { describe, it } from "vitest";
 import { noLiteralLayoutStyle, spreadRestProps } from "./rules.ts";
 
-RuleTester.afterAll = afterAll;
 RuleTester.describe = describe;
 RuleTester.it = it;
 RuleTester.itOnly = it.only;
