@@ -212,6 +212,7 @@ export type {
 } from "./tokens/index.ts";
 export { cx } from "./utils/cx.ts";
 export { isDevelopment, warnOnce } from "./utils/dev.ts";
+export { hasContent } from "./utils/has-content.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement } from "./utils/pressable.ts";
 export { Slot } from "./utils/slot.tsx";

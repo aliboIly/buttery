@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { cx } from "../../utils/cx.ts";
+import { hasContent } from "../../utils/has-content.ts";
 import { Text } from "../text/Text.tsx";
 import type { TextVariant } from "../text/Text.tsx";
 
@@ -78,9 +79,9 @@ export function TextStack({
         <Text variant={roles.title} asChild>
           <Title>{title}</Title>
         </Text>
-        {body === undefined ? null : <Text variant={roles.body}>{body}</Text>}
+        {hasContent(body) ? <Text variant={roles.body}>{body}</Text> : null}
       </div>
-      {caption === undefined ? null : <Text variant="caption">{caption}</Text>}
+      {hasContent(caption) ? <Text variant="caption">{caption}</Text> : null}
     </div>
   );
 }
