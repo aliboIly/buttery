@@ -148,16 +148,16 @@ export function Select<Value extends string = string>({
   const [active, setActive] = useState<Value | undefined>(undefined);
   const focused = active ?? resting?.value;
 
+  const optionElement = (option: SelectOption<Value>): HTMLElement | null =>
+    panel.current?.querySelector<HTMLElement>(
+      `[role="option"][data-value="${CSS.escape(option.value)}"]`,
+    ) ?? null;
   const focusOption = (option: SelectOption<Value> | undefined): void => {
     if (!option) return;
     flushSync(() => {
       setActive(option.value);
     });
-    panel.current
-      ?.querySelector<HTMLElement>(
-        `[role="option"][data-value="${CSS.escape(option.value)}"]`,
-      )
-      ?.focus();
+    optionElement(option)?.focus();
   };
   const choose = (option: SelectOption<Value>): void => {
     if (option.disabled === true) return;
@@ -276,7 +276,7 @@ export function Select<Value extends string = string>({
         className="bt-select-panel"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
-          focusOption(resting);
+          if (resting) optionElement(resting)?.focus();
         }}
         onKeyDown={panelKeyDown}
       >
