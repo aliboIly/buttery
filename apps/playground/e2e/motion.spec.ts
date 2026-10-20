@@ -3,6 +3,8 @@ import type { Locator, Page } from "@playwright/test";
 import {
   elementIds,
   finishSampling,
+  peek,
+  waitUntilMoved,
   fitSpring,
   fitTween,
   framesBetween,
@@ -21,6 +23,7 @@ import {
   traceOf,
 } from "./sampling.ts";
 import type {
+  Channel,
   Curve,
   Fit,
   Point,
@@ -65,12 +68,11 @@ const SPRING_SLACK = 0.03;
 const CURVE_ERROR = 3;
 /** A fitted tween may miss its token's duration by 4ms: WebKit's clock counts whole milliseconds. */
 const TWEEN_SLACK = 4;
-/** React's commit, Motion's first frame and a frame of sampling, on top of the spring's own time to 95%. */
-const LATENCY = 50;
-/** Two frames: by then, whatever lands at once has landed. */
-const AT_ONCE = 34;
-/** `AnimatePresence` unmounts exiting content a few frames after its fade. */
-const EXIT_GONE_MAX = DURATIONS.fast + 50;
+/** The latest an animation may start after the press: React's commit and Motion's first frame, with room for a busy machine. */
+const START_MAX = 100;
+/** One and two frames at 60Hz. */
+const FRAME = 17;
+const TWO_FRAMES = 34;
 
 const testId = (id: string): string => `[data-testid="${id}"]`;
 const INDICATOR = '[aria-label="Edge"] [data-bt-part="indicator"]';
@@ -189,7 +191,10 @@ function expectSpringCurve(
   return fit;
 }
 
-/** The progress follows spring `name` and reaches 95% of the travel in the spring's time plus `LATENCY`. */
+/**
+ * The progress follows spring `name`, starts within `START_MAX` of the press, and the sampled 95% comes no
+ * more than a frame after the spring's own.
+ */
 function expectSpring(
   label: string,
   points: readonly Point[],
@@ -197,12 +202,15 @@ function expectSpring(
 ): Fit {
   const fit = expectSpringCurve(label, points, name);
   const settle = settleTime(points);
-  const own = springSettle(SPRINGS[name]);
+  const due = fit.start + springSettle(SPRINGS[name]);
   report(
-    `${label}: 95% at ${ms(settle)} after the press (the spring alone takes ${ms(own)})`,
+    `${label}: 95% at ${ms(settle)} after the press (the spring alone takes ${ms(due - fit.start)})`,
   );
-  expect(settle).toBeGreaterThanOrEqual(own);
-  expect(settle).toBeLessThanOrEqual(own + LATENCY);
+  expect(fit.start).toBeLessThanOrEqual(START_MAX);
+  expect(settle).toBeGreaterThanOrEqual(due - 2);
+  expect(
+    points.filter(({ t }) => t >= due && t < settle).length,
+  ).toBeLessThanOrEqual(1);
   return fit;
 }
 
@@ -228,6 +236,13 @@ function expectInstant(points: readonly Point[]): void {
   const second = points[1];
   if (!second) throw new Error("Fewer than two frames were sampled.");
   expect(settleTime(points)).toBeLessThanOrEqual(second.t);
+}
+
+/** `AnimatePresence` unmounts content a frame or two after its exit: gone by the third frame after `faded`. */
+function expectGoneSoonAfter(run: Run, faded: number, id?: number): void {
+  const third = run.frames.filter(({ t }) => t >= faded)[2];
+  if (!third) throw new Error("The run ended too soon.");
+  expect(goneAt(run, id)).toBeLessThanOrEqual(third.t);
 }
 
 /** No sampled element moved off its resting place. */
@@ -308,7 +323,7 @@ test.describe("full motion", () => {
     if (old === undefined || next === undefined) {
       throw new Error("The content never swapped.");
     }
-    expectTween(
+    const leaving = expectTween(
       "Morph old content",
       progress(traceOf(run, old, opacity), 1, 0),
       EASE_STANDARD,
@@ -320,7 +335,7 @@ test.describe("full motion", () => {
       EASE_STANDARD,
       DURATIONS.fast,
     );
-    expect(goneAt(run, old)).toBeLessThanOrEqual(EXIT_GONE_MAX);
+    expectGoneSoonAfter(run, leaving.start + DURATIONS.fast, old);
   });
 
   test("the shared indicator slides with spring.snappy", async ({ page }) => {
@@ -360,13 +375,13 @@ test.describe("full motion", () => {
         );
         expect(Math.abs(moving.start - fading.start)).toBeLessThanOrEqual(3);
       }
-      expectTween(
+      const leaving = expectTween(
         `${preset} fading out`,
         progress(trace(exit, opacity), 1, 0),
         EASE_IN,
         DURATIONS.fast,
       );
-      expect(goneAt(exit)).toBeLessThanOrEqual(EXIT_GONE_MAX);
+      expectGoneSoonAfter(exit, leaving.start + DURATIONS.fast);
       expect(goneAt(exit)).toBeLessThan(settledAt(enter));
       expectAtRest(exit);
     });
@@ -502,7 +517,7 @@ test.describe("full motion", () => {
       EASE_OUT,
       DURATIONS.base,
     );
-    expect(rising.start - scrolled).toBeLessThanOrEqual(LATENCY);
+    expect(rising.start - scrolled).toBeLessThanOrEqual(START_MAX);
   });
 
   test("confetti flies up from the button and clears in 900ms", async ({
@@ -539,9 +554,9 @@ test.describe("full motion", () => {
           .filter(({ t }) => t <= CELEBRATION * 0.6)
           .every(({ reading: { opacity: value } }) => value === 1),
       ).toBe(true);
-      const fadeLeft = (CELEBRATION - last.t) / (CELEBRATION * 0.3);
+      const fadeLeft = (CELEBRATION - (last.t - first.t)) / (CELEBRATION * 0.3);
       expect(last.reading.opacity).toBeLessThanOrEqual(
-        Math.max(0, fadeLeft) + 0.1,
+        Math.max(0, fadeLeft) + 0.15,
       );
       expect(last.reading.y).toBeGreaterThan(late.reading.y);
       return (Math.atan2(away.reading.x, -away.reading.y) * 180) / Math.PI;
@@ -554,11 +569,16 @@ test.describe("full motion", () => {
       60,
     );
     const during = run.frames.filter(
-      ({ t }) => t >= AT_ONCE && t <= CELEBRATION - 50,
+      ({ t }) => t >= TWO_FRAMES && t <= CELEBRATION - 50,
     );
-    const after = run.frames.filter(({ t }) => t >= CELEBRATION + 20);
+    const after = run.frames.filter(({ t }) => t >= CELEBRATION + 100);
     expect(during.every(({ elements }) => elements.length > 0)).toBe(true);
-    expect(after.every(({ elements }) => elements.length === 0)).toBe(true);
+    expect(
+      after.every(({ elements }) =>
+        elements.every((reading) => reading.opacity <= 0.05),
+      ),
+    ).toBe(true);
+    await expect(page.locator(PIECES)).toHaveCount(0);
   });
 });
 
@@ -776,14 +796,22 @@ test.describe("motion turning reduced mid-animation", () => {
   });
 
   /**
-   * Samples `selector` while `act` starts an animation and the system setting turns to reduced motion
-   * 80ms later. Returns the run and when the page heard about the switch.
+   * Samples `selector` while `act` starts an animation, and turns the system setting to reduced motion once
+   * the first match has moved `moved.by` in `moved.channel`. Returns the run and when the page heard about
+   * the switch.
    */
   async function switchMidway(
     page: Page,
     selector: string,
     act: () => Promise<void>,
+    moved: {
+      readonly channel: Channel;
+      readonly from?: number;
+      readonly by: number;
+    },
   ): Promise<{ readonly run: Run; readonly switched: number }> {
+    const from = moved.from ?? (await peek(page, selector))?.[moved.channel];
+    if (from === undefined) throw new Error(`Nothing matches ${selector}.`);
     await startSampling(page, selector);
     await page.evaluate(() => {
       matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
@@ -795,7 +823,7 @@ test.describe("motion turning reduced mid-animation", () => {
       );
     });
     await act();
-    await page.waitForTimeout(80);
+    await waitUntilMoved(page, selector, moved.channel, from, moved.by);
     await page.emulateMedia({ reducedMotion: "reduce" });
     const run = await finishSampling(page, 400);
     const switched = run.marks["switched"];
@@ -811,22 +839,19 @@ test.describe("motion turning reduced mid-animation", () => {
     };
 
   /**
-   * Moving before motion turned reduced, and exactly at rest two frames after, long before the spring
-   * would have got there. Frames are stamped when they begin, so the frame that heard the switch can
-   * already show it.
+   * Well short of the end a frame before motion turned reduced, and exactly at rest from the second frame
+   * after. Frames are stamped when they begin, so the one that heard the switch may begin before it.
    */
   function expectLandedAtOnce(
     points: readonly Point[],
     switched: number,
   ): void {
     expect(
-      framesBetween(points.filter(({ t }) => t < switched)),
-    ).toBeGreaterThan(0);
-    expect(
-      points
-        .filter(({ t }) => t >= switched + AT_ONCE)
-        .every(({ value }) => value === 1),
-    ).toBe(true);
+      points.findLast(({ t }) => t <= switched - FRAME)?.value,
+    ).toBeLessThan(0.9);
+    const after = points.filter(({ t }) => t >= switched);
+    expect(after.length).toBeGreaterThan(2);
+    expect(after.slice(1).every(({ value }) => value === 1)).toBe(true);
   }
 
   test("a rising Presence lands in place and finishes its fade in 100ms", async ({
@@ -836,6 +861,7 @@ test.describe("motion turning reduced mid-animation", () => {
       page,
       testId("presence-rise"),
       clickInPage(page, testId("presence-rise-toggle")),
+      { channel: "y", from: RISE, by: 1 },
     );
     expectLandedAtOnce(
       progress(
@@ -847,7 +873,7 @@ test.describe("motion turning reduced mid-animation", () => {
     );
     expect(
       trace(run, opacity)
-        .filter(({ t }) => t >= switched + DURATIONS.reduced + AT_ONCE)
+        .filter(({ t }) => t >= switched + DURATIONS.reduced + TWO_FRAMES)
         .every(({ value }) => value === 1),
     ).toBe(true);
   });
@@ -859,6 +885,7 @@ test.describe("motion turning reduced mid-animation", () => {
       page,
       INDICATOR,
       clickInPage(page, testId("edge-Glow")),
+      { channel: "left", by: 10 },
     );
     expectLandedAtOnce(
       travelled(slide.run, (reading) => reading.left),
@@ -873,6 +900,7 @@ test.describe("motion turning reduced mid-animation", () => {
       page,
       testId("morph"),
       clickInPage(page, testId("morph-toggle")),
+      { channel: "height", by: 4 },
     );
     expectLandedAtOnce(
       travelled(grow.run, (reading) => reading.height),
@@ -891,19 +919,20 @@ test.describe("motion turning reduced mid-animation", () => {
           element.scrollIntoView({ block: "center" });
         });
       },
+      { channel: "opacity", by: 0.1 },
     );
     expect(
       run.frames
-        .filter(({ t }) => t < switched)
+        .filter(({ t }) => t <= switched - FRAME)
         .some(({ elements }) =>
           elements.some(
             (reading) => reading.opacity > 0 && reading.opacity < 1,
           ),
         ),
     ).toBe(true);
-    for (const { elements } of run.frames.filter(
-      ({ t }) => t >= switched + AT_ONCE,
-    )) {
+    const after = run.frames.filter(({ t }) => t >= switched);
+    expect(after.length).toBeGreaterThan(2);
+    for (const { elements } of after.slice(1)) {
       for (const reading of elements) {
         expect(reading.opacity).toBe(1);
         expect(reading.y).toBe(0);

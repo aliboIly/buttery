@@ -53,6 +53,7 @@ export interface Run {
 interface Sampler {
   readonly start: (selector: string, events: readonly string[]) => void;
   readonly mark: (name: string) => void;
+  readonly peek: (selector: string) => Reading | undefined;
   readonly stop: () => Run;
 }
 
@@ -172,6 +173,10 @@ function samplerScript(startOnLoad: string | undefined): void {
       };
     },
     mark,
+    peek(selector) {
+      const element = document.querySelector(selector);
+      return element ? read(element) : undefined;
+    },
     stop() {
       if (!active) throw new Error("The sampler isn't running.");
       const { before, frames, marks, transitions, request, unlisten } = active;
@@ -216,6 +221,50 @@ export async function startSampling(
       window.motionSampler.start(options.selector, options.events);
     },
     { selector, events },
+  );
+}
+
+/** A value the sampler reads, for waiting on. */
+export type Channel = "left" | "height" | "opacity" | "y" | "scale";
+
+/**
+ * Waits until the first element matching `selector` has been `by` away from `from` in `channel` for two
+ * frames running: one frame can show a size a ResizeObserver puts back before paint (see `Frame`).
+ */
+export async function waitUntilMoved(
+  page: Page,
+  selector: string,
+  channel: Channel,
+  from: number,
+  by: number,
+): Promise<void> {
+  await page.evaluate(
+    (options) =>
+      new Promise<void>((resolve) => {
+        let away = 0;
+        const tick = (): void => {
+          const reading = window.motionSampler?.peek(options.selector);
+          const moved =
+            reading !== undefined &&
+            Math.abs(reading[options.channel] - options.from) >= options.by;
+          away = moved ? away + 1 : 0;
+          if (away >= 2) resolve();
+          else requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }),
+    { selector, channel, from, by },
+  );
+}
+
+/** What the first element matching `selector` reads as now. */
+export async function peek(
+  page: Page,
+  selector: string,
+): Promise<Reading | undefined> {
+  return page.evaluate(
+    (target) => window.motionSampler?.peek(target),
+    selector,
   );
 }
 
