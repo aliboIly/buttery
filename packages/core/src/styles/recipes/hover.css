@@ -1,0 +1,32 @@
+@layer bt.recipes {
+  .bt-hover-lift {
+    transition:
+      translate var(--bt-dur-fast) var(--bt-ease-out),
+      box-shadow var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  .bt-hover-tint {
+    transition: background-color var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  @media (hover: hover) {
+    .bt-hover-lift:hover {
+      translate: 0 calc(var(--bt-space-0_5) * -1);
+      box-shadow: var(--bt-shadow-raised);
+    }
+
+    .bt-hover-tint:hover {
+      background-color: var(--bt-bg-item-hover);
+    }
+  }
+
+  [data-bt-motion="reduced"] .bt-hover-lift:hover {
+    translate: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bt-hover-lift:hover {
+      translate: none;
+    }
+  }
+}
