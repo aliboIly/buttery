@@ -264,6 +264,7 @@ export async function expectButtery(
   const record = async (
     found: readonly LayoutViolation[],
     conditions: { viewport: ButteryViewport; theme: string; density: string },
+    suffix = "",
   ): Promise<void> => {
     if (found.length === 0) return;
     const context = {
@@ -275,13 +276,10 @@ export async function expectButtery(
     };
     reported.push(...found.map((violation) => ({ ...violation, ...context })));
     if (info) {
-      await info.attach(
-        `buttery-${context.viewport}-${context.theme}-${context.density}.png`,
-        {
-          body: await annotate(page, found),
-          contentType: "image/png",
-        },
-      );
+      const file = `buttery-${context.viewport}-${context.theme}-${context.density}${suffix}.png`;
+      const image = await annotate(page, found);
+      writeFileSync(info.outputPath(file), image);
+      await info.attach(file, { body: image, contentType: "image/png" });
     }
   };
 
@@ -328,11 +326,11 @@ export async function expectButtery(
           during: "after buttery reported settled",
         })),
       );
-      await record(shifted, {
-        viewport: firstViewport,
-        theme: firstTheme,
-        density: firstDensity,
-      });
+      await record(
+        shifted,
+        { viewport: firstViewport, theme: firstTheme, density: firstDensity },
+        `-stability-${interaction.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      );
     }
   }
 
