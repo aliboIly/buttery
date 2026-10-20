@@ -63,7 +63,8 @@ export const enterScale = 0.97;
  * Timing tokens that aren't durations of a single transition, in milliseconds: the gap between staggered
  * items, hover intent (a menu opens once the pointer has rested on its trigger, at once when it moves between
  * the triggers of an open menu, and closes after a grace), the tooltip delay, one `Loop` step, the longest
- * choreographed entrance and a confetti burst's life.
+ * choreographed entrance, a confetti burst's life, and how long a toast stays (longer with an action, so
+ * there's time to reach it).
  */
 export const timing = {
   stagger: 50,
@@ -73,6 +74,8 @@ export const timing = {
   "loop-cycle": 4000,
   "entrance-max": 900,
   celebration: 900,
+  "toast-life": 3000,
+  "toast-life-action": 5000,
 } as const;
 
 /** Scale applied while a pressable element is held down. */

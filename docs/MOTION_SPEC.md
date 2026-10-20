@@ -61,6 +61,7 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-entrance-max` | 900ms (the longest choreographed entrance, stagger included) |
 | `--bt-loop-cycle` | 4000ms (one `Loop` step) |
 | `--bt-celebration` | 900ms (a confetti burst's life) |
+| `--bt-toast-life` / `--bt-toast-life-action` | 3000ms / 5000ms (how long a toast stays, longer with an action, while nothing pauses it) |
 | `--bt-delay-hover-open` / `--bt-delay-hover-close` | 150ms / 100ms (hover intent: a menu opens once the pointer has rested on its trigger for 150ms, at once when it moves between the triggers of an open menu, and closes 100ms after the pointer leaves) |
 | `--bt-delay-tooltip` | 500ms (tooltips open) |
 
