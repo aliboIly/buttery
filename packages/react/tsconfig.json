@@ -1,3 +1,8 @@
 {
-  "extends": "../../tooling/tsconfig/library.json"
+  "extends": "../../tooling/tsconfig/library.json",
+  "references": [
+    {
+      "path": "../core"
+    }
+  ]
 }
