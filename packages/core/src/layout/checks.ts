@@ -16,7 +16,7 @@ export interface LayoutViolation {
   readonly rule: ButteryRule;
   /** Selector of the offending element. */
   readonly a: string;
-  /** Selector of the second element, for overlaps. */
+  /** Selector of the second element: the other one in an overlap, or the one that cuts off clipped text. */
   readonly b?: string;
   /** How far off it is, in CSS pixels, where that applies. */
   readonly px?: number;
@@ -37,6 +37,7 @@ export interface LayoutCheckTokens {
 }
 
 export interface LayoutCheckOptions {
+  /** The token values to compare against, from `layoutCheckTokens()`. */
   readonly tokens: LayoutCheckTokens;
   /** Rules to run. Defaults to all of them. */
   readonly rules?: readonly LayoutRule[] | undefined;
@@ -55,7 +56,11 @@ export interface LayoutToolkit {
   readonly check: (options: LayoutCheckOptions) => LayoutViolation[];
   /** Records where every buttery element is, for `moved`. */
   readonly snapshot: () => void;
-  /** Reports buttery elements that moved more than 1px since the last `snapshot`. */
+  /**
+   * Reports buttery elements that moved more than 1px since the last `snapshot`, measured from whichever
+   * scroll container they hold still in: scrolling a container moves its content on screen, and a stuck
+   * sticky bar holds still on screen while the content under it scrolls, so neither counts.
+   */
   readonly moved: (options: MovedOptions) => LayoutViolation[];
 }
 
@@ -75,12 +80,52 @@ export function createLayoutToolkit(): LayoutToolkit {
     readonly element: Element;
     readonly box: Box;
     readonly layer: Element | null;
-    readonly component: Element | null;
+    readonly partOwner: Element | null;
+  }
+
+  interface ScrollOffset {
+    /** The scroll container, or `null` for the window. */
+    readonly container: Element | null;
+    readonly x: number;
+    readonly y: number;
+  }
+
+  interface Position {
+    readonly x: number;
+    readonly y: number;
+    /** Offsets of the scroll containers around the element, nearest first, then the window's. */
+    readonly scrolls: readonly ScrollOffset[];
+  }
+
+  interface TextRun {
+    readonly node: Text;
+    readonly parent: Element;
   }
 
   const html = document.documentElement;
+  const INTERACTIVE = [
+    "a[href]",
+    "button",
+    "input:not([type=hidden])",
+    "select",
+    "textarea",
+    "summary",
+    "[role=button]",
+    "[role=link]",
+    "[role=checkbox]",
+    "[role=radio]",
+    "[role=switch]",
+    "[role=slider]",
+    "[role=tab]",
+    "[role=menuitem]",
+    "[role=menuitemcheckbox]",
+    "[role=menuitemradio]",
+    "[role=option]",
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(", ");
+  const LAYER_FURNITURE = "[data-bt-layer], .bt-scrim, .bt-floating-lanes";
   let styles = new Map<Element, CSSStyleDeclaration>();
-  let positions = new Map<Element, DOMRect>();
+  let positions = new Map<Element, Position>();
 
   function styleOf(element: Element): CSSStyleDeclaration {
     let style = styles.get(element);
@@ -143,17 +188,87 @@ export function createLayoutToolkit(): LayoutToolkit {
     );
   }
 
-  function visibleBox(
-    element: Element,
-    rect: DOMRect,
-    clipBySelf = false,
-  ): Box | null {
-    const box: Box = {
+  function isTrimmed(element: Element): boolean {
+    const trim = styleOf(element).getPropertyValue("text-box-trim");
+    return trim !== "" && trim !== "none";
+  }
+
+  function isInline(element: Element): boolean {
+    const { display } = styleOf(element);
+    return display === "inline" || display === "contents";
+  }
+
+  /** The box of the nearest trimmed element from `element` up to its block container, if there is one. */
+  function trimmedBoxOf(element: Element): DOMRect | null {
+    for (
+      let node: Element | null = element;
+      node && node !== html;
+      node = node.parentElement
+    ) {
+      if (isTrimmed(node)) return node.getBoundingClientRect();
+      if (!isInline(node)) return null;
+    }
+    return null;
+  }
+
+  function toBox(rect: DOMRect): Box {
+    return {
       left: rect.left,
       top: rect.top,
       right: rect.right,
       bottom: rect.bottom,
     };
+  }
+
+  /**
+   * A text node's boxes, one per line: glyph extents across, the line box down (glyphs overhang tight line
+   * heights by design), and no taller than the box of text trimmed with `text-box`.
+   */
+  function lineBoxes({ node, parent }: TextRun): Box[] {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    const lineHeight = Number.parseFloat(styleOf(parent).lineHeight);
+    const trimmed = trimmedBoxOf(parent);
+    const boxes: Box[] = [];
+    for (const rect of range.getClientRects()) {
+      if (rect.width < 0.5 || rect.height < 0.5) continue;
+      const middle = (rect.top + rect.bottom) / 2;
+      let top = Number.isNaN(lineHeight) ? rect.top : middle - lineHeight / 2;
+      let bottom = Number.isNaN(lineHeight)
+        ? rect.bottom
+        : middle + lineHeight / 2;
+      if (trimmed) {
+        top = Math.max(top, trimmed.top);
+        bottom = Math.min(bottom, trimmed.bottom);
+      }
+      if (bottom - top < 0.5) continue;
+      boxes.push({ left: rect.left, top, right: rect.right, bottom });
+    }
+    return boxes;
+  }
+
+  function textRuns(): TextRun[] {
+    const found: TextRun[] = [];
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+    );
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const parent = node.parentElement;
+      if (!parent || !(node instanceof Text) || !node.data.trim()) continue;
+      if (parent.closest("script, style, template, svg, noscript")) continue;
+      if (isTooling(parent) || !isVisible(parent)) continue;
+      found.push({ node, parent });
+    }
+    return found;
+  }
+
+  function visibleBox(
+    element: Element,
+    box: Box,
+    clipBySelf = false,
+  ): Box | null {
+    const visible: Box = { ...box };
     if (styleOf(element).position !== "fixed") {
       for (
         let node = clipBySelf ? element : element.parentElement;
@@ -164,26 +279,61 @@ export function createLayoutToolkit(): LayoutToolkit {
         if (style.overflowX !== "visible" || style.overflowY !== "visible") {
           const clip = node.getBoundingClientRect();
           if (style.overflowX !== "visible") {
-            box.left = Math.max(box.left, clip.left);
-            box.right = Math.min(box.right, clip.right);
+            visible.left = Math.max(visible.left, clip.left);
+            visible.right = Math.min(visible.right, clip.right);
           }
           if (style.overflowY !== "visible") {
-            box.top = Math.max(box.top, clip.top);
-            box.bottom = Math.min(box.bottom, clip.bottom);
+            visible.top = Math.max(visible.top, clip.top);
+            visible.bottom = Math.min(visible.bottom, clip.bottom);
           }
         }
         if (style.position === "fixed") break;
       }
     }
-    return box.right - box.left > 0 && box.bottom - box.top > 0 ? box : null;
+    return visible.right - visible.left > 0 && visible.bottom - visible.top > 0
+      ? visible
+      : null;
   }
 
   function layerOf(element: Element): Element | null {
     return element.closest("[data-bt-layer], .bt-sticky");
   }
 
-  function componentOf(element: Element): Element | null {
-    return element.closest("[data-bt]");
+  /** The component owning the part `element` sits in, or `null` when its nearest marker is a component. */
+  function partOwnerOf(element: Element): Element | null {
+    for (let node: Element | null = element; node; node = node.parentElement) {
+      if (node.hasAttribute("data-bt-part"))
+        return node.parentElement?.closest("[data-bt]") ?? null;
+      if (node.hasAttribute("data-bt")) return null;
+    }
+    return null;
+  }
+
+  function alphaOf(color: string): number {
+    if (color === "transparent") return 0;
+    const modern = /\/\s*([\d.]+)(%?)\s*\)$/.exec(color);
+    if (modern?.[1]) return Number(modern[1]) / (modern[2] === "%" ? 100 : 1);
+    const legacy = /^rgba\((?:[^,]+,){3}\s*([\d.]+)\s*\)$/.exec(color);
+    return legacy?.[1] ? Number(legacy[1]) : 1;
+  }
+
+  function isPainted(element: Element): boolean {
+    const style = styleOf(element);
+    const borders: readonly (readonly [string, string])[] = [
+      [style.borderTopWidth, style.borderTopColor],
+      [style.borderRightWidth, style.borderRightColor],
+      [style.borderBottomWidth, style.borderBottomColor],
+      [style.borderLeftWidth, style.borderLeftColor],
+    ];
+    return (
+      alphaOf(style.backgroundColor) > 0 ||
+      style.backgroundImage !== "none" ||
+      style.boxShadow !== "none" ||
+      (style.backdropFilter !== "" && style.backdropFilter !== "none") ||
+      borders.some(
+        ([width, color]) => Number.parseFloat(width) > 0 && alphaOf(color) > 0,
+      )
+    );
   }
 
   function px(value: number): string {
@@ -206,49 +356,38 @@ export function createLayoutToolkit(): LayoutToolkit {
     const violations: LayoutViolation[] = [];
     const viewportWidth = html.clientWidth;
     const viewportHeight = html.clientHeight;
+    const runs =
+      enabled.has("overlap") || enabled.has("clipping") ? textRuns() : [];
 
     function report(violation: LayoutViolation): void {
       violations.push(violation);
     }
 
     if (enabled.has("overlap")) {
-      const skip = new Set(["Layer", "Scrim", "FloatingLanes"]);
       const measured: Measured[] = [];
       for (const element of document.querySelectorAll(
         "[data-bt], [data-bt-part]",
       )) {
-        const name = element.getAttribute("data-bt");
-        if (name && skip.has(name)) continue;
+        if (element.matches(LAYER_FURNITURE)) continue;
         if (element.getAttribute("data-bt-part") === "lane") continue;
         if (isTooling(element) || !isVisible(element)) continue;
-        const box = visibleBox(element, element.getBoundingClientRect());
+        const box = visibleBox(element, toBox(element.getBoundingClientRect()));
         if (!box) continue;
         measured.push({
           element,
           box,
           layer: layerOf(element),
-          component: componentOf(element),
+          partOwner: partOwnerOf(element),
         });
       }
-      const walker = document.createTreeWalker(
-        document.body,
-        NodeFilter.SHOW_TEXT,
-      );
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        const parent = node.parentElement;
-        if (!parent || !node.textContent?.trim()) continue;
-        if (parent.closest("script, style, template, svg, noscript")) continue;
-        if (isTooling(parent) || !isVisible(parent)) continue;
-        const range = document.createRange();
-        range.selectNodeContents(node);
-        const box = visibleBox(parent, range.getBoundingClientRect(), true);
-        if (!box) continue;
-        measured.push({
-          element: parent,
-          box,
-          layer: layerOf(parent),
-          component: componentOf(parent),
-        });
+      for (const run of runs) {
+        const layer = layerOf(run.parent);
+        const partOwner = partOwnerOf(run.parent);
+        for (const line of lineBoxes(run)) {
+          const box = visibleBox(run.parent, line, true);
+          if (box)
+            measured.push({ element: run.parent, box, layer, partOwner });
+        }
       }
       measured.sort((a, b) => a.box.left - b.box.left);
       const seen = new Set<string>();
@@ -262,7 +401,12 @@ export function createLayoutToolkit(): LayoutToolkit {
           if (a.layer !== b.layer) continue;
           if (a.element.contains(b.element) || b.element.contains(a.element))
             continue;
-          if (a.component && a.component === b.component) continue;
+          if (
+            a.partOwner?.contains(b.element) ||
+            b.partOwner?.contains(a.element)
+          ) {
+            continue;
+          }
           if (
             a.element.closest("[data-bt-allow-overlap]") ||
             b.element.closest("[data-bt-allow-overlap]")
@@ -306,10 +450,6 @@ export function createLayoutToolkit(): LayoutToolkit {
         "EMBED",
         "PICTURE",
       ]);
-      const isTrimmed = (element: Element): boolean => {
-        const trim = styleOf(element).getPropertyValue("text-box-trim");
-        return trim !== "" && trim !== "none";
-      };
       const hiddenWithin = (node: Element, container: Element): boolean => {
         for (
           let current: Element | null = node;
@@ -465,22 +605,82 @@ export function createLayoutToolkit(): LayoutToolkit {
         if (!ellipsized && !clamped) continue;
         if (!isVisible(element)) continue;
         const declared = element.hasAttribute("data-bt-truncate");
-        const holder =
-          element.closest("button, a, [role], [data-bt-tooltip]") ?? element;
-        const labelled = [element, holder].some(
+        const holder = element.parentElement?.closest(INTERACTIVE) ?? null;
+        const titled = [element, holder].some(
           (candidate) =>
-            Boolean(candidate.getAttribute("title")?.trim()) ||
-            Boolean(candidate.getAttribute("aria-label")?.trim()) ||
-            candidate.hasAttribute("data-bt-tooltip"),
+            candidate !== null &&
+            (Boolean(candidate.getAttribute("title")?.trim()) ||
+              candidate.hasAttribute("data-bt-tooltip")),
         );
-        if (declared && labelled) continue;
+        if (declared && titled) continue;
         report({
           rule: "clipping",
           a: selectorFor(element),
           message: declared
-            ? "is truncated but its full text isn't available"
+            ? "is truncated, but its full text isn't in a title or tooltip"
             : "is truncated without declaring it",
-          fix: "Truncated text needs data-bt-truncate and its full text in a title or Tooltip; <Text truncate> does both. Or give the text room.",
+          fix: "Truncated text needs data-bt-truncate and its full text in a title or Tooltip, on the text or the control around it; <Text truncate> does both. Or give the text room.",
+        });
+      }
+
+      const cutOff = new Set<Element>();
+      for (const run of runs) {
+        if (cutOff.has(run.parent)) continue;
+        if (run.parent.closest("[data-bt-clip], [data-bt-truncate]")) continue;
+        const lines = lineBoxes(run);
+        let cut: { readonly by: Element; readonly excess: number } | null =
+          null;
+        for (
+          let container: Element | null = run.parent;
+          container &&
+          container !== html &&
+          !container.hasAttribute("data-bt-layer");
+          container = container.parentElement
+        ) {
+          const style = styleOf(container);
+          const hidesAcross =
+            style.overflowX === "hidden" || style.overflowX === "clip";
+          const hidesDown =
+            style.overflowY === "hidden" || style.overflowY === "clip";
+          if ((hidesAcross || hidesDown) && style.textOverflow !== "ellipsis") {
+            if (container.clientWidth <= 2 || container.clientHeight <= 2)
+              break;
+            const rect = container.getBoundingClientRect();
+            const left = rect.left + container.clientLeft;
+            const top = rect.top + container.clientTop;
+            const right = left + container.clientWidth;
+            const bottom = top + container.clientHeight;
+            for (const line of lines) {
+              const across = hidesAcross
+                ? Math.max(left - line.left, line.right - right)
+                : 0;
+              const down = hidesDown
+                ? Math.max(top - line.top, line.bottom - bottom)
+                : 0;
+              const excess = Math.max(across, down);
+              if (excess > 1 && excess > (cut?.excess ?? 0))
+                cut = { by: container, excess };
+            }
+            if (cut) break;
+          }
+          const scrolls = [style.overflowX, style.overflowY].some(
+            (overflow) => overflow === "auto" || overflow === "scroll",
+          );
+          if (scrolls || style.position === "fixed") break;
+        }
+        if (!cut) continue;
+        cutOff.add(run.parent);
+        const by = cut.by === run.parent ? null : selectorFor(cut.by);
+        report({
+          rule: "clipping",
+          a: selectorFor(run.parent),
+          ...(by === null ? {} : { b: by }),
+          px: Math.round(cut.excess),
+          message:
+            by === null
+              ? `text is cut off by ${px(cut.excess)} with no ellipsis`
+              : `text is cut off by ${px(cut.excess)} with no ellipsis where ${by} hides its overflow`,
+          fix: "Text is never cut off: give it room, let it wrap, or truncate it with <Text truncate>, which adds an ellipsis and keeps the full text in a title. Mark an intended clip (a bleed visual, the stage) with data-bt-clip.",
         });
       }
     }
@@ -542,33 +742,25 @@ export function createLayoutToolkit(): LayoutToolkit {
     }
 
     if (enabled.has("target-size")) {
-      const interactive = [
-        "a[href]",
-        "button",
-        "input:not([type=hidden])",
-        "select",
-        "textarea",
-        "summary",
-        "[role=button]",
-        "[role=link]",
-        "[role=checkbox]",
-        "[role=radio]",
-        "[role=switch]",
-        "[role=slider]",
-        "[role=tab]",
-        "[role=menuitem]",
-        "[role=menuitemcheckbox]",
-        "[role=menuitemradio]",
-        "[role=option]",
-        '[tabindex]:not([tabindex="-1"])',
-      ].join(", ");
-      for (const element of document.querySelectorAll(interactive)) {
+      const inSentence = (link: Element): boolean => {
+        let block = link.parentElement;
+        while (block && isInline(block)) block = block.parentElement;
+        const own = link.textContent.trim().length;
+        const around = block?.textContent.trim().length ?? 0;
+        return around > own;
+      };
+      for (const element of document.querySelectorAll(INTERACTIVE)) {
         if (isTooling(element)) continue;
         if (element.matches(":disabled, [aria-disabled=true]")) continue;
         if (element.closest('[data-bt-target="group"]')) continue;
         if (!isVisible(element)) continue;
-        const style = styleOf(element);
-        if (element.tagName === "A" && style.display === "inline") continue;
+        if (
+          element.tagName === "A" &&
+          styleOf(element).display === "inline" &&
+          inSentence(element)
+        ) {
+          continue;
+        }
         const rect = element.getBoundingClientRect();
         let width = rect.width;
         let height = rect.height;
@@ -591,7 +783,7 @@ export function createLayoutToolkit(): LayoutToolkit {
             a: selectorFor(element),
             px: Math.round(Math.min(width, height)),
             message: `hit area is ${px(width)} × ${px(height)}, under 24 × 24`,
-            fix: "Make the hit area at least 24 × 24: use a 28px or larger control size, or give small visuals a [data-bt-hit] child that extends the target without changing layout.",
+            fix: "Make the hit area at least 24 × 24: use a 28px or larger control size, or give small visuals a [data-bt-hit] child that extends the target without changing layout. Only links inside a sentence can be smaller.",
           });
           continue;
         }
@@ -611,28 +803,46 @@ export function createLayoutToolkit(): LayoutToolkit {
     }
 
     if (enabled.has("viewport-fit")) {
-      const skip = new Set(["Layer", "Scrim", "FloatingLanes"]);
-      for (const element of document.querySelectorAll(
-        "[data-bt-layer] [data-bt]",
-      )) {
-        const name = element.getAttribute("data-bt");
-        if (name && skip.has(name)) continue;
-        if (element.closest('[data-bt-layer="dev"]')) continue;
-        if (!isVisible(element)) continue;
-        const box = visibleBox(element, element.getBoundingClientRect());
+      const surfaces = [
+        ...document.querySelectorAll("[data-bt-layer] *"),
+      ].filter(
+        (element) =>
+          !element.matches(LAYER_FURNITURE) &&
+          !isTooling(element) &&
+          isVisible(element) &&
+          isPainted(element),
+      );
+      const painted = new Set(surfaces);
+      for (const element of surfaces) {
+        let outermost = true;
+        for (
+          let node = element.parentElement;
+          node && !node.hasAttribute("data-bt-layer");
+          node = node.parentElement
+        ) {
+          if (painted.has(node)) {
+            outermost = false;
+            break;
+          }
+        }
+        if (!outermost) continue;
+        const box = visibleBox(element, toBox(element.getBoundingClientRect()));
         if (!box) continue;
-        const excess = Math.max(
-          8 - box.left,
-          8 - box.top,
-          box.right - (viewportWidth - 8),
-          box.bottom - (viewportHeight - 8),
+        const distance = Math.min(
+          box.left,
+          box.top,
+          viewportWidth - box.right,
+          viewportHeight - box.bottom,
         );
-        if (excess <= 0.5) continue;
+        if (distance >= 7.5) continue;
         report({
           rule: "viewport-fit",
           a: selectorFor(element),
-          px: Math.round(excess),
-          message: `floating UI comes within ${px(8 - excess)} of the viewport edge (keep 8px)`,
+          px: Math.round(8 - distance),
+          message:
+            distance < 0
+              ? `floating surface runs ${px(-distance)} past the viewport edge (keep it 8px inside)`
+              : `floating surface is ${px(distance)} from the viewport edge, under 8px`,
           fix: "Keep floating UI 8px inside the viewport: Popover does it with collision padding; cap other floating surfaces with min(their size, 100% - 16px).",
         });
       }
@@ -656,28 +866,96 @@ export function createLayoutToolkit(): LayoutToolkit {
     return violations;
   }
 
+  /** Where each buttery element is on screen, with the scroll offsets of every container around it. */
+  function measurePositions(): Map<Element, Position> {
+    const computed = new Map<Element, CSSStyleDeclaration>();
+    const style = (element: Element): CSSStyleDeclaration => {
+      let value = computed.get(element);
+      if (!value) {
+        value = getComputedStyle(element);
+        computed.set(element, value);
+      }
+      return value;
+    };
+    const scrollsContent = (element: Element): boolean =>
+      [style(element).overflowX, style(element).overflowY].some(
+        (overflow) => overflow !== "visible" && overflow !== "clip",
+      );
+    const result = new Map<Element, Position>();
+    for (const element of document.querySelectorAll("[data-bt]")) {
+      const rect = element.getBoundingClientRect();
+      const scrolls: ScrollOffset[] = [];
+      let fixed = style(element).position === "fixed";
+      for (
+        let node = element.parentElement;
+        node && node !== html && node !== document.body && !fixed;
+        node = node.parentElement
+      ) {
+        if (scrollsContent(node))
+          scrolls.push({
+            container: node,
+            x: node.scrollLeft,
+            y: node.scrollTop,
+          });
+        fixed = style(node).position === "fixed";
+      }
+      if (!fixed)
+        scrolls.push({ container: null, x: window.scrollX, y: window.scrollY });
+      result.set(element, { x: rect.left, y: rect.top, scrolls });
+    }
+    return result;
+  }
+
+  /**
+   * How far an element moved, from the scroll container it moved least relative to: the screen, or a
+   * container whose scrolling (and every one's outside it) is added back.
+   */
+  function movementOf(
+    before: Position,
+    after: Position,
+  ): { dx: number; dy: number } {
+    const size = (delta: { dx: number; dy: number }): number =>
+      Math.max(Math.abs(delta.dx), Math.abs(delta.dy));
+    let best = { dx: after.x - before.x, dy: after.y - before.y };
+    const sameContainers =
+      before.scrolls.length === after.scrolls.length &&
+      before.scrolls.every(
+        (offset, index) => offset.container === after.scrolls[index]?.container,
+      );
+    if (!sameContainers) return best;
+    let scrolledX = 0;
+    let scrolledY = 0;
+    for (let index = after.scrolls.length - 1; index >= 0; index -= 1) {
+      const was = before.scrolls[index];
+      const is = after.scrolls[index];
+      if (!was || !is) continue;
+      scrolledX += is.x - was.x;
+      scrolledY += is.y - was.y;
+      const candidate = {
+        dx: after.x - before.x + scrolledX,
+        dy: after.y - before.y + scrolledY,
+      };
+      if (size(candidate) < size(best)) best = candidate;
+    }
+    return best;
+  }
+
   function snapshot(): void {
-    positions = new Map(
-      [...document.querySelectorAll("[data-bt]")].map((element) => [
-        element,
-        element.getBoundingClientRect(),
-      ]),
-    );
+    positions = measurePositions();
   }
 
   function moved({ allow = [], during }: MovedOptions): LayoutViolation[] {
     const allowed = allow.length > 0 ? allow.join(", ") : null;
+    const now = measurePositions();
     const shifted: { element: Element; dx: number; dy: number }[] = [];
     for (const [element, before] of positions) {
-      if (!element.isConnected) continue;
+      const after = now.get(element);
+      if (!after) continue;
       if (allowed && element.closest(allowed)) continue;
       if (element.closest('[data-bt="Loop"], [data-bt-layer="dev"]')) continue;
-      const after = element.getBoundingClientRect();
-      const dx = after.left - before.left;
-      const dy = after.top - before.top;
-      if (Math.max(Math.abs(dx), Math.abs(dy)) > 1) {
-        shifted.push({ element, dx, dy });
-      }
+      const shift = movementOf(before, after);
+      if (Math.max(Math.abs(shift.dx), Math.abs(shift.dy)) > 1)
+        shifted.push({ element, ...shift });
     }
     return shifted
       .filter(

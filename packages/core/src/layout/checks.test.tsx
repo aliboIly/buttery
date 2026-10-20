@@ -37,7 +37,7 @@ const BROKEN = `
     <div data-testid="z" style="position: relative; z-index: 3">Raised by hand</div>
     <span data-testid="clipped" style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown)">
-      <div data-bt="Panel" data-testid="edge" style="position: absolute; inset-inline-start: 2px; inset-block-start: 40px; inline-size: 120px; block-size: 40px"></div>
+      <div data-bt="Panel" data-testid="edge" style="position: absolute; inset-inline-start: 2px; inset-block-start: 40px; inline-size: 120px; block-size: 40px; background: white"></div>
     </div>
   </main>`;
 
@@ -58,7 +58,7 @@ const FIXED = `
     <div style="position: relative; z-index: var(--bt-z-raised)">Raised with a token</div>
     <span data-bt-truncate title="A label much longer than its box" style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown)">
-      <div data-bt="Panel" style="position: absolute; inset-inline-start: 8px; inset-block-start: 40px; inline-size: 120px; block-size: 40px"></div>
+      <div data-bt="Panel" style="position: absolute; inset-inline-start: 8px; inset-block-start: 40px; inline-size: 120px; block-size: 40px; background: white"></div>
     </div>
   </main>`;
 
@@ -164,6 +164,50 @@ describe("runLayoutChecks", () => {
     ).toContain('[data-bt="Text"]');
   });
 
+  it("catches overlapping text inside one component", () => {
+    const violations = check(
+      `<div data-bt="Stack" style="display: flex; flex-direction: column">
+         <p data-testid="first" style="margin: 0; line-height: 20px">Spring launch</p>
+         <p data-testid="second" style="margin: -12px 0 0; line-height: 20px">Summer sale</p>
+       </div>`,
+      ["overlap"],
+    );
+    expect(violations).toEqual([
+      expect.objectContaining({
+        rule: "overlap",
+        a: '[data-testid="first"]',
+        b: '[data-testid="second"]',
+      }),
+    ]);
+  });
+
+  it("measures text a line at a time, by its line boxes", () => {
+    expect(
+      check(
+        `<p data-bt="Text" style="inline-size: 120px; font-size: 32px; line-height: 30px">
+           Every card <strong>starts</strong> on a <em>blank</em> canvas
+         </p>
+         <div data-bt="Inline" style="display: flex; inline-size: 200px">
+           <span data-bt="Label" style="line-height: 16px">Opacity</span>
+           <span data-bt="Badge" style="line-height: 16px">100%</span>
+         </div>`,
+        ["overlap"],
+      ),
+    ).toEqual([]);
+  });
+
+  it("measures trimmed text by its trimmed box", () => {
+    expect(
+      check(
+        `<div data-bt="Stack" style="display: flex; flex-direction: column; gap: 4px">
+           <p class="bt-text" data-role="label" data-bt="Text">Backdrop</p>
+           <p class="bt-text" data-role="caption" data-bt="Text">Fills the canvas behind the card</p>
+         </div>`,
+        ["overlap"],
+      ),
+    ).toEqual([]);
+  });
+
   it("ignores overlaps inside a component, inside data-bt-allow-overlap, and across layers", () => {
     expect(
       check(
@@ -182,6 +226,93 @@ describe("runLayoutChecks", () => {
         ["overlap"],
       ),
     ).toEqual([]);
+  });
+});
+
+describe("clipping", () => {
+  it("wants the full text in a title or tooltip on the text or its control", () => {
+    const truncated = (attributes: string): string =>
+      `<span data-bt-truncate ${attributes} style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">Remove background</span>`;
+    const violations = check(
+      `<div role="toolbar" aria-label="Edit" data-testid="toolbar">${truncated('data-testid="untitled"')}</div>
+       ${truncated('data-testid="labelled" aria-label="Remove background"')}
+       <button type="button" title="Remove background" style="block-size: 36px">${truncated('data-testid="in-button"')}</button>
+       ${truncated('data-testid="titled" title="Remove background"')}`,
+      ["clipping"],
+    );
+    expect(violations.map((violation) => violation.a).sort()).toEqual([
+      '[data-testid="labelled"]',
+      '[data-testid="untitled"]',
+    ]);
+  });
+
+  it("catches text cut off without an ellipsis", () => {
+    const [violation, ...rest] = check(
+      `<div data-testid="box" style="inline-size: 60px; overflow: hidden; white-space: nowrap">
+         <span data-testid="label">Remove background</span>
+       </div>`,
+      ["clipping"],
+    );
+    expect(rest).toEqual([]);
+    expect(violation).toMatchObject({
+      rule: "clipping",
+      a: '[data-testid="label"]',
+      b: '[data-testid="box"]',
+    });
+    expect(violation?.message).toContain("cut off");
+  });
+
+  it("leaves scrolling, declared clips and visually hidden text alone", () => {
+    expect(
+      check(
+        `<div style="inline-size: 60px; block-size: 40px; overflow: auto; white-space: nowrap">Remove background</div>
+         <div data-bt-clip style="inline-size: 60px; overflow: hidden; white-space: nowrap">Remove background</div>
+         <span style="position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap">Remove background</span>
+         <div style="inline-size: 200px; overflow: hidden"><h2 style="margin: 0; font-size: 48px; line-height: 44px">Studio</h2></div>`,
+        ["clipping"],
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("target size", () => {
+  it("lets only links inside a sentence be small", () => {
+    const violations = check(
+      `<p style="font-size: 13px; line-height: 16px">Read the <a href="#guide" data-testid="sentence">export guide</a> first.</p>
+       <div><a href="#close" data-testid="alone" style="font-size: 9px; line-height: 9px">Close</a></div>`,
+      ["target-size"],
+    );
+    expect(violations.map((violation) => violation.a)).toEqual([
+      '[data-testid="alone"]',
+    ]);
+  });
+});
+
+describe("viewport fit", () => {
+  it("checks the outermost painted surface in a layer, once", () => {
+    const violations = check(
+      `<div data-bt-layer="modal" style="position: fixed; inset: 0; z-index: var(--bt-z-modal)">
+         <div data-bt="Center" style="display: grid; place-items: center; block-size: 100%">
+           <div data-bt="Surface" data-testid="dialog" style="inline-size: 120px; block-size: 80px; background: white">
+             <div data-bt="Surface" style="block-size: 20px; background: gray"></div>
+           </div>
+         </div>
+       </div>
+       <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown)">
+         <div data-bt="Surface" data-testid="menu" style="position: absolute; inset-inline-start: -40px; inset-block-start: 40px; inline-size: 120px; block-size: 40px; background: white">
+           <div data-bt="Surface" style="block-size: 20px; background: gray"></div>
+         </div>
+       </div>`,
+      ["viewport-fit"],
+    );
+    expect(violations).toEqual([
+      expect.objectContaining({
+        a: '[data-testid="menu"]',
+        px: 48,
+        message:
+          "floating surface runs 40px past the viewport edge (keep it 8px inside)",
+      }),
+    ]);
   });
 });
 
@@ -209,6 +340,46 @@ describe("moved", () => {
         a: '[data-testid="row"]',
         px: 20,
         message: "moved 0px across and 20px down after Load more",
+      }),
+    ]);
+  });
+
+  it("doesn't count scrolling or a stuck sticky bar as movement", () => {
+    document.body.innerHTML = `
+      <div data-testid="scroller" style="block-size: 200px; overflow: auto">
+        <div class="bt-sticky" data-bt="Sticky" style="position: sticky; top: 0; block-size: 40px">Nav</div>
+        <div data-bt="Stack" style="block-size: 2000px"><div data-bt="Row">Row</div></div>
+      </div>
+      <div data-bt="Footer" style="block-size: 3000px">Footer</div>`;
+    const toolkit = createLayoutToolkit();
+    toolkit.snapshot();
+    const scroller = document.querySelector('[data-testid="scroller"]');
+    scroller?.scrollTo({ top: 300 });
+    window.scrollTo({ top: 120 });
+    const shifts = toolkit.moved({ during: "after Scroll" });
+    window.scrollTo({ top: 0 });
+    expect(shifts).toEqual([]);
+  });
+
+  it("reports the layout shift, not the scroll, when both happen", () => {
+    document.body.innerHTML = `
+      <div data-bt="Stack" style="display: flex; flex-direction: column">
+        <div data-testid="spacer" style="block-size: 0"></div>
+        <div data-bt="Row" data-testid="row">Row</div>
+        <div style="block-size: 3000px"></div>
+      </div>`;
+    const toolkit = createLayoutToolkit();
+    toolkit.snapshot();
+    window.scrollTo({ top: 200 });
+    document
+      .querySelector<HTMLElement>('[data-testid="spacer"]')
+      ?.style.setProperty("block-size", "24px");
+    const shifts = toolkit.moved({ during: "after Load more" });
+    window.scrollTo({ top: 0 });
+    expect(shifts).toEqual([
+      expect.objectContaining({
+        a: '[data-testid="row"]',
+        message: "moved 0px across and 24px down after Load more",
       }),
     ]);
   });
