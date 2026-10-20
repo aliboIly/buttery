@@ -7,10 +7,15 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": {
-      "@buttery/source": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+    "./stylelint": {
+      "@buttery/source": "./src/stylelint/index.ts",
+      "types": "./dist/stylelint.d.ts",
+      "default": "./dist/stylelint.js"
+    },
+    "./eslint": {
+      "@buttery/source": "./src/eslint/index.ts",
+      "types": "./dist/eslint.d.ts",
+      "default": "./dist/eslint.js"
     },
     "./package.json": "./package.json"
   },
@@ -21,6 +26,12 @@
     "build": "tsdown"
   },
   "devDependencies": {
+    "eslint": "^10.13.0",
+    "stylelint": "^17.16.0",
     "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "eslint": ">=9",
+    "stylelint": ">=16"
   }
 }

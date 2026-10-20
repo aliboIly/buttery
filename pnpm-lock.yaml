@@ -417,6 +417,12 @@ importers:
 
   packages/lint:
     devDependencies:
+      eslint:
+        specifier: ^10.13.0
+        version: 10.13.0(supports-color@10.2.2)
+      stylelint:
+        specifier: ^17.16.0
+        version: 17.16.0(supports-color@10.2.2)(typescript@6.0.3)
       tsdown:
         specifier: 'catalog:'
         version: 0.23.1(typescript@6.0.3)
