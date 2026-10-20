@@ -3,11 +3,14 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Popover } from "../popover/Popover.tsx";
 import { FloatingLanes, useFloatingObstacle } from "./FloatingLanes.tsx";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 function Toast({ children }: { readonly children: string }): ReactElement {
   return (
@@ -153,6 +156,24 @@ describe("FloatingLanes", () => {
     ).getBoundingClientRect();
     expect(item.left).toBe(24);
     expect(window.innerWidth - item.right).toBe(24);
+  });
+
+  it("warns, with the fix, when a lane holds more than three items", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <>
+        <FloatingLanes />
+        {["One", "Two", "Three", "Four"].map((name) => (
+          <FloatingLanes.Item key={name} lane="bottom-end">
+            <Toast>{name}</Toast>
+          </FloatingLanes.Item>
+        ))}
+      </>,
+    );
+    await screen.findByText("Four");
+    expect(warn).toHaveBeenCalledWith(
+      "[buttery:FloatingLanes] The bottom-end lane holds more than 3 items, so it can run off the screen. Fix: show toasts with toast() from @buttery/react, which keeps the newest three, or take older items out as new ones arrive.",
+    );
   });
 
   it("puts items in the lane they ask for", async () => {

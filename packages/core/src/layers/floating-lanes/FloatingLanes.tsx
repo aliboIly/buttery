@@ -1,12 +1,19 @@
-import { useLayoutEffect, useMemo, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useSyncExternalStore,
+} from "react";
 import type { ReactElement, ReactNode, RefCallback } from "react";
 import { createPortal } from "react-dom";
 import { space } from "../../tokens/space.ts";
+import { isDevelopment } from "../../utils/dev.ts";
 import { Layer } from "../layer/Layer.tsx";
 import { LayerContext, useCurrentLayer } from "../layer/layer-manager.ts";
 import type { LayerInfo } from "../layer/layer-manager.ts";
 import {
   addObstacle,
+  countLaneItem,
   getLanes,
   getObstacles,
   getServerLanes,
@@ -133,13 +140,15 @@ export interface FloatingLaneItemProps {
 
 /**
  * Renders its children into a floating lane, stacked 8px from the items already there. It renders no
- * element of its own: the children go straight into the lane.
+ * element of its own: the children go straight into the lane. A lane has room for three items; in
+ * development, a fourth logs a warning.
  */
 export function FloatingLaneItem({
   lane = "bottom-center",
   children,
 }: FloatingLaneItemProps): ReactElement | null {
   const lanes = useSyncExternalStore(subscribe, getLanes, getServerLanes);
+  useEffect(() => (isDevelopment ? countLaneItem(lane) : undefined), [lane]);
   const target = lanes[lane];
   if (!target) return null;
   return createPortal(
@@ -173,13 +182,14 @@ export interface FloatingLanesComponent {
 
 /**
  * The host for free-floating UI: toasts in the bottom-center lane, notices in bottom-end and top-end.
- * Items stack with an 8px gap, keep clear of sticky headers and footers, and move out of the way of
- * registered obstacles. `ButteryProvider` mounts the host once; render items with `FloatingLanes.Item`.
+ * Items stack with an 8px gap, never grow wider than their lane, keep clear of sticky headers and footers,
+ * and move out of the way of registered obstacles. `ButteryProvider` mounts the host once; render items
+ * with `FloatingLanes.Item`. For toasts, call `toast()` from @buttery/react instead.
  *
  * @example
- * <FloatingLanes.Item lane="bottom-center">
- *   <Surface level="floating" padX={4} padY={2}>
- *     <Text>Card deleted</Text>
+ * <FloatingLanes.Item lane="bottom-end">
+ *   <Surface level="floating" padX={4} padY={3}>
+ *     <Text variant="label">Exporting 12 cards</Text>
  *   </Surface>
  * </FloatingLanes.Item>
  */

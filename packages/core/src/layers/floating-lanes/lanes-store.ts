@@ -1,3 +1,4 @@
+import { warnOnce } from "../../utils/dev.ts";
 import type { LayerInfo } from "../layer/layer-manager.ts";
 
 /** The places free-floating UI can live: toasts at the bottom, notices at the top end. */
@@ -16,9 +17,13 @@ export interface Lane {
 
 type Lanes = Readonly<Partial<Record<LaneName, Lane>>>;
 
+/** How many items a lane has room for before it can run off the screen. */
+export const LANE_ROOM = 3;
+
 const listeners = new Set<() => void>();
 let lanes: Lanes = {};
 let obstacles: readonly HTMLElement[] = [];
+const itemCounts = new Map<LaneName, number>();
 
 function notify(): void {
   for (const listener of listeners) listener();
@@ -66,5 +71,23 @@ export function addObstacle(element: HTMLElement): () => void {
   return () => {
     obstacles = obstacles.filter((item) => item !== element);
     notify();
+  };
+}
+
+/**
+ * Counts an item in `lane` while it's mounted, and warns once the lane holds more than `LANE_ROOM`.
+ * Returns the function that stops counting it.
+ */
+export function countLaneItem(lane: LaneName): () => void {
+  const count = (itemCounts.get(lane) ?? 0) + 1;
+  itemCounts.set(lane, count);
+  if (count > LANE_ROOM) {
+    warnOnce(
+      "FloatingLanes",
+      `The ${lane} lane holds more than ${String(LANE_ROOM)} items, so it can run off the screen. Fix: show toasts with toast() from @buttery/react, which keeps the newest three, or take older items out as new ones arrive.`,
+    );
+  }
+  return () => {
+    itemCounts.set(lane, (itemCounts.get(lane) ?? 1) - 1);
   };
 }
