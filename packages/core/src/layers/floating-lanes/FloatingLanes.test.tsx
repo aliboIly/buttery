@@ -1,8 +1,10 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { useRef } from "react";
+import { userEvent } from "@testing-library/user-event";
+import { useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Popover } from "../popover/Popover.tsx";
 import { FloatingLanes, useFloatingObstacle } from "./FloatingLanes.tsx";
 
 afterEach(cleanup);
@@ -14,11 +16,10 @@ function Toast({ children }: { readonly children: string }): ReactElement {
 }
 
 function Toolbar(): ReactElement {
-  const ref = useRef<HTMLDivElement>(null);
-  useFloatingObstacle(ref);
+  const obstacle = useFloatingObstacle();
   return (
     <div
-      ref={ref}
+      ref={obstacle}
       data-testid="toolbar"
       style={{
         position: "fixed",
@@ -74,6 +75,66 @@ describe("FloatingLanes", () => {
       const toast = screen.getByText("Card deleted").getBoundingClientRect();
       expect(toolbar.top - toast.bottom).toBe(8);
     });
+  });
+
+  it("moves clear of an obstacle that mounts later", async () => {
+    function Editor(): ReactElement {
+      const [cropping, setCropping] = useState(false);
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setCropping(true);
+            }}
+          >
+            Crop
+          </button>
+          {cropping ? <Toolbar /> : null}
+        </>
+      );
+    }
+    render(
+      <>
+        <FloatingLanes />
+        <Editor />
+        <FloatingLanes.Item>
+          <Toast>Card deleted</Toast>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Crop" }));
+    const toolbar = screen.getByTestId("toolbar").getBoundingClientRect();
+    await waitFor(() => {
+      const toast = screen.getByText("Card deleted").getBoundingClientRect();
+      expect(toolbar.top - toast.bottom).toBe(8);
+    });
+  });
+
+  it("opens menus from a lane item above the lane", async () => {
+    render(
+      <>
+        <FloatingLanes />
+        <FloatingLanes.Item>
+          <Popover>
+            <Popover.Trigger>Undo options</Popover.Trigger>
+            <Popover.Content aria-label="Undo options">
+              <p>Undo the deletion</p>
+            </Popover.Content>
+          </Popover>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Undo options" }),
+    );
+    const menuLayer = screen
+      .getByRole("dialog", { name: "Undo options" })
+      .closest("[data-bt-layer]");
+    const toastLayer = screen
+      .getByRole("button", { name: "Undo options" })
+      .closest("[data-bt-layer]");
+    expect(menuLayer?.parentElement).toBe(toastLayer);
   });
 
   it("puts items in the lane they ask for", async () => {

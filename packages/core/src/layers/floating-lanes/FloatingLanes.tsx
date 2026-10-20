@@ -1,8 +1,10 @@
-import { useLayoutEffect, useSyncExternalStore } from "react";
-import type { ReactElement, ReactNode, RefCallback, RefObject } from "react";
+import { useLayoutEffect, useMemo, useSyncExternalStore } from "react";
+import type { ReactElement, ReactNode, RefCallback } from "react";
 import { createPortal } from "react-dom";
 import { space } from "../../tokens/space.ts";
 import { Layer } from "../layer/Layer.tsx";
+import { LayerContext, useCurrentLayer } from "../layer/layer-manager.ts";
+import type { LayerInfo } from "../layer/layer-manager.ts";
 import {
   addObstacle,
   getLanes,
@@ -15,20 +17,18 @@ import {
 } from "./lanes-store.ts";
 import type { LaneName } from "./lanes-store.ts";
 
-function laneRef(name: LaneName): RefCallback<HTMLDivElement> {
+function laneRef(
+  name: LaneName,
+  layer: LayerInfo,
+): RefCallback<HTMLDivElement> {
   return (element) => {
-    setLane(name, element);
+    if (!element) return undefined;
+    setLane(name, { element, layer });
     return () => {
       setLane(name, null);
     };
   };
 }
-
-const laneRefs: Readonly<Record<LaneName, RefCallback<HTMLDivElement>>> = {
-  "bottom-center": laneRef("bottom-center"),
-  "bottom-end": laneRef("bottom-end"),
-  "top-end": laneRef("top-end"),
-};
 
 function overlapsHorizontally(a: DOMRect, b: DOMRect): boolean {
   return a.left < b.right && b.left < a.right && a.width > 0 && b.width > 0;
@@ -64,7 +64,7 @@ function useLaneClearance(): void {
   );
 
   useLayoutEffect(() => {
-    const elements = laneNames.flatMap((name) => lanes[name] ?? []);
+    const elements = laneNames.flatMap((name) => lanes[name]?.element ?? []);
     const apply = (): void => {
       for (const lane of elements) {
         lane.style.setProperty(
@@ -92,20 +92,33 @@ function useLaneClearance(): void {
   }, [lanes, blockers]);
 }
 
+function Lanes(): ReactElement {
+  const layer = useCurrentLayer();
+  const refs = useMemo(
+    () =>
+      layer &&
+      new Map(laneNames.map((name) => [name, laneRef(name, layer)] as const)),
+    [layer],
+  );
+  return (
+    <div data-bt="FloatingLanes">
+      {laneNames.map((name) => (
+        <div
+          key={name}
+          ref={refs?.get(name)}
+          data-bt-part="lane"
+          data-lane={name}
+        />
+      ))}
+    </div>
+  );
+}
+
 function FloatingLanesHost(): ReactElement {
   useLaneClearance();
   return (
     <Layer band="toast">
-      <div data-bt="FloatingLanes">
-        {laneNames.map((name) => (
-          <div
-            key={name}
-            ref={laneRefs[name]}
-            data-bt-part="lane"
-            data-lane={name}
-          />
-        ))}
-      </div>
+      <Lanes />
     </Layer>
   );
 }
@@ -113,28 +126,41 @@ function FloatingLanesHost(): ReactElement {
 export interface FloatingLaneItemProps {
   /** Which lane to stack in. Defaults to `"bottom-center"`, where toasts go. */
   readonly lane?: LaneName | undefined;
+  /** The item, such as a toast. Menus and tooltips it opens stack above the lane. */
   readonly children?: ReactNode;
 }
 
-/** Renders its children into a floating lane, stacked 8px from the items already there. */
+/**
+ * Renders its children into a floating lane, stacked 8px from the items already there. It renders no
+ * element of its own: the children go straight into the lane.
+ */
 export function FloatingLaneItem({
   lane = "bottom-center",
   children,
 }: FloatingLaneItemProps): ReactElement | null {
   const lanes = useSyncExternalStore(subscribe, getLanes, getServerLanes);
-  const element = lanes[lane];
-  return element ? createPortal(children, element) : null;
+  const target = lanes[lane];
+  if (!target) return null;
+  return createPortal(
+    <LayerContext value={target.layer}>{children}</LayerContext>,
+    target.element,
+  );
 }
 
+const registerObstacle: RefCallback<HTMLElement> = (element) =>
+  element ? addObstacle(element) : undefined;
+
 /**
- * Registers an element, such as a toolbar anchored under a crop box, that floating lanes must stay
- * clear of. Lane items move above or below it instead of covering it.
+ * Registers an element, such as a toolbar anchored under a crop box, that floating lanes must stay clear
+ * of: lane items move above or below it instead of covering it. Returns a callback ref for the element;
+ * combine it with another ref through `useMergedRefs`.
+ *
+ * @example
+ * const obstacle = useFloatingObstacle();
+ * return <Surface ref={obstacle} level="floating">…</Surface>;
  */
-export function useFloatingObstacle(ref: RefObject<HTMLElement | null>): void {
-  useLayoutEffect(() => {
-    if (!ref.current) return undefined;
-    return addObstacle(ref.current);
-  }, [ref]);
+export function useFloatingObstacle(): RefCallback<HTMLElement> {
+  return registerObstacle;
 }
 
 export interface FloatingLanesComponent {

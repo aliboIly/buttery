@@ -1,9 +1,17 @@
+import type { LayerInfo } from "../layer/layer-manager.ts";
+
 /** The places free-floating UI can live: toasts at the bottom, notices at the top end. */
 export const laneNames = ["bottom-center", "bottom-end", "top-end"] as const;
 
 export type LaneName = (typeof laneNames)[number];
 
-type Lanes = Readonly<Partial<Record<LaneName, HTMLElement>>>;
+/** A lane's element and the toast layer it sits in, for what lane items open. */
+export interface Lane {
+  readonly element: HTMLElement;
+  readonly layer: LayerInfo;
+}
+
+type Lanes = Readonly<Partial<Record<LaneName, Lane>>>;
 
 const listeners = new Set<() => void>();
 let lanes: Lanes = {};
@@ -39,10 +47,10 @@ export function getServerObstacles(): readonly HTMLElement[] {
   return NO_OBSTACLES;
 }
 
-export function setLane(name: LaneName, element: HTMLElement | null): void {
-  if ((lanes[name] ?? null) === element) return;
-  const next: Partial<Record<LaneName, HTMLElement>> = { ...lanes };
-  if (element) next[name] = element;
+export function setLane(name: LaneName, lane: Lane | null): void {
+  if ((lanes[name] ?? null) === lane) return;
+  const next: Partial<Record<LaneName, Lane>> = { ...lanes };
+  if (lane) next[name] = lane;
   else Reflect.deleteProperty(next, name);
   lanes = next;
   notify();
