@@ -1,0 +1,2 @@
+#!/bin/sh
+exec node scripts/check-ai-tells.mjs --commit-msg "$1"
