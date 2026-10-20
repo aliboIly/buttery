@@ -11,6 +11,6 @@ export const meta: ComponentMeta = {
     "Inline status messages: put them in flow",
   ],
   related: ["Layer", "Sticky", "Popover"],
-  a11y: 'Lanes are plain containers; each item brings its own role (a toast uses role="status").',
+  a11y: 'Lanes are plain containers and items bring their own semantics. To announce an item, keep a live region (role="status") mounted outside the lane and change its text: a region that mounts along with its content often goes unannounced.',
   motion: "presence",
 };

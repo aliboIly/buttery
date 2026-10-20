@@ -1,3 +1,4 @@
+import { VisuallyHidden } from "radix-ui";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import {
@@ -41,9 +42,12 @@ function LaneDemo(): ReactElement {
           </Pressable>
         </Surface>
       </Inline>
+      <VisuallyHidden.Root role="status">
+        {items.length > 0 ? `Message ${String(items.length)}` : ""}
+      </VisuallyHidden.Root>
       {items.map((item) => (
         <FloatingLanes.Item key={item.id} lane={item.lane}>
-          <Surface level="floating" padX={4} padY={2} role="status">
+          <Surface level="floating" padX={4} padY={2}>
             <Text>Message {item.id}</Text>
           </Surface>
         </FloatingLanes.Item>

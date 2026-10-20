@@ -1,8 +1,9 @@
+import { VisuallyHidden } from "radix-ui";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { FloatingLanes, Pressable, Stack, Surface, Text } from "@buttery/core";
 
-/** A notice in the top-end lane that the user can put away. */
+/** A notice in the top-end lane that the user can put away, announced through a status region that stays mounted. */
 export function UpdateNotice(): ReactElement {
   const [visible, setVisible] = useState(false);
   return (
@@ -19,9 +20,12 @@ export function UpdateNotice(): ReactElement {
           </Text>
         </Pressable>
       </Surface>
+      <VisuallyHidden.Root role="status">
+        {visible ? "Update ready. Restart to get the new export options." : ""}
+      </VisuallyHidden.Root>
       {visible ? (
         <FloatingLanes.Item lane="top-end">
-          <Surface level="floating" pad={4} role="status">
+          <Surface level="floating" pad={4}>
             <Stack gap={3} align="start">
               <Stack gap={1}>
                 <Text variant="label">Update ready</Text>
