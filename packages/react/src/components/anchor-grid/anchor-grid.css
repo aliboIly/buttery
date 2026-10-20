@@ -1,0 +1,68 @@
+@layer bt.components {
+  .bt-anchor-grid {
+    --bt-anchor-grid-size: 43px;
+    --bt-anchor-grid-pitch: 11.5px;
+    --bt-anchor-grid-dot: 6px;
+    --bt-anchor-grid-knob: 10px;
+    --bt-anchor-grid-line: 1px;
+
+    display: inline-grid;
+    flex: none;
+    grid-template-rows: repeat(3, var(--bt-anchor-grid-pitch));
+    grid-template-columns: repeat(3, var(--bt-anchor-grid-pitch));
+    place-content: center;
+    inline-size: var(--bt-anchor-grid-size);
+    block-size: var(--bt-anchor-grid-size);
+    border: var(--bt-anchor-grid-line) solid var(--bt-border-strong);
+    border-radius: var(--bt-r-md);
+    background-color: var(--bt-bg-inset);
+    touch-action: none;
+  }
+
+  .bt-anchor-grid:has(> [data-bt-part="cell"]:focus-visible) {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-anchor-grid[data-disabled] {
+    opacity: 0.4;
+  }
+
+  .bt-anchor-grid > [data-bt-part="cell"] {
+    display: grid;
+    place-items: center;
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    outline: none;
+  }
+
+  .bt-anchor-grid > [data-bt-part="cell"] > [data-bt-part="dot"] {
+    inline-size: var(--bt-anchor-grid-dot);
+    block-size: var(--bt-anchor-grid-dot);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-dot);
+  }
+
+  .bt-anchor-grid
+    > [data-bt-part="cell"][aria-checked="true"]
+    > [data-bt-part="dot"] {
+    visibility: hidden;
+  }
+
+  /* The knob is the shared indicator, drawn small, round and dark in the middle of the chosen cell. */
+  .bt-anchor-grid
+    > [data-bt-part="cell"]
+    > [data-bt-part="indicator-slot"]
+    > [data-bt-part="indicator"] {
+    inset: calc(50% - var(--bt-anchor-grid-knob) / 2);
+    border-radius: var(--bt-r-full);
+    background: radial-gradient(
+      circle at 50% 35%,
+      var(--bt-knob-center),
+      var(--bt-knob-edge)
+    );
+    box-shadow: var(--bt-shadow-knob);
+  }
+}

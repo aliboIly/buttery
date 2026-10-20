@@ -269,16 +269,16 @@ Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12,
 20h, r6, `badge` role, hit area 24. Disabled: bg `bg-control-subtle`, text `text-disabled-subtle`. Enabled: bg `bg-control`, text `text-secondary`, hover text `text`.
 
 ### SwatchGrid
-6 columns, gap 8, swatches fill the column (41px at inspector width), aspect 1, r8, shadow-inset. Selected: `--bt-ring-select`. Radio-group semantics with arrow-key navigation. Holds gradient or solid presets.
+6 columns, gap 8, swatches fill the column (41px at inspector width), aspect 1, r8, shadow-inset. Selected: `--bt-ring-select`, at once. Radio-group semantics, one tab stop: left and right move along the swatches (wrapping), up and down move a column (stopping at the edges), Home and End reach the ends, and the selection follows. Holds gradient or solid presets, or any `{ value, label, fill }`.
 
 ### ColorDot + swap
-22px circle, shadow-inset, 6px gap between dots, hit area 28. Opens a color picker (native `<input type="color">` in v1). Swap = `IconButton sm` with `arrow-left-right`.
+22px circle, shadow-inset, 6px gap between dots, hit area 28 (the label around a visually hidden native `<input type="color">`, so the system picker opens). Keyboard focus rings the dot. Swap = `IconButton sm` with `arrow-left-right`.
 
 ### TiltPad
-Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center` → `knob-edge`, 1px `knob-border`, shadow-knob. When tilted, an accent arc (`accent`, 2px) appears on the knob edge in the tilt direction, opacity ∝ magnitude. Value `{x, y}` in −1…1 (maps to rotateY/rotateX ±20°, perspective 1200px). Paired with a reset chip.
+Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center` → `knob-edge`, 1px `knob-border`, shadow-knob, moving up to 4px toward the tilt. When tilted, an accent arc (`accent`, 2px, a 50° slice of a ring) appears on the knob edge in the tilt direction, opacity ∝ magnitude; CSS works out its angle and strength from x and y (`atan2`, `hypot`). Value `{x, y}` in −1…1, kept inside the unit circle (maps to rotateY/rotateX ±20°, perspective 1200px). A drag moves 48px for a full tilt and follows at once; keys and resets glide on `spring.smooth`. Two visually hidden sliders carry it for screen readers ("Left and right", "Up and down", values like "30% right"); arrows tilt, Shift ×5, Backspace/Delete/Home level it. Paired with a reset chip.
 
 ### AnchorGrid
-43×43 box, r10, 1px `border-strong`, `bg-inset`. 3×3 dots on an 11.5px pitch: idle 6px `dot`, active 10px radial knob. Radio semantics, 2D arrow keys. The whole box is the hit target (cells are ~14px), marked `data-bt-target="group"`.
+43×43 box, r10, 1px `border-strong`, `bg-inset`. 3×3 dots on an 11.5px pitch: idle 6px `dot`, active 10px radial knob (shadow-knob), which is a `SharedIndicator` and slides between dots on `spring.snappy` like any indicator. Radio semantics, one tab stop, 2D arrow keys that stop at the edges, Home/End for the corners; keyboard focus rings the box. The whole box is the hit target (a press picks the nearest dot; cells are 11.5px), marked `data-bt-target="group"`.
 
 ### Menu / Select
 - Trigger: ghost pill; while open, bg `bg-control-active`. `Select`'s trigger shows the chosen value (or `valueLabel`, or a placeholder) and a 16px chevron, and is named "label, value".

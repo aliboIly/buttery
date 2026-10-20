@@ -107,3 +107,21 @@ export type {
 } from "./parts/auth/AuthParts.tsx";
 export { Select } from "./components/select/Select.tsx";
 export type { SelectOption, SelectProps } from "./components/select/Select.tsx";
+export { SwatchGrid } from "./components/swatch-grid/SwatchGrid.tsx";
+export type {
+  Swatch,
+  SwatchGridProps,
+} from "./components/swatch-grid/SwatchGrid.tsx";
+export { ColorDot } from "./components/color-dot/ColorDot.tsx";
+export type { ColorDotProps } from "./components/color-dot/ColorDot.tsx";
+export { TiltPad } from "./components/tilt-pad/TiltPad.tsx";
+export type {
+  TiltPadLabels,
+  TiltPadProps,
+  TiltValue,
+} from "./components/tilt-pad/TiltPad.tsx";
+export { AnchorGrid, anchors } from "./components/anchor-grid/AnchorGrid.tsx";
+export type {
+  Anchor,
+  AnchorGridProps,
+} from "./components/anchor-grid/AnchorGrid.tsx";
