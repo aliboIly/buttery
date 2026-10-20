@@ -12,8 +12,15 @@
     z-index: var(--bt-z-base);
   }
 
+  .bt-shared-indicator > [data-bt-part="indicator-slot"] {
+    display: contents;
+    border-radius: inherit;
+  }
+
   /* The indicator is portaled in, outside the item's React tree: clicks on it must reach the item. */
-  .bt-shared-indicator > [data-bt-part="indicator"] {
+  .bt-shared-indicator
+    > [data-bt-part="indicator-slot"]
+    > [data-bt-part="indicator"] {
     position: absolute;
     inset: 0;
     z-index: var(--bt-z-behind);

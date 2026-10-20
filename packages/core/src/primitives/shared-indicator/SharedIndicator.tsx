@@ -1,11 +1,12 @@
 import { LayoutGroup, motion } from "motion/react";
-import { createContext, use, useId, useState } from "react";
+import { createContext, use, useCallback, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import type {
   ComponentPropsWithRef,
   Context,
   ReactElement,
   ReactNode,
+  RefCallback,
 } from "react";
 import { useLayoutAnimation } from "../../motion/transitions.ts";
 import { useAnimationTracking } from "../../motion/use-animation-tracking.ts";
@@ -48,6 +49,36 @@ function Indicator(): ReactElement {
   );
 }
 
+/**
+ * A span of the indicator's own inside the item, to portal into. React writes a host's text with
+ * `textContent` when text is its only child, which takes every other node with it: the span goes back each
+ * time, and since React never put it there, it never tries to remove what it holds from the item.
+ */
+function useIndicatorSlot(): readonly [
+  HTMLElement | null,
+  RefCallback<HTMLElement>,
+] {
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  const attach = useCallback((host: HTMLElement | null) => {
+    if (!host) return undefined;
+    const element = document.createElement("span");
+    element.dataset["btPart"] = "indicator-slot";
+    const keep = (): void => {
+      if (element.parentNode !== host) host.append(element);
+    };
+    keep();
+    const observer = new MutationObserver(keep);
+    observer.observe(host, { childList: true });
+    setSlot(element);
+    return () => {
+      observer.disconnect();
+      element.remove();
+      setSlot(null);
+    };
+  }, []);
+  return [slot, attach];
+}
+
 /** Props for `SharedIndicator`. */
 export interface SharedIndicatorProps extends ComponentPropsWithRef<"span"> {
   /** Whether this item shows the indicator. Exactly one item in a group should be active. */
@@ -88,8 +119,8 @@ function SharedIndicatorItem({
       "[buttery:SharedIndicator] SharedIndicator has to be inside a <SharedIndicator.Group>. Fix: <SharedIndicator.Group>{items.map((item) => <SharedIndicator active={…}>…</SharedIndicator>)}</SharedIndicator.Group>",
     );
   }
-  const [host, setHost] = useState<HTMLElement | null>(null);
-  const merged = useMergedRefs<HTMLElement>(ref, setHost);
+  const [slot, attach] = useIndicatorSlot();
+  const merged = useMergedRefs<HTMLElement>(ref, attach);
   const Root = asChild ? Slot : "span";
   return (
     <>
@@ -100,7 +131,7 @@ function SharedIndicatorItem({
         data-bt="SharedIndicator"
         data-active={active ? "" : undefined}
       />
-      {active && host ? createPortal(<Indicator />, host) : null}
+      {active && slot ? createPortal(<Indicator />, slot) : null}
     </>
   );
 }

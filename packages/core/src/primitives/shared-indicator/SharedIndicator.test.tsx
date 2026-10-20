@@ -49,6 +49,10 @@ function indicator(): HTMLElement {
   return element;
 }
 
+function itemWithIndicator(): Element | null {
+  return indicator().closest(".bt-shared-indicator");
+}
+
 describe("SharedIndicator", () => {
   it("stamps its class and data-bt, forwards its ref and spreads props", () => {
     const ref = createRef<HTMLSpanElement>();
@@ -70,7 +74,7 @@ describe("SharedIndicator", () => {
     expect(
       document.querySelectorAll('[data-bt-part="indicator"]'),
     ).toHaveLength(1);
-    expect(indicator().parentElement).toBe(plain);
+    expect(itemWithIndicator()).toBe(plain);
     const rect = plain.getBoundingClientRect();
     expect(
       document.elementFromPoint(
@@ -98,7 +102,7 @@ describe("SharedIndicator", () => {
       </SharedIndicator.Group>,
     );
     const canvas = screen.getByRole("button", { name: "Canvas" });
-    expect(indicator().parentElement).toBe(canvas);
+    expect(itemWithIndicator()).toBe(canvas);
     expect(canvas.classList).toContain("bt-shared-indicator");
     expect(canvas.classList).toContain("bt-surface");
     expect(canvas.classList).toContain("bt-center");
@@ -130,7 +134,7 @@ describe("SharedIndicator", () => {
     render(<Edges />);
     const plain = screen.getByRole("radio", { name: "Plain" });
     const glow = screen.getByRole("radio", { name: "Glow" });
-    expect(indicator().parentElement).toBe(plain);
+    expect(itemWithIndicator()).toBe(plain);
     expect(plain.classList).toContain("bt-shared-indicator");
     expect(glow.classList).toContain("bt-shared-indicator");
     plain.focus();
@@ -141,7 +145,7 @@ describe("SharedIndicator", () => {
     });
     await keyboard.keyboard("{/ArrowRight}");
     await waitFor(() => {
-      expect(indicator().parentElement).toBe(glow);
+      expect(itemWithIndicator()).toBe(glow);
     });
   });
 
@@ -150,7 +154,7 @@ describe("SharedIndicator", () => {
     const start = indicator().getBoundingClientRect().left;
     await userEvent.click(screen.getByRole("button", { name: "Glow" }));
     const glow = screen.getByRole("button", { name: "Glow" });
-    expect(indicator().parentElement).toBe(glow);
+    expect(itemWithIndicator()).toBe(glow);
     const target = glow.getBoundingClientRect().left;
     await waitFor(() => {
       const left = indicator().getBoundingClientRect().left;
@@ -220,6 +224,52 @@ describe("SharedIndicator", () => {
     expect(indicator().style.transform).toBe("");
     await new Promise((resolve) => requestAnimationFrame(resolve));
     expect(indicator().getBoundingClientRect().left).toBe(target);
+  });
+
+  it("keeps its indicator while the active item's text changes, then moves on", async () => {
+    function Counter(): ReactElement {
+      const [count, setCount] = useState(0);
+      const [active, setActive] = useState("inbox");
+      return (
+        <>
+          <SharedIndicator.Group>
+            <SharedIndicator active={active === "inbox"} asChild>
+              <button
+                type="button"
+                onClick={() => {
+                  setCount((current) => current + 1);
+                }}
+              >
+                {`Inbox ${String(count)}`}
+              </button>
+            </SharedIndicator>
+            <SharedIndicator active={active === "sent"} asChild>
+              <button
+                type="button"
+                onClick={() => {
+                  setActive("sent");
+                }}
+              >
+                Sent
+              </button>
+            </SharedIndicator>
+          </SharedIndicator.Group>
+        </>
+      );
+    }
+    render(<Counter />);
+    await userEvent.click(screen.getByRole("button", { name: "Inbox 0" }));
+    const inbox = screen.getByRole("button", { name: "Inbox 1" });
+    expect(itemWithIndicator()).toBe(inbox);
+    await userEvent.click(screen.getByRole("button", { name: "Sent" }));
+    await waitFor(() => {
+      expect(itemWithIndicator()).toBe(
+        screen.getByRole("button", { name: "Sent" }),
+      );
+    });
+    expect(
+      document.querySelectorAll('[data-bt-part="indicator"]'),
+    ).toHaveLength(1);
   });
 
   it("says how to fix an item outside a group", () => {
