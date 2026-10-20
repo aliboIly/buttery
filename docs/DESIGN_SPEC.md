@@ -168,8 +168,8 @@ Component-internal dimensions (thumb 24, tilt pad 32, anchor box 43, color dot 2
 | `--bt-r-thumb` | 7 | Slider thumb, app icon |
 | `--bt-r-sm` | 8 | Swatch, illustration window card, tooltip |
 | `--bt-r-md` | 10 | Anchor grid box, menu item, dialog media (18 − 8) |
-| `--bt-r-lg` | 12 | Inner row card, inputs, segmented item, CTA buttons, stage canvas |
-| `--bt-r-xl` | 14 | Segmented track |
+| `--bt-r-lg` | 12 | Inner row card, inputs, CTA buttons, stage canvas |
+| `--bt-r-xl` | 14 | Spare step between `lg` and `2xl`; no component uses it yet |
 | `--bt-r-2xl` | 16 | Section well (card 12 + well 4) |
 | `--bt-r-3xl` | 16 | Header bar, inspector panel, menu |
 | `--bt-r-dialog` | 18 | Dialog |
@@ -240,7 +240,7 @@ Ghost, square, r-full: `md` 36×36 (header, default) · `sm` 28×28 (dialog clos
 Primary pill 36h. Main segment + 1px divider `rgba(255,255,255,.18)` + 36px chevron segment that opens a Menu. Both halves share hover/disabled visuals but are separate focus targets.
 
 ### SegmentedControl
-Track `bg-control`, 34h, r14, padding 2. Items 30h, r12, padding-x 12, `control` type. Inactive text `text-secondary`; active = `bg-surface` + shadow-raised, text `text`. Exactly one item is always selected: Radix `ToggleGroup type="single"` lets users deselect, so ignore empty values in `onValueChange` (or build on `RadioGroup`). The active background is one shared element that slides.
+Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12, `control` type. Re-measured in Phase 1: the track and items are full pills (the first spec said r14 and r12). The capture insets its items 3px; buttery keeps the 2px step, so its active item is 2px taller. Inactive text `text-secondary`; active = `bg-surface` + shadow-raised, text `text`. Exactly one item is always selected: Radix `ToggleGroup type="single"` lets users deselect, so ignore empty values in `onValueChange` (or build on `RadioGroup`). The active background is one shared element that slides.
 
 ### Slider row
 - Row grid: `[label + badge] [track]`. Label `label` role, gap 8 to badge.

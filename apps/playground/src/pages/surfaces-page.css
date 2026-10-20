@@ -204,7 +204,7 @@
   display: inline-flex;
   block-size: var(--bt-h-control);
   padding: var(--bt-space-0_5);
-  border-radius: var(--bt-r-xl);
+  border-radius: var(--bt-r-full);
   background-color: var(--bt-bg-control);
 }
 
@@ -212,7 +212,7 @@
   display: inline-flex;
   align-items: center;
   padding-inline: var(--bt-space-3);
-  border-radius: var(--bt-r-lg);
+  border-radius: var(--bt-r-full);
 }
 
 .sf-segment[data-active] {
