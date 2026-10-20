@@ -1,20 +1,41 @@
+import { AnimatePresence } from "motion/react";
 import { Popover as RadixPopover } from "radix-ui";
-import { createContext, use } from "react";
+import { createContext, use, useRef } from "react";
 import type {
   ComponentPropsWithRef,
   Context,
   ReactElement,
   ReactNode,
+  RefObject,
 } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state.ts";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
+import { useMergedRefs } from "../../utils/merge-refs.ts";
+import { FloatingMotion, focusMovedOn } from "../floating-motion.tsx";
 import { Layer } from "../layer/Layer.tsx";
 import { Scrim } from "../scrim/Scrim.tsx";
 
-const PopoverOpenContext: Context<boolean | null> = createContext<
-  boolean | null
->(null);
+interface PopoverState {
+  readonly open: boolean;
+  readonly trigger: RefObject<HTMLButtonElement | null>;
+  readonly content: RefObject<HTMLDivElement | null>;
+  /** Records that a press or focus outside the popover is what's closing it. */
+  readonly pressedOutside: () => void;
+}
+
+const PopoverContext: Context<PopoverState | null> =
+  createContext<PopoverState | null>(null);
+
+function usePopover(part: string): PopoverState {
+  const popover = use(PopoverContext);
+  if (!popover) {
+    throw new Error(
+      `[buttery:Popover] Popover.${part} has to be inside a <Popover>. Fix: <Popover><Popover.Trigger>…</Popover.Trigger><Popover.Content>…</Popover.Content></Popover>`,
+    );
+  }
+  return popover;
+}
 
 /** Props for `Popover`. */
 export interface PopoverProps {
@@ -42,12 +63,35 @@ function PopoverRoot({
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
+  const trigger = useRef<HTMLButtonElement>(null);
+  const content = useRef<HTMLDivElement>(null);
+  const outside = useRef(false);
+  const change = (next: boolean): void => {
+    if (next) {
+      outside.current = false;
+    } else if (
+      !outside.current &&
+      content.current?.contains(document.activeElement)
+    ) {
+      trigger.current?.focus();
+    }
+    setOpen(next);
+  };
   return (
-    <PopoverOpenContext value={isOpen}>
-      <RadixPopover.Root open={isOpen} onOpenChange={setOpen} modal={modal}>
+    <PopoverContext
+      value={{
+        open: isOpen,
+        trigger,
+        content,
+        pressedOutside: () => {
+          outside.current = true;
+        },
+      }}
+    >
+      <RadixPopover.Root open={isOpen} onOpenChange={change} modal={modal}>
         {children}
       </RadixPopover.Root>
-    </PopoverOpenContext>
+    </PopoverContext>
   );
 }
 
@@ -57,8 +101,13 @@ export type PopoverTriggerProps = ComponentPropsWithRef<
 >;
 
 /** The control that opens the popover. Use `asChild` to make your own button the trigger. */
-export function PopoverTrigger(props: PopoverTriggerProps): ReactElement {
-  return <RadixPopover.Trigger {...props} />;
+export function PopoverTrigger({
+  ref,
+  ...rest
+}: PopoverTriggerProps): ReactElement {
+  const popover = usePopover("Trigger");
+  const refs = useMergedRefs(ref, popover.trigger);
+  return <RadixPopover.Trigger {...rest} ref={refs} />;
 }
 
 /** Props for `Popover.Anchor`. */
@@ -84,7 +133,11 @@ export function PopoverClose(props: PopoverCloseProps): ReactElement {
 /** Props for `Popover.Content`. Offset, collision padding and collision handling are fixed by buttery. */
 export interface PopoverContentProps extends Omit<
   ComponentPropsWithRef<typeof RadixPopover.Content>,
-  "sideOffset" | "collisionPadding" | "avoidCollisions" | "forceMount"
+  | "sideOffset"
+  | "collisionPadding"
+  | "avoidCollisions"
+  | "forceMount"
+  | "asChild"
 > {
   /**
    * Covers the page behind the open popover: `"blur"` for menus that open over content, `"dim"` to set
@@ -93,39 +146,72 @@ export interface PopoverContentProps extends Omit<
   readonly scrim?: "dim" | "blur" | undefined;
 }
 
+/** The scrim under an open popover, gone the moment it starts to close so presses reach the page. */
+function PopoverScrim({
+  variant,
+}: {
+  readonly variant: "dim" | "blur";
+}): ReactElement | null {
+  return usePopover("Content").open ? <Scrim variant={variant} /> : null;
+}
+
 /**
  * The floating panel. It sits 8px from its trigger, flips or shifts to stay 8px inside the viewport,
- * never covers the trigger, and scrolls inside when it's taller than the space available.
+ * never covers the trigger, and scrolls inside when it's taller than the space available. It grows in
+ * from the trigger's side and fades out; focus goes back to the trigger as it closes, unless the press
+ * that closed it was somewhere else.
  */
 export function PopoverContent({
   className,
   side = "bottom",
   align = "center",
   scrim,
+  children,
+  onInteractOutside,
+  onCloseAutoFocus,
+  ref,
   ...rest
-}: PopoverContentProps): ReactElement | null {
-  const open = use(PopoverOpenContext);
-  if (open === null) {
-    throw new Error(
-      "[buttery:Popover] Popover.Content has to be inside a <Popover>. Fix: <Popover><Popover.Trigger>…</Popover.Trigger><Popover.Content>…</Popover.Content></Popover>",
-    );
-  }
-  if (!open) return null;
+}: PopoverContentProps): ReactElement {
+  const popover = usePopover("Content");
+  const refs = useMergedRefs(ref, popover.content);
   return (
-    <Layer band="dropdown">
-      {scrim ? <Scrim variant={scrim} /> : null}
-      <RadixPopover.Content
-        {...rest}
-        side={side}
-        align={align}
-        sideOffset={space["2"]}
-        collisionPadding={space["2"]}
-        avoidCollisions
-        className={cx("bt-surface bt-popover", className)}
-        data-level="floating"
-        data-bt="Popover"
-      />
-    </Layer>
+    <AnimatePresence>
+      {popover.open ? (
+        <Layer band="dropdown" key="popover">
+          {scrim ? <PopoverScrim variant={scrim} /> : null}
+          <RadixPopover.Content
+            {...rest}
+            forceMount
+            asChild
+            side={side}
+            align={align}
+            sideOffset={space["2"]}
+            collisionPadding={space["2"]}
+            avoidCollisions
+            onInteractOutside={(event) => {
+              onInteractOutside?.(event);
+              popover.pressedOutside();
+            }}
+            onCloseAutoFocus={(event) => {
+              onCloseAutoFocus?.(event);
+              if (focusMovedOn(popover.content.current)) {
+                event.preventDefault();
+              }
+            }}
+          >
+            <FloatingMotion
+              ref={refs}
+              origin="--radix-popover-content-transform-origin"
+              className={cx("bt-surface bt-popover", className)}
+              data-level="floating"
+              data-bt="Popover"
+            >
+              {children}
+            </FloatingMotion>
+          </RadixPopover.Content>
+        </Layer>
+      ) : null}
+    </AnimatePresence>
   );
 }
 

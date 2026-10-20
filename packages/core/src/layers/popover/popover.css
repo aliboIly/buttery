@@ -4,10 +4,14 @@
     max-block-size: var(--radix-popover-content-available-height);
     overflow-y: auto;
     overscroll-behavior: contain;
-    transform-origin: var(--radix-popover-content-transform-origin);
   }
 
   .bt-popover:focus {
     outline: none;
+  }
+
+  /* While it fades out, the popover lets presses through to whatever is under it. */
+  .bt-popover[data-state="closed"] {
+    pointer-events: none;
   }
 }

@@ -1,15 +1,32 @@
 import "../../styles/index.css";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { publishSettled } from "../../motion/settle.ts";
 import { Popover } from "./Popover.tsx";
+
+beforeEach(() => {
+  publishSettled();
+});
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
 });
+
+async function settled(): Promise<void> {
+  await waitFor(() => {
+    expect(document.documentElement.hasAttribute("data-bt-settled")).toBe(true);
+  });
+}
+
+async function gone(role: string): Promise<void> {
+  await waitFor(() => {
+    expect(screen.queryByRole(role)).toBeNull();
+  });
+}
 
 function Sizes({
   onOpenChange,
@@ -45,6 +62,7 @@ describe("Popover", () => {
       content.closest("[data-bt-layer]")?.getAttribute("data-bt-layer"),
     ).toBe("dropdown");
     expect(content.dataset["level"]).toBe("floating");
+    await settled();
     expect(
       content.getBoundingClientRect().top -
         trigger.getBoundingClientRect().bottom,
@@ -52,16 +70,33 @@ describe("Popover", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 
-  it("closes on Escape and returns focus to the trigger", async () => {
+  it("closes on Escape, handing focus back to the trigger at once, then fades out", async () => {
     const onOpenChange = vi.fn();
     render(<Sizes onOpenChange={onOpenChange} />);
     await userEvent.click(screen.getByRole("button", { name: "Canvas size" }));
+    await settled();
+    const content = screen.getByRole("dialog", { name: "Canvas sizes" });
     await userEvent.keyboard("{Escape}");
-    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Canvas size" }),
+    );
+    expect(getComputedStyle(content).pointerEvents).toBe("none");
+    await gone("dialog");
     expect(document.activeElement).toBe(
       screen.getByRole("button", { name: "Canvas size" }),
     );
     expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
+  });
+
+  it("grows in from its trigger's side", async () => {
+    render(<Sizes />);
+    await userEvent.click(screen.getByRole("button", { name: "Canvas size" }));
+    const content = screen.getByRole("dialog", { name: "Canvas sizes" });
+    expect(new DOMMatrix(getComputedStyle(content).transform).a).toBeLessThan(
+      1,
+    );
+    await settled();
+    expect(new DOMMatrix(getComputedStyle(content).transform).a).toBe(1);
   });
 
   it("can be controlled", async () => {
@@ -83,7 +118,7 @@ describe("Popover", () => {
     expect(screen.getByRole("dialog", { name: "Panel" })).toBeTruthy();
     await userEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.getByText("closed")).toBeTruthy();
-    expect(screen.queryByRole("dialog")).toBeNull();
+    await gone("dialog");
   });
 
   it("puts a scrim under the content that closes it", async () => {
@@ -111,7 +146,10 @@ describe("Popover", () => {
     };
     expect(document.elementFromPoint(corner.x, corner.y)).toBe(scrim);
     await userEvent.pointer({ keys: "[MouseLeft]", coords: corner });
-    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(
+      content.closest("[data-bt-layer]")?.querySelector('[data-bt="Scrim"]'),
+    ).toBeNull();
+    await gone("dialog");
   });
 
   it("says how to fix content rendered outside a Popover", () => {
@@ -133,6 +171,7 @@ describe("Popover", () => {
       </Popover>,
     );
     const content = await screen.findByRole("dialog", { name: "Long" });
+    await settled();
     const rect = content.getBoundingClientRect();
     expect(rect.bottom).toBeLessThanOrEqual(window.innerHeight - 8);
     expect(content.scrollHeight).toBeGreaterThan(content.clientHeight);
