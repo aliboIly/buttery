@@ -66,12 +66,15 @@
     position: absolute;
     inset-block-end: var(--bt-space-2);
     inset-inline: var(--bt-space-2);
-    display: grid;
+    display: flex;
+    flex-direction: column;
     max-block-size: calc(100dvh - var(--bt-space-16));
     outline: none;
   }
 
+  /* The inspector shrinks to the sheet's height and scrolls its sections inside. */
   [data-bt-part="sheet"] > .bt-inspector {
+    flex: 1 1 auto;
     inline-size: 100%;
     min-block-size: 0;
   }
