@@ -190,3 +190,4 @@ export type {
 export { cx } from "./utils/cx.ts";
 export { isDevelopment, warnOnce } from "./utils/dev.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
+export { isPressableElement } from "./utils/pressable.ts";

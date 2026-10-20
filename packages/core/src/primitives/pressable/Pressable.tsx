@@ -4,9 +4,7 @@ import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { cx } from "../../utils/cx.ts";
 import { isDevelopment, warnOnce } from "../../utils/dev.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
-
-const PRESSABLE_ELEMENTS =
-  'button, a[href], summary, input:not([type="hidden"]), select, textarea, [role][tabindex]:not([tabindex="-1"])';
+import { isPressableElement } from "../../utils/pressable.ts";
 
 function isButtonElement(node: ReactNode): boolean {
   return isValidElement(node) && node.type === "button";
@@ -46,7 +44,7 @@ export function Pressable({
 
   useLayoutEffect(() => {
     if (!isDevelopment || !asChild || !element.current) return;
-    if (element.current.matches(PRESSABLE_ELEMENTS)) return;
+    if (isPressableElement(element.current)) return;
     warnOnce(
       "Pressable",
       `asChild rendered a <${element.current.localName}>, which keyboards and screen readers can't press. Fix: give it a <button> or <a href> child, or put the Pressable inside the element instead: <Surface asChild><Pressable>…</Pressable></Surface>.`,
