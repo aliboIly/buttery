@@ -153,13 +153,14 @@ const CODE_LINE = [
   /^[}\])]+[;,)]*$/,
   /^[a-z-]+\s*:\s*[^;]+;$/,
   /^[.#]?[\w-]+(?:\s*[>+~]?\s*[.#]?[\w-]+)*\s*\{$/,
+  /^[.#]?[a-z][\w-]*(?:[\s>+~.#:[\]="'-]+[\w-]*)*\s*\{[^{}]*;\s*\}$/i,
 ];
 
 const COMMENT_RULES = [
   {
     id: "changelog-comment",
     test: (text) =>
-      /^(?:added|adds|updated|updates|fixed|fixes|changed|changes|removed|removes|refactored|new:|now\b)/i.test(
+      /^(?:added|updated|fixed|changed|removed|renamed|moved|refactored|new(?::|$)|now\b)/i.test(
         text,
       ),
     message: "reads like a change log",
@@ -344,7 +345,7 @@ export function findProseTells(text) {
   let run = 0;
   lines.forEach((line, index) => {
     const boldLabel =
-      /^\s*(?:[-*+]|\d+\.)\s+\*\*[^*]+\*\*\s*(?:[:.—–-]|$)/.test(line);
+      /^\s*(?:[-*+]|\d+\.)\s+\*\*[^*]+\*\*(?=[\s:.\u2014\u2013-]|$)/.test(line);
     run = boldLabel ? run + 1 : 0;
     if (run === 2) {
       findings.push({
