@@ -1,0 +1,25 @@
+# Private build material, never tracked
+/reference/
+/PROMPTS.md
+
+# Agent files are part of the project, even where a global ignore hides them
+!/CLAUDE.md
+!/.claude/
+
+node_modules/
+dist/
+.tsbuild/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+blob-report/
+__screenshots__/
+apps/*/src-tauri/target/
+apps/*/src-tauri/gen/schemas/
+
+.DS_Store
+*.log
+.env
+.env.*
+.claude/settings.local.json
