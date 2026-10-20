@@ -139,9 +139,9 @@ The `buttery` factory (like `motion.div`) turns any element or component into a 
 ```tsx
 import { buttery } from "@buttery/react";
 
-<buttery.div surface="card" pad={4} gap={3} enter="rise">…</buttery.div>
+<buttery.div surface="card" pad={4} stack gap={3} enter="rise">…</buttery.div>
 <buttery.button press focus>…</buttery.button>
-const ButteryThing = buttery(ThirdPartyCard, { surface: "raised", press: true, layout: true });
+const ButteryThing = buttery(ThirdPartyCard, { surface: "raised", hover: "lift", layout: true });
 ```
 Props (all optional, all token-typed so wrong values fail type-checking): `surface` (a `SurfaceLevel`: `app|panel|section|card|raised|floating|dialog|inset`; the prop is named after the recipe it applies, `.bt-surface[data-level]`, and takes the same type as `Surface`'s `level`, so it isn't a synonym), `radius` (`auto` = concentric from parent), `pad`, `gap` (spacing-scale steps), `stack`/`inline`/`grid`, `press`, `focus`, `hover` (`lift|tint`), `enter` (`fade|rise|pop|stagger`), `layout` (animate layout changes, off with reduced motion) with `layoutDependency` (the state that moves it, needed under the React Compiler), `truncate`. The factory renders a Motion element only when `enter` or `layout` is set, composes `Stack`, `Inline`, `Grid`, `Stagger` and `Surface` through `asChild`, and gives `buttery.button` `type="button"`.
 
