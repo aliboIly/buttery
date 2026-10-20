@@ -55,12 +55,18 @@ export interface OverflowClusterProps
   readonly moreLabel?: string | undefined;
   /** Where the items sit in the space the cluster fills. Defaults to `"start"`. */
   readonly justify?: "start" | "end" | undefined;
+  /**
+   * Height of the "More" button, to match the items: `"sm"` (28), `"control"` (34) or `"button"` (36, the
+   * default). Compact density shortens them like any control.
+   */
+  readonly size?: "sm" | "control" | "button" | undefined;
 }
 
 function OverflowClusterRoot({
   gap = 1,
   moreLabel = "More",
   justify = "start",
+  size = "button",
   ref,
   className,
   children,
@@ -92,7 +98,9 @@ function OverflowClusterRoot({
         widths.current,
         element.clientWidth,
         Number.parseFloat(style.columnGap) || 0,
-        Number.parseFloat(style.getPropertyValue("--bt-h-button")) || 0,
+        Number.parseFloat(
+          style.getPropertyValue("--bt-overflow-cluster-more-size"),
+        ) || 0,
       );
       flushSync(() => {
         setHidden((current) => (sameSet(current, next) ? current : next));
@@ -116,6 +124,7 @@ function OverflowClusterRoot({
           className={cx("bt-overflow-cluster", className)}
           data-bt="OverflowCluster"
           data-justify={justify}
+          data-size={size}
           {...spacingAttributes({ gap })}
         >
           {children}
@@ -168,27 +177,39 @@ function OverflowClusterRoot({
   );
 }
 
-export interface OverflowClusterItemProps {
+export interface OverflowClusterItemProps extends Omit<
+  ComponentPropsWithRef<"div">,
+  "hidden"
+> {
   /** Higher stays visible longer. Among equal priorities, later items move into the menu first. Defaults to `0`. */
   readonly priority?: number | undefined;
   /** The item's entry in the "More" menu once it no longer fits. */
   readonly menuItem: OverflowMenuItem;
+  /** What the row shows while the item fits, such as a button. */
   readonly children?: ReactNode;
 }
 
-/** One item in an `OverflowCluster`. */
+/** One item in an `OverflowCluster`. The cluster hides it, and lists it in the "More" menu, when it doesn't fit. */
 export function OverflowClusterItem({
   priority = 0,
   menuItem,
+  ref,
   children,
+  ...rest
 }: OverflowClusterItemProps): ReactElement {
   const id = useId();
   const registry = use(RegistryContext);
   const isHidden = use(HiddenContext).has(id);
   const element = useRef<HTMLDivElement>(null);
+  const merged = useMergedRefs(ref, element);
+  if (!registry) {
+    throw new Error(
+      "[buttery:OverflowCluster] OverflowCluster.Item has to be inside an <OverflowCluster>. Fix: <OverflowCluster><OverflowCluster.Item menuItem={…}>…</OverflowCluster.Item></OverflowCluster>",
+    );
+  }
 
   useLayoutEffect(() => {
-    if (!registry || !element.current) return undefined;
+    if (!element.current) return undefined;
     return registry.register({
       id,
       priority,
@@ -198,7 +219,7 @@ export function OverflowClusterItem({
   }, [registry, id, priority, menuItem]);
 
   return (
-    <div ref={element} data-bt-part="item" hidden={isHidden}>
+    <div {...rest} ref={merged} data-bt-part="item" hidden={isHidden}>
       {children}
     </div>
   );

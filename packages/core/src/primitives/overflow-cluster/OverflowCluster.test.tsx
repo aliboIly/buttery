@@ -1,11 +1,15 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { createRef } from "react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OverflowCluster } from "./OverflowCluster.tsx";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 const ACTIONS = [
   { label: "Undo", priority: 3 },
@@ -74,6 +78,63 @@ describe("OverflowCluster", () => {
     expect(items.map((item) => item.textContent)).toEqual(["Share", "Help"]);
     await userEvent.click(screen.getByRole("menuitem", { name: "Help" }));
     expect(onSelect).toHaveBeenCalledWith("Help");
+  });
+
+  it("sizes the More button to match its items", async () => {
+    render(
+      <div style={{ display: "flex", inlineSize: "60px" }}>
+        <OverflowCluster size="sm" moreLabel="More actions">
+          {["Undo", "Redo", "Help"].map((label) => (
+            <OverflowCluster.Item
+              key={label}
+              menuItem={{ label, onSelect: vi.fn() }}
+            >
+              <button
+                type="button"
+                style={{ inlineSize: "40px", blockSize: "28px" }}
+              >
+                {label}
+              </button>
+            </OverflowCluster.Item>
+          ))}
+        </OverflowCluster>
+      </div>,
+    );
+    const more = await screen.findByRole("button", { name: "More actions" });
+    const rect = more.getBoundingClientRect();
+    expect([rect.width, rect.height]).toEqual([28, 28]);
+  });
+
+  it("passes refs and props through to an item's element", () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <OverflowCluster>
+        <OverflowCluster.Item
+          ref={ref}
+          className="custom"
+          data-testid="item"
+          menuItem={{ label: "Undo", onSelect: vi.fn() }}
+        >
+          <button type="button">Undo</button>
+        </OverflowCluster.Item>
+      </OverflowCluster>,
+    );
+    expect(ref.current).toBe(screen.getByTestId("item"));
+    expect(ref.current?.className).toBe("custom");
+    expect(ref.current?.dataset["btPart"]).toBe("item");
+  });
+
+  it("says how to fix an item rendered outside a cluster", () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    expect(() =>
+      render(
+        <OverflowCluster.Item menuItem={{ label: "Undo", onSelect: vi.fn() }}>
+          <button type="button">Undo</button>
+        </OverflowCluster.Item>,
+      ),
+    ).toThrow(
+      /\[buttery:OverflowCluster\] OverflowCluster\.Item has to be inside an <OverflowCluster>\. Fix:/,
+    );
   });
 
   it("brings items back as the row grows", async () => {

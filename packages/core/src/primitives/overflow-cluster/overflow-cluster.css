@@ -1,9 +1,19 @@
 @layer bt.primitives {
   .bt-overflow-cluster {
+    --bt-overflow-cluster-more-size: var(--bt-h-button);
+
     display: flex;
     flex: 1 1 0;
     align-items: center;
     min-inline-size: 0;
+  }
+
+  .bt-overflow-cluster[data-size="sm"] {
+    --bt-overflow-cluster-more-size: var(--bt-h-sm);
+  }
+
+  .bt-overflow-cluster[data-size="control"] {
+    --bt-overflow-cluster-more-size: var(--bt-h-control);
   }
 
   .bt-overflow-cluster[data-justify="end"] {
@@ -24,8 +34,8 @@
     flex: none;
     align-items: center;
     justify-content: center;
-    inline-size: var(--bt-h-button);
-    block-size: var(--bt-h-button);
+    inline-size: var(--bt-overflow-cluster-more-size);
+    block-size: var(--bt-overflow-cluster-more-size);
     padding: 0;
     border: 0;
     border-radius: var(--bt-r-full);

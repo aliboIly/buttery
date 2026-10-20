@@ -3,12 +3,17 @@ import type { IconComponentProps } from "../icon/Icon.tsx";
 
 /** How a cluster item appears in the "More" menu once it no longer fits. */
 export interface OverflowMenuItem {
+  /** The menu item's text, usually the item's own label or tooltip. */
   readonly label: string;
+  /** Runs when the menu item is chosen; usually the item's own action. */
   readonly onSelect: () => void;
+  /** Icon before the label, such as the icon the item shows in the row. */
   readonly icon?: ComponentType<IconComponentProps> | undefined;
+  /** Shows the menu item but stops it being chosen. Defaults to `false`. */
   readonly disabled?: boolean | undefined;
 }
 
+/** One registered cluster item. */
 export interface OverflowEntry {
   readonly id: string;
   readonly priority: number;
@@ -19,7 +24,9 @@ export interface OverflowEntry {
 /** The items of one cluster, as an external store the cluster subscribes to. */
 export interface OverflowRegistry {
   readonly subscribe: (listener: () => void) => () => void;
+  /** The registered items in document order. */
   readonly getSnapshot: () => readonly OverflowEntry[];
+  /** Adds or replaces an item and returns the function that removes it. */
   readonly register: (entry: OverflowEntry) => () => void;
 }
 
@@ -30,6 +37,7 @@ function inDocumentOrder(a: OverflowEntry, b: OverflowEntry): number {
     : 1;
 }
 
+/** A registry for one cluster's items. */
 export function createOverflowRegistry(): OverflowRegistry {
   const listeners = new Set<() => void>();
   let entries: readonly OverflowEntry[] = [];
@@ -54,16 +62,16 @@ export function createOverflowRegistry(): OverflowRegistry {
   };
 }
 
-/**
- * Which entries to hide so the rest fit in `available` px, given each entry's width, the gap between
- * items and the width of the "More" trigger. Lowest priority goes first; among equals, the last one.
- */
 /** The fields of an entry that decide whether it stays visible. */
 export interface Prioritized {
   readonly id: string;
   readonly priority: number;
 }
 
+/**
+ * Which entries to hide so the rest fit in `available` px, given each entry's width, the gap between
+ * items and the width of the "More" trigger. Lowest priority goes first; among equals, the last one.
+ */
 export function entriesToHide(
   entries: readonly Prioritized[],
   widths: ReadonlyMap<string, number>,

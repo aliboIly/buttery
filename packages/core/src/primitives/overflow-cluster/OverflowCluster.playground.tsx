@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { CircleHelp, Copy, Download, Redo2, Share2, Undo2 } from "lucide-react";
 import {
+  Center,
   Icon,
   OverflowCluster,
   Pressable,
@@ -28,11 +29,21 @@ function Cluster(): ReactElement {
           priority={priority}
           menuItem={{ label, icon, onSelect: () => undefined }}
         >
-          <Pressable aria-label={label} title={label}>
-            <Surface level="raised" padX={3} padY={2} radius="full">
-              <Icon icon={icon} />
-            </Surface>
-          </Pressable>
+          <Surface
+            asChild
+            level="raised"
+            radius="full"
+            style={{
+              inlineSize: "var(--bt-h-button)",
+              blockSize: "var(--bt-h-button)",
+            }}
+          >
+            <Center asChild>
+              <Pressable aria-label={label} title={label}>
+                <Icon icon={icon} />
+              </Pressable>
+            </Center>
+          </Surface>
         </OverflowCluster.Item>
       ))}
     </OverflowCluster>
