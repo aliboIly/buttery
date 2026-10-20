@@ -1,5 +1,9 @@
 import type { ESLint, Linter } from "eslint";
-import { noLiteralLayoutStyle, spreadRestProps } from "./rules.ts";
+import {
+  noLiteralLayoutStyle,
+  spreadRestProps,
+  tailwindTokens,
+} from "./rules.ts";
 
 /** The ESLint plugin with buttery's rules. */
 export const butteryEslintPlugin: ESLint.Plugin = {
@@ -7,6 +11,7 @@ export const butteryEslintPlugin: ESLint.Plugin = {
   rules: {
     "no-literal-layout-style": noLiteralLayoutStyle,
     "spread-rest-props": spreadRestProps,
+    "tailwind-tokens": tailwindTokens,
   },
 };
 
@@ -15,11 +20,17 @@ export interface ButteryEslintOptions {
   readonly components?: readonly string[] | undefined;
   /** Files the rules skip, such as tests and fixtures. */
   readonly ignores?: readonly string[] | undefined;
+  /**
+   * Check Tailwind classes against the tokens: no positioning, raw arbitrary values, Tailwind palette or
+   * off-scale spacing. Defaults to `true`; turn it off if your own class names collide with Tailwind's.
+   */
+  readonly tailwind?: boolean | undefined;
 }
 
 /**
- * buttery's ESLint config: no literal margins, z-index, position or sizes in inline styles, and components
- * that accept DOM props spread the rest onto their root element.
+ * buttery's ESLint config: no literal margins, z-index, position or sizes in inline styles, Tailwind
+ * classes that go through the tokens, and components that accept DOM props spread the rest onto their
+ * root element.
  *
  * @example
  * // eslint.config.js
@@ -46,7 +57,12 @@ export function butteryEslintConfig(
       files: ["**/*.tsx", "**/*.jsx"],
       ignores,
       plugins: { buttery: butteryEslintPlugin },
-      rules: { "buttery/no-literal-layout-style": "error" },
+      rules: {
+        "buttery/no-literal-layout-style": "error",
+        ...(options.tailwind === false
+          ? {}
+          : { "buttery/tailwind-tokens": "error" }),
+      },
     },
     {
       files: [...components],
