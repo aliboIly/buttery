@@ -50,6 +50,7 @@ Sampled by `apps/playground/e2e/motion.spec.ts` in Chromium and WebKit: `snappy`
 |---|---|
 | `--bt-dur-instant` | 0ms |
 | `--bt-dur-press` | 80ms (pointer-down scale) |
+| `--bt-dur-reduced` | 100ms (the longest fade with reduced motion) |
 | `--bt-dur-fast` | 120ms (hover color, exits, text crossfade) |
 | `--bt-dur-base` | 200ms (enters: menu, toast, dialog opacity) |
 | `--bt-dur-slow` | 300ms (backdrop blur in, crop-mode bg fade) |
@@ -57,6 +58,9 @@ Sampled by `apps/playground/e2e/motion.spec.ts` in Chromium and WebKit: `snappy`
 | `--bt-ease-in` | `cubic-bezier(0.4, 0, 1, 1)` (exits) |
 | `--bt-ease-standard` | `cubic-bezier(0.2, 0, 0, 1)` (everything else) |
 | `--bt-stagger` | 50ms (40–60 range) |
+| `--bt-entrance-max` | 900ms (the longest choreographed entrance, stagger included) |
+| `--bt-loop-cycle` | 4000ms (one `Loop` step) |
+| `--bt-celebration` | 900ms (a confetti burst's life) |
 | `--bt-delay-hover-open` / `--bt-delay-hover-close` | 80ms / 150ms (hover-intent for menus and tooltips; tooltips use 500ms open) |
 
 Never use `transition: all`. Transition only `opacity`, `transform`, `background-color`, `color`, `box-shadow`, `filter` and `backdrop-filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS. Two size animations are sanctioned: `Morph`'s height (§5) and the `MorphMenu` viewport's size and position (§4.1).

@@ -9,7 +9,7 @@ import {
   useButteryTransition,
 } from "../../motion/transitions.ts";
 import { useAnimationTracking } from "../../motion/use-animation-tracking.ts";
-import { durations, easingCurves } from "../../tokens/motion.ts";
+import { durations, easingCurves, spring } from "../../tokens/motion.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 
@@ -108,7 +108,7 @@ export function Morph({
       data-bt="Morph"
       initial={false}
       animate={size ? { height: size.height } : {}}
-      transition={size?.animate ? transition : { duration: 0 }}
+      transition={size?.animate ? transition : spring.instant}
       onAnimationStart={() => {
         outer.current?.setAttribute("data-animating", "");
         tracking.onAnimationStart();

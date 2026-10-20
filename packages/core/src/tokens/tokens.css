@@ -121,6 +121,7 @@
     --bt-z-dev: 90;
     --bt-dur-instant: 0ms;
     --bt-dur-press: 80ms;
+    --bt-dur-reduced: 100ms;
     --bt-dur-fast: 120ms;
     --bt-dur-base: 200ms;
     --bt-dur-slow: 300ms;
@@ -132,6 +133,8 @@
     --bt-delay-hover-close: 150ms;
     --bt-delay-tooltip: 500ms;
     --bt-loop-cycle: 4000ms;
+    --bt-entrance-max: 900ms;
+    --bt-celebration: 900ms;
     --bt-press-scale: 0.97;
     --bt-icon-stroke: 1.75;
     --bt-text-title-size: 15px;

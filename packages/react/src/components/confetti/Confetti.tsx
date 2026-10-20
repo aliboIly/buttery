@@ -1,7 +1,12 @@
 import { motion } from "motion/react";
 import { useEffect, useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
-import { Layer, trackAnimation, useMotionPreference } from "@buttery/core";
+import {
+  Layer,
+  timing,
+  trackAnimation,
+  useMotionPreference,
+} from "@buttery/core";
 import { gradients } from "@buttery/core/palettes";
 import {
   addBurst,
@@ -17,7 +22,7 @@ const COLORS = gradients
   .filter((preset) => FRESH.has(preset.id))
   .flatMap((preset) => [preset.fromHex, preset.toHex]);
 
-const LIFE = 0.9;
+const LIFE = timing.celebration / 1000;
 const GRAVITY = 1800;
 const CONE = Math.PI / 3;
 const STEPS = 12;

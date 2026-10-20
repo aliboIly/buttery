@@ -22,7 +22,7 @@ export const fadeOut: Transition = {
 /** Reduced motion: transforms land at once and opacity fades in at most 100ms (MOTION_SPEC rule 10). */
 export const reducedTransition: Transition = {
   default: spring.instant,
-  opacity: { duration: 0.1, ease: "linear" },
+  opacity: { duration: seconds(durations.reduced), ease: "linear" },
 };
 
 /**

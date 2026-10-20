@@ -1,18 +1,13 @@
 import { animate, inView, stagger } from "motion";
 import type { DOMKeyframesDefinition } from "motion";
-import {
-  durations,
-  easingCurves,
-  spring,
-  timing,
-  travel,
-} from "../tokens/motion.ts";
+import { spring, timing, travel } from "../tokens/motion.ts";
 import { trackAnimation } from "./settle.ts";
+import { fadeIn } from "./transitions.ts";
 
 const HIDDEN_TRANSFORM = `translateY(${String(travel.reveal)}px)`;
 const SHOWN_TRANSFORM = "translateY(0px)";
 const AMOUNT = 0.15;
-const LONGEST_ENTRANCE = 0.9;
+const LONGEST_ENTRANCE = timing["entrance-max"] / 1000;
 
 const arrive: DOMKeyframesDefinition = {
   opacity: [0, 1],
@@ -21,7 +16,7 @@ const arrive: DOMKeyframesDefinition = {
 
 const arriveOptions = {
   default: spring.gentle,
-  opacity: { duration: durations.base / 1000, ease: easingCurves.out },
+  opacity: fadeIn,
 };
 
 // Waiting items are only transparent: an offset there would push them past their container until they arrive.

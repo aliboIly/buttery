@@ -1,7 +1,8 @@
-/** Durations in milliseconds, emitted as `--bt-dur-<name>`. */
+/** Durations in milliseconds, emitted as `--bt-dur-<name>`. `reduced` is the longest fade with reduced motion. */
 export const durations = {
   instant: 0,
   press: 80,
+  reduced: 100,
   fast: 120,
   base: 200,
   slow: 300,
@@ -58,13 +59,18 @@ export const travel = {
 /** The scale menus and dialogs grow from as they arrive. Leaving, they fade without shrinking. */
 export const enterScale = 0.97;
 
-/** Timing tokens that aren't durations of a single transition, in milliseconds. */
+/**
+ * Timing tokens that aren't durations of a single transition, in milliseconds: the gap between staggered
+ * items, hover-intent delays, one `Loop` step, the longest choreographed entrance and a confetti burst's life.
+ */
 export const timing = {
   stagger: 50,
   "delay-hover-open": 80,
   "delay-hover-close": 150,
   "delay-tooltip": 500,
   "loop-cycle": 4000,
+  "entrance-max": 900,
+  celebration: 900,
 } as const;
 
 /** Scale applied while a pressable element is held down. */
