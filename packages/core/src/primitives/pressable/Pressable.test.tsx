@@ -2,9 +2,13 @@ import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { Surface } from "../surface/Surface.tsx";
 import { Pressable } from "./Pressable.tsx";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 describe("Pressable", () => {
   it("is a button that never submits by accident", async () => {
@@ -46,5 +50,53 @@ describe("Pressable", () => {
     const link = screen.getByRole("link", { name: "Card" });
     expect(link.className).toBe("bt-pressable bt-press bt-focus custom");
     expect(link.dataset["bt"]).toBe("Pressable");
+    expect(link.hasAttribute("type")).toBe(false);
+  });
+
+  it('keeps type="button" on a button child', () => {
+    render(
+      <Pressable asChild>
+        <button>Rename</button>
+      </Pressable>,
+    );
+    expect(
+      screen.getByRole("button", { name: "Rename" }).getAttribute("type"),
+    ).toBe("button");
+  });
+
+  it("warns when asChild renders something people can't press", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <>
+        <Pressable asChild>
+          <a href="#card">Card</a>
+        </Pressable>
+        <Pressable asChild>
+          <div>Spring launch</div>
+        </Pressable>
+      </>,
+    );
+    expect(warn).toHaveBeenCalledOnce();
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "[buttery:Pressable] asChild rendered a <div>, which keyboards and screen readers can't press. Fix:",
+      ),
+    );
+  });
+
+  it("becomes the surface it's placed in, keeping the surface's look", () => {
+    render(
+      <Surface asChild level="raised" padX={4} padY={2}>
+        <Pressable>Export</Pressable>
+      </Surface>,
+    );
+    const button = screen.getByRole("button", { name: "Export" });
+    const style = getComputedStyle(button);
+    expect(button.classList.contains("bt-surface")).toBe(true);
+    expect(style.paddingLeft).toBe("16px");
+    expect(style.paddingTop).toBe("8px");
+    expect(style.borderTopLeftRadius).toBe("12px");
+    expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+    expect(style.cursor).toBe("pointer");
   });
 });
