@@ -10,5 +10,6 @@
     "outDir": "${configDir}/.tsbuild",
     "tsBuildInfoFile": "${configDir}/.tsbuild/tsconfig.tsbuildinfo"
   },
-  "include": ["${configDir}/src"]
+  "include": ["${configDir}/src"],
+  "exclude": ["${configDir}/src/**/*.test.ts", "${configDir}/src/**/*.test.tsx"]
 }

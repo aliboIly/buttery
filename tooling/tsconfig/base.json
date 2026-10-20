@@ -7,9 +7,9 @@
     "moduleDetection": "force",
     "customConditions": ["@buttery/source"],
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "types": [],
-
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
