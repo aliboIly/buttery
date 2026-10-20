@@ -15,7 +15,7 @@ Page layout follows a strict grid with a consistent section rhythm: split heroes
 ## 1. The 13 non-negotiables
 
 1. **Flow layout only.** Siblings are positioned by `Stack` / `Inline` / `Grid` with `gap` from the spacing scale. Components never set their own outer margin. Negative margins are banned.
-2. **Out-of-flow is owned.** In app code and patterns, `position: absolute|fixed|sticky` is off-limits. It lives only in (a) layer primitives in `packages/core/src/layers/` (`Popover`, `Menu`, `Tooltip`, `Dialog`, `Toast`, `FloatingToolbar`, `Scrim`, `Sticky`), which render into portals and use z-index tokens; and (b) a component's own internal parts (a slider thumb, a segmented indicator, `FitBox` content), which stamp `data-bt-part`.
+2. **Out-of-flow is owned.** In app code and patterns, `position: absolute|fixed|sticky` is off-limits. It lives only in (a) layer primitives in `packages/core/src/layers/` (`Layer`/`Portal`, `Popover`, `Scrim`, `Sticky`, `FloatingLanes`), which render into portals and use z-index tokens; and (b) a component's own internal parts (a slider thumb, a segmented indicator, `FitBox` content), which stamp `data-bt-part`. The overlay components in `@buttery/react` (`Menu`, `Select`, `Tooltip`, `Dialog`, `Toast`, `FloatingToolbar`) are built on those primitives and never set `position` themselves.
 3. **Floating lanes.** Free-floating UI (toasts, notices) lives in a `FloatingLanes` lane (`bottom-center`, `bottom-end`, `top-end`): items stack with an 8px gap and respect safe insets (sticky header/footer, macOS titlebar). Anchored floating UI (a crop toolbar under its crop box) is positioned by its anchor but registers its rect as an obstacle, so lane items move clear of it. A toolbar and a toast can never cover each other.
 4. **Collision-aware overlays.** Popovers/menus: `avoidCollisions`, `collisionPadding={8}`, side offset 8, never cover their trigger, `max-height` = available space with internal scroll.
 5. **No component chooses its own height.** Heights come from tokens (`--bt-h-*`). Widths are intrinsic, fluid (`minmax(0,1fr)`), or a named token (`--bt-w-*`).
@@ -72,7 +72,7 @@ grid-template-columns: minmax(0,1fr) var(--bt-w-inspector); gap: 8px;
 height: 100dvh; overflow: hidden;
 ```
 - The inspector is full-height (it runs alongside the header). Its body scrolls; its footer is sticky.
-- `< 900px` container width: inspector becomes a bottom sheet (or side drawer on desktop app) toggled from the header; stage takes full width.
+- `< 900px` container width: the inspector becomes a bottom sheet toggled from the header; stage takes full width. (A desktop window never gets this narrow; its minimum width is 960.)
 - Desktop (Tauri): `HeaderBar dragRegion` adds `data-tauri-drag-region` and reserves `--bt-inset-titlebar` on the left for macOS traffic lights when the window uses an overlay title bar. Minimum window 960×640.
 
 ### Inspector rows
@@ -137,11 +137,11 @@ Runs in Playwright against every playground route and every app built on buttery
 | **Viewport fit** | A floating layer extends past the viewport minus 8px. |
 | **Layering** | A z-index that isn't a `--bt-z-*` token. |
 | **Accessibility** | axe-core serious/critical violations, or text contrast below AA. |
-| **Stability** | During a scripted interaction, a `[data-bt]` element that isn't the interaction target (or animating as its direct result) moves by > 1px — measured by sampling element rects before/after, not by the browser's CLS metric (which ignores shifts right after input). After the last animation finishes plus 1s idle, anything still moving must be a declared `Loop`. |
+| **Stability** | During a scripted interaction, a `[data-bt]` element that isn't the interaction target (or animating as its direct result) moves by > 1px — measured by sampling element rects before/after, not by the browser's CLS metric (which ignores shifts right after input). Once buttery reports settled (below), anything still moving must be a declared `Loop`. |
 
-How checks run: wait until `document.getAnimations()` is empty (plus 1s idle) before measuring, so in-flight springs and staggered entrances never cause false failures. The report is human-readable **and** JSON (`--reporter=json`), with selector, rule, measured value and a suggested fix — so coding agents can self-correct.
+How checks run: static checks emulate reduced motion and wait for buttery's settled flag before measuring. buttery counts its own running animations (every motion primitive registers when an animation starts and when it finishes; `Loop`s don't count) and sets `data-bt-settled` on `<html>` while the count is zero. `document.getAnimations()` can't stand in for this: Motion runs springs and `layout` animations on requestAnimationFrame, and those never appear there. Motion itself is verified separately by the Phase 3 sampling tests. The report is human-readable **and** JSON (`--reporter=json`), with selector, rule, measured value and a suggested fix — so coding agents can self-correct.
 
-Default matrix: viewports `390×844, 768×1024, 960×640, 1280×800, 1440×900, 1728×1117` × themes `light, dark` × densities `comfortable, compact`, in **Chromium and WebKit** (Tauri on macOS renders with WKWebView, so WebKit is the desktop truth). Failures print the offending selectors and save an annotated screenshot.
+Default matrix: viewports `390×844, 768×1024, 960×640, 1280×800, 1440×900, 1728×1117` × themes `light, dark` × densities `comfortable, compact`, in **Chromium and WebKit** (Tauri on macOS renders with WKWebView, so WebKit is the closest stand-in for the desktop app). Failures print the offending selectors and save an annotated screenshot. `pnpm check` runs the pages you changed at `390×844` and `1280×800`, light and dark, comfortable, in both engines; the full matrix runs with `pnpm test:layout` and at every phase stop. Playwright's WebKit is its own build rather than the system WebKit, so each phase stop also includes a short pass in the real desktop app.
 
 ### `LayoutGuard` (dev only)
 Mounted by `ButteryProvider` in development. Re-checks overlap, overflow and off-scale values on resize/mutation (debounced), outlines offenders in red with a label, and logs a grouped console report. `⌥⇧L` toggles it. Zero cost in production builds (tree-shaken).

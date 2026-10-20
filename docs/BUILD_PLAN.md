@@ -3,7 +3,8 @@
 Nine phases (0–8). Each ends with a **hard stop**: the agent shows screenshots + a short summary and waits for the go-ahead. Guardrails (Phase 2) come *before* components, so every component after is checked automatically. `ROADMAP.md` mirrors these phases as checkboxes — tick them as items land.
 
 Definition of done for every phase:
-- `pnpm check` passes (typecheck, lint, stylelint, unit tests; from Phase 2 on, also `expectButtery` on the phase's playground pages in Chromium + WebKit).
+- `pnpm check` passes (authorship and private-path checks, typecheck, lint, stylelint, format, unit and smoke tests; from Phase 2 on, also `expectButtery` on changed pages at 390 and 1280, light and dark, comfortable, in Chromium + WebKit).
+- From Phase 2 on, `pnpm test:layout` passes the full matrix. A short manual pass in the real desktop app finds nothing wrong.
 - Playground pages for everything built in the phase, light + dark, comfortable + compact.
 - Side-by-side screenshots against the relevant `reference/` images, with differences listed honestly.
 - `docs/DECISIONS.md` updated with any judgment calls; `ROADMAP.md` ticked.
@@ -51,7 +52,7 @@ Definition of done for every phase:
 ## Phase 4 — Controls
 - `Button` (primary/secondary/soft/ghost, sm/md/cta, pill/rounded, loading, icon slots, `arrow`), `IconButton`, `SplitButton`, `SegmentedControl`, `Slider` (+ `ValueBadge`, detents, double-click reset), `Chip`, `Tooltip`, `Kbd`, `ArrowLink`, `NumberField`.
 
-**Accept:** a Compare page with each control next to its crop from the references (light + dark); keyboard + screen-reader tests; `expectButtery` green.
+**Accept:** a Compare page with each control next to its crop from the references (light + dark). The page is local only: it reads from `reference/`, hides itself when the folder is missing, and is left out of builds and CI. Keyboard + screen-reader tests; `expectButtery` green.
 
 ## Phase 5 — Inspector & app patterns
 - `SwatchGrid`, `ColorDot`, `TiltPad`, `AnchorGrid`, `Menu`, `Select` (footer slot), `Toast`, `FloatingToolbar`, `EmptyState`/`DropZone`, `Stage`, `Inspector` (Section/Row/Row.Split/Footer), `HeaderBar` (`OverflowCluster`, `dragRegion`), `AppShell`.

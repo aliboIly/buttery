@@ -10,22 +10,25 @@ Targets: web apps and desktop apps (Tauri v2 wraps the same web code).
 
 | Concern | Choice |
 |---|---|
-| Language / UI | TypeScript 7, React 19 |
+| Language / UI | TypeScript 7 for type-checking (TypeScript 6.0 alongside it for typescript-eslint), React 19 |
+| Browser baseline | Safari 17.5+ and current Chromium; newer CSS such as `text-box-trim` only as progressive enhancement |
 | Monorepo | pnpm workspaces |
 | Accessible behavior | `radix-ui` (unified package) — Dialog, DropdownMenu, NavigationMenu, Popover, Slider, ToggleGroup, RadioGroup, Tooltip, Slot |
 | Motion | `motion` (`motion/react`) |
 | Icons | `lucide-react` (16px, stroke 1.75) |
 | Styling | Plain CSS + CSS custom properties, in cascade layers. No CSS-in-JS runtime. Optional Tailwind v4 bridge. |
-| Font | Inter Variable via `@fontsource-variable/inter` (bundled — works offline in desktop apps) |
+| Font | Inter Variable via `@fontsource-variable/inter`, a dependency of `@buttery/core` (bundled, so desktop apps work offline) |
 | Library build | `tsdown` (ESM + `.d.ts`), CSS concatenated per package |
-| App build | Vite 8 |
+| App build | Vite 8 with `@vitejs/plugin-react` |
+| React Compiler | On in the apps (`babel-plugin-react-compiler` through `@rolldown/plugin-babel`, which needs `@babel/core`); library code stays compiler-compatible through `eslint-plugin-react-hooks` |
 | Desktop | Tauri v2 |
-| Tests | Vitest + Testing Library (behavior), Playwright in Chromium **and WebKit** (layout, visual, a11y via `@axe-core/playwright`) |
-| Formatting / lint | Prettier, ESLint (typescript-eslint), stylelint |
+| Tests | Vitest + Testing Library (`@testing-library/react`, `@testing-library/user-event`): pure logic in Node, components in browser mode (`@vitest/browser-playwright`, Chromium and WebKit). Playwright in Chromium **and WebKit** for app smoke tests, layout, visual and a11y (`@axe-core/playwright`) |
+| Formatting / lint | Prettier, ESLint 10 (typescript-eslint, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`, `@eslint/js`, `globals`), stylelint |
+| Tooling | `@types/node` for configs and scripts |
 | Agent tooling | `@modelcontextprotocol/sdk` (for `@buttery/mcp`) |
 | Releases | Changesets |
 
-**TypeScript 7 caveat:** TS 7 is the native (Go) compiler. Use it for type-checking, but some tools (`.d.ts` emit in tsdown, typescript-eslint) may still need the JS-API `typescript` package. In Phase 0, verify both work; if not, install TS 6 alongside for tooling and record it in `docs/DECISIONS.md`.
+**TypeScript 7 and 6:** TS 7 is the native (Go) compiler and has no classic compiler API, so typescript-eslint (which accepts `typescript` < 6.1) runs on TS 6.0, installed as `typescript`. TS 7 is installed as `typescript-native` and `pnpm typecheck` runs it by path. tsdown emits `.d.ts` through oxc because packages use `isolatedDeclarations`, so it needs neither. Verified in Phase 0; see `docs/DECISIONS.md`.
 
 ## Repo layout
 
@@ -50,9 +53,12 @@ buttery/
 │  ├─ playground/                # every component × state × theme × density; demo screens; docs pages; Playwright target
 │  └─ starter/                   # template for new apps: Vite + React + Tauri v2, wired up, with agent files + skill
 ├─ scripts/
+│  ├─ check-ai-tells.mjs         # authorship checks (pnpm check + commit-msg hook)
+│  ├─ check-private-paths.mjs    # fails if reference/ or PROMPTS.md is tracked
 │  ├─ new-component.mjs          # scaffolds a component that already follows every rule
 │  └─ new-app.mjs                # copies apps/starter → apps/<name>
-└─ tooling/                      # shared tsconfig, vite, playwright configs
+├─ .githooks/                    # commit-msg and pre-commit, installed by pnpm install
+└─ tooling/                      # shared tsconfig presets
 ```
 
 ## The layers ("the butter stack")
@@ -77,6 +83,8 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                NavBar + MorphMenu, SubNav, Page/Section/Container, SplitHero, CenteredHero,
                Bento + ExpandableCard, StatStrip, LogoStrip, ArticleLayout, Footer
 ```
+
+Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, Select, Tooltip, Dialog, Toast, FloatingToolbar) are built on the layer primitives.
 
 CSS cascade layers, declared once in `@buttery/core/styles.css`:
 ```css
@@ -105,7 +113,7 @@ import { buttery } from "@buttery/react";
 <buttery.button press focus>…</buttery.button>
 const ButteryThing = buttery(ThirdPartyCard, { surface: "raised", press: true, layout: true });
 ```
-Props (all optional, all token-typed so wrong values fail type-checking): `surface` (`panel|section|card|raised|floating|dialog|inset`), `radius` (`auto` = concentric from parent), `pad`, `gap` (spacing-scale steps), `stack`/`inline`/`grid`, `press`, `focus`, `hover` (`lift|tint`), `enter` (`fade|rise|pop|stagger`), `layout` (animate layout changes), `truncate`.
+Props (all optional, all token-typed so wrong values fail type-checking): `surface` (a `SurfaceLevel`: `panel|section|card|raised|floating|dialog|inset`; the prop is named after the recipe it applies, `.bt-surface[data-level]`, and takes the same type as `Surface`'s `level`, so it isn't a synonym), `radius` (`auto` = concentric from parent), `pad`, `gap` (spacing-scale steps), `stack`/`inline`/`grid`, `press`, `focus`, `hover` (`lift|tint`), `enter` (`fade|rise|pop|stagger`), `layout` (animate layout changes), `truncate`.
 
 Same thing without React — recipes are plain classes/attributes:
 ```html
@@ -129,7 +137,7 @@ Same thing without React — recipes are plain classes/attributes:
 ## Component contract (every component, no exceptions)
 
 - Accepts `ref` as a regular prop (React 19 — no `forwardRef`); spreads `...rest` onto the root; accepts `className` and `style`.
-- Controlled **and** uncontrolled (`value` / `defaultValue` / `onValueChange` — same names everywhere).
+- Controlled **and** uncontrolled, with the same names everywhere: `value` / `defaultValue` / `onValueChange` for a selected value, and `open` / `defaultOpen` / `onOpenChange` for anything that opens (dialogs, menus, popovers, tooltips, sheets).
 - Shared prop vocabulary: `size`, `variant`, `disabled`, `label`, `asChild`. No synonyms.
 - `asChild` where it wraps a single element (Radix `Slot`).
 - Stamps `data-bt="<Name>"` plus state attributes (`data-state`, `data-size`, `data-variant`, `data-disabled`) — styling hooks and what `LayoutGuard`/`@buttery/test` scan. Fixed-height controls also stamp `data-bt-control`; internal parts stamp `data-bt-part`; extended hit areas use `data-bt-hit`.
@@ -151,11 +159,11 @@ Same thing without React — recipes are plain classes/attributes:
 
 ## Desktop (Tauri v2)
 
-- `apps/starter` includes `src-tauri/` (generated with `pnpm tauri init`). Window: 1280×820 default, min 960×640, macOS overlay title bar (`titleBarStyle: "Overlay"`, `hiddenTitle: true`).
+- `apps/starter` includes `src-tauri/` (generated with `pnpm tauri init`). Window: 1280×820 default, min 960×640, macOS overlay title bar (`titleBarStyle: "Overlay"`, `hiddenTitle: true`) with `trafficLightPosition` placing the window controls inside the 56px header. macOS first: other platforms get native window decorations.
 - `HeaderBar dragRegion` → `data-tauri-drag-region` + `--bt-inset-titlebar` for the traffic lights.
 - No network fonts or CDN assets anywhere (desktop must work offline).
 - Shortcuts use a shared `useShortcut("mod+o", …)` that maps `mod` to ⌘/Ctrl per platform.
-- Layout checks run in WebKit too, because Tauri on macOS renders with WKWebView.
+- Layout checks run in WebKit too, because Tauri on macOS renders with WKWebView. Playwright's WebKit is its own build, so every phase stop also includes a short manual pass in the real desktop app.
 
 ## Starting a new app
 
@@ -169,4 +177,4 @@ Outside the monorepo (after publishing): `npx create-buttery my-app`, or `npx bu
 
 ## Publishing (later)
 
-`buttery` is taken on npm (placeholder package). Before publishing, create the npm org `buttery` to own `@buttery/*` — or publish under your own scope. Workspace names work locally regardless. Packages ship their docs (`@buttery/core/docs/*.md`), `llms.txt`, and `manifest.json` so agents in consuming apps can read them from `node_modules`.
+Packages publish under the `@buttery` npm org; the unscoped `buttery` name belongs to someone else, and `create-buttery` is free. The packages stay `private` until the first publish in Phase 8. Packages ship their docs (`@buttery/core/docs/*.md`), `llms.txt`, and `manifest.json` so agents in consuming apps can read them from `node_modules`.

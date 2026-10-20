@@ -57,7 +57,7 @@ Use these names everywhere (`@buttery/core/motion` exports them for Motion; CSS 
 | `--bt-stagger` | 50ms (40–60 range) |
 | `--bt-delay-hover-open` / `--bt-delay-hover-close` | 80ms / 150ms (hover-intent for menus and tooltips; tooltips use 500ms open) |
 
-Never use `transition: all`. Transition only `opacity`, `transform`, `background-color`, `color`, `box-shadow`, `filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS.
+Never use `transition: all`. Transition only `opacity`, `transform`, `background-color`, `color`, `box-shadow`, `filter` and `backdrop-filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS. Two size animations are sanctioned: `Morph`'s height (§5) and the `MorphMenu` viewport's size and position (§4.1).
 
 ---
 
@@ -100,7 +100,7 @@ Never use `transition: all`. Transition only `opacity`, `transform`, `background
 ### 4.1 Morphing menu (`MorphMenu`)
 Hovering between top-level nav items never closes the panel: one floating surface **resizes and repositions** to fit each section. Build it on Radix `NavigationMenu` (its shared `Viewport` exposes the active content's size as CSS variables, and it handles hover intent and keyboard navigation).
 - Open: `dur-base` (measured ~170ms). Panel fades in + scale 0.98 → 1 from the trigger. Page behind: `backdrop-filter: blur(10px)` + `rgba(255,255,255,.55)` wash over `--bt-dur-slow`.
-- Switch: panel width/height/x animate with `spring.morph`; old content fades out (100ms) while new content fades in sliding 8–12px **from the direction of travel**.
+- Switch: panel width/height/x animate with `spring.morph`; old content fades out (100ms) while new content fades in sliding 8–12px **from the direction of travel**. The viewport's width, height and x are the second sanctioned size animation: Radix exposes the active content's size as CSS variables, and Motion animates that one element.
 - Close: panel fades `dur-fast`; blur clears `dur-base`. Hover-intent delays: `--bt-delay-hover-open` / `-close` (prevents flicker when moving diagonally).
 - buttery look: white `floating` surface, r16, buttery tokens.
 
@@ -138,7 +138,7 @@ Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus ov
 - Motion library: `motion` (`import { motion, AnimatePresence, LayoutGroup, MotionConfig } from "motion/react"`).
 - `ButteryProvider` wraps the app in `<MotionConfig reducedMotion="user" transition={spring.smooth}>` — but `reducedMotion="user"` only disables transform/layout animations; opacity still runs at full length. So components never hardcode transitions: they ask `useButteryTransition("smooth" | "snappy" | "fade" | …)`, which returns the normal preset, or the reduced set (transforms instant, opacity ≤ 100ms) when the user prefers reduced motion (or `ButteryProvider reducedMotion` forces it).
 - Shared indicators (segmented, dots, anchor grid): one element with a stable `layoutId` scoped by `useId()` inside a `LayoutGroup` so two instances never fight.
-- Auto-height (`Morph`): measure content with `ResizeObserver` and let Motion animate the wrapper's `height` (overflow clipped during the animation). This is the **one sanctioned height animation** — CSS transitions on width/height/top/left stay banned. Content uses `AnimatePresence mode="popLayout"` crossfade.
+- Auto-height (`Morph`): measure content with `ResizeObserver` and let Motion animate the wrapper's `height` (overflow clipped during the animation). This is one of the **two sanctioned size animations** (the other is the `MorphMenu` viewport, §4.1); CSS transitions on width/height/top/left stay banned. Content uses `AnimatePresence mode="popLayout"` crossfade.
 - Morph surfaces: animate a single `motion.div` with `layout` and keep it mounted between states.
 - Never animate on the main thread during drags: use pointer events + `transform` only; batch with `requestAnimationFrame`.
 - Every animated component must render correctly with motion disabled (this is a test).

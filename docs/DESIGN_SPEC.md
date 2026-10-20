@@ -20,18 +20,19 @@ Never copy either product's branding, names, icons, illustrations, copy or gradi
 | `--bt-bg-app` | `#f3f3f4` | Page / stage background behind everything |
 | `--bt-bg-surface` | `#ffffff` | Cards: header bar, inspector panel, inner rows, dialogs, menus, toolbars |
 | `--bt-bg-section` | `#f7f7f7` | Group "wells" (section backgrounds in the inspector) |
-| `--bt-bg-inset` | `#fafafa` | Small recessed controls: tilt pad, anchor-grid box |
+| `--bt-bg-inset` | `#fefefe` | Small recessed controls: tilt pad, anchor-grid box. Measured on the anchor box; the tilt pad reads `#fcfcfc`–`#fdfdfd` under its knob's shadow. |
 | `--bt-bg-control` | `#f1f1f1` | Segmented track, value badge, soft button, hover fill |
 | `--bt-bg-control-subtle` | `#f9f9f9` | Disabled soft button, disabled chip |
 | `--bt-bg-item-hover` | `#f7f7f7` | Menu item hover |
 | `--bt-bg-control-active` | `#ececec` | Ghost trigger while its menu is open |
 | `--bt-border` | `#ebebeb` | Row dividers, section border, footer divider, header separator |
-| `--bt-border-strong` | `#e3e3e3` | Slider track, inputs, anchor-grid box, tilt pad, card edges |
+| `--bt-border-strong` | `#e3e3e3` | Slider track, inputs, anchor-grid box, tilt pad |
 | `--bt-text-strong` | `#1a1a1a` | Dialog titles |
 | `--bt-text` | `#303030` | Labels, primary text, active segment |
 | `--bt-text-secondary` | `#616161` | Section titles, body copy, value badges, icons, inactive segments |
 | `--bt-text-tertiary` | `#6b6b6b` | Captions/hints. **The reference uses `#8a8a8a`, which fails WCAG AA.** `#6b6b6b` passes on white (5.3:1), section (5.0:1) and app bg (4.8:1). |
 | `--bt-text-disabled` | `#acacac` | Disabled text (exempt from contrast rules, like all inactive UI) |
+| `--bt-text-disabled-subtle` | `#b8b8b8` | Disabled chip text (measured; lighter than `text-disabled`) |
 | `--bt-icon-disabled` | `#c0c0c0` | Disabled icons |
 | `--bt-primary` | `#1a1a1a` | Primary button / split button |
 | `--bt-primary-hover` | `#2b2b2b` | Primary hover (lightens, doesn't darken) |
@@ -81,13 +82,15 @@ Decorative (onboarding illustrations, brand mark):
 | overlay / wash | `rgba(0,0,0,.55)` / `rgba(15,15,16,.55)` |
 | ring-selected / dot / dot-active | `#4a4a50` / `#2e2e32` / `#ececed` |
 
+Phase 1 derives the rest and marks it _derived_: surface edges and shadows (a light ring replaces the black one, which disappears on `#19191b`), `accent`, the skeleton colors and `text-disabled-subtle`.
+
 Every **active** text/background pair passes WCAG AA in both themes. Disabled states are exempt (WCAG 1.4.3). Phase 1 verifies this with a unit test that computes contrast for every declared token pair.
 
 ---
 
 ## 2. Typography
 
-- Family: **Inter Variable**, bundled via `@fontsource-variable/inter` in apps (desktop apps must work offline — no Google Fonts CDN). Fallback: `ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif`.
+- Family: **Inter Variable**, bundled via `@fontsource-variable/inter`. It's a dependency of `@buttery/core`, and `styles.css` imports it, so apps get it from the two CSS imports. Desktop apps must work offline, so there's no font CDN. Fallback: `ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif`.
 - Numbers in values, badges, dimensions: `font-variant-numeric: tabular-nums`.
 - Tracking tokens: `--bt-tracking-tight: -0.01em` (≥15px semibold), `--bt-tracking-display: -0.02em` (≥32px).
 
@@ -108,6 +111,8 @@ Every **active** text/background pair passes WCAG AA in both themes. Disabled st
 
 Page display roles (`display`, `heading-1`, `heading-2`, `body-lg`) are tokens too — values in `LAYOUT_RULES.md` §4.
 
+Text stacks (a title, body and caption under each other in dialogs, empty states and page sections) trim their line boxes with `text-box: trim-both cap alphabetic` where the engine supports it (WebKit 18.2+, Chromium 133+, so the macOS desktop app has it). The spacing token between two text blocks is then the gap you see. Gaps stay on the 4px scale; engines without support show them a few px larger, which is fine. Control text (buttons, segments, rows) is centered by its control and isn't trimmed, and trimmed text never sits in a box that clips overflow, because its descenders would be cut. Phase 1 re-derives the text-stack gaps in §5 (onboarding, empty state) against trimmed boxes: rebuilt literally from the current numbers, the onboarding text block is 238px tall against 227px in the capture.
+
 ---
 
 ## 3. Spacing, sizing, radius
@@ -121,7 +126,7 @@ One named exception: `--bt-space-well: 3px` (inset between a section well and it
 | Token | Comfortable | Compact | Used by |
 |---|---|---|---|
 | `--bt-h-badge` | 20 | 18 | Value badge, chip, keycap |
-| `--bt-h-sm` | 28 | 26 | Small icon buttons, dialog close |
+| `--bt-h-sm` | 28 | 28 | Small icon buttons, dialog close (stays 28 in compact: standalone buttons are never shorter) |
 | `--bt-h-control` | 34 | 30 | Segmented track (items = height − 4), inputs, selects |
 | `--bt-h-button` | 36 | 32 | Pill buttons, split button, header actions, menu items, toast |
 | `--bt-h-cta` | 48 | 40 | Step dialog buttons, floating toolbar |
@@ -190,7 +195,7 @@ The signature look is **nested surfaces with concentric corners**:
 app bg #f3f3f4
 └─ Panel        white, r16, shadow-card, padding 8, gap 8
    └─ Section   #f7f7f7, r15, 1px border, header 36px (title left, a reset action right), padding 0 3 3
-      └─ Card   white, r12 (= 15 − 3), 1px border-strong, rows divided by 1px border
+      └─ Card   white, r12 (= 15 − 3), shadow-card (its 1px ring is the edge; no border), rows divided by 1px border
          └─ Row 50px, padding-x 16
 ```
 
@@ -232,7 +237,7 @@ Track `bg-control`, 34h, r14, padding 2. Items 30h, r12, padding-x 12, `control`
 - Behaviors: click/drag anywhere on the track · arrows step, Shift = ×10 · double-click label or badge = reset to default · optional `detents` (soft snap within ±2% to e.g. 0°) · value formatter (`%`, `°`, px).
 
 ### Chip (a small reset action next to a control)
-20h, r6, `badge` role, hit area 24. Disabled: bg `bg-control-subtle`, text `text-disabled`. Enabled: bg `bg-control`, text `text-secondary`, hover text `text`.
+20h, r6, `badge` role, hit area 24. Disabled: bg `bg-control-subtle`, text `text-disabled-subtle`. Enabled: bg `bg-control`, text `text-secondary`, hover text `text`.
 
 ### SwatchGrid
 6 columns, gap 8, swatches fill the column (41px at inspector width), aspect 1, r8, shadow-inset. Selected: `--bt-ring-select`. Radio-group semantics with arrow-key navigation. Holds gradient or solid presets.
