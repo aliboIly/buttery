@@ -1,4 +1,4 @@
-import { Slot } from "radix-ui";
+import { Slot } from "../../utils/slot.tsx";
 import type { ComponentPropsWithRef, CSSProperties, ReactElement } from "react";
 import type { CssVariables } from "../../theme/create-theme.ts";
 import { cx } from "../../utils/cx.ts";
@@ -42,7 +42,7 @@ export function Grid({
   style,
   ...rest
 }: GridProps): ReactElement {
-  const Root = asChild ? Slot.Root : "div";
+  const Root = asChild ? Slot : "div";
   const merged: CSSProperties & CssVariables = {
     ...style,
     "--bt-grid-columns": String(columns),

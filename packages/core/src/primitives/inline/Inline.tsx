@@ -1,4 +1,4 @@
-import { Slot } from "radix-ui";
+import { Slot } from "../../utils/slot.tsx";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { cx } from "../../utils/cx.ts";
 import type { FlowAlign, FlowJustify } from "../flow.ts";
@@ -45,7 +45,7 @@ export function Inline({
   className,
   ...rest
 }: InlineProps): ReactElement {
-  const Root = asChild ? Slot.Root : "div";
+  const Root = asChild ? Slot : "div";
   return (
     <Root
       {...rest}

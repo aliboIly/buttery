@@ -1,4 +1,4 @@
-import { Slot } from "radix-ui";
+import { Slot } from "../../utils/slot.tsx";
 import { createContext, use } from "react";
 import type {
   ComponentPropsWithRef,
@@ -100,7 +100,7 @@ export function Surface({
     radius === undefined
       ? { ...style }
       : { ...style, "--bt-surface-radius": resolvedRadius };
-  const Root = asChild ? Slot.Root : "div";
+  const Root = asChild ? Slot : "div";
   return (
     <SurfaceContext value={geometry}>
       <Root

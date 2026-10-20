@@ -1,4 +1,4 @@
-import { Slot } from "radix-ui";
+import { Slot } from "../../utils/slot.tsx";
 import type { ComponentPropsWithRef, ReactElement, Ref } from "react";
 import type { DisplayRole, TextRole } from "../../tokens/type.ts";
 import { cx } from "../../utils/cx.ts";
@@ -84,7 +84,7 @@ export function Text({
     "data-bt-truncate": truncate ? "" : undefined,
     children,
   };
-  if (asChild) return <Slot.Root {...props} ref={ref} />;
+  if (asChild) return <Slot {...props} ref={ref} />;
   if (BLOCK_VARIANTS.has(variant))
     return <p {...props} ref={elementRef<HTMLParagraphElement>(ref)} />;
   return <span {...props} ref={elementRef<HTMLSpanElement>(ref)} />;

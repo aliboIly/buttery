@@ -1,4 +1,4 @@
-import { Slot } from "radix-ui";
+import { Slot } from "../../utils/slot.tsx";
 import { useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { cx } from "../../utils/cx.ts";
@@ -50,7 +50,7 @@ export function Sticky({
     return joinStickyStack(element.current, edge, variant);
   }, [edge, variant]);
 
-  const Root = asChild ? Slot.Root : "div";
+  const Root = asChild ? Slot : "div";
   return (
     <Root
       {...rest}

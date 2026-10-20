@@ -1,4 +1,4 @@
-import { Slot } from "radix-ui";
+import { Slot } from "../../utils/slot.tsx";
 import { isValidElement, useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { cx } from "../../utils/cx.ts";
@@ -54,7 +54,7 @@ export function Pressable({
   if (asChild) {
     const childType = isButtonElement(children) ? (type ?? "button") : type;
     return (
-      <Slot.Root
+      <Slot
         {...rest}
         {...(childType === undefined ? {} : { type: childType })}
         ref={merged}
@@ -62,7 +62,7 @@ export function Pressable({
         data-bt="Pressable"
       >
         {children}
-      </Slot.Root>
+      </Slot>
     );
   }
   return (
