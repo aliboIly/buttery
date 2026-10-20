@@ -9,16 +9,11 @@ export interface ControllableStateOptions<T> {
   readonly onChange?: ((value: T) => void) | undefined;
 }
 
-/** A setter that takes a value or a function of the current value. `T` itself must not be a function. */
-export type ControllableStateSetter<T> = (
-  next: T | ((current: T) => T),
-) => void;
-
-function isUpdater<T>(
-  next: T | ((current: T) => T),
-): next is (current: T) => T {
-  return typeof next === "function";
-}
+/**
+ * Sets the next value. It takes a value rather than an updater function: compute the next value from the
+ * current one in the event handler, as a controlled owner would.
+ */
+export type ControllableStateSetter<T> = (next: T) => void;
 
 /**
  * Controlled when `value` is defined, uncontrolled otherwise: the one implementation behind every buttery
@@ -35,10 +30,9 @@ export function useControllableState<T>({
 
   const setValue = useCallback<ControllableStateSetter<T>>(
     (next) => {
-      const resolved = isUpdater(next) ? next(current) : next;
-      if (Object.is(resolved, current)) return;
-      if (!controlled) setUncontrolled(resolved);
-      onChange?.(resolved);
+      if (Object.is(next, current)) return;
+      if (!controlled) setUncontrolled(() => next);
+      onChange?.(next);
     },
     [controlled, current, onChange],
   );
