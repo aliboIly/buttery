@@ -40,7 +40,7 @@ afterEach(() => {
 });
 
 describe("ButteryProvider", () => {
-  it("reports settled, hosts the floating lanes and shows LayoutGuard in development", () => {
+  it("reports settled, hosts the floating lanes and the toasts, and shows LayoutGuard in development", () => {
     const { unmount } = render(
       <ButteryProvider>
         <Probe />
@@ -48,6 +48,11 @@ describe("ButteryProvider", () => {
     );
     expect(root.hasAttribute("data-bt-settled")).toBe(true);
     expect(document.querySelectorAll('[data-bt-part="lane"]')).toHaveLength(3);
+    expect(
+      document
+        .querySelector('[data-bt="Toaster"]')
+        ?.closest('[data-lane="bottom-center"]'),
+    ).not.toBeNull();
     unmount();
     expect(root.hasAttribute("data-bt-settled")).toBe(false);
     expect(document.querySelector('[data-bt="FloatingLanes"]')).toBeNull();
@@ -64,6 +69,7 @@ describe("ButteryProvider", () => {
     expect(document.querySelectorAll('[data-bt="FloatingLanes"]')).toHaveLength(
       1,
     );
+    expect(document.querySelectorAll('[data-bt="Toaster"]')).toHaveLength(1);
   });
 
   it("writes its settings onto <html> and removes them on unmount", () => {

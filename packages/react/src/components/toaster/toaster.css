@@ -1,0 +1,81 @@
+@layer bt.components {
+  .bt-toaster {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* With nothing to show, the region takes no room in its lane, so it adds no gap beside other items. */
+  [role="region"]:has(> .bt-toaster:empty) {
+    display: none;
+  }
+
+  /* The toast fades and keeps its place in the stack; its pill rises, so the stack measures where toasts sit. */
+  .bt-toast {
+    display: flex;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    border-radius: var(--bt-r-full);
+    cursor: default;
+  }
+
+  .bt-toast > [data-bt-part="pill"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-5);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-4);
+    border-radius: inherit;
+    background-color: var(--bt-inverse-bg);
+    box-shadow: var(--bt-shadow-floating);
+    color: var(--bt-inverse-text);
+    font-size: var(--bt-text-body-size);
+    font-weight: var(--bt-text-body-weight);
+    line-height: var(--bt-text-body-line);
+    letter-spacing: var(--bt-text-body-tracking);
+    white-space: nowrap;
+  }
+
+  .bt-toast[data-swipe="move"] {
+    translate: 0 var(--radix-toast-swipe-move-y);
+  }
+
+  .bt-toast[data-swipe="cancel"] {
+    transition: translate calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-out);
+  }
+
+  .bt-toast[data-swipe="end"] {
+    translate: 0 var(--radix-toast-swipe-end-y);
+  }
+
+  .bt-toast [data-bt-part="action"] {
+    --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
+
+    flex: none;
+    padding-block: var(--bt-space-0_5);
+    padding-inline: 0;
+    border: 0;
+    border-radius: var(--bt-r-xs);
+    background: none;
+    color: var(--bt-inverse-text-secondary);
+    font-family: inherit;
+    font-size: var(--bt-text-button-size);
+    font-weight: var(--bt-text-button-weight);
+    line-height: var(--bt-text-button-line);
+    letter-spacing: var(--bt-text-button-tracking);
+  }
+
+  @media (hover: hover) {
+    .bt-toast [data-bt-part="action"]:hover {
+      color: var(--bt-inverse-text);
+    }
+  }
+}

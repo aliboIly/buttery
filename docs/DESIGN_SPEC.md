@@ -296,7 +296,12 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 - Scenes: each step's media is a small scene built from buttery parts whose shared elements morph between steps. Card Studio designs its own scenes around its features.
 
 ### Toast
-`inverse-bg` pill, 36h (measured 38, snapped to `--bt-h-button`), padding-x 16, `body`-size text in `inverse-text`, action 14/500 in `inverse-text-secondary` (hover `inverse-text`), gap 20, shadow-floating. Lives in the `bottom-center` floating lane.
+`inverse-bg` pill, 36h (measured 38, snapped to `--bt-h-button`), padding-x 16, `body`-size text in `inverse-text`, action 14/500 in `inverse-text-secondary` (hover `inverse-text`), gap 20, shadow-floating. One line: a long message truncates at the lane's width (the viewport minus 24 a side). The action's target is 24 tall (2px block padding).
+- Shown with `toast(message, options)` from `@buttery/react`; the `Toaster` that `ButteryProvider` mounts stacks them in the `bottom-center` floating lane, 8 apart, newest at the bottom.
+- **Three at most.** A fourth lets the oldest go. A toast with the `id` of one showing takes it over as the newest, so repeating an action never stacks copies.
+- Stays 3s (`--bt-toast-life`), or 5s with an action (`--bt-toast-life-action`); `duration: Infinity` keeps it until dismissed. The clock stops while the pointer or focus is on the toasts or the window is in the background.
+- Closes on Escape (focused), a swipe down past 50px, its action, or `toast.dismiss(id)`. F8 moves focus to the region ("Notifications (F8)"), Tab goes through the toasts newest first.
+- Screen readers hear "Notification" and the message, then the action's `altText` as its own sentence; `background: true` toasts are read at the next pause.
 
 ### FloatingToolbar (crop bar)
 `bg-surface` pill, 48h (padding 6), gap 4, shadow-floating. Left to right: meta text (the current size, `control` role, tabular), a ghost reset, a soft cancel and a primary confirm. **Anchored**: positioned 12px below its anchor, centered, clamped to the viewport, and registered with `FloatingLanes` as an obstacle so lane items (toasts) move above it.

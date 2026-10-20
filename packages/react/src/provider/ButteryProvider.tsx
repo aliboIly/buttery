@@ -16,6 +16,7 @@ import type {
   Density,
 } from "@buttery/core";
 import { Confetti } from "../components/confetti/Confetti.tsx";
+import { Toaster } from "../components/toaster/Toaster.tsx";
 import { TooltipProvider } from "../components/tooltip/Tooltip.tsx";
 import { ButteryContext } from "./context.ts";
 import type { ButteryContextValue, Platform } from "./context.ts";
@@ -116,8 +117,9 @@ function useRootVariables(variables: CssVariables, enabled: boolean): void {
 
 /**
  * Applies buttery's theme, density, platform and motion settings. The outermost provider writes them onto
- * `<html>` so portals and scrollbars follow, hosts the floating lanes, reports when animations have
- * settled, and shows `LayoutGuard` in development. A nested provider scopes its settings to its subtree.
+ * `<html>` so portals and scrollbars follow, hosts the floating lanes, toasts and confetti, reports when
+ * animations have settled, and shows `LayoutGuard` in development. A nested provider scopes its settings
+ * to its subtree.
  */
 export function ButteryProvider({
   children,
@@ -188,6 +190,7 @@ export function ButteryProvider({
           <TooltipProvider>
             {children}
             <FloatingLanes />
+            <Toaster />
             <Confetti />
             {isDevelopment && layoutGuard ? <LayoutGuard /> : null}
           </TooltipProvider>,

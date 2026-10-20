@@ -83,7 +83,9 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 | Frame style change | Frame style crossfades, content re-fits | `spring.smooth` (~250ms) |
 | Aspect ratio change | Stage reshapes, content stays centered | `spring.smooth` (~230ms measured) |
 | Enter crop mode | Stage bg fades out (200ms); image scales to fit; handles + floating toolbar fade/slide in after ~80ms | 200–250ms |
-| Item deleted | Stage swaps to the empty state instantly; a toast with undo slides up 8px + fades in | slide `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~200 / ~130ms); auto-dismiss 3s, paused on hover |
+| Item deleted | Stage swaps to the empty state instantly; a toast with undo slides up 8px + fades in | slide `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~200 / ~130ms); auto-dismiss 3s, paused on hover (5s with an action in buttery, see DECISIONS) |
+| Toast joins a stack | The new toast rises a whole step (its height and the gap) at the bottom while the stack moves up one step, as one column; a fourth lets the oldest fade out at the top | rise and stack both `spring.snappy`, so the 8px gaps hold every frame; fade `dur-base` in, `dur-fast` out |
+| Toast leaves the middle | It fades where it is, then the toasts above it close the gap | fade `dur-fast`, then `spring.snappy`; with reduced motion, a 100ms fade and the stack jumps |
 | Menu open (select) | Trigger gets active bg; menu fades + scales from trigger origin (0.97 → 1) | scale `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~150–200ms in) |
 | Button press | Scale 0.97 on pointer-down | down `dur-press`, release `dur-fast`, both `ease-out` (a CSS recipe, so no spring); at once with reduced motion |
 | Primary hover | `#1a1a1a` → `#2b2b2b` | `dur-fast` |

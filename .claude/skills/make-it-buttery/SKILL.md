@@ -46,7 +46,7 @@ Check it with reduced motion on: final states must still render correctly.
 - No outer margins on components; spacing via `gap` relationship tokens (LAYOUT_RULES §2).
 - Single-line text in controls: `truncate` + accessible full text. Changing numbers: `tabular-nums` + reserved width.
 - Toolbars/headers/navs: `OverflowCluster` with priorities. Fixed UI: register in `FloatingLanes`.
-- Overlays only through buttery layer components: `Popover` for anchored panels, `Layer` + `Scrim` for anything else out of flow, `FloatingLanes.Item` for toasts and notices, `Sticky` for sticky bars. They pick the z band and keep floating UI 8px inside the viewport.
+- Overlays only through buttery layer components: `Popover` for anchored panels, `Layer` + `Scrim` for anything else out of flow, `toast()` for toasts (three at most, give repeated messages an `id`), `FloatingLanes.Item` for notices, `Sticky` for sticky bars. They pick the z band and keep floating UI 8px inside the viewport.
 - App code never sets `position: absolute|fixed|sticky`; if a small target needs a bigger hit area, use or build a component that adds a `[data-bt-hit]` part.
 - Mark intentional overlaps (artwork on a stage) with `data-bt-allow-overlap`.
 

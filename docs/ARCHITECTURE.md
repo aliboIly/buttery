@@ -80,14 +80,16 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                FloatingLanes
 4. Components  Button, IconButton, SplitButton, SegmentedControl, Slider, ValueBadge, Chip,
                SwatchGrid, ColorDot, TiltPad, AnchorGrid, Menu, Select, NumberField,
-               Tooltip, Dialog, Toast, PageDots, ArrowLink, Stat, Confetti, BrandMark
+               Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti, BrandMark
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,
                EmptyState/DropZone, FloatingToolbar, Onboarding (StepDialog),
                NavBar + MorphMenu, SubNav, Page/Section/Container, SplitHero, CenteredHero,
                Bento + ExpandableCard, StatStrip, LogoStrip, ArticleLayout, Footer
 ```
 
-Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, Select, Tooltip, Dialog, Toast, FloatingToolbar) are built on the layer primitives.
+Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, Select, Tooltip, Dialog, Toaster, FloatingToolbar) are built on the layer primitives.
+
+Hosts that the root `ButteryProvider` mounts once take calls from anywhere through a module store: `toast(message, options)` shows a toast in the `Toaster` (Radix Toast in the `bottom-center` lane, three at most, `toast.dismiss(id?)` to close), and `celebrate(element?)` bursts confetti from the `Confetti` host. Without a host, each call does nothing and logs a development warning with the fix.
 
 Every open layer renders into its own container, `[data-bt-layer="<band>"]`, fixed over the viewport with clicks passing through, at its band's z token. A layer opened inside another layer of the same or a higher band (a Select inside a Dialog) mounts inside that layer's container, so it stacks above it by order; a layer in a higher band (a Tooltip inside a Dialog) mounts at the root. Every z-index in the page stays a token. Scrims render first in their layer's container, under its content.
 
@@ -132,7 +134,7 @@ import { ButteryProvider } from "@buttery/react";
 
 <ButteryProvider>{app}</ButteryProvider>
 ```
-You get: tokens, Inter, base typography, focus rings, selection color, scrollbars, motion presets with reduced-motion handling, light/dark, the toast/floating-lane hosts, the layer stack, and `LayoutGuard` in dev. (`npx buttery init` does this wiring for you.)
+You get: tokens, Inter, base typography, focus rings, selection color, scrollbars, motion presets with reduced-motion handling, light/dark, the floating lanes with the `Toaster` and `Confetti` hosts, the layer stack, and `LayoutGuard` in dev. (`npx buttery init` does this wiring for you.)
 
 ### Level 1 — wrap anything
 The `buttery` factory (like `motion.div`) turns any element or component into a buttery one:
