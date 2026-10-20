@@ -1,5 +1,7 @@
 import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
+import { useLayoutEffect, useRef } from "react";
+import type { ReactElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Layer, Portal } from "./Layer.tsx";
 
@@ -66,6 +68,50 @@ describe("Layer", () => {
         rect.top + rect.height / 2,
       ),
     ).toBe(button);
+  });
+
+  it("is in the document before its content's layout effects run", () => {
+    const connected: boolean[] = [];
+    function Measure(): ReactElement {
+      const ref = useRef<HTMLParagraphElement>(null);
+      useLayoutEffect(() => {
+        connected.push(ref.current?.isConnected ?? false);
+      }, []);
+      return <p ref={ref}>Measured</p>;
+    }
+    render(
+      <Layer band="modal">
+        <Measure />
+        <Layer band="dropdown">
+          <Measure />
+        </Layer>
+      </Layer>,
+    );
+    expect(connected).toEqual([true, true]);
+  });
+
+  it("keeps a nested layer attached when its parent re-renders", () => {
+    function Dialog({ title }: { readonly title: string }): ReactElement {
+      return (
+        <Layer band="modal">
+          <p>{title}</p>
+          <Layer band="dropdown">
+            <p>Menu</p>
+          </Layer>
+        </Layer>
+      );
+    }
+    const { rerender } = render(<Dialog title="Rename" />);
+    const modal = layerOf(screen.getByText("Rename"));
+    const observer = new MutationObserver(() => undefined);
+    observer.observe(modal, { childList: true });
+    rerender(<Dialog title="Rename the card" />);
+    const removed = observer
+      .takeRecords()
+      .flatMap((record) => [...record.removedNodes]);
+    observer.disconnect();
+    expect(screen.getByText("Rename the card")).toBeTruthy();
+    expect(removed).toEqual([]);
   });
 
   it("removes its container on unmount", () => {

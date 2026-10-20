@@ -1,15 +1,34 @@
+import { useMemo } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import {
   LayerContext,
   useCurrentLayer,
+  useLayerAttachment,
   useLayerContainer,
 } from "./layer-manager.ts";
-import type { LayerBand } from "./layer-manager.ts";
+import type { LayerBand, LayerInfo } from "./layer-manager.ts";
+
+interface LayerAttachmentProps {
+  readonly container: HTMLElement;
+  readonly band: LayerBand;
+  readonly parent: LayerInfo | null;
+}
+
+// Rendered before the portal, so the container is attached before the content's layout effects run.
+function LayerAttachment({
+  container,
+  band,
+  parent,
+}: LayerAttachmentProps): null {
+  useLayerAttachment(container, band, parent);
+  return null;
+}
 
 export interface LayerProps {
   /** The z band to render in, such as `"dropdown"`, `"modal"` or `"toast"`. */
   readonly band: LayerBand;
+  /** What the layer shows. Its own elements take clicks; the rest of the viewport lets them through. */
   readonly children?: ReactNode;
 }
 
@@ -24,17 +43,32 @@ export interface LayerProps {
  * </Layer>
  */
 export function Layer({ band, children }: LayerProps): ReactElement | null {
-  const container = useLayerContainer(band);
-  if (!container) return null;
-  return createPortal(
-    <LayerContext value={{ band, container }}>{children}</LayerContext>,
-    container,
+  const parent = useCurrentLayer();
+  const container = useLayerContainer();
+  const layer = useMemo(
+    (): LayerInfo | null => container && { band, container },
+    [band, container],
+  );
+  if (!layer) return null;
+  return (
+    <>
+      <LayerAttachment
+        container={layer.container}
+        band={band}
+        parent={parent}
+      />
+      {createPortal(
+        <LayerContext value={layer}>{children}</LayerContext>,
+        layer.container,
+      )}
+    </>
   );
 }
 
 export interface PortalProps {
   /** Where to render. Defaults to the current layer's container, or `document.body` on the page. */
   readonly container?: HTMLElement | null | undefined;
+  /** What to render there. */
   readonly children?: ReactNode;
 }
 

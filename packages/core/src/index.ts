@@ -29,10 +29,7 @@ export { laneNames } from "./layers/floating-lanes/lanes-store.ts";
 export type { LaneName } from "./layers/floating-lanes/lanes-store.ts";
 export { Layer, Portal } from "./layers/layer/Layer.tsx";
 export type { LayerProps, PortalProps } from "./layers/layer/Layer.tsx";
-export {
-  useCurrentLayer,
-  useLayerContainer,
-} from "./layers/layer/layer-manager.ts";
+export { useCurrentLayer } from "./layers/layer/layer-manager.ts";
 export type { LayerBand, LayerInfo } from "./layers/layer/layer-manager.ts";
 export {
   Popover,

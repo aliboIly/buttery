@@ -21,18 +21,27 @@ export function useCurrentLayer(): LayerInfo | null {
 }
 
 /**
- * A container for a layer in `band`, attached to the document while the caller is mounted. A layer whose
- * band isn't above its parent layer's band mounts inside the parent's container, so it stacks over the
- * parent by order alone and every z-index stays a token. Returns `null` during server rendering.
+ * A container for a layer, created once while the caller is mounted and attached to the document by
+ * `useLayerAttachment`. Returns `null` during server rendering.
  */
-export function useLayerContainer(band: LayerBand): HTMLElement | null {
-  const parent = use(LayerContext);
+export function useLayerContainer(): HTMLElement | null {
   const [container] = useState(() =>
     typeof document === "undefined" ? null : document.createElement("div"),
   );
+  return container;
+}
 
+/**
+ * Attaches a layer's container to the document. A layer whose band isn't above its parent layer's band
+ * mounts inside the parent's container, so it stacks over the parent by order alone and every z-index
+ * stays a token; any other layer mounts on `document.body`.
+ */
+export function useLayerAttachment(
+  container: HTMLElement,
+  band: LayerBand,
+  parent: LayerInfo | null,
+): void {
   useLayoutEffect(() => {
-    if (!container) return undefined;
     container.setAttribute("data-bt", "Layer");
     container.setAttribute("data-bt-layer", band);
     const host =
@@ -44,6 +53,4 @@ export function useLayerContainer(band: LayerBand): HTMLElement | null {
       container.remove();
     };
   }, [band, container, parent]);
-
-  return container;
 }
