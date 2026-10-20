@@ -1,0 +1,10 @@
+pnpm-lock.yaml
+*.md
+**/dist/
+**/.tsbuild/
+coverage/
+playwright-report/
+test-results/
+apps/*/src-tauri/target/
+apps/*/src-tauri/gen/
+reference/
