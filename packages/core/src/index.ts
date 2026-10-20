@@ -29,7 +29,10 @@ export { laneNames } from "./layers/floating-lanes/lanes-store.ts";
 export type { LaneName } from "./layers/floating-lanes/lanes-store.ts";
 export { Layer, Portal } from "./layers/layer/Layer.tsx";
 export type { LayerProps, PortalProps } from "./layers/layer/Layer.tsx";
-export { useCurrentLayer, useLayerContainer } from "./layers/layer/layer-manager.ts";
+export {
+  useCurrentLayer,
+  useLayerContainer,
+} from "./layers/layer/layer-manager.ts";
 export type { LayerBand, LayerInfo } from "./layers/layer/layer-manager.ts";
 export {
   Popover,
@@ -71,6 +74,16 @@ export { Icon } from "./primitives/icon/Icon.tsx";
 export type { IconComponentProps, IconProps } from "./primitives/icon/Icon.tsx";
 export { Inline } from "./primitives/inline/Inline.tsx";
 export type { InlineProps } from "./primitives/inline/Inline.tsx";
+export {
+  OverflowCluster,
+  OverflowClusterItem,
+} from "./primitives/overflow-cluster/OverflowCluster.tsx";
+export type {
+  OverflowClusterComponent,
+  OverflowClusterItemProps,
+  OverflowClusterProps,
+} from "./primitives/overflow-cluster/OverflowCluster.tsx";
+export type { OverflowMenuItem } from "./primitives/overflow-cluster/overflow-registry.ts";
 export { Pressable } from "./primitives/pressable/Pressable.tsx";
 export type { PressableProps } from "./primitives/pressable/Pressable.tsx";
 export { spacingAttributes } from "./primitives/spacing.ts";

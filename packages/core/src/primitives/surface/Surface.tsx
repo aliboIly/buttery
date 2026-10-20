@@ -45,7 +45,7 @@ export interface SurfaceProps extends ComponentPropsWithRef<"div"> {
    * Corner radius. `"auto"` nests concentrically inside the surface around it: the parent's radius minus
    * the parent's padding, never less than 4px. Defaults to the level's own radius.
    */
-  readonly radius?: "auto" | Exclude<RadiusToken, "full"> | undefined;
+  readonly radius?: "auto" | RadiusToken | undefined;
   /** Padding on every side, on the spacing scale. Replaces the level's padding. */
   readonly pad?: SpaceValue | undefined;
   /** Left and right padding, on the spacing scale. */

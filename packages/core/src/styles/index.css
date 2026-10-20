@@ -20,6 +20,7 @@
 @import "../primitives/icon/icon.css";
 @import "../primitives/pressable/pressable.css";
 @import "../primitives/fit-box/fit-box.css";
+@import "../primitives/overflow-cluster/overflow-cluster.css";
 @import "../layers/layer/layer.css";
 @import "../layers/scrim/scrim.css";
 @import "../layers/sticky/sticky.css";
