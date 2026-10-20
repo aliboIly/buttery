@@ -1,7 +1,13 @@
 import "../../styles/index.css";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { createRef } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MotionPreferenceContext } from "../../motion/preference.ts";
 import { publishSettled } from "../../motion/settle.ts";
 import { Presence } from "../presence/Presence.tsx";
@@ -13,7 +19,17 @@ beforeEach(() => {
   publishSettled();
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
+
+async function holds(milliseconds = 250): Promise<string | undefined> {
+  const before = step();
+  await new Promise((resolve) => setTimeout(resolve, milliseconds));
+  expect(step()).toBe(before);
+  return before;
+}
 
 function step(): string | undefined {
   return screen.getByTestId("loop").dataset["step"];
@@ -48,6 +64,67 @@ describe("Loop", () => {
     await waitFor(() => {
       expect(step()).toBe("0");
     });
+  });
+
+  it("holds still while the pointer is over it or focus is inside it", async () => {
+    render(
+      <Loop steps={3} interval={60} data-testid="loop">
+        {(current) => (
+          <button type="button">{`Step ${String(current)}`}</button>
+        )}
+      </Loop>,
+    );
+    const loop = screen.getByTestId("loop");
+    fireEvent.pointerEnter(loop);
+    const held = await holds();
+    fireEvent.pointerLeave(loop);
+    await waitFor(() => {
+      expect(step()).not.toBe(held);
+    });
+    screen.getByRole("button").focus();
+    const focused = await holds();
+    screen.getByRole("button").blur();
+    await waitFor(() => {
+      expect(step()).not.toBe(focused);
+    });
+  });
+
+  it("holds still while paused or while the page is hidden", async () => {
+    const { rerender } = render(
+      <Loop steps={3} interval={60} paused data-testid="loop">
+        {(current) => `Step ${String(current)}`}
+      </Loop>,
+    );
+    await holds();
+    rerender(
+      <Loop steps={3} interval={60} data-testid="loop">
+        {(current) => `Step ${String(current)}`}
+      </Loop>,
+    );
+    const visibility = vi
+      .spyOn(document, "visibilityState", "get")
+      .mockReturnValue("hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+    const hidden = await holds();
+    visibility.mockRestore();
+    document.dispatchEvent(new Event("visibilitychange"));
+    await waitFor(() => {
+      expect(step()).not.toBe(hidden);
+    });
+  });
+
+  it("says how to fix an interval outside 3 to 5 seconds", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <Loop steps={3} interval={800}>
+        {(current) => current}
+      </Loop>,
+    );
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "[buttery:Loop] interval={800} steps too quickly or too slowly for a living demo. Fix: keep it between 3000 and 5000",
+      ),
+    );
   });
 
   it("stays put while it's off screen", async () => {
