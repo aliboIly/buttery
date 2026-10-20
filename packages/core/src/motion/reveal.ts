@@ -75,8 +75,10 @@ function whenInView(element: HTMLElement, onEnter: () => void): () => void {
  * Runs the scroll-in entrance on `targets` the first time `trigger` is 15% in view (15% of the viewport for
  * content taller than it), and reports it to the settled flag when `tracked`. Content already in view on the
  * first frame gets one 200ms fade instead, so nothing the user is looking at rises into place. `onShown`
- * runs once the targets have arrived, including when a cleanup finishes an entrance early; a cleanup before
- * the entrance starts only shows the targets again. Returns the cleanup.
+ * runs once the targets have arrived. A cleanup finishes a running entrance at once but reports it a
+ * microtask later, so an effect that runs again straight away (Strict Mode, a new motion setting) still
+ * decides for itself whether to play; a cleanup before the entrance starts only shows the targets again.
+ * Returns the cleanup.
  */
 export function revealOnce(
   trigger: HTMLElement,
@@ -133,10 +135,7 @@ export function revealOnce(
 
   // Stopping would leave Motion to write the half-way value after the cleanup, so cleanups finish instead.
   const finish = (): void => {
-    if (running) {
-      running.complete();
-      onShown?.();
-    }
+    running?.complete();
     clear();
     release?.();
   };

@@ -49,6 +49,18 @@ describe("Reveal", () => {
     });
   });
 
+  it("fades content that's in view under Strict Mode too", async () => {
+    render(
+      <StrictMode>
+        <Reveal data-testid="hero">Your canvas is empty</Reveal>
+      </StrictMode>,
+    );
+    expect(opacity("hero")).toBeLessThan(1);
+    await waitFor(() => {
+      expect(opacity("hero")).toBe(1);
+    });
+  });
+
   it("waits below the fold, then rises in once it scrolls into view", async () => {
     render(
       <>
