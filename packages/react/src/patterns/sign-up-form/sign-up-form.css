@@ -1,0 +1,6 @@
+@layer bt.patterns {
+  .bt-sign-up-form [data-bt-part="label"] a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}

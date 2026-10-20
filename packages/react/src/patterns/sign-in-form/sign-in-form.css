@@ -1,0 +1,10 @@
+@layer bt.patterns {
+  .bt-sign-in-form [data-bt-part="options"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bt-space-2) var(--bt-space-4);
+    min-inline-size: 0;
+  }
+}

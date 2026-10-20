@@ -304,6 +304,11 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 ### Callout (_derived_, Phase 4.5)
 A tinted box: r12, padding 12×16, gap 12, a 16px icon in the tone's color (`accent`, `success`, `warning` or `danger`) over its `-subtle` tint. A title (`label` role), the body at `body-sm` size in `text-secondary` (not trimmed, so it can hold lists), and an optional action row 6 below. Links in its lists are 24px targets in the tone's color. No role of its own: `role="alert"` for an error that appears after an action, `role="status"` for a result.
 
+### SignInForm and SignUpForm (_derived_, Phase 4.5)
+A column 20 apart, at most 400 wide (`w-dialog`): a `TextStack` heading (an `h1` unless told otherwise) with an optional line, the error summary, the fields 16 apart at size `lg`, a full-width 48 rounded primary submit, an "or" rule (two decorative dividers and a caption) over full-width soft buttons for other ways in (a generic icon and text, never a brand mark), and a footer line with an `ArrowLink` to the other form. Sign-in's keep-me-signed-in box and forgot-password link share a row that wraps.
+- On a failed submit each field shows what to fix, and a danger `Callout` summary (`role="alert"`) with a link to each field appears above the fields and takes focus; a link focuses its field. The field errors clear as they're fixed; the summary holds still until the next submit, so a field never moves while it's being typed in. A message returned from `onSubmit` shows in the same summary. The submit button keeps its width while busy.
+- Sign-up lists the password's rules under it, ticked as they're met (8 characters and a number by default), and asks for the terms when there's a terms link.
+
 ### Tooltip
 `inverse-bg` pill, `inverse-text` 12/500, padding 4×8, r8, 500ms open delay, no arrow. Content-sized (not height-checked). Opens at once on keyboard focus, closes on Escape, renders in the tooltip band above dialogs. The root `ButteryProvider` hosts one provider for all tooltips, so moving between them skips the delay.
 

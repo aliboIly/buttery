@@ -85,7 +85,8 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,
                EmptyState/DropZone, FloatingToolbar, Onboarding (StepDialog),
                NavBar + MorphMenu, SubNav, Page/Section/Container, SplitHero, CenteredHero,
-               Bento + ExpandableCard, StatStrip, LogoStrip, ArticleLayout, Footer
+               Bento + ExpandableCard, StatStrip, LogoStrip, ArticleLayout, Footer,
+               SignInForm, SignUpForm
 ```
 
 Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, Select, Tooltip, Dialog, Toaster, FloatingToolbar) are built on the layer primitives.

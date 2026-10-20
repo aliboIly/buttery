@@ -3,6 +3,7 @@
 @import "./parts/arrow/arrow.css";
 @import "./parts/spinner/spinner.css";
 @import "./parts/form-field/form-field.css";
+@import "./parts/auth/auth.css";
 @import "./components/confetti/confetti.css";
 @import "./components/button/button.css";
 @import "./components/arrow-link/arrow-link.css";
@@ -22,3 +23,5 @@
 @import "./components/checkbox/checkbox.css";
 @import "./components/switch/switch.css";
 @import "./components/callout/callout.css";
+@import "./patterns/sign-in-form/sign-in-form.css";
+@import "./patterns/sign-up-form/sign-up-form.css";

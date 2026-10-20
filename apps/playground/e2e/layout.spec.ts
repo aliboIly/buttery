@@ -66,6 +66,31 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
     },
   ],
+  "sign-in-form": [
+    {
+      name: "submit it empty, showing the errors",
+      run: press("Sign in"),
+      allowMove: ["main"],
+    },
+    { name: "show the password", run: press("Show password") },
+  ],
+  "sign-up-form": [
+    {
+      name: "submit it empty, showing the errors",
+      run: press("Create account"),
+      allowMove: ["main"],
+    },
+    {
+      name: "type a long name",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        await page
+          .getByLabel("Name", { exact: true })
+          .first()
+          .fill("Alexandria Constance Montgomery-Wellington of the Studio");
+      },
+    },
+  ],
   "split-button": [
     { name: "open the export menu", run: press("More export options") },
   ],

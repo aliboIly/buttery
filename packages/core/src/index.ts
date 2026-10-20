@@ -218,4 +218,8 @@ export { Slot } from "./utils/slot.tsx";
 export { Kbd } from "./primitives/kbd/Kbd.tsx";
 export type { KbdKey, KbdProps } from "./primitives/kbd/Kbd.tsx";
 export { TextStack } from "./primitives/text-stack/TextStack.tsx";
-export type { TextStackProps } from "./primitives/text-stack/TextStack.tsx";
+export type {
+  TextStackProps,
+  TextStackSize,
+  TextStackTitleElement,
+} from "./primitives/text-stack/TextStack.tsx";

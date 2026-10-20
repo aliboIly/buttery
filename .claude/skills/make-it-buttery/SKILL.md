@@ -22,9 +22,9 @@ For the screen or component in scope, list:
 - **Risks**: things that can overlap, overflow, wrap or jitter (long labels, changing numbers, many toolbar actions, fixed-position elements).
 
 ## 3. Map to buttery (top-down, reuse first)
-1. Whole screen → a pattern if one fits: `AppShell`, `Page` + `SplitHero`/`Bento`/`ArticleLayout`, `Onboarding`, `EmptyState`.
+1. Whole screen → a pattern if one fits: `AppShell`, `Page` + `SplitHero`/`Bento`/`ArticleLayout`, `Onboarding`, `EmptyState`, `SignInForm`/`SignUpForm`.
 2. Regions → `Surface` levels (`panel → section → card`, `radius="auto"` for concentric corners) and layout primitives (`Stack`, `Inline` with `uniform` for equal buttons, `Grid`, `Center`, `Divider`, `FitBox`, `OverflowCluster`). Spacing props take spacing steps: `gap={3}`, `pad={4}`, `padX="0.5"`. Text goes through `Text` with a role (`variant="title"`, `asChild` for headings); icons through `Icon`.
-3. Controls → buttery components (`Button`, `SegmentedControl`, `Slider`, `Menu`/`Select`, `SwatchGrid`, …). Never restyle a native control by hand if a component exists.
+3. Controls → buttery components (`Button`, `SegmentedControl`, `Slider`, `Menu`/`Select`, `SwatchGrid`, …). Never restyle a native control by hand if a component exists. Forms: `TextField`/`PasswordField`/`TextArea` (label above, `hint`, `error`; pass `type`, `autoComplete`, `inputMode`), `Checkbox` for a choice that waits for submit, `Switch` for one that takes effect at once, `Field` to label anything else, `Callout` for an error summary or a note. Text blocks (title, body, caption) → `TextStack`.
 4. Anything custom/third-party → wrap with `buttery(Component, recipe)` or `<buttery.div surface=… press …>`; plain HTML → recipe classes (`.bt-surface[data-level]`, `.bt-press`, `.bt-focus`).
 5. Raw values → tokens. If no token fits, use the nearest one; only add a token for a genuinely new concept (log it in `docs/DECISIONS.md`).
 

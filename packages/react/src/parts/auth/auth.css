@@ -1,0 +1,55 @@
+@layer bt.patterns {
+  .bt-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-5);
+    inline-size: 100%;
+    min-inline-size: 0;
+    max-inline-size: var(--bt-w-dialog);
+  }
+
+  .bt-auth-form > [data-bt-part="summary"]:focus-visible {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-auth-form > [data-bt-part="fields"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-auth-form > [data-bt-part="or"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-3);
+    color: var(--bt-text-tertiary);
+  }
+
+  .bt-auth-form > [data-bt-part="or"] > [data-bt="Divider"] {
+    flex: 1;
+  }
+
+  .bt-auth-form > [data-bt-part="providers"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-auth-form > [data-bt-part="footer"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bt-space-1_5);
+    color: var(--bt-text-secondary);
+  }
+
+  /* A link on a line of its own needs a 24px target; control text is 18 tall. */
+  .bt-auth-form [data-bt-part="link"] {
+    padding-block: var(--bt-space-1);
+    color: var(--bt-text-secondary);
+    text-decoration: underline;
+  }
+}
