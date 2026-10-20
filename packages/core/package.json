@@ -1,0 +1,28 @@
+{
+  "name": "@buttery/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tokens, recipes, primitives, layers and motion presets for buttery.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "@buttery/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:"
+  }
+}
