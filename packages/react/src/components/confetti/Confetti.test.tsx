@@ -1,7 +1,7 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MotionPreferenceContext, publishSettled } from "@buttery/core";
 import { gradients } from "@buttery/core/palettes";
 import { celebrate, Confetti } from "./Confetti.tsx";
@@ -12,7 +12,10 @@ beforeEach(() => {
   publishSettled();
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 function pieces(): NodeListOf<HTMLElement> {
   return document.querySelectorAll<HTMLElement>(
@@ -94,15 +97,37 @@ describe("Confetti", () => {
     );
   });
 
-  it("does nothing when motion is reduced", () => {
-    render(
+  it("does nothing when motion is reduced, and keeps nothing for later", () => {
+    const { rerender } = render(
       <MotionPreferenceContext value="reduced">
         <Confetti />
       </MotionPreferenceContext>,
     );
     act(() => {
       celebrate();
+      celebrate();
+      celebrate();
     });
+    expect(pieces()).toHaveLength(0);
+    rerender(
+      <MotionPreferenceContext value="full">
+        <Confetti />
+      </MotionPreferenceContext>,
+    );
+    expect(pieces()).toHaveLength(0);
+  });
+
+  it("says how to fix a celebration with no host, and keeps nothing for later", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    act(() => {
+      celebrate();
+    });
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "[buttery:Confetti] celebrate() ran with no <Confetti /> host",
+      ),
+    );
+    render(<Confetti />);
     expect(pieces()).toHaveLength(0);
   });
 });
