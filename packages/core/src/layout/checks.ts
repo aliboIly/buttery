@@ -126,11 +126,27 @@ export function createLayoutToolkit(): LayoutToolkit {
     "[role=option]",
     '[tabindex]:not([tabindex="-1"])',
   ].join(", ");
+  const INTERACTIVE_WITHOUT_TABINDEX = INTERACTIVE.replace(
+    ', [tabindex]:not([tabindex="-1"])',
+    "",
+  );
   const LAYER_FURNITURE = "[data-bt-layer], .bt-scrim, .bt-floating-lanes";
+  const FOCUS_CONTAINERS =
+    "dialog, [role=dialog], [role=alertdialog], [role=tabpanel], [role=region], [role=document], [role=group], [role=application], [role=log], [role=feed]";
   const PAGE_CHROME =
     "header, nav, [role=banner], [role=navigation], .bt-sticky";
   let styles = new Map<Element, CSSStyleDeclaration>();
   let positions = new Map<Element, Position>();
+  let inkContext: CanvasRenderingContext2D | null | undefined;
+
+  /** How far the glyphs of `text` hang below its baseline, in px, in the element's font. */
+  function inkDescent(text: string, element: Element): number {
+    inkContext ??= document.createElement("canvas").getContext("2d");
+    if (!inkContext) return 0;
+    const { fontStyle, fontWeight, fontSize, fontFamily } = styleOf(element);
+    inkContext.font = `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`;
+    return Math.max(0, inkContext.measureText(text).actualBoundingBoxDescent);
+  }
 
   function styleOf(element: Element): CSSStyleDeclaration {
     let style = styles.get(element);
@@ -227,7 +243,8 @@ export function createLayoutToolkit(): LayoutToolkit {
 
   /**
    * A text node's boxes, one per line: glyph extents across, the line box down (glyphs overhang tight line
-   * heights by design), and no taller than the box of text trimmed with `text-box`.
+   * heights by design). Text trimmed with `text-box` keeps to its trimmed box, except that the last line
+   * still owns its descenders, which hang below the trimmed baseline.
    */
   function lineBoxes({ node, parent }: TextRun): Box[] {
     const range = document.createRange();
@@ -243,8 +260,15 @@ export function createLayoutToolkit(): LayoutToolkit {
         ? rect.bottom
         : middle + lineHeight / 2;
       if (trimmed) {
+        const lastLine = bottom >= trimmed.bottom - 0.5;
         top = Math.max(top, trimmed.top);
         bottom = Math.min(bottom, trimmed.bottom);
+        if (lastLine) {
+          bottom = Math.max(
+            bottom,
+            trimmed.bottom + inkDescent(node.data, parent),
+          );
+        }
       }
       if (bottom - top < 0.5) continue;
       boxes.push({ left: rect.left, top, right: rect.right, bottom });
@@ -794,6 +818,14 @@ export function createLayoutToolkit(): LayoutToolkit {
       for (const element of document.querySelectorAll(INTERACTIVE)) {
         if (isTooling(element)) continue;
         if (element.matches(":disabled, [aria-disabled=true]")) continue;
+        // Tab panels, dialogs and focusable scroll regions take focus for keyboards, but no one taps them.
+        if (element.matches(FOCUS_CONTAINERS)) continue;
+        if (
+          !element.matches(INTERACTIVE_WITHOUT_TABINDEX) &&
+          ["auto", "scroll"].includes(styleOf(element).overflowY)
+        ) {
+          continue;
+        }
         if (element.closest('[data-bt-target="group"]')) continue;
         if (!isVisible(element)) continue;
         if (

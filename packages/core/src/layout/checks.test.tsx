@@ -208,6 +208,21 @@ describe("runLayoutChecks", () => {
     ).toEqual([]);
   });
 
+  it("sees the descenders of trimmed text hanging into the next line", () => {
+    const stack = (gap: number): string =>
+      `<div data-bt="Stack" style="display: flex; flex-direction: column; gap: ${String(gap)}px">
+         <p class="bt-text" data-role="display" data-bt="Text" data-testid="total">1,204</p>
+         <p class="bt-text" data-role="caption" data-bt="Text" data-testid="caption">cards made today</p>
+       </div>`;
+    const tight = check(stack(2), ["overlap"]);
+    expect(tight.map((violation) => violation.rule)).toEqual(["overlap"]);
+    expect([tight[0]?.a, tight[0]?.b].sort()).toEqual([
+      '[data-testid="caption"]',
+      '[data-testid="total"]',
+    ]);
+    expect(check(stack(16), ["overlap"])).toEqual([]);
+  });
+
   it("ignores overlaps inside a component, inside data-bt-allow-overlap, and across layers", () => {
     expect(
       check(
@@ -315,6 +330,16 @@ describe("target size", () => {
     expect(violations.map((violation) => violation.a)).toEqual([
       '[data-testid="alone"]',
     ]);
+  });
+
+  it("doesn't count tab panels or focusable scroll regions as targets", () => {
+    expect(
+      check(
+        `<div role="tabpanel" tabindex="0" style="block-size: 10px">The card as people will see it.</div>
+         <div tabindex="0" style="block-size: 12px; overflow-y: auto"><div style="block-size: 40px"></div></div>`,
+        ["target-size"],
+      ),
+    ).toEqual([]);
   });
 });
 
