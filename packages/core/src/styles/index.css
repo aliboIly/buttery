@@ -20,3 +20,8 @@
 @import "../primitives/icon/icon.css";
 @import "../primitives/pressable/pressable.css";
 @import "../primitives/fit-box/fit-box.css";
+@import "../layers/layer/layer.css";
+@import "../layers/scrim/scrim.css";
+@import "../layers/sticky/sticky.css";
+@import "../layers/popover/popover.css";
+@import "../layers/floating-lanes/floating-lanes.css";

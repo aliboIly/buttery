@@ -1,4 +1,3 @@
-export { cx } from "./utils/cx.ts";
 export {
   contrastRatio,
   formatHex,
@@ -17,6 +16,41 @@ export type {
   ControllableStateOptions,
   ControllableStateSetter,
 } from "./hooks/use-controllable-state.ts";
+export {
+  FloatingLaneItem,
+  FloatingLanes,
+  useFloatingObstacle,
+} from "./layers/floating-lanes/FloatingLanes.tsx";
+export type {
+  FloatingLaneItemProps,
+  FloatingLanesComponent,
+} from "./layers/floating-lanes/FloatingLanes.tsx";
+export { laneNames } from "./layers/floating-lanes/lanes-store.ts";
+export type { LaneName } from "./layers/floating-lanes/lanes-store.ts";
+export { Layer, Portal } from "./layers/layer/Layer.tsx";
+export type { LayerProps, PortalProps } from "./layers/layer/Layer.tsx";
+export { useCurrentLayer, useLayerContainer } from "./layers/layer/layer-manager.ts";
+export type { LayerBand, LayerInfo } from "./layers/layer/layer-manager.ts";
+export {
+  Popover,
+  PopoverAnchor,
+  PopoverClose,
+  PopoverContent,
+  PopoverTrigger,
+} from "./layers/popover/Popover.tsx";
+export type {
+  PopoverAnchorProps,
+  PopoverCloseProps,
+  PopoverComponent,
+  PopoverContentProps,
+  PopoverProps,
+  PopoverTriggerProps,
+} from "./layers/popover/Popover.tsx";
+export { Scrim } from "./layers/scrim/Scrim.tsx";
+export type { ScrimProps } from "./layers/scrim/Scrim.tsx";
+export { Sticky } from "./layers/sticky/Sticky.tsx";
+export type { StickyProps } from "./layers/sticky/Sticky.tsx";
+export type { StickyEdge } from "./layers/sticky/sticky-stack.ts";
 export type {
   ComponentKind,
   ComponentMeta,
@@ -111,3 +145,5 @@ export type {
   WidthDefinition,
   ZToken,
 } from "./tokens/index.ts";
+export { cx } from "./utils/cx.ts";
+export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";

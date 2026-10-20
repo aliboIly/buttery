@@ -1,0 +1,13 @@
+@layer bt.primitives {
+  [data-bt="Popover"] {
+    max-inline-size: var(--radix-popover-content-available-width);
+    max-block-size: var(--radix-popover-content-available-height);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform-origin: var(--radix-popover-content-transform-origin);
+  }
+
+  [data-bt="Popover"]:focus {
+    outline: none;
+  }
+}

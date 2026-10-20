@@ -1,0 +1,11 @@
+@layer bt.primitives {
+  [data-bt-layer] {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  [data-bt-layer] > * {
+    pointer-events: auto;
+  }
+}

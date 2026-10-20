@@ -1,0 +1,15 @@
+@layer bt.primitives {
+  [data-bt="Scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-bt="Scrim"][data-variant="dim"] {
+    background-color: var(--bt-overlay);
+  }
+
+  [data-bt="Scrim"][data-variant="blur"] {
+    background-color: var(--bt-wash);
+    backdrop-filter: blur(var(--bt-blur-scrim));
+  }
+}
