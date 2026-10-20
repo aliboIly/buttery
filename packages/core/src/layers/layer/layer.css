@@ -5,7 +5,7 @@
     pointer-events: none;
   }
 
-  [data-bt-layer] > * {
+  :where([data-bt-layer] > :not([data-bt-layer])) {
     pointer-events: auto;
   }
 }

@@ -47,6 +47,27 @@ describe("Layer", () => {
     expect(layerOf(screen.getByText("Tip")).parentElement).toBe(document.body);
   });
 
+  it("lets clicks through a nested layer to the layer under it", () => {
+    render(
+      <Layer band="modal">
+        <button type="button" style={{ margin: "40px" }}>
+          Rename
+        </button>
+        <Layer band="dropdown">
+          <p style={{ margin: "200px" }}>Menu</p>
+        </Layer>
+      </Layer>,
+    );
+    const button = screen.getByRole("button", { name: "Rename" });
+    const rect = button.getBoundingClientRect();
+    expect(
+      document.elementFromPoint(
+        rect.left + rect.width / 2,
+        rect.top + rect.height / 2,
+      ),
+    ).toBe(button);
+  });
+
   it("removes its container on unmount", () => {
     const { unmount } = render(
       <Layer band="toast">
