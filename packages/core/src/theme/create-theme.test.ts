@@ -83,6 +83,8 @@ describe("createTheme", () => {
       createTheme({ accent: "#0f766e", neutral: "warm" }),
       createTheme({ accent: "#c2410c", neutral: "cool" }),
       createTheme({ neutral: "warm" }),
+      createTheme({ accent: "#3b82f6" }),
+      createTheme({ accent: "#6366f1", neutral: "cool" }),
     ];
     for (const [index, theme] of themes.entries()) {
       for (const scheme of ["light", "dark"] as const) {
@@ -98,12 +100,22 @@ describe("createTheme", () => {
     }
   });
 
-  it("derives the info tint from a custom accent", () => {
+  it("derives the info tint from a custom accent, and keeps it when the accent is too light for text", () => {
     const theme = createTheme({ accent: "#7c3aed" });
     const tint = hexToOklch(theme.light["--bt-accent-subtle"] ?? "");
     expect(tint.h).toBeCloseTo(hexToOklch("#7c3aed").h, -1);
     expect(tint.l).toBeGreaterThan(0.9);
     expect(theme.dark["--bt-accent-subtle"]).toBeDefined();
+    expect(theme.light["--bt-accent-text"]).toBe("#7c3aed");
+    const light = createTheme({ accent: "#3b82f6" }).light;
+    expect(light["--bt-accent-subtle"]).not.toBe(colors["bg-surface"].light);
+    expect(light["--bt-accent-text"]).not.toBe("#3b82f6");
+    expect(
+      contrastRatio(
+        light["--bt-accent-text"] ?? "",
+        light["--bt-accent-subtle"] ?? "",
+      ),
+    ).toBeGreaterThanOrEqual(4.5);
   });
 
   it("lets overrides win", () => {

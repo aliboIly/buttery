@@ -163,13 +163,13 @@ function neutralColors(neutral: Neutral, scheme: ColorScheme): ColorValues {
 
 /**
  * The accent's tint for info callouts: a tenth of the accent over the light surface, and a dark surface
- * a step lighter with a little of the accent's hue. It fades toward the surface until the accent and
- * secondary text both hold 4.5:1 on it.
+ * a step lighter with a little of the accent's hue. It fades toward the surface only as far as body and
+ * secondary text need to hold 4.5:1 on it, so it always shows.
  */
 function accentTint(
   accent: string,
   surface: string,
-  secondaryText: string,
+  texts: readonly string[],
   scheme: ColorScheme,
 ): string {
   const base = hexToOklch(accent);
@@ -180,20 +180,44 @@ function accentTint(
       : { l: ground.l + 0.03, c: Math.min(base.c * 0.25, 0.05), h: base.h };
   for (let strength = 1; strength > 0; strength -= 0.1) {
     const tinted = oklchToHex(mixOklab(ground, full, strength));
-    if (
-      contrastRatio(accent, tinted) >= 4.5 &&
-      contrastRatio(secondaryText, tinted) >= 4.5
-    ) {
+    if (texts.every((text) => contrastRatio(text, tinted) >= 4.5)) {
       return tinted;
     }
   }
   return surface;
 }
 
+/**
+ * The accent as text: the accent itself when it holds 4.5:1 on every background given, otherwise darker
+ * (light theme) or lighter (dark theme) until it does.
+ */
+function accentInk(
+  accent: string,
+  backgrounds: readonly string[],
+  scheme: ColorScheme,
+): string {
+  const base = hexToOklch(accent);
+  const step = scheme === "light" ? -0.01 : 0.01;
+  let ink = accent;
+  for (
+    let lightness = base.l;
+    lightness >= 0 && lightness <= 1;
+    lightness += step
+  ) {
+    ink = withLightness(base, lightness);
+    if (
+      backgrounds.every((background) => contrastRatio(ink, background) >= 4.5)
+    ) {
+      return ink;
+    }
+  }
+  return ink;
+}
+
 function accentColors(
   accent: string,
   surfaces: Readonly<Record<ColorScheme, string>>,
-  secondaryText: Readonly<Record<ColorScheme, string>>,
+  texts: Readonly<Record<ColorScheme, readonly string[]>>,
 ): { light: ColorValues; dark: ColorValues } {
   const light = normalizeHex(accent);
   const base = hexToOklch(light);
@@ -203,25 +227,19 @@ function accentColors(
     lightness += 0.02;
     dark = withLightness(base, lightness);
   }
+  const lightTint = accentTint(light, surfaces.light, texts.light, "light");
+  const darkTint = accentTint(dark, surfaces.dark, texts.dark, "dark");
   return {
     light: {
       accent: light,
-      "accent-subtle": accentTint(
-        light,
-        surfaces.light,
-        secondaryText.light,
-        "light",
-      ),
+      "accent-subtle": lightTint,
+      "accent-text": accentInk(light, [lightTint, surfaces.light], "light"),
       selection: rgba(light, 0.2),
     },
     dark: {
       accent: dark,
-      "accent-subtle": accentTint(
-        dark,
-        surfaces.dark,
-        secondaryText.dark,
-        "dark",
-      ),
+      "accent-subtle": darkTint,
+      "accent-text": accentInk(dark, [darkTint, surfaces.dark], "dark"),
       selection: rgba(dark, 0.3),
     },
   };
@@ -315,8 +333,14 @@ export function createTheme(options: ThemeOptions = {}): ButteryTheme {
         dark: dark["bg-surface"] ?? colors["bg-surface"].dark,
       },
       {
-        light: light["text-secondary"] ?? colors["text-secondary"].light,
-        dark: dark["text-secondary"] ?? colors["text-secondary"].dark,
+        light: [
+          light.text ?? colors.text.light,
+          light["text-secondary"] ?? colors["text-secondary"].light,
+        ],
+        dark: [
+          dark.text ?? colors.text.dark,
+          dark["text-secondary"] ?? colors["text-secondary"].dark,
+        ],
       },
     );
     Object.assign(light, accent.light);

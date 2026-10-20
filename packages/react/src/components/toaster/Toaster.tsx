@@ -61,8 +61,6 @@ export interface ToasterProps {
 const SWIPE_TO_CLOSE = 50;
 /** How far a press moves, in px, before it counts as a swipe: a finger gets more room than a mouse. */
 const SWIPE_START = { touch: 10, other: 2 } as const;
-/** How long an announcement stays in its live region, in ms, so the region doesn't keep old news. */
-const ANNOUNCEMENT_LIFE = 1000;
 const HOTKEY = "F8";
 const SETTLED = { y: 0 } as const;
 
@@ -286,7 +284,7 @@ function Announcer({ label }: { readonly label: string }): ReactElement {
     if (!announcement) return undefined;
     const timer = window.setTimeout(() => {
       setQuiet(announcement.version);
-    }, ANNOUNCEMENT_LIFE);
+    }, timing["announcement-life"]);
     return () => {
       window.clearTimeout(timer);
     };

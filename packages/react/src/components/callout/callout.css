@@ -1,7 +1,7 @@
 @layer bt.components {
   .bt-callout {
     --bt-callout-bg: var(--bt-accent-subtle);
-    --bt-callout-ink: var(--bt-accent);
+    --bt-callout-ink: var(--bt-accent-text);
 
     display: flex;
     align-items: flex-start;
@@ -55,13 +55,20 @@
     padding-inline-start: var(--bt-space-4);
   }
 
-  .bt-callout > [data-bt-part="content"] > [data-bt-part="body"] a {
+  .bt-callout
+    > [data-bt-part="content"]
+    > [data-bt-part="body"]
+    a:not([data-bt]) {
     color: var(--bt-callout-ink);
     text-decoration: underline;
   }
 
   /* A link on a line of its own, as in an error summary, gets a 24px target. */
-  .bt-callout > [data-bt-part="content"] > [data-bt-part="body"] li > a {
+  .bt-callout
+    > [data-bt-part="content"]
+    > [data-bt-part="body"]
+    li
+    > a:not([data-bt]) {
     display: inline-block;
     padding-block: var(--bt-space-0_5);
   }

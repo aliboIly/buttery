@@ -69,13 +69,14 @@ export const colors = {
   "border-strong": {
     light: "#e3e3e3",
     dark: "#333338",
-    description: "Slider track, inputs, anchor grid, tilt pad.",
+    description:
+      "Slider track, anchor grid, tilt pad, and the edge of a disabled input.",
   },
   "control-border": {
     light: "#858585",
     dark: "#75757c",
     description:
-      "The edge that marks a control where nothing else does: a checkbox's box, a switch's track. 3:1 on every surface.",
+      "The edge that marks a control where nothing else does: a text input's box, a checkbox's box, a switch's track. 3:1 on every surface.",
   },
   "text-strong": {
     light: "#1a1a1a",
@@ -163,6 +164,12 @@ export const colors = {
     light: "#e9f0fd",
     dark: "#16223b",
     description: "Background of an info callout.",
+  },
+  "accent-text": {
+    light: "#2862e0",
+    dark: "#4f89ff",
+    description:
+      "The accent as text: links and icons in an info callout. 4.5:1 on the surface and on accent-subtle, even when a theme's accent is lighter.",
   },
   danger: {
     light: "#c72a1c",
@@ -359,7 +366,8 @@ export const contrastPairs: readonly ContrastPair[] = [
     "success-subtle",
     "warning-subtle",
   ]),
-  { text: "accent", on: "accent-subtle", minimum: 4.5 },
+  { text: "accent-text", on: "accent-subtle", minimum: 4.5 },
+  { text: "accent-text", on: "bg-surface", minimum: 4.5 },
   ...TEXT_SURFACES.map((on): ContrastPair => ({
     text: "control-border",
     on,

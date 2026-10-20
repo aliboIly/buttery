@@ -33,6 +33,7 @@
     --bt-inverse-text-secondary: #a3a3a3;
     --bt-accent: #2862e0;
     --bt-accent-subtle: #e9f0fd;
+    --bt-accent-text: #2862e0;
     --bt-danger: #c72a1c;
     --bt-danger-subtle: #fdeceb;
     --bt-success: #177245;
@@ -147,6 +148,7 @@
     --bt-celebration: 900ms;
     --bt-toast-life: 3000ms;
     --bt-toast-life-action: 5000ms;
+    --bt-announcement-life: 1000ms;
     --bt-press-scale: 0.97;
     --bt-icon-stroke: 1.75;
     --bt-text-title-size: 15px;
@@ -294,6 +296,7 @@
     --bt-inverse-text-secondary: #6b6b6b;
     --bt-accent: #4f89ff;
     --bt-accent-subtle: #16223b;
+    --bt-accent-text: #4f89ff;
     --bt-danger: #ff7a6e;
     --bt-danger-subtle: #3a1916;
     --bt-success: #4cc38a;
@@ -365,6 +368,7 @@
       --bt-inverse-text-secondary: #6b6b6b;
       --bt-accent: #4f89ff;
       --bt-accent-subtle: #16223b;
+      --bt-accent-text: #4f89ff;
       --bt-danger: #ff7a6e;
       --bt-danger-subtle: #3a1916;
       --bt-success: #4cc38a;
