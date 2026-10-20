@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
 import { Menu, Settings2 } from "lucide-react";
+import { RadioGroup } from "radix-ui";
 import {
   Icon,
   Inline,
@@ -28,21 +29,21 @@ function Toggle({
   onChange,
 }: ToggleProps): ReactElement {
   return (
-    <div className="pg-toggle" role="radiogroup" aria-label={label}>
+    <RadioGroup.Root
+      className="pg-toggle"
+      aria-label={label}
+      orientation="horizontal"
+      value={value}
+      onValueChange={onChange}
+    >
       {options.map((option) => (
-        <Pressable
-          key={option}
-          role="radio"
-          aria-checked={option === value}
-          className="pg-toggle-option"
-          onClick={() => {
-            onChange(option);
-          }}
-        >
-          <Text variant="control">{option}</Text>
-        </Pressable>
+        <RadioGroup.Item key={option} value={option} asChild>
+          <Pressable className="pg-toggle-option">
+            <Text variant="control">{option}</Text>
+          </Pressable>
+        </RadioGroup.Item>
       ))}
-    </div>
+    </RadioGroup.Root>
   );
 }
 
@@ -124,7 +125,7 @@ export function Chrome({
   const title = pages.find((page) => page.route === current)?.title ?? "Pages";
   return (
     <div className="pg-shell">
-      <Surface level="card" padX={4} asChild>
+      <Surface level="card" padX={3} asChild>
         <header className="pg-header">
           <Text variant="title-sm" truncate className="pg-brand">
             🧈 buttery playground

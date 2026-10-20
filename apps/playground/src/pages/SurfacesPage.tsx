@@ -183,7 +183,7 @@ function Inspector(): ReactElement {
             <div className="sf-split">
               <span className="sf-split-cell">
                 <Inline gap={2}>
-                  <Text>Lean</Text>
+                  <Text truncate>Lean</Text>
                   <Pressable className="sf-chip" disabled>
                     <Text variant="badge" tone="disabled">
                       Reset
@@ -195,7 +195,7 @@ function Inspector(): ReactElement {
                 </span>
               </span>
               <span className="sf-split-cell">
-                <Text>Anchor</Text>
+                <Text truncate>Anchor</Text>
                 <AnchorPlaceholder />
               </span>
             </div>

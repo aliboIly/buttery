@@ -152,6 +152,7 @@
 
 .sf-badge {
   display: inline-flex;
+  flex: none;
   align-items: center;
   block-size: var(--bt-h-badge);
   padding-inline: var(--bt-space-1_5);
@@ -247,6 +248,7 @@
 
 .sf-chip {
   display: inline-flex;
+  flex: none;
   align-items: center;
   block-size: var(--bt-h-badge);
   padding-inline: var(--bt-space-1_5);
