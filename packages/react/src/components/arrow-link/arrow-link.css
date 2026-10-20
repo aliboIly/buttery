@@ -1,0 +1,32 @@
+@layer bt.components {
+  .bt-arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    color: var(--bt-primary);
+    font-size: var(--bt-text-label-size);
+    font-weight: var(--bt-text-label-weight);
+    line-height: var(--bt-text-label-line);
+    letter-spacing: var(--bt-text-label-tracking);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  /* A link has no padding for the head to nudge into, so its arrow box keeps that room itself. */
+  .bt-arrow-link > .bt-arrow {
+    inline-size: calc(var(--bt-arrow-width) + var(--bt-arrow-nudge));
+  }
+
+  @media (hover: hover) {
+    .bt-arrow-link:hover {
+      color: var(--bt-primary-hover);
+    }
+  }
+
+  .bt-arrow-link:focus-visible {
+    text-decoration: underline;
+  }
+}

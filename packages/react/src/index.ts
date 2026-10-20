@@ -24,3 +24,5 @@ export type {
   ButtonVariant,
 } from "./components/button/Button.tsx";
 export type { ArrowDirection } from "./parts/arrow/Arrow.tsx";
+export { ArrowLink } from "./components/arrow-link/ArrowLink.tsx";
+export type { ArrowLinkProps } from "./components/arrow-link/ArrowLink.tsx";

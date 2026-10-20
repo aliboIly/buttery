@@ -233,11 +233,11 @@ A nested surface sits evenly inside its parent: the same inset on every open sid
 - Sizes: `sm` 28 · `md` 36 (default) · `cta` 48.
 - Shapes: `pill` (default, r-full, padding-x 20) or `rounded` (r12 — dialog CTAs).
 - Icons 16px, stroke 1.75, gap 6. `loading` swaps the label for a spinner without changing width.
-- `arrow="forward" | "back"` adds the navigation arrow (MOTION_SPEC §4.5): a 16px chevron after the label (before it for back), gap 6, that draws its stem on hover or focus. Its full width is reserved at rest, so the button never changes width; `loading` hides it and keeps the space.
+- `arrow="forward" | "back"` adds the navigation arrow (MOTION_SPEC §4.5): a 16px chevron after the label (before it for back), gap 6, that draws its stem on hover or focus. Only its transforms change, so the button never changes width: the head nudges 3px into the padding. `loading` hides it and keeps the space.
 - Press: scale 0.97 (MOTION_SPEC).
 
 ### ArrowLink
-A text link with the same arrow part as `Button`: `label` role in `primary`, hover `primary-hover`, arrow 16px after the label, gap 4. Underlined only on keyboard focus, beside the focus ring.
+A text link with the same arrow part as `Button`: `label` role in `primary`, hover `primary-hover`, arrow 16px after the label, gap 4. Its arrow box is 3px wider than a button's, since a link has no padding for the head to nudge into. Underlined only on keyboard focus, beside the focus ring.
 
 ### IconButton
 Ghost, square, r-full: `md` 36×36 (header, default) · `sm` 28×28 (dialog close, inline). Icon 16 `text-secondary`, disabled `icon-disabled`, hover bg `bg-control`. Requires `label` (tooltip + aria-label).
