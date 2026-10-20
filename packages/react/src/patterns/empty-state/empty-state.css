@@ -1,0 +1,19 @@
+@layer bt.patterns {
+  .bt-empty-state {
+    --bt-empty-state-gap: var(--bt-space-6);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--bt-empty-state-gap);
+    min-inline-size: 0;
+    text-align: center;
+  }
+
+  .bt-empty-state > [data-bt-part="actions"] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--bt-space-2);
+  }
+}

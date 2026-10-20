@@ -162,3 +162,16 @@ export type {
   HeaderBarComponent,
   HeaderBarProps,
 } from "./patterns/header-bar/HeaderBar.tsx";
+export { EmptyState } from "./patterns/empty-state/EmptyState.tsx";
+export type { EmptyStateProps } from "./patterns/empty-state/EmptyState.tsx";
+export {
+  DropZone,
+  DropZoneOpen,
+  fileMatches,
+} from "./patterns/drop-zone/DropZone.tsx";
+export type {
+  DropZoneComponent,
+  DropZoneLabels,
+  DropZoneOpenProps,
+  DropZoneProps,
+} from "./patterns/drop-zone/DropZone.tsx";

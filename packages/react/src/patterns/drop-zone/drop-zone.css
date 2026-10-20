@@ -1,0 +1,27 @@
+@layer bt.patterns {
+  .bt-drop-zone {
+    --bt-drop-zone-line: 2px;
+
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+
+  .bt-drop-zone[data-over] {
+    background-color: var(--bt-bg-control-active);
+  }
+
+  /* A dashed edge 16px in from the area's edges, with what a drop does in the middle. */
+  .bt-drop-zone > [data-bt-part="drop-hint"] {
+    position: absolute;
+    inset: var(--bt-space-4);
+    display: grid;
+    place-items: center;
+    border: var(--bt-drop-zone-line) dashed var(--bt-ring-selected);
+    border-radius: var(--bt-r-2xl);
+    color: var(--bt-text-secondary);
+    pointer-events: none;
+  }
+}
