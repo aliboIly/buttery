@@ -61,6 +61,19 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       run: pressIfShown("button", "More actions"),
     },
   ],
+  toaster: [
+    {
+      name: "show four toasts and hold them under the pointer",
+      run: async (page: Page) => {
+        const show = page.getByRole("button", {
+          name: "Show a toast",
+          exact: true,
+        });
+        for (let count = 0; count < 4; count += 1) await show.click();
+        await page.getByRole("region", { name: "Notifications (F8)" }).hover();
+      },
+    },
+  ],
 };
 
 test.describe.configure({ timeout: 300_000 });
