@@ -12,6 +12,7 @@ export function RotationRow(): ReactElement {
       max={180}
       format="°"
       detents={[0]}
+      resetValue={0}
       value={rotation}
       onValueChange={setRotation}
     />

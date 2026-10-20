@@ -1,6 +1,6 @@
-import { Text, cx, useControllableState } from "@buttery/core";
+import { Text, cx, useControllableState, warnOnce } from "@buttery/core";
 import { Slider as RadixSlider } from "radix-ui";
-import { useId, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { ValueBadge } from "../value-badge/ValueBadge.tsx";
 
@@ -61,7 +61,7 @@ function formatterFor(
  * badge resets it, as do Backspace and Delete on the thumb.
  *
  * @example
- * <Slider label="Rotation" min={-180} max={180} format="°" detents={[0]} value={angle} onValueChange={setAngle} />
+ * <Slider label="Rotation" min={-180} max={180} format="°" detents={[0]} resetValue={0} value={angle} onValueChange={setAngle} />
  */
 export function Slider({
   label,
@@ -89,8 +89,23 @@ export function Slider({
   const dragging = useRef(false);
   const write = formatterFor(format, step);
   const reset = (): void => {
-    if (!disabled) setCurrent(resetValue ?? defaultValue ?? min);
+    if (disabled) return;
+    const target = resetValue ?? defaultValue ?? min;
+    setCurrent(target);
+    onValueCommit?.(target);
   };
+  const resetsToMin =
+    value !== undefined &&
+    resetValue === undefined &&
+    defaultValue === undefined;
+
+  useEffect(() => {
+    if (!resetsToMin) return;
+    warnOnce(
+      "Slider",
+      `The "${label}" slider is controlled without resetValue or defaultValue, so double-click and Backspace reset it to its minimum, ${String(min)}. Fix: pass the value it should go back to, such as resetValue={0}.`,
+    );
+  }, [resetsToMin, label, min]);
   const pull = (max - min) * DETENT_PULL;
 
   return (

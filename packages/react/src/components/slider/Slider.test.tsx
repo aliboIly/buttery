@@ -7,7 +7,10 @@ import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Slider } from "./Slider.tsx";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 function thumb(): HTMLElement {
   return screen.getByRole("slider");
@@ -106,8 +109,9 @@ describe("Slider", () => {
     expect(change).toHaveBeenLastCalledWith(1);
   });
 
-  it("resets on a double-click of its label or badge, or Backspace on the thumb", async () => {
+  it("resets on a double-click of its label or badge, or Backspace on the thumb, and commits the reset", async () => {
     const change = vi.fn();
+    const commit = vi.fn<(value: number) => void>();
     render(
       <Slider
         label="Rotation"
@@ -115,16 +119,43 @@ describe("Slider", () => {
         max={180}
         defaultValue={45}
         resetValue={0}
+        format="°"
         onValueChange={change}
+        onValueCommit={commit}
       />,
     );
     await userEvent.dblClick(screen.getByText("Rotation"));
     expect(change).toHaveBeenLastCalledWith(0);
+    expect(commit).toHaveBeenLastCalledWith(0);
     thumb().focus();
     await browser.keyboard("{ArrowRight}");
     expect(change).toHaveBeenLastCalledWith(1);
     await browser.keyboard("{Backspace}");
     expect(change).toHaveBeenLastCalledWith(0);
+    await browser.keyboard("{ArrowRight}");
+    await userEvent.dblClick(
+      screen.getByText("1°", { selector: '[data-bt-part="value"]' }),
+    );
+    expect(change).toHaveBeenLastCalledWith(0);
+    expect(commit.mock.calls.map(([committed]) => committed)).toEqual([
+      0, 1, 0, 1, 0,
+    ]);
+  });
+
+  it("warns, with the fix, when a controlled slider would reset to its minimum", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <Slider
+        label="Rotation"
+        min={-180}
+        max={180}
+        value={20}
+        onValueChange={() => undefined}
+      />,
+    );
+    expect(warn).toHaveBeenCalledWith(
+      '[buttery:Slider] The "Rotation" slider is controlled without resetValue or defaultValue, so double-click and Backspace reset it to its minimum, -180. Fix: pass the value it should go back to, such as resetValue={0}.',
+    );
   });
 
   it("has a 24px thumb on a 14px track with a 36px hit area", () => {
