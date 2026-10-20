@@ -4,6 +4,7 @@ import { dirname, join, relative } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { format, resolveConfig } from "prettier";
 
 const KINDS = {
   primitive: { folder: "primitives", layer: "bt.primitives" },
@@ -22,9 +23,10 @@ export function kebabCase(name) {
     .toLowerCase();
 }
 
-function componentSource(name, purpose) {
+function componentSource(name, purpose, cxImport) {
   return `import { Slot } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement } from "react";
+import { cx } from "${cxImport}";
 
 export interface ${name}Props extends ComponentPropsWithRef<"div"> {
   /** Render the single child element instead of a \`div\`, with ${name}'s props merged onto it. */
@@ -37,9 +39,9 @@ export interface ${name}Props extends ComponentPropsWithRef<"div"> {
  * @example
  * <${name} />
  */
-export function ${name}({ asChild = false, ...rest }: ${name}Props): ReactElement {
+export function ${name}({ asChild = false, className, ...rest }: ${name}Props): ReactElement {
   const Root = asChild ? Slot.Root : "div";
-  return <Root {...rest} data-bt="${name}" />;
+  return <Root {...rest} className={cx("bt-${kebabCase(name)}", className)} data-bt="${name}" />;
 }
 `;
 }
@@ -47,7 +49,7 @@ export function ${name}({ asChild = false, ...rest }: ${name}Props): ReactElemen
 function cssSource(name, layer) {
   const prefix = `--bt-${kebabCase(name)}`;
   return `@layer ${layer} {
-  [data-bt="${name}"] {
+  .bt-${kebabCase(name)} {
     ${prefix}-gap: var(--bt-space-2);
 
     display: flex;
@@ -69,12 +71,12 @@ import { ${name} } from "./${name}.tsx";
 afterEach(cleanup);
 
 describe("${name}", () => {
-  it("stamps data-bt, forwards its ref and spreads props", () => {
+  it("stamps its class and data-bt, forwards its ref and spreads props", () => {
     const ref = createRef<HTMLDivElement>();
     render(<${name} ref={ref} aria-label="Example" className="custom" />);
     expect(ref.current?.dataset["bt"]).toBe("${name}");
     expect(ref.current?.getAttribute("aria-label")).toBe("Example");
-    expect(ref.current?.className).toContain("custom");
+    expect(ref.current?.className).toBe("bt-${kebabCase(name)} custom");
   });
 });
 `;
@@ -142,8 +144,16 @@ function ensureStylesExport(packageJsonPath) {
   writeFileSync(packageJsonPath, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
-/** Scaffolds a contract-compliant component folder and wires it into its package. Returns the files written. */
-export function createComponent({
+async function formatted(path, content) {
+  const config = await resolveConfig(path);
+  return format(content, { ...config, filepath: path });
+}
+
+/**
+ * Scaffolds a contract-compliant component folder, formatted with the repo's Prettier config, and wires it
+ * into its package. Resolves to the files written.
+ */
+export async function createComponent({
   root,
   name,
   purpose,
@@ -179,13 +189,15 @@ export function createComponent({
   const npmName = `@buttery/${packageName}`;
   const sentence = purpose.trim().replace(/\.?$/, ".");
   const metaImport = packageName === "core" ? "../../meta.ts" : "@buttery/core";
+  const cxImport =
+    packageName === "core" ? "../../utils/cx.ts" : "@buttery/core";
   const stylesImports =
     packageName === "core"
       ? ["../../styles/index.css"]
       : ["@buttery/core/styles.css", "../../styles.css"];
 
   const files = {
-    [`${name}.tsx`]: componentSource(name, sentence),
+    [`${name}.tsx`]: componentSource(name, sentence, cxImport),
     [`${kebabCase(name)}.css`]: cssSource(name, settings.layer),
     [`${name}.test.tsx`]: testSource(name, stylesImports),
     [`${name}.meta.ts`]: metaSource(name, kind, sentence, metaImport),
@@ -197,7 +209,7 @@ export function createComponent({
   for (const [file, content] of Object.entries(files)) {
     const path = join(folder, file);
     mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, content);
+    writeFileSync(path, await formatted(path, content));
     written.push(relative(root, path));
   }
 
@@ -249,7 +261,7 @@ if (isMain) {
         values.package ??
         (kind === "primitive" || kind === "layer" ? "core" : "react");
       const root = fileURLToPath(new URL("..", import.meta.url));
-      const written = createComponent({
+      const written = await createComponent({
         root,
         name,
         purpose: values.purpose,

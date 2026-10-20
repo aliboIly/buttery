@@ -7,6 +7,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { check } from "prettier";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createComponent, kebabCase } from "./new-component.mjs";
 
@@ -47,8 +48,8 @@ describe("kebabCase", () => {
 });
 
 describe("createComponent", () => {
-  it("scaffolds every contract file for a react component and wires it in", () => {
-    const written = createComponent({
+  it("scaffolds every contract file for a react component and wires it in", async () => {
+    const written = await createComponent({
       root,
       name: "ValueBadge",
       purpose: "Shows a slider's value next to its label",
@@ -68,6 +69,7 @@ describe("createComponent", () => {
       "utf8",
     );
     expect(source).toContain('data-bt="ValueBadge"');
+    expect(source).toContain('cx("bt-value-badge", className)');
     expect(source).toContain("* Shows a slider's value next to its label.");
     expect(
       readFileSync(join(root, "packages/react/src/index.ts"), "utf8"),
@@ -90,11 +92,12 @@ describe("createComponent", () => {
       "utf8",
     );
     expect(css).toContain("@layer bt.components {");
+    expect(css).toContain(".bt-value-badge {");
     expect(css).toContain("--bt-value-badge-gap: var(--bt-space-2);");
   });
 
-  it("puts primitives in core's primitives layer and stylesheet", () => {
-    createComponent({
+  it("puts primitives in core's primitives layer and stylesheet", async () => {
+    await createComponent({
       root,
       name: "Spacer",
       purpose: "Fills leftover space in a row",
@@ -112,24 +115,43 @@ describe("createComponent", () => {
     ).toContain('import type { ComponentMeta } from "../../meta.ts";');
   });
 
-  it("explains how to fix bad input", () => {
-    expect(() =>
+  it("writes files that already pass the format check", async () => {
+    const written = await createComponent({
+      root,
+      name: "SegmentedControlWithALongName",
+      purpose: "Picks one of a few options with a long name",
+    });
+    for (const file of written) {
+      const path = join(root, file);
+      expect(
+        await check(readFileSync(path, "utf8"), { filepath: path }),
+        file,
+      ).toBe(true);
+    }
+  });
+
+  it("explains how to fix bad input", async () => {
+    await expect(
       createComponent({ root, name: "value-badge", purpose: "Shows a value" }),
-    ).toThrow(/PascalCase/);
-    expect(() =>
+    ).rejects.toThrow(/PascalCase/);
+    await expect(
       createComponent({ root, name: "ValueBadge", purpose: "" }),
-    ).toThrow(/--purpose/);
-    expect(() =>
+    ).rejects.toThrow(/--purpose/);
+    await expect(
       createComponent({
         root,
         name: "ValueBadge",
         purpose: "Shows a value",
         kind: "widget",
       }),
-    ).toThrow(/Unknown kind/);
-    createComponent({ root, name: "ValueBadge", purpose: "Shows a value" });
-    expect(() =>
+    ).rejects.toThrow(/Unknown kind/);
+    await createComponent({
+      root,
+      name: "ValueBadge",
+      purpose: "Shows a value",
+    });
+    await expect(
       createComponent({ root, name: "ValueBadge", purpose: "Shows a value" }),
-    ).toThrow(/already exists/);
+    ).rejects.toThrow(/already exists/);
   });
 });
