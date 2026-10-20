@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "Sticky nav bars, sub navs and panel footers",
     "Anything anchors and floating lanes need to stay clear of",
+    'Sidebars and tables of contents that follow the scroll: variant="aside"',
   ],
   avoidWhen: [
     "Free-floating UI over the page: use a Layer",

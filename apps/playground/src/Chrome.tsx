@@ -173,7 +173,7 @@ export function Chrome({
         </header>
       </Surface>
       <div className="pg-body">
-        <Sticky className="pg-sidebar pg-wide">
+        <Sticky variant="aside" className="pg-sidebar pg-wide">
           <nav aria-label="Pages">
             <PageLinks current={current} />
           </nav>

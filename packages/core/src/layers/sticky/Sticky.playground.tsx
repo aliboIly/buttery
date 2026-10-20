@@ -1,4 +1,4 @@
-import { Stack, Sticky, Surface, Text } from "@buttery/core";
+import { Inline, Stack, Sticky, Surface, Text } from "@buttery/core";
 import type { DemoSection } from "@buttery/core";
 
 export const demos: readonly DemoSection[] = [
@@ -29,6 +29,40 @@ export const demos: readonly DemoSection[] = [
             <Text key={index}>Row {index + 1}</Text>
           ))}
         </Stack>
+      </Surface>
+    ),
+  },
+  {
+    title: "Aside",
+    description:
+      "A sidebar sticks under the nav without adding to --bt-sticky-top, so anchors and lanes only clear the nav.",
+    render: () => (
+      <Surface
+        level="card"
+        role="region"
+        aria-label="Aside demo"
+        tabIndex={0}
+        style={{ blockSize: "var(--bt-bento-row)", overflowY: "auto" }}
+      >
+        <Sticky>
+          <Surface level="raised" padX={4} padY={3} radius="xs">
+            <Text variant="label">Nav</Text>
+          </Surface>
+        </Sticky>
+        <Inline align="start" gap={6} padX={4}>
+          <Sticky variant="aside">
+            <Stack gap={2} padY={3}>
+              <Text variant="label">On this page</Text>
+              <Text variant="caption">Setup</Text>
+              <Text variant="caption">Export</Text>
+            </Stack>
+          </Sticky>
+          <Stack gap={3} padY={3}>
+            {Array.from({ length: 24 }, (_, index) => (
+              <Text key={index}>Paragraph {index + 1}</Text>
+            ))}
+          </Stack>
+        </Inline>
       </Surface>
     ),
   },

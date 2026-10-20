@@ -3,18 +3,24 @@ import { useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 import { joinStickyStack } from "./sticky-stack.ts";
-import type { StickyEdge } from "./sticky-stack.ts";
+import type { StickyEdge, StickyVariant } from "./sticky-stack.ts";
 
 export interface StickyProps extends ComponentPropsWithRef<"div"> {
   /** The edge of the scroll container to hold to. Defaults to `"top"`. */
   readonly edge?: StickyEdge | undefined;
+  /**
+   * `"bar"` (the default) runs across the scroll container, such as a nav bar or a panel footer, and
+   * counts toward the published height. `"aside"` is a column beside the content, such as a sidebar or a
+   * table of contents: it sits under the bars and doesn't count.
+   */
+  readonly variant?: StickyVariant | undefined;
   /** Render the single child element instead of a `div`, with Sticky's props merged onto it. */
   readonly asChild?: boolean | undefined;
 }
 
 /**
- * Keeps its content at the top or bottom edge of the scroll container while the rest scrolls. Stickies
- * on the same edge stack under one another, and the container publishes their total height as
+ * Keeps its content at the top or bottom edge of the scroll container while the rest scrolls. Bars on the
+ * same edge stack under one another, and the container publishes their total height as
  * `--bt-sticky-top` (or `--bt-sticky-bottom`), so anchors can use
  * `scroll-margin-top: var(--bt-sticky-top)` and floating lanes stay clear.
  *
@@ -22,9 +28,13 @@ export interface StickyProps extends ComponentPropsWithRef<"div"> {
  * <Sticky>
  *   <NavBar />
  * </Sticky>
+ * <Sticky variant="aside">
+ *   <nav aria-label="On this page">…</nav>
+ * </Sticky>
  */
 export function Sticky({
   edge = "top",
+  variant = "bar",
   asChild = false,
   ref,
   ...rest
@@ -34,9 +44,17 @@ export function Sticky({
 
   useLayoutEffect(() => {
     if (!element.current) return undefined;
-    return joinStickyStack(element.current, edge);
-  }, [edge]);
+    return joinStickyStack(element.current, edge, variant);
+  }, [edge, variant]);
 
   const Root = asChild ? Slot.Root : "div";
-  return <Root {...rest} ref={merged} data-bt="Sticky" data-edge={edge} />;
+  return (
+    <Root
+      {...rest}
+      ref={merged}
+      data-bt="Sticky"
+      data-edge={edge}
+      data-variant={variant}
+    />
+  );
 }
