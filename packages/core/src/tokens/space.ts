@@ -17,6 +17,7 @@ export const space = {
   "32": 128,
 } as const;
 
+/** A step on the spacing scale, as its key (`"4"`, `"0.5"`). */
 export type SpaceStep = keyof typeof space;
 
 type NumericStep<Step> = Step extends `${infer N extends number}` ? N : never;

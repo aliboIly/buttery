@@ -13,4 +13,5 @@ export const radii = {
   full: 9999,
 } as const;
 
+/** The name of a radius token. */
 export type RadiusToken = keyof typeof radii;

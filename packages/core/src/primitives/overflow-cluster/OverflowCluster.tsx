@@ -49,6 +49,7 @@ function sameSet(a: ReadonlySet<string>, b: ReadonlySet<string>): boolean {
   return a.size === b.size && [...a].every((id) => b.has(id));
 }
 
+/** Props for `OverflowCluster`. */
 export interface OverflowClusterProps
   extends ComponentPropsWithRef<"div">, Pick<SpacingProps, "gap"> {
   /** Accessible name of the "More" button. Defaults to `"More"`. */
@@ -181,6 +182,7 @@ function OverflowClusterRoot({
   );
 }
 
+/** Props for `OverflowCluster.Item`. */
 export interface OverflowClusterItemProps extends Omit<
   ComponentPropsWithRef<"div">,
   "hidden"
@@ -229,6 +231,7 @@ export function OverflowClusterItem({
   );
 }
 
+/** `OverflowCluster` with its `Item` part. */
 export interface OverflowClusterComponent {
   (props: OverflowClusterProps): ReactElement;
   /** One item in the cluster. */

@@ -23,6 +23,7 @@ const BLOCK_VARIANTS: ReadonlySet<TextVariant> = new Set<TextVariant>([
   "body-lg",
 ]);
 
+/** Props for `Text`. */
 export interface TextProps extends Omit<ComponentPropsWithRef<"span">, "ref"> {
   /** The rendered element: a `p`, a `span`, or the child with `asChild`. */
   readonly ref?: Ref<HTMLElement> | undefined;

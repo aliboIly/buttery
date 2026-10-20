@@ -9,6 +9,7 @@ import type { SpacingProps } from "../spacing.ts";
 /** Column counts `Grid` accepts. */
 export type GridColumns = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
+/** Props for `Grid`. */
 export interface GridProps extends ComponentPropsWithRef<"div">, SpacingProps {
   /** Number of equal columns. Defaults to `1`. */
   readonly columns?: GridColumns | undefined;

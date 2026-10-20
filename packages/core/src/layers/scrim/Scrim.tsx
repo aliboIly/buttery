@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { cx } from "../../utils/cx.ts";
 
+/** Props for `Scrim`. */
 export interface ScrimProps extends Omit<
   ComponentPropsWithRef<"div">,
   "children"

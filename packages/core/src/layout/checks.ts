@@ -37,6 +37,7 @@ export interface LayoutCheckTokens {
   readonly zIndex: readonly number[];
 }
 
+/** Options for `check` and `runLayoutChecks`. */
 export interface LayoutCheckOptions {
   /** The token values to compare against, from `layoutCheckTokens()`. */
   readonly tokens: LayoutCheckTokens;
@@ -44,6 +45,7 @@ export interface LayoutCheckOptions {
   readonly rules?: readonly LayoutRule[] | undefined;
 }
 
+/** Options for `moved`. */
 export interface MovedOptions {
   /** Selectors of elements that are meant to move, along with everything inside them. */
   readonly allow?: readonly string[] | undefined;

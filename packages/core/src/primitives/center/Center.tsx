@@ -4,6 +4,7 @@ import { cx } from "../../utils/cx.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
 
+/** Props for `Center`. */
 export interface CenterProps
   extends ComponentPropsWithRef<"div">, Omit<SpacingProps, "gap"> {
   /** Render the single child element instead of a `div`, with Center's props merged onto it. */

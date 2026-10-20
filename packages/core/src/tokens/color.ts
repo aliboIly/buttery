@@ -1,3 +1,4 @@
+/** A color token's light and dark values and what it's for. */
 export interface ColorDefinition {
   /** The light theme value. */
   readonly light: string;
@@ -257,8 +258,10 @@ export const colors = {
   },
 } as const;
 
+/** The name of a color token. */
 export type ColorToken = keyof typeof colors;
 
+/** A text color and the background it sits on, with the contrast it has to reach. */
 export interface ContrastPair {
   /** The text color. */
   readonly text: ColorToken;

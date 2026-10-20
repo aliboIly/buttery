@@ -38,6 +38,7 @@ function levelInset(level: SurfaceLevel): string {
     : `var(${spaceVar(inline)})`;
 }
 
+/** Props for `Surface`. */
 export interface SurfaceProps extends ComponentPropsWithRef<"div"> {
   /** Background, edge, shadow, corner radius and padding, by level. Defaults to `"card"`. */
   readonly level?: SurfaceLevel | undefined;

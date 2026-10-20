@@ -4,6 +4,7 @@ import { cx } from "../../utils/cx.ts";
 /** Props `Icon` passes to the icon component. lucide-react icons accept them, as does any component that renders an `svg`. */
 export type IconComponentProps = SVGProps<SVGSVGElement>;
 
+/** Props for `Icon`. */
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "children"> {
   /** The rendered `svg`. */
   readonly ref?: Ref<SVGSVGElement> | undefined;

@@ -15,6 +15,7 @@ export const butteryEslintPlugin: ESLint.Plugin = {
   },
 };
 
+/** Options for `butteryEslintConfig`. */
 export interface ButteryEslintOptions {
   /** Where components live; they must spread their DOM props. Defaults to buttery's component folders. */
   readonly components?: readonly string[] | undefined;

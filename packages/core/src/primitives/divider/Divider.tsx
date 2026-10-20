@@ -4,6 +4,7 @@ import type { SpaceValue } from "../../tokens/space.ts";
 import type { CssVariables } from "../../theme/create-theme.ts";
 import { cx } from "../../utils/cx.ts";
 
+/** Props for `Divider`. */
 export interface DividerProps extends Omit<
   ComponentPropsWithRef<"div">,
   "children"

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 
+/** Options for `useControllableState`. */
 export interface ControllableStateOptions<T> {
   /** The controlled value. While it's defined, the component reflects it and never updates it itself. */
   readonly value?: T | undefined;

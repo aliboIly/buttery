@@ -13,4 +13,5 @@ export const zIndex = {
   dev: 90,
 } as const;
 
+/** The name of a z token. */
 export type ZToken = keyof typeof zIndex;

@@ -6,6 +6,7 @@ import { useMergedRefs } from "../../utils/merge-refs.ts";
 import { joinStickyStack } from "./sticky-stack.ts";
 import type { StickyEdge, StickyVariant } from "./sticky-stack.ts";
 
+/** Props for `Sticky`. */
 export interface StickyProps extends ComponentPropsWithRef<"div"> {
   /** The edge of the scroll container to hold to. Defaults to `"top"`. */
   readonly edge?: StickyEdge | undefined;

@@ -3,6 +3,7 @@ import type { LayerInfo } from "../layer/layer-manager.ts";
 /** The places free-floating UI can live: toasts at the bottom, notices at the top end. */
 export const laneNames = ["bottom-center", "bottom-end", "top-end"] as const;
 
+/** The name of a floating lane. */
 export type LaneName = (typeof laneNames)[number];
 
 /** A lane's element and the toast layer it sits in, for what lane items open. */

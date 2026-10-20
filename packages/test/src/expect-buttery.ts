@@ -39,6 +39,7 @@ export interface ButteryInteraction {
   readonly allowMove?: readonly string[] | undefined;
 }
 
+/** Options for `expectButtery`: the matrix, the rules, scripted interactions and the settle timeout. */
 export interface ExpectButteryOptions extends Partial<ButteryMatrix> {
   /** Shown in reports, such as the route. Defaults to the page's path and hash. */
   readonly name?: string | undefined;

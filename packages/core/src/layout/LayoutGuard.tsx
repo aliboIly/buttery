@@ -41,6 +41,7 @@ function report(violations: readonly LayoutViolation[]): void {
   );
 }
 
+/** Props for `LayoutGuard`. */
 export interface LayoutGuardProps {
   /** Show outlines when it mounts. Defaults to `true`; ⌥⇧L toggles them. */
   readonly defaultVisible?: boolean | undefined;

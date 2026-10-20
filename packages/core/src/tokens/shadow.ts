@@ -1,3 +1,4 @@
+/** A shadow token's light and dark values and what it's for. */
 export interface ShadowDefinition {
   /** The light theme value. */
   readonly light: string;
@@ -56,4 +57,5 @@ export const shadows = {
   },
 } as const;
 
+/** The name of a shadow token. */
 export type ShadowToken = keyof typeof shadows;

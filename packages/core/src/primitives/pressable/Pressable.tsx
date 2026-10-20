@@ -12,6 +12,7 @@ function isButtonElement(node: ReactNode): boolean {
   return isValidElement(node) && node.type === "button";
 }
 
+/** Props for `Pressable`. */
 export interface PressableProps extends ComponentPropsWithRef<"button"> {
   /**
    * Render the single child element (such as a link) instead of a `button`, with Pressable's props merged

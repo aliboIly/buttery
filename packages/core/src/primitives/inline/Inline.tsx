@@ -5,6 +5,7 @@ import type { FlowAlign, FlowJustify } from "../flow.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
 
+/** Props for `Inline`. */
 export interface InlineProps
   extends ComponentPropsWithRef<"div">, SpacingProps {
   /** Cross-axis (vertical) alignment. Defaults to `"center"`. */

@@ -13,8 +13,10 @@ export const tracking = {
   display: "-0.02em",
 } as const;
 
+/** The name of a letter-spacing token. */
 export type TrackingToken = keyof typeof tracking;
 
+/** A text role's size, line height, weight and color. */
 export interface TextRoleDefinition {
   /** Font size in px. */
   readonly size: number;
@@ -134,10 +136,13 @@ export const textRoles = {
   },
 } as const;
 
+/** The name of a text role in the app type scale. */
 export type TextRole = keyof typeof textRoles;
 
+/** A display size step: small, medium or large. */
 export type DisplayStep = "sm" | "md" | "lg";
 
+/** A page display role's size and line height at each step, weight and color. */
 export interface DisplayRoleDefinition {
   /** Font size and line height in px at each display step. */
   readonly steps: Readonly<
@@ -179,6 +184,7 @@ export const displayRoles = {
   },
 } as const;
 
+/** The name of a page display role. */
 export type DisplayRole = keyof typeof displayRoles;
 
 /** Container widths where display roles step up. */

@@ -23,6 +23,7 @@ export type RadiusScale = "soft" | "default" | "crisp";
 /** A map of buttery custom properties to values. */
 export type CssVariables = Readonly<Record<`--bt-${string}`, string>>;
 
+/** What `createTheme` can change: neutrals, accent, radii, fonts, density and individual colors. */
 export interface ThemeOptions {
   /** Focus ring and selection color, as hex. Defaults to buttery's blue. */
   readonly accent?: string;

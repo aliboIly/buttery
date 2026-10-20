@@ -123,6 +123,7 @@ function FloatingLanesHost(): ReactElement {
   );
 }
 
+/** Props for `FloatingLanes.Item`. */
 export interface FloatingLaneItemProps {
   /** Which lane to stack in. Defaults to `"bottom-center"`, where toasts go. */
   readonly lane?: LaneName | undefined;
@@ -163,6 +164,7 @@ export function useFloatingObstacle(): RefCallback<HTMLElement> {
   return registerObstacle;
 }
 
+/** `FloatingLanes`: the lane host, with `Item` to render into a lane. */
 export interface FloatingLanesComponent {
   (): ReactElement;
   /** Renders its children into a lane. */

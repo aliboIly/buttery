@@ -16,6 +16,7 @@ const PopoverOpenContext: Context<boolean | null> = createContext<
   boolean | null
 >(null);
 
+/** Props for `Popover`. */
 export interface PopoverProps {
   /** Whether the popover is open. Pair with `onOpenChange` to control it. */
   readonly open?: boolean | undefined;
@@ -50,6 +51,7 @@ function PopoverRoot({
   );
 }
 
+/** Props for `Popover.Trigger`. */
 export type PopoverTriggerProps = ComponentPropsWithRef<
   typeof RadixPopover.Trigger
 >;
@@ -59,6 +61,7 @@ export function PopoverTrigger(props: PopoverTriggerProps): ReactElement {
   return <RadixPopover.Trigger {...props} />;
 }
 
+/** Props for `Popover.Anchor`. */
 export type PopoverAnchorProps = ComponentPropsWithRef<
   typeof RadixPopover.Anchor
 >;
@@ -68,6 +71,7 @@ export function PopoverAnchor(props: PopoverAnchorProps): ReactElement {
   return <RadixPopover.Anchor {...props} />;
 }
 
+/** Props for `Popover.Close`. */
 export type PopoverCloseProps = ComponentPropsWithRef<
   typeof RadixPopover.Close
 >;
@@ -77,6 +81,7 @@ export function PopoverClose(props: PopoverCloseProps): ReactElement {
   return <RadixPopover.Close {...props} />;
 }
 
+/** Props for `Popover.Content`. Offset, collision padding and collision handling are fixed by buttery. */
 export interface PopoverContentProps extends Omit<
   ComponentPropsWithRef<typeof RadixPopover.Content>,
   "sideOffset" | "collisionPadding" | "avoidCollisions" | "forceMount"
@@ -124,6 +129,7 @@ export function PopoverContent({
   );
 }
 
+/** `Popover` with its parts: `Trigger`, `Content`, `Anchor` and `Close`. */
 export interface PopoverComponent {
   (props: PopoverProps): ReactElement;
   /** The control that opens the popover. */

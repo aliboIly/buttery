@@ -25,6 +25,7 @@ function LayerAttachment({
   return null;
 }
 
+/** Props for `Layer`. */
 export interface LayerProps {
   /** The z band to render in, such as `"dropdown"`, `"modal"` or `"toast"`. */
   readonly band: LayerBand;
@@ -71,6 +72,7 @@ export function Layer({ band, children }: LayerProps): ReactElement | null {
   );
 }
 
+/** Props for `Portal`. */
 export interface PortalProps {
   /** Where to render. Defaults to the current layer's container, or `document.body` on the page. */
   readonly container?: HTMLElement | null | undefined;

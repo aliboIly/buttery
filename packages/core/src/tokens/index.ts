@@ -49,6 +49,7 @@ export const surfaceLevels = [
   "inset",
 ] as const;
 
+/** A surface level: app, panel, section, card, raised, floating, dialog or inset. */
 export type SurfaceLevel = (typeof surfaceLevels)[number];
 
 /** Resolved color scheme. `ButteryProvider` also accepts `"system"`. */

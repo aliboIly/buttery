@@ -3,6 +3,7 @@ import type { RadiusToken } from "./radius.ts";
 import type { ShadowToken } from "./shadow.ts";
 import type { SpaceStep } from "./space.ts";
 
+/** A surface level's background, corners, shadow, border and padding. */
 export interface SurfaceDefinition {
   /** The background color. */
   readonly background: ColorToken;

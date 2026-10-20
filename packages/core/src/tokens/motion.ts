@@ -7,6 +7,7 @@ export const durations = {
   slow: 300,
 } as const;
 
+/** The name of a duration token. */
 export type DurationToken = keyof typeof durations;
 
 /** Easing curves for CSS transitions, emitted as `--bt-ease-<name>`. */
@@ -16,6 +17,7 @@ export const easings = {
   standard: "cubic-bezier(0.2, 0, 0, 1)",
 } as const;
 
+/** The name of an easing token. */
 export type EasingToken = keyof typeof easings;
 
 /** Timing tokens that aren't durations of a single transition. */

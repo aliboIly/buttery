@@ -1,5 +1,7 @@
+/** Control heights: comfortable or compact. */
 export type Density = "comfortable" | "compact";
 
+/** A height token's comfortable and compact values and what it's for. */
 export interface HeightDefinition {
   /** Height in px at comfortable density. */
   readonly comfortable: number;
@@ -56,8 +58,10 @@ export const heights = {
   },
 } as const;
 
+/** The name of a height token. */
 export type HeightToken = keyof typeof heights;
 
+/** A width token's variable, value and what it's for. */
 export interface WidthDefinition {
   /** The CSS variable that holds the width. */
   readonly cssVar: `--bt-${string}`;

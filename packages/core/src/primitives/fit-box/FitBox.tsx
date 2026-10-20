@@ -9,6 +9,7 @@ import type { SpaceValue } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
 import { spacingAttributes } from "../spacing.ts";
 
+/** Props for `FitBox`. */
 export interface FitBoxProps extends ComponentPropsWithRef<"div"> {
   /** Width ÷ height of the content box, such as `16 / 9`. Must be a positive number. */
   readonly ratio: number;

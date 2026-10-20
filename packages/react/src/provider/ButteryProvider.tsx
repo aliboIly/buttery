@@ -22,6 +22,7 @@ export type ColorSchemePreference = ColorScheme | "system";
 /** `"user"` follows the OS setting; `"always"` and `"never"` override it. */
 export type ReducedMotionPreference = "user" | "always" | "never";
 
+/** Props for `ButteryProvider`. */
 export interface ButteryProviderProps {
   /** The app, or the part of it these settings apply to. */
   readonly children?: ReactNode;

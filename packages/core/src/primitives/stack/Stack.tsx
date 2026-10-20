@@ -5,6 +5,7 @@ import type { FlowAlign, FlowJustify } from "../flow.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
 
+/** Props for `Stack`. */
 export interface StackProps extends ComponentPropsWithRef<"div">, SpacingProps {
   /** Cross-axis (horizontal) alignment. Defaults to `"stretch"`. */
   readonly align?: FlowAlign | undefined;

@@ -31,13 +31,16 @@ function componentFolders() {
 
 const folders = componentFolders();
 
-/** Members of exported interfaces in `source` that have no JSDoc comment right before them. */
+/** Exported types, and members of exported interfaces, in `source` with no JSDoc comment right before them. */
 function undocumentedMembers(source) {
   const missing = [];
   const lines = source.split("\n");
   let current = null;
   let depth = 0;
   for (const [index, line] of lines.entries()) {
+    const exported = /^export (?:interface|type) (\w+)\b/.exec(line);
+    if (exported && !lines[index - 1]?.trim().endsWith("*/"))
+      missing.push(exported[1]);
     const declared = /^export interface (\w+)\b/.exec(line);
     if (declared) {
       current = declared[1];
@@ -85,7 +88,7 @@ describe("component contract", () => {
         );
       });
 
-      it("documents every prop", () => {
+      it("documents its exported types and every prop", () => {
         const missing = readdirSync(folder)
           .filter(
             (file) =>
