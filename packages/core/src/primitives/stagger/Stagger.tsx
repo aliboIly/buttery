@@ -39,11 +39,16 @@ function StaggerRoot({
   const reduced = useMotionPreference() === "reduced";
   const tracked = use(AnimationTrackingContext);
   const element = useRef<HTMLDivElement>(null);
+  const shown = useRef(false);
   const merged = useMergedRefs(ref, element);
 
   useLayoutEffect(() => {
     const node = element.current;
-    if (!node || reduced) return undefined;
+    if (!node) return undefined;
+    if (reduced || shown.current) {
+      shown.current = true;
+      return undefined;
+    }
     const marked = [
       ...node.querySelectorAll<HTMLElement>(':scope > [data-bt-part="item"]'),
     ];
@@ -53,7 +58,13 @@ function StaggerRoot({
         : [...node.children].filter(
             (child): child is HTMLElement => child instanceof HTMLElement,
           );
-    return revealOnce(node, items, { tracked, stepped: true });
+    return revealOnce(node, items, {
+      tracked,
+      stepped: true,
+      onShown: () => {
+        shown.current = true;
+      },
+    });
   }, [reduced, tracked]);
 
   const Root = asChild ? Slot : "div";

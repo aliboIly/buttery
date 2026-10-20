@@ -1,6 +1,6 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { createRef } from "react";
+import { createRef, StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MotionPreferenceContext } from "../../motion/preference.ts";
 import { publishSettled } from "../../motion/settle.ts";
@@ -75,6 +75,75 @@ describe("Reveal", () => {
       expect(style.opacity).toBe("");
       expect(style.transform).toBe("");
     });
+  });
+
+  it("rises in content taller than the screen once 15% of the screen shows it", async () => {
+    render(
+      <>
+        <div style={{ blockSize: "3000px" }} />
+        <Reveal data-testid="tall" style={{ blockSize: "20000px" }}>
+          A long article
+        </Reveal>
+      </>,
+    );
+    expect(opacity("tall")).toBe(0);
+    const top =
+      screen.getByTestId("tall").getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, top - window.innerHeight / 2);
+    await waitFor(() => {
+      expect(opacity("tall")).toBe(1);
+    });
+  });
+
+  it("waits and rises in under Strict Mode, and keeps its own inline styles", async () => {
+    render(
+      <StrictMode>
+        <div style={{ blockSize: "3000px" }} />
+        <Reveal
+          data-testid="section"
+          style={{ blockSize: "200px", transform: "rotate(1deg)" }}
+        >
+          Templates
+        </Reveal>
+      </StrictMode>,
+    );
+    expect(opacity("section")).toBe(0);
+    screen.getByTestId("section").scrollIntoView();
+    await waitFor(() => {
+      expect(opacity("section")).toBe(1);
+      expect(root.hasAttribute("data-bt-settled")).toBe(true);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId("section").style.transform).toBe(
+        "rotate(1deg)",
+      );
+    });
+  });
+
+  it("never plays again once its content has shown, when motion settings change", async () => {
+    const { rerender } = render(
+      <MotionPreferenceContext value="reduced">
+        <Reveal data-testid="section">Templates</Reveal>
+      </MotionPreferenceContext>,
+    );
+    expect(opacity("section")).toBe(1);
+    rerender(
+      <MotionPreferenceContext value="full">
+        <Reveal data-testid="section">Templates</Reveal>
+      </MotionPreferenceContext>,
+    );
+    const seen: number[] = [];
+    await new Promise<void>((resolve) => {
+      let frames = 0;
+      const tick = (): void => {
+        seen.push(opacity("section"));
+        frames += 1;
+        if (frames < 10) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
+    });
+    expect(Math.min(...seen)).toBe(1);
   });
 
   it("shows its content fully when motion becomes reduced mid-fade", async () => {

@@ -23,12 +23,23 @@ export function Reveal({ className, ref, ...rest }: RevealProps): ReactElement {
   const reduced = useMotionPreference() === "reduced";
   const tracked = use(AnimationTrackingContext);
   const element = useRef<HTMLDivElement>(null);
+  const shown = useRef(false);
   const merged = useMergedRefs(ref, element);
 
   useLayoutEffect(() => {
     const node = element.current;
-    if (!node || reduced) return undefined;
-    return revealOnce(node, [node], { tracked, stepped: false });
+    if (!node) return undefined;
+    if (reduced || shown.current) {
+      shown.current = true;
+      return undefined;
+    }
+    return revealOnce(node, [node], {
+      tracked,
+      stepped: false,
+      onShown: () => {
+        shown.current = true;
+      },
+    });
   }, [reduced, tracked]);
 
   return (

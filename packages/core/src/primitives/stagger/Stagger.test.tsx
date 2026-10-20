@@ -1,6 +1,7 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef } from "react";
+import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MotionPreferenceContext } from "../../motion/preference.ts";
 import { publishSettled } from "../../motion/settle.ts";
@@ -92,5 +93,33 @@ describe("Stagger", () => {
       </MotionPreferenceContext>,
     );
     for (const item of ITEMS) expect(opacity(item)).toBe(1);
+  });
+
+  it("never plays again once its items have shown, when motion settings change", async () => {
+    const group = (preference: "full" | "reduced"): ReactElement => (
+      <MotionPreferenceContext value={preference}>
+        <Stagger>
+          {ITEMS.map((item) => (
+            <Stagger.Item key={item} data-testid={item}>
+              {item}
+            </Stagger.Item>
+          ))}
+        </Stagger>
+      </MotionPreferenceContext>
+    );
+    const { rerender } = render(group("reduced"));
+    rerender(group("full"));
+    const lowest: number[] = [];
+    await new Promise<void>((resolve) => {
+      let frames = 0;
+      const tick = (): void => {
+        lowest.push(Math.min(...ITEMS.map((item) => opacity(item))));
+        frames += 1;
+        if (frames < 10) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
+    });
+    expect(Math.min(...lowest)).toBe(1);
   });
 });
