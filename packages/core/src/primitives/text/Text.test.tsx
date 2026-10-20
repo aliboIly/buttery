@@ -2,6 +2,7 @@ import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Inline } from "../inline/Inline.tsx";
 import { Text } from "./Text.tsx";
 
 afterEach(cleanup);
@@ -49,6 +50,19 @@ describe("Text", () => {
     expect(text.title).toBe("A label much longer than its row");
     expect(getComputedStyle(text).textOverflow).toBe("ellipsis");
     expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
+  });
+
+  it("keeps a tabular number's width when its row runs out of room", () => {
+    render(
+      <Inline gap={2} style={{ inlineSize: "60px" }}>
+        <Text truncate>Background for the spring launch card</Text>
+        <Text variant="badge" tabular data-testid="value">
+          135°
+        </Text>
+      </Inline>,
+    );
+    const value = screen.getByTestId("value");
+    expect(value.scrollWidth).toBeLessThanOrEqual(value.clientWidth);
   });
 
   it("overrides the role's color with a tone", () => {

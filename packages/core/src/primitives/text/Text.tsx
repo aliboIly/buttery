@@ -38,7 +38,10 @@ export interface TextProps extends Omit<ComponentPropsWithRef<"span">, "ref"> {
    * `title`, so the full text stays available. Defaults to `false`.
    */
   readonly truncate?: boolean | undefined;
-  /** Tabular figures, for numbers that change. Defaults to `false`. */
+  /**
+   * Tabular figures, for numbers that change. A tabular number keeps its width in a row instead of
+   * shrinking under its neighbors. Defaults to `false`.
+   */
   readonly tabular?: boolean | undefined;
   /** Render the single child element (such as an `h2`) instead, with Text's props merged onto it. */
   readonly asChild?: boolean | undefined;
