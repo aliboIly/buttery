@@ -1,0 +1,13 @@
+@layer bt.primitives {
+  .bt-morph {
+    min-inline-size: 0;
+  }
+
+  .bt-morph[data-animating] {
+    overflow: hidden;
+  }
+
+  .bt-morph > [data-bt-part="content"] {
+    position: relative;
+  }
+}

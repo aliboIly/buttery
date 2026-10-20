@@ -97,6 +97,8 @@ export { Icon } from "./primitives/icon/Icon.tsx";
 export type { IconComponentProps, IconProps } from "./primitives/icon/Icon.tsx";
 export { Inline } from "./primitives/inline/Inline.tsx";
 export type { InlineProps } from "./primitives/inline/Inline.tsx";
+export { Morph } from "./primitives/morph/Morph.tsx";
+export type { MorphProps } from "./primitives/morph/Morph.tsx";
 export {
   OverflowCluster,
   OverflowClusterItem,
@@ -107,8 +109,19 @@ export type {
   OverflowClusterProps,
 } from "./primitives/overflow-cluster/OverflowCluster.tsx";
 export type { OverflowMenuItem } from "./primitives/overflow-cluster/overflow-registry.ts";
+export { Presence } from "./primitives/presence/Presence.tsx";
+export type { PresenceProps } from "./primitives/presence/Presence.tsx";
 export { Pressable } from "./primitives/pressable/Pressable.tsx";
 export type { PressableProps } from "./primitives/pressable/Pressable.tsx";
+export {
+  SharedIndicator,
+  SharedIndicatorGroup,
+} from "./primitives/shared-indicator/SharedIndicator.tsx";
+export type {
+  SharedIndicatorComponent,
+  SharedIndicatorGroupProps,
+  SharedIndicatorProps,
+} from "./primitives/shared-indicator/SharedIndicator.tsx";
 export { spacingAttributes } from "./primitives/spacing.ts";
 export type { SpacingAttributes, SpacingProps } from "./primitives/spacing.ts";
 export { Stack } from "./primitives/stack/Stack.tsx";

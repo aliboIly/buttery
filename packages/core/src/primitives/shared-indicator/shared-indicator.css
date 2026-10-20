@@ -1,0 +1,18 @@
+@layer bt.primitives {
+  .bt-shared-indicator {
+    --bt-shared-indicator-background: var(--bt-bg-raised);
+    --bt-shared-indicator-shadow: var(--bt-shadow-raised);
+
+    position: relative;
+    isolation: isolate;
+  }
+
+  .bt-shared-indicator > [data-bt-part="indicator"] {
+    position: absolute;
+    inset: 0;
+    z-index: var(--bt-z-behind);
+    border-radius: inherit;
+    background-color: var(--bt-shared-indicator-background);
+    box-shadow: var(--bt-shared-indicator-shadow);
+  }
+}
