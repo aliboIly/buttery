@@ -1,6 +1,6 @@
 import { globSync } from "node:fs";
 import { basename } from "node:path";
-import { componentRoute, foundationPages } from "../src/routes.ts";
+import { componentRoute, demoPages, foundationPages } from "../src/routes.ts";
 
 /** Every component with a playground page, read from the meta files that create the pages. */
 export const componentRoutes: readonly {
@@ -14,5 +14,6 @@ export const componentRoutes: readonly {
 /** Every playground route, read from the files that create them. */
 export const routes: readonly string[] = [
   ...foundationPages.map((page) => page.route),
+  ...demoPages.map((page) => page.route),
   ...componentRoutes.map(({ route }) => route),
 ];

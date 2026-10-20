@@ -23,6 +23,22 @@ function pressIfShown(
   };
 }
 
+/** Presses a header action, from the More menu when it has folded away. */
+function headerAction(name: string): ButteryInteraction["run"] {
+  return async (page: Page) => {
+    const direct = page.getByRole("button", { name, exact: true }).first();
+    if (await direct.isVisible()) {
+      await direct.click();
+      return;
+    }
+    await page
+      .getByRole("button", { name: "More actions", exact: true })
+      .first()
+      .click();
+    await page.getByRole("menuitem", { name, exact: true }).click();
+  };
+}
+
 const escape: ButteryInteraction = {
   name: "press Escape",
   run: async (page: Page) => {
@@ -59,6 +75,47 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     { name: "open the actions menu", run: press("Card actions") },
     escape,
     { name: "open the view menu", run: press("View") },
+  ],
+  "card-studio": [
+    {
+      name: "enter crop mode",
+      run: headerAction("Crop"),
+      acrossMatrix: true,
+    },
+    {
+      name: "cancel the crop",
+      run: press("Cancel"),
+    },
+    {
+      name: "delete the card, showing the empty state and a toast",
+      run: headerAction("Delete"),
+      allowMove: ['[data-bt="HeaderBar"]'],
+      acrossMatrix: true,
+    },
+    {
+      name: "add a new card",
+      run: press("New card"),
+      allowMove: ['[data-bt="HeaderBar"]'],
+    },
+    {
+      name: "open the canvas shape list or the More menu",
+      run: async (page: Page) => {
+        const select = page
+          .getByRole("button", { name: /^Canvas shape/ })
+          .first();
+        if (await select.isVisible()) await select.click();
+        else
+          await page
+            .getByRole("button", { name: "More actions", exact: true })
+            .first()
+            .click();
+      },
+    },
+    escape,
+    {
+      name: "open the inspector sheet when it's narrow",
+      run: pressIfShown("button", "Edit card"),
+    },
   ],
   "app-shell": [
     {

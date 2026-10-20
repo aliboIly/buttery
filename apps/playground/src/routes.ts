@@ -8,6 +8,11 @@ export const foundationPages = [
   { route: "motion", title: "Motion" },
 ] as const;
 
+/** Original demo apps built from buttery's components. */
+export const demoPages = [
+  { route: "card-studio", title: "Card Studio" },
+] as const;
+
 /** The playground route for a component: `fit-box` for FitBox. */
 export function componentRoute(name: string): string {
   return name

@@ -9,8 +9,9 @@ import { PalettesPage } from "./pages/PalettesPage.tsx";
 import { SurfacesPage } from "./pages/SurfacesPage.tsx";
 import { TextStacksPage } from "./pages/TextStacksPage.tsx";
 import { TokensPage } from "./pages/TokensPage.tsx";
+import { CardStudio } from "./card-studio/CardStudio.tsx";
 import { components } from "./registry.ts";
-import { foundationPages } from "./routes.ts";
+import { demoPages, foundationPages } from "./routes.ts";
 
 export interface Page {
   readonly route: string;
@@ -57,6 +58,14 @@ export const pageGroups: readonly PageGroup[] = [
       route,
       title,
       render: FOUNDATIONS[route],
+    })),
+  },
+  {
+    title: "Demos",
+    pages: demoPages.map(({ route, title }) => ({
+      route,
+      title,
+      render: () => <CardStudio />,
     })),
   },
   ...KINDS.map(([kind, title]) => ({

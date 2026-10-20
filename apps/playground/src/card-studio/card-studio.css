@@ -1,0 +1,90 @@
+.cs-root {
+  block-size: 100dvh;
+}
+
+.pg-main .cs-root {
+  block-size: calc(100dvh - var(--bt-space-24));
+}
+
+/* The canvas's own box, so the card's sizes follow the canvas the way the export draws them. */
+.cs-artwork {
+  container-type: size;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.cs-room {
+  display: grid;
+  inline-size: 100%;
+  block-size: 100%;
+  padding: 6cqmin;
+}
+
+.cs-slot {
+  display: grid;
+  perspective: 110cqi;
+}
+
+.cs-slot[data-anchor$="left"] {
+  justify-self: start;
+}
+
+.cs-slot[data-anchor="top"],
+.cs-slot[data-anchor="center"],
+.cs-slot[data-anchor="bottom"] {
+  justify-self: center;
+}
+
+.cs-slot[data-anchor$="right"] {
+  justify-self: end;
+}
+
+.cs-slot[data-anchor^="top"] {
+  align-self: start;
+}
+
+.cs-slot[data-anchor="left"],
+.cs-slot[data-anchor="center"],
+.cs-slot[data-anchor="right"] {
+  align-self: center;
+}
+
+.cs-slot[data-anchor^="bottom"] {
+  align-self: end;
+}
+
+.cs-card {
+  --cs-card-width: min(100cqi - 12cqmin, (100cqb - 12cqmin) * 1.6);
+
+  display: grid;
+  place-items: center;
+  inline-size: var(--cs-card-width);
+  aspect-ratio: 1.6;
+  padding: calc(var(--cs-padding) * 100cqi / var(--cs-canvas-width));
+  border-radius: calc(var(--cs-radius) * 100cqi / var(--cs-canvas-width));
+  background-color: var(--cs-fill);
+  box-shadow: 0 calc(var(--cs-shadow) * 3cqi) calc(var(--cs-shadow) * 8cqi)
+    var(--cs-shadow-color);
+  color: var(--cs-ink);
+  transition:
+    background-color var(--bt-dur-base) var(--bt-ease-standard),
+    color var(--bt-dur-base) var(--bt-ease-standard);
+}
+
+.cs-title {
+  overflow-wrap: anywhere;
+  font-size: calc(var(--cs-card-width) * 0.085);
+  font-weight: var(--bt-text-title-weight);
+  line-height: 1.15;
+  letter-spacing: var(--bt-text-title-tracking);
+  text-align: center;
+}
+
+/* As measured: Copy padded 32 a side, and Export filling the rest of the footer. */
+.cs-copy {
+  --bt-button-padding: var(--bt-space-8);
+}
+
+.cs-export {
+  flex: 1;
+}
