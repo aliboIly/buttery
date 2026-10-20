@@ -41,10 +41,23 @@
     "tokens": "node scripts/generate-tokens.ts"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "catalog:"
+    "@fontsource-variable/inter": "catalog:",
+    "radix-ui": "catalog:"
   },
   "devDependencies": {
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "tailwindcss": "^4.3.3",
     "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

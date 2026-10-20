@@ -21,6 +21,14 @@
     "build": "tsdown"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "tsdown": "catalog:"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "catalog:",
+    "@buttery/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.50.0"
   }
 }
