@@ -118,7 +118,7 @@ Coding agents get the rules people get: `AGENTS.md`, the make-it-buttery skill, 
 
 ### Motion
 
-Five springs and the primitives built on them: `Presence`, `Morph`, `SharedIndicator`, `Reveal`, `Stagger`, `Loop` and `celebrate()`. A Playwright test samples every one frame by frame in both engines.
+Five springs and the primitives built on them: `Presence`, `Morph`, `SharedIndicator`, `Reveal`, `Stagger`, `Loop` and `celebrate()`. A Playwright test reads each of them every frame in Chromium and WebKit and checks the curve against its token. `Loop`'s steps are timed on a fake clock.
 
 </td>
 <td width="33%" valign="top">

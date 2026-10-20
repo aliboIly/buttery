@@ -42,7 +42,7 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 
 "Settle time" in this doc = time until 95% of the travel is done (that's what the recordings measure). Motion's `visualDuration` is close to that for `bounce: 0`, but verify by sampling — don't assume.
 
-Sampled by `apps/playground/e2e/motion.spec.ts` in Chromium and WebKit: `snappy` settles in ~175ms, `smooth` ~240ms, `morph` ~355ms (0.35 gave ~325ms, short of §4.2's measured 350–400ms) and `gentle` ~370ms, since its bounce reaches 95% before its `visualDuration`.
+`apps/playground/e2e/motion.spec.ts` reads every demo on the playground's Motion page each frame, in Chromium and WebKit, and fits the token's own curve to what it read. Every spring fits within 1% of its `visualDuration` and every tween within about 3ms of its duration (WebKit's clock counts whole milliseconds). A spring on its own reaches 95% of its travel in 163ms (`snappy`), 227ms (`smooth`), 344ms (`morph`) and 357ms (`gentle`, whose bounce gets there before its `visualDuration`). Counted from the press, with React's commit and Motion's first frame, that is ~165–180ms, ~230–245ms, ~350–355ms and ~360–370ms. `morph` was 0.35 at first, which reached 95% in ~325ms, short of §4.2's measured 350–400ms.
 
 ### Durations & easing (CSS transitions — color, opacity, shadows)
 
@@ -63,7 +63,7 @@ Sampled by `apps/playground/e2e/motion.spec.ts` in Chromium and WebKit: `snappy`
 | `--bt-celebration` | 900ms (a confetti burst's life) |
 | `--bt-delay-hover-open` / `--bt-delay-hover-close` | 80ms / 150ms (hover-intent for menus and tooltips; tooltips use 500ms open) |
 
-Never use `transition: all`. Transition only `opacity`, `transform`, `background-color`, `color`, `box-shadow`, `filter` and `backdrop-filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS. Two size animations are sanctioned: `Morph`'s height (§5) and the `MorphMenu` viewport's size and position (§4.1).
+Never use `transition: all`. Transition only `opacity`, transforms (`transform`, `translate`, `scale`), `background-color`, `color`, `box-shadow`, `filter` and `backdrop-filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS. Two size animations are sanctioned: `Morph`'s height (§5) and the `MorphMenu` viewport's size and position (§4.1).
 
 ---
 
