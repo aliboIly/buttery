@@ -32,13 +32,33 @@ function marks(): NodeListOf<Element> {
   );
 }
 
+function nextFrame(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      resolve();
+    });
+  });
+}
+
+/** Lets the guard's timer fire, then a frame render, then the check it scheduled after the frame. */
+async function runGuard(milliseconds = 300): Promise<void> {
+  act(() => {
+    vi.advanceTimersByTime(milliseconds);
+  });
+  await act(async () => {
+    await nextFrame();
+    await nextFrame();
+  });
+  act(() => {
+    vi.advanceTimersByTime(0);
+  });
+}
+
 describe("LayoutGuard", () => {
-  it("outlines offenders and logs them once in the shared JSON format", () => {
+  it("outlines offenders and logs them once in the shared JSON format", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     render(<LayoutGuard />);
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
+    await runGuard();
     expect(marks()).toHaveLength(1);
     expect(marks()[0]?.textContent).toContain("overlap");
     const [summary, json] = String(warn.mock.calls[0]?.[0]).split("\n");
@@ -49,9 +69,7 @@ describe("LayoutGuard", () => {
       a: '[data-bt="Chip"]',
       b: '[data-bt="Badge"]',
     });
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
+    await runGuard(1000);
     expect(warn).toHaveBeenCalledOnce();
   });
 
@@ -65,42 +83,64 @@ describe("LayoutGuard", () => {
         vi.advanceTimersByTime(100);
       });
     }
+    await runGuard(0);
     expect(marks()).toHaveLength(1);
   });
 
-  it("waits for buttery's animations to settle", () => {
+  it("checks after the page renders, once components have adapted to a resize", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    page.innerHTML = `
+      <div data-bt="Box" id="box" style="inline-size: 200px">
+        <div id="content" style="inline-size: 200px; block-size: 10px"></div>
+      </div>`;
+    const box = page.querySelector<HTMLElement>("#box");
+    const content = page.querySelector<HTMLElement>("#content");
+    if (!box || !content) throw new Error("fixture missing");
+    const fit = new ResizeObserver(() => {
+      content.style.setProperty("inline-size", `${String(box.clientWidth)}px`);
+    });
+    fit.observe(box);
+    render(<LayoutGuard />);
+    await runGuard();
+    for (let elapsed = 0; elapsed < 900; elapsed += 100) {
+      await act(async () => {
+        page.dataset["frame"] = String(elapsed);
+        await Promise.resolve();
+        vi.advanceTimersByTime(100);
+      });
+    }
+    box.style.setProperty("inline-size", "80px");
+    await runGuard(100);
+    fit.disconnect();
+    expect(warn).not.toHaveBeenCalled();
+    expect(marks()).toHaveLength(0);
+  });
+
+  it("waits for buttery's animations to settle", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const finish = trackAnimation();
     render(<LayoutGuard />);
-    act(() => {
-      vi.advanceTimersByTime(600);
-    });
+    await runGuard(600);
     expect(marks()).toHaveLength(0);
     finish();
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
+    await runGuard();
     expect(marks()).toHaveLength(1);
   });
 
-  it("leaves ⌥⇧L alone while typing in a field", () => {
+  it("leaves ⌥⇧L alone while typing in a field", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const field = document.createElement("input");
     page.append(field);
     render(<LayoutGuard />);
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
+    await runGuard();
     fireEvent.keyDown(field, { code: "KeyL", altKey: true, shiftKey: true });
     expect(marks()).toHaveLength(1);
   });
 
-  it("toggles the outlines with ⌥⇧L and the grid with ⌥⇧G", () => {
+  it("toggles the outlines with ⌥⇧L and the grid with ⌥⇧G", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
     render(<LayoutGuard />);
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
+    await runGuard();
     expect(marks()).toHaveLength(1);
     fireEvent.keyDown(window, { code: "KeyL", altKey: true, shiftKey: true });
     expect(marks()).toHaveLength(0);

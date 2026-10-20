@@ -87,18 +87,14 @@ export function LayoutGuard({
     if (!visible) return undefined;
     const tokens = layoutCheckTokens();
     let timer = 0;
+    let frame = 0;
     let burstStart: number | null = null;
     let lastReport = "";
     const observer = new MutationObserver((records) => {
       if (records.every((record) => isInsideGuard(record.target))) return;
       schedule();
     });
-    const run = (): void => {
-      burstStart = null;
-      if (!isSettled()) {
-        schedule();
-        return;
-      }
+    const check = (): void => {
       const violations = runLayoutChecks({ tokens, rules: GUARD_RULES });
       observer.takeRecords();
       const serialized = JSON.stringify(violations);
@@ -121,9 +117,22 @@ export function LayoutGuard({
         }),
       );
     };
+    // Checks wait for a rendered frame: components adapt to size changes in ResizeObserver callbacks,
+    // which run with the frame, and a check before them would report a state that never paints.
+    const run = (): void => {
+      burstStart = null;
+      if (!isSettled()) {
+        schedule();
+        return;
+      }
+      frame = requestAnimationFrame(() => {
+        timer = window.setTimeout(check, 0);
+      });
+    };
     function schedule(): void {
       const now = performance.now();
       burstStart ??= now;
+      cancelAnimationFrame(frame);
       window.clearTimeout(timer);
       timer = window.setTimeout(
         run,
@@ -140,6 +149,7 @@ export function LayoutGuard({
     window.addEventListener("scroll", schedule, true);
     schedule();
     return () => {
+      cancelAnimationFrame(frame);
       window.clearTimeout(timer);
       observer.disconnect();
       window.removeEventListener("resize", schedule);
