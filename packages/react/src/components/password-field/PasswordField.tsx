@@ -54,14 +54,13 @@ export function PasswordField({
   const listed = requirements !== undefined && requirements.length > 0;
 
   useEffect(() => {
-    const form = input.current?.form;
-    if (!form) return undefined;
-    const hide = (): void => {
-      setVisible(false);
+    const hide = (event: SubmitEvent): void => {
+      const form = input.current?.form;
+      if (form && event.target === form) setVisible(false);
     };
-    form.addEventListener("submit", hide);
+    document.addEventListener("submit", hide, true);
     return () => {
-      form.removeEventListener("submit", hide);
+      document.removeEventListener("submit", hide, true);
     };
   }, []);
 

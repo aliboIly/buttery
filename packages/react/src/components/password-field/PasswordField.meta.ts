@@ -13,6 +13,6 @@ export const meta: ComponentMeta = {
     'Codes sent by email or text: use TextField with autoComplete="one-time-code"',
   ],
   related: ["TextField", "SignInForm", "SignUpForm"],
-  a11y: 'The reveal button is a toggle with a fixed name ("Show password") and aria-pressed, in the tab order after the input. Requirements are a list that describes the input; a met rule has a tick named "Met", so its state doesn\'t rest on color.',
+  a11y: 'The reveal button is a toggle with a fixed name ("Show password") and aria-pressed, in the tab order after the input. Requirements are a list that describes the input; each rule has a tick named "Met" or a circle named "Not met", so its state doesn\'t rest on color. A shown password is never corrected, capitalized or spell-checked, and hides again when its form is submitted.',
   motion: "none",
 };
