@@ -16,7 +16,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 
 Wrap an app in buttery and it gets the tokens, type, surfaces, motion and layout rules written up in [`docs/`](docs), plus checks that fail when something overlaps, overflows or drifts off the scale. People and coding agents work from the same small vocabulary, and a wrong value fails type-checking instead of shipping.
 
-It's early. The tokens, layout primitives, layers and layout checks are in place; motion and components come next, and nothing is on npm yet. [ROADMAP.md](ROADMAP.md) shows where things stand.
+It's early. The tokens, layout primitives, layers, layout checks and motion are in place; components come next, and nothing is on npm yet. [ROADMAP.md](ROADMAP.md) shows where things stand.
 
 ## What's in it
 
@@ -113,6 +113,29 @@ Coding agents get the rules people get: `AGENTS.md`, the make-it-buttery skill, 
 
 </td>
 </tr>
+<tr>
+<td width="33%" valign="top">
+
+### Motion
+
+Five springs and the primitives built on them: `Presence`, `Morph`, `SharedIndicator`, `Reveal`, `Stagger`, `Loop` and `celebrate()`. A Playwright test samples every one frame by frame in both engines.
+
+</td>
+<td width="33%" valign="top">
+
+### Wrap anything
+
+`buttery.div` and `buttery(Component)` add a surface, spacing, press and focus feedback, hover, an entrance or layout animation through token-typed props.
+
+</td>
+<td width="33%" valign="top">
+
+### Reduced motion
+
+Springs land at once, fades take 100ms, loops hold still and confetti stays off. Every animated component renders its final state with motion off.
+
+</td>
+</tr>
 </table>
 
 ## A quick look
@@ -121,6 +144,7 @@ Nothing is published yet, so for now this works inside the repo, where apps impo
 
 ```tsx
 import "@buttery/core/styles.css";
+import "@buttery/react/styles.css";
 import { createTheme } from "@buttery/core";
 import { ButteryProvider } from "@buttery/react";
 
@@ -181,8 +205,8 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 
 | Path | Contents |
 | --- | --- |
-| `packages/core` | Tokens, recipes, themes, palettes, layout primitives, layers and the layout checker; motion presets to come |
-| `packages/react` | `ButteryProvider` now; components and patterns to come |
+| `packages/core` | Tokens, recipes, themes, palettes, layout and motion primitives, layers and the layout checker |
+| `packages/react` | `ButteryProvider`, `celebrate` and the `buttery` factory; components and patterns to come |
 | `packages/test` | `expectButtery()`: layout, accessibility and stability checks for Playwright |
 | `packages/lint` | ESLint and stylelint rules that keep values on tokens and positioning owned |
 | `packages/cli`, `packages/mcp` | The command line and the MCP server (not started) |

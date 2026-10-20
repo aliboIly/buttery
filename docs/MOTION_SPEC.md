@@ -28,19 +28,21 @@ Never animate: text values (no number tweening of user-set values), layout durin
 
 ## 2. Motion tokens
 
-Use these names everywhere (`@buttery/core/motion` exports them for Motion; CSS vars for transitions).
+Use these names everywhere (`@buttery/core` exports them as `spring` for Motion; CSS vars for transitions).
 
 ### Springs (Motion `type: "spring"` with `visualDuration` + `bounce`)
 
 | Token | Config | Use |
 |---|---|---|
-| `spring.instant` | `{ duration: 0 }` | Direct manipulation, reduced motion |
+| `spring.instant` | `{ type: "tween", duration: 0.001 }` | Direct manipulation, reduced motion. Lands on the next frame; 1ms rather than 0 (§5) |
 | `spring.snappy` | `{ visualDuration: 0.18, bounce: 0 }` | Selection indicators (segmented thumb, page dots, anchor dot), press release |
 | `spring.smooth` | `{ visualDuration: 0.25, bounce: 0 }` | **Default.** Position/aspect/reset, layout morphs, height changes, dialogs |
-| `spring.morph` | `{ visualDuration: 0.35, bounce: 0 }` | Big surfaces changing shape: menu morph, card → modal |
+| `spring.morph` | `{ visualDuration: 0.38, bounce: 0 }` | Big surfaces changing shape: menu morph, card → modal |
 | `spring.gentle` | `{ visualDuration: 0.45, bounce: 0.08 }` | Choreographed entrances only |
 
 "Settle time" in this doc = time until 95% of the travel is done (that's what the recordings measure). Motion's `visualDuration` is close to that for `bounce: 0`, but verify by sampling — don't assume.
+
+Sampled by `apps/playground/e2e/motion.spec.ts` in Chromium and WebKit: `snappy` settles in ~175ms, `smooth` ~240ms, `morph` ~355ms (0.35 gave ~325ms, short of §4.2's measured 350–400ms) and `gentle` ~370ms, since its bounce reaches 95% before its `visualDuration`.
 
 ### Durations & easing (CSS transitions — color, opacity, shadows)
 
@@ -75,8 +77,8 @@ Never use `transition: all`. Transition only `opacity`, `transform`, `background
 | Frame style change | Frame style crossfades, content re-fits | `spring.smooth` (~250ms) |
 | Aspect ratio change | Stage reshapes, content stays centered | `spring.smooth` (~230ms measured) |
 | Enter crop mode | Stage bg fades out (200ms); image scales to fit; handles + floating toolbar fade/slide in after ~80ms | 200–250ms |
-| Item deleted | Stage swaps to the empty state instantly; a toast with undo slides up 8px + fades in | in `dur-base` / out `dur-fast` (measured ~200 / ~130ms); auto-dismiss 3s, paused on hover |
-| Menu open (select) | Trigger gets active bg; menu fades + scales from trigger origin (0.97 → 1) | in `dur-base` / out `dur-fast` (measured ~150–200ms in) |
+| Item deleted | Stage swaps to the empty state instantly; a toast with undo slides up 8px + fades in | slide `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~200 / ~130ms); auto-dismiss 3s, paused on hover |
+| Menu open (select) | Trigger gets active bg; menu fades + scales from trigger origin (0.97 → 1) | scale `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~150–200ms in) |
 | Button press | Scale 0.97 on pointer-down | down `dur-press`, release `spring.snappy` |
 | Primary hover | `#1a1a1a` → `#2b2b2b` | `dur-fast` |
 
@@ -136,8 +138,10 @@ Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus ov
 ## 5. Implementation notes
 
 - Motion library: `motion` (`import { motion, AnimatePresence, LayoutGroup, MotionConfig } from "motion/react"`).
-- `ButteryProvider` wraps the app in `<MotionConfig reducedMotion="user" transition={spring.smooth}>` — but `reducedMotion="user"` only disables transform/layout animations; opacity still runs at full length. So components never hardcode transitions: they ask `useButteryTransition("smooth" | "snappy" | "fade" | …)`, which returns the normal preset, or the reduced set (transforms instant, opacity ≤ 100ms) when the user prefers reduced motion (or `ButteryProvider reducedMotion` forces it).
-- Shared indicators (segmented, dots, anchor grid): one element with a stable `layoutId` scoped by `useId()` inside a `LayoutGroup` so two instances never fight.
+- `ButteryProvider` resolves its `reducedMotion` prop (`user` follows the OS) and wraps the app in `<MotionConfig reducedMotion={reduced ? "always" : "never"} transition={spring.smooth}>`, with a `MotionPreferenceContext` that buttery's components read. Motion's reduced mode only stops transform and layout animations; opacity still runs at full length. So components never hardcode transitions: they ask `useButteryTransition("smooth" | "snappy" | …)`, which returns the spring, or the reduced set (transforms land at once, opacity ≤ 100ms) when motion is reduced. `Presence` presets (`presencePresets`) have a reduced twin, `reducedPresence`.
+- Layout animations spread `useLayoutAnimation(name)` (`layout` plus the transition) instead of setting `layout` directly. With reduced motion it turns `layout` off, so the element simply takes its new place. Motion snaps a reduced layout animation with a zero-length animation, and it renders an element at most once per frame timestamp; WebKit's clock rounds to whole milliseconds, so that last frame can land in the same millisecond as the frame Motion flushed after the layout change, and the element stays at its old position. The same is why `spring.instant` lasts 1ms.
+- Under the React Compiler, JSX is memoized: a `motion` element whose own props don't change doesn't re-render when a parent's state moves it, and Motion only measures layout when it re-renders. Pass `layoutDependency` with the state that moves it.
+- Shared indicators (segmented, dots, anchor grid): one element with a stable `layoutId` scoped by `useId()` inside a `LayoutGroup` so two instances never fight. With reduced motion it has no `layoutId` and simply appears on the new item.
 - Auto-height (`Morph`): measure content with `ResizeObserver` and let Motion animate the wrapper's `height` (overflow clipped during the animation). This is one of the **two sanctioned size animations** (the other is the `MorphMenu` viewport, §4.1); CSS transitions on width/height/top/left stay banned. Content uses `AnimatePresence mode="popLayout"` crossfade.
 - Morph surfaces: animate a single `motion.div` with `layout` and keep it mounted between states.
 - Never animate on the main thread during drags: use pointer events + `transform` only; batch with `requestAnimationFrame`.

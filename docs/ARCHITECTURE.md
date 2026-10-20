@@ -112,12 +112,14 @@ The generated files are committed and Prettier skips them; a unit test fails whe
 
 | Import | Contents |
 |---|---|
-| `@buttery/core` | The token tables as typed data, the OKLCH color helpers, `createTheme`, the primitives, the layers, `LayoutGuard` and `useControllableState` |
+| `@buttery/core` | The token tables as typed data (`spring` for Motion included), the OKLCH color helpers, `createTheme`, the primitives, the layers, the motion hooks and presets (`useButteryTransition`, `useLayoutAnimation`, `presencePresets`), `LayoutGuard` and `useControllableState` |
 | `@buttery/core/layout` | The in-page layout checker (`createLayoutToolkit`, `runLayoutChecks`), without React, for test runners |
 | `@buttery/core/palettes` | Gradient and solid presets, `gradientCss` |
 | `@buttery/core/styles.css` | Layer order, reset, Inter, tokens, base styles and recipes in one file |
 | `@buttery/core/tailwind.css` | The Tailwind v4 bridge |
 | `@buttery/core/tokens.json` | The token data as JSON |
+| `@buttery/react` | `ButteryProvider`, the components, `celebrate` and the `buttery` factory |
+| `@buttery/react/styles.css` | The components' styles in the `bt.components` layer, after the same layer order statement so it works on its own |
 
 ## "Make anything buttery" — four levels of effort
 
@@ -140,7 +142,7 @@ import { buttery } from "@buttery/react";
 <buttery.button press focus>…</buttery.button>
 const ButteryThing = buttery(ThirdPartyCard, { surface: "raised", press: true, layout: true });
 ```
-Props (all optional, all token-typed so wrong values fail type-checking): `surface` (a `SurfaceLevel`: `app|panel|section|card|raised|floating|dialog|inset`; the prop is named after the recipe it applies, `.bt-surface[data-level]`, and takes the same type as `Surface`'s `level`, so it isn't a synonym), `radius` (`auto` = concentric from parent), `pad`, `gap` (spacing-scale steps), `stack`/`inline`/`grid`, `press`, `focus`, `hover` (`lift|tint`), `enter` (`fade|rise|pop|stagger`), `layout` (animate layout changes), `truncate`.
+Props (all optional, all token-typed so wrong values fail type-checking): `surface` (a `SurfaceLevel`: `app|panel|section|card|raised|floating|dialog|inset`; the prop is named after the recipe it applies, `.bt-surface[data-level]`, and takes the same type as `Surface`'s `level`, so it isn't a synonym), `radius` (`auto` = concentric from parent), `pad`, `gap` (spacing-scale steps), `stack`/`inline`/`grid`, `press`, `focus`, `hover` (`lift|tint`), `enter` (`fade|rise|pop|stagger`), `layout` (animate layout changes, off with reduced motion) with `layoutDependency` (the state that moves it, needed under the React Compiler), `truncate`. The factory renders a Motion element only when `enter` or `layout` is set, composes `Stack`, `Inline`, `Grid`, `Stagger` and `Surface` through `asChild`, and gives `buttery.button` `type="button"`.
 
 Same thing without React — recipes are plain classes/attributes:
 ```html
@@ -191,7 +193,7 @@ Each component lives in its own folder, which is what the playground, the manife
 ## Theming & extension
 
 - `createTheme({ accent, primary, neutral: "gray" | "warm" | "cool", radius: "soft" | "default" | "crisp", density, overrides })` returns `{ light, dark, shared, density }`, holding only the `--bt-*` variables that differ from the defaults; `ButteryProvider theme={…}` applies it. Dark values are derived (the accent is lightened until it clears 4.5:1 on the dark surface), and `overrides.light` / `overrides.dark` win token by token.
-- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`, default `system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion` (`user | always | never`, default `user`). The outermost provider writes `data-bt-theme`, `data-bt-density`, `data-bt-platform`, `data-bt-motion` and the theme's variables onto `<html>`, so portals and scrollbars follow; a nested provider scopes them to a `display: contents` wrapper. `useButtery()` returns the resolved values. The outermost provider also hosts the floating lanes, publishes `data-bt-settled`, and shows `LayoutGuard` in Vite development builds (`layoutGuard={false}` turns it off; production builds never include it).
+- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`, default `system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion` (`user | always | never`, default `user`). The outermost provider writes `data-bt-theme`, `data-bt-density`, `data-bt-platform`, `data-bt-motion` and the theme's variables onto `<html>`, so portals and scrollbars follow; a nested provider scopes them to a `display: contents` wrapper. `useButtery()` returns the resolved values. The outermost provider also hosts the floating lanes and `Confetti`, publishes `data-bt-settled`, and shows `LayoutGuard` in Vite development builds (`layoutGuard={false}` turns it off; production builds never include it). Every provider wraps its children in Motion's `MotionConfig` (reduced motion and the default `spring.smooth` transition) and buttery's `MotionPreferenceContext`.
 - The stylesheet works without a provider: it follows the OS color scheme until `data-bt-theme` says otherwise.
 - Tailwind v4 users: `@import "@buttery/core/tailwind.css";` after `@import "tailwindcss";` maps tokens to `@theme` (e.g. `bg-surface`, `rounded-card`, `shadow-floating`, `h-control`, `ease-buttery`). It uses `@theme inline`, so the utilities read the live `--bt-*` variables and follow the theme and density. Text colors are named `fg` (`text-fg`, `text-fg-secondary`).
 - Palettes (gradient + solid presets) are data in `@buttery/core/palettes` — swap or extend per app. Colors are defined in OKLCH with gamut-mapped hex beside them, and `gradientCss(preset)` renders a gradient blended in OKLab.

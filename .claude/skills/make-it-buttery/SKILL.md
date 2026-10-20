@@ -32,7 +32,7 @@ For the screen or component in scope, list:
 | Situation | Use |
 |---|---|
 | User drags / picks a value | Instant update, no tween |
-| Discrete state change (toggle, snap, reset, resize) | `spring.smooth` via `layout` |
+| Discrete state change (toggle, snap, reset, resize) | `spring.smooth` via `layout`: `buttery.div layout`, or spread `useLayoutAnimation()` on a `motion` element, with `layoutDependency` set to the state that moves it |
 | Content swaps inside a container | `Morph` (auto-height + crossfade) |
 | Selection indicator | `SharedIndicator` (`spring.snappy`) |
 | Something appears/disappears | `Presence` preset (exit faster than enter) |
