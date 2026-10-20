@@ -264,6 +264,7 @@ function ToastItem({
             }}
           >
             {action.label}
+            <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />
           </button>
         ) : null}
       </motion.div>

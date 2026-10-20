@@ -66,6 +66,7 @@
   .bt-toast > [data-bt-part="pill"] > [data-bt-part="action"] {
     --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
 
+    position: relative;
     flex: none;
     min-inline-size: var(--bt-toaster-hit);
     padding-block: var(--bt-space-0_5);
@@ -85,5 +86,15 @@
     .bt-toast > [data-bt-part="pill"] > [data-bt-part="action"]:hover {
       color: var(--bt-inverse-text);
     }
+  }
+
+  /* The action's text is 24px tall; its target fills the pill's height. */
+  .bt-toast
+    > [data-bt-part="pill"]
+    > [data-bt-part="action"]
+    > [data-bt-part="hit"] {
+    position: absolute;
+    inset-block: calc((var(--bt-toaster-hit) - var(--bt-h-button)) / 2);
+    inset-inline: 0;
   }
 }
