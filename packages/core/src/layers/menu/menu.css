@@ -46,6 +46,14 @@
     background-color: var(--bt-bg-item-hover);
   }
 
+  .bt-menu > [data-bt-part="menu-item"]:focus-visible,
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"]:focus-visible {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: calc(-1 * var(--bt-focus-width));
+  }
+
   .bt-menu > [data-bt-part="menu-item"][data-disabled],
   .bt-menu
     > [data-bt-part="menu-group"]

@@ -71,6 +71,19 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
     },
   ],
+  select: [
+    { name: "open the canvas shape list", run: press("Canvas shape, 16:9") },
+    escape,
+    {
+      name: "open the list with width and height fields",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Canvas shape, 16:9", exact: true })
+          .nth(1)
+          .click();
+      },
+    },
+  ],
   "sign-in-form": [
     {
       name: "submit it empty, showing the errors",

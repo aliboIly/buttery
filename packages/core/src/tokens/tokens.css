@@ -149,6 +149,7 @@
     --bt-toast-life: 3000ms;
     --bt-toast-life-action: 5000ms;
     --bt-announcement-life: 1000ms;
+    --bt-typeahead: 500ms;
     --bt-press-scale: 0.97;
     --bt-icon-stroke: 1.75;
     --bt-text-title-size: 15px;

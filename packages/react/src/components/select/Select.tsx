@@ -1,0 +1,340 @@
+import {
+  Icon,
+  Popover,
+  cx,
+  timing,
+  useControllableState,
+  useMergedRefs,
+} from "@buttery/core";
+import type { IconComponentProps } from "@buttery/core";
+import { ChevronDown } from "lucide-react";
+import { useId, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import type {
+  ComponentPropsWithRef,
+  KeyboardEvent,
+  ReactElement,
+  ReactNode,
+} from "react";
+import { Button } from "../button/Button.tsx";
+
+/** One choice in a `Select`. */
+export interface SelectOption<Value extends string = string> {
+  /** What choosing it sets the select's value to. */
+  readonly value: Value;
+  /** What the list and, once chosen, the trigger show. */
+  readonly label: string;
+  /** Keeps it from being chosen; arrow keys skip it. */
+  readonly disabled?: boolean | undefined;
+}
+
+/** Props for `Select`. `ref` and other button props go to the trigger. */
+export interface SelectProps<Value extends string = string> extends Omit<
+  ComponentPropsWithRef<"button">,
+  "value" | "defaultValue" | "onChange" | "children"
+> {
+  /** What the value is, such as "Canvas shape". It names the trigger, the list and the footer. */
+  readonly label: string;
+  /** The choices, in order. */
+  readonly options: readonly SelectOption<Value>[];
+  /** The chosen value. Pair with `onValueChange` to control it. */
+  readonly value?: Value | undefined;
+  /** The value chosen at first when uncontrolled. */
+  readonly defaultValue?: Value | undefined;
+  /** Called with the value of the option chosen. */
+  readonly onValueChange?: ((value: Value) => void) | undefined;
+  /** Whether the list is open. Pair with `onOpenChange` to control it. */
+  readonly open?: boolean | undefined;
+  /** Whether the list starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
+  /** Called when the list opens or closes. */
+  readonly onOpenChange?: ((open: boolean) => void) | undefined;
+  /** What the trigger shows instead of the chosen option's label, such as a custom size from the footer. */
+  readonly valueLabel?: string | undefined;
+  /** What the trigger shows while nothing is chosen. Defaults to `"Choose"`. */
+  readonly placeholder?: string | undefined;
+  /** Controls under the list, such as width and height fields for a custom value. */
+  readonly footer?: ReactNode;
+  /** Names the footer for screen readers. Defaults to `label`. */
+  readonly footerLabel?: string | undefined;
+  /** Which edge of the trigger the list lines up with. Defaults to `"end"`. */
+  readonly align?: "start" | "center" | "end" | undefined;
+  /** The trigger's height: `"sm"` (28px) or `"md"` (36px, the default). */
+  readonly size?: "sm" | "md" | undefined;
+}
+
+function Check(props: IconComponentProps): ReactElement {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+/** The elements Tab moves between inside the open list: the option holding focus, then the footer's controls. */
+function tabStops(panel: HTMLElement): HTMLElement[] {
+  return [
+    ...panel.querySelectorAll<HTMLElement>(
+      '[role="option"][tabindex="0"], [data-bt-part="footer"] :is(input, select, textarea, button, a[href], [tabindex]):not([tabindex="-1"], :disabled)',
+    ),
+  ];
+}
+
+/**
+ * A ghost pill showing the chosen value; it opens a list to pick another, lined up with its end, and an
+ * optional footer for a custom value, such as width and height fields. The open list moves like a menu:
+ * arrow keys, Home and End move, typing jumps to an option, Enter or Space chooses, Escape closes, and
+ * focus goes back to the trigger. With a footer, Tab moves between the list and the footer's controls.
+ *
+ * @example
+ * <Select
+ *   label="Canvas shape"
+ *   value={shape}
+ *   onValueChange={setShape}
+ *   options={[{ value: "16:9", label: "16:9" }, { value: "1:1", label: "1:1" }]}
+ * />
+ */
+export function Select<Value extends string = string>({
+  label,
+  options,
+  value,
+  defaultValue,
+  onValueChange,
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  valueLabel,
+  placeholder = "Choose",
+  footer,
+  footerLabel,
+  align = "end",
+  size = "md",
+  className,
+  disabled,
+  ref,
+  ...rest
+}: SelectProps<Value>): ReactElement {
+  const [current, setCurrent] = useControllableState<Value | undefined>({
+    value,
+    defaultValue,
+    onChange: (next) => {
+      if (next !== undefined) onValueChange?.(next);
+    },
+  });
+  const [isOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+  const trigger = useRef<HTMLButtonElement>(null);
+  const triggerRefs = useMergedRefs(ref, trigger);
+  const panel = useRef<HTMLDivElement>(null);
+  const typed = useRef({ text: "", at: 0 });
+  const listId = useId();
+  const selected = options.find((option) => option.value === current);
+  const shown = valueLabel ?? selected?.label ?? placeholder;
+  const enabled = options.filter((option) => option.disabled !== true);
+  const resting =
+    selected === undefined || selected.disabled === true
+      ? enabled[0]
+      : selected;
+  const [active, setActive] = useState<Value | undefined>(undefined);
+  const focused = active ?? resting?.value;
+
+  const focusOption = (option: SelectOption<Value> | undefined): void => {
+    if (!option) return;
+    flushSync(() => {
+      setActive(option.value);
+    });
+    panel.current
+      ?.querySelector<HTMLElement>(
+        `[role="option"][data-value="${CSS.escape(option.value)}"]`,
+      )
+      ?.focus();
+  };
+  const choose = (option: SelectOption<Value>): void => {
+    if (option.disabled === true) return;
+    trigger.current?.focus();
+    setCurrent(option.value);
+    setOpen(false);
+  };
+
+  const moveFrom = (option: SelectOption<Value>, key: string): void => {
+    const at = enabled.indexOf(option);
+    if (key === "ArrowDown")
+      focusOption(enabled[Math.min(at + 1, enabled.length - 1)]);
+    else if (key === "ArrowUp") focusOption(enabled[Math.max(at - 1, 0)]);
+    else if (key === "Home") focusOption(enabled[0]);
+    else if (key === "End") focusOption(enabled.at(-1));
+  };
+
+  const typeahead = (
+    option: SelectOption<Value>,
+    character: string,
+    now: number,
+  ): void => {
+    const text =
+      now - typed.current.at > timing.typeahead
+        ? character
+        : typed.current.text + character;
+    typed.current = { text, at: now };
+    const from = enabled.indexOf(option);
+    const ordered = [...enabled.slice(from + 1), ...enabled.slice(0, from + 1)];
+    const search = text.toLocaleLowerCase();
+    const match =
+      ordered.find((candidate) =>
+        candidate.label.toLocaleLowerCase().startsWith(search),
+      ) ??
+      (text.length > 1
+        ? undefined
+        : ordered.find((candidate) =>
+            candidate.label
+              .toLocaleLowerCase()
+              .startsWith(character.toLocaleLowerCase()),
+          ));
+    focusOption(match);
+  };
+
+  const optionKeyDown =
+    (option: SelectOption<Value>) =>
+    (event: KeyboardEvent<HTMLDivElement>): void => {
+      if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+        event.preventDefault();
+        moveFrom(option, event.key);
+      } else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        choose(option);
+      } else if (
+        event.key.length === 1 &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey
+      ) {
+        typeahead(option, event.key, event.timeStamp);
+      }
+    };
+
+  const panelKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key !== "Tab" || !panel.current) return;
+    const stops = tabStops(panel.current);
+    const first = stops[0];
+    const last = stops.at(-1);
+    if (!first || !last) return;
+    if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    }
+  };
+
+  return (
+    <Popover
+      open={isOpen}
+      onOpenChange={(next) => {
+        if (next) setActive(undefined);
+        setOpen(next);
+      }}
+    >
+      <Popover.Trigger asChild>
+        <Button asChild variant="ghost" size={size} iconEnd={ChevronDown}>
+          <button
+            {...rest}
+            ref={triggerRefs}
+            type="button"
+            disabled={disabled}
+            aria-haspopup="listbox"
+            aria-controls={isOpen ? listId : undefined}
+            aria-label={`${label}, ${shown}`}
+            className={cx("bt-select", className)}
+            data-bt="Select"
+          >
+            <span
+              className="bt-truncate"
+              data-bt-part="value"
+              data-bt-truncate=""
+              title={shown}
+            >
+              {shown}
+            </span>
+          </button>
+        </Button>
+      </Popover.Trigger>
+      <Popover.Content
+        ref={panel}
+        align={align}
+        role={footer === undefined ? "none" : "dialog"}
+        aria-label={footer === undefined ? undefined : label}
+        className="bt-select-panel"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          focusOption(resting);
+        }}
+        onKeyDown={panelKeyDown}
+      >
+        <div role="listbox" id={listId} aria-label={label} data-bt-part="list">
+          {options.map((option) => {
+            const chosen = option.value === current;
+            return (
+              <div
+                key={option.value}
+                role="option"
+                tabIndex={option.value === focused ? 0 : -1}
+                aria-selected={chosen}
+                aria-disabled={option.disabled === true || undefined}
+                data-value={option.value}
+                className="bt-text"
+                data-role="menu"
+                data-bt-part="option"
+                onClick={() => {
+                  choose(option);
+                }}
+                onKeyDown={optionKeyDown(option)}
+                onPointerMove={(event) => {
+                  if (
+                    option.disabled !== true &&
+                    document.activeElement !== event.currentTarget
+                  ) {
+                    focusOption(option);
+                  }
+                }}
+              >
+                <span
+                  className="bt-truncate"
+                  data-bt-truncate=""
+                  data-bt-part="label"
+                  title={option.label}
+                >
+                  {option.label}
+                </span>
+                <span data-bt-part="check">
+                  {chosen ? <Icon icon={Check} /> : null}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        {footer === undefined ? null : (
+          <>
+            <div data-bt-part="separator" aria-hidden="true" />
+            <div
+              role="group"
+              aria-label={footerLabel ?? label}
+              data-bt-part="footer"
+            >
+              {footer}
+            </div>
+          </>
+        )}
+      </Popover.Content>
+    </Popover>
+  );
+}

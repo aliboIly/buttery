@@ -1,0 +1,84 @@
+@layer bt.components {
+  .bt-select,
+  .bt-select-panel {
+    --bt-select-line: 1px;
+  }
+
+  .bt-select {
+    min-inline-size: 0;
+  }
+
+  /* The list renders in the dropdown layer, away from the trigger, so its panel carries its own class. */
+  .bt-select-panel {
+    min-inline-size: var(--bt-w-menu-min);
+  }
+
+  .bt-select-panel > [data-bt-part="list"] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bt-select-panel > [data-bt-part="list"] > [data-bt-part="option"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-md);
+    cursor: default;
+    outline: none;
+  }
+
+  .bt-select-panel
+    > [data-bt-part="list"]
+    > [data-bt-part="option"]:is(:focus, :hover):not([aria-disabled]) {
+    background-color: var(--bt-bg-item-hover);
+  }
+
+  .bt-select-panel
+    > [data-bt-part="list"]
+    > [data-bt-part="option"]:focus-visible {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: calc(-1 * var(--bt-focus-width));
+  }
+
+  .bt-select-panel
+    > [data-bt-part="list"]
+    > [data-bt-part="option"][aria-disabled] {
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-select-panel
+    > [data-bt-part="list"]
+    > [data-bt-part="option"]
+    > [data-bt-part="label"] {
+    flex: 1;
+  }
+
+  .bt-select-panel
+    > [data-bt-part="list"]
+    > [data-bt-part="option"]
+    > [data-bt-part="check"] {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-icon-sm);
+    block-size: var(--bt-icon-sm);
+  }
+
+  /* One element: the 1px line sits centered in 6px of space above and below. */
+  .bt-select-panel > [data-bt-part="separator"] {
+    flex: none;
+    block-size: calc(var(--bt-select-line) + 2 * var(--bt-space-1_5));
+    background: linear-gradient(var(--bt-border), var(--bt-border)) center /
+      100% var(--bt-select-line) no-repeat;
+  }
+
+  /* The list sets the panel's width; the footer's fields fit into it instead of widening it. */
+  .bt-select-panel > [data-bt-part="footer"] {
+    padding: var(--bt-space-1_5) var(--bt-space-1);
+    contain: inline-size;
+  }
+}

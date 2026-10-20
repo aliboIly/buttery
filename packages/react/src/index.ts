@@ -105,3 +105,5 @@ export type {
   AuthSubmit,
   AuthSubmitResult,
 } from "./parts/auth/AuthParts.tsx";
+export { Select } from "./components/select/Select.tsx";
+export type { SelectOption, SelectProps } from "./components/select/Select.tsx";

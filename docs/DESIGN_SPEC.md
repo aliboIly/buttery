@@ -281,17 +281,17 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 43×43 box, r10, 1px `border-strong`, `bg-inset`. 3×3 dots on an 11.5px pitch: idle 6px `dot`, active 10px radial knob. Radio semantics, 2D arrow keys. The whole box is the hit target (cells are ~14px), marked `data-bt-target="group"`.
 
 ### Menu / Select
-- Trigger: ghost pill; while open, bg `bg-control-active`.
+- Trigger: ghost pill; while open, bg `bg-control-active`. `Select`'s trigger shows the chosen value (or `valueLabel`, or a placeholder) and a 16px chevron, and is named "label, value".
 - Content: `bg-surface`, r16, padding 6, shadow-floating, min-width 200, side offset 8, align end.
-- Item: 36h, r10, padding-x 12 (measured ~14), `menu` role; highlight `bg-item-hover`; selected shows a 16px check on the right.
+- Item: 36h, r10, padding-x 12 (measured ~14), `menu` role; highlight `bg-item-hover`; selected shows a 16px check on the right. Keyboard focus also draws the accent ring inside the item, since the highlight alone is faint.
 - Separator: 1px `border` with 6px above and below it, drawn as one 13px element so the list needs no margins.
 - Group heading (`Menu.Group`, `Menu.RadioGroup` with `label`): 28h (`h-sm`), padding-x 12, `caption` role in `text-secondary`; it names the group.
 - In a radio group the chosen item shows a 16px check at its end; the space is kept on every item so labels line up.
 - Motion (MOTION_SPEC §3, "Menu open"): the content grows from 97% on the trigger's side on `spring.snappy` with a `dur-base` fade and leaves with a `dur-fast` fade, letting presses through while it fades. Popover content moves the same way. Focus goes back to the trigger as it starts to close, unless a press elsewhere closed it.
-- Footer slot (e.g. a pair of number fields): labels `control` role in `text-secondary`, inputs 34h r12 1px `control-border` (measured `border-strong`, raised to 3:1 like every text input), tabular, with a stepper.
+- Footer slot (e.g. a pair of number fields): after the separator, padding 6×4, labels above the inputs (`NumberField labelPosition="top"`, `control` role in `text-secondary`), inputs 34h r12 1px `control-border` (measured `border-strong`, raised to 3:1 like every text input), tabular, with a stepper, in two equal columns 8 apart. Tab loops between the list's focused option and the footer's controls.
 
 ### NumberField
-34h, 128w (`--bt-number-field-width`), r12, 1px `control-border` (measured `border-strong`; 3:1 like every text input), padding-x 12, tabular, stepper on hover/focus, optional scrub-to-change by dragging the label (one change per frame). The label names the input and is the scrub handle; the stepper sits outside it, so the input's name is the label alone. Typing edits a draft: Enter or leaving commits, Escape puts back the value; arrows step from what's typed, Shift = ×10. The stepper buttons stay out of the tab order, since the arrow keys do the same, and take no taps while hidden.
+34h, 128w (`--bt-number-field-width`), r12, 1px `control-border` (measured `border-strong`; 3:1 like every text input), padding-x 12, tabular, stepper on hover/focus, optional scrub-to-change by dragging the label (one change per frame). The label names the input and is the scrub handle; the stepper sits outside it, so the input's name is the label alone. Typing edits a draft: Enter or leaving commits, Escape puts back the value; arrows step from what's typed, Shift = ×10. The stepper buttons stay out of the tab order, since the arrow keys do the same, and take no taps while hidden. A field narrower than 112px (a container query) drops the stepper, so the number keeps its room; `labelPosition="top"` puts the label above a field that fills its column.
 
 ### Form fields (Field, TextField, PasswordField, TextArea) (_derived_, Phase 4.5)
 - Layout, top to bottom, 8 apart: the label (`label` role, `text`), the hint 6 under it (`caption`), the box, the error (`caption` in `danger` with a 16px alert icon, so it doesn't rest on color). The hint and the error describe the control (`aria-describedby`, after any description of the caller's own); an error sets `aria-invalid` and turns the box's border `danger`.

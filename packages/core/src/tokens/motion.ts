@@ -64,8 +64,9 @@ export const enterScale = 0.97;
  * items, hover intent (a menu opens once the pointer has rested on its trigger, at once when it moves between
  * the triggers of an open menu, and closes after a grace), the tooltip delay, one `Loop` step, the longest
  * choreographed entrance, a confetti burst's life, how long a toast stays (longer with an action, so
- * there's time to reach it), and how long a live region holds what it announced before it's cleared, so
- * reading the page later doesn't hear it again.
+ * there's time to reach it), how long a live region holds what it announced before it's cleared, so
+ * reading the page later doesn't hear it again, and how long letters typed in a list build up one search
+ * before it starts over.
  */
 export const timing = {
   stagger: 50,
@@ -78,6 +79,7 @@ export const timing = {
   "toast-life": 3000,
   "toast-life-action": 5000,
   "announcement-life": 1000,
+  typeahead: 500,
 } as const;
 
 /** Scale applied while a pressable element is held down. */
