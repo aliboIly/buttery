@@ -11,7 +11,7 @@ Two sets of local captures (not in the repo), both measured frame by frame:
 
 ## 1. The ten rules
 
-1. **Direct manipulation is instant.** Dragging a slider, picking a swatch, choosing a color, dragging the tilt control: the result updates in the *same frame*. Never tween a value the user is driving. (Measured: background swap = 1 frame, no crossfade.)
+1. **Direct manipulation is instant.** Dragging a slider, picking a swatch, choosing a color, dragging the tilt control: the result updates in the *same frame*. Never tween a value the user is driving: set it directly (a style, a CSS variable, `MotionValue.jump`), since even `spring.instant` lands a frame later. (Measured: background swap = 1 frame, no crossfade.)
 2. **Discrete state changes settle in ~250ms with no overshoot.** Position snap, aspect-ratio change, reset, frame change: critically damped spring (`spring.smooth`). Small selection indicators (segmented pill, page dots, anchor dot) are quicker (`spring.snappy`). (Measured: 230–300ms, monotonic decay, no bounce.)
 3. **One surface morphs; it doesn't close and reopen.** A menu that switches sections resizes and re-positions itself; a card that opens becomes the modal; a stage that changes aspect ratio reshapes. (Morphing menu, card-to-modal.)
 4. **Containers animate their size when content changes.** If content swaps inside a panel, the panel's height animates and the content crossfades. No jumps. (Measured: a panel collapsing after a fill-type switch, ~250ms.)
@@ -34,7 +34,7 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 
 | Token | Config | Use |
 |---|---|---|
-| `spring.instant` | `{ type: "tween", duration: 0.001 }` | Direct manipulation, reduced motion. Lands on the next frame; 1ms rather than 0 (§5) |
+| `spring.instant` | `{ type: "tween", duration: 0.001 }` | Reduced motion, and snaps the user isn't driving. Lands on the next frame; 1ms rather than 0 (§5). Direct manipulation doesn't animate at all (rule 1) |
 | `spring.snappy` | `{ visualDuration: 0.18, bounce: 0 }` | Selection indicators (segmented thumb, page dots, anchor dot) |
 | `spring.smooth` | `{ visualDuration: 0.25, bounce: 0 }` | **Default.** Position/aspect/reset, layout morphs, height changes, dialogs |
 | `spring.morph` | `{ visualDuration: 0.38, bounce: 0 }` | Big surfaces changing shape: menu morph, card → modal |
