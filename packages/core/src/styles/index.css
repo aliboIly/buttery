@@ -11,6 +11,7 @@
 @import "./recipes/focus.css";
 @import "./recipes/truncate.css";
 @import "./recipes/hover.css";
+@import "./recipes/scroll.css";
 @import "./primitives/layout.css";
 @import "../primitives/stack/stack.css";
 @import "../primitives/inline/inline.css";

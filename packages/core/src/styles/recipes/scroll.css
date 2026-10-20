@@ -1,0 +1,19 @@
+@layer bt.recipes {
+  /*
+   * Content fades out at a scroll area's edges. The padding keeps the first and last items clear of the
+   * fade, and the scroll padding keeps anything scrolled into view clear of it too.
+   */
+  .bt-scroll-fade {
+    --bt-scroll-fade-size: var(--bt-space-3);
+
+    padding-block: var(--bt-scroll-fade-size);
+    scroll-padding-block: var(--bt-scroll-fade-size);
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      var(--bt-text) var(--bt-scroll-fade-size),
+      var(--bt-text) calc(100% - var(--bt-scroll-fade-size)),
+      transparent
+    );
+  }
+}
