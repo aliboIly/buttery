@@ -105,7 +105,20 @@ async function moved(
   );
 }
 
+async function nextFrames(page: Page): Promise<void> {
+  await page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(resolve);
+        });
+      }),
+  );
+}
+
 async function waitForSettled(page: Page, timeout: number): Promise<void> {
+  // Style changes from setViewportSize and emulateMedia start their transitions a frame later.
+  await nextFrames(page);
   try {
     await page.waitForFunction(
       () => {
