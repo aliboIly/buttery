@@ -61,7 +61,9 @@ describe("ButteryProvider", () => {
         </ButteryProvider>
       </ButteryProvider>,
     );
-    expect(document.querySelectorAll('[data-bt="FloatingLanes"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-bt="FloatingLanes"]')).toHaveLength(
+      1,
+    );
   });
 
   it("writes its settings onto <html> and removes them on unmount", () => {

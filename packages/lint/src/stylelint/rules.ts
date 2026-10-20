@@ -44,9 +44,9 @@ function inFontFace(declaration: Declaration): boolean {
   const { parent } = declaration;
   return Boolean(
     parent &&
-      "name" in parent &&
-      typeof parent.name === "string" &&
-      parent.name.toLowerCase() === "font-face",
+    "name" in parent &&
+    typeof parent.name === "string" &&
+    parent.name.toLowerCase() === "font-face",
   );
 }
 
