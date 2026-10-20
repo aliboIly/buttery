@@ -122,6 +122,28 @@ describe("SharedIndicator", () => {
     });
   });
 
+  it("slides under the labels it passes", async () => {
+    render(<Modes />);
+    const outline = screen.getByRole("button", { name: "Outline" });
+    const rect = outline.getBoundingClientRect();
+    const covered: number[] = [];
+    await userEvent.click(screen.getByRole("button", { name: "Glow" }));
+    const start = performance.now();
+    await new Promise<void>((resolve) => {
+      const tick = (now: number): void => {
+        const top = document.elementFromPoint(
+          rect.left + rect.width / 2,
+          rect.top + rect.height / 2,
+        );
+        if (top === indicator()) covered.push(now - start);
+        if (now - start < 400) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
+    });
+    expect(covered).toEqual([]);
+  });
+
   it("jumps to the new item when motion is reduced", async () => {
     render(
       <MotionPreferenceContext value="reduced">

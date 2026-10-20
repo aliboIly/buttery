@@ -4,7 +4,12 @@
     --bt-shared-indicator-shadow: var(--bt-shadow-raised);
 
     position: relative;
-    isolation: isolate;
+    z-index: var(--bt-z-raised);
+  }
+
+  /* The indicator travels inside the item it's moving to, so that item sits under the others while it slides. */
+  .bt-shared-indicator[data-active] {
+    z-index: var(--bt-z-base);
   }
 
   .bt-shared-indicator > [data-bt-part="indicator"] {
