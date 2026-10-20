@@ -125,6 +125,8 @@ export function createLayoutToolkit(): LayoutToolkit {
     '[tabindex]:not([tabindex="-1"])',
   ].join(", ");
   const LAYER_FURNITURE = "[data-bt-layer], .bt-scrim, .bt-floating-lanes";
+  const PAGE_CHROME =
+    "header, nav, [role=banner], [role=navigation], .bt-sticky";
   let styles = new Map<Element, CSSStyleDeclaration>();
   let positions = new Map<Element, Position>();
 
@@ -433,6 +435,43 @@ export function createLayoutToolkit(): LayoutToolkit {
             px: Math.round(Math.min(width, height)),
             message: `overlaps ${second} by ${px(width)} × ${px(height)}`,
             fix: "Lay them out with Stack, Inline or Grid and a gap, or move extra items into OverflowCluster. If the overlap is intended (artwork, a close button over media), mark the container data-bt-allow-overlap.",
+          });
+        }
+      }
+
+      const laneItems = [
+        ...document.querySelectorAll('[data-bt-part="lane"] > *'),
+      ].filter((item) => !isTooling(item) && isVisible(item));
+      const chromeControls =
+        laneItems.length === 0
+          ? []
+          : [...document.querySelectorAll(INTERACTIVE)].filter(
+              (control) =>
+                control.closest(PAGE_CHROME) !== null &&
+                control.closest("[data-bt-layer]") === null &&
+                isVisible(control),
+            );
+      for (const item of laneItems) {
+        const box = toBox(item.getBoundingClientRect());
+        for (const control of chromeControls) {
+          const target = visibleBox(
+            control,
+            toBox(control.getBoundingClientRect()),
+          );
+          if (!target) continue;
+          const width =
+            Math.min(box.right, target.right) - Math.max(box.left, target.left);
+          const height =
+            Math.min(box.bottom, target.bottom) - Math.max(box.top, target.top);
+          if (width <= 1 || height <= 1) continue;
+          const covered = selectorFor(control);
+          report({
+            rule: "overlap",
+            a: selectorFor(item),
+            b: covered,
+            px: Math.round(Math.min(width, height)),
+            message: `floating UI covers ${covered} in the page's header or navigation`,
+            fix: "Floating lanes keep clear of Sticky bars and of elements registered with useFloatingObstacle. Make the header a Sticky or register it as an obstacle, so notices and toasts sit beside its controls instead of over them.",
           });
         }
       }

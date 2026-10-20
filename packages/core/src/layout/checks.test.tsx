@@ -229,6 +229,36 @@ describe("runLayoutChecks", () => {
   });
 });
 
+describe("floating UI over page chrome", () => {
+  const page = (noticeTop: number): string => `
+    <header style="display: flex; justify-content: flex-end; padding: 16px">
+      <button type="button" data-testid="settings" style="inline-size: 120px; block-size: 36px">Settings</button>
+    </header>
+    <div data-bt-layer="toast" style="position: fixed; inset: 0; z-index: var(--bt-z-toast); pointer-events: none">
+      <div class="bt-floating-lanes" data-bt="FloatingLanes">
+        <div data-bt-part="lane" style="position: absolute; inset-block-start: ${String(noticeTop)}px; inset-inline-end: 24px">
+          <div data-bt="Notice" data-testid="notice" style="inline-size: 200px; block-size: 60px; background: white">Update ready</div>
+        </div>
+      </div>
+    </div>`;
+
+  it("reports a lane item covering a control in the header", () => {
+    const violations = check(page(24), ["overlap"]);
+    expect(violations).toEqual([
+      expect.objectContaining({
+        rule: "overlap",
+        a: '[data-testid="notice"]',
+        b: '[data-testid="settings"]',
+      }),
+    ]);
+    expect(violations[0]?.message).toContain("header or navigation");
+  });
+
+  it("passes a lane item that sits below the header", () => {
+    expect(check(page(84), ["overlap"])).toEqual([]);
+  });
+});
+
 describe("clipping", () => {
   it("wants the full text in a title or tooltip on the text or its control", () => {
     const truncated = (attributes: string): string =>
