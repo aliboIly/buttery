@@ -85,7 +85,7 @@ export const colors = {
   },
   "text-tertiary": {
     light: "#6b6b6b",
-    dark: "#8e8e95",
+    dark: "#93939a",
     description: "Captions and hints.",
   },
   "text-disabled": {
@@ -267,27 +267,23 @@ const textOn = (
 ): ContrastPair[] => backgrounds.map((on) => ({ text, on, minimum: 4.5 }));
 
 /** Every active text/background pair the components use. Each must pass in both themes. */
+const TEXT_SURFACES: readonly ColorToken[] = [
+  "bg-app",
+  "bg-surface",
+  "bg-section",
+  "bg-raised",
+  "bg-floating",
+  "bg-inset",
+  "bg-control",
+  "bg-item-hover",
+  "bg-control-active",
+];
+
 export const contrastPairs: readonly ContrastPair[] = [
-  ...textOn("text-strong", ["bg-surface", "bg-floating", "bg-app"]),
-  ...textOn("text", [
-    "bg-surface",
-    "bg-raised",
-    "bg-floating",
-    "bg-section",
-    "bg-app",
-    "bg-control",
-    "bg-item-hover",
-  ]),
-  ...textOn("text-secondary", [
-    "bg-surface",
-    "bg-raised",
-    "bg-floating",
-    "bg-section",
-    "bg-app",
-    "bg-control",
-    "bg-control-active",
-  ]),
-  ...textOn("text-tertiary", ["bg-surface", "bg-section", "bg-app"]),
+  ...textOn("text-strong", TEXT_SURFACES),
+  ...textOn("text", TEXT_SURFACES),
+  ...textOn("text-secondary", TEXT_SURFACES),
+  ...textOn("text-tertiary", TEXT_SURFACES),
   { text: "on-primary", on: "primary", minimum: 4.5 },
   { text: "on-primary", on: "primary-hover", minimum: 4.5 },
   { text: "inverse-text", on: "inverse-bg", minimum: 4.5 },

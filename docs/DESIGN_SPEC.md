@@ -77,7 +77,7 @@ buttery's own set, derived in OKLCH rather than taken from the references: 20 tw
 | bg-app / surface / section / inset | `#0f0f10` / `#19191b` / `#141416` / `#161618` |
 | control / control-subtle / item-hover / control-active | `#232326` / `#1e1e20` / `#202023` / `#2a2a2d` |
 | border / border-strong | `#2a2a2e` / `#333338` |
-| text-strong / text / secondary / tertiary | `#f5f5f6` / `#ececed` / `#a0a0a6` / `#8e8e95` |
+| text-strong / text / secondary / tertiary | `#f5f5f6` / `#ececed` / `#a0a0a6` / `#93939a` (tertiary raised from `#8e8e95` in Phase 2, which measured 4.27:1 on the raised surface) |
 | text-disabled / icon-disabled | `#55555b` / `#4a4a50` |
 | primary / primary-hover / primary-disabled / on-primary | `#f2f2f3` / `#ffffff` / `#4a4a50` / `#111111` |
 | inverse-bg / inverse-text / inverse-text-secondary | `#f2f2f3` / `#111111` / `#6b6b6b` |
