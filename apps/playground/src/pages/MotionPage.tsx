@@ -9,6 +9,7 @@ import {
   Morph,
   Presence,
   Pressable,
+  Reveal,
   SharedIndicator,
   spring,
   Stack,
@@ -238,6 +239,32 @@ export function MotionPage(): ReactElement {
       </Stack>
 
       <Stack gap={4} asChild>
+        <section aria-label="Press and hover">
+          <Text variant="title" asChild>
+            <h2>Press and hover</h2>
+          </Text>
+          <Surface level="section" pad={6} radius="lg">
+            <Stack gap={4} align="start">
+              <Text variant="body">
+                Everything pressable presses in to 97%. Cards that open
+                something also lift 2px under the pointer.
+              </Text>
+              <Surface asChild level="card" pad={4} className="mo-card">
+                <Pressable asChild className="bt-hover-lift">
+                  <a href="#/pressable" data-testid="lift-card">
+                    <Stack gap={1}>
+                      <Text variant="label">Pressable</Text>
+                      <Text variant="caption">The press and hover recipes</Text>
+                    </Stack>
+                  </a>
+                </Pressable>
+              </Surface>
+            </Stack>
+          </Surface>
+        </section>
+      </Stack>
+
+      <Stack gap={4} asChild>
         <section aria-label="Arrivals, loops and celebrations">
           <Text variant="title" asChild>
             <h2>Arrivals, loops and celebrations</h2>
@@ -255,7 +282,14 @@ export function MotionPage(): ReactElement {
                   ))}
                 </Stagger>
               </Grid>
-              <Loop steps={TOTALS.length} aria-hidden="true">
+              <Reveal data-testid="reveal">
+                <Surface level="card" pad={4}>
+                  <Text variant="body">
+                    Every export lands here, newest first.
+                  </Text>
+                </Surface>
+              </Reveal>
+              <Loop steps={TOTALS.length} aria-hidden="true" data-testid="loop">
                 {(step) => (
                   <Morph contentKey={step}>
                     <Text variant="heading-2" tabular>

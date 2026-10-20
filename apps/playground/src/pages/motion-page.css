@@ -52,3 +52,8 @@
   padding-inline: var(--bt-space-3);
   border-radius: var(--bt-r-full);
 }
+
+.mo-card {
+  inline-size: 100%;
+  max-inline-size: var(--bt-w-inspector);
+}
