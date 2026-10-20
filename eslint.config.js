@@ -4,6 +4,7 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import { butteryEslintConfig } from "./packages/lint/src/eslint/index.ts";
 
 const reactRuleMessage =
   "React 19 takes ref as a prop and compound components share state through context. See AGENTS.md.";
@@ -105,4 +106,5 @@ export default defineConfig(
       ],
     },
   },
+  ...butteryEslintConfig(),
 );
