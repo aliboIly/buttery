@@ -1,0 +1,35 @@
+@layer bt.recipes {
+  .bt-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+    block-size: var(--bt-control-height, var(--bt-h-control));
+    padding-inline: var(--bt-control-padding, var(--bt-space-3));
+    white-space: nowrap;
+  }
+
+  .bt-control[data-size="badge"] {
+    --bt-control-height: var(--bt-h-badge);
+    --bt-control-padding: var(--bt-space-1_5);
+  }
+
+  .bt-control[data-size="sm"] {
+    --bt-control-height: var(--bt-h-sm);
+  }
+
+  .bt-control[data-size="control"] {
+    --bt-control-height: var(--bt-h-control);
+  }
+
+  .bt-control[data-size="button"] {
+    --bt-control-height: var(--bt-h-button);
+    --bt-control-padding: var(--bt-space-5);
+  }
+
+  .bt-control[data-size="cta"] {
+    --bt-control-height: var(--bt-h-cta);
+    --bt-control-padding: var(--bt-space-6);
+  }
+}

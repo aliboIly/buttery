@@ -1,0 +1,49 @@
+/* Arial scaled to Inter's average width and vertical metrics, so text doesn't shift when Inter loads. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  size-adjust: 106.58%;
+  ascent-override: 90.89%;
+  descent-override: 22.63%;
+  line-gap-override: 0%;
+}
+
+@layer bt.base {
+  html {
+    font-family: var(--bt-font-sans);
+    font-optical-sizing: auto;
+    background-color: var(--bt-bg-app);
+    color: var(--bt-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  body {
+    font-size: var(--bt-text-label-size);
+    line-height: var(--bt-text-label-line);
+  }
+
+  ::selection {
+    background-color: var(--bt-selection);
+  }
+
+  :focus-visible {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  * {
+    scrollbar-color: var(--bt-border-strong) transparent;
+    scrollbar-width: thin;
+  }
+
+  [data-bt-platform="desktop"]
+    :is(button, [role="button"], a[href], summary, label, .bt-press) {
+    cursor: default;
+  }
+}

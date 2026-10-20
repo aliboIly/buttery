@@ -1,0 +1,21 @@
+@layer bt.recipes {
+  .bt-press {
+    cursor: pointer;
+    transition: transform var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  .bt-press:active:not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    transform: scale(var(--bt-press-scale));
+    transition-duration: var(--bt-dur-press);
+  }
+
+  [data-bt-motion="reduced"] .bt-press {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bt-press {
+      transition: none;
+    }
+  }
+}

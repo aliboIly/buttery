@@ -1,0 +1,7 @@
+@layer bt.recipes {
+  .bt-focus:focus-visible,
+  .bt-focus:focus-within:has(:focus-visible) {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+}
