@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { Layer } from "../layers/layer/Layer.tsx";
+import { isSettled } from "../motion/settle.ts";
 import { runLayoutChecks } from "./checks.ts";
 import type { LayoutRule, LayoutViolation } from "./checks.ts";
 import { layoutCheckTokens } from "./tokens.ts";
@@ -12,6 +13,15 @@ interface Mark {
 }
 
 const GUARD_RULES: readonly LayoutRule[] = ["overlap", "overflow", "scale"];
+const QUIET_MS = 300;
+const MAX_WAIT_MS = 1000;
+
+function isEditable(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || target.matches("input, textarea, select"))
+  );
+}
 
 function isInsideGuard(node: Node): boolean {
   const element = node instanceof Element ? node : node.parentElement;
@@ -38,9 +48,10 @@ export interface LayoutGuardProps {
 
 /**
  * The development overlay that keeps layouts honest. It re-checks overlap, overflow and off-scale spacing
- * whenever the page changes, outlines offenders in red with a label, and logs each new set of problems to
+ * once the page has been quiet for 300ms (at least once a second while it keeps changing) and buttery's
+ * animations have settled, outlines offenders in red with a label, and logs each new set of problems to
  * the console in the same JSON format `expectButtery` uses. ⌥⇧L toggles the outlines and ⌥⇧G a 12-column
- * page grid. `ButteryProvider` mounts it in development builds.
+ * page grid, except while typing in a field. `ButteryProvider` mounts it in development builds.
  *
  * @example
  * <ButteryProvider>
@@ -56,7 +67,7 @@ export function LayoutGuard({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (!event.altKey || !event.shiftKey) return;
+      if (!event.altKey || !event.shiftKey || isEditable(event.target)) return;
       if (event.code === "KeyL") {
         event.preventDefault();
         setVisible((current) => !current);
@@ -75,12 +86,18 @@ export function LayoutGuard({
     if (!visible) return undefined;
     const tokens = layoutCheckTokens();
     let timer = 0;
+    let burstStart: number | null = null;
     let lastReport = "";
     const observer = new MutationObserver((records) => {
       if (records.every((record) => isInsideGuard(record.target))) return;
       schedule();
     });
     const run = (): void => {
+      burstStart = null;
+      if (!isSettled()) {
+        schedule();
+        return;
+      }
       const violations = runLayoutChecks({ tokens, rules: GUARD_RULES });
       observer.takeRecords();
       const serialized = JSON.stringify(violations);
@@ -104,8 +121,13 @@ export function LayoutGuard({
       );
     };
     function schedule(): void {
+      const now = performance.now();
+      burstStart ??= now;
       window.clearTimeout(timer);
-      timer = window.setTimeout(run, 300);
+      timer = window.setTimeout(
+        run,
+        Math.max(0, Math.min(QUIET_MS, burstStart + MAX_WAIT_MS - now)),
+      );
     }
     observer.observe(document.body, {
       subtree: true,

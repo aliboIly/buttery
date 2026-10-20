@@ -1,6 +1,7 @@
 import "../styles/index.css";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { trackAnimation } from "../motion/settle.ts";
 import { LayoutGuard } from "./LayoutGuard.tsx";
 
 const OVERLAPPING = `
@@ -12,7 +13,7 @@ const OVERLAPPING = `
 let page: HTMLDivElement;
 
 beforeEach(() => {
-  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "performance"] });
   page = document.createElement("div");
   page.innerHTML = OVERLAPPING;
   document.body.append(page);
@@ -52,6 +53,46 @@ describe("LayoutGuard", () => {
       vi.advanceTimersByTime(1000);
     });
     expect(warn).toHaveBeenCalledOnce();
+  });
+
+  it("still checks at least once a second while the page keeps changing", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(<LayoutGuard />);
+    for (let elapsed = 0; elapsed < 1000; elapsed += 100) {
+      await act(async () => {
+        page.dataset["frame"] = String(elapsed);
+        await Promise.resolve();
+        vi.advanceTimersByTime(100);
+      });
+    }
+    expect(marks()).toHaveLength(1);
+  });
+
+  it("waits for buttery's animations to settle", () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const finish = trackAnimation();
+    render(<LayoutGuard />);
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+    expect(marks()).toHaveLength(0);
+    finish();
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(marks()).toHaveLength(1);
+  });
+
+  it("leaves ⌥⇧L alone while typing in a field", () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const field = document.createElement("input");
+    page.append(field);
+    render(<LayoutGuard />);
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    fireEvent.keyDown(field, { code: "KeyL", altKey: true, shiftKey: true });
+    expect(marks()).toHaveLength(1);
   });
 
   it("toggles the outlines with ⌥⇧L and the grid with ⌥⇧G", () => {
