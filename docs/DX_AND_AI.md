@@ -4,7 +4,7 @@ buttery should be **the easiest correct way to build UI** — for a developer in
 
 ## Principles
 1. **Zero-config start.** One provider, two CSS imports, and it already looks and moves right.
-2. **One vocabulary.** The same prop names everywhere (`value`/`defaultValue`/`onValueChange`, `open`/`defaultOpen`/`onOpenChange`, `size`, `variant`, `disabled`, `label`, `asChild`). No synonyms, no per-component dialects. Predictable APIs are what make agents reliable.
+2. **One vocabulary.** The same prop names everywhere (`value`/`defaultValue`/`onValueChange`, `checked`/`defaultChecked`/`onCheckedChange` for something on or off, `open`/`defaultOpen`/`onOpenChange`, `size`, `variant`, `disabled`, `label`, `asChild`). No synonyms, no per-component dialects. Predictable APIs are what make agents reliable.
 3. **Wrong is a type error.** Spacing, sizes, surfaces, motion presets and variants are string/number unions of tokens, so a bad value fails `tsc` before anyone sees it.
 4. **Errors teach.** Every dev warning names the problem, the fix and a docs link, in one line:
    `[buttery:IconButton] needs a "label" (tooltip + screen readers). Fix: <IconButton label="Undo" …/> → docs/icon-button#label`
