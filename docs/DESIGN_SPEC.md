@@ -232,8 +232,12 @@ A nested surface sits evenly inside its parent: the same inset on every open sid
 
 - Sizes: `sm` 28 · `md` 36 (default) · `cta` 48.
 - Shapes: `pill` (default, r-full, padding-x 20) or `rounded` (r12 — dialog CTAs).
-- Icons 16px, stroke 1.75, gap 6. `loading` swaps the label for a spinner without changing width. `arrow` adds the hover arrow (MOTION_SPEC §4.5).
+- Icons 16px, stroke 1.75, gap 6. `loading` swaps the label for a spinner without changing width.
+- `arrow="forward" | "back"` adds the navigation arrow (MOTION_SPEC §4.5): a 16px chevron after the label (before it for back), gap 6, that draws its stem on hover or focus. Its full width is reserved at rest, so the button never changes width; `loading` hides it and keeps the space.
 - Press: scale 0.97 (MOTION_SPEC).
+
+### ArrowLink
+A text link with the same arrow part as `Button`: `label` role in `primary`, hover `primary-hover`, arrow 16px after the label, gap 4. Underlined only on keyboard focus, beside the focus ring.
 
 ### IconButton
 Ghost, square, r-full: `md` 36×36 (header, default) · `sm` 28×28 (dialog close, inline). Icon 16 `text-secondary`, disabled `icon-disabled`, hover bg `bg-control`. Requires `label` (tooltip + aria-label).
@@ -286,7 +290,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 - Media: 384×200, r10, per-step gradient background, holding a small scene whose elements morph between steps.
 - Title `dialog-title` (24px below media) · body `body` (16px below) · caption `caption` (20px below). Gaps are between trimmed text boxes (see §2).
 - PageDots 20px below caption: dots 6px, gap 6, inactive `dot`, active = 18×6 pill `dot-active`. Dots are indicators, not buttons.
-- Buttons 16px below the dots: two equal columns (`Inline uniform`), gap 8, 48h, r12. The back button is soft (disabled on the first step) and the forward button is primary; on the last step its label changes (e.g. "Continue" → "Finish"). Bottom padding 24.
+- Buttons 16px below the dots: two equal columns (`Inline uniform`), gap 8, 48h, r12. The back button is soft with `arrow="back"` (disabled on the first step) and the forward button is primary with `arrow="forward"`; on the last step its label changes (e.g. "Continue" → "Finish") and the arrow goes, since finishing isn't moving on. Bottom padding 24.
 - Scenes: each step's media is a small scene built from buttery parts whose shared elements morph between steps. Card Studio designs its own scenes around its features.
 
 ### Toast
@@ -297,6 +301,13 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 
 ### HeaderBar
 56h, r16, `bg-surface`, shadow-card, padding-x 16. Left: 24px app mark (the app's own icon; buttery's playground uses `BrandMark`) + title (`title-sm`, 12px gap, truncates). Right: ghost text actions, ghost icon actions, Select trigger, a 1px × 24 separator, undo/redo/help `IconButton`s; gap 4. Overflowing actions move into a "…" menu automatically (`OverflowCluster`).
+
+### NavBar + MorphMenu (_derived_ from buttery's tokens; behavior in MOTION_SPEC §4.1)
+- Bar: 64h, aligned to the page container. Left: `BrandMark` (24) and the nav items, ghost pills 36h, padding-x 12, `control` role in `text-secondary` (hover `text`); triggers add a 16px chevron, gap 4; plain links have none. Right: a `secondary` pill and a `primary` call to action with `arrow="forward"`, gap 8. At rest over a colorful hero the bar has no background.
+- Open trigger: label `text-strong`, chevron turned 180°.
+- Panel: the `floating` surface (r16, shadow-floating) reaching up behind the bar row, so the nav items sit inside its top edge. Padding 24; columns laid out with `Grid`, gap 32. A column has a group heading (`control` role, `text-secondary`) and items 8 apart, each a title (`label`, `text`) over a one-line caption (`caption`, `text-secondary`), r10, hover background `bg-item-hover`. An optional featured column sits on the `section` level (r12, padding 16). A footer row under a 1px `border` divider holds a "See all" `ArrowLink`. Max width: the container, never wider than the viewport minus 16px.
+- Below 640px of container width: a menu button (`IconButton md`) opens a full-height sheet in which each menu becomes an accordion section.
+- `behavior`: `static` (default) · `sticky` · `auto-hide`. Pinned past the hero, the bar takes the `panel` surface with `shadow-card`.
 
 ### Inspector
 340w panel (padding 8, gap 8 between sections) with a sticky footer: 1px divider, padding 12, buttons 36h gap 8 (a soft button with an icon, padded 32 a side — measured 118 wide with a short label — and a primary SplitButton filling the rest). The body scrolls internally with 12px fade masks at scrolled edges.

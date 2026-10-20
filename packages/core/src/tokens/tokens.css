@@ -130,8 +130,8 @@
     --bt-ease-in: cubic-bezier(0.4, 0, 1, 1);
     --bt-ease-standard: cubic-bezier(0.2, 0, 0, 1);
     --bt-stagger: 50ms;
-    --bt-delay-hover-open: 80ms;
-    --bt-delay-hover-close: 150ms;
+    --bt-delay-hover-open: 150ms;
+    --bt-delay-hover-close: 100ms;
     --bt-delay-tooltip: 500ms;
     --bt-loop-cycle: 4000ms;
     --bt-entrance-max: 900ms;

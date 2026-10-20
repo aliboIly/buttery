@@ -28,7 +28,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] Settle times verified against the spec
 
 ## v0.4 — Controls (Phase 4)
-- [ ] Button family, IconButton, SplitButton
+- [ ] Button family, IconButton, SplitButton, with the forward/back arrow shared with ArrowLink
 - [ ] SegmentedControl, Slider + ValueBadge, Chip, NumberField
 - [ ] Tooltip, Kbd, ArrowLink
 - [ ] Compare page vs references
@@ -41,10 +41,10 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 
 ## v0.6 — Choreography (Phase 6)
 - [ ] Dialog, Onboarding (StepDialog), PageDots
-- [ ] NavBar + MorphMenu, SubNav
+- [ ] NavBar (static, sticky, auto-hide) + MorphMenu, SubNav
 - [ ] Bento + ExpandableCard
 - [ ] Page patterns: SplitHero, CenteredHero, StatStrip, LogoStrip, ArticleLayout, Footer
-- [ ] Card Studio marketing page + onboarding
+- [ ] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
 
 ## v0.9 — Hardening & brand (Phase 7)
 - [ ] Accessibility audit, dark + compact passes, visual regression baselines

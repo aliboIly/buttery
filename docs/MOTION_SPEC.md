@@ -35,9 +35,9 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | Token | Config | Use |
 |---|---|---|
 | `spring.instant` | `{ type: "tween", duration: 0.001 }` | Reduced motion, and snaps the user isn't driving. Lands on the next frame; 1ms rather than 0 (§5). Direct manipulation doesn't animate at all (rule 1) |
-| `spring.snappy` | `{ visualDuration: 0.18, bounce: 0 }` | Selection indicators (segmented thumb, page dots, anchor dot) |
+| `spring.snappy` | `{ visualDuration: 0.18, bounce: 0 }` | Selection indicators (segmented thumb, page dots, anchor dot), the nav menu's panel switching sections |
 | `spring.smooth` | `{ visualDuration: 0.25, bounce: 0 }` | **Default.** Position/aspect/reset, layout morphs, height changes, dialogs |
-| `spring.morph` | `{ visualDuration: 0.38, bounce: 0 }` | Big surfaces changing shape: menu morph, card → modal |
+| `spring.morph` | `{ visualDuration: 0.38, bounce: 0 }` | Big surfaces changing shape: card → modal |
 | `spring.gentle` | `{ visualDuration: 0.45, bounce: 0.08 }` | Choreographed entrances only |
 
 "Settle time" in this doc = time until 95% of the travel is done (that's what the recordings measure). Motion's `visualDuration` is close to that for `bounce: 0`, but verify by sampling — don't assume.
@@ -51,9 +51,9 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-dur-instant` | 0ms |
 | `--bt-dur-press` | 80ms (pointer-down scale) |
 | `--bt-dur-reduced` | 100ms (the longest fade with reduced motion) |
-| `--bt-dur-fast` | 120ms (hover color, exits, text crossfade) |
+| `--bt-dur-fast` | 120ms (hover color and arrows, exits, text crossfade, the nav panel folding and its blur) |
 | `--bt-dur-base` | 200ms (enters: menu, toast, dialog opacity) |
-| `--bt-dur-slow` | 300ms (backdrop blur in, crop-mode bg fade) |
+| `--bt-dur-slow` | 300ms (modal scrim in, crop-mode bg fade) |
 | `--bt-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` (enters) |
 | `--bt-ease-in` | `cubic-bezier(0.4, 0, 1, 1)` (exits) |
 | `--bt-ease-standard` | `cubic-bezier(0.2, 0, 0, 1)` (everything else) |
@@ -61,7 +61,8 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-entrance-max` | 900ms (the longest choreographed entrance, stagger included) |
 | `--bt-loop-cycle` | 4000ms (one `Loop` step) |
 | `--bt-celebration` | 900ms (a confetti burst's life) |
-| `--bt-delay-hover-open` / `--bt-delay-hover-close` | 80ms / 150ms (hover-intent for menus and tooltips; tooltips use 500ms open) |
+| `--bt-delay-hover-open` / `--bt-delay-hover-close` | 150ms / 100ms (hover intent: a menu opens once the pointer has rested on its trigger for 150ms, at once when it moves between the triggers of an open menu, and closes 100ms after the pointer leaves) |
+| `--bt-delay-tooltip` | 500ms (tooltips open) |
 
 Never use `transition: all`. Transition only `opacity`, transforms (`transform`, `translate`, `scale`), `background-color`, `color`, `box-shadow`, `filter` and `backdrop-filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS. Two size animations are sanctioned: `Morph`'s height (§5) and the `MorphMenu` viewport's size and position (§4.1).
 
@@ -103,12 +104,17 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 
 ## 4. Choreography patterns
 
-### 4.1 Morphing menu (`MorphMenu`)
-Hovering between top-level nav items never closes the panel: one floating surface **resizes and repositions** to fit each section. Build it on Radix `NavigationMenu` (its shared `Viewport` exposes the active content's size as CSS variables, and it handles hover intent and keyboard navigation).
-- Open: `dur-base` (measured ~170ms). Panel fades in + scale 0.98 → 1 from the trigger. Page behind: `backdrop-filter: blur(10px)` + `rgba(255,255,255,.55)` wash over `--bt-dur-slow`.
-- Switch: panel width/height/x animate with `spring.morph`; old content fades out (100ms) while new content fades in sliding 8–12px **from the direction of travel**. The viewport's width, height and x are the second sanctioned size animation: Radix exposes the active content's size as CSS variables, and Motion animates that one element.
-- Close: panel fades `dur-fast`; blur clears `dur-base`. Hover-intent delays: `--bt-delay-hover-open` / `-close` (prevents flicker when moving diagonally).
-- buttery look: white `floating` surface, r16, buttery tokens.
+### 4.1 Nav bar and morphing menu (`NavBar`, `MorphMenu`)
+Measured from a local 30fps recording of a marketing site's top bar (`reference/inspiration-nav/`, not in the repo). Moving between top-level items never closes the panel: one floating surface **resizes and repositions** to fit each section. Build it on Radix `NavigationMenu`: its shared `Viewport` exposes the active content's size as CSS variables, and it handles hover intent and keyboard navigation.
+- **Open:** the pointer rests on a trigger for `--bt-delay-hover-open` (150ms). Then the panel unfolds downward from the bar, the viewport growing from the bar's height to the content's in `dur-fast` with `ease-out` (measured ~100ms), while its columns fade in. The page behind blurs and washes in over `dur-fast` (measured ~100–150ms).
+- **Switch:** moving to another trigger while the panel is open starts at once, with no hover delay (measured within ~70ms), and settles with `spring.snappy` (measured ~170–200ms). Old columns fade out over `dur-fast`; new ones fade in sliding 8–12px **from the direction of travel**; the panel's width, height and x morph. It never closes in between. The viewport's width, height and x are the second sanctioned size animation: Radix exposes the active content's size as CSS variables, and Motion animates that one element.
+- **Close:** moving onto a plain link (one without a menu) or out of the bar waits `--bt-delay-hover-close` (100ms). Then the panel folds up in `dur-fast` with `ease-in` (measured ~70–120ms) and the blur clears in `dur-fast` (measured ~150ms).
+- **Trigger:** the open trigger's chevron turns 180° with `spring.snappy` and its label goes to `text-strong`.
+- **One surface:** the open panel's floating surface reaches up behind the bar row, so the nav items sit inside its top edge. At rest over a colorful hero the bar has no background.
+- **Scrolling:** `behavior="static"` (the default, as recorded) scrolls away with the page; `sticky` stays pinned; `auto-hide` slides out as the page scrolls down and back as it scrolls up, with `spring.smooth`, and once past the hero it takes the `panel` surface with `shadow-card` (no background at the top of the page).
+- **Keyboard and touch:** arrow keys move between triggers; Enter, Space or ArrowDown opens; Esc closes and returns focus to the trigger. A tap toggles a panel.
+- **Reduced motion:** the panel appears and leaves with a 100ms fade, a switch swaps the columns without sliding, the chevron turns at once and the blur fades in 100ms.
+- buttery look: the `floating` surface, r16, buttery tokens.
 
 ### 4.2 Card → modal (`ExpandableCard`)
 Clicking a bento card turns *that card* into the modal (shared layout). Grid behind fades to 0 opacity and the scrim washes in; card content crossfades to detail content mid-flight.
@@ -125,8 +131,13 @@ Product visuals inside cards and heroes quietly cycle states — numbers tick to
 - 3–5s per cycle, ease-in-out, crossfades for text values, `layout` for added rows.
 - Pause when offscreen (IntersectionObserver) and under reduced motion. Never loop anything the user is editing.
 
-### 4.5 Hover arrow (`ArrowLink`, `Button` with `arrow`)
-Chevron "›" grows a stem and becomes "→", nudging 2px right. `dur-fast`, `--bt-ease-out`. Implemented with two SVG paths (stem scales from 0 → 1 on X).
+### 4.5 Forward and back arrows (`Button` and `ArrowLink` with `arrow`)
+Measured from the same local recording at 10fps. At rest the label is followed by a small chevron. On hover or keyboard focus a stem draws in behind the chevron's point and the head nudges forward, so › becomes →; leaving reverses it. `dur-fast` each way (measured ~100ms), `ease-out`, no delay. The control never changes width.
+- One SVG with a head path and a stem path. The stem scales on X from the head's side, 0 to 1; the head moves `--bt-arrow-nudge` (3px, a component variable). The arrow's full width is reserved at rest, so hovering shifts nothing.
+- `arrow="back"` mirrors it: ‹ becomes ← and nudges left.
+- Colors are buttery's hover colors (primary goes to `primary-hover`), and the press scale stays.
+- Touch, with no hover: the chevron only. Reduced motion: the chevron becomes the arrow at once, without the nudge. `loading`: the arrow hides and the width stays.
+- Use it on every forward or back navigation action: onboarding Next and Back, `StepDialog`, `ExpandableCard` and hero calls to action, "See all" links in the nav menu, pagination. Not on Done, Save, Submit or destructive actions.
 
 ### 4.6 Card hover lift
 `translateY(-2px)`, shadow steps from `card` to `raised`, corner affordance icon fills with `--bt-primary`. `dur-fast`. Disabled on touch devices and in reduced motion.
@@ -135,7 +146,7 @@ Chevron "›" grows a stem and becomes "→", nudging 2px right. `dur-fast`, `--
 Marketing numbers (not user values) count up once when revealed, 800ms ease-out, tabular-nums, width reserved for the final value. Screen readers get the final value immediately (`aria-label`); with reduced motion the final value renders directly.
 
 ### 4.8 Context blur (`Scrim`)
-Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). Both animate in over `--bt-dur-slow`; out over `--bt-dur-base` (blur) or `--bt-dur-fast` (dim). The blur scrim sits below the sticky nav (`--bt-z-scrim-nav`) so the nav and menu stay crisp.
+Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). The blur scrim fades in and out over `--bt-dur-fast` (measured ~100–150ms each way behind the nav menu); the dim scrim comes in over `--bt-dur-slow` and leaves over `--bt-dur-fast`. The blur scrim sits below the sticky nav (`--bt-z-scrim-nav`) so the nav and menu stay crisp.
 
 ---
 

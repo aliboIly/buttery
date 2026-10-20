@@ -100,7 +100,7 @@ height: 100dvh; overflow: hidden;
 - Dev overlay: `⌥⇧G` toggles a column overlay (dev only — not a visual feature).
 
 ### Patterns
-- **NavBar**: sticky, 64h, container-aligned. Links use `MorphMenu` (one morphing panel, see MOTION_SPEC §4.1). Collapses to a sheet below 640.
+- **NavBar**: 64h, aligned to the page container. Brand mark on the left, the nav items next to it (triggers carry a chevron, plain links don't), and a right cluster with a secondary pill and a primary call to action with a forward arrow. The nav items go through `OverflowCluster`; below 640px of container width everything collapses into a menu button that opens a full-height sheet with accordion sections. `behavior` is `static` (the default: it scrolls away with the page), `sticky` or `auto-hide`; while it can stay on screen it publishes its height as `--bt-sticky-top`. Its menus share one `MorphMenu` panel (MOTION_SPEC §4.1) laid out with `Grid`, never wider than the container or than the viewport minus 16px, and never over the bar's own items.
 - **SubNav**: sticky under NavBar, 48h, scroll-spy highlight.
 - **SplitHero**: text 6–7 cols / visual 5–6 cols, vertically centered; headline is two-tone (strong + secondary continuation) ≤ 22ch; actions 24 below body.
 - **CenteredHero**: centered text (≤ 8 cols) above a full-width visual stage.

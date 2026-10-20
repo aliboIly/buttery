@@ -61,12 +61,14 @@ export const enterScale = 0.97;
 
 /**
  * Timing tokens that aren't durations of a single transition, in milliseconds: the gap between staggered
- * items, hover-intent delays, one `Loop` step, the longest choreographed entrance and a confetti burst's life.
+ * items, hover intent (a menu opens once the pointer has rested on its trigger, at once when it moves between
+ * the triggers of an open menu, and closes after a grace), the tooltip delay, one `Loop` step, the longest
+ * choreographed entrance and a confetti burst's life.
  */
 export const timing = {
   stagger: 50,
-  "delay-hover-open": 80,
-  "delay-hover-close": 150,
+  "delay-hover-open": 150,
+  "delay-hover-close": 100,
   "delay-tooltip": 500,
   "loop-cycle": 4000,
   "entrance-max": 900,
