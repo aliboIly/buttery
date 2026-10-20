@@ -137,6 +137,24 @@ describe("FloatingLanes", () => {
     expect(menuLayer?.parentElement).toBe(toastLayer);
   });
 
+  it("keeps an item with long text inside its lane, 24px from each side", async () => {
+    render(
+      <>
+        <FloatingLanes />
+        <FloatingLanes.Item>
+          <div className="bt-truncate" data-bt-truncate="">
+            {"Exported 12 cards to the Downloads folder. ".repeat(12)}
+          </div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const item = (
+      await screen.findByText(/^Exported 12 cards/)
+    ).getBoundingClientRect();
+    expect(item.left).toBe(24);
+    expect(window.innerWidth - item.right).toBe(24);
+  });
+
   it("puts items in the lane they ask for", async () => {
     render(
       <>

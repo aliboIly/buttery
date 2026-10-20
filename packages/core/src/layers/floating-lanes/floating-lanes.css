@@ -13,7 +13,9 @@
     max-inline-size: calc(100% - 2 * var(--bt-space-6));
   }
 
+  /* An item never grows past its lane, so long text inside it truncates or wraps instead of running off screen. */
   .bt-floating-lanes > [data-bt-part="lane"] > * {
+    max-inline-size: 100%;
     pointer-events: auto;
   }
 
@@ -24,6 +26,7 @@
     );
     inset-inline-start: 50%;
     align-items: center;
+    inline-size: max-content;
     transform: translateX(-50%);
   }
 
