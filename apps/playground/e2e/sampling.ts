@@ -32,6 +32,8 @@ export interface Frame {
 
 /** A CSS transition that started running on a sampled element. */
 export interface TransitionRecord {
+  /** The element it ran on, as in its readings. */
+  readonly id: number;
   /** When it started running, in ms since sampling began. */
   readonly t: number;
   readonly property: string;
@@ -94,7 +96,8 @@ function samplerScript(startOnLoad: string | undefined): void {
     const [translateX = 0, translateY = 0] = style.translate
       .split(" ")
       .map((part) => Number.parseFloat(part) || 0);
-    const scale = Number.parseFloat(style.scale) || 1;
+    const scaleX = Number.parseFloat(style.scale);
+    const scale = Number.isNaN(scaleX) ? 1 : scaleX;
     return {
       id: idOf(element),
       left: rect.left,
@@ -141,6 +144,7 @@ function samplerScript(startOnLoad: string | undefined): void {
           );
         const timing = running?.effect?.getComputedTiming();
         transitions.push({
+          id: idOf(target),
           t: performance.now() - origin,
           property: propertyName,
           duration:
