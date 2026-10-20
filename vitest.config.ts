@@ -23,6 +23,8 @@ export default defineConfig({
         test: {
           name: "browser",
           include: ["packages/*/src/**/*.test.tsx"],
+          // Files share one browser window, and focus can only be in one of their frames at a time.
+          fileParallelism: false,
           browser: {
             enabled: true,
             headless: true,
