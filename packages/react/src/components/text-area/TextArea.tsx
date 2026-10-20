@@ -106,19 +106,22 @@ export function TextArea({
   }, [current, rows, maxRows]);
 
   useEffect(() => {
-    const node = element.current;
-    if (!node) return undefined;
-    let width = node.offsetWidth;
+    const copy = measure.current;
+    if (!copy) return undefined;
+    let width = copy.getBoundingClientRect().width;
     let live = true;
-    const observer = new ResizeObserver(() => {
-      if (node.offsetWidth === width) return;
-      width = node.offsetWidth;
+    const observer = new ResizeObserver(([entry]) => {
+      const next = entry?.contentBoxSize[0]?.inlineSize ?? width;
+      if (next === width) return;
+      width = next;
       fit.current();
     });
-    observer.observe(node);
-    void document.fonts.ready.then(() => {
-      if (live) fit.current();
-    });
+    observer.observe(copy);
+    if ("fonts" in document) {
+      void document.fonts.ready.then(() => {
+        if (live) fit.current();
+      });
+    }
     return () => {
       live = false;
       observer.disconnect();
@@ -159,6 +162,9 @@ export function TextArea({
         <textarea
           ref={measure}
           rows={1}
+          wrap={rest.wrap}
+          dir={rest.dir}
+          lang={rest.lang}
           tabIndex={-1}
           readOnly
           inert
@@ -166,11 +172,7 @@ export function TextArea({
           data-bt-part="measure"
         />
       </div>
-      <FormFieldError
-        id={ids.error}
-        name={label}
-        announce={announceError}
-      >
+      <FormFieldError id={ids.error} name={label} announce={announceError}>
         {error}
       </FormFieldError>
     </div>

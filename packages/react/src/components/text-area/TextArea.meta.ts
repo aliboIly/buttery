@@ -13,6 +13,6 @@ export const meta: ComponentMeta = {
     "Rich text with formatting: TextArea holds plain text",
   ],
   related: ["TextField", "Field"],
-  a11y: "Labelled and described like TextField. It grows by measuring its text, never by animating, and once it reaches maxRows it scrolls inside itself with faded edges.",
+  a11y: "Labelled and described like TextField. It grows by measuring a hidden copy of its text, never by animating or collapsing itself, fits again when its width changes, and once it reaches maxRows it scrolls inside itself with faded edges.",
   motion: "none",
 };
