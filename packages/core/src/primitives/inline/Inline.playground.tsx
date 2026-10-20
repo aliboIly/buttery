@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Inline, Surface, Text } from "@buttery/core";
+import { Inline, Stack, Surface, Text } from "@buttery/core";
 import type { DemoSection } from "@buttery/core";
 
 function Box({ label }: { readonly label: string }): ReactElement {
@@ -42,7 +42,7 @@ export const demos: readonly DemoSection[] = [
     title: "Justify",
     description: "Start (the default), center, end and between.",
     render: () => (
-      <Inline gap={2} wrap>
+      <Stack gap={2}>
         {(["start", "center", "end", "between"] as const).map((justify) => (
           <Surface key={justify} level="section" pad={2}>
             <Inline gap={2} justify={justify}>
@@ -51,7 +51,7 @@ export const demos: readonly DemoSection[] = [
             </Inline>
           </Surface>
         ))}
-      </Inline>
+      </Stack>
     ),
   },
 ];

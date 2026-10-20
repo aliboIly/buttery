@@ -1,15 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import {
-  Grid,
-  Inline,
-  Morph,
-  Pressable,
-  Stack,
-  Surface,
-  Text,
-} from "@buttery/core";
+import { Grid, Morph, Pressable, Stack, Surface, Text } from "@buttery/core";
 import type { DemoSection } from "@buttery/core";
+import { gradientCss, gradients, solids } from "@buttery/core/palettes";
 
 function FillDemo(): ReactElement {
   const [fill, setFill] = useState<"blend" | "flat">("blend");
@@ -34,16 +27,26 @@ function FillDemo(): ReactElement {
         <Morph contentKey={fill} data-testid="morph-fill">
           {fill === "blend" ? (
             <Grid columns={6} gap={2}>
-              {Array.from({ length: 12 }, (_, index) => (
-                <Surface key={index} level="inset" pad={4} />
+              {gradients.slice(0, 12).map((preset) => (
+                <Surface
+                  key={preset.id}
+                  level="inset"
+                  pad={4}
+                  style={{ backgroundImage: gradientCss(preset) }}
+                />
               ))}
             </Grid>
           ) : (
-            <Inline gap={2}>
-              {Array.from({ length: 6 }, (_, index) => (
-                <Surface key={index} level="inset" pad={4} />
+            <Grid columns={6} gap={2}>
+              {solids.slice(0, 6).map((solid) => (
+                <Surface
+                  key={solid.id}
+                  level="inset"
+                  pad={4}
+                  style={{ backgroundColor: solid.hex }}
+                />
               ))}
-            </Inline>
+            </Grid>
           )}
         </Morph>
       </Surface>

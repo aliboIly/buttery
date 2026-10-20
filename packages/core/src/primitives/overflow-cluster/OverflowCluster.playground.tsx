@@ -51,9 +51,9 @@ function Cluster(): ReactElement {
 }
 
 const WIDTHS = [
-  "var(--bt-w-dialog)",
-  "var(--bt-w-row-control)",
-  "var(--bt-space-32)",
+  { width: "var(--bt-w-dialog)", label: "Wide, 400px" },
+  { width: "var(--bt-w-row-control)", label: "Medium, 164px" },
+  { width: "var(--bt-space-32)", label: "Narrow, 128px" },
 ] as const;
 
 export const demos: readonly DemoSection[] = [
@@ -63,9 +63,9 @@ export const demos: readonly DemoSection[] = [
       "The same six actions at three widths. Help goes first, then Share and Download; Undo and Redo stay longest.",
     render: () => (
       <Stack gap={4}>
-        {WIDTHS.map((width) => (
+        {WIDTHS.map(({ width, label }) => (
           <Stack key={width} gap={2}>
-            <Text variant="caption">{width}</Text>
+            <Text variant="caption">{label}</Text>
             <Surface
               level="card"
               padX={2}
