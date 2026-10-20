@@ -16,6 +16,7 @@ export default defineConfig(
     "playwright-report/",
     "test-results/",
     "apps/*/src-tauri/",
+    "reference/",
   ]),
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
