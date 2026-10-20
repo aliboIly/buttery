@@ -15,7 +15,7 @@
   }
 
   /* The thumb moves by flex alignment, and Motion's layout animation carries it there on spring.snappy. */
-  .bt-switch [data-bt-part="track"] {
+  .bt-switch > [data-bt-part="row"] > [data-bt-part="track"] {
     position: relative;
     display: inline-flex;
     flex: none;
@@ -30,13 +30,18 @@
     box-shadow: inset 0 0 0 var(--bt-switch-line) var(--bt-control-border);
   }
 
-  .bt-switch [data-bt-part="track"][data-state="checked"] {
+  .bt-switch
+    > [data-bt-part="row"]
+    > [data-bt-part="track"][data-state="checked"] {
     justify-content: flex-end;
     background-color: var(--bt-primary);
     box-shadow: none;
   }
 
-  .bt-switch [data-bt-part="thumb"] {
+  .bt-switch
+    > [data-bt-part="row"]
+    > [data-bt-part="track"]
+    > [data-bt-part="thumb"] {
     display: block;
     inline-size: calc(var(--bt-h-badge) - 2 * var(--bt-space-0_5));
     block-size: calc(var(--bt-h-badge) - 2 * var(--bt-space-0_5));
@@ -46,17 +51,21 @@
   }
 
   .bt-switch
-    [data-bt-part="track"][data-state="checked"]
-    [data-bt-part="thumb"] {
+    > [data-bt-part="row"]
+    > [data-bt-part="track"][data-state="checked"]
+    > [data-bt-part="thumb"] {
     background-color: var(--bt-on-primary);
   }
 
-  .bt-switch [data-bt-part="track"]:disabled {
+  .bt-switch > [data-bt-part="row"] > [data-bt-part="track"]:disabled {
     background-color: var(--bt-bg-control-subtle);
     box-shadow: inset 0 0 0 var(--bt-switch-line) var(--bt-border-strong);
   }
 
-  .bt-switch [data-bt-part="track"] > [data-bt-part="hit"] {
+  .bt-switch
+    > [data-bt-part="row"]
+    > [data-bt-part="track"]
+    > [data-bt-part="hit"] {
     position: absolute;
     inset-block: calc((var(--bt-h-badge) - var(--bt-switch-hit)) / 2);
     inset-inline: 0;
@@ -64,5 +73,47 @@
 
   .bt-switch > [data-bt-part="hint"] {
     padding-inline-start: calc(var(--bt-switch-width) + var(--bt-space-2));
+  }
+
+  /* Forced colors drop shadows and flatten backgrounds, which would leave nothing of the switch: draw it in system colors. */
+  @media (forced-colors: active) {
+    .bt-switch > [data-bt-part="row"] > [data-bt-part="track"] {
+      forced-color-adjust: none;
+      background-color: Canvas;
+      box-shadow: inset 0 0 0 var(--bt-switch-line) CanvasText;
+    }
+
+    .bt-switch
+      > [data-bt-part="row"]
+      > [data-bt-part="track"]
+      > [data-bt-part="thumb"] {
+      background-color: CanvasText;
+      box-shadow: none;
+    }
+
+    .bt-switch
+      > [data-bt-part="row"]
+      > [data-bt-part="track"][data-state="checked"] {
+      background-color: Highlight;
+      box-shadow: none;
+    }
+
+    .bt-switch
+      > [data-bt-part="row"]
+      > [data-bt-part="track"][data-state="checked"]
+      > [data-bt-part="thumb"] {
+      background-color: HighlightText;
+    }
+
+    .bt-switch > [data-bt-part="row"] > [data-bt-part="track"]:disabled {
+      box-shadow: inset 0 0 0 var(--bt-switch-line) GrayText;
+    }
+
+    .bt-switch
+      > [data-bt-part="row"]
+      > [data-bt-part="track"]:disabled
+      > [data-bt-part="thumb"] {
+      background-color: GrayText;
+    }
   }
 }
