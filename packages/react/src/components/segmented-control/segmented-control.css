@@ -1,0 +1,51 @@
+@layer bt.components {
+  .bt-segmented-control {
+    display: inline-grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    block-size: var(--bt-h-control);
+    padding: var(--bt-space-0_5);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-control);
+  }
+
+  .bt-segmented-control > [data-bt-part="segment"] {
+    --bt-shared-indicator-background: var(--bt-bg-surface);
+    --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
+
+    display: grid;
+    place-items: center;
+    min-inline-size: 0;
+    padding-block: 0;
+    padding-inline: var(--bt-space-3);
+    border: 0;
+    border-radius: var(--bt-r-full);
+    background: none;
+    color: var(--bt-text-secondary);
+    font-family: inherit;
+    font-size: var(--bt-text-control-size);
+    font-weight: var(--bt-text-control-weight);
+    line-height: var(--bt-text-control-line);
+    letter-spacing: var(--bt-text-control-tracking);
+    white-space: nowrap;
+    appearance: none;
+  }
+
+  .bt-segmented-control > [data-bt-part="segment"][data-state="checked"] {
+    color: var(--bt-text);
+  }
+
+  @media (hover: hover) {
+    .bt-segmented-control
+      > [data-bt-part="segment"]:not(:disabled, [data-state="checked"]):hover {
+      color: var(--bt-text);
+    }
+  }
+
+  .bt-segmented-control > [data-bt-part="segment"]:disabled {
+    color: var(--bt-text-disabled);
+    cursor: default;
+  }
+}
