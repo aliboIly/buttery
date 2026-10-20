@@ -64,7 +64,7 @@ export interface AuthForm {
 /**
  * A sign-in or sign-up form's submit: it checks the values, and either shows what to fix with focus on the
  * summary, or hands them to `onSubmit` and shows its message if it returns one. When `onSubmit` throws or
- * rejects, it shows `failed` instead.
+ * rejects, it shows `failed` instead and passes the error to `reportError`, so error tracking still sees it.
  */
 export function useAuthForm<Values>(
   values: Values,
@@ -92,8 +92,9 @@ export function useAuthForm<Values>(
     try {
       const result = await onSubmit(values);
       if (result !== undefined) report(result);
-    } catch {
+    } catch (error) {
       report(failed);
+      reportError(error);
     } finally {
       setPending(false);
     }

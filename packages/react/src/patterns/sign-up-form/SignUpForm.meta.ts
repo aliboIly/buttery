@@ -13,6 +13,6 @@ export const meta: ComponentMeta = {
     'Changing a password: use PasswordField with autoComplete="new-password" and its requirements',
   ],
   related: ["SignInForm", "PasswordField", "Checkbox", "Callout"],
-  a11y: "A named form with a real heading. The password asks for a new password (new-password) and lists its rules, each ticked as it's met, as part of its description. On a failed submit, each field shows what to fix and a summary with a link to each one appears and takes focus (role alert).",
+  a11y: "A named form with a real heading. The email field is the username for password managers, and the password asks for a new password (new-password) and lists its rules, each ticked as it's met, as part of its description. On a failed submit, each field shows what to fix and a summary with a link to each one appears and takes focus (role alert).",
   motion: "none",
 };

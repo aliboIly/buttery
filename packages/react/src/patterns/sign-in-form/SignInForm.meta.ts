@@ -13,6 +13,6 @@ export const meta: ComponentMeta = {
     'A one-time code step: use TextField with autoComplete="one-time-code"',
   ],
   related: ["SignUpForm", "TextField", "PasswordField", "Checkbox", "Callout"],
-  a11y: "A named form with a real heading. Fields fill in from the password manager (email, current-password). On a failed submit, each field shows what to fix and a summary with a link to each one appears and takes focus (role alert); a message returned from onSubmit shows there too. The submit button keeps its width while busy. Other ways to sign in are buttons named by their text.",
+  a11y: "A named form with a real heading. Fields fill in from the password manager (username on the email field, current-password). On a failed submit, each field shows what to fix and a summary with a link to each one appears and takes focus (role alert); a message returned from onSubmit shows there too. The submit button keeps its width while busy. Other ways to sign in are buttons named by their text.",
   motion: "none",
 };

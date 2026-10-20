@@ -131,10 +131,12 @@ describe("SignInForm", () => {
     expect(document.activeElement).toBe(field("Email"));
   });
 
-  it("says so in the summary when onSubmit fails", async () => {
-    render(
-      <SignInForm onSubmit={() => Promise.reject(new Error("Offline"))} />,
-    );
+  it("says so in the summary when onSubmit fails, and reports the error", async () => {
+    const reported = vi
+      .spyOn(window, "reportError")
+      .mockImplementation(() => undefined);
+    const offline = new Error("Offline");
+    render(<SignInForm onSubmit={() => Promise.reject(offline)} />);
     await userEvent.type(field("Email"), "sam@example.com");
     await userEvent.type(field("Password"), "butter-2026");
     await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
@@ -144,6 +146,8 @@ describe("SignInForm", () => {
       );
     });
     expect(document.activeElement).toBe(screen.getByRole("alert"));
+    expect(reported).toHaveBeenCalledWith(offline);
+    reported.mockRestore();
   });
 
   it("shows other ways to sign in as buttons named by their text, and links only when given", async () => {

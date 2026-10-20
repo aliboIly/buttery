@@ -1,6 +1,12 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -69,6 +75,40 @@ describe("SignUpForm", () => {
       password: "butter-2026",
     });
     expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("submits with Enter from a field, and says so in the summary when onSubmit fails", async () => {
+    const reported = vi
+      .spyOn(window, "reportError")
+      .mockImplementation(() => undefined);
+    const submit = vi.fn(() => Promise.reject(new Error("Offline")));
+    render(<SignUpForm onSubmit={submit} />);
+    await userEvent.type(field("Name"), "Sam");
+    await userEvent.type(field("Email"), "sam@example.com");
+    await userEvent.type(field("Password"), "butter-2026{Enter}");
+    expect(submit).toHaveBeenCalledWith({
+      name: "Sam",
+      email: "sam@example.com",
+      password: "butter-2026",
+    });
+    await waitFor(() => {
+      expect(screen.getByRole("alert").textContent).toContain(
+        "Couldn't create your account.",
+      );
+    });
+    expect(document.activeElement).toBe(screen.getByRole("alert"));
+    expect(reported).toHaveBeenCalledTimes(1);
+    reported.mockRestore();
+  });
+
+  it("takes a keyboard from the summary to the field to fix", async () => {
+    render(<SignUpForm onSubmit={() => undefined} />);
+    field("Name").focus();
+    await userEvent.keyboard("{Enter}");
+    expect(document.activeElement).toBe(screen.getByRole("alert"));
+    await userEvent.tab();
+    await userEvent.keyboard("{Enter}");
+    expect(document.activeElement).toBe(field("Name"));
   });
 
   it("checks a password against the rules it's given", async () => {
