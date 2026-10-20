@@ -40,7 +40,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] SignInForm and SignUpForm patterns, with an original sign-in demo page
 
 ## v0.5 — App patterns (Phase 5)
-- [ ] SwatchGrid, ColorDot, TiltPad, AnchorGrid
+- [x] SwatchGrid, ColorDot, TiltPad, AnchorGrid
 - [x] Toast (`toast()` and `Toaster`, built early)
 - [ ] Menu, Select, FloatingToolbar
 - [ ] EmptyState/DropZone, Stage, Inspector, HeaderBar, AppShell
