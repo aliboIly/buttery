@@ -36,7 +36,7 @@ describe("SignInForm", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "Sign in" }),
     ).toBeTruthy();
-    expect(field("Email").autocomplete).toBe("email");
+    expect(field("Email").autocomplete).toBe("username");
     expect(field("Email").type).toBe("email");
     expect(field("Password").autocomplete).toBe("current-password");
     expect(field("Password").name).toBe("password");
@@ -104,6 +104,46 @@ describe("SignInForm", () => {
     });
     expect(document.activeElement).toBe(screen.getByRole("alert"));
     expect(button.hasAttribute("aria-busy")).toBe(false);
+  });
+
+  it("submits with Enter from a field", async () => {
+    const submit = vi.fn();
+    render(<SignInForm onSubmit={submit} />);
+    await userEvent.type(field("Email"), "sam@example.com");
+    await userEvent.type(field("Password"), "butter-2026{Enter}");
+    expect(submit).toHaveBeenCalledWith({
+      email: "sam@example.com",
+      password: "butter-2026",
+      remember: false,
+    });
+  });
+
+  it("takes a keyboard from the summary to the field to fix", async () => {
+    render(<SignInForm onSubmit={() => undefined} />);
+    field("Email").focus();
+    await userEvent.keyboard("{Enter}");
+    expect(document.activeElement).toBe(screen.getByRole("alert"));
+    await userEvent.tab();
+    expect(document.activeElement).toBe(
+      screen.getByRole("link", { name: "Enter your email address" }),
+    );
+    await userEvent.keyboard("{Enter}");
+    expect(document.activeElement).toBe(field("Email"));
+  });
+
+  it("says so in the summary when onSubmit fails", async () => {
+    render(
+      <SignInForm onSubmit={() => Promise.reject(new Error("Offline"))} />,
+    );
+    await userEvent.type(field("Email"), "sam@example.com");
+    await userEvent.type(field("Password"), "butter-2026");
+    await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => {
+      expect(screen.getByRole("alert").textContent).toContain(
+        "Couldn't sign in. Check your connection and try again.",
+      );
+    });
+    expect(document.activeElement).toBe(screen.getByRole("alert"));
   });
 
   it("shows other ways to sign in as buttons named by their text, and links only when given", async () => {

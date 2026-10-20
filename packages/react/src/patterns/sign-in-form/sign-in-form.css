@@ -1,5 +1,5 @@
 @layer bt.patterns {
-  .bt-sign-in-form [data-bt-part="options"] {
+  .bt-sign-in-form > [data-bt-part="fields"] > [data-bt-part="options"] {
     display: flex;
     flex-wrap: wrap;
     align-items: center;

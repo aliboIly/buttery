@@ -1,5 +1,10 @@
 @layer bt.patterns {
-  .bt-sign-up-form [data-bt-part="label"] a {
+  .bt-sign-up-form
+    > [data-bt-part="fields"]
+    > .bt-checkbox
+    > [data-bt-part="row"]
+    > [data-bt-part="label"]
+    a {
     color: inherit;
     text-decoration: underline;
   }

@@ -8,6 +8,10 @@
     max-inline-size: var(--bt-w-dialog);
   }
 
+  .bt-auth-form > [data-bt-part="summary"] {
+    scroll-margin-block-start: var(--bt-sticky-top, 0px);
+  }
+
   .bt-auth-form > [data-bt-part="summary"]:focus-visible {
     outline: var(--bt-focus-width) solid var(--bt-accent);
     outline-offset: var(--bt-focus-offset);
@@ -47,7 +51,10 @@
   }
 
   /* A link on a line of its own needs a 24px target; control text is 18 tall. */
-  .bt-auth-form [data-bt-part="link"] {
+  .bt-auth-form
+    > [data-bt-part="fields"]
+    > [data-bt-part="options"]
+    > [data-bt-part="link"] {
     padding-block: var(--bt-space-1);
     color: var(--bt-text-secondary);
     text-decoration: underline;

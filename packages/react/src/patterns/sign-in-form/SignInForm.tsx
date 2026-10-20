@@ -47,6 +47,8 @@ export interface SignInLabels {
   readonly or: string;
   /** The heading of the error summary. */
   readonly problem: string;
+  /** When `onSubmit` throws or rejects, such as when the network is down. */
+  readonly submitFailed: string;
   /** When the email is empty. */
   readonly emailMissing: string;
   /** When the email doesn't look like an email address. */
@@ -66,6 +68,7 @@ const LABELS: SignInLabels = {
   signUp: "Create an account",
   or: "or",
   problem: "There's a problem",
+  submitFailed: "Couldn't sign in. Check your connection and try again.",
   emailMissing: "Enter your email address",
   emailInvalid: "Enter an email address like name@example.com",
   passwordMissing: "Enter your password",
@@ -101,7 +104,7 @@ export interface SignInFormProps extends Omit<
  * A sign-in form: email and password (filled in by the browser's password manager), keep me signed in, a
  * forgot-password link, other ways to sign in and a link to sign up. It checks the fields when submitted,
  * shows what to fix beside each one and in a summary that takes focus, and hands the values to
- * `onSubmit`.
+ * `onSubmit`. If `onSubmit` throws or rejects, the summary says so.
  *
  * @example
  * <SignInForm
@@ -143,6 +146,7 @@ export function SignInForm({
         : []),
     ],
     onSubmit,
+    words.submitFailed,
   );
   const heading = title ?? words.title;
   return (
@@ -162,12 +166,13 @@ export function SignInForm({
           name="email"
           label={words.email}
           type="email"
-          autoComplete="email"
+          autoComplete="username"
           inputMode="email"
           size="lg"
           value={email}
           onValueChange={setEmail}
           error={form.errorFor(emailId)}
+          announceError={false}
         />
         <PasswordField
           id={passwordId}
@@ -177,6 +182,7 @@ export function SignInForm({
           value={password}
           onValueChange={setPassword}
           error={form.errorFor(passwordId)}
+          announceError={false}
         />
         <div data-bt-part="options">
           <Checkbox

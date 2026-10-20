@@ -57,6 +57,8 @@ export interface SignUpLabels {
   readonly or: string;
   /** The heading of the error summary. */
   readonly problem: string;
+  /** When `onSubmit` throws or rejects, such as when the network is down. */
+  readonly submitFailed: string;
   /** When the name is empty. */
   readonly nameMissing: string;
   /** When the email is empty. */
@@ -81,6 +83,8 @@ const LABELS: SignUpLabels = {
   signIn: "Sign in",
   or: "or",
   problem: "There's a problem",
+  submitFailed:
+    "Couldn't create your account. Check your connection and try again.",
   nameMissing: "Enter your name",
   emailMissing: "Enter your email address",
   emailInvalid: "Enter an email address like name@example.com",
@@ -128,7 +132,8 @@ export interface SignUpFormProps extends Omit<
 /**
  * A sign-up form: name, email, a new password with its rules ticked off as they're met, the terms, other
  * ways to sign up and a link to sign in. It checks the fields when submitted, shows what to fix beside
- * each one and in a summary that takes focus, and hands the values to `onSubmit`.
+ * each one and in a summary that takes focus, and hands the values to `onSubmit`. If `onSubmit` throws or
+ * rejects, the summary says so.
  *
  * @example
  * <SignUpForm termsHref="/terms" signInHref="/sign-in" onSubmit={createAccount} />
@@ -176,6 +181,7 @@ export function SignUpForm({
         : []),
     ],
     onSubmit,
+    words.submitFailed,
   );
   const heading = title ?? words.title;
   return (
@@ -199,18 +205,20 @@ export function SignUpForm({
           value={name}
           onValueChange={setName}
           error={form.errorFor(nameId)}
+          announceError={false}
         />
         <TextField
           id={emailId}
           name="email"
           label={words.email}
           type="email"
-          autoComplete="email"
+          autoComplete="username"
           inputMode="email"
           size="lg"
           value={email}
           onValueChange={setEmail}
           error={form.errorFor(emailId)}
+          announceError={false}
         />
         <PasswordField
           id={passwordId}
@@ -221,6 +229,7 @@ export function SignUpForm({
           value={password}
           onValueChange={setPassword}
           error={form.errorFor(passwordId)}
+          announceError={false}
           requirements={passwordRules.map((rule) => ({
             label: rule.label,
             met: rule.test(password),
@@ -235,6 +244,7 @@ export function SignUpForm({
               setAgreed(next === true);
             }}
             error={form.errorFor(termsId)}
+            announceError={false}
             label={
               <>
                 {words.terms} <a href={termsHref}>{words.termsLink}</a>

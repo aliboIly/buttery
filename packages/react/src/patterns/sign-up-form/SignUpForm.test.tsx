@@ -26,6 +26,9 @@ describe("SignUpForm", () => {
 
   it("asks for a new password and ticks its rules off as they're met", async () => {
     render(<SignUpForm onSubmit={() => undefined} />);
+    expect(field("Name").autocomplete).toBe("name");
+    expect(field("Email").autocomplete).toBe("username");
+    expect(field("Email").type).toBe("email");
     expect(field("Password").autocomplete).toBe("new-password");
     const met = (): boolean[] =>
       screen

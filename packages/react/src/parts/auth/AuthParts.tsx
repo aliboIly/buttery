@@ -1,12 +1,13 @@
 import { Divider } from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type {
   ComponentType,
   ReactElement,
   RefObject,
   SubmitEvent,
 } from "react";
+import { flushSync } from "react-dom";
 import { Button } from "../../components/button/Button.tsx";
 import { Callout } from "../../components/callout/Callout.tsx";
 
@@ -62,34 +63,37 @@ export interface AuthForm {
 
 /**
  * A sign-in or sign-up form's submit: it checks the values, and either shows what to fix with focus on the
- * summary, or hands them to `onSubmit` and shows its message if it returns one.
+ * summary, or hands them to `onSubmit` and shows its message if it returns one. When `onSubmit` throws or
+ * rejects, it shows `failed` instead.
  */
 export function useAuthForm<Values>(
   values: Values,
   check: (values: Values) => readonly AuthProblem[],
   onSubmit: AuthSubmit<Values>,
+  failed: string,
 ): AuthForm {
   const [tried, setTried] = useState(false);
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState<string | undefined>(undefined);
   const [reported, setReported] = useState<readonly AuthProblem[]>([]);
-  const [focusRequest, setFocusRequest] = useState(0);
   const summary = useRef<HTMLDivElement>(null);
   const problems = tried ? check(values) : [];
 
-  useLayoutEffect(() => {
-    if (focusRequest > 0) summary.current?.focus();
-  }, [focusRequest]);
+  const report = (message: string): void => {
+    flushSync(() => {
+      setFailure(message);
+    });
+    summary.current?.focus();
+  };
 
   const run = async (): Promise<void> => {
     setPending(true);
     setFailure(undefined);
     try {
       const result = await onSubmit(values);
-      if (result !== undefined) {
-        setFailure(result);
-        setFocusRequest((count) => count + 1);
-      }
+      if (result !== undefined) report(result);
+    } catch {
+      report(failed);
     } finally {
       setPending(false);
     }
@@ -98,12 +102,14 @@ export function useAuthForm<Values>(
   const submit = (event: SubmitEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (pending) return;
-    setTried(true);
     const found = check(values);
-    setReported(found);
+    flushSync(() => {
+      setTried(true);
+      setReported(found);
+      if (found.length > 0) setFailure(undefined);
+    });
     if (found.length > 0) {
-      setFailure(undefined);
-      setFocusRequest((count) => count + 1);
+      summary.current?.focus();
       return;
     }
     void run();
