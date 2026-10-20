@@ -79,7 +79,7 @@ height: 100dvh; overflow: hidden;
 - Row: 50h, `grid-template-columns: minmax(0,1fr) auto`, padding-x 16, 1px divider between rows.
 - Left cell: label (truncates) + optional value badge (reserved min-width).
 - Right cell: control at its token width (slider 164, segmented intrinsic, swatch grid spans both columns).
-- `Row.Split`: two half-rows side by side with a 1px vertical divider (two compact controls in one row).
+- `Row.Split`: two half-rows side by side with a 1px vertical divider (two compact controls in one row), `--bt-h-row-split` (64) tall so a tilt pad or anchor grid has room.
 
 ### Stage
 - Centers content with `FitBox` at the chosen aspect ratio with a 32px minimum margin from stage edges.

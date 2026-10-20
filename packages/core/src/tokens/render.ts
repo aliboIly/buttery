@@ -442,6 +442,7 @@ const TAILWIND_HEIGHTS: readonly (readonly [
   ["button", "button"],
   ["cta", "cta"],
   ["row", "row"],
+  ["row-split", "row-split"],
   ["header", "header"],
 ];
 

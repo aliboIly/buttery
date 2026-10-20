@@ -38,8 +38,8 @@
     --bt-ring-selected: #cacaca;
     --bt-knob-top: #535353;
     --bt-knob-bottom: #2e2e2e;
-    --bt-knob-center: #474747;
-    --bt-knob-edge: #353535;
+    --bt-knob-center: #5c5c5c;
+    --bt-knob-edge: #262626;
     --bt-knob-border: #1c1c1c;
     --bt-knob-highlight: #7a7a7a;
     --bt-knob-grip: #b2b2b2;
@@ -230,6 +230,7 @@
     --bt-h-button: 36px;
     --bt-h-cta: 48px;
     --bt-h-row: 50px;
+    --bt-h-row-split: 64px;
     --bt-h-header: 56px;
   }
 
@@ -240,6 +241,7 @@
     --bt-h-button: 32px;
     --bt-h-cta: 40px;
     --bt-h-row: 42px;
+    --bt-h-row-split: 56px;
     --bt-h-header: 48px;
   }
 
@@ -280,8 +282,8 @@
     --bt-ring-selected: #4a4a50;
     --bt-knob-top: #535353;
     --bt-knob-bottom: #2e2e2e;
-    --bt-knob-center: #474747;
-    --bt-knob-edge: #353535;
+    --bt-knob-center: #5c5c5c;
+    --bt-knob-edge: #262626;
     --bt-knob-border: #000000;
     --bt-knob-highlight: #7a7a7a;
     --bt-knob-grip: #b2b2b2;
@@ -341,8 +343,8 @@
       --bt-ring-selected: #4a4a50;
       --bt-knob-top: #535353;
       --bt-knob-bottom: #2e2e2e;
-      --bt-knob-center: #474747;
-      --bt-knob-edge: #353535;
+      --bt-knob-center: #5c5c5c;
+      --bt-knob-edge: #262626;
       --bt-knob-border: #000000;
       --bt-knob-highlight: #7a7a7a;
       --bt-knob-grip: #b2b2b2;

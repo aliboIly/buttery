@@ -51,6 +51,7 @@
   --spacing-button: var(--bt-h-button);
   --spacing-cta: var(--bt-h-cta);
   --spacing-row: var(--bt-h-row);
+  --spacing-row-split: var(--bt-h-row-split);
   --spacing-header: var(--bt-h-header);
   --container-inspector: var(--bt-w-inspector);
   --container-dialog: var(--bt-w-dialog);

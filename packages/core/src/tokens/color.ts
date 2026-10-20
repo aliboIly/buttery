@@ -188,15 +188,16 @@ export const colors = {
     description: "Bottom of the slider thumb's vertical gradient.",
   },
   "knob-center": {
-    light: "#474747",
-    dark: "#474747",
+    light: "#5c5c5c",
+    dark: "#5c5c5c",
     description:
-      "Center of the radial knob gradient (tilt knob, active anchor dot).",
+      "Lit point of the radial knob gradient (tilt knob, active anchor dot), 30% down from the top.",
   },
   "knob-edge": {
-    light: "#353535",
-    dark: "#353535",
-    description: "Edge of the radial knob gradient.",
+    light: "#262626",
+    dark: "#262626",
+    description:
+      "Where the radial knob gradient ends: the bottom edge, the side farthest from the lit point.",
   },
   "knob-border": {
     light: "#1c1c1c",

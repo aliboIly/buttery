@@ -53,7 +53,7 @@ Knob (slider thumb, tilt knob, active anchor dot):
 | Token | Value |
 |---|---|
 | `--bt-knob-top` → `--bt-knob-bottom` | `#535353` → `#2e2e2e` (vertical gradient — slider thumb) |
-| `--bt-knob-center` → `--bt-knob-edge` | `#474747` → `#353535` (radial gradient — tilt knob, anchor dot) |
+| `--bt-knob-center` → `--bt-knob-edge` | `#5c5c5c` → `#262626` (radial gradient lit 30% down from the top and ending at the bottom edge: `radial-gradient(circle farthest-side at 50% 30%, …)` — tilt knob, active anchor dot; re-measured in Phase 2, the first spec's `#474747` → `#353535` read flat) |
 | `--bt-knob-border` | `#1c1c1c` |
 | `--bt-knob-highlight` | `#7a7a7a` (1px inset top highlight) |
 | `--bt-knob-grip` | `#b2b2b2` (two vertical grip lines) |
@@ -142,6 +142,7 @@ The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px;
 | `--bt-h-button` | 36 | 32 | Pill buttons, split button, header actions, menu items, toast |
 | `--bt-h-cta` | 48 | 40 | Step dialog buttons, floating toolbar |
 | `--bt-h-row` | 50 (49 + 1px divider) | 42 | Inspector row |
+| `--bt-h-row-split` | 64 (63 + 1px divider) | 56 | Inspector split row (tilt pad, anchor grid); measured 63.5 in Phase 2 |
 | `--bt-h-header` | 56 | 48 | App header bar |
 
 ### Widths & layout sizes
@@ -224,7 +225,7 @@ A nested surface sits evenly inside its parent: the same inset on every open sid
 | Variant | Rest | Hover | Disabled |
 |---|---|---|---|
 | `primary` | bg `primary`, text `on-primary` | `primary-hover` | bg `primary-disabled`, text `on-primary` |
-| `secondary` | `bg-surface`, shadow-raised, text `text` | bg `bg-inset` | text `text-disabled` |
+| `secondary` | `bg-surface`, no ring or shadow, text `text` (measured on the stage; on a white surface use `soft`) | shadow-raised _derived_ | text `text-disabled` |
 | `soft` | bg `bg-control`, text `text` | bg `border` (#ebebeb) | bg `bg-control-subtle`, text `text-disabled` |
 | `ghost` | transparent, text `text-secondary` | bg `bg-control`, text `text` | text `icon-disabled` |
 
@@ -237,7 +238,7 @@ A nested surface sits evenly inside its parent: the same inset on every open sid
 Ghost, square, r-full: `md` 36×36 (header, default) · `sm` 28×28 (dialog close, inline). Icon 16 `text-secondary`, disabled `icon-disabled`, hover bg `bg-control`. Requires `label` (tooltip + aria-label).
 
 ### SplitButton
-Primary pill 36h. Main segment + 1px divider `rgba(255,255,255,.18)` + 36px chevron segment that opens a Menu. Both halves share hover/disabled visuals but are separate focus targets.
+Primary pill 36h. Main segment + 1px divider `rgba(255,255,255,.18)`, 18 tall and centered (measured 17.5), + 36px chevron segment that opens a Menu. Both halves share hover/disabled visuals but are separate focus targets.
 
 ### SegmentedControl
 Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12, `control` type. Re-measured in Phase 1: the track and items are full pills (the first spec said r14 and r12). The capture insets its items 3px; buttery keeps the 2px step, so its active item is 2px taller. Inactive text `text-secondary`; active = `bg-surface` + shadow-raised, text `text`. Exactly one item is always selected: Radix `ToggleGroup type="single"` lets users deselect, so ignore empty values in `onValueChange` (or build on `RadioGroup`). The active background is one shared element that slides.
@@ -297,7 +298,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 56h, r16, `bg-surface`, shadow-card, padding-x 16. Left: 24px app mark (the app's own icon; buttery's playground uses `BrandMark`) + title (`title-sm`, 12px gap, truncates). Right: ghost text actions, ghost icon actions, Select trigger, a 1px × 24 separator, undo/redo/help `IconButton`s; gap 4. Overflowing actions move into a "…" menu automatically (`OverflowCluster`).
 
 ### Inspector
-340w panel (padding 8, gap 8 between sections) with a sticky footer: 1px divider, padding 12, buttons 36h gap 8 (a soft button with an icon, and a primary SplitButton filling the rest). The body scrolls internally with 12px fade masks at scrolled edges.
+340w panel (padding 8, gap 8 between sections) with a sticky footer: 1px divider, padding 12, buttons 36h gap 8 (a soft button with an icon, padded 32 a side — measured 118 wide with a short label — and a primary SplitButton filling the rest). The body scrolls internally with 12px fade masks at scrolled edges.
 
 ### EmptyState / DropZone
 Centered in the stage. Title `title`, description `body-sm` 12px below, actions 24px below (primary pill + secondary pill, gap 8); gaps are between trimmed text boxes. The whole stage accepts drops; paste `⌘V`, open `⌘O`. Drag-over (_derived_): bg tints to `bg-control-active`, 2px dashed `ring-selected` inset 16px, r16, label "Drop to add".

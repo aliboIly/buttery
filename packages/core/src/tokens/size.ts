@@ -43,6 +43,12 @@ export const heights = {
     compact: 42,
     description: "Inspector row, including its 1px divider.",
   },
+  "row-split": {
+    comfortable: 64,
+    compact: 56,
+    description:
+      "Inspector split row: two half-rows side by side, tall enough for a tilt pad or an anchor grid, including its 1px divider.",
+  },
   header: {
     comfortable: 56,
     compact: 48,
