@@ -13,6 +13,6 @@ export const meta: ComponentMeta = {
     "One of several options: use SegmentedControl",
   ],
   related: ["Checkbox", "SegmentedControl"],
-  a11y: "A real switch (role switch) named by its label, which takes presses too; Space and Enter flip it. The track has a 3:1 edge while off and a 24px target. The thumb slides on spring.snappy and jumps with reduced motion.",
+  a11y: "A real switch (role switch) named by its label, which takes presses too; Space and Enter flip it. The track has a 3:1 edge while off and a 24px target. The thumb slides on spring.snappy and jumps with reduced motion. In forced colors it draws itself in system colors.",
   motion: "indicator",
 };

@@ -18,6 +18,22 @@ async function paint(locator: Locator): Promise<{
   });
 }
 
+/** WCAG contrast between two computed `rgb(…)` colors. */
+function contrast(a: string, b: string): number {
+  const luminance = (color: string): number => {
+    const channels = (color.match(/\d+(\.\d+)?/g) ?? []).slice(0, 3);
+    const [r = 0, g = 0, bl = 0] = channels.map((channel) => {
+      const value = Number(channel) / 255;
+      return value <= 0.04045
+        ? value / 12.92
+        : ((value + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return ((light ?? 0) + 0.05) / ((dark ?? 0) + 0.05);
+}
+
 test.beforeEach(({ browserName }) => {
   test.skip(
     browserName !== "chromium",
@@ -25,15 +41,25 @@ test.beforeEach(({ browserName }) => {
   );
 });
 
-test("a switch keeps its edge and its thumb, off and on", async ({ page }) => {
+test("a switch keeps its edge and its thumb, off and on, enabled and disabled", async ({
+  page,
+}) => {
   await page.emulateMedia({ forcedColors: "active" });
   await page.goto("/#/switch");
-  for (const name of ["Snap to the grid", "Show guides"]) {
+  for (const name of [
+    "Snap to the grid",
+    "Show guides",
+    "Share with the team",
+    "Keep a backup",
+  ]) {
     const track = page.getByRole("switch", { name, exact: true }).first();
     const thumb = track.locator('[data-bt-part="thumb"]');
     const trackPaint = await paint(track);
     const thumbPaint = await paint(thumb);
-    expect(thumbPaint.background, name).not.toBe(trackPaint.background);
+    expect(
+      contrast(thumbPaint.background, trackPaint.background),
+      name,
+    ).toBeGreaterThanOrEqual(3);
     if ((await track.getAttribute("data-state")) === "unchecked") {
       expect(trackPaint.shadow, name).not.toBe("none");
     }

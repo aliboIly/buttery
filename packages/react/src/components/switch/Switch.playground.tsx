@@ -6,7 +6,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "States",
     description:
-      "Off, on, with a hint, and disabled. The thumb slides on spring.snappy.",
+      "Off, on, with a hint, and disabled off and on. The thumb slides on spring.snappy.",
     render: () => (
       <Stack gap={4}>
         <Switch label="Snap to the grid" />
@@ -16,6 +16,7 @@ export const demos: readonly DemoSection[] = [
           hint="Your cards back up as you work."
         />
         <Switch label="Share with the team" disabled />
+        <Switch label="Keep a backup" disabled defaultChecked />
       </Stack>
     ),
   },
