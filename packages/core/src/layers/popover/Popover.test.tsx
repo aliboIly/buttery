@@ -6,7 +6,10 @@ import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Popover } from "./Popover.tsx";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 function Sizes({
   onOpenChange,
@@ -81,6 +84,15 @@ describe("Popover", () => {
     await userEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.getByText("closed")).toBeTruthy();
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("says how to fix content rendered outside a Popover", () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    expect(() =>
+      render(<Popover.Content aria-label="Orphan">Sizes</Popover.Content>),
+    ).toThrow(
+      /\[buttery:Popover\] Popover\.Content has to be inside a <Popover>\. Fix:/,
+    );
   });
 
   it("scrolls inside instead of running past the viewport", async () => {

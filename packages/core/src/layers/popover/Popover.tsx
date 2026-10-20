@@ -11,7 +11,9 @@ import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
 import { Layer } from "../layer/Layer.tsx";
 
-const PopoverOpenContext: Context<boolean> = createContext(false);
+const PopoverOpenContext: Context<boolean | null> = createContext<
+  boolean | null
+>(null);
 
 export interface PopoverProps {
   /** Whether the popover is open. Pair with `onOpenChange` to control it. */
@@ -89,6 +91,11 @@ export function PopoverContent({
   ...rest
 }: PopoverContentProps): ReactElement | null {
   const open = use(PopoverOpenContext);
+  if (open === null) {
+    throw new Error(
+      "[buttery:Popover] Popover.Content has to be inside a <Popover>. Fix: <Popover><Popover.Trigger>…</Popover.Trigger><Popover.Content>…</Popover.Content></Popover>",
+    );
+  }
   if (!open) return null;
   return (
     <Layer band="dropdown">
