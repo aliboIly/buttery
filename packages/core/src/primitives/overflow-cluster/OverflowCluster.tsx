@@ -129,7 +129,11 @@ function OverflowClusterRoot({
         >
           {children}
           {overflowed.length > 0 ? (
-            <DropdownMenu.Root open={menuOpen} onOpenChange={setMenuOpen}>
+            <DropdownMenu.Root
+              open={menuOpen}
+              onOpenChange={setMenuOpen}
+              modal={false}
+            >
               <DropdownMenu.Trigger
                 aria-label={moreLabel}
                 className="bt-press bt-focus"
