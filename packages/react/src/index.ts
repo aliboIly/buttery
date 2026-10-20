@@ -31,3 +31,5 @@ export type {
   TooltipProps,
   TooltipSide,
 } from "./components/tooltip/Tooltip.tsx";
+export { IconButton } from "./components/icon-button/IconButton.tsx";
+export type { IconButtonProps } from "./components/icon-button/IconButton.tsx";
