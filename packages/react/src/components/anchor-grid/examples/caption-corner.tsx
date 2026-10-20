@@ -1,20 +1,16 @@
+import { useState } from "react";
 import type { ReactElement } from "react";
 import { AnchorGrid } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
 
 /** A caption's corner, with the anchor names translated for screen readers. */
-export function CaptionCorner({
-  value,
-  onValueChange,
-}: {
-  readonly value: Anchor;
-  readonly onValueChange: (value: Anchor) => void;
-}): ReactElement {
+export function CaptionCorner(): ReactElement {
+  const [corner, setCorner] = useState<Anchor>("bottom-right");
   return (
     <AnchorGrid
       label="Position de la légende"
-      value={value}
-      onValueChange={onValueChange}
+      value={corner}
+      onValueChange={setCorner}
       labels={{
         "top-left": "En haut à gauche",
         top: "En haut",

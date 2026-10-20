@@ -1,15 +1,17 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Button, Inspector, SegmentedControl, Slider } from "@buttery/react";
+import {
+  Button,
+  Inspector,
+  SegmentedControl,
+  Slider,
+  toast,
+} from "@buttery/react";
 
 type Format = "png" | "jpg";
 
 /** A small inspector: one section of rows that resets, and a footer with the main action. */
-export function ExportSettings({
-  onExport,
-}: {
-  readonly onExport: (settings: { format: Format; quality: number }) => void;
-}): ReactElement {
+export function ExportSettings(): ReactElement {
   const [format, setFormat] = useState<Format>("png");
   const [quality, setQuality] = useState(90);
   return (
@@ -20,7 +22,12 @@ export function ExportSettings({
           <Button
             variant="primary"
             onClick={() => {
-              onExport({ format, quality });
+              toast(
+                `Exported a ${format.toUpperCase()} at ${String(quality)}%`,
+                {
+                  id: "export",
+                },
+              );
             }}
           >
             Export
