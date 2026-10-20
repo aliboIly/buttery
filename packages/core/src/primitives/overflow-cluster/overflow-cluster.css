@@ -47,9 +47,13 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-overflow-cluster > [data-bt-part="more"]:hover,
-  .bt-overflow-cluster > [data-bt-part="more"][data-state="open"] {
+  .bt-overflow-cluster > [data-bt-part="more"]:not([data-state="open"]):hover {
     background-color: var(--bt-bg-control);
+    color: var(--bt-text);
+  }
+
+  .bt-overflow-cluster > [data-bt-part="more"][data-state="open"] {
+    background-color: var(--bt-bg-control-active);
     color: var(--bt-text);
   }
 }

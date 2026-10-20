@@ -72,6 +72,12 @@
     --bt-button-fg: var(--bt-text-secondary);
   }
 
+  /* A ghost button that opens a menu or a select stays filled while it's open. */
+  .bt-button[data-variant="ghost"][data-state="open"] {
+    --bt-button-bg: var(--bt-bg-control-active);
+    --bt-button-fg: var(--bt-text);
+  }
+
   @media (hover: hover) {
     .bt-button[data-variant="primary"]:not(
         :disabled,
@@ -96,7 +102,8 @@
 
     .bt-button[data-variant="ghost"]:not(
         :disabled,
-        [aria-disabled="true"]
+        [aria-disabled="true"],
+        [data-state="open"]
       ):hover {
       --bt-button-bg: var(--bt-bg-control);
       --bt-button-fg: var(--bt-text);
