@@ -1,0 +1,133 @@
+@layer bt.components {
+  .bt-button {
+    --bt-button-bg: var(--bt-bg-control);
+    --bt-button-fg: var(--bt-text);
+    --bt-button-shadow: none;
+    --bt-button-padding: var(--bt-space-5);
+    --bt-transition-hover:
+      background-color var(--bt-dur-fast) var(--bt-ease-standard),
+      color var(--bt-dur-fast) var(--bt-ease-standard),
+      box-shadow var(--bt-dur-fast) var(--bt-ease-standard);
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-button-padding);
+    border: 0;
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-button-bg);
+    box-shadow: var(--bt-button-shadow);
+    color: var(--bt-button-fg);
+    font-family: inherit;
+    font-size: var(--bt-text-button-size);
+    font-weight: var(--bt-text-button-weight);
+    line-height: var(--bt-text-button-line);
+    letter-spacing: var(--bt-text-button-tracking);
+    text-decoration: none;
+    white-space: nowrap;
+    appearance: none;
+  }
+
+  .bt-button[data-size="sm"] {
+    --bt-button-padding: var(--bt-space-3);
+
+    block-size: var(--bt-h-sm);
+    font-size: var(--bt-text-control-size);
+    font-weight: var(--bt-text-control-weight);
+    line-height: var(--bt-text-control-line);
+    letter-spacing: var(--bt-text-control-tracking);
+  }
+
+  .bt-button[data-size="cta"] {
+    --bt-button-padding: var(--bt-space-6);
+
+    block-size: var(--bt-h-cta);
+    font-size: var(--bt-text-button-lg-size);
+    font-weight: var(--bt-text-button-lg-weight);
+    line-height: var(--bt-text-button-lg-line);
+    letter-spacing: var(--bt-text-button-lg-tracking);
+  }
+
+  .bt-button[data-shape="rounded"] {
+    border-radius: var(--bt-r-lg);
+  }
+
+  .bt-button[data-variant="primary"] {
+    --bt-button-bg: var(--bt-primary);
+    --bt-button-fg: var(--bt-on-primary);
+  }
+
+  .bt-button[data-variant="secondary"] {
+    --bt-button-bg: var(--bt-bg-surface);
+  }
+
+  .bt-button[data-variant="ghost"] {
+    --bt-button-bg: transparent;
+    --bt-button-fg: var(--bt-text-secondary);
+  }
+
+  @media (hover: hover) {
+    .bt-button[data-variant="primary"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-button-bg: var(--bt-primary-hover);
+    }
+
+    .bt-button[data-variant="secondary"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-button-shadow: var(--bt-shadow-raised);
+    }
+
+    .bt-button[data-variant="soft"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-button-bg: var(--bt-border);
+    }
+
+    .bt-button[data-variant="ghost"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-button-bg: var(--bt-bg-control);
+      --bt-button-fg: var(--bt-text);
+    }
+  }
+
+  .bt-button:is(:disabled, [data-disabled]) {
+    cursor: default;
+  }
+
+  .bt-button[data-variant="primary"]:is(:disabled, [data-disabled]) {
+    --bt-button-bg: var(--bt-primary-disabled);
+  }
+
+  .bt-button[data-variant="secondary"]:is(:disabled, [data-disabled]) {
+    --bt-button-fg: var(--bt-text-disabled);
+  }
+
+  .bt-button[data-variant="soft"]:is(:disabled, [data-disabled]) {
+    --bt-button-bg: var(--bt-bg-control-subtle);
+    --bt-button-fg: var(--bt-text-disabled);
+  }
+
+  .bt-button[data-variant="ghost"]:is(:disabled, [data-disabled]) {
+    --bt-button-fg: var(--bt-icon-disabled);
+  }
+
+  /* Text an asChild link renders is a bare text node, so the label hides by color; the spinner keeps it. */
+  .bt-button[data-loading] {
+    --bt-spinner-color: var(--bt-button-fg);
+
+    color: transparent;
+    cursor: default;
+  }
+}

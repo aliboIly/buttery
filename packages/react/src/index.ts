@@ -17,3 +17,10 @@ export type {
 export { useButtery } from "./provider/context.ts";
 export type { ButteryContextValue, Platform } from "./provider/context.ts";
 export { useMediaQuery } from "./provider/use-media-query.ts";
+export { Button } from "./components/button/Button.tsx";
+export type {
+  ButtonProps,
+  ButtonSize,
+  ButtonVariant,
+} from "./components/button/Button.tsx";
+export type { ArrowDirection } from "./parts/arrow/Arrow.tsx";
