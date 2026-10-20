@@ -1,6 +1,17 @@
 import { expect, test } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 test.use({ viewport: { width: 1280, height: 720 } });
+
+/** Puts the pointer in the middle of the part of the sidebar that's on screen. */
+async function pointAtSidebar(page: Page, sidebar: Locator): Promise<void> {
+  const box = await sidebar.boundingBox();
+  const viewport = page.viewportSize();
+  if (!box || !viewport) throw new Error("the sidebar isn't on screen");
+  const top = Math.max(box.y, 0);
+  const bottom = Math.min(box.y + box.height, viewport.height);
+  await page.mouse.move(box.x + box.width / 2, (top + bottom) / 2);
+}
 
 test("the sidebar's whole list can be scrolled to with the pointer over it", async ({
   page,
@@ -9,9 +20,7 @@ test("the sidebar's whole list can be scrolled to with the pointer over it", asy
   const sidebar = page.getByRole("navigation", { name: "Pages" });
   const links = sidebar.getByRole("link");
   await expect(links.first()).toBeVisible();
-  const box = await sidebar.boundingBox();
-  if (!box) throw new Error("the sidebar isn't on screen");
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await pointAtSidebar(page, sidebar);
   for (let turn = 0; turn < 20; turn += 1) await page.mouse.wheel(0, 400);
   await expect(async () => {
     const last = await links.last().boundingBox();
@@ -32,9 +41,7 @@ test("at the bottom of a long page, scrolling up over the sidebar reaches its fi
   await page.evaluate(() => {
     window.scrollTo(0, document.documentElement.scrollHeight);
   });
-  const box = await sidebar.boundingBox();
-  if (!box) throw new Error("the sidebar isn't on screen");
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await pointAtSidebar(page, sidebar);
   for (let turn = 0; turn < 30; turn += 1) await page.mouse.wheel(0, -400);
   const header = page.locator(".pg-top");
   await expect(async () => {
