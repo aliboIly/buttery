@@ -1,4 +1,3 @@
-import { DropdownMenu } from "radix-ui";
 import {
   createContext,
   use,
@@ -15,8 +14,7 @@ import type {
   ReactNode,
 } from "react";
 import { flushSync } from "react-dom";
-import { Layer } from "../../layers/layer/Layer.tsx";
-import { space } from "../../tokens/space.ts";
+import { Menu } from "../../layers/menu/Menu.tsx";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 import { Icon } from "../icon/Icon.tsx";
@@ -130,51 +128,27 @@ function OverflowClusterRoot({
         >
           {children}
           {overflowed.length > 0 ? (
-            <DropdownMenu.Root
-              open={menuOpen}
-              onOpenChange={setMenuOpen}
-              modal={false}
-            >
-              <DropdownMenu.Trigger
+            <Menu open={menuOpen} onOpenChange={setMenuOpen}>
+              <Menu.Trigger
                 aria-label={moreLabel}
                 className="bt-press bt-focus"
                 data-bt-part="more"
               >
                 <Icon icon={MoreDots} />
-              </DropdownMenu.Trigger>
-              {menuOpen ? (
-                <Layer band="dropdown">
-                  <DropdownMenu.Content
-                    align="end"
-                    sideOffset={space["2"]}
-                    collisionPadding={space["2"]}
-                    className="bt-surface bt-menu"
-                    data-level="floating"
-                    data-bt-part="menu"
+              </Menu.Trigger>
+              <Menu.Content>
+                {overflowed.map(({ id, menuItem }) => (
+                  <Menu.Item
+                    key={id}
+                    icon={menuItem.icon}
+                    disabled={menuItem.disabled}
+                    onSelect={menuItem.onSelect}
                   >
-                    {overflowed.map(({ id, menuItem }) => (
-                      <DropdownMenu.Item
-                        key={id}
-                        disabled={menuItem.disabled}
-                        onSelect={menuItem.onSelect}
-                        className="bt-text"
-                        data-role="menu"
-                        data-bt-part="menu-item"
-                      >
-                        {menuItem.icon ? <Icon icon={menuItem.icon} /> : null}
-                        <span
-                          className="bt-truncate"
-                          data-bt-truncate=""
-                          title={menuItem.label}
-                        >
-                          {menuItem.label}
-                        </span>
-                      </DropdownMenu.Item>
-                    ))}
-                  </DropdownMenu.Content>
-                </Layer>
-              ) : null}
-            </DropdownMenu.Root>
+                    {menuItem.label}
+                  </Menu.Item>
+                ))}
+              </Menu.Content>
+            </Menu>
           ) : null}
         </div>
       </HiddenContext>

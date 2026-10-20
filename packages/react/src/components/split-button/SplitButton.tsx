@@ -1,7 +1,6 @@
-import { Icon, Layer, cx, space, useControllableState } from "@buttery/core";
+import { Icon, Menu, cx, useControllableState } from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
 import { ChevronDown } from "lucide-react";
-import { DropdownMenu } from "radix-ui";
 import type {
   ComponentPropsWithRef,
   ComponentType,
@@ -97,48 +96,28 @@ export function SplitButton({
         </span>
       </button>
       <span data-bt-part="divider" aria-hidden="true" />
-      <DropdownMenu.Root open={isOpen} onOpenChange={setOpen} modal={false}>
-        <DropdownMenu.Trigger
+      <Menu open={isOpen} onOpenChange={setOpen}>
+        <Menu.Trigger
           disabled={disabled}
           aria-label={menuLabel}
           className="bt-press bt-focus"
           data-bt-part="menu-button"
         >
           <Icon icon={ChevronDown} />
-        </DropdownMenu.Trigger>
-        {isOpen ? (
-          <Layer band="dropdown">
-            <DropdownMenu.Content
-              align="end"
-              sideOffset={space["2"]}
-              collisionPadding={space["2"]}
-              className="bt-surface bt-menu"
-              data-level="floating"
-              data-bt-part="menu"
+        </Menu.Trigger>
+        <Menu.Content>
+          {items.map((item) => (
+            <Menu.Item
+              key={item.label}
+              icon={item.icon}
+              disabled={item.disabled}
+              onSelect={item.onSelect}
             >
-              {items.map((item) => (
-                <DropdownMenu.Item
-                  key={item.label}
-                  disabled={item.disabled}
-                  onSelect={item.onSelect}
-                  className="bt-text"
-                  data-role="menu"
-                  data-bt-part="menu-item"
-                >
-                  {item.icon ? <Icon icon={item.icon} /> : null}
-                  <span
-                    className="bt-truncate"
-                    data-bt-truncate=""
-                    title={item.label}
-                  >
-                    {item.label}
-                  </span>
-                </DropdownMenu.Item>
-              ))}
-            </DropdownMenu.Content>
-          </Layer>
-        ) : null}
-      </DropdownMenu.Root>
+              {item.label}
+            </Menu.Item>
+          ))}
+        </Menu.Content>
+      </Menu>
     </div>
   );
 }
