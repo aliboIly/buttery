@@ -56,7 +56,7 @@ Thirteen text roles and four fluid display roles. Text stacks trim to the cap he
 
 ### Palettes
 
-20 gradients and 14 solids, defined in OKLCH and blended in OKLab so the midpoints don't go gray.
+24 gradients and 18 solids, defined in OKLCH and blended in OKLab so the midpoints don't go gray.
 
 </td>
 <td width="33%" valign="top">

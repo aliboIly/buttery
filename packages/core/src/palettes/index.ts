@@ -52,8 +52,9 @@ function gradient(
 }
 
 /**
- * buttery's 20 gradient presets: a cream row, a fresh row and a deep row over the same six hue families
- * (butter, apricot, rose, lilac, sky, mint), then a light neutral pair (paper, stone). Each stop shifts
+ * buttery's 24 gradient presets in four rows of six. Three rows run over the same six hue families, one
+ * family to a column (butter, apricot, rose, lilac, sky, mint): cream pastels, fresh mids and a deep row.
+ * The fourth row is neutral, light to dark: paper, fog, stone, sand, slate and graphite. Each stop shifts
  * lightness, chroma and hue a little toward its neighbor, so the blends stay soft.
  */
 export const gradients: readonly GradientPreset[] = [
@@ -70,35 +71,48 @@ export const gradients: readonly GradientPreset[] = [
   gradient("sky", "Sky", [0.8, 0.09, 235], [0.62, 0.14, 258]),
   gradient("sea", "Sea", [0.8, 0.09, 180], [0.6, 0.11, 200]),
   gradient("espresso", "Espresso", [0.46, 0.05, 55], [0.3, 0.035, 40]),
-  gradient("slate", "Slate", [0.52, 0.025, 250], [0.34, 0.02, 255]),
-  gradient("ink", "Ink", [0.4, 0.08, 275], [0.24, 0.06, 285]),
-  gradient("forest", "Forest", [0.46, 0.06, 160], [0.3, 0.045, 175]),
+  gradient("rust", "Rust", [0.52, 0.12, 38], [0.36, 0.09, 24]),
   gradient("plum", "Plum", [0.42, 0.07, 340], [0.27, 0.05, 325]),
-  gradient("graphite", "Graphite", [0.38, 0.006, 260], [0.22, 0.004, 260]),
+  gradient("ink", "Ink", [0.4, 0.08, 275], [0.24, 0.06, 285]),
+  gradient("navy", "Navy", [0.5, 0.09, 240], [0.34, 0.075, 252]),
+  gradient("forest", "Forest", [0.46, 0.06, 160], [0.3, 0.045, 175]),
   gradient("paper", "Paper", [0.975, 0.01, 85], [0.905, 0.022, 72]),
-  gradient("stone", "Stone", [0.955, 0.006, 250], [0.85, 0.014, 245]),
+  gradient("fog", "Fog", [0.89, 0.01, 230], [0.8, 0.016, 245]),
+  gradient("stone", "Stone", [0.79, 0.012, 75], [0.7, 0.016, 60]),
+  gradient("sand", "Sand", [0.7, 0.04, 82], [0.58, 0.05, 62]),
+  gradient("slate", "Slate", [0.55, 0.022, 245], [0.41, 0.026, 255]),
+  gradient("graphite", "Graphite", [0.38, 0.006, 260], [0.22, 0.004, 260]),
 ];
 
-const SOLID_SOURCES = [
-  "cream",
-  "peach",
-  "blush",
-  "lilac",
-  "mist",
-  "mint",
-  "espresso",
-  "slate",
-  "ink",
-  "forest",
-  "plum",
-  "graphite",
-  "paper",
-  "stone",
-];
+/** The four rows of `gradients`, six presets each, for laying them out by family. */
+export interface GradientRows {
+  /** Cream pastels, one hue family to a column. */
+  readonly cream: readonly GradientPreset[];
+  /** Fresh mids, with more chroma. */
+  readonly fresh: readonly GradientPreset[];
+  /** Deep tones. */
+  readonly deep: readonly GradientPreset[];
+  /** Neutrals, light to dark. */
+  readonly neutral: readonly GradientPreset[];
+}
 
-/** buttery's 14 solid presets: the OKLab midpoints of the cream, deep and neutral gradients. */
+/** `gradients` row by row. */
+export const gradientRows: GradientRows = {
+  cream: gradients.slice(0, 6),
+  fresh: gradients.slice(6, 12),
+  deep: gradients.slice(12, 18),
+  neutral: gradients.slice(18, 24),
+};
+
+const SOLID_SOURCES = new Set(
+  [...gradientRows.cream, ...gradientRows.deep, ...gradientRows.neutral].map(
+    (preset) => preset.id,
+  ),
+);
+
+/** buttery's 18 solid presets: the OKLab midpoints of the cream, deep and neutral gradients. */
 export const solids: readonly SolidPreset[] = gradients
-  .filter((preset) => SOLID_SOURCES.includes(preset.id))
+  .filter((preset) => SOLID_SOURCES.has(preset.id))
   .map((preset) => {
     const color = mixOklab(preset.from, preset.to, 0.5);
     return { id: preset.id, name: preset.name, color, hex: oklchToHex(color) };
