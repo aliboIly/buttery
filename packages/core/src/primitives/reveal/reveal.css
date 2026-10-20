@@ -1,0 +1,5 @@
+@layer bt.primitives {
+  .bt-reveal {
+    min-inline-size: 0;
+  }
+}

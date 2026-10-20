@@ -1,0 +1,5 @@
+@layer bt.primitives {
+  .bt-loop {
+    min-inline-size: 0;
+  }
+}

@@ -97,6 +97,8 @@ export { Icon } from "./primitives/icon/Icon.tsx";
 export type { IconComponentProps, IconProps } from "./primitives/icon/Icon.tsx";
 export { Inline } from "./primitives/inline/Inline.tsx";
 export type { InlineProps } from "./primitives/inline/Inline.tsx";
+export { Loop } from "./primitives/loop/Loop.tsx";
+export type { LoopProps } from "./primitives/loop/Loop.tsx";
 export { Morph } from "./primitives/morph/Morph.tsx";
 export type { MorphProps } from "./primitives/morph/Morph.tsx";
 export {
@@ -113,6 +115,8 @@ export { Presence } from "./primitives/presence/Presence.tsx";
 export type { PresenceProps } from "./primitives/presence/Presence.tsx";
 export { Pressable } from "./primitives/pressable/Pressable.tsx";
 export type { PressableProps } from "./primitives/pressable/Pressable.tsx";
+export { Reveal } from "./primitives/reveal/Reveal.tsx";
+export type { RevealProps } from "./primitives/reveal/Reveal.tsx";
 export {
   SharedIndicator,
   SharedIndicatorGroup,
@@ -126,6 +130,12 @@ export { spacingAttributes } from "./primitives/spacing.ts";
 export type { SpacingAttributes, SpacingProps } from "./primitives/spacing.ts";
 export { Stack } from "./primitives/stack/Stack.tsx";
 export type { StackProps } from "./primitives/stack/Stack.tsx";
+export { Stagger, StaggerItem } from "./primitives/stagger/Stagger.tsx";
+export type {
+  StaggerComponent,
+  StaggerItemProps,
+  StaggerProps,
+} from "./primitives/stagger/Stagger.tsx";
 export { Surface } from "./primitives/surface/Surface.tsx";
 export type { SurfaceProps } from "./primitives/surface/Surface.tsx";
 export { Text } from "./primitives/text/Text.tsx";

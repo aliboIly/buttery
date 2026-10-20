@@ -31,3 +31,6 @@
 @import "../primitives/presence/presence.css";
 @import "../primitives/morph/morph.css";
 @import "../primitives/shared-indicator/shared-indicator.css";
+@import "../primitives/reveal/reveal.css";
+@import "../primitives/stagger/stagger.css";
+@import "../primitives/loop/loop.css";
