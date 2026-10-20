@@ -120,6 +120,13 @@ describe("findCommentTells", () => {
     expect(await findCommentTells("src/Note.tsx", source)).toEqual([]);
   });
 
+  it("finishes quickly on long prose comments", async () => {
+    const prose = `/* ${"Edit the token source then run the generator again. ".repeat(40)} */\n.a { color: red; }\n`;
+    const started = performance.now();
+    expect(await findCommentTells("src/long.css", prose)).toEqual([]);
+    expect(performance.now() - started).toBeLessThan(500);
+  });
+
   it("reads CSS comments", async () => {
     const css =
       "/* Updated colors */\n.a { color: red; }\n/* .b { color: blue; } */\n";
