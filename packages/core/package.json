@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "catalog:",
+    "motion": "catalog:",
     "radix-ui": "catalog:"
   },
   "devDependencies": {

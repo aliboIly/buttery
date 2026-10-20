@@ -62,7 +62,28 @@ export type {
   DemoSection,
   MotionClass,
 } from "./meta.ts";
+export {
+  MotionPreferenceContext,
+  useMotionPreference,
+} from "./motion/preference.ts";
+export type { MotionPreference } from "./motion/preference.ts";
+export { presencePresets, reducedPresence } from "./motion/presets.ts";
+export type { PresenceMotion, PresencePreset } from "./motion/presets.ts";
+export type { MotionElementProps } from "./motion/props.ts";
 export { isSettled, publishSettled, trackAnimation } from "./motion/settle.ts";
+export {
+  fadeIn,
+  fadeOut,
+  reducedTransition,
+  useButteryTransition,
+  useLayoutAnimation,
+} from "./motion/transitions.ts";
+export type { LayoutAnimation } from "./motion/transitions.ts";
+export {
+  AnimationTrackingContext,
+  useAnimationTracking,
+} from "./motion/use-animation-tracking.ts";
+export type { AnimationTracking } from "./motion/use-animation-tracking.ts";
 export { Center } from "./primitives/center/Center.tsx";
 export type { CenterProps } from "./primitives/center/Center.tsx";
 export { Divider } from "./primitives/divider/Divider.tsx";
