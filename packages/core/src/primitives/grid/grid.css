@@ -1,0 +1,27 @@
+@layer bt.primitives {
+  [data-bt="Grid"] {
+    display: grid;
+    grid-template-columns: repeat(var(--bt-grid-columns, 1), minmax(0, 1fr));
+    min-inline-size: 0;
+  }
+
+  [data-bt="Grid"] > * {
+    min-inline-size: 0;
+  }
+
+  [data-bt="Grid"][data-align="start"] {
+    align-items: start;
+  }
+
+  [data-bt="Grid"][data-align="center"] {
+    align-items: center;
+  }
+
+  [data-bt="Grid"][data-align="end"] {
+    align-items: end;
+  }
+
+  [data-bt="Grid"][data-align="baseline"] {
+    align-items: baseline;
+  }
+}

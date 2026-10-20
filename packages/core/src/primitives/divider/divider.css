@@ -1,0 +1,19 @@
+@layer bt.primitives {
+  [data-bt="Divider"] {
+    flex: none;
+    align-self: stretch;
+  }
+
+  [data-bt="Divider"][data-orientation="horizontal"] {
+    border-block-start: 1px solid var(--bt-border);
+  }
+
+  [data-bt="Divider"][data-orientation="vertical"] {
+    border-inline-start: 1px solid var(--bt-border);
+  }
+
+  [data-bt="Divider"][data-orientation="vertical"][data-length] {
+    align-self: center;
+    block-size: var(--bt-divider-length);
+  }
+}

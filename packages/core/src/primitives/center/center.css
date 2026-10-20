@@ -1,0 +1,12 @@
+@layer bt.primitives {
+  [data-bt="Center"] {
+    display: grid;
+    place-items: center;
+    min-inline-size: 0;
+  }
+
+  [data-bt="Center"] > * {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+}

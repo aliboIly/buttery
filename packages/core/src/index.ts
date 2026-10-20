@@ -1,3 +1,4 @@
+export { cx } from "./utils/cx.ts";
 export {
   contrastRatio,
   formatHex,
@@ -11,6 +12,45 @@ export {
   rgbToOklch,
 } from "./color/color.ts";
 export type { Oklch, Rgb } from "./color/color.ts";
+export { useControllableState } from "./hooks/use-controllable-state.ts";
+export type {
+  ControllableStateOptions,
+  ControllableStateSetter,
+} from "./hooks/use-controllable-state.ts";
+export type {
+  ComponentKind,
+  ComponentMeta,
+  DemoSection,
+  MotionClass,
+} from "./meta.ts";
+export { isSettled, publishSettled, trackAnimation } from "./motion/settle.ts";
+export { Center } from "./primitives/center/Center.tsx";
+export type { CenterProps } from "./primitives/center/Center.tsx";
+export { Divider } from "./primitives/divider/Divider.tsx";
+export type { DividerProps } from "./primitives/divider/Divider.tsx";
+export { FitBox } from "./primitives/fit-box/FitBox.tsx";
+export type { FitBoxProps } from "./primitives/fit-box/FitBox.tsx";
+export type { FlowAlign, FlowJustify } from "./primitives/flow.ts";
+export { Grid } from "./primitives/grid/Grid.tsx";
+export type { GridColumns, GridProps } from "./primitives/grid/Grid.tsx";
+export { Icon } from "./primitives/icon/Icon.tsx";
+export type { IconComponentProps, IconProps } from "./primitives/icon/Icon.tsx";
+export { Inline } from "./primitives/inline/Inline.tsx";
+export type { InlineProps } from "./primitives/inline/Inline.tsx";
+export { Pressable } from "./primitives/pressable/Pressable.tsx";
+export type { PressableProps } from "./primitives/pressable/Pressable.tsx";
+export { spacingAttributes } from "./primitives/spacing.ts";
+export type { SpacingAttributes, SpacingProps } from "./primitives/spacing.ts";
+export { Stack } from "./primitives/stack/Stack.tsx";
+export type { StackProps } from "./primitives/stack/Stack.tsx";
+export { Surface } from "./primitives/surface/Surface.tsx";
+export type { SurfaceProps } from "./primitives/surface/Surface.tsx";
+export { Text } from "./primitives/text/Text.tsx";
+export type {
+  TextProps,
+  TextTone,
+  TextVariant,
+} from "./primitives/text/Text.tsx";
 export { createTheme } from "./theme/create-theme.ts";
 export type {
   ButteryTheme,
@@ -28,10 +68,12 @@ export {
   easings,
   fontFamilies,
   heights,
+  iconStroke,
   pressScale,
   radii,
   shadows,
   space,
+  spaceStep,
   spaceVar,
   spaceWell,
   surfaceLevels,
@@ -60,6 +102,7 @@ export type {
   ShadowDefinition,
   ShadowToken,
   SpaceStep,
+  SpaceValue,
   SurfaceDefinition,
   SurfaceLevel,
   TextRole,

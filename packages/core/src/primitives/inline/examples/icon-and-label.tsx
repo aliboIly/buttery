@@ -1,0 +1,13 @@
+import type { ReactElement } from "react";
+import { Copy } from "lucide-react";
+import { Icon, Inline, Text } from "@buttery/core";
+
+/** An icon and its label with the 6px icon gap. */
+export function IconAndLabel(): ReactElement {
+  return (
+    <Inline gap={1.5}>
+      <Icon icon={Copy} />
+      <Text variant="button">Copy</Text>
+    </Inline>
+  );
+}

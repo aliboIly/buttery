@@ -1,0 +1,50 @@
+@layer bt.primitives {
+  [data-bt="Inline"] {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-inline-size: 0;
+  }
+
+  [data-bt="Inline"] > * {
+    min-inline-size: 0;
+  }
+
+  [data-bt="Inline"][data-uniform] {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+
+  [data-bt="Inline"][data-wrap] {
+    flex-wrap: wrap;
+  }
+
+  [data-bt="Inline"][data-align="start"] {
+    align-items: flex-start;
+  }
+
+  [data-bt="Inline"][data-align="end"] {
+    align-items: flex-end;
+  }
+
+  [data-bt="Inline"][data-align="stretch"] {
+    align-items: stretch;
+  }
+
+  [data-bt="Inline"][data-align="baseline"] {
+    align-items: baseline;
+  }
+
+  [data-bt="Inline"][data-justify="center"] {
+    justify-content: center;
+  }
+
+  [data-bt="Inline"][data-justify="end"] {
+    justify-content: flex-end;
+  }
+
+  [data-bt="Inline"][data-justify="between"] {
+    justify-content: space-between;
+  }
+}

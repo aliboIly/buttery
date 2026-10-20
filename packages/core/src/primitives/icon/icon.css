@@ -1,0 +1,16 @@
+@layer bt.primitives {
+  [data-bt="Icon"] {
+    flex: none;
+    inline-size: var(--bt-icon-size);
+    block-size: var(--bt-icon-size);
+    stroke-width: var(--bt-icon-stroke);
+  }
+
+  [data-bt="Icon"][data-size="sm"] {
+    --bt-icon-size: var(--bt-icon-sm);
+  }
+
+  [data-bt="Icon"][data-size="md"] {
+    --bt-icon-size: var(--bt-icon-md);
+  }
+}

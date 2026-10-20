@@ -1,0 +1,45 @@
+@layer bt.primitives {
+  [data-bt="Text"]:is(
+    [data-role="body"],
+    [data-role="body-sm"],
+    [data-role="body-lg"]
+  ) {
+    max-inline-size: 60ch;
+  }
+
+  [data-bt="Text"]:is(
+    [data-role="display"],
+    [data-role="heading-1"],
+    [data-role="heading-2"]
+  ) {
+    max-inline-size: 22ch;
+  }
+
+  [data-bt="Text"][data-tone="strong"] {
+    color: var(--bt-text-strong);
+  }
+
+  [data-bt="Text"][data-tone="default"] {
+    color: var(--bt-text);
+  }
+
+  [data-bt="Text"][data-tone="secondary"] {
+    color: var(--bt-text-secondary);
+  }
+
+  [data-bt="Text"][data-tone="tertiary"] {
+    color: var(--bt-text-tertiary);
+  }
+
+  [data-bt="Text"][data-tone="disabled"] {
+    color: var(--bt-text-disabled);
+  }
+
+  [data-bt="Text"][data-bt-truncate] {
+    display: block;
+  }
+
+  [data-bt="Text"][data-tabular] {
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -10,3 +10,13 @@
 @import "./recipes/press.css";
 @import "./recipes/focus.css";
 @import "./recipes/truncate.css";
+@import "./primitives/layout.css";
+@import "../primitives/stack/stack.css";
+@import "../primitives/inline/inline.css";
+@import "../primitives/grid/grid.css";
+@import "../primitives/center/center.css";
+@import "../primitives/divider/divider.css";
+@import "../primitives/text/text.css";
+@import "../primitives/icon/icon.css";
+@import "../primitives/pressable/pressable.css";
+@import "../primitives/fit-box/fit-box.css";

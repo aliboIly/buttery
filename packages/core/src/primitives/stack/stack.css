@@ -1,0 +1,39 @@
+@layer bt.primitives {
+  [data-bt="Stack"] {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  [data-bt="Stack"] > * {
+    min-inline-size: 0;
+  }
+
+  [data-bt="Stack"][data-align="start"] {
+    align-items: flex-start;
+  }
+
+  [data-bt="Stack"][data-align="center"] {
+    align-items: center;
+  }
+
+  [data-bt="Stack"][data-align="end"] {
+    align-items: flex-end;
+  }
+
+  [data-bt="Stack"][data-align="baseline"] {
+    align-items: baseline;
+  }
+
+  [data-bt="Stack"][data-justify="center"] {
+    justify-content: center;
+  }
+
+  [data-bt="Stack"][data-justify="end"] {
+    justify-content: flex-end;
+  }
+
+  [data-bt="Stack"][data-justify="between"] {
+    justify-content: space-between;
+  }
+}

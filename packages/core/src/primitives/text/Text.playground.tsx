@@ -1,0 +1,55 @@
+import { displayRoles, Stack, Surface, Text, textRoles } from "@buttery/core";
+import type { DemoSection, TextTone, TextVariant } from "@buttery/core";
+
+const ROLES = [
+  ...Object.keys(textRoles),
+  ...Object.keys(displayRoles),
+] as TextVariant[];
+const TONES: readonly TextTone[] = [
+  "strong",
+  "default",
+  "secondary",
+  "tertiary",
+  "disabled",
+];
+
+export const demos: readonly DemoSection[] = [
+  {
+    title: "Roles",
+    description:
+      "Every role on the type scale; display roles scale with their container.",
+    render: () => (
+      <Stack gap={4}>
+        {ROLES.map((role) => (
+          <Stack key={role} gap={1}>
+            <Text variant="caption">{role}</Text>
+            <Text variant={role}>Round the corners and add depth</Text>
+          </Stack>
+        ))}
+      </Stack>
+    ),
+  },
+  {
+    title: "Tones",
+    render: () => (
+      <Stack gap={2}>
+        {TONES.map((tone) => (
+          <Text key={tone} tone={tone}>
+            {tone}
+          </Text>
+        ))}
+      </Stack>
+    ),
+  },
+  {
+    title: "Truncation",
+    description: "One line with an ellipsis; the full text is in the title.",
+    render: () => (
+      <Surface level="card" padX={4} padY={3}>
+        <Text truncate>
+          A label far longer than the row it has to fit inside, so it truncates
+        </Text>
+      </Surface>
+    ),
+  },
+];
