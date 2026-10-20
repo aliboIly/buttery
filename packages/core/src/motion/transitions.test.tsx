@@ -29,6 +29,7 @@ function hooks(preference: MotionPreference) {
     () => ({
       transition: useButteryTransition("snappy"),
       layout: useLayoutAnimation("morph"),
+      position: useLayoutAnimation("snappy", "position"),
     }),
     { wrapper: withPreference(preference) },
   ).result.current;
@@ -39,6 +40,10 @@ describe("motion transitions", () => {
     const seen = hooks("full");
     expect(seen.transition).toBe(spring.snappy);
     expect(seen.layout).toEqual({ layout: true, transition: spring.morph });
+    expect(seen.position).toEqual({
+      layout: "position",
+      transition: spring.snappy,
+    });
   });
 
   it("lands transforms at once, fades in 100ms and leaves layout alone with reduced motion", () => {
@@ -48,6 +53,7 @@ describe("motion transitions", () => {
       layout: false,
       transition: reducedTransition,
     });
+    expect(seen.position).toEqual(seen.layout);
     expect(reducedTransition).toMatchObject({
       default: spring.instant,
       opacity: { duration: 0.1 },

@@ -38,29 +38,40 @@ export function useButteryTransition(name: SpringToken): Transition {
   return reduced ? reducedTransition : spring[name];
 }
 
+/**
+ * What a layout animation follows: `"layout"`, the element's position and size, or `"position"` alone, so
+ * text inside never stretches while the box changes size.
+ */
+export type LayoutScope = "layout" | "position";
+
 /** Props that animate a Motion component's layout changes, from `useLayoutAnimation`. */
 export interface LayoutAnimation {
   /** Motion's `layout`: off with reduced motion, so the element simply takes its new place. */
-  readonly layout: boolean;
+  readonly layout: boolean | "position";
   /** The named spring, or the reduced-motion transition. */
   readonly transition: Transition;
 }
 
 /**
- * Animates a Motion component's position and size changes with a named spring. Spread it instead of
- * setting `layout` yourself: with reduced motion it turns the layout animation off, because Motion snaps
- * reduced layout animations with a zero-length animation whose last frame WebKit can drop, leaving the
- * element where it was. Under the React Compiler, also pass `layoutDependency` with the state that moves
- * the element, or it won't re-render and Motion won't see the change.
+ * Animates a Motion component's position and size changes with a named spring, or its position alone with
+ * `"position"`. Spread it instead of setting `layout` yourself: with reduced motion it turns the layout
+ * animation off, because Motion snaps reduced layout animations with a zero-length animation whose last
+ * frame WebKit can drop, leaving the element where it was. Under the React Compiler, also pass
+ * `layoutDependency` with the state that moves the element, or it won't re-render and Motion won't see the
+ * change.
  *
  * @example
  * <motion.div {...useLayoutAnimation("smooth")} layoutDependency={expanded} />
+ * <motion.li {...useLayoutAnimation("snappy", "position")} />
  */
 export function useLayoutAnimation(
   name: SpringToken = "smooth",
+  scope: LayoutScope = "layout",
 ): LayoutAnimation {
   const reduced = useMotionPreference() === "reduced";
-  return reduced
-    ? { layout: false, transition: reducedTransition }
-    : { layout: true, transition: spring[name] };
+  if (reduced) return { layout: false, transition: reducedTransition };
+  return {
+    layout: scope === "position" ? "position" : true,
+    transition: spring[name],
+  };
 }

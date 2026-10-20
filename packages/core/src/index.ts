@@ -78,7 +78,7 @@ export {
   useButteryTransition,
   useLayoutAnimation,
 } from "./motion/transitions.ts";
-export type { LayoutAnimation } from "./motion/transitions.ts";
+export type { LayoutAnimation, LayoutScope } from "./motion/transitions.ts";
 export {
   AnimationTrackingContext,
   useAnimationTracking,
