@@ -125,3 +125,12 @@ export type {
   Anchor,
   AnchorGridProps,
 } from "./components/anchor-grid/AnchorGrid.tsx";
+export {
+  FloatingToolbar,
+  FloatingToolbarButton,
+} from "./patterns/floating-toolbar/FloatingToolbar.tsx";
+export type {
+  FloatingToolbarButtonProps,
+  FloatingToolbarComponent,
+  FloatingToolbarProps,
+} from "./patterns/floating-toolbar/FloatingToolbar.tsx";

@@ -1,0 +1,34 @@
+@layer bt.patterns {
+  .bt-floating-toolbar {
+    --bt-floating-toolbar-room: calc(100vw - 2 * var(--bt-space-2));
+
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-1);
+    max-inline-size: var(--bt-floating-toolbar-room);
+    block-size: var(--bt-h-cta);
+    padding: var(--bt-space-1_5);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-floating);
+    white-space: nowrap;
+  }
+
+  .bt-floating-toolbar > [data-bt-part="meta"] {
+    min-inline-size: 0;
+    padding-inline: var(--bt-space-3) var(--bt-space-2);
+    color: var(--bt-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bt-floating-toolbar > [data-bt="Button"] {
+    flex: none;
+  }
+
+  /* Placed in the floating layer by script, so it follows its anchor; the layer lets presses through around it. */
+  [data-bt-part="floating-toolbar-place"] {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+  }
+}

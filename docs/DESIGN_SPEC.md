@@ -336,7 +336,7 @@ A column 20 apart, at most 400 wide (`w-dialog`): a `TextStack` heading (an `h1`
 - Screen readers hear "Notification" and the message, then the action's `altText` as its own sentence; `background: true` toasts are read at the next pause.
 
 ### FloatingToolbar (crop bar)
-`bg-surface` pill, 48h (padding 6), gap 4, shadow-floating. Left to right: meta text (the current size, `control` role, tabular), a ghost reset, a soft cancel and a primary confirm. **Anchored**: positioned 12px below its anchor, centered, clamped to the viewport, and registered with `FloatingLanes` as an obstacle so lane items (toasts) move above it.
+`bg-surface` pill, 48h (padding 6), gap 4, shadow-floating, in the `floating` layer band. Left to right: meta text (the current size, `control` role in `text-secondary`, tabular, truncating), a ghost reset, a soft cancel and a primary confirm (`FloatingToolbar.Button`, 36h). **Anchored**: positioned 12px below its anchor, centered, clamped 8px inside the viewport (above the anchor when there's no room below), following the anchor every frame while open (it may move by transforms), and registered with `FloatingLanes` as an obstacle so lane items (toasts) move above it. It rises in on the `rise` preset (after `delay-follow`, 80ms, with `delayed`, as in crop mode) and fades out. A toolbar (Radix): one Tab stop, arrows between its buttons.
 
 ### HeaderBar
 56h, r16, `bg-surface`, shadow-card, padding-x 16. Left: 24px app mark (the app's own icon; buttery's playground uses `BrandMark`) + title (`title-sm`, 12px gap, truncates). Right: ghost text actions, ghost icon actions, Select trigger, a 1px × 24 separator, undo/redo/help `IconButton`s; gap 4. Overflowing actions move into a "…" menu automatically (`OverflowCluster`).
