@@ -134,3 +134,19 @@ export type {
   FloatingToolbarComponent,
   FloatingToolbarProps,
 } from "./patterns/floating-toolbar/FloatingToolbar.tsx";
+export {
+  Inspector,
+  InspectorFooter,
+  InspectorRow,
+  InspectorRowSplit,
+  InspectorSection,
+} from "./patterns/inspector/Inspector.tsx";
+export type {
+  InspectorComponent,
+  InspectorFooterProps,
+  InspectorProps,
+  InspectorRowComponent,
+  InspectorRowProps,
+  InspectorRowSplitProps,
+  InspectorSectionProps,
+} from "./patterns/inspector/Inspector.tsx";

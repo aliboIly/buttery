@@ -163,7 +163,7 @@ The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px;
 | `--bt-w-inspector` | 340 |
 | `--bt-w-dialog` | 400 |
 | `--bt-w-menu-min` | 200 |
-| `--bt-w-row-control` | 164 (slider width in a row) |
+| `--bt-w-row-control` | 160 (slider width in a row; measured 162–164, see DECISIONS) |
 | `--bt-w-page` | 1200 (page content max width) |
 | `--bt-bento-row` | 320 (bento row unit) |
 | `--bt-inset-titlebar` | 84 (HeaderBar's left padding in desktop apps, measured from its own left edge: the macOS window controls span x 28–88 of the window, so content starts at 100, 12px clear) |
@@ -261,7 +261,7 @@ Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12,
 ### Slider row
 - Row grid: `[label + badge] [track]`. Label `label` role, gap 8 to badge.
 - Value badge: 20h, r6, bg `bg-control`, padding-x 6, `badge` role, min-width reserved for the longest formatted value (e.g. `-180°`) so it never jitters.
-- Track: 164w × 14h, r7, 1px `border-strong`, fill `bg-surface`. **No filled range** (reference). Optional `showRange`.
+- Track: 160w × 14h (measured 162–164), r7, 1px `border-strong`, fill `bg-surface`, 8 after the caption. **No filled range** (reference). Optional `showRange`.
 - Thumb: 24×24, r7, knob gradient + border + highlight, two 1.5×8 grip lines 3px apart, shadow-knob. Hit area 36×36 via a `[data-bt-hit]` element.
 - Behaviors: click/drag anywhere on the track · arrows step, Shift = ×10 · double-click label or badge, or Backspace/Delete on the thumb = reset to default · optional `detents` (soft snap within ±2% to e.g. 0°, while dragging only, so keyboard steps pass through) · value formatter (`%`, `°`, px), also read to screen readers as the thumb's value text. The badge reserves the formatted min and max.
 
@@ -349,7 +349,7 @@ A column 20 apart, at most 400 wide (`w-dialog`): a `TextStack` heading (an `h1`
 - `behavior`: `static` (default) · `sticky` · `auto-hide`. Pinned past the hero, the bar takes the `panel` surface with `shadow-card`.
 
 ### Inspector
-340w panel (padding 8, gap 8 between sections) with a sticky footer: 1px divider, padding 12, buttons 36h gap 8 (a soft button with an icon, padded 32 a side — measured 118 wide with a short label — and a primary SplitButton filling the rest). The body scrolls internally with 12px fade masks at scrolled edges.
+340w panel (padding 8, gap 8 between sections) with a sticky footer: 1px divider, padding 12, buttons 36h gap 8 (a soft button with an icon, padded 32 a side — measured 118 wide with a short label — and a primary SplitButton filling the rest). The body scrolls internally with 12px fade masks at scrolled edges. `Inspector.Section` follows the nesting recipe (§4): a 36h header (title in `caption` role, `text-secondary`, padded 16 so it lines up with the rows; a Reset text action, 28h, named with the title, dimmed while nothing differs from the defaults), then a card of rows divided by 1px `border`. `Inspector.Row`: 50h, padding-x 16, label (and an `extra` such as a reset chip) at the start and the control at the end; without a label the control fills the row (a `Slider` brings its own); `block` grows to fit, padded 16 (a swatch grid). `Inspector.Row.Split`: two rows side by side, 64h, a 1px line between. The section heading is an `h2`, and each section is a region named by it.
 
 ### EmptyState / DropZone
 Centered in the stage. Title `title`, description `body-sm` 12px below, actions 24px below (primary pill + secondary pill, gap 8); gaps are between trimmed text boxes. The whole stage accepts drops; paste `⌘V`, open `⌘O`. Drag-over (_derived_): bg tints to `bg-control-active`, 2px dashed `ring-selected` inset 16px, r16, label "Drop to add".
