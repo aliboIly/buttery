@@ -23,11 +23,11 @@ export function kebabCase(name) {
     .toLowerCase();
 }
 
-function componentSource(name, purpose, cxImport) {
-  return `import { Slot } from "radix-ui";
-import type { ComponentPropsWithRef, ReactElement } from "react";
-import { cx } from "${cxImport}";
+function componentSource(name, purpose, imports) {
+  return `import type { ComponentPropsWithRef, ReactElement } from "react";
+${imports}
 
+/** Props for \`${name}\`. */
 export interface ${name}Props extends ComponentPropsWithRef<"div"> {
   /** Render the single child element instead of a \`div\`, with ${name}'s props merged onto it. */
   readonly asChild?: boolean | undefined;
@@ -40,7 +40,7 @@ export interface ${name}Props extends ComponentPropsWithRef<"div"> {
  * <${name} />
  */
 export function ${name}({ asChild = false, className, ...rest }: ${name}Props): ReactElement {
-  const Root = asChild ? Slot.Root : "div";
+  const Root = asChild ? Slot : "div";
   return <Root {...rest} className={cx("bt-${kebabCase(name)}", className)} data-bt="${name}" />;
 }
 `;
@@ -189,15 +189,17 @@ export async function createComponent({
   const npmName = `@buttery/${packageName}`;
   const sentence = purpose.trim().replace(/\.?$/, ".");
   const metaImport = packageName === "core" ? "../../meta.ts" : "@buttery/core";
-  const cxImport =
-    packageName === "core" ? "../../utils/cx.ts" : "@buttery/core";
+  const imports =
+    packageName === "core"
+      ? 'import { cx } from "../../utils/cx.ts";\nimport { Slot } from "../../utils/slot.tsx";'
+      : 'import { cx, Slot } from "@buttery/core";';
   const stylesImports =
     packageName === "core"
       ? ["../../styles/index.css"]
       : ["@buttery/core/styles.css", "../../styles.css"];
 
   const files = {
-    [`${name}.tsx`]: componentSource(name, sentence, cxImport),
+    [`${name}.tsx`]: componentSource(name, sentence, imports),
     [`${kebabCase(name)}.css`]: cssSource(name, settings.layer),
     [`${name}.test.tsx`]: testSource(name, stylesImports),
     [`${name}.meta.ts`]: metaSource(name, kind, sentence, metaImport),
