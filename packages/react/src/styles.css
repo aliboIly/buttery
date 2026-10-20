@@ -19,3 +19,6 @@
 @import "./components/text-field/text-field.css";
 @import "./components/password-field/password-field.css";
 @import "./components/text-area/text-area.css";
+@import "./components/checkbox/checkbox.css";
+@import "./components/switch/switch.css";
+@import "./components/callout/callout.css";

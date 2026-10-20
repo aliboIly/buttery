@@ -1,0 +1,74 @@
+@layer bt.components {
+  .bt-checkbox {
+    --bt-checkbox-size: 18px;
+    --bt-checkbox-mark: 12px;
+    --bt-checkbox-hit: 24px;
+    --bt-checkbox-line: 1px;
+
+    gap: var(--bt-space-1_5);
+  }
+
+  .bt-checkbox > [data-bt-part="row"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-checkbox [data-bt-part="check"] {
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-checkbox-size);
+    block-size: var(--bt-checkbox-size);
+    padding: 0;
+    border: var(--bt-checkbox-line) solid var(--bt-control-border);
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-bg-surface);
+    color: var(--bt-on-primary);
+  }
+
+  .bt-checkbox
+    [data-bt-part="check"]:is(
+      [data-state="checked"],
+      [data-state="indeterminate"]
+    ) {
+    border-color: var(--bt-primary);
+    background-color: var(--bt-primary);
+  }
+
+  .bt-checkbox[data-invalid] [data-bt-part="check"][data-state="unchecked"] {
+    border-color: var(--bt-danger);
+  }
+
+  .bt-checkbox [data-bt-part="check"]:disabled {
+    border-color: var(--bt-border-strong);
+    background-color: var(--bt-bg-control-subtle);
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-checkbox [data-bt-part="mark"] {
+    display: grid;
+    place-items: center;
+  }
+
+  .bt-checkbox [data-bt-part="mark"] svg {
+    inline-size: var(--bt-checkbox-mark);
+    block-size: var(--bt-checkbox-mark);
+    stroke-width: 3;
+  }
+
+  /* Measured from inside the box's border, so the target comes out 24px. */
+  .bt-checkbox [data-bt-part="check"] > [data-bt-part="hit"] {
+    position: absolute;
+    inset: calc(
+      (var(--bt-checkbox-size) - var(--bt-checkbox-hit)) / 2 -
+        var(--bt-checkbox-line)
+    );
+  }
+
+  .bt-checkbox > :is([data-bt-part="hint"], [data-bt-part="error"]) {
+    padding-inline-start: calc(var(--bt-checkbox-size) + var(--bt-space-2));
+  }
+}

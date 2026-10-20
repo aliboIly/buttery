@@ -296,6 +296,14 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 - TextArea: grows from `rows` (3) to `maxRows` (8) lines by measuring its text, never animating its height, then scrolls inside itself with faded edges.
 - Field: the same label, hint and error for a control you bring, through a render prop that hands it `id`, `aria-describedby`, `aria-invalid` and `aria-required`.
 
+### Checkbox and Switch (_derived_, Phase 4.5)
+- Checkbox: an 18px box, r6 (`r-xs`), 1px `control-border` (3:1) on `bg-surface`; ticked or mixed it fills with `primary` and draws a 12px check or dash in `on-primary`. A 24px target around the box; the label (`label` role) 8 beside it takes presses too. An error turns an unticked box's edge `danger`. The hint and error sit under the label.
+- Switch: a 32×20 track (`h-badge` tall, so 18 in compact), r-full, `bg-control` with a 1px inset `control-border` edge while off and `primary` while on; a thumb 4 smaller than the track, `bg-raised` with `shadow-raised` while off and `on-primary` while on, 2 from the end. The thumb moves by flex alignment and slides there on `spring.snappy` (Motion layout, off with reduced motion). A 24px target; the label 8 beside it.
+- Both are Radix (`role="checkbox"` and `role="switch"`), named by their visible labels.
+
+### Callout (_derived_, Phase 4.5)
+A tinted box: r12, padding 12×16, gap 12, a 16px icon in the tone's color (`accent`, `success`, `warning` or `danger`) over its `-subtle` tint. A title (`label` role), the body at `body-sm` size in `text-secondary` (not trimmed, so it can hold lists), and an optional action row 6 below. Links in its lists are 24px targets in the tone's color. No role of its own: `role="alert"` for an error that appears after an action, `role="status"` for a result.
+
 ### Tooltip
 `inverse-bg` pill, `inverse-text` 12/500, padding 4×8, r8, 500ms open delay, no arrow. Content-sized (not height-checked). Opens at once on keyboard focus, closes on Escape, renders in the tooltip band above dialogs. The root `ButteryProvider` hosts one provider for all tooltips, so moving between them skips the delay.
 

@@ -1,0 +1,75 @@
+@layer bt.components {
+  .bt-callout {
+    --bt-callout-bg: var(--bt-accent-subtle);
+    --bt-callout-ink: var(--bt-accent);
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+    padding: var(--bt-space-3) var(--bt-space-4);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-callout-bg);
+    color: var(--bt-text);
+  }
+
+  .bt-callout[data-tone="success"] {
+    --bt-callout-bg: var(--bt-success-subtle);
+    --bt-callout-ink: var(--bt-success);
+  }
+
+  .bt-callout[data-tone="warning"] {
+    --bt-callout-bg: var(--bt-warning-subtle);
+    --bt-callout-ink: var(--bt-warning);
+  }
+
+  .bt-callout[data-tone="danger"] {
+    --bt-callout-bg: var(--bt-danger-subtle);
+    --bt-callout-ink: var(--bt-danger);
+  }
+
+  .bt-callout > svg {
+    flex: none;
+    color: var(--bt-callout-ink);
+  }
+
+  .bt-callout > [data-bt-part="content"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+  }
+
+  /* The body holds text, lists and links, so it takes body-sm's size without trimming its lines. */
+  .bt-callout [data-bt-part="body"] {
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-text-body-sm-size);
+    font-weight: var(--bt-text-body-sm-weight);
+    line-height: var(--bt-text-body-sm-line);
+  }
+
+  .bt-callout [data-bt-part="body"] :is(ul, ol) {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding-inline-start: var(--bt-space-4);
+  }
+
+  .bt-callout [data-bt-part="body"] a {
+    color: var(--bt-callout-ink);
+    text-decoration: underline;
+  }
+
+  /* A link on a line of its own, as in an error summary, gets a 24px target. */
+  .bt-callout [data-bt-part="body"] li > a {
+    display: inline-block;
+    padding-block: var(--bt-space-0_5);
+  }
+
+  .bt-callout [data-bt-part="action"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bt-space-2);
+    padding-block-start: var(--bt-space-1_5);
+  }
+}

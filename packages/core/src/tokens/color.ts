@@ -361,6 +361,12 @@ export const contrastPairs: readonly ContrastPair[] = [
     "success-subtle",
     "warning-subtle",
   ]),
+  ...textOn("text-secondary", [
+    "accent-subtle",
+    "danger-subtle",
+    "success-subtle",
+    "warning-subtle",
+  ]),
   { text: "accent", on: "accent-subtle", minimum: 4.5 },
   ...[...TONE_SURFACES, "bg-raised" as const].map((on): ContrastPair => ({
     text: "control-border",

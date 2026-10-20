@@ -1,0 +1,18 @@
+import type { ComponentMeta } from "@buttery/core";
+
+export const meta: ComponentMeta = {
+  name: "Switch",
+  kind: "component",
+  purpose:
+    "A switch that turns a setting on or off at once, with its label beside it.",
+  useWhen: [
+    "A setting that takes effect as soon as it's flipped: snap to grid, dark previews, sync",
+  ],
+  avoidWhen: [
+    "A choice in a form that waits for Submit: use Checkbox",
+    "One of several options: use SegmentedControl",
+  ],
+  related: ["Checkbox", "SegmentedControl"],
+  a11y: "A real switch (role switch) named by its label, which takes presses too; Space and Enter flip it. The track has a 3:1 edge while off and a 24px target. The thumb slides on spring.snappy and jumps with reduced motion.",
+  motion: "indicator",
+};
