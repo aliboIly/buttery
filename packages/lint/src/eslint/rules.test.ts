@@ -32,6 +32,14 @@ tester.run("no-raw-motion-layout", noRawMotionLayout, {
       filename: "page.tsx",
     },
     { code: "<Card layout />", filename: "page.tsx" },
+    {
+      code: "function Pill() { const { layout, transition } = useLayoutAnimation(); return <motion.div layout={layout} transition={transition} />; }",
+      filename: "page.tsx",
+    },
+    {
+      code: 'function Pill() { const animation = useLayoutAnimation("snappy"); return <motion.span layout={animation.layout} layoutId={animation.layout ? "pill" : undefined} />; }',
+      filename: "page.tsx",
+    },
   ],
   invalid: [
     {
@@ -48,6 +56,16 @@ tester.run("no-raw-motion-layout", noRawMotionLayout, {
       code: '<m.li layout="position" />',
       filename: "page.tsx",
       errors: [{ messageId: "raw" }],
+    },
+    {
+      code: "function Pill() { const layout = true; return <motion.div layout={layout} />; }",
+      filename: "page.tsx",
+      errors: [{ messageId: "raw" }],
+    },
+    {
+      code: 'import { motion as animated } from "motion/react"; const Card = animated.create("article"); const element = <><animated.div layout /><Card layoutId="card" /></>;',
+      filename: "page.tsx",
+      errors: [{ messageId: "raw" }, { messageId: "raw" }],
     },
   ],
 });

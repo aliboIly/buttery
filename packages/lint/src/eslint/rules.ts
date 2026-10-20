@@ -1,4 +1,4 @@
-import type { Rule } from "eslint";
+import type { Rule, Scope } from "eslint";
 import { hasRawLength, tailwindProblem } from "../tailwind.ts";
 
 interface Located {
@@ -369,8 +369,71 @@ export const tailwindTokens: Rule.RuleModule = {
   },
 };
 
-const MOTION_NAMESPACES = new Set(["motion", "m"]);
+const MOTION_EXPORTS = new Set(["motion", "m"]);
+const MOTION_SOURCES = new Set([
+  "motion/react",
+  "motion/react-m",
+  "motion/react-client",
+  "framer-motion",
+]);
 const LAYOUT_PROPS = new Set(["layout", "layoutId"]);
+
+type ScopeNode = Parameters<Rule.RuleContext["sourceCode"]["getScope"]>[0];
+
+function isScopeNode(value: unknown): value is ScopeNode {
+  return isObject(value) && typeof value["type"] === "string";
+}
+
+function identifierName(node: unknown): string | null {
+  return hasType(node, "Identifier") && typeof node["name"] === "string"
+    ? node["name"]
+    : null;
+}
+
+function isLayoutAnimationCall(node: unknown): boolean {
+  return (
+    hasType(node, "CallExpression") &&
+    identifierName(node["callee"]) === "useLayoutAnimation"
+  );
+}
+
+/** Whether the identifier `node` is bound, where it's used, to what a `useLayoutAnimation()` call returned. */
+function fromLayoutAnimation(
+  context: Rule.RuleContext,
+  node: unknown,
+): boolean {
+  const name = identifierName(node);
+  if (name === null || !isScopeNode(node)) return false;
+  for (
+    let scope: Scope.Scope | null = context.sourceCode.getScope(node);
+    scope;
+    scope = scope.upper
+  ) {
+    const variable = scope.set.get(name);
+    if (variable) {
+      return variable.defs.some(
+        (definition) =>
+          definition.type === "Variable" &&
+          isLayoutAnimationCall(definition.node.init),
+      );
+    }
+  }
+  return false;
+}
+
+/** `layout` from `useLayoutAnimation()`, read through its result or destructured from it. */
+function isLayoutAnimationFlag(
+  context: Rule.RuleContext,
+  node: unknown,
+): boolean {
+  if (hasType(node, "MemberExpression")) {
+    return (
+      identifierName(node["property"]) === "layout" &&
+      fromLayoutAnimation(context, node["object"])
+    );
+  }
+  return fromLayoutAnimation(context, node);
+}
 
 /**
  * Motion elements take their layout animation from `useLayoutAnimation`, which turns it off with reduced
@@ -385,44 +448,96 @@ export const noRawMotionLayout: Rule.RuleModule = {
     },
     schema: [],
     messages: {
-      raw: "{{prop}} on <{{element}}> runs a layout animation even with reduced motion, where Motion snaps it with a zero-length animation that WebKit can leave half done. Fix: spread useLayoutAnimation() (<{{element}} {...useLayoutAnimation()} />), and set a layoutId only while its layout is true.",
+      raw: '{{prop}} on <{{element}}> runs a layout animation even with reduced motion, where Motion snaps it with a zero-length animation that WebKit can leave half done. Fix: spread useLayoutAnimation() (<{{element}} {...useLayoutAnimation()} />) or pass its `layout` on, and give a layoutId only while that is true, with a conditional spread: {...(layout ? { layoutId: "pill" } : {})}.',
     },
   },
   create(context) {
+    const namespaces = new Set(MOTION_EXPORTS);
+    const components = new Set<string>();
+
+    const motionElement = (element: unknown): string | null => {
+      if (hasType(element, "JSXIdentifier")) {
+        const name = element["name"];
+        return typeof name === "string" && components.has(name) ? name : null;
+      }
+      if (!hasType(element, "JSXMemberExpression")) return null;
+      const namespace = element["object"];
+      const tag = element["property"];
+      if (
+        !hasType(namespace, "JSXIdentifier") ||
+        typeof namespace["name"] !== "string" ||
+        !namespaces.has(namespace["name"]) ||
+        !hasType(tag, "JSXIdentifier") ||
+        typeof tag["name"] !== "string"
+      )
+        return null;
+      return `${namespace["name"]}.${tag["name"]}`;
+    };
+
+    const allowed = (prop: string, value: unknown): boolean => {
+      if (!hasType(value, "JSXExpressionContainer")) return false;
+      const expression = value["expression"];
+      if (hasType(expression, "Literal") && expression["value"] === false)
+        return true;
+      if (prop === "layout") return isLayoutAnimationFlag(context, expression);
+      return (
+        hasType(expression, "ConditionalExpression") &&
+        identifierName(expression["alternate"]) === "undefined" &&
+        isLayoutAnimationFlag(context, expression["test"])
+      );
+    };
+
     return {
+      ImportDeclaration(node: unknown) {
+        if (!hasType(node, "ImportDeclaration")) return;
+        const source = node["source"];
+        const specifiers = node["specifiers"];
+        if (
+          !isObject(source) ||
+          typeof source["value"] !== "string" ||
+          !MOTION_SOURCES.has(source["value"]) ||
+          !Array.isArray(specifiers)
+        )
+          return;
+        for (const specifier of specifiers) {
+          if (!hasType(specifier, "ImportSpecifier")) continue;
+          const imported = identifierName(specifier["imported"]);
+          const local = identifierName(specifier["local"]);
+          if (
+            imported !== null &&
+            local !== null &&
+            MOTION_EXPORTS.has(imported)
+          )
+            namespaces.add(local);
+        }
+      },
+      VariableDeclarator(node: unknown) {
+        if (!hasType(node, "VariableDeclarator")) return;
+        const name = identifierName(node["id"]);
+        const init = node["init"];
+        if (name === null || !hasType(init, "CallExpression")) return;
+        const callee = init["callee"];
+        const factory = hasType(callee, "MemberExpression")
+          ? identifierName(callee["property"]) === "create"
+            ? identifierName(callee["object"])
+            : null
+          : identifierName(callee);
+        if (factory !== null && namespaces.has(factory)) components.add(name);
+      },
       JSXAttribute(node: unknown) {
         if (!hasType(node, "JSXAttribute")) return;
         const name = node["name"];
         if (!isObject(name) || typeof name["name"] !== "string") return;
-        if (!LAYOUT_PROPS.has(name["name"])) return;
+        const prop = name["name"];
+        if (!LAYOUT_PROPS.has(prop)) return;
         const opening = node["parent"];
         if (!hasType(opening, "JSXOpeningElement")) return;
-        const element = opening["name"];
-        if (!hasType(element, "JSXMemberExpression")) return;
-        const namespace = element["object"];
-        const tag = element["property"];
-        if (
-          !hasType(namespace, "JSXIdentifier") ||
-          typeof namespace["name"] !== "string" ||
-          !MOTION_NAMESPACES.has(namespace["name"]) ||
-          !hasType(tag, "JSXIdentifier") ||
-          typeof tag["name"] !== "string"
-        )
-          return;
-        const value = node["value"];
-        if (
-          hasType(value, "JSXExpressionContainer") &&
-          hasType(value["expression"], "Literal") &&
-          value["expression"]["value"] === false
-        )
-          return;
+        const element = motionElement(opening["name"]);
+        if (element === null || allowed(prop, node["value"])) return;
         context.report({
           loc: node.loc,
           messageId: "raw",
-          data: {
-            prop: name["name"],
-            element: `${namespace["name"]}.${tag["name"]}`,
-          },
+          data: { prop, element },
         });
       },
     };
