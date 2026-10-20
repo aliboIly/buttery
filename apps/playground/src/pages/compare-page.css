@@ -1,0 +1,17 @@
+.cp-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--bt-w-inspector)), 1fr));
+  gap: var(--bt-space-4);
+}
+
+.cp-cell {
+  display: grid;
+  place-items: center start;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.cp-crop {
+  max-inline-size: 100%;
+  background-repeat: no-repeat;
+}

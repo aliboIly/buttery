@@ -1,0 +1,172 @@
+import { ArrowLeftRight, CircleHelp, Copy, Redo2, Undo2 } from "lucide-react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
+import { Inline, Stack, Surface, Text } from "@buttery/core";
+import {
+  Button,
+  ButteryProvider,
+  Chip,
+  IconButton,
+  SegmentedControl,
+  Slider,
+  SplitButton,
+} from "@buttery/react";
+import { referenceRoot } from "virtual:buttery-reference";
+import "./compare-page.css";
+
+/** The editor capture: 2× pixels, shown at 1×. */
+const CAPTURE = { file: "01-editor-empty.png", width: 1743, height: 1050 };
+
+interface Crop {
+  readonly title: string;
+  /** Where the control sits in the capture, in 1× px. */
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly ours: () => ReactNode;
+}
+
+const CROPS: readonly Crop[] = [
+  {
+    title: "SegmentedControl",
+    x: 1355,
+    y: 64,
+    width: 190,
+    height: 44,
+    ours: () => (
+      <SegmentedControl
+        label="Edge"
+        options={["Plain", "Outline", "Glow"]}
+        defaultValue="Outline"
+      />
+    ),
+  },
+  {
+    title: "Slider and ValueBadge",
+    x: 1230,
+    y: 114,
+    width: 330,
+    height: 44,
+    ours: () => (
+      <Slider label="Scale" min={25} max={200} defaultValue={75} format="%" />
+    ),
+  },
+  {
+    title: "Chip",
+    x: 1262,
+    y: 428,
+    width: 80,
+    height: 36,
+    ours: () => (
+      <Inline gap={2} align="center">
+        <Text>Lean</Text>
+        <Chip disabled>Reset</Chip>
+      </Inline>
+    ),
+  },
+  {
+    title: "Button and SplitButton",
+    x: 1222,
+    y: 976,
+    width: 340,
+    height: 52,
+    ours: () => (
+      <Inline gap={2}>
+        <Button iconStart={Copy} disabled>
+          Copy
+        </Button>
+        <SplitButton
+          disabled
+          menuLabel="Export options"
+          items={[{ label: "Copy to clipboard", onSelect: () => undefined }]}
+        >
+          Export PNG
+        </SplitButton>
+      </Inline>
+    ),
+  },
+  {
+    title: "IconButton",
+    x: 1092,
+    y: 24,
+    width: 116,
+    height: 42,
+    ours: () => (
+      <Inline gap={1}>
+        <IconButton icon={Undo2} label="Undo" />
+        <IconButton icon={Redo2} label="Redo" disabled />
+        <IconButton icon={CircleHelp} label="Help" />
+      </Inline>
+    ),
+  },
+  {
+    title: "IconButton, small",
+    x: 1494,
+    y: 754,
+    width: 44,
+    height: 36,
+    ours: () => (
+      <IconButton icon={ArrowLeftRight} label="Swap hues" size="sm" />
+    ),
+  },
+];
+
+function CropView({ crop }: { readonly crop: Crop }): ReactElement {
+  const style: CSSProperties = {
+    inlineSize: `${String(crop.width)}px`,
+    blockSize: `${String(crop.height)}px`,
+    backgroundImage: `url("${String(referenceRoot)}/${CAPTURE.file}")`,
+    backgroundPosition: `-${String(crop.x)}px -${String(crop.y)}px`,
+    backgroundSize: `${String(CAPTURE.width)}px ${String(CAPTURE.height)}px`,
+  };
+  return (
+    <div
+      className="cp-crop"
+      style={style}
+      role="img"
+      aria-label={`Reference capture: ${crop.title}`}
+    />
+  );
+}
+
+/**
+ * Each control next to its crop from the local reference captures, in light and dark. Only the dev server
+ * shows this page, and only when the reference folder is there.
+ */
+export function ComparePage(): ReactElement {
+  return (
+    <Stack gap={8}>
+      <Stack gap={2}>
+        <Text variant="heading-1" asChild>
+          <h1>Compare</h1>
+        </Text>
+        <Text variant="body-lg">
+          Reference crops on the left, buttery&apos;s controls in light and dark
+          beside them. Local only: it reads the reference folder.
+        </Text>
+      </Stack>
+      {CROPS.map((crop) => (
+        <Stack key={crop.title} gap={3} asChild>
+          <section aria-label={crop.title}>
+            <Text variant="title" asChild>
+              <h2>{crop.title}</h2>
+            </Text>
+            <div className="cp-row">
+              <Surface level="section" pad={4} className="cp-cell">
+                <CropView crop={crop} />
+              </Surface>
+              <Surface level="section" pad={4} className="cp-cell">
+                {crop.ours()}
+              </Surface>
+              <ButteryProvider colorScheme="dark">
+                <Surface level="app" pad={4} className="cp-cell">
+                  {crop.ours()}
+                </Surface>
+              </ButteryProvider>
+            </div>
+          </section>
+        </Stack>
+      ))}
+    </Stack>
+  );
+}

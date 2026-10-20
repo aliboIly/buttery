@@ -1,5 +1,7 @@
+import { lazy, Suspense } from "react";
 import type { ReactElement } from "react";
 import type { ComponentKind } from "@buttery/core";
+import { referenceRoot } from "virtual:buttery-reference";
 import { ComponentPage } from "./ComponentPage.tsx";
 import { LevelsPage } from "./pages/LevelsPage.tsx";
 import { MotionPage } from "./pages/MotionPage.tsx";
@@ -32,6 +34,14 @@ const FOUNDATIONS: Readonly<
   motion: () => <MotionPage />,
 };
 
+const ComparePage =
+  import.meta.env.DEV && referenceRoot !== null
+    ? lazy(async () => {
+        const { ComparePage: Page } = await import("./pages/ComparePage.tsx");
+        return { default: Page };
+      })
+    : null;
+
 const KINDS: readonly (readonly [ComponentKind, string])[] = [
   ["primitive", "Primitives"],
   ["layer", "Layers"],
@@ -59,6 +69,24 @@ export const pageGroups: readonly PageGroup[] = [
         render: () => <ComponentPage entry={entry} />,
       })),
   })).filter((group) => group.pages.length > 0),
+  ...(ComparePage
+    ? [
+        {
+          title: "Local",
+          pages: [
+            {
+              route: "compare",
+              title: "Compare",
+              render: () => (
+                <Suspense fallback={null}>
+                  <ComparePage />
+                </Suspense>
+              ),
+            },
+          ],
+        },
+      ]
+    : []),
 ];
 
 export const pages: readonly Page[] = pageGroups.flatMap(
