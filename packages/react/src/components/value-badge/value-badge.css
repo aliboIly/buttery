@@ -1,0 +1,27 @@
+@layer bt.components {
+  .bt-value-badge {
+    display: inline-grid;
+    flex: none;
+    grid-template-areas: "value";
+    place-items: center;
+    block-size: var(--bt-h-badge);
+    padding-inline: var(--bt-space-1_5);
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-text-badge-size);
+    font-weight: var(--bt-text-badge-weight);
+    line-height: var(--bt-text-badge-line);
+    letter-spacing: var(--bt-text-badge-tracking);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .bt-value-badge > [data-bt-part] {
+    grid-area: value;
+  }
+
+  .bt-value-badge > [data-bt-part="reserve"] {
+    visibility: hidden;
+  }
+}

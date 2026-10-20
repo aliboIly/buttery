@@ -42,3 +42,5 @@ export type {
 } from "./components/segmented-control/SegmentedControl.tsx";
 export { SplitButton } from "./components/split-button/SplitButton.tsx";
 export type { SplitButtonProps } from "./components/split-button/SplitButton.tsx";
+export { ValueBadge } from "./components/value-badge/ValueBadge.tsx";
+export type { ValueBadgeProps } from "./components/value-badge/ValueBadge.tsx";
