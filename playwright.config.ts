@@ -38,6 +38,10 @@ const browsers = [
 
 const ci = Boolean(process.env["CI"]);
 
+function testPort(app: App): number {
+  return app.port + 1000;
+}
+
 export default defineConfig({
   forbidOnly: ci,
   reporter: ci ? "github" : "list",
@@ -47,13 +51,13 @@ export default defineConfig({
       testDir: `apps/${app.name}/e2e`,
       use: {
         ...browser.device,
-        baseURL: `http://localhost:${String(app.port)}`,
+        baseURL: `http://localhost:${String(testPort(app))}`,
       },
     })),
   ),
   webServer: apps.map((app) => ({
-    command: `pnpm --filter ${app.name} dev`,
-    url: `http://localhost:${String(app.port)}`,
-    reuseExistingServer: !ci,
+    command: `pnpm --filter ${app.name} exec vite --port ${String(testPort(app))} --strictPort`,
+    url: `http://localhost:${String(testPort(app))}`,
+    reuseExistingServer: false,
   })),
 });
