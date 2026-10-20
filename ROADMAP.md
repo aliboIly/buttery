@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 3 is done. Next: Phase 4, controls.
+**Now:** Phase 4 is done. Next: Phase 4.5, forms and text, then Phase 5.
 
 ---
 
@@ -28,14 +28,21 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Settle times verified against the spec
 
 ## v0.4 — Controls (Phase 4)
-- [ ] Button family, IconButton, SplitButton, with the forward/back arrow shared with ArrowLink
-- [ ] SegmentedControl, Slider + ValueBadge, Chip, NumberField
-- [ ] Tooltip, Kbd, ArrowLink
-- [ ] Compare page vs references
+- [x] Button family, IconButton, SplitButton, with the forward/back arrow shared with ArrowLink
+- [x] SegmentedControl, Slider + ValueBadge, Chip, NumberField
+- [x] Tooltip, Kbd, ArrowLink
+- [x] Compare page vs references
+
+## v0.4.5 — Forms and text (Phase 4.5)
+- [ ] TextField, PasswordField, TextArea, Field
+- [ ] Checkbox, Switch, Callout
+- [ ] TextStack
+- [ ] SignInForm and SignUpForm patterns, with an original sign-in demo page
 
 ## v0.5 — App patterns (Phase 5)
 - [ ] SwatchGrid, ColorDot, TiltPad, AnchorGrid
-- [ ] Menu, Select, Toast, FloatingToolbar
+- [x] Toast (`toast()` and `Toaster`, built early)
+- [ ] Menu, Select, FloatingToolbar
 - [ ] EmptyState/DropZone, Stage, Inspector, HeaderBar, AppShell
 - [ ] Card Studio demo (original), passes the full matrix at every size
 

@@ -54,8 +54,15 @@ Definition of done for every phase:
 
 **Accept:** a Compare page with each control next to its crop from the references (light + dark). The page is local only: it reads from `reference/`, hides itself when the folder is missing, and is left out of builds and CI. Keyboard + screen-reader tests; `expectButtery` green. The arrow (MOTION_SPEC §4.5): unit tests for its states, zero width change on hover, reduced motion and only the chevron on touch; Playwright samples it per frame against §4.5 and proves zero layout shift on hover; side-by-side frames against `reference/inspiration-nav/` with the differences listed.
 
+## Phase 4.5 — Forms and text
+- `TextField` (label above, hint, error, optional icons), `PasswordField` (a show and hide toggle), `TextArea` (grows with its text up to a limit, then scrolls), `Field` (label, hint and error wiring for any control), `Checkbox`, `Switch`, `Callout` (an inline message: info, success, warning, error), `TextStack` (a title, body and caption with the gaps between trimmed text, as on the Text stacks page).
+- Patterns: `SignInForm` and `SignUpForm` (email and password with autofill attributes, remember me, a forgot-password link, third-party sign-in buttons without anyone's brand mark, an error summary, inline field errors).
+- Playground: a page for each, and an original sign-in demo page.
+
+**Accept:** keyboard and screen-reader tests for each component (names, descriptions, error announcements, focus moving to the first invalid field on submit); autofill attributes checked; `expectButtery` green with errors showing and the password visible, at 390 and 1280, light and dark.
+
 ## Phase 5 — Inspector & app patterns
-- `SwatchGrid`, `ColorDot`, `TiltPad`, `AnchorGrid`, `Menu`, `Select` (footer slot), `Toast`, `FloatingToolbar`, `EmptyState`/`DropZone`, `Stage`, `Inspector` (Section/Row/Row.Split/Footer), `HeaderBar` (`OverflowCluster`, `dragRegion`), `AppShell`.
+- `SwatchGrid`, `ColorDot`, `TiltPad`, `AnchorGrid`, `Menu`, `Select` (footer slot), `FloatingToolbar` (`Toast` landed early, in Phase 4), `EmptyState`/`DropZone`, `Stage`, `Inspector` (Section/Row/Row.Split/Footer), `HeaderBar` (`OverflowCluster`, `dragRegion`), `AppShell`.
 - Demo in playground: **Card Studio** — an *original* app (style a title card: its text, background, edge style, scale, rotation and 3D tilt, placement, canvas shape and crop, then export an image) that exercises every component. Not a clone of the reference product.
 
 **Accept:** Card Studio matches the measured motion table (MOTION_SPEC §3) and passes the full matrix; resizing 1728 → 960 → 390 never overlaps or overflows (header actions collapse into "…", inspector becomes a sheet).
