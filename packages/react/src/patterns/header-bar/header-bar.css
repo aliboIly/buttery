@@ -1,0 +1,50 @@
+@layer bt.patterns {
+  .bt-header-bar {
+    --bt-header-bar-mark: 24px;
+
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+    block-size: var(--bt-h-header);
+    padding-inline: var(--bt-space-4);
+    border-radius: var(--bt-r-2xl);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  /* Under the desktop app's window controls, the bar starts after them. */
+  [data-bt-platform="desktop"] .bt-header-bar[data-drag-region] {
+    padding-inline-start: var(--bt-inset-titlebar);
+  }
+
+  .bt-header-bar > [data-bt-part="lead"] {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
+  .bt-header-bar > [data-bt-part="lead"] > [data-bt-part="mark"] {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-header-bar-mark);
+    block-size: var(--bt-header-bar-mark);
+  }
+
+  /* The actions take the room left after the title, so the "…" menu fills before the title truncates. */
+  .bt-header-bar > [data-bt-part="actions"] {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-header-bar > [data-bt-part="actions"] > [data-bt-part="cluster"] {
+    flex: 1 1 0;
+  }
+}

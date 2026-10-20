@@ -150,3 +150,15 @@ export type {
   InspectorRowSplitProps,
   InspectorSectionProps,
 } from "./patterns/inspector/Inspector.tsx";
+export {
+  HeaderBar,
+  HeaderBarAction,
+  HeaderBarActions,
+  HeaderBarSeparator,
+} from "./patterns/header-bar/HeaderBar.tsx";
+export type {
+  HeaderBarActionProps,
+  HeaderBarActionsProps,
+  HeaderBarComponent,
+  HeaderBarProps,
+} from "./patterns/header-bar/HeaderBar.tsx";
