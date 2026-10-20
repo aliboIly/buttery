@@ -59,7 +59,7 @@ Definition of done for every phase:
 - Patterns: `SignInForm` and `SignUpForm` (email and password with autofill attributes, remember me, a forgot-password link, third-party sign-in buttons without anyone's brand mark, an error summary, inline field errors).
 - Playground: a page for each, and an original sign-in demo page.
 
-**Accept:** keyboard and screen-reader tests for each component (names, descriptions, error announcements, focus moving to the first invalid field on submit); autofill attributes checked; `expectButtery` green with errors showing and the password visible, at 390 and 1280, light and dark.
+**Accept:** keyboard and screen-reader tests for each component (names, descriptions, error announcements, focus moving to an error summary on submit whose links lead to each invalid field); autofill attributes checked; `expectButtery` green with errors showing and the password visible, at 390 and 1280, light and dark.
 
 ## Phase 5 — Inspector & app patterns
 - `SwatchGrid`, `ColorDot`, `TiltPad`, `AnchorGrid`, `Menu`, `Select` (footer slot), `FloatingToolbar` (`Toast` landed early, in Phase 4), `EmptyState`/`DropZone`, `Stage`, `Inspector` (Section/Row/Row.Split/Footer), `HeaderBar` (`OverflowCluster`, `dragRegion`), `AppShell`.

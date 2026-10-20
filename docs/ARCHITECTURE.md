@@ -171,7 +171,7 @@ Same thing without React — recipes are plain classes/attributes:
 ## Component contract (every component, no exceptions)
 
 - Accepts `ref` as a regular prop (React 19 — no `forwardRef`); spreads `...rest` onto the root; accepts `className` and `style`.
-- Controlled **and** uncontrolled, with the same names everywhere: `value` / `defaultValue` / `onValueChange` for a selected value, and `open` / `defaultOpen` / `onOpenChange` for anything that opens (dialogs, menus, popovers, tooltips, sheets).
+- Controlled **and** uncontrolled, with the same names everywhere: `value` / `defaultValue` / `onValueChange` for a selected value, `checked` / `defaultChecked` / `onCheckedChange` for something on or off (checkboxes, switches, where `value` is what a form submits, as in HTML), and `open` / `defaultOpen` / `onOpenChange` for anything that opens (dialogs, menus, popovers, tooltips, sheets).
 - Shared prop vocabulary: `size`, `variant`, `disabled`, `label`, `asChild`. No synonyms.
 - `asChild` where it wraps a single element, through `Slot` from `@buttery/core` (Radix's, also taking its child in a one-item array, which is how `Slottable` hands it on).
 - Stamps a `bt-<name>` class merged with `className` (the styling hook: classes merge when components compose through `asChild`, so both keep their styles) and `data-bt="<Name>"` (what `LayoutGuard`, `@buttery/test` and devtools read), plus state attributes (`data-state`, `data-size`, `data-variant`, `data-disabled`) that styles combine with the class. Fixed-height controls also stamp `data-bt-control`; internal parts stamp `data-bt-part`; extended hit areas use `data-bt-hit`.
