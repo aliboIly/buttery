@@ -125,7 +125,7 @@
 
 .pg-toggle-option[aria-checked="true"] {
   background-color: var(--bt-bg-raised);
-  box-shadow: var(--bt-shadow-raised);
+  box-shadow: var(--bt-shadow-selected);
 }
 
 .pg-toggle-option[aria-checked="true"] > * {

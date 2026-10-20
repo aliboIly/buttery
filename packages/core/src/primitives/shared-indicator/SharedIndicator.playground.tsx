@@ -41,7 +41,12 @@ function EdgeDemo(): ReactElement {
                       borderRadius: "var(--bt-r-full)",
                     }}
                   >
-                    <Text variant="control">{option}</Text>
+                    <Text
+                      variant="control"
+                      tone={option === edge ? "default" : "secondary"}
+                    >
+                      {option}
+                    </Text>
                   </Pressable>
                 </Center>
               </SharedIndicator>

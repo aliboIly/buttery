@@ -47,7 +47,12 @@ export function StepPicker(): ReactElement {
                       borderRadius: "var(--bt-r-full)",
                     }}
                   >
-                    <Text variant="badge">{option}</Text>
+                    <Text
+                      variant="badge"
+                      tone={option === step ? "default" : "secondary"}
+                    >
+                      {option}
+                    </Text>
                   </Pressable>
                 </Center>
               </SharedIndicator>

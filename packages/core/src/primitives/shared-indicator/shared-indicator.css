@@ -1,7 +1,7 @@
 @layer bt.primitives {
   .bt-shared-indicator {
     --bt-shared-indicator-background: var(--bt-bg-raised);
-    --bt-shared-indicator-shadow: var(--bt-shadow-raised);
+    --bt-shared-indicator-shadow: var(--bt-shadow-selected);
 
     position: relative;
     z-index: var(--bt-z-raised);

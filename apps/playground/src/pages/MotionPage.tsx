@@ -159,7 +159,12 @@ function IndicatorDemo(): ReactElement {
                   className="mo-segment"
                   data-testid={`edge-${option}`}
                 >
-                  <Text variant="control">{option}</Text>
+                  <Text
+                    variant="control"
+                    tone={option === edge ? "default" : "secondary"}
+                  >
+                    {option}
+                  </Text>
                 </Pressable>
               </SharedIndicator>
             </RadioGroup.Item>

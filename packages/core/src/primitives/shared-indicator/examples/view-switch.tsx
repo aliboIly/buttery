@@ -50,7 +50,12 @@ export function ViewSwitch(): ReactElement {
                           borderRadius: "var(--bt-r-full)",
                         }}
                       >
-                        <Text variant="button">{label}</Text>
+                        <Text
+                          variant="button"
+                          tone={value === view ? "default" : "secondary"}
+                        >
+                          {label}
+                        </Text>
                       </Pressable>
                     </Center>
                   </SharedIndicator>
