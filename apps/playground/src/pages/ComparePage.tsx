@@ -1,34 +1,64 @@
 import { ArrowLeftRight, CircleHelp, Copy, Redo2, Undo2 } from "lucide-react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
+import { Inline, Kbd, Stack, Surface, Text } from "@buttery/core";
 import {
+  ArrowLink,
   Button,
   ButteryProvider,
   Chip,
   IconButton,
+  NumberField,
   SegmentedControl,
   Slider,
   SplitButton,
+  Tooltip,
 } from "@buttery/react";
 import { referenceRoot } from "virtual:buttery-reference";
 import "./compare-page.css";
 
-/** The editor capture: 2× pixels, shown at 1×. */
-const CAPTURE = { file: "01-editor-empty.png", width: 1743, height: 1050 };
+interface Capture {
+  readonly file: string;
+  /** The capture's size shown at CSS pixels. */
+  readonly width: number;
+  readonly height: number;
+}
+
+/** The empty editor: 2× pixels, shown at 1×. */
+const EDITOR: Capture = {
+  file: "01-editor-empty.png",
+  width: 1743,
+  height: 1050,
+};
+/** Recorded frames: about 1.17 pixels to a CSS pixel. */
+const ACTIVE: Capture = {
+  file: "frames/editor-active.png",
+  width: 1368,
+  height: 1031,
+};
+const TOAST: Capture = {
+  file: "frames/empty-state-toast.png",
+  width: 1368,
+  height: 1031,
+};
 
 interface Crop {
   readonly title: string;
-  /** Where the control sits in the capture, in 1× px. */
+  /** The capture it comes from, or `null` when no capture shows it. */
+  readonly capture: Capture | null;
+  /** Where the control sits in the capture, in CSS px. */
   readonly x: number;
   readonly y: number;
   readonly width: number;
   readonly height: number;
+  /** Why there's no crop, for rows without one. */
+  readonly note?: string;
   readonly ours: () => ReactNode;
 }
 
 const CROPS: readonly Crop[] = [
   {
     title: "SegmentedControl",
+    capture: EDITOR,
     x: 1355,
     y: 64,
     width: 190,
@@ -43,6 +73,7 @@ const CROPS: readonly Crop[] = [
   },
   {
     title: "Slider and ValueBadge",
+    capture: EDITOR,
     x: 1230,
     y: 114,
     width: 330,
@@ -53,6 +84,7 @@ const CROPS: readonly Crop[] = [
   },
   {
     title: "Chip",
+    capture: EDITOR,
     x: 1262,
     y: 428,
     width: 80,
@@ -66,6 +98,7 @@ const CROPS: readonly Crop[] = [
   },
   {
     title: "Button and SplitButton",
+    capture: EDITOR,
     x: 1222,
     y: 976,
     width: 340,
@@ -87,6 +120,7 @@ const CROPS: readonly Crop[] = [
   },
   {
     title: "IconButton",
+    capture: EDITOR,
     x: 1092,
     y: 24,
     width: 116,
@@ -101,6 +135,7 @@ const CROPS: readonly Crop[] = [
   },
   {
     title: "IconButton, small",
+    capture: EDITOR,
     x: 1494,
     y: 754,
     width: 44,
@@ -109,15 +144,122 @@ const CROPS: readonly Crop[] = [
       <IconButton icon={ArrowLeftRight} label="Swap hues" size="sm" />
     ),
   },
+  {
+    title: "Chip, enabled",
+    capture: ACTIVE,
+    x: 1051,
+    y: 419,
+    width: 86,
+    height: 31,
+    ours: () => (
+      <Inline gap={2} align="center">
+        <Text>Lean</Text>
+        <Chip>Reset</Chip>
+      </Inline>
+    ),
+  },
+  {
+    title: "Button and SplitButton, enabled",
+    capture: ACTIVE,
+    x: 1041,
+    y: 964,
+    width: 316,
+    height: 43,
+    ours: () => (
+      <Inline gap={2}>
+        <Button iconStart={Copy}>Copy</Button>
+        <SplitButton
+          menuLabel="Export options"
+          items={[{ label: "Copy to clipboard", onSelect: () => undefined }]}
+        >
+          Export PNG
+        </SplitButton>
+      </Inline>
+    ),
+  },
+  {
+    title: "NumberField",
+    capture: TOAST,
+    x: 694,
+    y: 293,
+    width: 191,
+    height: 66,
+    ours: () => (
+      <Inline gap={2}>
+        <NumberField label="W" defaultValue={1600} unit="px" />
+        <NumberField label="H" defaultValue={900} unit="px" />
+      </Inline>
+    ),
+  },
+  {
+    title: "Toast",
+    capture: TOAST,
+    x: 590,
+    y: 959,
+    width: 190,
+    height: 50,
+    ours: () => (
+      <div className="bt-toast" data-bt-part="toast">
+        <div data-bt-part="pill">
+          <span data-bt-part="message">Card deleted</span>
+          <button
+            type="button"
+            className="bt-press bt-focus"
+            data-bt-part="action"
+          >
+            Undo
+          </button>
+        </div>
+      </div>
+    ),
+  },
+  {
+    title: "Button and ArrowLink with the arrow",
+    capture: null,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    note: "The arrow follows a recording of another product's nav; its look isn't buttery's, so it's compared frame by frame for behavior in the phase report instead.",
+    ours: () => (
+      <Inline gap={4} align="center">
+        <Button variant="primary" arrow="forward">
+          Get started
+        </Button>
+        <ArrowLink href="#/button">More about buttons</ArrowLink>
+      </Inline>
+    ),
+  },
+  {
+    title: "Tooltip and Kbd",
+    capture: null,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    note: "No capture shows a tooltip or a keycap.",
+    ours: () => (
+      <Inline gap={4} align="center">
+        <Tooltip label="Undo" defaultOpen>
+          <IconButton icon={Undo2} label="Undo" />
+        </Tooltip>
+        <Kbd keys={["mod", "Z"]} />
+      </Inline>
+    ),
+  },
 ];
 
 function CropView({ crop }: { readonly crop: Crop }): ReactElement {
+  const { capture } = crop;
+  if (!capture) {
+    return <Text variant="caption">{crop.note}</Text>;
+  }
   const style: CSSProperties = {
     inlineSize: `${String(crop.width)}px`,
     blockSize: `${String(crop.height)}px`,
-    backgroundImage: `url("${String(referenceRoot)}/${CAPTURE.file}")`,
+    backgroundImage: `url("${String(referenceRoot)}/${capture.file}")`,
     backgroundPosition: `-${String(crop.x)}px -${String(crop.y)}px`,
-    backgroundSize: `${String(CAPTURE.width)}px ${String(CAPTURE.height)}px`,
+    backgroundSize: `${String(capture.width)}px ${String(capture.height)}px`,
   };
   return (
     <div
