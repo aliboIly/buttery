@@ -7,6 +7,8 @@ export interface ReportedViolation extends LayoutViolation {
   readonly theme: string;
   readonly density: string;
   readonly engine: string;
+  /** The state a scripted interaction left the page in, such as "after open the export menu". */
+  readonly state?: string;
 }
 
 /** A human-readable report: one block per page and condition, one line per problem with its fix. */
@@ -16,7 +18,8 @@ export function formatViolations(
   if (violations.length === 0) return "buttery found no layout problems.";
   const groups = new Map<string, ReportedViolation[]>();
   for (const violation of violations) {
-    const key = `${violation.page} at ${violation.viewport}, ${violation.theme}, ${violation.density}, ${violation.engine}`;
+    const state = violation.state ? ` ${violation.state}` : "";
+    const key = `${violation.page}${state} at ${violation.viewport}, ${violation.theme}, ${violation.density}, ${violation.engine}`;
     groups.set(key, [...(groups.get(key) ?? []), violation]);
   }
   const noun = violations.length === 1 ? "problem" : "problems";

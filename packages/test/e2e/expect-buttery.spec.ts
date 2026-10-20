@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { expectButtery } from "../src/index.ts";
+import type { ReportedViolation } from "../src/index.ts";
 
 const tokens = readFileSync(
   new URL("../../core/src/tokens/tokens.css", import.meta.url),
@@ -16,6 +17,9 @@ function fixture(body: string, { settled = true } = {}): string {
     </html>`;
 }
 
+const PANEL =
+  "position: absolute; inset-block-start: 400px; inline-size: 120px; block-size: 40px; background: var(--bt-bg-floating)";
+
 const BROKEN = fixture(`
   <main style="display: block; padding: 16px">
     <div style="position: relative; block-size: 60px">
@@ -24,14 +28,14 @@ const BROKEN = fixture(`
     </div>
     <div data-bt="Card" style="inline-size: 100px"><div style="inline-size: 300px; block-size: 10px"></div></div>
     <div data-bt="Row" style="display: flex; gap: 7px"><span>One</span><span>Two</span></div>
-    <button type="button" style="inline-size: 16px; block-size: 16px; padding: 0">x</button>
-    <button type="button" style="inline-size: 40px; block-size: 40px"></button>
-    <div style="position: relative; z-index: 3">Raised by hand</div>
-    <span style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
+    <button type="button" id="tiny" style="inline-size: 16px; block-size: 16px; padding: 0">x</button>
+    <button type="button" id="unnamed" style="inline-size: 40px; block-size: 40px"></button>
+    <div id="raised" style="position: relative; z-index: 3">Raised by hand</div>
+    <span id="clipped" style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
     <button type="button" id="load" style="block-size: 36px">Load more</button>
-    <div data-bt="List" id="list"><div data-bt="Item">First row</div><div data-bt="Item">Second row</div></div>
+    <div data-bt="List" id="list"><div data-bt="Item" id="first">First row</div><div data-bt="Item">Second row</div></div>
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown); pointer-events: none">
-      <div data-bt="Panel" style="position: absolute; inset-inline-start: 2px; inset-block-start: 400px; inline-size: 120px; block-size: 40px"></div>
+      <div data-bt="Panel" style="${PANEL}; inset-inline-start: 2px"></div>
     </div>
   </main>
   <script>
@@ -49,12 +53,16 @@ const FIXED = fixture(`
       <div data-bt="Chip" style="inline-size: 80px; block-size: 40px"></div>
       <div data-bt="Badge" style="inline-size: 80px; block-size: 40px"></div>
     </div>
-    <button type="button" style="block-size: var(--bt-h-sm)">Save</button>
-    <span data-bt-truncate title="A label much longer than its box" style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
+    <div data-bt="Card" style="inline-size: 100px"><div style="inline-size: 100%; block-size: 10px"></div></div>
+    <div data-bt="Row" style="display: flex; gap: 8px"><span>One</span><span>Two</span></div>
+    <button type="button" id="tiny" aria-label="Close" style="position: relative; inline-size: 16px; block-size: 16px; padding: 0; border: 0"><svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" /></svg><span data-bt-hit style="position: absolute; inset: -6px"></span></button>
+    <button type="button" id="unnamed" aria-label="Add a row" style="inline-size: 40px; block-size: 40px"></button>
+    <div id="raised" style="position: relative; z-index: var(--bt-z-raised)">Raised with a token</div>
+    <span id="clipped" data-bt-truncate title="A label much longer than its box" style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
     <button type="button" id="load" style="block-size: 36px">Load more</button>
-    <div data-bt="List" id="list" style="display: flex; flex-direction: column"><div data-bt="Item">First row</div></div>
+    <div data-bt="List" id="list" style="display: flex; flex-direction: column"><div data-bt="Item" id="first">First row</div><div data-bt="Item">Second row</div></div>
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown); pointer-events: none">
-      <div data-bt="Panel" style="position: absolute; inset-inline-start: 8px; inset-block-start: 400px; inline-size: 120px; block-size: 40px"></div>
+      <div data-bt="Panel" style="${PANEL}; inset-inline-start: 8px"></div>
     </div>
   </main>
   <script>
@@ -70,36 +78,77 @@ async function loadMore(page: Page): Promise<void> {
   await page.getByRole("button", { name: "Load more" }).click();
 }
 
-test("fails every rule on the broken fixture, with a fix for each", async ({
+async function failure(run: Promise<unknown>): Promise<Error> {
+  const reason: unknown = await run.then(
+    () => null,
+    (error: unknown) => error,
+  );
+  if (!(reason instanceof Error)) throw new Error("expectButtery passed");
+  return reason;
+}
+
+function isReported(value: unknown): value is ReportedViolation {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "rule" in value &&
+    "a" in value &&
+    "fix" in value &&
+    typeof value.fix === "string"
+  );
+}
+
+function reportedViolations(): ReportedViolation[] {
+  const parsed: unknown = JSON.parse(
+    readFileSync(test.info().outputPath("buttery-violations.json"), "utf8"),
+  );
+  if (!Array.isArray(parsed) || !parsed.every(isReported))
+    throw new Error("buttery-violations.json isn't a list of violations");
+  return parsed;
+}
+
+test("fails each broken element under its rule, with a fix", async ({
   page,
 }) => {
   await page.setContent(BROKEN);
-  const error = await expectButtery(page, {
-    name: "broken",
-    interactions: [{ name: "Load more", run: loadMore }],
-  }).then(
-    () => null,
-    (reason: unknown) => (reason instanceof Error ? reason : null),
+  const error = await failure(
+    expectButtery(page, {
+      name: "broken",
+      interactions: [{ name: "load more", run: loadMore }],
+    }),
   );
-  expect(error).not.toBeNull();
-  const report = error?.message ?? "";
-  for (const rule of [
-    "overlap",
-    "overflow",
-    "clipping",
-    "scale",
-    "target-size",
-    "viewport-fit",
-    "layering",
-    "accessibility",
-    "stability",
-  ]) {
-    expect(report, `the report should include ${rule}`).toContain(`  ${rule}`);
-  }
-  expect(report).toContain("broken at 1280x720, light, comfortable");
-  expect(report).toContain('[data-bt="Chip"] and [data-bt="Badge"]');
-  expect(report).toContain("moved 0px across and 24px down after Load more");
-  expect(report.match(/Fix: /g)?.length).toBeGreaterThanOrEqual(9);
+  const found = reportedViolations()
+    .filter((violation) => violation.rule !== "accessibility")
+    .map(({ rule, a, b }) => ({ rule, a, ...(b ? { b } : {}) }));
+  expect(found).toEqual(
+    expect.arrayContaining([
+      { rule: "overlap", a: '[data-bt="Chip"]', b: '[data-bt="Badge"]' },
+      { rule: "overflow", a: '[data-bt="Card"]' },
+      { rule: "scale", a: '[data-bt="Row"]' },
+      { rule: "target-size", a: "#tiny" },
+      { rule: "layering", a: "#raised" },
+      { rule: "clipping", a: "#clipped" },
+      { rule: "viewport-fit", a: '[data-bt="Panel"]' },
+      { rule: "stability", a: "#first" },
+    ]),
+  );
+  expect(
+    reportedViolations().some(
+      (violation) =>
+        violation.rule === "accessibility" && violation.a === "#unnamed",
+    ),
+  ).toBe(true);
+  expect(
+    reportedViolations().find((violation) => violation.rule === "stability"),
+  ).toMatchObject({
+    state: "after load more",
+    message: "moved 0px across and 24px down after load more",
+  });
+  expect(error.message).toContain("broken at 1280x720, light, comfortable");
+  expect(error.message).toContain("broken after load more at 1280x720");
+  expect(
+    reportedViolations().every((violation) => violation.fix.length > 20),
+  ).toBe(true);
 });
 
 test("passes the fixed fixture in both themes and densities", async ({
@@ -110,8 +159,70 @@ test("passes the fixed fixture in both themes and densities", async ({
     name: "fixed",
     themes: ["light", "dark"],
     densities: ["comfortable", "compact"],
-    interactions: [{ name: "Load more", run: loadMore }],
+    interactions: [{ name: "load more", run: loadMore }],
   });
+});
+
+test("checks the state an interaction leaves the page in", async ({ page }) => {
+  await page.setContent(
+    fixture(`
+      <button type="button" id="open" style="block-size: 36px">Export</button>
+      <script>
+        document.getElementById("open").addEventListener("click", () => {
+          const layer = document.createElement("div");
+          layer.setAttribute("data-bt-layer", "dropdown");
+          layer.style.cssText = "position: fixed; inset: 0; z-index: var(--bt-z-dropdown)";
+          layer.innerHTML = '<div data-bt="Menu" style="${PANEL}; inset-inline-start: -20px"></div>';
+          document.body.append(layer);
+        });
+      </script>`),
+  );
+  const error = await failure(
+    expectButtery(page, {
+      name: "menu",
+      rules: ["viewport-fit"],
+      interactions: [
+        {
+          name: "open the export menu",
+          run: async (target) => {
+            await target.getByRole("button", { name: "Export" }).click();
+          },
+        },
+      ],
+    }),
+  );
+  expect(error.message).toContain("menu after open the export menu at");
+  expect(reportedViolations()).toEqual([
+    expect.objectContaining({
+      rule: "viewport-fit",
+      a: '[data-bt="Menu"]',
+      state: "after open the export menu",
+    }),
+  ]);
+});
+
+test("says how to fix a page that undoes the density it's checked in", async ({
+  page,
+}) => {
+  await page.setContent(
+    fixture(`
+      <p>Settings</p>
+      <script>
+        new MutationObserver(() => {
+          if (document.documentElement.dataset.btDensity !== "comfortable")
+            document.documentElement.dataset.btDensity = "comfortable";
+        }).observe(document.documentElement, { attributeFilter: ["data-bt-density"] });
+      </script>`),
+  );
+  await expect(
+    expectButtery(page, {
+      name: "density",
+      themes: ["dark"],
+      densities: ["compact"],
+    }),
+  ).rejects.toThrow(
+    /changed data-bt-density on <html> to "comfortable" after expectButtery set it to "compact".*Fix:/,
+  );
 });
 
 test("says how to fix a page that never reports settled", async ({ page }) => {

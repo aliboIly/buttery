@@ -26,10 +26,14 @@ const LAYOUT_RULES: readonly LayoutRule[] = [
   "layering",
 ];
 
-/** A scripted interaction for the stability check. */
+/**
+ * A scripted interaction. `expectButtery` runs every check on the state it leaves the page in (an open
+ * menu, a toast) and reports what moved because of it.
+ */
 export interface ButteryInteraction {
-  /** Shown in the report, such as "Open the export menu". */
+  /** Shown in the report, such as "open the export menu". */
   readonly name: string;
+  /** Drives the page, such as clicking the trigger of a menu. */
   readonly run: (page: Page) => Promise<void>;
   /** Selectors of elements that are meant to move: the target and whatever it animates. */
   readonly allowMove?: readonly string[] | undefined;
@@ -40,7 +44,10 @@ export interface ExpectButteryOptions extends Partial<ButteryMatrix> {
   readonly name?: string | undefined;
   /** Rules to run. Defaults to all of them. */
   readonly rules?: readonly ButteryRule[] | undefined;
-  /** Interactions to run once, at the first viewport, theme and density, for the stability check. */
+  /**
+   * Interactions to run in order, once, at the first viewport, theme and density. Each state they leave
+   * gets every check, and the stability check compares positions before and after.
+   */
   readonly interactions?: readonly ButteryInteraction[] | undefined;
   /** How long to wait for buttery to report settled, in ms. Defaults to 5000. */
   readonly settleTimeout?: number | undefined;
@@ -259,11 +266,33 @@ export async function expectButtery(
       document.documentElement.setAttribute("data-bt-density", value);
     }, density);
     await waitForSettled(page, timeout);
+    const applied: unknown = await page.evaluate(() =>
+      document.documentElement.getAttribute("data-bt-density"),
+    );
+    if (applied !== density) {
+      throw new Error(
+        `[buttery:expectButtery] the page changed data-bt-density on <html> to ${JSON.stringify(applied)} after expectButtery set it to "${density}", so it can't be checked in ${density} density. Fix: write data-bt-density only when the density setting itself changes, as ButteryProvider does.`,
+      );
+    }
+  };
+
+  const checkState = async (): Promise<LayoutViolation[]> => {
+    const found =
+      layoutRules.length > 0
+        ? await check(page, { tokens, rules: layoutRules })
+        : [];
+    if (rules.has("accessibility")) found.push(...(await accessibility(page)));
+    return found;
   };
 
   const record = async (
     found: readonly LayoutViolation[],
-    conditions: { viewport: ButteryViewport; theme: string; density: string },
+    conditions: {
+      readonly viewport: ButteryViewport;
+      readonly theme: string;
+      readonly density: string;
+      readonly state?: string | undefined;
+    },
     suffix = "",
   ): Promise<void> => {
     if (found.length === 0) return;
@@ -273,6 +302,7 @@ export async function expectButtery(
       theme: conditions.theme,
       density: conditions.density,
       engine,
+      ...(conditions.state === undefined ? {} : { state: conditions.state }),
     };
     reported.push(...found.map((violation) => ({ ...violation, ...context })));
     if (info) {
@@ -287,13 +317,7 @@ export async function expectButtery(
     for (const theme of themes) {
       for (const density of densities) {
         await setConditions(viewport, theme, density);
-        const found =
-          layoutRules.length > 0
-            ? await check(page, { tokens, rules: layoutRules })
-            : [];
-        if (rules.has("accessibility"))
-          found.push(...(await accessibility(page)));
-        await record(found, { viewport, theme, density });
+        await record(await checkState(), { viewport, theme, density });
       }
     }
   }
@@ -302,7 +326,6 @@ export async function expectButtery(
   const [firstTheme] = themes;
   const [firstDensity] = densities;
   if (
-    rules.has("stability") &&
     options.interactions?.length &&
     firstViewport &&
     firstTheme &&
@@ -311,25 +334,31 @@ export async function expectButtery(
     await setConditions(firstViewport, firstTheme, firstDensity);
     for (const interaction of options.interactions) {
       const allow = interaction.allowMove ?? [];
+      const state = `after ${interaction.name}`;
       await snapshot(page);
       await interaction.run(page);
       await waitForSettled(page, timeout);
-      const shifted = await moved(page, {
-        allow,
-        during: `after ${interaction.name}`,
-      });
-      await snapshot(page);
-      await page.waitForTimeout(150);
-      shifted.push(
-        ...(await moved(page, {
-          allow,
-          during: "after buttery reported settled",
-        })),
-      );
+      const found = await checkState();
+      if (rules.has("stability")) {
+        found.push(...(await moved(page, { allow, during: state })));
+        await snapshot(page);
+        await page.waitForTimeout(150);
+        found.push(
+          ...(await moved(page, {
+            allow,
+            during: `${state}, once buttery reported settled`,
+          })),
+        );
+      }
       await record(
-        shifted,
-        { viewport: firstViewport, theme: firstTheme, density: firstDensity },
-        `-stability-${interaction.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+        found,
+        {
+          viewport: firstViewport,
+          theme: firstTheme,
+          density: firstDensity,
+          state,
+        },
+        `-${interaction.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
       );
     }
   }
