@@ -153,6 +153,41 @@ export const colors = {
     dark: "#4f89ff",
     description: "Focus ring, tilt arc, selection highlights.",
   },
+  "accent-subtle": {
+    light: "#e9f0fd",
+    dark: "#16223b",
+    description: "Background of an info callout.",
+  },
+  danger: {
+    light: "#c72a1c",
+    dark: "#ff7a6e",
+    description: "Errors: a field's border and message, error icons.",
+  },
+  "danger-subtle": {
+    light: "#fdeceb",
+    dark: "#3a1916",
+    description: "Background of an error callout.",
+  },
+  success: {
+    light: "#177245",
+    dark: "#4cc38a",
+    description: "Success text and icons, a met requirement.",
+  },
+  "success-subtle": {
+    light: "#e7f5ed",
+    dark: "#132c20",
+    description: "Background of a success callout.",
+  },
+  warning: {
+    light: "#9a4d00",
+    dark: "#f2a33a",
+    description: "Warning text and icons.",
+  },
+  "warning-subtle": {
+    light: "#fdf1e2",
+    dark: "#33230f",
+    description: "Background of a warning callout.",
+  },
   selection: {
     light: "rgba(40, 98, 224, 0.2)",
     dark: "rgba(79, 137, 255, 0.3)",
@@ -294,6 +329,14 @@ const TEXT_SURFACES: readonly ColorToken[] = [
   "bg-control-active",
 ];
 
+/** Where tone text sits: forms and callouts on the app, its surfaces and its controls. */
+const TONE_SURFACES: readonly ColorToken[] = [
+  "bg-app",
+  "bg-surface",
+  "bg-section",
+  "bg-control",
+];
+
 export const contrastPairs: readonly ContrastPair[] = [
   ...textOn("text-strong", TEXT_SURFACES),
   ...textOn("text", TEXT_SURFACES),
@@ -303,6 +346,16 @@ export const contrastPairs: readonly ContrastPair[] = [
   { text: "on-primary", on: "primary-hover", minimum: 4.5 },
   { text: "inverse-text", on: "inverse-bg", minimum: 4.5 },
   { text: "inverse-text-secondary", on: "inverse-bg", minimum: 4.5 },
+  ...textOn("danger", [...TONE_SURFACES, "danger-subtle"]),
+  ...textOn("success", [...TONE_SURFACES, "success-subtle"]),
+  ...textOn("warning", [...TONE_SURFACES, "warning-subtle"]),
+  ...textOn("text", [
+    "accent-subtle",
+    "danger-subtle",
+    "success-subtle",
+    "warning-subtle",
+  ]),
+  { text: "accent", on: "accent-subtle", minimum: 4.5 },
   { text: "accent", on: "bg-surface", minimum: 3 },
   { text: "accent", on: "bg-app", minimum: 3 },
   { text: "dot-active", on: "bg-surface", minimum: 3 },

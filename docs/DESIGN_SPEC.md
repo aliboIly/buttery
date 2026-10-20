@@ -48,6 +48,10 @@ Never copy either product's branding, names, icons, illustrations, copy or gradi
 | `--bt-wash` | `rgba(255,255,255,0.55)` | Blur scrim wash behind menus |
 | `--bt-dot` / `--bt-dot-active` | `#e8e8e8` / `#303030` | Page dots, idle anchor dots |
 | `--bt-ring-selected` | `#cacaca` | Selected swatch ring, crop handle border, drop-zone dashes |
+| `--bt-danger` / `--bt-danger-subtle` | `#c72a1c` / `#fdeceb` | A field's error border and message, error icons / an error callout's background (_derived_, Phase 4.5) |
+| `--bt-success` / `--bt-success-subtle` | `#177245` / `#e7f5ed` | Success text and icons, a met requirement / a success callout (_derived_) |
+| `--bt-warning` / `--bt-warning-subtle` | `#9a4d00` / `#fdf1e2` | Warning text and icons / a warning callout (_derived_) |
+| `--bt-accent-subtle` | `#e9f0fd` | An info callout's background (_derived_) |
 
 Knob (slider thumb, tilt knob, active anchor dot):
 
@@ -90,6 +94,7 @@ buttery's own set, derived in OKLCH rather than taken from the references: 24 tw
 | accent / selection (Phase 1) | `#4f89ff` (the light accent at OKLCH L 0.65, 5.3:1 on the surface) / `rgba(79,137,255,0.3)` |
 | text-disabled-subtle (Phase 1) | `#4d4d53`: one step closer to the background than `text-disabled` (`#55555b`), as in light |
 | skeleton / skeleton-strong (Phase 1) | `#232326` / `#2a2a2d` |
+| danger, success, warning and their `-subtle` backgrounds, accent-subtle (Phase 4.5) | `#ff7a6e` / `#3a1916`, `#4cc38a` / `#132c20`, `#f2a33a` / `#33230f`, `#16223b`: each tone passes 4.5:1 on every surface and on its own background, and text passes on each background |
 | shadow-card (Phase 1) | `0 0 0 1px rgba(255,255,255,.06), 0 1px 2px rgba(0,0,0,.24)`: a light ring replaces the black one, which disappears on `#19191b`, and the drop stays soft so a card's well reads evenly |
 | shadow-raised / floating / dialog (Phase 1) | light ring at 9%, 9% and 10% over drops at 60%, 50% + 30%, and 60% black |
 | shadow-inset (Phase 1) | `inset 0 0 0 1px rgba(255,255,255,.06)` |
