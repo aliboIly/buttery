@@ -15,11 +15,15 @@
     "packages/*/scripts/**/*.ts",
     "apps/*/*.config.ts",
     "apps/*/package.json",
-    "apps/*/e2e/**/*.ts"
+    "apps/*/e2e/**/*.ts",
+    "packages/*/e2e/**/*.ts"
   ],
   "references": [
     {
       "path": "./packages/core"
+    },
+    {
+      "path": "./packages/test"
     }
   ]
 }
