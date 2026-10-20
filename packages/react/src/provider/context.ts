@@ -7,9 +7,13 @@ export type Platform = "web" | "desktop";
 
 /** What `ButteryProvider` resolved from its props and the OS. */
 export interface ButteryContextValue {
+  /** The color scheme in use. */
   readonly colorScheme: ColorScheme;
+  /** The density in use. */
   readonly density: Density;
+  /** Where the app runs. */
   readonly platform: Platform;
+  /** Whether motion is reduced. */
   readonly reducedMotion: boolean;
 }
 

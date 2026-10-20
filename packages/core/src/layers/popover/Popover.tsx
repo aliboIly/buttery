@@ -25,6 +25,7 @@ export interface PopoverProps {
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
   /** Keep focus inside and make the page inert while open. Defaults to `false`. */
   readonly modal?: boolean | undefined;
+  /** The trigger and content: `Popover.Trigger`, `Popover.Content` and, optionally, `Popover.Anchor`. */
   readonly children?: ReactNode;
 }
 
@@ -125,9 +126,13 @@ export function PopoverContent({
 
 export interface PopoverComponent {
   (props: PopoverProps): ReactElement;
+  /** The control that opens the popover. */
   readonly Trigger: typeof PopoverTrigger;
+  /** The floating panel. */
   readonly Content: typeof PopoverContent;
+  /** Positions the popover against another element. */
   readonly Anchor: typeof PopoverAnchor;
+  /** Closes the popover when pressed. */
   readonly Close: typeof PopoverClose;
 }
 

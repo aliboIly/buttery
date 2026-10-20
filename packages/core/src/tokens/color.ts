@@ -1,6 +1,9 @@
 export interface ColorDefinition {
+  /** The light theme value. */
   readonly light: string;
+  /** The dark theme value. */
   readonly dark: string;
+  /** What the color is for. */
   readonly description: string;
 }
 
@@ -256,8 +259,11 @@ export const colors = {
 export type ColorToken = keyof typeof colors;
 
 export interface ContrastPair {
+  /** The text color. */
   readonly text: ColorToken;
+  /** The background it sits on. */
   readonly on: ColorToken;
+  /** The contrast ratio it has to reach: 4.5 for text, 3 for large text and icons. */
   readonly minimum: 3 | 4.5;
 }
 

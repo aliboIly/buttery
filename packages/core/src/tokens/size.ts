@@ -1,8 +1,11 @@
 export type Density = "comfortable" | "compact";
 
 export interface HeightDefinition {
+  /** Height in px at comfortable density. */
   readonly comfortable: number;
+  /** Height in px at compact density. */
   readonly compact: number;
+  /** What the height is for. */
   readonly description: string;
 }
 
@@ -50,8 +53,11 @@ export const heights = {
 export type HeightToken = keyof typeof heights;
 
 export interface WidthDefinition {
+  /** The CSS variable that holds the width. */
   readonly cssVar: `--bt-${string}`;
+  /** Width in px. */
   readonly value: number;
+  /** What the width is for. */
   readonly description: string;
 }
 

@@ -7,7 +7,9 @@ export type LaneName = (typeof laneNames)[number];
 
 /** A lane's element and the toast layer it sits in, for what lane items open. */
 export interface Lane {
+  /** The lane's element, which its items render into. */
   readonly element: HTMLElement;
+  /** The toast layer the lane sits in. */
   readonly layer: LayerInfo;
 }
 

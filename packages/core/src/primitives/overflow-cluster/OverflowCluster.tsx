@@ -231,6 +231,7 @@ export function OverflowClusterItem({
 
 export interface OverflowClusterComponent {
   (props: OverflowClusterProps): ReactElement;
+  /** One item in the cluster. */
   readonly Item: typeof OverflowClusterItem;
 }
 

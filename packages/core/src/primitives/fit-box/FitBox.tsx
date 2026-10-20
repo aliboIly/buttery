@@ -16,6 +16,7 @@ export interface FitBoxProps extends ComponentPropsWithRef<"div"> {
   readonly inset?: SpaceValue | undefined;
   /** Props for the content box itself, such as a ref to measure it. */
   readonly contentProps?: ComponentPropsWithRef<"div"> | undefined;
+  /** What to draw in the content box; it fills the box. */
   readonly children?: ReactNode;
 }
 

@@ -3,9 +3,13 @@ import type { Oklch } from "../color/color.ts";
 
 /** A two-stop gradient preset. `from` sits top-left and `to` bottom-right. */
 export interface GradientPreset {
+  /** Stable identifier, such as `"lilac"`. */
   readonly id: string;
+  /** Display name, shown in tooltips. */
   readonly name: string;
+  /** The top-left stop. */
   readonly from: Oklch;
+  /** The bottom-right stop. */
   readonly to: Oklch;
   /** `from` as a gamut-mapped hex color. */
   readonly fromHex: string;
@@ -15,8 +19,11 @@ export interface GradientPreset {
 
 /** A solid color preset. */
 export interface SolidPreset {
+  /** Stable identifier, such as `"stone"`. */
   readonly id: string;
+  /** Display name, shown in tooltips. */
   readonly name: string;
+  /** The color. */
   readonly color: Oklch;
   /** `color` as a gamut-mapped hex color. */
   readonly hex: string;

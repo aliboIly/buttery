@@ -12,23 +12,30 @@ export type ComponentKind = "primitive" | "layer" | "component" | "pattern";
  * and JSDoc read from the types.
  */
 export interface ComponentMeta {
+  /** The component's export name, such as `"OverflowCluster"`. */
   readonly name: string;
+  /** Which layer of the system it belongs to. */
   readonly kind: ComponentKind;
   /** One sentence: what it is for. */
   readonly purpose: string;
+  /** Situations it's the right choice for. */
   readonly useWhen: readonly string[];
+  /** Situations to use something else, and what. */
   readonly avoidWhen: readonly string[];
   /** Names of components to use instead or alongside. */
   readonly related: readonly string[];
   /** Keyboard and screen-reader behavior. */
   readonly a11y: string;
+  /** Its motion class, from MOTION_SPEC. */
   readonly motion: MotionClass;
 }
 
 /** One titled demo on a component's playground page. */
 export interface DemoSection {
+  /** The demo's heading on the page. */
   readonly title: string;
   /** What the demo shows, in one sentence. */
   readonly description?: string;
+  /** Renders the demo. */
   readonly render: () => ReactElement;
 }

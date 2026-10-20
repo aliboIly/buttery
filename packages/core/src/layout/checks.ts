@@ -13,6 +13,7 @@ export type ButteryRule = LayoutRule | "accessibility" | "stability";
 
 /** One problem, in the format `LayoutGuard`, `expectButtery` and `buttery check --json` share. */
 export interface LayoutViolation {
+  /** The rule that failed, such as `"overlap"`. */
   readonly rule: ButteryRule;
   /** Selector of the offending element. */
   readonly a: string;

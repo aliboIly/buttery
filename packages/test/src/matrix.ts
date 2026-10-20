@@ -2,7 +2,9 @@ import type { Density } from "@buttery/core";
 
 /** A viewport size in CSS pixels. */
 export interface ButteryViewport {
+  /** Width in CSS pixels. */
   readonly width: number;
+  /** Height in CSS pixels. */
   readonly height: number;
 }
 
@@ -11,8 +13,11 @@ export type ButteryColorScheme = "light" | "dark";
 
 /** The combinations `expectButtery` runs: every viewport in every theme and density. */
 export interface ButteryMatrix {
+  /** The viewport sizes to check. */
   readonly viewports: readonly ButteryViewport[];
+  /** The color schemes to check. */
   readonly themes: readonly ButteryColorScheme[];
+  /** The densities to check. */
   readonly densities: readonly Density[];
 }
 

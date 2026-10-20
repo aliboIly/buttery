@@ -23,6 +23,7 @@ export type ColorSchemePreference = ColorScheme | "system";
 export type ReducedMotionPreference = "user" | "always" | "never";
 
 export interface ButteryProviderProps {
+  /** The app, or the part of it these settings apply to. */
   readonly children?: ReactNode;
   /** A theme from `createTheme`, applied on top of buttery's defaults. */
   readonly theme?: ButteryTheme;

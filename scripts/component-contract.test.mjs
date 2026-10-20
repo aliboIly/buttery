@@ -31,6 +31,29 @@ function componentFolders() {
 
 const folders = componentFolders();
 
+/** Members of exported interfaces in `source` that have no JSDoc comment right before them. */
+function undocumentedMembers(source) {
+  const missing = [];
+  const lines = source.split("\n");
+  let current = null;
+  let depth = 0;
+  for (const [index, line] of lines.entries()) {
+    const declared = /^export interface (\w+)\b/.exec(line);
+    if (declared) {
+      current = declared[1];
+      depth = 0;
+    }
+    if (!current) continue;
+    const member = /^ {2}(?:readonly )?([\w"-]+)\??:/.exec(line);
+    if (member && depth === 1 && !lines[index - 1]?.trim().endsWith("*/"))
+      missing.push(`${current}.${member[1]}`);
+    depth +=
+      (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length;
+    if (depth <= 0 && line.trim().startsWith("}")) current = null;
+  }
+  return missing;
+}
+
 describe("component contract", () => {
   it("finds the components", () => {
     expect(folders.length).toBeGreaterThan(0);
@@ -59,6 +82,21 @@ describe("component contract", () => {
           `${name} needs a JSDoc comment right before "export function ${name}" (or "export const ${name}:" for compound components)`,
         ).toMatch(
           new RegExp(`\\*/\\s*export (?:function ${name}\\(|const ${name}: )`),
+        );
+      });
+
+      it("documents every prop", () => {
+        const missing = readdirSync(folder)
+          .filter(
+            (file) =>
+              /\.tsx?$/.test(file) &&
+              !/\.(test|meta|playground)\.tsx?$/.test(file),
+          )
+          .flatMap((file) =>
+            undocumentedMembers(read(file)).map((name) => `${file}: ${name}`),
+          );
+        expect(missing, `add a JSDoc comment to ${missing.join(", ")}`).toEqual(
+          [],
         );
       });
 

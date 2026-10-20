@@ -186,7 +186,7 @@ Each component lives in its own folder, which is what the playground, the manife
 | `Name.playground.tsx` | `export const demos`: titled demos the playground renders on the component's page |
 | `examples/*.tsx` | 2–4 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would |
 
-`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer` and `--package react|core`) writes that folder and wires the exports and stylesheet. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, JSDoc on the export, tests, demos, 2–4 examples and a filled-in manifest entry.
+`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer` and `--package react|core`) writes that folder and wires the exports and stylesheet. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, the `bt-<name>` class behind its CSS, JSDoc on the export and on every prop, tests, demos, 2–4 examples and a filled-in manifest entry.
 
 ## Theming & extension
 

@@ -24,6 +24,7 @@ const BLOCK_VARIANTS: ReadonlySet<TextVariant> = new Set<TextVariant>([
 ]);
 
 export interface TextProps extends Omit<ComponentPropsWithRef<"span">, "ref"> {
+  /** The rendered element: a `p`, a `span`, or the child with `asChild`. */
   readonly ref?: Ref<HTMLElement> | undefined;
   /**
    * The role on the type scale. Defaults to `"label"`. Block roles (titles, body, captions, display roles)

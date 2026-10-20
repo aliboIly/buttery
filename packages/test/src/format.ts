@@ -2,10 +2,15 @@ import type { LayoutViolation } from "@buttery/core/layout";
 
 /** A violation with the page and conditions it was found under. */
 export interface ReportedViolation extends LayoutViolation {
+  /** The page's name, such as its route. */
   readonly page: string;
+  /** The viewport, such as `"390x844"`. */
   readonly viewport: string;
+  /** The emulated color scheme. */
   readonly theme: string;
+  /** The density set on `<html>`. */
   readonly density: string;
+  /** The browser engine, such as `"webkit"`. */
   readonly engine: string;
   /** The state a scripted interaction left the page in, such as "after open the export menu". */
   readonly state?: string;

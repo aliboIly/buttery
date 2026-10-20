@@ -8,7 +8,9 @@ export type LayerBand = Exclude<ZToken, "base">;
 
 /** The layer a component renders inside: its band and its container element. */
 export interface LayerInfo {
+  /** The z band the layer renders in. */
   readonly band: LayerBand;
+  /** The element the layer's content renders into. */
   readonly container: HTMLElement;
 }
 

@@ -5,6 +5,7 @@ import { cx } from "../../utils/cx.ts";
 export type IconComponentProps = SVGProps<SVGSVGElement>;
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "children"> {
+  /** The rendered `svg`. */
   readonly ref?: Ref<SVGSVGElement> | undefined;
   /** The icon to draw, such as `Undo2` from lucide-react. */
   readonly icon: ComponentType<IconComponentProps>;

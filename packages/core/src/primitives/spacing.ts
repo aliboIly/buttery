@@ -15,9 +15,13 @@ export interface SpacingProps {
 
 /** The data attributes that `layout.css` turns into `gap` and `padding`. */
 export interface SpacingAttributes {
+  /** The `gap` step. */
   readonly "data-gap"?: string;
+  /** The `pad` step. */
   readonly "data-pad"?: string;
+  /** The `padX` step. */
   readonly "data-pad-x"?: string;
+  /** The `padY` step. */
   readonly "data-pad-y"?: string;
 }
 

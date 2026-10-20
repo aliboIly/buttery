@@ -1,6 +1,9 @@
 export interface ShadowDefinition {
+  /** The light theme value. */
   readonly light: string;
+  /** The dark theme value. */
   readonly dark: string;
+  /** What the shadow is for. */
   readonly description: string;
 }
 

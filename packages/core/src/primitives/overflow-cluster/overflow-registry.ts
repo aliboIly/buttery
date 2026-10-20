@@ -15,14 +15,19 @@ export interface OverflowMenuItem {
 
 /** One registered cluster item. */
 export interface OverflowEntry {
+  /** The item's id, unique in its cluster. */
   readonly id: string;
+  /** Higher stays visible longer. */
   readonly priority: number;
+  /** How it appears in the More menu. */
   readonly menuItem: OverflowMenuItem;
+  /** The item's element, measured to decide what fits. */
   readonly element: HTMLElement;
 }
 
 /** The items of one cluster, as an external store the cluster subscribes to. */
 export interface OverflowRegistry {
+  /** Calls the listener whenever an item is added or removed; returns the function that stops. */
   readonly subscribe: (listener: () => void) => () => void;
   /** The registered items in document order. */
   readonly getSnapshot: () => readonly OverflowEntry[];
@@ -64,7 +69,9 @@ export function createOverflowRegistry(): OverflowRegistry {
 
 /** The fields of an entry that decide whether it stays visible. */
 export interface Prioritized {
+  /** The item's id, unique in its cluster. */
   readonly id: string;
+  /** Higher stays visible longer. */
   readonly priority: number;
 }
 

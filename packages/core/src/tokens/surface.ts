@@ -4,12 +4,17 @@ import type { ShadowToken } from "./shadow.ts";
 import type { SpaceStep } from "./space.ts";
 
 export interface SurfaceDefinition {
+  /** The background color. */
   readonly background: ColorToken;
+  /** The corner radius, or `"none"` for square corners. */
   readonly radius: RadiusToken | "none";
+  /** The shadow, if the surface has one. */
   readonly shadow?: ShadowToken;
+  /** The border color, if the surface has a border. */
   readonly border?: ColorToken;
   /** Padding as spacing steps, in CSS shorthand order. `well` is the section inset (`spaceWell`). */
   readonly padding?: readonly (SpaceStep | "well")[];
+  /** What the level is for. */
   readonly description: string;
 }
 

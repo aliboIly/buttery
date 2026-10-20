@@ -43,9 +43,13 @@ export interface ThemeOptions {
 
 /** The output of `createTheme`: only the variables that differ from buttery's defaults. */
 export interface ButteryTheme {
+  /** Variables that apply in the light theme. */
   readonly light: CssVariables;
+  /** Variables that apply in the dark theme. */
   readonly dark: CssVariables;
+  /** Variables that apply in both themes, such as radii and fonts. */
   readonly shared: CssVariables;
+  /** The density the theme asks for. */
   readonly density: Density;
 }
 

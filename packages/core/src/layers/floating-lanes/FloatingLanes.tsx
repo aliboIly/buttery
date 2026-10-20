@@ -165,6 +165,7 @@ export function useFloatingObstacle(): RefCallback<HTMLElement> {
 
 export interface FloatingLanesComponent {
   (): ReactElement;
+  /** Renders its children into a lane. */
   readonly Item: typeof FloatingLaneItem;
 }
 

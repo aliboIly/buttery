@@ -1,14 +1,20 @@
 /** An sRGB color with channels from 0 to 1. */
 export interface Rgb {
+  /** Red, 0–1. */
   readonly r: number;
+  /** Green, 0–1. */
   readonly g: number;
+  /** Blue, 0–1. */
   readonly b: number;
 }
 
 /** An OKLCH color: lightness 0–1, chroma from 0 (about 0.37 at most in sRGB), hue in degrees. */
 export interface Oklch {
+  /** Lightness, 0–1. */
   readonly l: number;
+  /** Chroma, from 0 for grays. */
   readonly c: number;
+  /** Hue in degrees, 0–360. */
   readonly h: number;
 }
 

@@ -16,12 +16,19 @@ export const tracking = {
 export type TrackingToken = keyof typeof tracking;
 
 export interface TextRoleDefinition {
+  /** Font size in px. */
   readonly size: number;
+  /** Line height in px. */
   readonly lineHeight: number;
+  /** Font weight. */
   readonly weight: 400 | 500 | 600;
+  /** Text color, when the role sets one. */
   readonly color?: ColorToken;
+  /** Uses tabular figures. */
   readonly tabular?: boolean;
+  /** Trims the line box to the cap height and baseline. */
   readonly trim?: boolean;
+  /** What the role is for. */
   readonly description: string;
 }
 
@@ -132,11 +139,15 @@ export type TextRole = keyof typeof textRoles;
 export type DisplayStep = "sm" | "md" | "lg";
 
 export interface DisplayRoleDefinition {
+  /** Font size and line height in px at each display step. */
   readonly steps: Readonly<
     Record<DisplayStep, readonly [size: number, lineHeight: number]>
   >;
+  /** Font weight. */
   readonly weight: 400 | 600;
+  /** Text color. */
   readonly color: ColorToken;
+  /** What the role is for. */
   readonly description: string;
 }
 
