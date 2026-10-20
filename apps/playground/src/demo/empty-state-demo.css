@@ -6,13 +6,6 @@
   text-align: center;
 }
 
-.es-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--bt-space-3);
-}
-
 .es-actions {
   display: flex;
   gap: var(--bt-space-2);

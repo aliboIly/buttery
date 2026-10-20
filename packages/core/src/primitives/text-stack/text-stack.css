@@ -1,0 +1,33 @@
+@layer bt.primitives {
+  .bt-text-stack {
+    --bt-text-stack-gap: var(--bt-space-4);
+    --bt-text-stack-caption-gap: var(--bt-space-5);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-text-stack-caption-gap);
+    min-inline-size: 0;
+  }
+
+  .bt-text-stack[data-size="empty"] {
+    --bt-text-stack-gap: var(--bt-space-3);
+    --bt-text-stack-caption-gap: var(--bt-space-3);
+  }
+
+  .bt-text-stack[data-size="section"] {
+    --bt-text-stack-caption-gap: var(--bt-space-4);
+  }
+
+  .bt-text-stack > [data-bt-part="head"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-text-stack-gap);
+    min-inline-size: 0;
+  }
+
+  .bt-text-stack[data-align="center"],
+  .bt-text-stack[data-align="center"] > [data-bt-part="head"] {
+    align-items: center;
+    text-align: center;
+  }
+}

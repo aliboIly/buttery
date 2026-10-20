@@ -332,3 +332,6 @@ Content box fits the available space at the chosen aspect ratio (`FitBox`: never
 
 ### Kbd
 Keycap: 20h, min-width 20, r5, `bg-surface`, 1px `border-strong` plus a 1px bottom edge, `kbd` role.
+
+### TextStack
+A title over body text and an optional caption, the text block of dialogs, empty states and page sections, measured between trimmed text (§2). `size="dialog"` (the default): `dialog-title`, `body` 16 below, `caption` 20 below. `size="empty"`: `title`, `body-sm` 12 below, `caption` 12 below. `size="section"`: `heading-2`, `body-lg` 16 below, `caption` 16 below. `align="center"` centers it. The title is an `h2` unless `titleAs` names another level or `p`.

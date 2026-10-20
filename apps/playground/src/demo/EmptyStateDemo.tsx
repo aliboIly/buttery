@@ -1,18 +1,17 @@
 import type { ReactElement } from "react";
+import { TextStack } from "@buttery/core";
 import "./empty-state-demo.css";
 
 /** A static empty state built from text roles and spacing tokens, until the EmptyState pattern lands. */
 export function EmptyStateDemo(): ReactElement {
   return (
     <div className="es-root" data-testid="empty-state">
-      <div className="es-text">
-        <h2 className="bt-text" data-role="title">
-          Your canvas is empty
-        </h2>
-        <p className="bt-text" data-role="body-sm">
-          Bring in a photo, or start from a blank card.
-        </p>
-      </div>
+      <TextStack
+        size="empty"
+        align="center"
+        title="Your canvas is empty"
+        body="Bring in a photo, or start from a blank card."
+      />
       <div className="es-actions">
         <button
           type="button"

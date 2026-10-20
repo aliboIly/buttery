@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import { TextStack } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { EmptyStateDemo } from "../demo/EmptyStateDemo.tsx";
 import "./text-stacks-page.css";
@@ -18,20 +19,11 @@ function OnboardingDemo(): ReactElement {
       />
       <div className="ob-content">
         <div className="ob-lead">
-          <div className="ob-copy">
-            <div className="ob-head">
-              <h2 className="bt-text" data-role="dialog-title">
-                Make it yours
-              </h2>
-              <p className="bt-text" data-role="body">
-                Pick a backdrop, round the corners and add depth. Every change
-                shows up right away.
-              </p>
-            </div>
-            <p className="bt-text" data-role="caption">
-              Tip: hold Shift for finer steps.
-            </p>
-          </div>
+          <TextStack
+            title="Make it yours"
+            body="Pick a backdrop, round the corners and add depth. Every change shows up right away."
+            caption="Tip: hold Shift for finer steps."
+          />
           <div className="ob-dots" aria-hidden="true">
             <span className="ob-dot" />
             <span className="ob-dot" data-active="" />

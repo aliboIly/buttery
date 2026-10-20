@@ -34,17 +34,10 @@
   padding: 0 var(--bt-space-4) var(--bt-space-4);
 }
 
-.ob-lead,
-.ob-copy {
+.ob-lead {
   display: flex;
   flex-direction: column;
   gap: var(--bt-space-5);
-}
-
-.ob-head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--bt-space-4);
 }
 
 .ob-dots {
