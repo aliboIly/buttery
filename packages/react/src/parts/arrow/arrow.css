@@ -1,0 +1,77 @@
+@layer bt.components {
+  :is(.bt-arrow, [data-arrow]) {
+    --bt-arrow-width: 6px;
+    --bt-arrow-nudge: 3px;
+    /* With reduced motion the head stays where it rests, so the stem stops at its tip: 4 of its 7 units. */
+    --bt-arrow-still-stem: calc(4 / 7);
+  }
+
+  .bt-arrow {
+    flex: none;
+    inline-size: var(--bt-arrow-width);
+    block-size: var(--bt-icon-sm);
+    overflow: visible;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: var(--bt-icon-stroke);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .bt-arrow:is([data-direction="back"], [data-direction="forward"]:dir(rtl)) {
+    scale: -1 1;
+  }
+
+  .bt-arrow[data-direction="back"]:dir(rtl) {
+    scale: none;
+  }
+
+  .bt-arrow > [data-bt-part="arrow-tip"] {
+    translate: calc(var(--bt-arrow-nudge) * -1) 0;
+    transition: translate calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-out);
+  }
+
+  .bt-arrow [data-bt-part="arrow-stem"] {
+    transform-box: fill-box;
+    transform-origin: 100% 50%;
+    scale: 0 1;
+    transition: scale calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-out);
+  }
+
+  [data-arrow]:not(:disabled, [aria-disabled="true"]):focus-visible
+    .bt-arrow
+    > [data-bt-part="arrow-tip"] {
+    translate: calc(var(--bt-arrow-nudge) * (var(--bt-motion) - 1)) 0;
+  }
+
+  [data-arrow]:not(:disabled, [aria-disabled="true"]):focus-visible
+    .bt-arrow
+    [data-bt-part="arrow-stem"] {
+    scale: calc(
+        var(--bt-arrow-still-stem) + (1 - var(--bt-arrow-still-stem)) *
+          var(--bt-motion)
+      )
+      1;
+  }
+
+  /* Touchscreens report taps as hover, so only a real pointer grows the arrow; touch keeps the chevron. */
+  @media (hover: hover) {
+    [data-arrow]:not(:disabled, [aria-disabled="true"]):hover
+      .bt-arrow
+      > [data-bt-part="arrow-tip"] {
+      translate: calc(var(--bt-arrow-nudge) * (var(--bt-motion) - 1)) 0;
+    }
+
+    [data-arrow]:not(:disabled, [aria-disabled="true"]):hover
+      .bt-arrow
+      [data-bt-part="arrow-stem"] {
+      scale: calc(
+          var(--bt-arrow-still-stem) + (1 - var(--bt-arrow-still-stem)) *
+            var(--bt-motion)
+        )
+        1;
+    }
+  }
+}

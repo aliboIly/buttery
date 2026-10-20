@@ -1,3 +1,5 @@
 @layer bt.reset, bt.tokens, bt.base, bt.recipes, bt.primitives, bt.components, bt.patterns, bt.utilities;
 
+@import "./parts/arrow/arrow.css";
+@import "./parts/spinner/spinner.css";
 @import "./components/confetti/confetti.css";

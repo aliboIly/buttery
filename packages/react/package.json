@@ -38,7 +38,9 @@
   },
   "dependencies": {
     "@buttery/core": "workspace:*",
-    "motion": "catalog:"
+    "lucide-react": "catalog:",
+    "motion": "catalog:",
+    "radix-ui": "catalog:"
   },
   "peerDependencies": {
     "react": "^19.0.0",

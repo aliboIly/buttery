@@ -133,7 +133,7 @@ Product visuals inside cards and heroes quietly cycle states — numbers tick to
 
 ### 4.5 Forward and back arrows (`Button` and `ArrowLink` with `arrow`)
 Measured from the same local recording at 10fps. At rest the label is followed by a small chevron. On hover or keyboard focus a stem draws in behind the chevron's point and the head nudges forward, so › becomes →; leaving reverses it. `dur-fast` each way (measured ~100ms), `ease-out`, no delay. The control never changes width.
-- One SVG with a head path and a stem path. The stem scales on X from the head's side, 0 to 1; the head moves `--bt-arrow-nudge` (3px, a component variable). The arrow's full width is reserved at rest, so hovering shifts nothing.
+- One SVG with a head path and a stem path. The stem scales on X from the head's side, 0 to 1; the head moves `--bt-arrow-nudge` (3px, a component variable). Only transforms change, so hovering shifts nothing: the head nudges into the button's padding, and a link, which has none, gives its arrow box that room.
 - `arrow="back"` mirrors it: ‹ becomes ← and nudges left.
 - Colors are buttery's hover colors (primary goes to `primary-hover`), and the press scale stays.
 - Touch, with no hover: the chevron only. Reduced motion: the chevron becomes the arrow at once, without the nudge. `loading`: the arrow hides and the width stays.
