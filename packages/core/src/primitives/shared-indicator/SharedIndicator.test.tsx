@@ -162,6 +162,29 @@ describe("SharedIndicator", () => {
     });
   });
 
+  it("lets clicks on the active item's padding reach the item", async () => {
+    const pressed: string[] = [];
+    render(
+      <SharedIndicator.Group>
+        <SharedIndicator active asChild>
+          <button
+            type="button"
+            style={{ inlineSize: "120px", blockSize: "40px", border: 0 }}
+            onClick={() => {
+              pressed.push("plain");
+            }}
+          >
+            Plain
+          </button>
+        </SharedIndicator>
+      </SharedIndicator.Group>,
+    );
+    await keyboard.click(screen.getByRole("button", { name: "Plain" }), {
+      position: { x: 6, y: 6 },
+    });
+    expect(pressed).toEqual(["plain"]);
+  });
+
   it("slides under the labels it passes", async () => {
     render(<Modes />);
     const outline = screen.getByRole("button", { name: "Outline" });

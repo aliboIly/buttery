@@ -12,10 +12,12 @@
     z-index: var(--bt-z-base);
   }
 
+  /* The indicator is portaled in, outside the item's React tree: clicks on it must reach the item. */
   .bt-shared-indicator > [data-bt-part="indicator"] {
     position: absolute;
     inset: 0;
     z-index: var(--bt-z-behind);
+    pointer-events: none;
     border-radius: inherit;
     background-color: var(--bt-shared-indicator-background);
     box-shadow: var(--bt-shared-indicator-shadow);
