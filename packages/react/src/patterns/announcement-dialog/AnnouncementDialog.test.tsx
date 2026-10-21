@@ -98,6 +98,11 @@ describe("AnnouncementDialog", () => {
   it("leaves focus off its trigger after it opened by itself, and hands it back after it was opened there", async () => {
     render(<News storageKey="test-news" />);
     await screen.findByRole("dialog");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Got it" }),
+      );
+    });
     await browser.keyboard("{Enter}");
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();

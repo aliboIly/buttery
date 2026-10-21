@@ -154,6 +154,7 @@ export function DialogContent({
   const element = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, element);
   const body = useRef<HTMLDivElement>(null);
+  const focusOnSettle = useRef(false);
   const closeFocus = useCloseFocus(open, element, trigger ?? undefined);
   const registry = useMemo<ContentRegistry>(
     () => ({
@@ -210,9 +211,11 @@ export function DialogContent({
               onOpenAutoFocus={(event) => {
                 onOpenAutoFocus?.(event);
                 if (event.defaultPrevented) return;
-                // Radix skips links and falls back to the close button, whose tooltip would open; links can be what a dialog offers.
+                // Focus waits in the dialog until it has settled, then goes to its first tab stop, so a ring
+                // never grows with it. Radix would skip links for the close button, whose tooltip would open.
                 event.preventDefault();
-                (tabbables(body.current)[0] ?? element.current)?.focus();
+                element.current?.focus({ preventScroll: true });
+                focusOnSettle.current = true;
               }}
               onCloseAutoFocus={(event) => {
                 onCloseAutoFocus?.(event);
@@ -221,6 +224,13 @@ export function DialogContent({
             >
               <motion.div
                 {...tracking}
+                onAnimationComplete={() => {
+                  tracking.onAnimationComplete();
+                  if (!focusOnSettle.current) return;
+                  focusOnSettle.current = false;
+                  if (document.activeElement !== element.current) return;
+                  tabbables(body.current)[0]?.focus();
+                }}
                 initial={motionOf.initial}
                 animate={motionOf.animate}
                 exit={motionOf.exit}

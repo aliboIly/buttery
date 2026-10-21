@@ -110,6 +110,18 @@ describe("Dialog", () => {
     );
   });
 
+  it("waits in the dialog until it has settled, then focuses its first tab stop", async () => {
+    render(<Confirm />);
+    await userEvent.click(screen.getByRole("button", { name: "Delete card" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(document.activeElement).toBe(dialog);
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Keep it" }),
+      );
+    });
+  });
+
   it("closes on Escape and hands focus back to its trigger", async () => {
     render(<Confirm />);
     await openConfirm();

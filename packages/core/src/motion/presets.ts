@@ -11,8 +11,8 @@ import { fadeIn, fadeOut, reducedTransition } from "./transitions.ts";
 /**
  * How a `Presence` arrives: `"fade"`, `"rise"` (up 8px), `"pop"` (from 97% scale), `"toast"` (up 8px, a
  * little quicker than `"rise"`), `"menu"` (from 97% scale, a little quicker than `"pop"`), `"dialog"` (from
- * 97% scale over `dur-fast`) or `"scrim"` (a fade over `dur-fast`, under a dialog). Every preset leaves
- * with a quick fade.
+ * 97% scale, rising 4px, over `dur-fast`) or `"scrim"` (a fade over `dur-fast`, under a dialog). Every
+ * preset leaves with a quick fade.
  */
 export type PresencePreset =
   "fade" | "rise" | "pop" | "toast" | "menu" | "dialog" | "scrim";
@@ -80,8 +80,8 @@ export const presencePresets: Readonly<Record<PresencePreset, PresenceMotion>> =
       exit: leave,
     },
     dialog: {
-      initial: { opacity: 0, scale: enterScale },
-      animate: { opacity: 1, scale: 1, transition: quickIn },
+      initial: { opacity: 0, scale: enterScale, y: travel.nudge },
+      animate: { opacity: 1, scale: 1, y: 0, transition: quickIn },
       exit: leave,
     },
     scrim: {
