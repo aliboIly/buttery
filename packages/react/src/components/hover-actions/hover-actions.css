@@ -1,0 +1,66 @@
+@layer bt.components {
+  .bt-hover-actions {
+    --bt-hover-actions-bar: 2px;
+    --bt-hover-actions-fade: calc(
+      var(--bt-dur-reduced) + (var(--bt-dur-fast) - var(--bt-dur-reduced)) *
+        var(--bt-motion)
+    );
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+    padding-block: var(--bt-space-2);
+    padding-inline: var(--bt-space-3);
+  }
+
+  .bt-hover-actions > [data-bt-part="bar"] {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--bt-hover-actions-bar);
+    background-color: var(--bt-accent);
+    opacity: 0;
+    transition: opacity var(--bt-hover-actions-fade) var(--bt-ease-out);
+  }
+
+  .bt-hover-actions > [data-bt-part="content"] {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .bt-hover-actions > [data-bt-part="actions"] {
+    display: flex;
+    flex: none;
+    gap: var(--bt-space-2);
+    opacity: 0;
+    transition: opacity var(--bt-hover-actions-fade) var(--bt-ease-out);
+  }
+
+  .bt-hover-actions:focus-within {
+    background-color: var(--bt-bg-item-hover);
+  }
+
+  .bt-hover-actions:focus-within
+    > :is([data-bt-part="bar"], [data-bt-part="actions"]) {
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    .bt-hover-actions:hover {
+      background-color: var(--bt-bg-item-hover);
+    }
+
+    .bt-hover-actions:hover
+      > :is([data-bt-part="bar"], [data-bt-part="actions"]) {
+      opacity: 1;
+    }
+  }
+
+  @media (hover: none) {
+    .bt-hover-actions > [data-bt-part="actions"] {
+      opacity: 1;
+    }
+  }
+}

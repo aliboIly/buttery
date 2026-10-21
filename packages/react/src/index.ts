@@ -534,3 +534,5 @@ export { SettingRow } from "./patterns/setting-row/SettingRow.tsx";
 export type { SettingRowProps } from "./patterns/setting-row/SettingRow.tsx";
 export { SettingsPage } from "./patterns/settings-page/SettingsPage.tsx";
 export type { SettingsPageProps } from "./patterns/settings-page/SettingsPage.tsx";
+export { HoverActions } from "./components/hover-actions/HoverActions.tsx";
+export type { HoverActionsProps } from "./components/hover-actions/HoverActions.tsx";
