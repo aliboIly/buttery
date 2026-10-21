@@ -1,0 +1,149 @@
+import "@buttery/core/styles.css";
+import "../../styles.css";
+import { publishSettled } from "@buttery/core";
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
+import { createRef } from "react";
+import type { ReactElement } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ButteryProvider } from "../../provider/ButteryProvider.tsx";
+import { SetupGuide } from "./SetupGuide.tsx";
+import type { SetupGuideProps, SetupTask } from "./SetupGuide.tsx";
+
+const TASKS: readonly SetupTask[] = [
+  { id: "coffee", title: "Add your first coffee", done: true },
+  {
+    id: "shipping",
+    title: "Set shipping rates",
+    description: "What a bag costs to send.",
+    action: { label: "Set rates", href: "#shipping" },
+  },
+  { id: "bank", title: "Connect your bank" },
+];
+
+beforeEach(() => {
+  for (const key of [
+    "buttery:setup-guide:test-setup",
+    "buttery:setup-guide-open:test-setup",
+  ])
+    window.localStorage.removeItem(key);
+  publishSettled();
+});
+
+afterEach(cleanup);
+
+function Guide(props: Partial<SetupGuideProps>): ReactElement {
+  return (
+    <ButteryProvider>
+      <SetupGuide tasks={TASKS} {...props} />
+    </ButteryProvider>
+  );
+}
+
+function guide(): HTMLElement {
+  return screen.getByRole("region", { name: "Setup guide" });
+}
+
+describe("SetupGuide", () => {
+  it("stamps its class and data-bt, forwards its ref and spreads props", () => {
+    const ref = createRef<HTMLDivElement>();
+    render(<Guide ref={ref} className="custom" id="setup" />);
+    expect(ref.current?.dataset["bt"]).toBe("SetupGuide");
+    expect(ref.current?.className).toBe("bt-setup-guide custom");
+    expect(ref.current?.id).toBe("setup");
+  });
+
+  it("floats in the bottom-end lane, 288 wide", () => {
+    render(<Guide />);
+    expect(guide().closest('[data-lane="bottom-end"]')).not.toBeNull();
+    expect(guide().getBoundingClientRect().width).toBe(288);
+  });
+
+  it("shows its progress and the next task as a link while folded", async () => {
+    render(<Guide />);
+    const bar = within(guide()).getByRole("progressbar", {
+      name: "Setup guide",
+    });
+    expect(bar.getAttribute("aria-valuenow")).toBe("1");
+    expect(bar.getAttribute("aria-valuetext")).toBe("1 of 3 done");
+    expect(
+      within(guide()).getByText("Next:", { exact: false }).textContent,
+    ).toBe("Next: Set shipping rates");
+    expect(
+      within(guide())
+        .getByRole("link", { name: "Set shipping rates" })
+        .getAttribute("href"),
+    ).toBe("#shipping");
+    await waitFor(() => {
+      const fill = guide().querySelector<HTMLElement>('[data-bt-part="fill"]');
+      expect(fill?.getBoundingClientRect().width).toBeCloseTo(
+        (bar.getBoundingClientRect().width * 1) / 3,
+        0,
+      );
+    });
+  });
+
+  it("unfolds to every task, read as done or to do, with the next one's action", async () => {
+    render(<Guide />);
+    const expand = within(guide()).getByRole("button", {
+      name: "Show all steps",
+    });
+    expect(expand.getAttribute("aria-expanded")).toBe("false");
+    await userEvent.click(expand);
+    const collapse = within(guide()).getByRole("button", {
+      name: "Hide steps",
+    });
+    expect(collapse.getAttribute("aria-expanded")).toBe("true");
+    const list = document.getElementById(
+      collapse.getAttribute("aria-controls") ?? "",
+    );
+    expect(
+      within(list ?? guide())
+        .getAllByRole("listitem")
+        .map((item) => item.textContent),
+    ).toEqual([
+      "Done: Add your first coffee",
+      "To do: Set shipping ratesWhat a bag costs to send.Set rates",
+      "To do: Connect your bank",
+    ]);
+    expect(
+      within(guide()).getByRole("link", { name: "Set rates" }).dataset[
+        "variant"
+      ],
+    ).toBe("soft");
+  });
+
+  it("remembers being unfolded and being dismissed under its storage key", async () => {
+    const onDismiss = vi.fn();
+    render(<Guide storageKey="test-setup" onDismiss={onDismiss} />);
+    await userEvent.click(
+      within(guide()).getByRole("button", { name: "Show all steps" }),
+    );
+    cleanup();
+    render(<Guide storageKey="test-setup" onDismiss={onDismiss} />);
+    expect(
+      within(guide()).getByRole("button", { name: "Hide steps" }),
+    ).toBeTruthy();
+    await userEvent.click(
+      within(guide()).getByRole("button", { name: "Dismiss" }),
+    );
+    await waitFor(() => {
+      expect(screen.queryByRole("region", { name: "Setup guide" })).toBeNull();
+    });
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+    cleanup();
+    render(<Guide storageKey="test-setup" />);
+    expect(screen.queryByRole("region", { name: "Setup guide" })).toBeNull();
+  });
+
+  it("says it's all set once every task is done", () => {
+    render(<Guide tasks={TASKS.map((task) => ({ ...task, done: true }))} />);
+    expect(within(guide()).getByText("You're all set.")).toBeTruthy();
+  });
+});

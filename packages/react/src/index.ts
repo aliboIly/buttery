@@ -503,3 +503,9 @@ export { FeatureIntro } from "./patterns/feature-intro/FeatureIntro.tsx";
 export type { FeatureIntroProps } from "./patterns/feature-intro/FeatureIntro.tsx";
 export { NotificationNudge } from "./patterns/notification-nudge/NotificationNudge.tsx";
 export type { NotificationNudgeProps } from "./patterns/notification-nudge/NotificationNudge.tsx";
+export { SetupGuide } from "./patterns/setup-guide/SetupGuide.tsx";
+export type {
+  SetupGuideLabels,
+  SetupGuideProps,
+  SetupTask,
+} from "./patterns/setup-guide/SetupGuide.tsx";
