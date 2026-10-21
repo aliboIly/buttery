@@ -59,6 +59,13 @@ export function SettingsPage(): ReactElement {
                   href={settingHref(setting)}
                 />
               ))}
+              {section.title === "Money" ? (
+                <SettingsIndex.More
+                  title="See what each plan adds"
+                  description="Roast planning, wholesale and more."
+                  href="#/roastery/settings/plans"
+                />
+              ) : null}
             </SettingsIndex.Section>
           ))}
         </SettingsIndex>
@@ -343,8 +350,8 @@ function TeamNotificationSettings({
           ]}
           tabs={[
             {
-              id: "team",
-              label: "Team",
+              id: "shop",
+              label: "Orders and roasting",
               groups: [
                 {
                   id: "orders",
@@ -370,9 +377,15 @@ function TeamNotificationSettings({
                     { id: "low-stock", label: "Green coffee running low" },
                   ],
                 },
+              ],
+            },
+            {
+              id: "money",
+              label: "Money",
+              groups: [
                 {
                   id: "money",
-                  title: "Money",
+                  title: "Payouts and invoices",
                   rows: [
                     { id: "payout", label: "Payout sent" },
                     {
@@ -403,6 +416,12 @@ const PLANS = {
 
 type PlanId = keyof typeof PLANS;
 
+const VOLUMES = [
+  { value: "200", label: "Up to 200 bags a month", factor: 1 },
+  { value: "1000", label: "Up to 1,000 bags a month", factor: 2 },
+  { value: "more", label: "More than 1,000 bags a month", factor: 3 },
+] as const;
+
 function PlanSettings({
   setting,
 }: {
@@ -410,10 +429,12 @@ function PlanSettings({
 }): ReactElement {
   const [current, setCurrent] = useState<PlanId>("starter");
   const [period, setPeriod] = useState("monthly");
+  const [volume, setVolume] = useState("200");
   const [trying, setTrying] = useState<PlanId | null>(null);
   const yearly = period === "yearly";
+  const factor = VOLUMES.find((option) => option.value === volume)?.factor ?? 1;
   const price = (id: PlanId): string =>
-    `$${String(yearly ? PLANS[id].monthly * 10 : PLANS[id].monthly)}`;
+    `$${String(PLANS[id].monthly * factor * (yearly ? 10 : 1))}`;
   const action = (id: PlanId): ReactNode =>
     id === current ? (
       <Button variant="soft" aria-disabled>
@@ -449,6 +470,10 @@ function PlanSettings({
           ]}
           period={period}
           onPeriodChange={setPeriod}
+          volumes={VOLUMES.map(({ value, label }) => ({ value, label }))}
+          volume={volume}
+          onVolumeChange={setVolume}
+          volumeLabel="Bags a month"
           plans={[
             {
               id: "starter",
