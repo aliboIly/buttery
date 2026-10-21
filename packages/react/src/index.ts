@@ -553,3 +553,9 @@ export type {
   PreferenceValue,
   PreferencesMatrixProps,
 } from "./components/preferences-matrix/PreferencesMatrix.tsx";
+export { DetailPage } from "./patterns/detail-page/DetailPage.tsx";
+export type {
+  DetailPageLink,
+  DetailPageLinksProps,
+  DetailPageProps,
+} from "./patterns/detail-page/DetailPage.tsx";
