@@ -129,7 +129,7 @@ Measured from local 30fps strips of a product dashboard (`reference/inspiration-
 | Loading pill | Shows only if loading lasts `--bt-delay-loading` (300ms), fading in; leaves with a fade as the content crossfades in | `dur-fast` each way |
 | Chart hover | Crosshair, points and tooltip follow the pointer in the same frame (set from the pointer handler, no React state per move); the tooltip's text changes when the nearest point does, and it flips sides at the chart's edge without animating | instant |
 | Setup guide expands or folds | `Morph` height; the progress bar's fill grows by `scaleX` | `spring.smooth`; fill `spring.smooth` |
-| Banner or card dismissed | Fades where it is, then what's below closes the gap | `dur-fast` fade, then `spring.smooth` layout |
+| Banner or card dismissed | Fades where it is, then what's below closes the gap: blocks in a `ReflowGroup` (an `AppPage`'s sections) slide up into its place | `dur-fast` fade, then `spring.smooth` layout |
 | A toast or the setup guide arrives | Rises into its lane as toasts do (§3) | `spring.snappy` + `dur-base` fade |
 
 With reduced motion: chrome is unchanged (it doesn't move), dialogs fade over 100ms without scaling, group height and indicators land at once, skeletons don't shimmer, and the crossfades take 100ms.

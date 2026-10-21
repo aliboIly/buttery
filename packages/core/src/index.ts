@@ -127,6 +127,12 @@ export {
 } from "./motion/preference.ts";
 export type { MotionPreference } from "./motion/preference.ts";
 export { presencePresets, reducedPresence } from "./motion/presets.ts";
+export {
+  ReflowGroup,
+  useReflow,
+  useReflowDeparture,
+} from "./motion/reflow.tsx";
+export type { ReflowGroupProps, ReflowLayout } from "./motion/reflow.tsx";
 export { revealOnce } from "./motion/reveal.ts";
 export type { RevealArrival, RevealOnceOptions } from "./motion/reveal.ts";
 export type { PresenceMotion, PresencePreset } from "./motion/presets.ts";
