@@ -12,6 +12,8 @@ export type TextTone =
   "strong" | "default" | "secondary" | "tertiary" | "disabled";
 
 const BLOCK_VARIANTS: ReadonlySet<TextVariant> = new Set<TextVariant>([
+  "title-lg",
+  "title-md",
   "title",
   "dialog-title",
   "body",

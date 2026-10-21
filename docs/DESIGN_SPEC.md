@@ -120,6 +120,8 @@ Every **active** text/background pair passes WCAG AA in both themes. Disabled st
 
 | Role token | Size / line-height | Weight | Color | Where |
 |---|---|---|---|---|
+| `title-lg` | 24 / 30 | 600, tight | text-strong | App page titles, metric values (Phase 6B) |
+| `title-md` | 18 / 24 | 600, tight | text-strong | Section headings in app pages, right-rail card titles (Phase 6B) |
 | `title` | 15 / 20 | 600, tight | text | Empty-state title (re-measured in Phase 1; the first spec said 16 / 22) |
 | `dialog-title` | 15 / 20 | 600 | text-strong | Dialog title |
 | `title-sm` | 14 / 20 | 600 | text | App/document title in the header |
@@ -160,6 +162,7 @@ The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px;
 | `--bt-h-header` | 56 | 48 | App header bar |
 | `--bt-h-nav-bar` | 64 | 64 | Page nav bar; page chrome keeps its height |
 | `--bt-h-sub-nav` | 48 | 48 | Page sub nav bar under the nav bar; page chrome keeps its height |
+| `--bt-h-table-row` | 36 (35 + 1px divider) | 32 | Table header and body rows (Phase 6B) |
 
 ### Widths & layout sizes
 
@@ -167,6 +170,10 @@ The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px;
 |---|---|
 | `--bt-w-shell-max` | 1380 (AppShell max width, centered — measured) |
 | `--bt-w-inspector` | 340 |
+| `--bt-w-sidebar` / `--bt-w-sidebar-rail` | 240 / 56 (an app's sidebar, and the sidebar as an icon rail; Phase 6B) |
+| `--bt-w-app-page` | 1280 (a contained app page's content, padding included) |
+| `--bt-w-aside` | 320 (an app page's right rail) |
+| `--bt-w-search` | 360 (the top bar's search field, at most) |
 | `--bt-w-dialog` | 400 |
 | `--bt-w-dialog-md` / `--bt-w-dialog-lg` | 560 / 880 (wider dialogs: a list of choices; copy beside an illustration) |
 | `--bt-w-menu-min` | 200 |
@@ -414,7 +421,7 @@ Measured from local frames of a product dashboard (`reference/inspiration-dashbo
 | `--bt-h-table-row` | 36 comfortable · 32 compact (35 + a 1px divider) | Table header and body rows |
 | `title-lg` | 24 / 30, 600, tight | Page titles, metric values |
 | `title-md` | 18 / 24, 600, tight | Section headings in app pages, card titles in the right rail |
-| `--bt-chart-1` … `--bt-chart-5` | `chart-1` is the accent; 2–5 derived in OKLCH from the mint, apricot, lilac and rose families at the accent's lightness, each 3:1 on the surface in both themes (WCAG 1.4.11) | Chart series, in order |
+| `--bt-chart-1` … `--bt-chart-5` | `chart-1` is the accent; 2–5 derived in OKLCH from the mint, apricot, lilac and rose families at the accent's lightness, chroma 0.14 (or the most sRGB allows), each 3:1 on the surface in both themes (WCAG 1.4.11). Light: `#2862e0` `#008254` `#a65400` `#7b57b2` `#ae445b`; dark: `#4f89ff` `#1ea971` `#cf752d` `#9d7ad7` `#d6677c`, each at least 4.3:1 on the surface, section, app and floating backgrounds | Chart series, in order |
 
 Chart gridlines use `border`, axis labels `caption` in `text-tertiary`, and a comparison series (the previous period) `text-tertiary`, dashed.
 

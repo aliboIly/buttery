@@ -58,6 +58,14 @@
   --container-menu-min: var(--bt-w-menu-min);
   --container-page: var(--bt-w-page);
   --container-shell: var(--bt-w-shell-max);
+  --text-title-lg: var(--bt-text-title-lg-size);
+  --text-title-lg--line-height: var(--bt-text-title-lg-line);
+  --text-title-lg--font-weight: var(--bt-text-title-lg-weight);
+  --text-title-lg--letter-spacing: var(--bt-text-title-lg-tracking);
+  --text-title-md: var(--bt-text-title-md-size);
+  --text-title-md--line-height: var(--bt-text-title-md-line);
+  --text-title-md--font-weight: var(--bt-text-title-md-weight);
+  --text-title-md--letter-spacing: var(--bt-text-title-md-tracking);
   --text-title: var(--bt-text-title-size);
   --text-title--line-height: var(--bt-text-title-line);
   --text-title--font-weight: var(--bt-text-title-weight);

@@ -40,6 +40,11 @@
     --bt-accent: #2862e0;
     --bt-accent-subtle: #e9f0fd;
     --bt-accent-text: #2862e0;
+    --bt-chart-1: #2862e0;
+    --bt-chart-2: #008254;
+    --bt-chart-3: #a65400;
+    --bt-chart-4: #7b57b2;
+    --bt-chart-5: #ae445b;
     --bt-danger: #c72a1c;
     --bt-danger-subtle: #fdeceb;
     --bt-success: #177245;
@@ -114,6 +119,11 @@
     --bt-r-full: 9999px;
     --bt-w-shell-max: 1380px;
     --bt-w-inspector: 340px;
+    --bt-w-sidebar: 240px;
+    --bt-w-sidebar-rail: 56px;
+    --bt-w-app-page: 1280px;
+    --bt-w-aside: 320px;
+    --bt-w-search: 360px;
     --bt-w-dialog: 400px;
     --bt-w-dialog-md: 560px;
     --bt-w-dialog-lg: 880px;
@@ -146,6 +156,7 @@
     --bt-dur-fast: 120ms;
     --bt-dur-base: 200ms;
     --bt-dur-slow: 300ms;
+    --bt-dur-shimmer: 1600ms;
     --bt-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --bt-ease-in: cubic-bezier(0.4, 0, 1, 1);
     --bt-ease-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -162,8 +173,18 @@
     --bt-typeahead: 500ms;
     --bt-delay-follow: 80ms;
     --bt-count-up: 800ms;
+    --bt-delay-submenu: 40ms;
+    --bt-delay-loading: 300ms;
     --bt-press-scale: 0.97;
     --bt-icon-stroke: 1.75;
+    --bt-text-title-lg-size: 24px;
+    --bt-text-title-lg-line: 30px;
+    --bt-text-title-lg-weight: 600;
+    --bt-text-title-lg-tracking: var(--bt-tracking-tight);
+    --bt-text-title-md-size: 18px;
+    --bt-text-title-md-line: 24px;
+    --bt-text-title-md-weight: 600;
+    --bt-text-title-md-tracking: var(--bt-tracking-tight);
     --bt-text-title-size: 15px;
     --bt-text-title-line: 20px;
     --bt-text-title-weight: 600;
@@ -266,6 +287,7 @@
     --bt-h-header: 56px;
     --bt-h-nav-bar: 64px;
     --bt-h-sub-nav: 48px;
+    --bt-h-table-row: 36px;
   }
 
   [data-bt-density="compact"] {
@@ -279,6 +301,7 @@
     --bt-h-header: 48px;
     --bt-h-nav-bar: 64px;
     --bt-h-sub-nav: 48px;
+    --bt-h-table-row: 32px;
   }
 
   [data-bt-theme="dark"] {
@@ -320,6 +343,11 @@
     --bt-accent: #4f89ff;
     --bt-accent-subtle: #16223b;
     --bt-accent-text: #4f89ff;
+    --bt-chart-1: #4f89ff;
+    --bt-chart-2: #1ea971;
+    --bt-chart-3: #cf752d;
+    --bt-chart-4: #9d7ad7;
+    --bt-chart-5: #d6677c;
     --bt-danger: #ff7a6e;
     --bt-danger-subtle: #3a1916;
     --bt-success: #4cc38a;
@@ -399,6 +427,11 @@
       --bt-accent: #4f89ff;
       --bt-accent-subtle: #16223b;
       --bt-accent-text: #4f89ff;
+      --bt-chart-1: #4f89ff;
+      --bt-chart-2: #1ea971;
+      --bt-chart-3: #cf752d;
+      --bt-chart-4: #9d7ad7;
+      --bt-chart-5: #d6677c;
       --bt-danger: #ff7a6e;
       --bt-danger-subtle: #3a1916;
       --bt-success: #4cc38a;

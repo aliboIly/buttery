@@ -39,6 +39,22 @@ export interface TextRoleDefinition {
  * baseline where the engine supports `text-box`, so spacing tokens between them equal the visible gaps.
  */
 export const textRoles = {
+  "title-lg": {
+    size: 24,
+    lineHeight: 30,
+    weight: 600,
+    color: "text-strong",
+    trim: true,
+    description: "App page titles and metric values.",
+  },
+  "title-md": {
+    size: 18,
+    lineHeight: 24,
+    weight: 600,
+    color: "text-strong",
+    trim: true,
+    description: "Section headings in app pages, card titles in a right rail.",
+  },
   title: {
     size: 15,
     lineHeight: 20,

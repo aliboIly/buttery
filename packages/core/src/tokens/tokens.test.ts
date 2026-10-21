@@ -76,6 +76,23 @@ describe("contrast", () => {
   }
 });
 
+describe("charts", () => {
+  it("start from the accent and keep every series 3:1 on the surfaces they sit on", () => {
+    expect(colors["chart-1"].light).toBe(colors.accent.light);
+    expect(colors["chart-1"].dark).toBe(colors.accent.dark);
+    const series = Object.keys(colors).filter((name) =>
+      name.startsWith("chart-"),
+    );
+    expect(series).toHaveLength(5);
+    for (const name of series) {
+      expect(
+        contrastPairs.filter((pair) => pair.text === name).length,
+        name,
+      ).toBeGreaterThan(0);
+    }
+  });
+});
+
 describe("scales", () => {
   it("keep spacing on the 4px grid, except the 2px and 6px half steps", () => {
     for (const [step, px] of Object.entries(space)) {

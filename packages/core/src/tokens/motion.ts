@@ -1,4 +1,7 @@
-/** Durations in milliseconds, emitted as `--bt-dur-<name>`. `reduced` is the longest fade with reduced motion. */
+/**
+ * Durations in milliseconds, emitted as `--bt-dur-<name>`. `reduced` is the longest fade with reduced motion;
+ * `shimmer` is one pass of a skeleton's looping shimmer.
+ */
 export const durations = {
   instant: 0,
   press: 80,
@@ -6,6 +9,7 @@ export const durations = {
   fast: 120,
   base: 200,
   slow: 300,
+  shimmer: 1600,
 } as const;
 
 /** The name of a duration token. */
@@ -72,7 +76,8 @@ export const assembleScale = 0.96;
  * there's time to reach it), how long a live region holds what it announced before it's cleared, so
  * reading the page later doesn't hear it again, how long letters typed in a list build up one search
  * before it starts over, how long chrome that follows a change waits before it arrives, as crop mode's
- * handles and toolbar do, and how long a stat takes to count up to its number.
+ * handles and toolbar do, how long a stat takes to count up to its number, how long the pointer rests on a
+ * menu item before its submenu opens, and how long loading has to last before a loading pill shows.
  */
 export const timing = {
   stagger: 50,
@@ -88,6 +93,8 @@ export const timing = {
   typeahead: 500,
   "delay-follow": 80,
   "count-up": 800,
+  "delay-submenu": 40,
+  "delay-loading": 300,
 } as const;
 
 /** Scale applied while a pressable element is held down. */

@@ -68,6 +68,11 @@ export const heights = {
     description:
       "Page sub nav bar under the nav bar. Page chrome, so it keeps its height in compact.",
   },
+  "table-row": {
+    comfortable: 36,
+    compact: 32,
+    description: "Table header and body rows, including their 1px divider.",
+  },
 } as const;
 
 /** The name of a height token. */
@@ -94,6 +99,32 @@ export const widths = {
     cssVar: "--bt-w-inspector",
     value: 340,
     description: "Inspector panel width.",
+  },
+  sidebar: {
+    cssVar: "--bt-w-sidebar",
+    value: 240,
+    description: "An app's sidebar.",
+  },
+  "sidebar-rail": {
+    cssVar: "--bt-w-sidebar-rail",
+    value: 56,
+    description: "The sidebar as an icon rail.",
+  },
+  "app-page": {
+    cssVar: "--bt-w-app-page",
+    value: 1280,
+    description:
+      "A contained app page's content, padding included, centered in the content column.",
+  },
+  aside: {
+    cssVar: "--bt-w-aside",
+    value: 320,
+    description: "An app page's right rail.",
+  },
+  search: {
+    cssVar: "--bt-w-search",
+    value: 360,
+    description: "The top bar's search field, at most.",
   },
   dialog: { cssVar: "--bt-w-dialog", value: 400, description: "Dialog width." },
   "dialog-md": {

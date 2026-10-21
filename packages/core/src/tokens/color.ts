@@ -205,6 +205,35 @@ export const colors = {
     description:
       "The accent as text: links and icons in an info callout. 4.5:1 on the surface and on accent-subtle, even when a theme's accent is lighter.",
   },
+  "chart-1": {
+    light: "#2862e0",
+    dark: "#4f89ff",
+    description: "A chart's first series: the accent.",
+  },
+  "chart-2": {
+    light: "#008254",
+    dark: "#1ea971",
+    description:
+      "A chart's second series: the mint family at the accent's OKLCH lightness, chroma 0.14 or the most sRGB allows.",
+  },
+  "chart-3": {
+    light: "#a65400",
+    dark: "#cf752d",
+    description:
+      "A chart's third series: the apricot family at the accent's OKLCH lightness, chroma 0.14 or the most sRGB allows.",
+  },
+  "chart-4": {
+    light: "#7b57b2",
+    dark: "#9d7ad7",
+    description:
+      "A chart's fourth series: the lilac family at the accent's OKLCH lightness, chroma 0.14.",
+  },
+  "chart-5": {
+    light: "#ae445b",
+    dark: "#d6677c",
+    description:
+      "A chart's fifth series: the rose family at the accent's OKLCH lightness, chroma 0.14.",
+  },
   danger: {
     light: "#c72a1c",
     dark: "#ff7a6e",
@@ -426,5 +455,11 @@ export const contrastPairs: readonly ContrastPair[] = [
   })),
   { text: "accent", on: "bg-surface", minimum: 3 },
   { text: "accent", on: "bg-app", minimum: 3 },
+  ...(["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] as const).flatMap(
+    (series) =>
+      (["bg-surface", "bg-section", "bg-app", "bg-floating"] as const).map(
+        (on): ContrastPair => ({ text: series, on, minimum: 3 }),
+      ),
+  ),
   { text: "dot-active", on: "bg-surface", minimum: 3 },
 ];
