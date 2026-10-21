@@ -71,7 +71,7 @@ export const assembleScale = 0.96;
 /**
  * Timing tokens that aren't durations of a single transition, in milliseconds: the gap between staggered
  * items, hover intent (a menu opens once the pointer has rested on its trigger, at once when it moves between
- * the triggers of an open menu, and closes after a grace), the tooltip delay, one `Loop` step, the longest
+ * the triggers of an open menu or comes back soon after one closed, and closes after a grace), the tooltip delay, one `Loop` step, the longest
  * choreographed entrance, a confetti burst's life, how long a toast stays (longer with an action, so
  * there's time to reach it), how long a live region holds what it announced before it's cleared, so
  * reading the page later doesn't hear it again, how long letters typed in a list build up one search
@@ -83,6 +83,7 @@ export const timing = {
   stagger: 50,
   "delay-hover-open": 150,
   "delay-hover-close": 100,
+  "delay-hover-skip": 300,
   "delay-tooltip": 500,
   "loop-cycle": 4000,
   "entrance-max": 900,

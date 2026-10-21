@@ -88,9 +88,23 @@ function panel(): HTMLElement | null {
   return document.querySelector('[data-bt-part="panel"]');
 }
 
-async function settled(): Promise<void> {
-  await waitFor(() => {
-    expect(document.documentElement.hasAttribute("data-bt-settled")).toBe(true);
+/** Opens a trigger's menu and waits for its card to unfold to the menu's size. */
+async function openCard(name: string): Promise<HTMLElement> {
+  await userEvent.click(trigger(name));
+  return waitFor(() => {
+    const card = panel()?.querySelector<HTMLElement>('[data-bt-part="body"]');
+    const content = document.querySelector(
+      '[data-bt-part="content"][data-state="open"]',
+    );
+    if (!card || !content) throw new Error("No card yet.");
+    const box = card.getBoundingClientRect();
+    const size = content.getBoundingClientRect();
+    if (
+      Math.abs(box.width - size.width) > 1 ||
+      Math.abs(box.height - size.height) > 1
+    )
+      throw new Error("The card hasn't unfolded yet.");
+    return card;
   });
 }
 
@@ -155,32 +169,98 @@ describe("MorphMenu", () => {
     expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("reaches up behind the triggers without covering them, centered under its trigger and inside the row", async () => {
+  it("stays closed after a click or Escape closes it while a hover was still timing, until the pointer leaves", () => {
     menu();
-    await userEvent.click(trigger("Guides"));
-    await waitFor(() => {
-      const surface = panel();
-      if (!surface) throw new Error("No panel.");
-      const row = screen.getByTestId("menu").getBoundingClientRect();
-      const box = surface.getBoundingClientRect();
-      const target = trigger("Guides").getBoundingClientRect();
-      expect(box.top).toBe(row.top);
-      expect(box.left).toBeGreaterThanOrEqual(row.left);
-      expect(box.right).toBeLessThanOrEqual(row.right + 0.5);
-      const center = target.left + target.width / 2;
-      const clamped = Math.min(
-        Math.max(center - box.width / 2, row.left),
-        row.right - box.width,
-      );
-      expect(Math.abs(box.left - clamped)).toBeLessThanOrEqual(1);
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const product = trigger("Product");
+    const pricing = screen.getByRole("link", { name: "Pricing" });
+    pointTo(product);
+    advance(50);
+    act(() => {
+      fireEvent.click(product);
     });
-    await settled();
+    expect(product.getAttribute("aria-expanded")).toBe("true");
+    act(() => {
+      fireEvent.keyDown(document.body, { key: "Escape" });
+    });
+    expect(product.getAttribute("aria-expanded")).toBe("false");
+    advance(300);
+    expect(product.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.pointerMove(product, { pointerType: "mouse", bubbles: true });
+    advance(300);
+    expect(product.getAttribute("aria-expanded")).toBe("false");
+    pointTo(pricing, product);
+    pointTo(product, pricing);
+    advance(150);
+    expect(product.getAttribute("aria-expanded")).toBe("true");
+    act(() => {
+      fireEvent.click(product);
+    });
+    advance(300);
+    expect(product.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("stays open while the pointer crosses from its trigger into the panel, however slowly", () => {
+    menu();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    pointTo(trigger("Product"));
+    advance(150);
+    expect(trigger("Product").getAttribute("aria-expanded")).toBe("true");
+    const reach = document.querySelector('[data-bt-part="reach"]');
+    if (!reach) throw new Error("No panel.");
+    pointTo(reach, trigger("Product"));
+    advance(400);
+    expect(trigger("Product").getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("opens its card 8px under the row, centered under its trigger and inside the row, never over a trigger", async () => {
+    menu();
+    const card = await openCard("Guides");
+    const row = screen.getByTestId("menu").getBoundingClientRect();
+    const box = card.getBoundingClientRect();
+    expect(box.top).toBe(row.bottom + 8);
+    expect(box.left).toBeGreaterThanOrEqual(row.left);
+    expect(box.right).toBeLessThanOrEqual(row.right + 0.5);
     const target = trigger("Guides").getBoundingClientRect();
-    const hit = document.elementFromPoint(
-      target.left + target.width / 2,
-      target.top + target.height / 2,
+    const center = target.left + target.width / 2;
+    const clamped = Math.min(
+      Math.max(center - box.width / 2, row.left),
+      row.right - box.width,
     );
-    expect(trigger("Guides").contains(hit)).toBe(true);
+    expect(Math.abs(box.left - clamped)).toBeLessThanOrEqual(1);
+    expect(getComputedStyle(card).boxShadow).not.toBe("none");
+    expect(getComputedStyle(panel() ?? card).backgroundColor).toBe(
+      "rgba(0, 0, 0, 0)",
+    );
+    const stops = [
+      trigger("Product"),
+      trigger("Guides"),
+      screen.getByRole("link", { name: "Pricing" }),
+    ];
+    for (const stop of stops) {
+      const { left, top, width, height } = stop.getBoundingClientRect();
+      expect(
+        stop.contains(
+          document.elementFromPoint(left + width / 2, top + height / 2),
+        ),
+        stop.textContent,
+      ).toBe(true);
+    }
+  });
+
+  it("keeps the pointer inside the menu all the way from its trigger down to the card", async () => {
+    menu();
+    const card = await openCard("Guides");
+    const target = trigger("Guides").getBoundingClientRect();
+    const x = target.left + target.width / 2;
+    const top = card.getBoundingClientRect().top;
+    for (let y = target.top + 1; y < top + 4; y += 2) {
+      const hit = document.elementFromPoint(x, y);
+      expect(
+        trigger("Guides").contains(hit) || (panel()?.contains(hit) ?? false),
+        `at ${String(y)}`,
+      ).toBe(true);
+    }
   });
 
   it("unfolds to the open menu's size below the row", async () => {

@@ -306,8 +306,8 @@ function PhoneMenu({
 
 /**
  * The bar across the top of a page: the brand at the start, the menus and links next to it, and the
- * actions at the end, 64px tall on the page container. Its menus open in one `MorphMenu` panel that reaches
- * up behind the bar, while the page behind blurs. At rest it has no background, so it sits on a hero;
+ * actions at the end, 64px tall on the page container. Its menus open in one `MorphMenu` card 8px under the
+ * bar, never over it, while the page behind blurs. At rest it has no background, so it sits on a hero;
  * pinned and scrolled it takes the `panel` surface. It stacks at `--bt-z-sticky` whatever its `behavior`,
  * and while it can stay on screen it publishes its height as `--bt-sticky-top`; an auto-hiding bar also
  * publishes how far it has slid away as `--bt-sticky-shift`, for sticky followers such as `SubNav`. With

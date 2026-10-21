@@ -11,8 +11,15 @@ import {
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { userEvent as browser } from "vitest/browser";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+} from "vitest";
+import { userEvent as browser, page as screenPage } from "vitest/browser";
 import { Button } from "../../components/button/Button.tsx";
 import { MorphMenu } from "../morph-menu/MorphMenu.tsx";
 import { NavBar } from "./NavBar.tsx";
@@ -148,6 +155,43 @@ describe("NavBar", () => {
     });
     const layer = scrim.closest('[data-bt="Layer"]');
     expect(Number(getComputedStyle(layer ?? scrim).zIndex)).toBeLessThan(20);
+  });
+
+  it("opens a menu's card 8px under the bar, leaving the brand, menus and actions uncovered", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1200, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    page("static", 1100);
+    await userEvent.click(screen.getByRole("button", { name: "Product" }));
+    const card = await waitFor(() => {
+      const element = document.querySelector<HTMLElement>(
+        '[data-bt-part="panel"] > [data-bt-part="body"]',
+      );
+      if (!element || element.getBoundingClientRect().height < 40)
+        throw new Error("The card hasn't unfolded yet.");
+      return element;
+    });
+    const row = bar().querySelector('[data-bt-part="bar"]');
+    if (!row) throw new Error("No bar row.");
+    expect(card.getBoundingClientRect().top).toBe(
+      row.getBoundingClientRect().bottom + 8,
+    );
+    for (const element of [
+      screen.getByRole("link", { name: "Card Studio" }),
+      screen.getByRole("button", { name: "Product" }),
+      screen.getByRole("link", { name: "Pricing" }),
+      screen.getByRole("button", { name: "Sign in" }),
+    ]) {
+      const { left, top, width, height } = element.getBoundingClientRect();
+      expect(
+        element.contains(
+          document.elementFromPoint(left + width / 2, top + height / 2),
+        ),
+        element.textContent,
+      ).toBe(true);
+    }
   });
 
   it("folds the menus and actions into a menu button under 640px, which opens them in a sheet", async () => {

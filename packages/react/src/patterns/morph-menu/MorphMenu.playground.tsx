@@ -21,7 +21,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Menus in one panel",
     description:
-      "Rest on a trigger for 150ms and its menu unfolds from the row in dur-fast. Move along the row and the panel reshapes on spring.snappy while the columns crossfade, the new ones sliding in from the side you came from. Leave and it folds up after 100ms.",
+      "Rest on a trigger for 150ms and its menu unfolds under the row in dur-fast. Move along the row and the panel reshapes on spring.snappy while the columns crossfade, the new ones sliding in from the side you came from. Leave and it folds up after 100ms.",
     render: () => (
       <Surface
         level="card"

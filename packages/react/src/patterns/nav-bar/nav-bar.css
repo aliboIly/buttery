@@ -22,7 +22,7 @@
     box-shadow: var(--bt-shadow-card);
   }
 
-  /* The bar row is the panel's frame: the panel reaches up behind it and stays inside its width. */
+  /* The bar row is the panel's frame: the menu's card opens under it and stays inside its width. */
   .bt-nav-bar [data-bt-part="bar"] {
     position: relative;
     container: bt-nav / inline-size;
@@ -57,8 +57,8 @@
   }
 
   /*
-   * In a bar the menu sets no stacking context or size container of its own, so its panel sits behind the
-   * brand and actions too and may take the bar's whole width. The bar folds rather than scrolling its row.
+   * In a bar the menu sets no stacking context or size container of its own, so its card opens under the
+   * whole bar and may take the bar's width. The bar folds rather than scrolling its row.
    */
   .bt-nav-bar .bt-morph-menu {
     --bt-morph-menu-reach: var(--bt-h-nav-bar);

@@ -185,7 +185,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Sticky",
     description:
-      "64px on the page container, with no background over the hero. Its menus open in one MorphMenu panel that reaches up behind the bar while the page blurs. Scrolled, it stays pinned on the panel surface. Narrow the page and everything folds into the menu button.",
+      "64px on the page container, with no background over the hero. Its menus open in one MorphMenu card just under the bar while the page blurs. Scrolled, it stays pinned on the panel surface. Narrow the page and everything folds into the menu button.",
     render: () => <Site behavior="sticky" />,
   },
   {

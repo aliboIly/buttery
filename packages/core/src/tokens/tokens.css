@@ -164,6 +164,7 @@
     --bt-stagger: 50ms;
     --bt-delay-hover-open: 150ms;
     --bt-delay-hover-close: 100ms;
+    --bt-delay-hover-skip: 300ms;
     --bt-delay-tooltip: 500ms;
     --bt-loop-cycle: 4000ms;
     --bt-entrance-max: 900ms;

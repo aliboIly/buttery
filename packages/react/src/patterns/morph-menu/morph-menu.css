@@ -3,16 +3,17 @@
     /* Room around the triggers for their focus ring, which the row would clip as it scrolls. */
     --bt-morph-menu-ring: calc(var(--bt-focus-width) + var(--bt-focus-offset));
 
-    /* How far the panel reaches up behind the row of triggers: the row's height. A nav bar sets its own. */
+    /* The row of triggers' height, which the menu's card opens under. A nav bar sets its own. */
     --bt-morph-menu-reach: calc(
       var(--bt-h-button) + var(--bt-morph-menu-ring) * 2
     );
+    --bt-morph-menu-gap: var(--bt-space-2);
     --bt-morph-menu-line: 1px;
     --bt-morph-menu-entry: 240px;
     --bt-morph-menu-screen: 100vw;
 
-    /* Its own stacking context, so the panel sits behind the triggers but over what follows the menu, and its
-       own size container, so a menu is never wider than the row it opens from. */
+    /* Its own stacking context, so the panel's pointer strip sits behind the triggers while its card covers
+       what follows the menu, and its own size container, so a menu is never wider than the row it opens from. */
     position: relative;
     z-index: var(--bt-z-raised);
     min-inline-size: 0;
@@ -73,7 +74,7 @@
     flex: none;
   }
 
-  /* The panel sits behind the triggers, inside the row's stacking context, so it never paints over them. */
+  /* The panel starts at the row's top, behind the triggers in the row's stacking context; only its card shows. */
   .bt-morph-menu-panel[data-bt-part="panel"] {
     position: absolute;
     inset-block-start: 0;
@@ -81,16 +82,17 @@
     z-index: var(--bt-z-behind);
     display: flex;
     flex-direction: column;
-    padding: 0;
-    overflow: hidden;
   }
 
+  /* The pointer's way from a trigger down to the card: the row's height and the gap under it, drawn as nothing. */
   .bt-morph-menu-panel > [data-bt-part="reach"] {
     flex: none;
-    block-size: var(--bt-morph-menu-reach);
+    block-size: calc(var(--bt-morph-menu-reach) + var(--bt-morph-menu-gap));
   }
 
+  /* The card: the floating surface, holding the open menu and clipping it to its corners. */
   .bt-morph-menu-panel > [data-bt-part="body"] {
+    padding: 0;
     overflow: hidden;
   }
 

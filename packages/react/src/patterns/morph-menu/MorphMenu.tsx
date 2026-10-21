@@ -46,8 +46,16 @@ interface MenuState {
   readonly layout: MorphMenuLayout;
   readonly value: string;
   readonly register: (value: string, element: HTMLElement | null) => void;
+  /** The pointer came onto the panel: whatever close was waiting stops. */
   readonly hold: (event: PointerEvent) => void;
+  /** The pointer left the panel or a trigger: the open menu closes after the grace. */
   readonly release: (event: PointerEvent) => void;
+  /** The pointer came onto a trigger. */
+  readonly enter: (item: string, event: PointerEvent) => void;
+  /** The pointer moved on a trigger: its menu opens, after the hover intent unless one was just open. */
+  readonly point: (item: string, event: PointerEvent) => void;
+  /** The pointer left a trigger. */
+  readonly leave: (item: string, event: PointerEvent) => void;
 }
 
 const MenuContext = createContext<MenuState | null>(null);
@@ -87,6 +95,11 @@ const SHORTEST = widths["nav-panel-min"].value;
 /** How far the panel stays inside the window's bottom edge, as every floating surface does. */
 const GUTTER = space["2"];
 
+/** The panel's own hold and release time the pointer, so Radix's close timer never starts from the menu. */
+function keepRadixTimersOff(event: PointerEvent): void {
+  event.preventDefault();
+}
+
 function sameGeometry(a: Geometry | null, b: Geometry): boolean {
   return (
     a !== null &&
@@ -98,9 +111,9 @@ function sameGeometry(a: Geometry | null, b: Geometry): boolean {
 }
 
 /**
- * The one floating surface every menu opens in. It reaches up behind the row of triggers, so they sit
- * inside its top edge, and below them it takes the open menu's size, centered under its trigger and kept
- * inside the row it reaches behind.
+ * The one floating card every menu opens in, 8px under the row of triggers: the open menu's size, centered
+ * under its trigger and kept inside the row. Above the card a strip that draws nothing runs from the row's
+ * top, behind the triggers, so the pointer never leaves the menu on its way from a trigger to the card.
  */
 function MorphPanel({
   value,
@@ -219,8 +232,7 @@ function MorphPanel({
           {...tracking}
           key="panel"
           ref={panel}
-          className="bt-morph-menu-panel bt-surface"
-          data-level="floating"
+          className="bt-morph-menu-panel"
           data-bt-part="panel"
           data-bt-float=""
           initial={{ opacity: 0 }}
@@ -237,6 +249,8 @@ function MorphPanel({
           <div data-bt-part="reach" />
           <motion.div
             {...tracking}
+            className="bt-surface"
+            data-level="floating"
             data-bt-part="body"
             data-capped={geometry?.capped ? "" : undefined}
             initial={{ height: 0 }}
@@ -248,6 +262,8 @@ function MorphPanel({
               forceMount
               ref={viewport}
               className="bt-morph-menu-viewport"
+              onPointerEnter={keepRadixTimersOff}
+              onPointerLeave={keepRadixTimersOff}
             />
           </motion.div>
         </motion.div>
@@ -353,13 +369,40 @@ function MorphMenuRoot({
     onChange: onValueChange,
   });
   const triggers = useRef(new Map<string, HTMLElement>());
+  const current = useRef(open);
+  const openTimer = useRef(0);
   const closeTimer = useRef(0);
+  const closedAt = useRef(Number.NEGATIVE_INFINITY);
+  const visiting = useRef<string | null>(null);
+  const asked = useRef(false);
+  const blocked = useRef<string | null>(null);
+
+  useLayoutEffect(() => {
+    current.current = open;
+  });
 
   useEffect(
     () => () => {
+      window.clearTimeout(openTimer.current);
       window.clearTimeout(closeTimer.current);
     },
     [],
+  );
+
+  // Every open or close goes through here and cancels whatever was waiting, so a hover that began before a
+  // click or an Escape can't open the menu again afterwards.
+  const change = useCallback(
+    (next: string) => {
+      window.clearTimeout(openTimer.current);
+      window.clearTimeout(closeTimer.current);
+      if (next === "" && current.current !== "") {
+        closedAt.current = performance.now();
+        if (visiting.current === current.current)
+          blocked.current = visiting.current;
+      }
+      setOpen(next);
+    },
+    [setOpen],
   );
 
   const register = useCallback((item: string, element: HTMLElement | null) => {
@@ -373,13 +416,64 @@ function MorphMenuRoot({
     (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
       window.clearTimeout(closeTimer.current);
+      if (current.current === "") return;
       closeTimer.current = window.setTimeout(() => {
-        setOpen("");
+        change("");
       }, timing["delay-hover-close"]);
     },
-    [setOpen],
+    [change],
   );
-  const state: MenuState = { layout, value: open, register, hold, release };
+  const enter = useCallback((item: string, event: PointerEvent) => {
+    if (event.pointerType !== "mouse") return;
+    visiting.current = item;
+    asked.current = false;
+    window.clearTimeout(closeTimer.current);
+  }, []);
+  const point = useCallback(
+    (item: string, event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      // MorphMenu times the pointer itself; Radix's own open timer outlives a click or Escape before it.
+      event.preventDefault();
+      if (asked.current || blocked.current === item) return;
+      asked.current = true;
+      window.clearTimeout(closeTimer.current);
+      if (current.current === item) return;
+      const recent =
+        performance.now() - closedAt.current < timing["delay-hover-skip"];
+      if (current.current !== "" || recent) {
+        change(item);
+        return;
+      }
+      window.clearTimeout(openTimer.current);
+      openTimer.current = window.setTimeout(() => {
+        change(item);
+      }, timing["delay-hover-open"]);
+    },
+    [change],
+  );
+  const leave = useCallback(
+    (item: string, event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      // Radix's own close timer would run on even while the pointer crosses into the panel.
+      event.preventDefault();
+      if (visiting.current === item) visiting.current = null;
+      if (blocked.current === item) blocked.current = null;
+      asked.current = false;
+      window.clearTimeout(openTimer.current);
+      release(event);
+    },
+    [release],
+  );
+  const state: MenuState = {
+    layout,
+    value: open,
+    register,
+    hold,
+    release,
+    enter,
+    point,
+    leave,
+  };
 
   if (layout === "stack") {
     return (
@@ -410,8 +504,7 @@ function MorphMenuRoot({
       <RadixNav.Root
         {...rest}
         value={open}
-        onValueChange={setOpen}
-        delayDuration={timing["delay-hover-open"]}
+        onValueChange={change}
         aria-label={label}
         className={cx("bt-morph-menu", className)}
         data-bt="MorphMenu"
@@ -527,8 +620,15 @@ export function MorphMenuItem({
         ref={attach}
         className="bt-morph-menu-trigger bt-text bt-focus"
         data-role="control"
-        onPointerEnter={menu.hold}
-        onPointerLeave={menu.release}
+        onPointerEnter={(event) => {
+          menu.enter(id, event);
+        }}
+        onPointerMove={(event) => {
+          menu.point(id, event);
+        }}
+        onPointerLeave={(event) => {
+          menu.leave(id, event);
+        }}
         onKeyDown={(event) => {
           if (event.key !== "Tab" || event.shiftKey || !open) return;
           // Focusing the sentinel runs Radix's own way in, which puts the menu's links back in the tab
