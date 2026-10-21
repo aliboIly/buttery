@@ -1,6 +1,7 @@
 import {
   Icon,
   Menu,
+  Skeleton,
   cx,
   hasContent,
   useControllableState,
@@ -198,10 +199,6 @@ function CellContent({
       {text}
     </span>
   );
-}
-
-function Skeleton({ shape }: { readonly shape: SkeletonShape }): ReactElement {
-  return <span data-bt-part="skeleton" data-shape={shape} aria-hidden="true" />;
 }
 
 function DataTableRoot<Row>({
@@ -446,7 +443,7 @@ function DataTableRoot<Row>({
                         data-check=""
                         data-first=""
                       >
-                        <Skeleton shape="badge" />
+                        <Skeleton data-bt-part="skeleton" data-shape="badge" />
                       </div>
                     ) : null}
                     {columns.map((column, at) => (
@@ -461,7 +458,8 @@ function DataTableRoot<Row>({
                         }
                       >
                         <Skeleton
-                          shape={
+                          data-bt-part="skeleton"
+                          data-shape={
                             column.skeleton ??
                             (column.align === "end" ? "number" : "text")
                           }

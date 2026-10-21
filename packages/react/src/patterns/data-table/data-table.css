@@ -211,20 +211,9 @@
   }
 
   .bt-data-table [data-bt-part="skeleton"] {
-    display: block;
     inline-size: 60%;
     block-size: var(--bt-data-table-bar);
     border-radius: var(--bt-r-full);
-    background:
-      linear-gradient(
-          90deg,
-          transparent,
-          var(--bt-bg-control-active),
-          transparent
-        )
-        0 0 / 200% 100% no-repeat,
-      var(--bt-bg-control);
-    animation: bt-data-table-shimmer var(--bt-dur-shimmer) linear infinite;
   }
 
   .bt-data-table [data-bt-part="skeleton"][data-shape="badge"] {
@@ -241,10 +230,6 @@
 
   .bt-data-table [data-bt-part="skeleton"][data-shape="number"] {
     inline-size: var(--bt-data-table-number);
-  }
-
-  [data-bt-motion="reduced"] .bt-data-table [data-bt-part="skeleton"] {
-    animation: none;
   }
 
   /* Rows that replace skeleton rows fade in where the skeletons were; nothing moves. */
@@ -273,20 +258,6 @@
 
   .bt-data-table[data-empty] {
     justify-content: center;
-  }
-
-  @keyframes bt-data-table-shimmer {
-    from {
-      background-position:
-        200% 0,
-        0 0;
-    }
-
-    to {
-      background-position:
-        -100% 0,
-        0 0;
-    }
   }
 
   @keyframes bt-data-table-arrive {
