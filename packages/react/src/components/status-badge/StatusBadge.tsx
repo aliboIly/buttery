@@ -36,7 +36,14 @@ export function StatusBadge({
       data-tone={tone}
     >
       {icon === undefined ? null : <Icon icon={icon} />}
-      <span data-bt-part="label">{children}</span>
+      <span
+        className="bt-truncate"
+        data-bt-truncate=""
+        title={typeof children === "string" ? children : undefined}
+        data-bt-part="label"
+      >
+        {children}
+      </span>
     </span>
   );
 }

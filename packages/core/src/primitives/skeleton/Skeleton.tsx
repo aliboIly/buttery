@@ -17,8 +17,8 @@ export interface SkeletonProps extends Omit<
 }
 
 /**
- * A placeholder for something still loading: `bg-control` with a light sweeping across it every
- * `dur-shimmer`, hidden from screen readers. With a `variant` it's a line of that text role, as wide as its
+ * A placeholder for something still loading: the `skeleton` color with a band of `skeleton-strong` sweeping
+ * across it every `dur-shimmer`, hidden from screen readers. With a `variant` it's a line of that text role, as wide as its
  * `text`; without one, a block sized by the CSS around it. It holds still with reduced motion.
  *
  * @example

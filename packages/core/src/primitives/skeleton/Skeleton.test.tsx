@@ -55,12 +55,16 @@ describe("Skeleton", () => {
     expect(skeleton.height).toBeGreaterThan(0);
   });
 
-  it("holds still with reduced motion", () => {
-    document.documentElement.dataset["btMotion"] = "reduced";
-    render(<Skeleton data-testid="skeleton" />);
-    expect(getComputedStyle(screen.getByTestId("skeleton")).animationName).toBe(
-      "none",
+  it("holds still with reduced motion, following the nearest provider's choice", () => {
+    render(
+      <div data-bt-motion="reduced">
+        <Skeleton data-testid="still" />
+        <div data-bt-motion="full">
+          <Skeleton data-testid="moving" />
+        </div>
+      </div>,
     );
-    delete document.documentElement.dataset["btMotion"];
+    expect(screen.getByTestId("still").getAnimations()).toHaveLength(0);
+    expect(screen.getByTestId("moving").getAnimations()).toHaveLength(1);
   });
 });

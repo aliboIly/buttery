@@ -14,16 +14,14 @@
       var(--bt-skeleton);
     color: transparent;
     user-select: none;
-    animation: bt-skeleton-shimmer var(--bt-dur-shimmer) linear infinite;
+    /* Scaled by --bt-motion, so it holds still under the nearest provider's reduced motion, or the OS's. */
+    animation: bt-skeleton-shimmer
+      calc(var(--bt-dur-shimmer) * var(--bt-motion)) linear infinite;
   }
 
   .bt-skeleton[data-fit] {
     inline-size: fit-content;
     max-inline-size: 100%;
-  }
-
-  [data-bt-motion="reduced"] .bt-skeleton {
-    animation: none;
   }
 
   @keyframes bt-skeleton-shimmer {

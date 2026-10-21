@@ -60,6 +60,20 @@ describe("StatusBadge", () => {
     }
   });
 
+  it("truncates a long label inside a narrow cell, with its full text as its title", () => {
+    render(
+      <div style={{ inlineSize: "60px" }}>
+        <StatusBadge data-testid="badge">Waiting on the roaster</StatusBadge>
+      </div>,
+    );
+    const badge = screen.getByTestId("badge");
+    expect(badge.getBoundingClientRect().width).toBeLessThanOrEqual(60);
+    const label = badge.querySelector<HTMLElement>('[data-bt-part="label"]');
+    expect(label?.scrollWidth).toBeGreaterThan(label?.clientWidth ?? 0);
+    expect(getComputedStyle(label ?? badge).textOverflow).toBe("ellipsis");
+    expect(label?.title).toBe("Waiting on the roaster");
+  });
+
   it("puts a 12px icon before the label", () => {
     render(
       <StatusBadge tone="success" icon={ArrowUpRight} data-testid="badge">

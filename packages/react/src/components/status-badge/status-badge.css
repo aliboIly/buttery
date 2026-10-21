@@ -8,6 +8,8 @@
     flex: none;
     align-items: center;
     gap: var(--bt-space-1);
+    min-inline-size: 0;
+    max-inline-size: 100%;
     block-size: var(--bt-h-badge);
     padding-inline: var(--bt-space-1_5);
     border-radius: var(--bt-r-xs);

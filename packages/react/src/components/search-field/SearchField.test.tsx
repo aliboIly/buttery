@@ -81,6 +81,21 @@ describe("SearchField", () => {
     expect(box().querySelector('[data-bt-part="shortcut"]')).toBeNull();
   });
 
+  it("ends a placeholder or value that doesn't fit with an ellipsis", () => {
+    render(
+      <div style={{ inlineSize: "160px" }}>
+        <SearchField
+          label="Search orders and customers"
+          placeholder="Search orders and customers"
+          defaultValue="Orders from the harbor cafe last spring"
+        />
+      </div>,
+    );
+    const input = screen.getByRole("searchbox");
+    expect(input.scrollWidth).toBeGreaterThan(input.clientWidth);
+    expect(getComputedStyle(input).textOverflow).toBe("ellipsis");
+  });
+
   it("sits on bg-control with no edge when soft, with a 1px edge when outlined", () => {
     render(
       <>
