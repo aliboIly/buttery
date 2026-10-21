@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { Button } from "../../components/button/Button.tsx";
 import { AppShell } from "../app-shell/AppShell.tsx";
+import { DataTable } from "../data-table/DataTable.tsx";
 import { DetailPage } from "./DetailPage.tsx";
 
 afterEach(cleanup);
@@ -122,5 +123,67 @@ describe("DetailPage", () => {
     inShell(1440, <PriceList onNavigate={onNavigate} />);
     await userEvent.click(screen.getByRole("link", { name: "Blends" }));
     expect(onNavigate).toHaveBeenCalledWith("#blends", expect.anything());
+    const origins = screen.getByRole("link", { name: "Single origins" });
+    origins.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    await userEvent.keyboard("{Meta>}");
+    await userEvent.click(origins);
+    await userEvent.keyboard("{/Meta}");
+    expect(onNavigate).toHaveBeenCalledTimes(1);
+  });
+
+  it("makes its aside a region for its one primary action", () => {
+    inShell(1440, <PriceList />);
+    expect(
+      screen
+        .getByRole("complementary", { name: "Details" })
+        .hasAttribute("data-bt-region"),
+    ).toBe(true);
+  });
+
+  it("passes a list of links its ref, class and other props", () => {
+    const ref = createRef<HTMLElement>();
+    render(
+      <DetailPage.Links
+        ref={ref}
+        title="Resources"
+        links={[{ label: "How prices are set", href: "#prices" }]}
+        className="custom"
+        data-testid="links"
+      />,
+    );
+    expect(ref.current).toBe(screen.getByRole("region", { name: "Resources" }));
+    expect(ref.current?.className).toBe("custom");
+    expect(ref.current?.dataset["testid"]).toBe("links");
+  });
+
+  it("leaves the parts of what it holds alone: a table's links keep the table's look", () => {
+    inShell(
+      1440,
+      <DetailPage title="Café price list">
+        <DataTable
+          label="Prices"
+          rows={[{ id: "nyeri", name: "Nyeri AA" }]}
+          rowKey={(row) => row.id}
+          rowLabel={(row) => row.name}
+          columns={[
+            {
+              id: "name",
+              header: "Coffee",
+              minWidth: "md",
+              cell: (row) => (
+                <DataTable.Link href="#nyeri">{row.name}</DataTable.Link>
+              ),
+            },
+          ]}
+        />
+      </DetailPage>,
+    );
+    const link = screen.getByRole("link", { name: "Nyeri AA" });
+    const cell = link.closest("[role='cell']");
+    if (!cell) throw new Error("No cell.");
+    expect(getComputedStyle(link).display).toBe("block");
+    expect(getComputedStyle(link).color).toBe(getComputedStyle(cell).color);
   });
 });

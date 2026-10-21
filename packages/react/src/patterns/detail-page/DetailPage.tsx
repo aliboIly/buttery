@@ -1,6 +1,11 @@
-import { Text, cx, hasContent } from "@buttery/core";
+import { Text, cx, hasContent, opensElsewhere } from "@buttery/core";
 import { useId } from "react";
-import type { MouseEvent, ReactElement, ReactNode } from "react";
+import type {
+  ComponentPropsWithRef,
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+} from "react";
 import { AppPage } from "../app-page/AppPage.tsx";
 import type { AppPageProps } from "../app-page/AppPage.tsx";
 import { PageHeader } from "../page-header/PageHeader.tsx";
@@ -63,7 +68,11 @@ function DetailPageRoot({
       >
         <div data-bt-part="detail-page-detail">{children}</div>
         {withAside ? (
-          <aside aria-label={asideLabel} data-bt-part="detail-aside">
+          <aside
+            aria-label={asideLabel}
+            data-bt-part="detail-aside"
+            data-bt-region=""
+          >
             {hasContent(action) ? (
               <div data-bt-part="detail-action">{action}</div>
             ) : null}
@@ -84,12 +93,15 @@ export interface DetailPageLink {
 }
 
 /** Props for `DetailPage.Links`. */
-export interface DetailPageLinksProps {
+export interface DetailPageLinksProps extends Omit<
+  ComponentPropsWithRef<"section">,
+  "title"
+> {
   /** The list's heading, an `h2` in `title-sm`, over a hairline. */
   readonly title: string;
   /** Its links, in the `body-sm` size and `primary`. */
   readonly links: readonly DetailPageLink[];
-  /** Runs as a link is followed, where a router can take over. */
+  /** Runs as a link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
   readonly onNavigate?:
     ((href: string, event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
 }
@@ -99,10 +111,15 @@ export function DetailPageLinks({
   title,
   links,
   onNavigate,
+  ...rest
 }: DetailPageLinksProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} data-bt-part="detail-page-links">
+    <section
+      aria-labelledby={titleId}
+      {...rest}
+      data-bt-part="detail-page-links"
+    >
       <Text id={titleId} variant="title-sm" asChild>
         <h2>{title}</h2>
       </Text>
@@ -115,7 +132,7 @@ export function DetailPageLinks({
               data-role="body-sm"
               data-bt-part="detail-page-link"
               onClick={(event) => {
-                onNavigate?.(link.href, event);
+                if (!opensElsewhere(event)) onNavigate?.(link.href, event);
               }}
             >
               {link.label}
