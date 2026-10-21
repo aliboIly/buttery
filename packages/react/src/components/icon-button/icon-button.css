@@ -1,5 +1,7 @@
 @layer bt.components {
   .bt-icon-button {
+    --bt-icon-button-dot: 8px;
+    --bt-icon-button-dot-ring: 2px;
     --bt-icon-button-bg: transparent;
     --bt-icon-button-fg: var(--bt-text-secondary);
     --bt-transition-hover:
@@ -17,6 +19,23 @@
     background-color: var(--bt-icon-button-bg);
     color: var(--bt-icon-button-fg);
     appearance: none;
+    position: relative;
+  }
+
+  /* The dot's center sits on the icon's top end corner. */
+  .bt-icon-button > [data-bt-part="dot"] {
+    position: absolute;
+    inset-block-start: calc(
+      50% - var(--bt-icon-sm) / 2 - var(--bt-icon-button-dot) / 2
+    );
+    inset-inline-end: calc(
+      50% - var(--bt-icon-sm) / 2 - var(--bt-icon-button-dot) / 2
+    );
+    inline-size: var(--bt-icon-button-dot);
+    block-size: var(--bt-icon-button-dot);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-accent);
+    box-shadow: 0 0 0 var(--bt-icon-button-dot-ring) var(--bt-bg-surface);
   }
 
   .bt-icon-button[data-size="sm"] {

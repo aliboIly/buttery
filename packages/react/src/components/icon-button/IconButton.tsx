@@ -20,6 +20,10 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
   readonly size?: "sm" | "md" | undefined;
   /** Which side the tooltip opens on. Defaults to `"top"`. */
   readonly tooltipSide?: TooltipSide | undefined;
+  /** Draws an accent dot at the icon's top end, for something new behind the button, and adds it to the name. */
+  readonly dot?: boolean | undefined;
+  /** What the dot adds to the button's name. Defaults to `"new"`, read as "Notifications, new". */
+  readonly dotLabel?: string | undefined;
   /** Render the single child element (such as a link) as the button, with the icon merged in. */
   readonly asChild?: boolean | undefined;
 }
@@ -38,6 +42,8 @@ export function IconButton({
   label,
   size = "md",
   tooltipSide,
+  dot = false,
+  dotLabel = "new",
   asChild = false,
   className,
   type,
@@ -46,6 +52,10 @@ export function IconButton({
   ...rest
 }: IconButtonProps): ReactElement {
   const classes = cx("bt-icon-button bt-press bt-focus", className);
+  const name = dot ? `${label}, ${dotLabel}` : label;
+  const mark = dot ? (
+    <span data-bt-part="dot" data-bt-allow-overlap="" aria-hidden="true" />
+  ) : null;
   const unavailable =
     rest["aria-disabled"] === true || rest["aria-disabled"] === "true";
   const press = (event: MouseEvent<HTMLButtonElement>): void => {
@@ -61,13 +71,14 @@ export function IconButton({
         <Slot
           {...rest}
           onClick={press}
-          aria-label={label}
+          aria-label={name}
           className={classes}
           data-bt="IconButton"
           data-bt-control=""
           data-size={size}
         >
           <Icon icon={icon} />
+          {mark}
           <RadixSlot.Slottable>{children}</RadixSlot.Slottable>
         </Slot>
       ) : (
@@ -75,13 +86,14 @@ export function IconButton({
           {...rest}
           type={type ?? "button"}
           onClick={press}
-          aria-label={label}
+          aria-label={name}
           className={classes}
           data-bt="IconButton"
           data-bt-control=""
           data-size={size}
         >
           <Icon icon={icon} />
+          {mark}
         </button>
       )}
     </Tooltip>

@@ -88,4 +88,34 @@ describe("IconButton", () => {
     expect(onClick).not.toHaveBeenCalled();
     expect(document.activeElement).toBe(button);
   });
+
+  it("draws a dot on the icon's top end corner and adds it to the name", () => {
+    render(
+      <>
+        <IconButton icon={BookOpen} label="Notifications" dot />
+        <IconButton
+          icon={BookOpen}
+          label="Updates"
+          dot
+          dotLabel="unread"
+          size="sm"
+        />
+      </>,
+    );
+    const button = screen.getByRole("button", { name: "Notifications, new" });
+    const dot = button.querySelector('[data-bt-part="dot"]');
+    const icon = button.querySelector("svg");
+    if (!dot || !icon) throw new Error("No dot or icon.");
+    expect(dot.getAttribute("aria-hidden")).toBe("true");
+    const mark = dot.getBoundingClientRect();
+    const glyph = icon.getBoundingClientRect();
+    expect([mark.width, mark.height]).toEqual([8, 8]);
+    expect(Math.abs(mark.left + mark.width / 2 - glyph.right)).toBeLessThan(
+      0.5,
+    );
+    expect(Math.abs(mark.top + mark.height / 2 - glyph.top)).toBeLessThan(0.5);
+    expect(
+      screen.getByRole("button", { name: "Updates, unread" }),
+    ).toBeTruthy();
+  });
 });

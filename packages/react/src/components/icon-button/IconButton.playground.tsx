@@ -1,4 +1,4 @@
-import { HelpCircle, Redo2, Undo2, X } from "lucide-react";
+import { Bell, HelpCircle, Redo2, Undo2, X } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
@@ -31,6 +31,17 @@ export const demos: readonly DemoSection[] = [
         <IconButton icon={Redo2} label="Redo" />
         <IconButton icon={HelpCircle} label="Help" />
         <IconButton icon={X} label="Close" size="sm" />
+      </Inline>
+    ),
+  },
+  {
+    title: "With a dot",
+    description:
+      "An accent dot for something new behind the button; its name says so too.",
+    render: () => (
+      <Inline gap={1} align="center">
+        <IconButton icon={Bell} label="Notifications" dot />
+        <IconButton icon={HelpCircle} label="What's new" dot size="sm" />
       </Inline>
     ),
   },
