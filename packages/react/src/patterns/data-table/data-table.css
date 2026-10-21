@@ -65,6 +65,14 @@
     border-block-end: var(--bt-data-table-line) solid var(--bt-border);
   }
 
+  /* A compact row leaves 2px around a 28px button, less than its ring takes, so the row with focus paints above the next. */
+  .bt-data-table
+    [data-bt-part="body"]
+    > [data-bt-part="row"]:has(:focus-visible) {
+    position: relative;
+    z-index: var(--bt-z-raised);
+  }
+
   .bt-data-table [data-bt-part="cell"] {
     display: flex;
     align-items: center;
@@ -275,8 +283,14 @@
     inline-size: var(--bt-data-table-number);
   }
 
+  /* dur-fast, or dur-reduced, the longest fade, with reduced motion. */
   .bt-data-table [data-bt-part="body"][data-arrived] > [data-bt-part="row"] {
-    animation: bt-data-table-arrive var(--bt-dur-fast) var(--bt-ease-out);
+    animation: bt-data-table-arrive
+      calc(
+        var(--bt-dur-reduced) + (var(--bt-dur-fast) - var(--bt-dur-reduced)) *
+          var(--bt-motion)
+      )
+      var(--bt-ease-out);
   }
 
   .bt-data-table > [data-bt-part="pagination"] {

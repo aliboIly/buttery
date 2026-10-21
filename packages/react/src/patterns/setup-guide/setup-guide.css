@@ -84,9 +84,11 @@
     scrollbar-gutter: stable;
   }
 
+  /* The edge fade would mask the ring's top and bottom, so it comes off while the ring shows. */
   .bt-setup-guide [data-bt-part="steps-scroll"]:focus-visible {
     outline: var(--bt-focus-width) solid var(--bt-accent);
     outline-offset: calc(var(--bt-focus-width) * -1);
+    mask-image: none;
   }
 
   .bt-setup-guide [data-bt-part="steps"] {

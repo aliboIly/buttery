@@ -538,6 +538,48 @@ describe("DataTable", () => {
     expect(getComputedStyle(scroll).outlineStyle).toBe("none");
   });
 
+  it("lifts a row holding focus above the next in compact density, so its button's ring shows whole", async () => {
+    render(
+      <div data-bt-density="compact">
+        <Orders
+          rowActions={() => (
+            <Menu.Item onSelect={() => undefined}>Refund</Menu.Item>
+          )}
+        />
+      </div>,
+    );
+    const button = screen.getByRole("button", {
+      name: /^Actions for ORD-1040/,
+    });
+    const [first, second] = rows();
+    if (!first || !second) throw new Error("No rows.");
+    await browser.keyboard("{Shift}");
+    button.focus();
+    const ring =
+      button.getBoundingClientRect().bottom +
+      Number.parseFloat(getComputedStyle(button).outlineOffset) +
+      Number.parseFloat(getComputedStyle(button).outlineWidth);
+    expect(ring).toBeGreaterThan(first.getBoundingClientRect().bottom);
+    expect(getComputedStyle(first).zIndex).toBe("10");
+    expect(getComputedStyle(second).zIndex).toBe("auto");
+  });
+
+  it("fades arriving rows in over 100ms with reduced motion", () => {
+    const { rerender } = render(
+      <div data-bt-motion="reduced">
+        <Orders loading />
+      </div>,
+    );
+    rerender(
+      <div data-bt-motion="reduced">
+        <Orders />
+      </div>,
+    );
+    const [first] = rows();
+    if (!first) throw new Error("No rows.");
+    expect(getComputedStyle(first).animationDuration).toBe("0.1s");
+  });
+
   it("shows a selected row's tint while hovered", async () => {
     render(<Orders selectable defaultSelected={new Set(["ORD-1041"])} />);
     const [, second] = rows();

@@ -188,6 +188,23 @@ describe("SetupGuide", () => {
     ).toBe(false);
   });
 
+  it("shows its steps' ring whole, the edge fade off while it's focused", async () => {
+    const many = Array.from({ length: 12 }, (_, index) => ({
+      id: `task-${String(index)}`,
+      title: `Finish part ${String(index + 1)} of the shop`,
+      done: true,
+    }));
+    render(<Guide tasks={many} defaultOpen />);
+    const steps = within(guide()).getByRole("region", { name: "Steps" });
+    await waitFor(() => {
+      expect(steps.tabIndex).toBe(0);
+    });
+    expect(getComputedStyle(steps).maskImage).not.toBe("none");
+    await browser.keyboard("{Shift}");
+    steps.focus();
+    expect(getComputedStyle(steps).maskImage).toBe("none");
+  });
+
   it("says it's all set once every task is done", () => {
     render(<Guide tasks={TASKS.map((task) => ({ ...task, done: true }))} />);
     expect(within(guide()).getByText("You're all set.")).toBeTruthy();
