@@ -299,3 +299,19 @@ export type {
 } from "./patterns/footer/Footer.tsx";
 export { SubNav } from "./patterns/sub-nav/SubNav.tsx";
 export type { SubNavItem, SubNavProps } from "./patterns/sub-nav/SubNav.tsx";
+export {
+  MorphMenu,
+  MorphMenuColumn,
+  MorphMenuEntry,
+  MorphMenuItem,
+  MorphMenuLink,
+} from "./patterns/morph-menu/MorphMenu.tsx";
+export type {
+  MorphMenuColumnProps,
+  MorphMenuComponent,
+  MorphMenuEntryProps,
+  MorphMenuItemProps,
+  MorphMenuLayout,
+  MorphMenuLinkProps,
+  MorphMenuProps,
+} from "./patterns/morph-menu/MorphMenu.tsx";

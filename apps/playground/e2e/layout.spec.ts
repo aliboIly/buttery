@@ -203,6 +203,33 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
   ],
+  "morph-menu": [
+    {
+      name: "open the Product menu",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Product", exact: true })
+          .first()
+          .click();
+        await page.locator('[data-bt-part="panel"]').first().waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "move to the Guides menu",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Guides", exact: true })
+          .first()
+          .hover();
+        await page
+          .getByRole("button", { name: "Guides", expanded: true })
+          .first()
+          .waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
   onboarding: [
     {
       name: "open the tour",

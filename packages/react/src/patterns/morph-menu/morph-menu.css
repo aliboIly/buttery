@@ -1,0 +1,297 @@
+@layer bt.patterns {
+  .bt-morph-menu {
+    /* Room around the triggers for their focus ring, which the row would clip as it scrolls. */
+    --bt-morph-menu-ring: calc(var(--bt-focus-width) + var(--bt-focus-offset));
+
+    /* How far the panel reaches up behind the row of triggers: the row's height. A nav bar sets its own. */
+    --bt-morph-menu-reach: calc(
+      var(--bt-h-button) + var(--bt-morph-menu-ring) * 2
+    );
+    --bt-morph-menu-line: 1px;
+    --bt-morph-menu-entry: 240px;
+    --bt-morph-menu-screen: 100vw;
+
+    /* Its own stacking context, so the panel sits behind the triggers but over what follows the menu, and its
+       own size container, so a menu is never wider than the row it opens from. */
+    position: relative;
+    z-index: var(--bt-z-raised);
+    min-inline-size: 0;
+    container-type: inline-size;
+  }
+
+  /* A row too narrow for its triggers scrolls sideways rather than spilling. */
+  .bt-morph-menu-list {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: var(--bt-morph-menu-ring);
+    overflow-x: auto;
+    list-style: none;
+  }
+
+  .bt-morph-menu-item {
+    display: flex;
+    flex: none;
+  }
+
+  .bt-morph-menu-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-1);
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-3);
+    border: 0;
+    border-radius: var(--bt-r-full);
+    background-color: transparent;
+    color: var(--bt-text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  @media (hover: hover) {
+    .bt-morph-menu-trigger:hover {
+      color: var(--bt-text);
+    }
+  }
+
+  .bt-morph-menu-trigger[data-state="open"] {
+    color: var(--bt-text-strong);
+  }
+
+  /* The trigger's target runs the row's full height, so the pointer reaches the panel without leaving it. */
+  .bt-morph-menu-trigger > [data-bt-part="hit"] {
+    position: absolute;
+    inset-block: calc((var(--bt-morph-menu-reach) - var(--bt-h-button)) / -2);
+    inset-inline: 0;
+  }
+
+  .bt-morph-menu-chevron {
+    display: inline-flex;
+    flex: none;
+  }
+
+  /* The panel sits behind the triggers, inside the row's stacking context, so it never paints over them. */
+  .bt-morph-menu-panel[data-bt-part="panel"] {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: var(--bt-z-behind);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .bt-morph-menu-panel > [data-bt-part="reach"] {
+    flex: none;
+    block-size: var(--bt-morph-menu-reach);
+  }
+
+  .bt-morph-menu-panel > [data-bt-part="body"] {
+    overflow: hidden;
+  }
+
+  /* A menu taller than the room left in the window scrolls inside the panel. */
+  .bt-morph-menu-panel > [data-bt-part="body"][data-capped] {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bt-morph-menu-viewport {
+    position: relative;
+    inline-size: var(--radix-navigation-menu-viewport-width);
+    block-size: var(--radix-navigation-menu-viewport-height);
+  }
+
+  /* Old and new columns overlap while they crossfade; the viewport takes the open menu's size. */
+  .bt-morph-menu-viewport > [data-bt-part="content"] {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: max-content;
+    max-inline-size: min(
+      100cqi,
+      var(--bt-morph-menu-screen) - var(--bt-space-4)
+    );
+    animation: bt-morph-menu-in calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-out);
+  }
+
+  .bt-morph-menu-viewport > [data-motion="from-end"] {
+    animation-name: bt-morph-menu-from-end;
+  }
+
+  .bt-morph-menu-viewport > [data-motion="from-start"] {
+    animation-name: bt-morph-menu-from-start;
+  }
+
+  .bt-morph-menu-viewport
+    > :is([data-motion="to-start"], [data-motion="to-end"]) {
+    animation: bt-morph-menu-out calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-in) forwards;
+  }
+
+  @keyframes bt-morph-menu-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes bt-morph-menu-from-end {
+    from {
+      opacity: 0;
+      translate: calc(var(--bt-space-2) * var(--bt-motion)) 0;
+    }
+  }
+
+  @keyframes bt-morph-menu-from-start {
+    from {
+      opacity: 0;
+      translate: calc(var(--bt-space-2) * var(--bt-motion) * -1) 0;
+    }
+  }
+
+  @keyframes bt-morph-menu-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .bt-morph-menu-content {
+    display: flex;
+    min-inline-size: 0;
+  }
+
+  .bt-morph-menu-content > [data-bt-part="main"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-6);
+    min-inline-size: 0;
+    padding: var(--bt-space-6);
+  }
+
+  .bt-morph-menu-content [data-bt-part="columns"] {
+    display: flex;
+    gap: var(--bt-space-8);
+    min-inline-size: 0;
+  }
+
+  .bt-morph-menu-content [data-bt-part="footer"] {
+    padding-block-start: var(--bt-space-4);
+    border-block-start: var(--bt-morph-menu-line) solid var(--bt-border);
+  }
+
+  /* The featured column runs to the panel's end edge, clipped by its corners. */
+  .bt-morph-menu-content > [data-bt-part="featured"] {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    padding: var(--bt-space-6);
+    background-color: var(--bt-bg-section);
+  }
+
+  .bt-morph-menu-column {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
+  .bt-morph-menu-column > [data-bt-part="heading"] {
+    padding-inline: var(--bt-space-3);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-morph-menu-column > [data-bt-part="entries"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bt-morph-menu-entry {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+    max-inline-size: var(--bt-morph-menu-entry);
+    padding: var(--bt-space-2) var(--bt-space-3);
+    border-radius: var(--bt-r-md);
+    color: var(--bt-text);
+    text-decoration: none;
+    transition: background-color var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  @media (hover: hover) {
+    .bt-morph-menu-entry:hover {
+      background-color: var(--bt-bg-item-hover);
+    }
+  }
+
+  .bt-morph-menu-entry > [data-bt-part="title"] {
+    color: var(--bt-text);
+  }
+
+  /* A menu with little room stacks its columns, and its featured column under them, rather than squeezing. */
+  @container (width < 640px) {
+    .bt-morph-menu-content,
+    .bt-morph-menu-content [data-bt-part="columns"] {
+      flex-direction: column;
+    }
+
+    .bt-morph-menu-content [data-bt-part="columns"] {
+      gap: var(--bt-space-4);
+    }
+  }
+
+  /* Stacked, each menu is a section that opens in place under its trigger. */
+  .bt-morph-menu[data-layout="stack"] > [data-bt-part="list"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+  }
+
+  .bt-morph-menu-section-header {
+    margin: 0;
+  }
+
+  .bt-morph-menu[data-layout="stack"] .bt-morph-menu-trigger {
+    justify-content: space-between;
+    inline-size: 100%;
+    block-size: var(--bt-h-cta);
+    padding-inline: var(--bt-space-4);
+    border-radius: var(--bt-r-md);
+    color: var(--bt-text);
+  }
+
+  .bt-morph-menu[data-layout="stack"] .bt-morph-menu-content {
+    flex-direction: column;
+  }
+
+  .bt-morph-menu[data-layout="stack"]
+    .bt-morph-menu-content
+    > [data-bt-part="main"] {
+    padding: var(--bt-space-2) var(--bt-space-1) var(--bt-space-4);
+  }
+
+  .bt-morph-menu[data-layout="stack"] [data-bt-part="columns"] {
+    flex-direction: column;
+    gap: var(--bt-space-4);
+  }
+
+  .bt-morph-menu[data-layout="stack"]
+    .bt-morph-menu-content
+    > [data-bt-part="featured"] {
+    border-radius: var(--bt-r-lg);
+  }
+
+  .bt-morph-menu[data-layout="stack"] .bt-morph-menu-entry {
+    max-inline-size: none;
+  }
+}
