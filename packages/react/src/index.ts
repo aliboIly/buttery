@@ -570,3 +570,9 @@ export type {
   CatalogPageProps,
   CatalogPageSectionProps,
 } from "./patterns/catalog-page/CatalogPage.tsx";
+export { PlanComparison } from "./patterns/plan-comparison/PlanComparison.tsx";
+export type {
+  PlanComparisonOptionProps,
+  PlanComparisonPlan,
+  PlanComparisonProps,
+} from "./patterns/plan-comparison/PlanComparison.tsx";

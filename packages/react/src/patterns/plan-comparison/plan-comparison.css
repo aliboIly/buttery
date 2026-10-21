@@ -1,0 +1,187 @@
+@layer bt.patterns {
+  .bt-plan-comparison {
+    --bt-plan-comparison-columns: 3;
+    --bt-plan-comparison-line: 1px;
+    --bt-plan-comparison-ribbon: 28px;
+    --bt-plan-comparison-check: 14px;
+
+    container: bt-plan-comparison / inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-6);
+    min-inline-size: 0;
+  }
+
+  .bt-plan-comparison > [data-bt-part="controls"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-self: flex-start;
+    gap: var(--bt-space-1);
+    max-inline-size: 100%;
+    padding: var(--bt-space-1);
+    border: var(--bt-plan-comparison-line) solid var(--bt-border);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-plan-comparison [data-bt-part="controls-divider"] {
+    align-self: stretch;
+    inline-size: var(--bt-plan-comparison-line);
+    background-color: var(--bt-border);
+  }
+
+  .bt-plan-comparison > [data-bt-part="plans"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-plan-comparison [data-bt-part="plan"] {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .bt-plan-comparison [data-bt-part="ribbon-slot"] {
+    display: flex;
+    align-items: flex-end;
+    min-block-size: var(--bt-plan-comparison-ribbon);
+    padding-inline: var(--bt-space-4);
+  }
+
+  .bt-plan-comparison [data-bt-part="ribbon"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+    block-size: var(--bt-plan-comparison-ribbon);
+    padding-inline: var(--bt-space-2);
+    border-radius: var(--bt-r-sm) var(--bt-r-sm) 0 0;
+    background-color: var(--bt-accent-subtle);
+    color: var(--bt-accent-text);
+    white-space: nowrap;
+  }
+
+  .bt-plan-comparison [data-bt-part="card"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-5);
+    min-inline-size: 0;
+    padding: var(--bt-space-5);
+  }
+
+  .bt-plan-comparison [data-bt-part="intro"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-plan-comparison [data-bt-part="description"],
+  .bt-plan-comparison [data-bt-part="period"],
+  .bt-plan-comparison [data-bt-part="price-note"] {
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-plan-comparison [data-bt-part="price"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--bt-space-1) var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-plan-comparison [data-bt-part="price-note"] {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    gap: var(--bt-space-1);
+  }
+
+  .bt-plan-comparison [data-bt-part="action"] {
+    display: grid;
+  }
+
+  .bt-plan-comparison [data-bt-part="features"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
+  .bt-plan-comparison [data-bt-part="feature-list"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bt-plan-comparison [data-bt-part="feature-list"] > li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-plan-comparison [data-bt-part="feature-list"] .bt-icon {
+    --bt-icon-size: var(--bt-plan-comparison-check);
+
+    flex: none;
+    color: var(--bt-accent);
+  }
+
+  .bt-plan-comparison > [data-bt-part="more"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-plan-comparison [data-bt-part="options"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-4);
+  }
+
+  .bt-plan-comparison [data-bt-part="option"] {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    padding: var(--bt-space-5);
+  }
+
+  @container bt-plan-comparison (width >= 640px) {
+    .bt-plan-comparison [data-bt-part="options"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* The cards share their rows, so each part lines up across them whatever its text's length. */
+  @container bt-plan-comparison (width >= 900px) {
+    .bt-plan-comparison > [data-bt-part="plans"] {
+      grid-template-columns: repeat(
+        var(--bt-plan-comparison-columns),
+        minmax(0, 1fr)
+      );
+      grid-template-rows: auto auto auto auto 1fr;
+    }
+
+    .bt-plan-comparison [data-bt-part="plan"] {
+      display: grid;
+      grid-row: span 5;
+      grid-template-rows: subgrid;
+    }
+
+    .bt-plan-comparison [data-bt-part="card"] {
+      display: grid;
+      grid-row: 2 / span 4;
+      grid-template-rows: subgrid;
+    }
+  }
+}
