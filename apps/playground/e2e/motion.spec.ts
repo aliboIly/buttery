@@ -2190,4 +2190,248 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
       );
     }
   });
+
+  test("a form dialog rises 4px as it fades in over dur-fast, waits on itself, then focuses its field once it has settled", async ({
+    page,
+  }) => {
+    await openDemo(page, "/settings/team");
+    await page.getByRole("button", { name: "Invite someone" }).focus();
+    await startSampling(page, '[data-bt="Dialog"]');
+    await page.keyboard.press("Enter");
+    const focusDuring = await page.evaluate(
+      () => document.activeElement?.getAttribute("role") ?? "",
+    );
+    const enter = await finishSampling(page, 500);
+    expectTween(
+      "form dialog rising",
+      progress(
+        trace(enter, (reading) => reading.y),
+        4,
+        0,
+      ),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    expect(focusDuring).toBe("dialog");
+    await expect(
+      page.getByRole("textbox", { name: "Email address" }),
+    ).toBeFocused();
+    await startSampling(page, '[data-bt="Dialog"]');
+    await page.keyboard.press("Escape");
+    const exit = await finishSampling(page, 400);
+    expectTween(
+      "form dialog fading out",
+      progress(trace(exit, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+  });
+
+  test("a full-screen dialog fades in and out over dur-fast without growing, rising or shrinking", async ({
+    page,
+  }) => {
+    await page.goto("/?motion=full#/fullscreen-dialog");
+    await page.locator("h1").first().waitFor();
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
+    const dialog = '[data-bt="Dialog"][data-size="full"]';
+    await page
+      .getByRole("button", { name: "Set up the roastery", exact: true })
+      .first()
+      .focus();
+    await startSampling(page, dialog);
+    await page.keyboard.press("Enter");
+    const enter = await finishSampling(page, 400);
+    expectTween(
+      "full-screen dialog fading in",
+      progress(trace(enter, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    expectAtRest(enter);
+    await startSampling(page, dialog);
+    await page.keyboard.press("Escape");
+    const exit = await finishSampling(page, 400);
+    const leaving = expectTween(
+      "full-screen dialog fading out",
+      progress(trace(exit, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+    expectGoneSoonAfter(exit, leaving.start + DURATIONS.fast);
+    expectAtRest(exit);
+  });
+
+  test("a side panel docks in one frame, the page narrowing in that frame, and fades its content in over dur-fast", async ({
+    page,
+  }) => {
+    await openDemo(page, "");
+    const column = '[data-bt="AppShell"] > [data-bt-part="column"]';
+    const panel = '[data-bt="SidePanel"]';
+    const content = `${panel} > [data-bt-part="content"]`;
+    await page.getByRole("button", { name: "Help", exact: true }).focus();
+    await startSampling(page, `${column}, ${panel}, ${content}`, ["keydown"]);
+    await page.keyboard.press("Enter");
+    const opening = await finishSampling(page, 400);
+    const [columnId, panelId, contentId] = elementIds(opening);
+    if (
+      columnId === undefined ||
+      panelId === undefined ||
+      contentId === undefined
+    )
+      throw new Error("The panel didn't dock.");
+    const wide = opening.before.elements[0]?.width ?? 0;
+    const frames = framesFrom(opening, "keydown");
+    const docked = frames.findIndex(({ elements }) =>
+      elements.some(({ id }) => id === panelId),
+    );
+    report(`side panel: docks ${String(docked)} frames after the key`);
+    expect(docked).toBeGreaterThanOrEqual(0);
+    expect(docked).toBeLessThanOrEqual(1);
+    for (const [index, { elements }] of frames.entries()) {
+      const columnNow = elements.find(({ id }) => id === columnId);
+      const panelNow = elements.find(({ id }) => id === panelId);
+      if (index < docked) expect(columnNow?.width).toBe(wide);
+      else {
+        expect(columnNow?.width).toBe(wide - 360);
+        expect(panelNow?.width).toBe(360);
+        expect(panelNow?.opacity).toBe(1);
+      }
+    }
+    expectTween(
+      "side panel content fading in",
+      progress(traceOf(opening, contentId, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    await startSampling(page, `${column}, ${panel}`, ["keydown"]);
+    await page.keyboard.press("Escape");
+    const closing = framesFrom(await finishSampling(page, 300), "keydown");
+    const gone = closing.findIndex(
+      ({ elements }) => !elements.some(({ id }) => id === panelId),
+    );
+    report(`side panel: gone ${String(gone)} frames after Escape`);
+    expect(gone).toBeGreaterThanOrEqual(0);
+    expect(gone).toBeLessThanOrEqual(1);
+    for (const { elements } of closing.slice(gone))
+      expect(elements.find(({ id }) => id === columnId)?.width).toBe(wide);
+  });
+
+  test("the search field widens from 360 to 600 on spring.smooth, its icon keeping its size, over a panel complete in its first frame", async ({
+    page,
+  }) => {
+    await openDemo(page, "/orders");
+    const field = '[data-bt="CommandSearch"]';
+    const icon = `${field} > [data-bt-part="icon"]`;
+    const panel = ".bt-command-search-panel";
+    await startSampling(page, `${field}, ${icon}, ${panel}`, ["keydown"]);
+    await page.keyboard.press("/");
+    const run = await finishSampling(page, 700);
+    const [fieldId, iconId, panelId] = elementIds(run);
+    if (fieldId === undefined || iconId === undefined || panelId === undefined)
+      throw new Error("The field or its panel wasn't there.");
+    expectSpring(
+      "search field widening",
+      progress(
+        traceOf(run, fieldId, (reading) => reading.width),
+        360,
+        600,
+      ),
+      "smooth",
+    );
+    for (const { reading } of readingsOf(run, iconId))
+      expect(Math.abs(reading.width - 16)).toBeLessThanOrEqual(0.5);
+    const shown = readingsOf(run, panelId);
+    expect(shown.length).toBeGreaterThan(0);
+    for (const { reading } of shown) {
+      expect(reading.opacity).toBe(1);
+      expect(reading.scale).toBe(1);
+      expect(reading.width).toBe(600);
+    }
+  });
+
+  test("search results change in the frame the query does, and the suggestions come back in one frame when it's cleared", async ({
+    page,
+  }) => {
+    await openDemo(page, "/orders");
+    await page.keyboard.press("/");
+    await page.waitForTimeout(400);
+    const rows = '.bt-command-search-panel [role="option"]';
+    const settledWithin = (frames: Run["frames"]): number => {
+      const counts = frames.map(({ elements }) => elements.length);
+      const last = counts.at(-1);
+      return counts.findIndex(
+        (count, index) =>
+          count === last &&
+          counts.slice(index).every((later) => later === last),
+      );
+    };
+    await startSampling(page, rows, ["keydown"]);
+    await page.keyboard.type("r");
+    const typed = framesFrom(await finishSampling(page, 200), "keydown");
+    const swapped = settledWithin(typed);
+    report(`search: results swap in ${String(swapped)} frames after the key`);
+    expect(swapped).toBeLessThanOrEqual(1);
+    expect(typed.at(-1)?.elements.length ?? 0).toBeGreaterThan(3);
+    await startSampling(page, rows, ["keydown"]);
+    await page.keyboard.press("Escape");
+    const cleared = framesFrom(await finishSampling(page, 200), "keydown");
+    const back = settledWithin(cleared);
+    report(`search: suggestions back ${String(back)} frames after clearing`);
+    expect(back).toBeLessThanOrEqual(1);
+    expect(cleared.at(-1)?.elements.length).toBe(3);
+  });
+
+  test("a remote group keeps its rows while it asks again, with a spinner row in itself alone", async ({
+    page,
+  }) => {
+    await openDemo(page, "/orders");
+    await page.keyboard.press("/");
+    await page.keyboard.type("pay");
+    const help = page.getByRole("group", { name: "Help" });
+    await expect(
+      help.locator('[role="option"]:not([aria-disabled])').first(),
+    ).toBeVisible();
+    const rows =
+      '.bt-command-search-panel [role="group"][aria-label="Help"] [role="option"]';
+    const before = await page.locator(rows).count();
+    await startSampling(page, rows, ["keydown"]);
+    await page.keyboard.type("o");
+    const spinners = await page.locator('[data-bt-part="searching"]').count();
+    const spinnersInHelp = await help
+      .locator('[data-bt-part="searching"]')
+      .count();
+    const run = framesFrom(await finishSampling(page, 800), "keydown");
+    expect(spinners).toBe(1);
+    expect(spinnersInHelp).toBe(1);
+    for (const { elements } of run) expect(elements.length).toBeGreaterThan(0);
+    expect(run.some(({ elements }) => elements.length === before + 1)).toBe(
+      true,
+    );
+    await expect(page.locator('[data-bt-part="searching"]')).toHaveCount(0);
+  });
+
+  test("a row's hover actions fade in over dur-fast while its tint shows at once", async ({
+    page,
+  }) => {
+    await page.goto("/?motion=full#/hover-actions");
+    await page.locator("h1").first().waitFor();
+    const row = page.locator('[data-bt="HoverActions"]').first();
+    await row.scrollIntoViewIfNeeded();
+    await row.evaluate((element) => {
+      element.setAttribute("data-sample", "");
+    });
+    await startSampling(
+      page,
+      '[data-sample], [data-sample] > [data-bt-part="actions"]',
+    );
+    await row.hover();
+    const run = await finishSampling(page, 300);
+    expect(transitionsOf(run, "opacity")).toContainEqual([
+      DURATIONS.fast,
+      CSS_EASE_OUT,
+    ]);
+    expect(transitionsOf(run, "background-color")).toEqual([]);
+  });
 });
