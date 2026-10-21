@@ -412,3 +412,16 @@ export type {
   AccountMenuWorkspacesProps,
   AccountWorkspace,
 } from "./patterns/account-menu/AccountMenu.tsx";
+export { DataTable } from "./patterns/data-table/DataTable.tsx";
+export type {
+  ColumnWidth,
+  DataTableAmountProps,
+  DataTableColumn,
+  DataTableComponent,
+  DataTableIdProps,
+  DataTableLabels,
+  DataTablePagination,
+  DataTableProps,
+  DataTableSort,
+  SkeletonShape,
+} from "./patterns/data-table/DataTable.tsx";
