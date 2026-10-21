@@ -15,7 +15,7 @@ import {
 } from "@buttery/core";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog, VisuallyHidden } from "radix-ui";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import type {
   ComponentPropsWithRef,
   ReactElement,
@@ -315,6 +315,7 @@ function SidebarShell({
   ...rest
 }: AppShellSidebarProps): ReactElement {
   const root = useRef<HTMLDivElement>(null);
+  const page = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, root);
   const [mode, setMode] = useState<SidebarMode>("full");
   const [sheetOpen, setSheetOpen] = useControllableState({
@@ -344,11 +345,16 @@ function SidebarShell({
     };
   }, []);
 
+  const scrollPageToTop = useCallback(() => {
+    page.current?.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
   const shell: AppShellState = {
     sidebar: mode,
     openSidebar: () => {
       setSheetOpen(true);
     },
+    scrollPageToTop,
   };
   const inSheet: AppShellState = { ...shell, sidebar: "full" };
 
@@ -370,7 +376,7 @@ function SidebarShell({
           )}
           <div data-bt-part="column">
             {hasContent(topBar) ? <div data-bt-part="top">{topBar}</div> : null}
-            <div data-bt-part="page" className="bt-scroll-fade">
+            <div ref={page} data-bt-part="page" className="bt-scroll-fade">
               {children}
             </div>
           </div>

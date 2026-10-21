@@ -7,8 +7,9 @@ import {
 } from "@buttery/core";
 import type { MotionElementProps } from "@buttery/core";
 import { motion } from "motion/react";
-import { useId, useMemo } from "react";
+import { useId, useLayoutEffect, useMemo } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import { useAppShell } from "../app-shell/app-shell-context.ts";
 import { AppPageContext } from "./app-page-context.ts";
 
 /** Props for `AppPage`. */
@@ -41,6 +42,12 @@ function AppPageRoot({
 }: AppPageProps): ReactElement {
   const withAside = hasContent(aside);
   const page = useMemo(() => ({ fill }), [fill]);
+  const { scrollPageToTop } = useAppShell();
+
+  useLayoutEffect(() => {
+    scrollPageToTop();
+  }, [scrollPageToTop]);
+
   return (
     <main
       {...rest}
@@ -143,6 +150,8 @@ export interface AppPageComponent {
  * header comes first and the page's sections 24px under it, 32px apart; a right rail sits beside them,
  * 320px wide and 32px away, from 1280px of shell, and under them below that. With `fill`, the last block
  * takes the rest of the height so a table scrolls inside it. Its end padding leaves room for floating lanes.
+ * Each page starts at the top: mounting one scrolls the shell's page region back up, so key a page by what
+ * it shows (`<CustomerPage key={id} />`) when one route renders it for different records.
  *
  * @example
  * <AppPage header={<PageHeader title="Orders" />} fill>

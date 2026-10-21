@@ -139,6 +139,34 @@ describe("AppPage", () => {
     expect(page.scrollHeight).toBe(page.clientHeight);
   });
 
+  it("starts each page at the top of the shell's page region", () => {
+    const tall = (title: string): ReactElement => (
+      <AppPage key={title} header={<h1>{title}</h1>}>
+        <AppPage.Section>
+          <div style={{ minBlockSize: "2000px" }}>Rows</div>
+        </AppPage.Section>
+      </AppPage>
+    );
+    const shell = (page: ReactNode): ReactElement => (
+      <div style={{ inlineSize: "1440px", blockSize: "700px" }}>
+        <AppShell layout="sidebar" sidebar={<nav aria-label="Main">Nav</nav>}>
+          {page}
+        </AppShell>
+      </div>
+    );
+    const { rerender } = render(shell(tall("Orders")));
+    const region = document.querySelector(
+      '[data-bt="AppShell"] [data-bt-part="page"]',
+    );
+    if (!region) throw new Error("No page region.");
+    region.scrollTop = 900;
+    expect(region.scrollTop).toBe(900);
+    rerender(shell(tall("Orders")));
+    expect(region.scrollTop).toBe(900);
+    rerender(shell(tall("Customers")));
+    expect(region.scrollTop).toBe(0);
+  });
+
   it("styles only its own parts, not parts with the same names inside its blocks", () => {
     render(
       <AppPage fill>
