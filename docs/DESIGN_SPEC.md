@@ -367,6 +367,11 @@ A column 20 apart, at most 400 wide (`w-dialog`): a `TextStack` heading (an `h1`
 - Below 640px of container width: a menu button (`IconButton md`) opens a full-height sheet in which each menu becomes an accordion section.
 - `behavior`: `static` (default) · `sticky` · `auto-hide`. Pinned past the hero, the bar takes the `panel` surface with `shadow-card`.
 
+### SubNav (_derived_ from buttery's tokens)
+- Bar: 48h (`h-sub-nav`), `bg-surface` with a 1px `border` line along its bottom, on the page container, gap 24. Title at the start in `label`, `text-strong`, truncating; an optional action at the end (`Button size="sm"`).
+- Links: the bar's full height, padding-x 12, `control` role in `text-secondary` (hover `text`). The current section's link is `text-strong` with a 2px `primary` underline, r-full, inset 12 a side, over the bar's bottom line; it slides between links on `spring.snappy` (at once with reduced motion). "More sections" holds the links that don't fit.
+- The current section is the last one whose top has reached the bottom of the sticky bars, or the last section once the page is scrolled to its end (`useScrollSpy`).
+
 ### Inspector
 340w panel (padding 8, gap 8 between sections) with a sticky footer: 1px divider, padding 12, buttons 36h gap 8 (a soft button with an icon, padded 32 a side — measured 118 wide with a short label — and a primary SplitButton filling the rest). The body scrolls internally with 8px fade masks at its edges, inset 8 all round. `Inspector.Section` follows the nesting recipe (§4): a 36h header (title in `caption` role, `text-secondary`, padded 16 so it lines up with the rows; a Reset text action, 28h, named with the title, dimmed while nothing differs from the defaults), then a card of rows divided by 1px `border`. `Inspector.Row`: 50h, padding-x 16, label (and an `extra` such as a reset chip) at the start and the control at the end; without a label the control fills the row (a `Slider` brings its own); `block` grows to fit, padded 16 (a swatch grid). `Inspector.Row.Split`: two rows side by side, 64h, a 1px line between. Rows that change together (a fill type's rows) can sit in a `Morph` inside the card and keep their dividers while the height follows. The section heading is an `h2`, and each section is a region named by it.
 

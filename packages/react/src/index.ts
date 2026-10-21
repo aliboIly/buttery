@@ -297,3 +297,5 @@ export type {
   FooterLinkProps,
   FooterProps,
 } from "./patterns/footer/Footer.tsx";
+export { SubNav } from "./patterns/sub-nav/SubNav.tsx";
+export type { SubNavItem, SubNavProps } from "./patterns/sub-nav/SubNav.tsx";

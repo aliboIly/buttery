@@ -1,0 +1,76 @@
+@layer bt.patterns {
+  .bt-sub-nav {
+    --bt-sub-nav-line: 1px;
+    --bt-sub-nav-underline: 2px;
+
+    min-inline-size: 0;
+    border-block-end: var(--bt-sub-nav-line) solid var(--bt-border);
+    background-color: var(--bt-bg-surface);
+
+    /* While an auto-hiding nav bar slides away, the sub nav moves up with it rather than leaving a gap. */
+    translate: 0 calc(var(--bt-sticky-shift, 0px) * -1);
+  }
+
+  .bt-sub-nav [data-bt-part="bar"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-6);
+    block-size: var(--bt-h-sub-nav);
+    min-inline-size: 0;
+  }
+
+  .bt-sub-nav [data-bt-part="title"] {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    color: var(--bt-text-strong);
+  }
+
+  /* The links fill the bar's height, so their underline sits on its bottom edge. */
+  .bt-sub-nav [data-bt-part="links"] {
+    align-self: stretch;
+    align-items: stretch;
+  }
+
+  .bt-sub-nav [data-bt-part="links"] > [data-bt-part="more"] {
+    align-self: center;
+  }
+
+  .bt-sub-nav [data-bt-part="action"] {
+    flex: none;
+  }
+
+  .bt-sub-nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--bt-space-3);
+    color: var(--bt-text-secondary);
+    text-decoration: none;
+    transition: color var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  @media (hover: hover) {
+    .bt-sub-nav-link:hover {
+      color: var(--bt-text);
+    }
+  }
+
+  .bt-sub-nav-link[aria-current] {
+    color: var(--bt-text-strong);
+  }
+
+  /* The current link's underline sits on the bar's bottom edge, the track it slides along. */
+  .bt-sub-nav-link
+    > [data-bt-part="indicator-slot"]
+    > [data-bt-part="indicator"] {
+    inset: auto var(--bt-space-3) calc(var(--bt-sub-nav-line) * -1);
+    block-size: var(--bt-sub-nav-underline);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-primary);
+    box-shadow: none;
+  }
+
+  /* A section a sub nav link moved focus to shows no ring: the page scrolling there says where focus went. */
+  [data-bt-scroll-target]:focus-visible {
+    outline: none;
+  }
+}
