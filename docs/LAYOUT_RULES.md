@@ -8,7 +8,7 @@ That promise is kept three ways, and all three are required:
 2. **Static lint** blocks the usual causes (raw values, negative margins, ad-hoc z-index, stray absolute positioning).
 3. **Automated layout checks** (`@buttery/test` + the dev-time `LayoutGuard`) catch anything that slips through, at every viewport, in both themes.
 
-Page layout follows a strict grid with a consistent section rhythm: split heroes, bento grids, sticky asides. App layout follows the inspector-style editor in the local app captures.
+Page layout follows a strict grid with a consistent section rhythm: split heroes, bento grids, sticky asides. App layout follows the inspector-style editor in the local app captures, and for dashboards a sidebar shell (§3).
 
 ---
 
@@ -16,14 +16,14 @@ Page layout follows a strict grid with a consistent section rhythm: split heroes
 
 1. **Flow layout only.** Siblings are positioned by `Stack` / `Inline` / `Grid` with `gap` from the spacing scale. Components never set their own outer margin. Negative margins are banned.
 2. **Out-of-flow is owned.** In app code and patterns, `position: absolute|fixed|sticky` is off-limits. It lives only in (a) layer primitives in `packages/core/src/layers/` (`Layer`/`Portal`, `Popover`, `Scrim`, `Sticky`, `FloatingLanes`), which render into portals and use z-index tokens; and (b) a component's own internal parts (a slider thumb, a segmented indicator, `FitBox` content), which stamp `data-bt-part`. The overlay components (`Menu`, `Select`, `Tooltip`, `Dialog`, `Toaster`) are built on those primitives and never set `position` themselves. `FloatingToolbar` renders into the floating layer and places its own `data-bt-part` wrapper there by script, following its anchor.
-3. **Floating lanes.** Free-floating UI (toasts, notices) lives in a `FloatingLanes` lane (`bottom-center`, `bottom-end`, `top-end`): items stack with an 8px gap, never grow wider than their lane (the viewport minus 24 a side), and respect safe insets (sticky header/footer, macOS titlebar). A lane has room for three items: toasts come from `toast()`, which keeps three at most, and a fourth item in any lane logs a development warning. Anchored floating UI (a crop toolbar under its crop box) is positioned by its anchor but registers its resting rect as an obstacle and calls `notifyObstacleMoved()` when it moves, so lane items move clear of where it is. A toolbar and a toast can never cover each other.
+3. **Floating lanes.** Free-floating UI (toasts, notices) lives in a `FloatingLanes` lane (`bottom-center`, `bottom-end`, `top-end`): items stack with an 8px gap, never grow wider than their lane (the viewport minus 24 a side), and respect safe insets (sticky header/footer, macOS titlebar). A lane has room for three items: toasts come from `toast()`, which keeps three at most, and a fourth item in any lane logs a development warning. Anchored floating UI (a crop toolbar under its crop box) is positioned by its anchor but registers its resting rect as an obstacle and calls `notifyObstacleMoved()` when it moves, so lane items move clear of where it is. A toolbar and a toast can never cover each other. The bottom lanes stack as one column when they'd touch (a narrow window), center items above end items, and `FloatingLanes` publishes the height they take as `--bt-lane-clearance` for scroll areas to keep clear (§3).
 4. **Collision-aware overlays.** Popovers/menus: `avoidCollisions`, `collisionPadding={8}`, side offset 8, never cover their trigger, `max-height` = available space with internal scroll.
 5. **No component chooses its own height.** Heights come from tokens (`--bt-h-*`). Widths are intrinsic, fluid (`minmax(0,1fr)`), or a named token (`--bt-w-*`).
 6. **`min-width: 0` by default.** Every flex/grid child inside buttery primitives gets it, so long content shrinks instead of pushing siblings off-screen.
 7. **Text never overflows.** Single-line control text truncates with an ellipsis *and* exposes the full text (tooltip/`title`). Content text wraps, with a max measure (body ≤ 60ch, display headings ≤ 22ch). Numbers that change use tabular figures and a reserved min-width so nothing jitters.
 8. **Media keeps its shape.** Aspect-ratio boxes and explicit `object-fit`. Stage content uses `FitBox` (largest rect that fits the available space at a given aspect, always centered).
 9. **Container queries, not viewport queries.** Components respond to the space they're given, so the same component works in a 340px inspector and a 1200px page.
-10. **Priority overflow instead of wrapping.** Toolbars, header bars and nav bars use `OverflowCluster`: when items don't fit, the lowest-priority ones move into a "More" (`…`) menu. They never wrap to two lines, never overlap, never shrink text.
+10. **Priority overflow instead of wrapping.** Toolbars, header bars and nav bars use `OverflowCluster`: when items don't fit, the lowest-priority ones move into a "More" (`…`) menu. They never wrap to two lines, never overlap, never shrink text. Applied filter pills are the one exception: they're state the person has to see and remove, so a `FilterBar` wraps them, and folds them into one button under 640px.
 11. **Scroll is contained.** The shell never scrolls horizontally. Panels scroll internally (`overscroll-behavior: contain`, `scrollbar-gutter: stable`, 12px fade masks at the edges with `.bt-scroll-fade`), and a contained panel fits inside the viewport: if its end sits below the fold, containment keeps the page from scrolling to it. `<Sticky variant="aside">` fits a sidebar between the sticky bars and scrolls it inside without containment, because what follows an aside can push it up past the bars near the end of the page, and only a scroll that reaches the page brings it back.
 12. **Sticky things reserve space.** Sticky headers publish their height as `--bt-sticky-top`; anchors use `scroll-margin-top: var(--bt-sticky-top)`. A bar that slides away (`NavBar behavior="auto-hide"`) keeps reserving its height and publishes how far it has slid as `--bt-sticky-shift`, which sticky followers add as a translate.
 13. **Zero layout shift on interaction.** Loading states, skeletons and label swaps (e.g. "Continue" → "Finish") keep exact dimensions. Fonts are bundled and preloaded with a metric-matched fallback.
@@ -50,13 +50,17 @@ Page layout follows a strict grid with a consistent section rhythm: split heroes
 | Body ↔ actions | 20 (app) · 24–32 (page) |
 | Section intro ↔ section content | 48 (md) · 64 (lg) |
 | Page sections (padding-block) | 64 (sm) · 96 (md) · 128 (lg) |
+| Sidebar items | 2 |
+| An app page's header block ↔ its first section | 24 |
+| Sections in an app page | 32 |
+| Filter pills, quick actions | 8 |
 
 - **Baselines line up.** Rows use a two-column grid (`[label+badge] [control]`) with center alignment; bento card titles in the same row share a baseline.
 - **Icons are 16px** in controls (stroke 1.75), 20px in empty states, never mixed within one cluster.
 
 ---
 
-## 3. App layouts (from the inspector app)
+## 3. App layouts (from the inspector app and a dashboard)
 
 ### AppShell
 Its work is at most `--bt-w-shell-max` (1380) wide, centered; below that it fills the window.
@@ -84,6 +88,33 @@ gap: 8px; padding: 8px; justify-content: center; block-size: 100%;
 ### Stage
 - Centers content with `FitBox` at the chosen aspect ratio with a 32px minimum margin from stage edges.
 - Empty state, crop mode and drop overlay all occupy the same box — swapping between them never moves surrounding UI.
+
+### AppShell `layout="sidebar"` (Phase 6B)
+For dashboards: a sidebar beside a column holding the top bar and the page.
+```
+┌ Sidebar 240 ──┬ Top bar (56h): search ············· actions · create ┐
+│ workspace     │                                                      │
+│ nav (2 apart) │ AppPage: contained ≤ 1280 or full, side padding      │
+│ Recent        │ 32 / 24 / 16                                         │
+│ groups        │   main ··················· │ aside 320 (≥ 1280)      │
+│ More          │                            │                         │
+└──────── 1px ──┴──────────────────────────────────────────────────────┘
+grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
+```
+- The shell fills its container's height and never scrolls. The sidebar and the page each scroll on their own (`overscroll-behavior: contain`, `.bt-scroll-fade`); the sidebar draws a 1px `border` hairline on its inline-end edge.
+- Breakpoints are the shell's own width, through a named container (`@container bt-shell`), so they hold wherever the shell is mounted. From 1100px: the full sidebar. Under 1100: an icon rail (`--bt-w-sidebar-rail`, 56) where each item is an icon with its label in a tooltip, section headings become 1px dividers, and a group's items open in a flyout menu beside it. Under 640: no sidebar; a menu button at the top bar's start opens it as a sheet from the start edge, which closes on navigation, Escape or the scrim.
+- `AppPage width="contained"` centers the page at most `--bt-w-app-page` (1280) wide in the column; `"full"` fills it. Side padding follows the page grid (§4): 32 from 1024px of column width, 24 from 640, 16 under it.
+- The right rail (`AppPage aside`, `--bt-w-aside`, 320) sits beside the main column, 32 apart, from 1280px of shell width, and drops under the main content below that.
+- A page whose main block is a table can give it the rest of the height (`AppPage fill`): the header, tabs and filters keep their size and the table scrolls inside, with its header sticky.
+
+### Tables
+- A `DataTable` is one scroll container for both axes. Its rows share one grid column template, so every column has a minimum width (a token step) and a share of what's left; when the minimums don't fit, the table scrolls sideways inside its container, and the page never does.
+- The header row sticks to the top of the table's scroll area and the first column (with the checkbox column) to its inline start, both on `bg-surface`; the first column shows a 1px edge while the table is scrolled sideways. The header sticks whenever the table scrolls vertically, which it does when it's given a height (`AppPage fill`, or a parent with one); a table that grows with its rows scrolls with the page instead.
+- Cells never wrap: text truncates with an ellipsis and its full text in a tooltip (`data-bt-truncate`). Numbers are right-aligned and tabular. Row height is `--bt-h-table-row`; skeleton rows use the same height, so swapping them for rows moves nothing.
+
+### Floating guidance
+- `SetupGuide` lives in the `bottom-end` lane and toasts in `bottom-center`. When the two lanes would touch (a narrow window), they stack as one column at the bottom end: toasts above the guide, 8 apart, so neither covers the other.
+- `FloatingLanes` publishes the height its bottom lanes take, plus the gap, as `--bt-lane-clearance` on `<html>` (0 while they're empty). Page and table scroll areas add it to their end padding, so their last row and their pagination can always scroll clear of a toast or the guide. A bar pinned to the bottom of the viewport, such as a filled page's pagination, registers as a lane obstacle, so lane items rise above it.
 
 ---
 
