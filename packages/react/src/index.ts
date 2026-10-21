@@ -576,3 +576,5 @@ export type {
   PlanComparisonPlan,
   PlanComparisonProps,
 } from "./patterns/plan-comparison/PlanComparison.tsx";
+export { FormDialog } from "./patterns/form-dialog/FormDialog.tsx";
+export type { FormDialogProps } from "./patterns/form-dialog/FormDialog.tsx";

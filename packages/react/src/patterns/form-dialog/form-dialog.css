@@ -1,0 +1,27 @@
+@layer bt.patterns {
+  .bt-form-dialog {
+    --bt-form-dialog-line: 1px;
+
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .bt-form-dialog > .bt-dialog-text {
+    padding-block-end: var(--bt-space-4);
+    border-block-end: var(--bt-form-dialog-line) solid var(--bt-border);
+  }
+
+  .bt-form-dialog > [data-bt-part="form"] {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .bt-form-dialog [data-bt-part="footer"] {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--bt-space-2);
+    padding: var(--bt-space-5) var(--bt-space-6) var(--bt-space-6);
+  }
+}
