@@ -64,6 +64,7 @@ Knob (slider thumb, tilt knob, active anchor dot):
 | `--bt-knob-border` | `#1c1c1c` |
 | `--bt-knob-highlight` | `#7a7a7a` (1px inset top highlight) |
 | `--bt-knob-grip` | `#b2b2b2` (two vertical grip lines) |
+| `--bt-knob-ring` | `#ffffff` in both themes: the ring around the color picker's thumbs, which sit on any color |
 
 Decorative (onboarding illustrations, brand mark):
 
@@ -272,7 +273,16 @@ Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12,
 6 columns, gap 8, swatches fill the column (41px at inspector width), aspect 1, r8, shadow-inset. Selected: `--bt-ring-select`, at once. Radio-group semantics, one tab stop: left and right move along the swatches (wrapping), up and down move a column (stopping at the edges), Home and End reach the ends, and the selection follows. Holds gradient or solid presets, or any `{ value, label, fill }`.
 
 ### ColorDot + swap
-24px circle, shadow-inset, 6px gap between dots (30 center to center), hit area 28 through a hit part that reaches 2px past the dot, and `onValueCommit` once the picker closes on a color (the label around a visually hidden native `<input type="color">`, so the system picker opens). Keyboard focus rings the dot. Swap = `IconButton sm` with `arrow-left-right`.
+24px circle, shadow-inset, 6px gap between dots (30 center to center), hit area 28 through a hit part that reaches 2px past the dot. A button named "label, color" that opens buttery's `ColorPicker` in a popover (padding 12) beside it; Escape or a press outside closes it and focus goes back to the dot. `onValueCommit` reports each settled change, as the picker does. Keyboard focus rings the dot. Swap = `IconButton sm` with `arrow-left-right`.
+
+### ColorPicker
+216 wide, its parts stacked 12 apart (_derived_; the references only show the system picker):
+- Area: saturation across and brightness up, 3:2, r10, edged by `shadow-inset`. Its thumb is an 18px circle filled with the color inside a 2px `knob-ring`, with `shadow-knob`; its center marks the color, so at the edges it rides past the area (`data-bt-allow-overlap`).
+- Hue track: 14h, r7 (`r-thumb`), `shadow-inset`, under a 20px thumb ring filled with the hue that stays inside the track end to end, as a slider's does; a 28px hit area.
+- Code row: a 24px swatch of the color, then the hex field, 34h (`h-control`), r12, 1px `control-border`, `#` in `text-tertiary` and the six digits uppercase and tabular.
+- Optional presets under it in a 6-column `SwatchGrid`.
+
+Dragging moves a thumb with the pointer in the same frame (MotionValues set directly); keys, codes and presets glide on `spring.smooth`. Arrows step 1% (1° of hue), Shift ×10, Page Up and Page Down ten steps, Home and End to the ends. Three visually hidden sliders carry it for screen readers ("Saturation", "Brightness", "Hue", read as "40%" and "210°"); the area's two share one Tab stop that follows the axis last moved. The code field edits a draft (`data-bt-draft`): Enter or leaving takes a valid 3- or 6-digit code, Escape puts it back. A color taken to gray keeps its hue. `onValueChange` reports every change, `onValueCommit` each settled one: a drag's end, a key, a code, a preset.
 
 ### TiltPad
 Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center` → `knob-edge`, 1px `knob-border`, shadow-knob, moving up to 4px toward the tilt. When tilted, an accent arc (`accent`, 2px, a 50° slice of a ring) appears on the knob edge in the tilt direction, opacity ∝ magnitude; CSS works out its angle and strength from x and y (`atan2`, `hypot`). Value `{x, y}` in −1…1, kept inside the unit circle (Card Studio maps it to rotateY/rotateX ±20° at a perspective of 1.1 × the canvas width, the measured 1200px on an 1100px canvas). A drag moves 48px for a full tilt and moves the knob in the same frame as the pointer (MotionValues set directly); keys and resets glide on `spring.smooth`. Two visually hidden sliders carry it for screen readers ("Left and right", "Up and down", values like "30% right"; the up-and-down one counts up as it tilts up), one Tab stop between them that follows the axis last moved; arrows tilt, Shift ×5, Page Up and Page Down take ×5 steps on that axis, Backspace/Delete/Home level it, End does nothing. Paired with a reset chip.
@@ -282,6 +292,7 @@ Pad 32px circle: `bg-inset`, 1px `border-strong`. Knob 24px: radial `knob-center
 
 ### Menu / Select
 - Trigger: ghost pill; while open, bg `bg-control-active`. `Select`'s trigger shows the chosen value (or `valueLabel`, or a placeholder) and a 16px chevron, and is named "label, value".
+- `Select variant="outline"`, for forms: a box like a text field's, 34h (`h-control`, 28 at `size="sm"`), r12, 1px `control-border`, `bg-surface`, padding-x 12, the value in `body` at its start and the chevron in `text-secondary` at its end, filling its column. `aria-invalid` turns the edge `danger`; disabled takes `bg-control-subtle` and a `border-strong` edge. Its list lines up with its start and is at least as wide as the box. In a `Field` it's named by the field's label followed by its value.
 - Content: `bg-surface`, r16, padding 6, shadow-floating, min-width 200, side offset 8, align end.
 - Item: 36h, r10, padding-x 12 (measured ~14), `menu` role; highlight `bg-item-hover`; selected shows a 16px check on the right. Keyboard focus also draws the accent ring inside the item, since the highlight alone is faint.
 - Separator: 1px `border` with 6px above and below it, drawn as one 13px element so the list needs no margins.

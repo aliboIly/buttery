@@ -79,7 +79,7 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
    Layers      (packages/core/src/layers/) Layer/Portal + layer manager, Scrim, Sticky, Popover,
                Menu, FloatingLanes
 4. Components  Button, IconButton, SplitButton, SegmentedControl, Slider, ValueBadge, Chip,
-               SwatchGrid, ColorDot, TiltPad, AnchorGrid, Select, NumberField,
+               SwatchGrid, ColorDot, ColorPicker, TiltPad, AnchorGrid, Select, NumberField,
                Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti, BrandMark,
                Field, TextField, PasswordField, TextArea, Checkbox, Switch, Callout
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,

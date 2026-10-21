@@ -75,6 +75,7 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 |---|---|---|
 | Slider drag | Thumb + badge + canvas update every frame | instant |
 | Swatch pick | Background swaps; selection ring jumps to new swatch | instant (1 frame) |
+| Color picker drag (_derived_) | The area or hue thumb follows the pointer and the color updates in the same frame; a typed code or a preset glides the thumbs there | instant while dragging; `spring.smooth` otherwise |
 | Segmented switch | White active pill slides to the new item | `spring.snappy` |
 | Fill type switch (gradient ↔ solid) | Swatch grid crossfades; the two gradient rows collapse into one color row; panel height animates | crossfade 120ms, height `spring.smooth` (~270ms measured) |
 | Anchor change (anchor grid) | Content glides to the new anchor | `spring.smooth` (~230ms measured) |
