@@ -1,11 +1,23 @@
 const CANDIDATES =
   "button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]";
 
-/** The elements inside `element` that the Tab key stops on, in document order: buttons, links, fields and `tabindex` 0 or more. */
+function rendered(element: HTMLElement): boolean {
+  return (
+    element.getClientRects().length > 0 &&
+    getComputedStyle(element).visibility !== "hidden" &&
+    element.closest("[inert]") === null
+  );
+}
+
+/**
+ * The elements inside `element` that the Tab key stops on, in document order: buttons, links, fields and
+ * `tabindex` 0 or more, leaving out any that aren't rendered (`display: none`, `visibility: hidden`) or sit
+ * under `inert`.
+ */
 export function tabbables(element: Element | null): HTMLElement[] {
   if (element === null) return [];
   return [...element.querySelectorAll<HTMLElement>(CANDIDATES)].filter(
-    (candidate) => candidate.tabIndex >= 0,
+    (candidate) => candidate.tabIndex >= 0 && rendered(candidate),
   );
 }
 

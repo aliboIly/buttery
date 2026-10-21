@@ -256,7 +256,10 @@ function MorphPanel({
   );
 }
 
-/** The first tab stop in the row after a trigger's item, where Tab goes once it leaves that trigger's menu. */
+/**
+ * Where Tab goes once it leaves a trigger's menu: the next tab stop in the row, or past the row's last item,
+ * the first one after the whole menu, so it never lands on Radix's hidden sentinel.
+ */
 function stopAfter(trigger: Element): HTMLElement | undefined {
   for (
     let item = trigger.closest("li")?.nextElementSibling;
@@ -266,7 +269,15 @@ function stopAfter(trigger: Element): HTMLElement | undefined {
     const [stop] = tabbables(item);
     if (stop) return stop;
   }
-  return undefined;
+  const menu = trigger.closest('[data-bt="MorphMenu"]');
+  if (!menu) return undefined;
+  return tabbables(document.body).find(
+    (stop) =>
+      !menu.contains(stop) &&
+      (menu.compareDocumentPosition(stop) &
+        Node.DOCUMENT_POSITION_FOLLOWING) !==
+        0,
+  );
 }
 
 function Chevron({ open }: { readonly open: boolean }): ReactElement {

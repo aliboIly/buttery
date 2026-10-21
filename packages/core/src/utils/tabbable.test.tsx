@@ -30,6 +30,23 @@ describe("hasTabbable", () => {
     expect(hasTabbable(null)).toBe(false);
   });
 
+  it("skips what isn't rendered or sits under inert", () => {
+    expect(
+      hasTabbable(holding('<button style="display: none">Menu</button>')),
+    ).toBe(false);
+    expect(
+      hasTabbable(
+        holding('<div style="display: none"><a href="#a">A</a></div>'),
+      ),
+    ).toBe(false);
+    expect(
+      hasTabbable(holding('<button style="visibility: hidden">Go</button>')),
+    ).toBe(false);
+    expect(hasTabbable(holding("<div inert><button>Go</button></div>"))).toBe(
+      false,
+    );
+  });
+
   it("lists the tab stops in document order", () => {
     const element = holding(
       '<button>One</button><p>Text</p><a href="#two">Two</a><button disabled>Off</button>',

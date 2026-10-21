@@ -12,6 +12,7 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { MorphMenu } from "./MorphMenu.tsx";
 import type { MorphMenuLayout } from "./MorphMenu.tsx";
 
@@ -222,6 +223,33 @@ describe("MorphMenu", () => {
     );
     await user.tab();
     expect(document.activeElement).toBe(trigger("Guides"));
+  });
+
+  it("takes Tab past the last menu's last link to what follows the menu", async () => {
+    render(
+      <div>
+        <MorphMenu>
+          <MorphMenu.Item label="Guides" value="guides">
+            <MorphMenu.Column>
+              <MorphMenu.Entry href="#first" title="Your first card" />
+            </MorphMenu.Column>
+          </MorphMenu.Item>
+        </MorphMenu>
+        <button type="button">After the menu</button>
+      </div>,
+    );
+    await userEvent.click(trigger("Guides"));
+    await screen.findByRole("link", { name: /Your first card/ });
+    trigger("Guides").focus();
+    // The browser's own Tab, so its tab order (not a simulation of it) decides where focus goes.
+    await browser.keyboard("{Tab}");
+    expect(document.activeElement).toBe(
+      screen.getByRole("link", { name: /Your first card/ }),
+    );
+    await browser.keyboard("{Tab}");
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "After the menu" }),
+    );
   });
 
   it("keeps Radix's hidden focus sentinel out of the tab order", async () => {
