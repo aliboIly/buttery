@@ -573,12 +573,15 @@ export function MenuSubTrigger({
       data-bt-part="menu-item"
       onPointerMove={(event) => {
         onPointerMove?.(event);
-        if (event.pointerType !== "mouse" || sub.open || timer.current !== 0)
+        if (event.pointerType !== "mouse" || rest.disabled === true || sub.open)
           return;
-        // Radix waits 100ms before it opens a submenu; buttery opens it sooner, with Radix's pointer grace intact.
+        const item = event.currentTarget;
+        cancel();
+        // Opens once the pointer has rested, if Radix still has the item highlighted: crossing it on the way
+        // into an open sibling submenu (Radix's pointer grace) leaves it unhighlighted.
         timer.current = window.setTimeout(() => {
           timer.current = 0;
-          sub.setOpen(true);
+          if (item.hasAttribute("data-highlighted")) sub.setOpen(true);
         }, timing["delay-submenu"]);
       }}
       onPointerLeave={(event) => {

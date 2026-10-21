@@ -424,6 +424,65 @@ describe("Menu", () => {
     expect(item.getAttribute("aria-expanded")).toBe("true");
   });
 
+  it("waits for the pointer to rest: each move on its item starts the 40ms again", async () => {
+    render(<Workspaces />);
+    await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+    const item = screen.getByRole("menuitem", { name: "Switch workspace" });
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fireEvent.pointerMove(item, { pointerType: "mouse" });
+    act(() => {
+      vi.advanceTimersByTime(30);
+    });
+    fireEvent.pointerMove(item, { pointerType: "mouse" });
+    act(() => {
+      vi.advanceTimersByTime(30);
+    });
+    expect(item.getAttribute("aria-expanded")).toBe("false");
+    act(() => {
+      vi.advanceTimersByTime(10);
+    });
+    expect(item.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("leaves a submenu shut if its item loses its highlight before the delay ends", async () => {
+    render(<Workspaces />);
+    await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+    const item = screen.getByRole("menuitem", { name: "Switch workspace" });
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fireEvent.pointerMove(item, { pointerType: "mouse" });
+    act(() => {
+      screen.getByRole("menuitem", { name: "Settings" }).focus();
+    });
+    act(() => {
+      vi.advanceTimersByTime(40);
+    });
+    expect(item.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("never opens a disabled submenu on hover", async () => {
+    render(
+      <Menu>
+        <Menu.Trigger>Workspace</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Sub>
+            <Menu.SubTrigger disabled>Switch workspace</Menu.SubTrigger>
+            <Menu.SubContent>
+              <Menu.Item>Harbor Beans</Menu.Item>
+            </Menu.SubContent>
+          </Menu.Sub>
+        </Menu.Content>
+      </Menu>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+    const item = screen.getByRole("menuitem", { name: "Switch workspace" });
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fireEvent.pointerMove(item, { pointerType: "mouse" });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    expect(item.getAttribute("aria-expanded")).toBe("false");
+  });
+
   it("follows a link item with Enter, running its click handler, and closes", async () => {
     const onClick = vi.fn((event: { preventDefault: () => void }) => {
       event.preventDefault();
