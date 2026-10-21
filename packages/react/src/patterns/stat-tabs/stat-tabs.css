@@ -1,0 +1,40 @@
+@layer bt.patterns {
+  .bt-stat-tabs {
+    --bt-stat-tabs-height: 48px;
+
+    min-inline-size: 0;
+  }
+
+  .bt-stat-tabs [data-bt-part="track"] {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    block-size: var(--bt-stat-tabs-height);
+    padding: var(--bt-space-1);
+    border-radius: var(--bt-r-2xl);
+    background-color: var(--bt-bg-control);
+  }
+
+  .bt-stat-tabs [data-bt-part="tab"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    padding-block: 0;
+    padding-inline: var(--bt-space-3);
+    border: 0;
+    border-radius: var(--bt-r-lg);
+    background: none;
+    font-family: inherit;
+  }
+
+  .bt-stat-tabs [data-bt-part="tab"] > [data-bt-part="label"] {
+    min-inline-size: 0;
+  }
+
+  .bt-stat-tabs [data-bt-part="tab"] > [data-bt-part="count"] {
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -442,3 +442,5 @@ export type {
   ColumnSettingsLabels,
   ColumnSettingsProps,
 } from "./patterns/column-settings/ColumnSettings.tsx";
+export { StatTabs } from "./patterns/stat-tabs/StatTabs.tsx";
+export type { StatTab, StatTabsProps } from "./patterns/stat-tabs/StatTabs.tsx";
