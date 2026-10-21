@@ -1,4 +1,9 @@
-import { SharedIndicator, cx, useControllableState } from "@buttery/core";
+import {
+  SharedIndicator,
+  cx,
+  useControllableState,
+  useMergedRefs,
+} from "@buttery/core";
 import { RadioGroup } from "radix-ui";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
@@ -54,6 +59,7 @@ export function StatTabs({
   defaultValue,
   onValueChange,
   className,
+  ref,
   ...rest
 }: StatTabsProps): ReactElement {
   const [chosen, choose] = useControllableState({
@@ -62,6 +68,7 @@ export function StatTabs({
     onChange: onValueChange,
   });
   const root = useRef<HTMLDivElement>(null);
+  const refs = useMergedRefs(ref, root);
   const [narrow, setNarrow] = useState(false);
 
   useLayoutEffect(() => {
@@ -80,8 +87,8 @@ export function StatTabs({
 
   return (
     <div
-      ref={root}
       {...rest}
+      ref={refs}
       className={cx("bt-stat-tabs", className)}
       data-bt="StatTabs"
       data-narrow={narrow ? "" : undefined}

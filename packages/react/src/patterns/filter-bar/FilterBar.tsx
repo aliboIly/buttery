@@ -1,7 +1,15 @@
-import { Icon, Popover, cx, hasContent } from "@buttery/core";
+import {
+  Icon,
+  Popover,
+  cx,
+  hasContent,
+  useControllableState,
+  useMergedRefs,
+} from "@buttery/core";
 import { ListFilter, Plus, X } from "lucide-react";
 import {
   Children,
+  Fragment,
   isValidElement,
   useLayoutEffect,
   useRef,
@@ -14,7 +22,10 @@ import { Button } from "../../components/button/Button.tsx";
 const FOLD_BELOW = 640;
 
 /** Props for `FilterPill`. */
-export interface FilterPillProps {
+export interface FilterPillProps extends Omit<
+  ComponentPropsWithRef<"div">,
+  "children"
+> {
   /** The field it filters, such as "Status". */
   readonly label: string;
   /** What it's set to, such as "Paid". Leave it out while the filter isn't applied. */
@@ -25,6 +36,8 @@ export interface FilterPillProps {
   readonly children?: ReactNode;
   /** Whether its popover is open. Pair with `onOpenChange` to control it, such as to close it once a value is picked. */
   readonly open?: boolean | undefined;
+  /** Whether its popover starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
   /** Called when its popover opens or closes. */
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
   /** Names the remove button. Defaults to "Remove" and the field's name. */
@@ -41,13 +54,22 @@ export function FilterPill({
   onRemove,
   children,
   open,
+  defaultOpen = false,
   onOpenChange,
   removeLabel,
+  className,
+  ...rest
 }: FilterPillProps): ReactElement {
   const applied = value !== undefined;
+  const [isOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   return (
     <div
-      className="bt-filter-pill"
+      {...rest}
+      className={cx("bt-filter-pill", className)}
       data-bt="FilterPill"
       data-applied={applied ? "" : undefined}
     >
@@ -63,7 +85,7 @@ export function FilterPill({
           <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />
         </button>
       ) : null}
-      <Popover open={open} onOpenChange={onOpenChange}>
+      <Popover open={isOpen} onOpenChange={setOpen}>
         <Popover.Trigger asChild>
           <button
             type="button"
@@ -107,8 +129,32 @@ export interface FilterBarProps extends ComponentPropsWithRef<"div"> {
   readonly onClearAll?: (() => void) | undefined;
   /** Names "Clear filters". */
   readonly clearLabel?: string | undefined;
+  /**
+   * How many filters are applied, for "Clear filters" and the folded button's count. Counted from the
+   * `FilterPill`s among the children (through fragments) when left out; pass it when your pills sit inside
+   * components of your own.
+   */
+  readonly applied?: number | undefined;
   /** The filters, `FilterPill`s. */
   readonly children?: ReactNode;
+}
+
+/** The applied `FilterPill`s among `children`, looking through fragments. */
+function countApplied(children: ReactNode): number {
+  return Children.toArray(children).reduce<number>((count, child) => {
+    if (
+      !isValidElement<{
+        readonly value?: string;
+        readonly children?: ReactNode;
+      }>(child)
+    )
+      return count;
+    if (child.type === Fragment)
+      return count + countApplied(child.props.children);
+    return child.type === FilterPill && child.props.value !== undefined
+      ? count + 1
+      : count;
+  }, 0);
 }
 
 /**
@@ -129,17 +175,16 @@ export function FilterBar({
   actions,
   onClearAll,
   clearLabel = "Clear filters",
+  applied: appliedCount,
   className,
   children,
+  ref,
   ...rest
 }: FilterBarProps): ReactElement {
   const root = useRef<HTMLDivElement>(null);
+  const refs = useMergedRefs(ref, root);
   const [folded, setFolded] = useState(false);
-  const applied = Children.toArray(children).filter(
-    (child) =>
-      isValidElement<{ readonly value?: string }>(child) &&
-      child.props.value !== undefined,
-  ).length;
+  const applied = appliedCount ?? countApplied(children);
 
   useLayoutEffect(() => {
     const element = root.current;
@@ -164,10 +209,10 @@ export function FilterBar({
 
   return (
     <div
-      ref={root}
       role="group"
       aria-label={label}
       {...rest}
+      ref={refs}
       className={cx("bt-filter-bar", className)}
       data-bt="FilterBar"
       data-folded={folded ? "" : undefined}

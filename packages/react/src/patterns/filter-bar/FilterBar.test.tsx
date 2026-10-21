@@ -159,4 +159,60 @@ describe("FilterBar", () => {
     const box = hit?.getBoundingClientRect();
     expect([box?.width, box?.height]).toEqual([24, 24]);
   });
+
+  it("still folds under 640px when given a ref", () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <div style={{ inlineSize: "500px" }}>
+        <FilterBar ref={ref}>
+          <FilterPill label="Status" value="Paid" />
+        </FilterBar>
+      </div>,
+    );
+    expect(ref.current?.dataset["bt"]).toBe("FilterBar");
+    expect(screen.getByRole("button", { name: "Filters · 1" })).toBeTruthy();
+  });
+
+  it("counts applied pills inside fragments, and takes a count for pills inside components", () => {
+    function StatusFilter(): ReactElement {
+      return <FilterPill label="Status" value="Paid" />;
+    }
+    render(
+      <>
+        <div style={{ inlineSize: "500px" }}>
+          <FilterBar>
+            <>
+              <FilterPill label="Status" value="Paid" />
+              <FilterPill label="Origin" />
+            </>
+          </FilterBar>
+        </div>
+        <div style={{ inlineSize: "900px" }}>
+          <FilterBar applied={1} onClearAll={() => undefined}>
+            <StatusFilter />
+          </FilterBar>
+        </div>
+      </>,
+    );
+    expect(screen.getByRole("button", { name: "Filters · 1" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Clear filters" })).toBeTruthy();
+  });
+
+  it("forwards a pill's ref, classes and props, and starts its editor open with defaultOpen", async () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <FilterPill
+        ref={ref}
+        className="status"
+        data-testid="pill"
+        label="Status"
+        defaultOpen
+      >
+        <button type="button">Paid</button>
+      </FilterPill>,
+    );
+    expect(ref.current?.classList.contains("status")).toBe(true);
+    expect(screen.getByTestId("pill")).toBe(ref.current);
+    expect(await screen.findByRole("button", { name: "Paid" })).toBeTruthy();
+  });
 });

@@ -97,4 +97,15 @@ describe("StatTabs", () => {
     );
     expect(onValueChange).toHaveBeenCalledWith("shipping");
   });
+
+  it("still becomes a select under 640px when given a ref", () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <div style={{ inlineSize: "400px" }}>
+        <StatTabs ref={ref} label="Orders by state" tabs={TABS} />
+      </div>,
+    );
+    expect(ref.current?.dataset["bt"]).toBe("StatTabs");
+    expect(screen.queryByRole("radiogroup")).toBeNull();
+  });
 });
