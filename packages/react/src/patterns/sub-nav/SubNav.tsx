@@ -4,7 +4,7 @@ import {
   Sticky,
   cx,
   hasContent,
-  scrollRootOf,
+  scrollToSection,
   useScrollSpy,
 } from "@buttery/core";
 import type {
@@ -43,27 +43,6 @@ export interface SubNavProps extends Omit<
   readonly label?: string | undefined;
   /** Names the button that lists the sections that don't fit. Defaults to `"More sections"`. */
   readonly moreLabel?: string | undefined;
-}
-
-/** Scrolls a section's top to the bottom of the sticky bars, and moves focus there so Tab carries on from it. */
-function scrollToSection(id: string): void {
-  const section = document.getElementById(id);
-  if (!section) return;
-  const root = scrollRootOf(section);
-  const top =
-    root === document.documentElement ? 0 : root.getBoundingClientRect().top;
-  const bars =
-    Number.parseFloat(
-      getComputedStyle(root).getPropertyValue("--bt-sticky-top"),
-    ) || 0;
-  root.scrollTo({
-    top: root.scrollTop + section.getBoundingClientRect().top - top - bars,
-  });
-  if (section.tabIndex < 0) {
-    section.tabIndex = -1;
-    section.dataset["btScrollTarget"] = "";
-  }
-  section.focus({ preventScroll: true });
 }
 
 function opensElsewhere(event: MouseEvent): boolean {

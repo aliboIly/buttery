@@ -68,9 +68,4 @@
     background-color: var(--bt-primary);
     box-shadow: none;
   }
-
-  /* A section a sub nav link moved focus to shows no ring: the page scrolling there says where focus went. */
-  [data-bt-scroll-target]:focus-visible {
-    outline: none;
-  }
 }

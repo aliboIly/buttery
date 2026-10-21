@@ -266,6 +266,7 @@ export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement } from "./utils/pressable.ts";
 export { hasTabbable, tabbables } from "./utils/tabbable.ts";
 export { scrollRootOf } from "./utils/scroll-root.ts";
+export { scrollToSection } from "./utils/scroll-section.ts";
 export { Slot } from "./utils/slot.tsx";
 export { variants } from "./utils/variants.ts";
 export type {

@@ -37,6 +37,11 @@
     outline: none;
   }
 
+  /* A section scrollToSection moved focus to shows no ring: the page scrolling there says where focus went. */
+  [data-bt-scroll-target]:focus-visible {
+    outline: none;
+  }
+
   * {
     scrollbar-color: var(--bt-border-strong) transparent;
     scrollbar-width: thin;
