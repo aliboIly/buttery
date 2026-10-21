@@ -501,3 +501,5 @@ export { RecommendationCard } from "./patterns/recommendation-card/Recommendatio
 export type { RecommendationCardProps } from "./patterns/recommendation-card/RecommendationCard.tsx";
 export { FeatureIntro } from "./patterns/feature-intro/FeatureIntro.tsx";
 export type { FeatureIntroProps } from "./patterns/feature-intro/FeatureIntro.tsx";
+export { NotificationNudge } from "./patterns/notification-nudge/NotificationNudge.tsx";
+export type { NotificationNudgeProps } from "./patterns/notification-nudge/NotificationNudge.tsx";

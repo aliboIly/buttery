@@ -1,0 +1,24 @@
+@layer bt.patterns {
+  .bt-notification-nudge {
+    --bt-notification-nudge-width: 280px;
+    --bt-surface-padding: var(--bt-space-4);
+
+    max-inline-size: min(
+      var(--bt-notification-nudge-width),
+      var(--radix-popover-content-available-width)
+    );
+  }
+
+  .bt-notification-nudge > [data-bt-part="body"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-notification-nudge [data-bt-part="actions"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bt-space-2);
+    padding-block-start: var(--bt-space-2);
+  }
+}
