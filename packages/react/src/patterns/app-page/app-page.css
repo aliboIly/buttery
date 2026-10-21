@@ -1,6 +1,7 @@
 @layer bt.patterns {
   .bt-app-page {
     --bt-app-page-line: 1px;
+    --bt-app-page-hit: 24px;
 
     display: flex;
     flex-direction: column;
@@ -68,6 +69,9 @@
   }
 
   .bt-app-page > [data-bt-part="frame"] > [data-bt-part="footer"] a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--bt-app-page-hit);
     color: inherit;
     text-underline-offset: var(--bt-space-0_5);
   }

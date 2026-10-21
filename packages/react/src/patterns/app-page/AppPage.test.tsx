@@ -111,6 +111,7 @@ describe("AppPage", () => {
     expect(footer.width).toBe(box("frame").width - 64);
     const link = screen.getByRole("link", { name: "Share feedback" });
     expect(getComputedStyle(link).color).toBe(getComputedStyle(part).color);
+    expect(link.getBoundingClientRect().height).toBe(24);
     const heading = screen
       .getByRole("heading", { level: 2, name: "Hours" })
       .getBoundingClientRect();
