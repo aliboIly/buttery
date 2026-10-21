@@ -3,7 +3,8 @@ import "../../styles.css";
 import { publishSettled } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { createRef } from "react";
+import { createRef, useEffect, useState } from "react";
+import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ButteryProvider } from "../../provider/ButteryProvider.tsx";
 import { Onboarding } from "./Onboarding.tsx";
@@ -176,6 +177,14 @@ describe("Onboarding", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it("opens with focus on the forward button", async () => {
+    render(<Onboarding steps={STEPS} defaultOpen />);
+    await screen.findByRole("dialog");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(forward());
+    });
+  });
+
   it("starts again from the first step each time it opens", async () => {
     render(<Onboarding steps={STEPS} defaultOpen />);
     await screen.findByRole("dialog");
@@ -188,6 +197,59 @@ describe("Onboarding", () => {
     render(<Onboarding steps={STEPS} open />);
     await screen.findByRole("dialog");
     expect(screen.getByRole("img", { name: "Step 1 of 3" })).toBeTruthy();
+  });
+
+  it("starts again from the first step when its owner opens it again", async () => {
+    const { rerender } = render(<Onboarding steps={STEPS} open />);
+    await screen.findByRole("dialog");
+    await userEvent.keyboard("{ArrowRight}");
+    expect(screen.getByRole("img", { name: "Step 2 of 3" })).toBeTruthy();
+    rerender(<Onboarding steps={STEPS} open={false} />);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    rerender(<Onboarding steps={STEPS} open />);
+    await screen.findByRole("dialog");
+    expect(screen.getByRole("img", { name: "Step 1 of 3" })).toBeTruthy();
+  });
+
+  it("closes once the confetti has flown while its owner keeps rendering", async () => {
+    function Owner(): ReactElement {
+      const [open, setOpen] = useState(true);
+      const [, setTick] = useState(0);
+      useEffect(() => {
+        const timer = window.setInterval(() => {
+          setTick((tick) => tick + 1);
+        }, 50);
+        return () => {
+          window.clearInterval(timer);
+        };
+      }, []);
+      return (
+        <Onboarding
+          steps={STEPS}
+          open={open}
+          onOpenChange={(next) => {
+            setOpen(next);
+          }}
+        />
+      );
+    }
+    render(
+      <ButteryProvider reducedMotion="never" layoutGuard={false}>
+        <Owner />
+      </ButteryProvider>,
+    );
+    await screen.findByRole("dialog");
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}");
+    await userEvent.click(forward());
+    expect(forward().hasAttribute("aria-disabled")).toBe(false);
+    await waitFor(
+      () => {
+        expect(screen.queryByRole("dialog")).toBeNull();
+      },
+      { timeout: 2000 },
+    );
   });
 
   it("speaks the words it's given", async () => {

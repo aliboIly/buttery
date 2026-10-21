@@ -13,7 +13,7 @@ import {
 import type { MotionElementProps } from "@buttery/core";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
-import { createContext, use, useEffect, useId, useState } from "react";
+import { createContext, use, useEffect, useId, useRef, useState } from "react";
 import type {
   KeyboardEvent,
   MouseEvent,
@@ -180,32 +180,43 @@ function OnboardingRoot({
     value: open,
     defaultValue: defaultOpen ?? firstRun,
     onChange: (next: boolean) => {
-      if (next) {
-        setStep(0);
-        setHeard("");
-      } else {
-        remember(storageKey);
-      }
+      if (!next) remember(storageKey);
       onOpenChange?.(next);
     },
   });
+  const [shown, setShown] = useState(isOpen);
+  const forward = useRef<HTMLButtonElement>(null);
+  const close = useRef(setOpen);
   const count = steps.length;
   const current = steps[Math.min(step, count - 1)];
   const last = step >= count - 1;
+
+  if (isOpen !== shown) {
+    setShown(isOpen);
+    setFinishing(false);
+    if (isOpen) {
+      setStep(0);
+      setHeard("");
+    }
+  }
+
+  useEffect(() => {
+    close.current = setOpen;
+  });
 
   useEffect(() => {
     if (!finishing) return undefined;
     const timer = window.setTimeout(
       () => {
         setFinishing(false);
-        setOpen(false);
+        close.current(false);
       },
       reduced ? 0 : timing.celebration,
     );
     return () => {
       window.clearTimeout(timer);
     };
-  }, [finishing, reduced, setOpen]);
+  }, [finishing, reduced]);
 
   const go = (next: number): void => {
     const target = Math.min(Math.max(next, 0), count - 1);
@@ -238,6 +249,10 @@ function OnboardingRoot({
         description={current?.body}
         closeLabel={words.close}
         onKeyDown={keyDown}
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          forward.current?.focus();
+        }}
       >
         <div
           ref={ref}
@@ -300,11 +315,11 @@ function OnboardingRoot({
               {words.back}
             </Button>
             <Button
+              ref={forward}
               variant="primary"
               size="cta"
               shape="rounded"
               arrow={last ? undefined : "forward"}
-              aria-disabled={finishing}
               onClick={(event) => {
                 if (last) finish(event);
                 else go(step + 1);
