@@ -394,11 +394,13 @@ function MorphMenuRoot({
   );
 
   // Every open or close goes through here and cancels whatever was waiting, so a hover that began before a
-  // click or an Escape can't open the menu again afterwards.
+  // click or an Escape can't open the menu again afterwards. Only a close by the pointer leaving, which
+  // stamps closedAt after this, lets the next menu open at once.
   const change = useCallback(
     (next: string) => {
       window.clearTimeout(openTimer.current);
       window.clearTimeout(closeTimer.current);
+      closedAt.current = Number.NEGATIVE_INFINITY;
       if (
         next === "" &&
         current.current !== "" &&
@@ -411,11 +413,11 @@ function MorphMenuRoot({
   );
 
   // The pointer leaves an open menu alone while keyboard focus is in it. Focus that a click left there goes
-  // back to the menu's trigger before the pointer closes or switches it, so it never drops to the page.
-  const pointerMayChange = useCallback((): boolean => {
+  // to the trigger of the menu that's open next, or of the one closing, so it never drops to the page.
+  const pointerMayChange = useCallback((next: string): boolean => {
     if (panel.current?.contains(document.activeElement) !== true) return true;
     if (lastInput() === "keyboard") return false;
-    triggers.current.get(current.current)?.focus();
+    triggers.current.get(next === "" ? current.current : next)?.focus();
     return true;
   }, []);
 
@@ -432,7 +434,7 @@ function MorphMenuRoot({
       window.clearTimeout(closeTimer.current);
       if (current.current === "") return;
       closeTimer.current = window.setTimeout(() => {
-        if (!pointerMayChange()) return;
+        if (!pointerMayChange("")) return;
         change("");
         closedAt.current = performance.now();
       }, timing["delay-hover-close"]);
@@ -453,7 +455,7 @@ function MorphMenuRoot({
       if (asked.current || blocked.current === item) return;
       window.clearTimeout(closeTimer.current);
       if (current.current !== "" && current.current !== item) {
-        if (!pointerMayChange()) return;
+        if (!pointerMayChange(item)) return;
         asked.current = true;
         change(item);
         return;

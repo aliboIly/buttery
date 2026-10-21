@@ -266,7 +266,32 @@ describe("MorphMenu", () => {
     expect(product.getAttribute("aria-expanded")).toBe("true");
   });
 
+  it("waits for the hover intent again after a click and an Escape follow a close by the pointer leaving", () => {
+    menu();
+    fakeTime();
+    const pricing = screen.getByRole("link", { name: "Pricing" });
+    pointTo(trigger("Product"));
+    advance(150);
+    pointTo(pricing, trigger("Product"));
+    advance(100);
+    expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
+    act(() => {
+      fireEvent.click(trigger("Guides"));
+    });
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("true");
+    act(() => {
+      fireEvent.keyDown(document.body, { key: "Escape" });
+    });
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("false");
+    pointTo(trigger("Product"), pricing);
+    advance(149);
+    expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
+    advance(1);
+    expect(trigger("Product").getAttribute("aria-expanded")).toBe("true");
+  });
+
   it("leaves a menu open while keyboard focus is in it, whatever the pointer does", async () => {
+    onTestFinished(watchFocusHistory());
     menu();
     await userEvent.click(trigger("Product"));
     const cards = await screen.findByRole("link", { name: /Cards/ });
@@ -297,6 +322,20 @@ describe("MorphMenu", () => {
       expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
     });
     expect(document.activeElement).toBe(trigger("Product"));
+  });
+
+  it("hands focus a click left in the menu to the next menu's trigger when the pointer switches to it", async () => {
+    onTestFinished(watchFocusHistory());
+    menu();
+    await userEvent.click(trigger("Product"));
+    const all = await screen.findByRole("link", { name: "See all" });
+    fireEvent.pointerDown(all);
+    all.focus();
+    pointTo(trigger("Guides"), all);
+    await waitFor(() => {
+      expect(trigger("Guides").getAttribute("aria-expanded")).toBe("true");
+    });
+    expect(document.activeElement).toBe(trigger("Guides"));
   });
 
   it("stays open while the pointer crosses from its trigger into the panel, however slowly", () => {
