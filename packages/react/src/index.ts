@@ -559,3 +559,5 @@ export type {
   DetailPageLinksProps,
   DetailPageProps,
 } from "./patterns/detail-page/DetailPage.tsx";
+export { TagChip } from "./components/tag-chip/TagChip.tsx";
+export type { TagChipProps } from "./components/tag-chip/TagChip.tsx";
