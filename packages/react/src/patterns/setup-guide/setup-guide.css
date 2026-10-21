@@ -3,6 +3,8 @@
     --bt-setup-guide-width: 288px;
     --bt-setup-guide-bar: 4px;
     --bt-setup-guide-steps: 320px;
+    --bt-setup-guide-line: 1px;
+    --bt-setup-guide-hit: 24px;
 
     display: flex;
     flex-direction: column;
@@ -71,6 +73,21 @@
     }
   }
 
+  /* A button can't be an inline box, so it trims to its text as the line around it does, and takes presses
+     from a 24px band around it. */
+  .bt-setup-guide button[data-bt-part="next-link"] {
+    position: relative;
+    text-box: trim-both cap alphabetic;
+  }
+
+  .bt-setup-guide [data-bt-part="next-link"] > [data-bt-part="hit"] {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline: 0;
+    block-size: var(--bt-setup-guide-hit);
+    translate: 0 -50%;
+  }
+
   .bt-setup-guide [data-bt-part="next-title"] {
     color: var(--bt-text);
   }
@@ -115,6 +132,18 @@
     color: var(--bt-success);
   }
 
+  /* A done step's circle fills, its check knocked out of it. */
+  .bt-setup-guide
+    [data-bt-part="step"][data-done]
+    [data-bt-part="check"]
+    circle {
+    fill: currentcolor;
+  }
+
+  .bt-setup-guide [data-bt-part="step"][data-done] [data-bt-part="check"] path {
+    stroke: var(--bt-bg-floating);
+  }
+
   .bt-setup-guide [data-bt-part="step-text"] {
     display: flex;
     flex-direction: column;
@@ -125,5 +154,75 @@
   .bt-setup-guide [data-bt-part="step-action"] {
     display: flex;
     padding-block-start: var(--bt-space-1);
+  }
+
+  .bt-setup-guide [data-bt-part="unfolded"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-setup-guide [data-bt-part="groups"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+  }
+
+  .bt-setup-guide [data-bt-part="group"] {
+    border-radius: var(--bt-r-md);
+  }
+
+  .bt-setup-guide [data-bt-part="group"][data-open] {
+    background-color: var(--bt-bg-section);
+  }
+
+  .bt-setup-guide [data-bt-part="group-head"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-2);
+    border: 0;
+    border-radius: var(--bt-r-md);
+    background: none;
+    color: var(--bt-text-strong);
+    font: inherit;
+    text-align: start;
+  }
+
+  @media (hover: hover) {
+    .bt-setup-guide
+      [data-bt-part="group"]:not([data-open])
+      > [data-bt-part="group-head"]:hover {
+      background-color: var(--bt-bg-item-hover);
+    }
+  }
+
+  .bt-setup-guide [data-bt-part="group-title"] {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .bt-setup-guide [data-bt-part="group-chevron"] {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    color: var(--bt-text-tertiary);
+  }
+
+  .bt-setup-guide [data-bt-part="group"] [data-bt-part="steps"] {
+    padding: var(--bt-space-1) var(--bt-space-2) var(--bt-space-3);
+  }
+
+  .bt-setup-guide [data-bt-part="footer"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    padding-block-start: var(--bt-space-2);
+    border-block-start: var(--bt-setup-guide-line) solid var(--bt-border);
   }
 }

@@ -28,10 +28,32 @@ const TASKS: readonly SetupTask[] = [
   { id: "bank", title: "Connect your bank" },
 ];
 
+const GROUPED: readonly SetupTask[] = [
+  {
+    id: "coffee",
+    title: "Add your first coffee",
+    done: true,
+    group: "Stock the shop",
+  },
+  { id: "photos", title: "Add photos", done: true, group: "Stock the shop" },
+  {
+    id: "shipping",
+    title: "Set shipping rates",
+    group: "Take orders",
+    action: { label: "Set rates", href: "#shipping" },
+  },
+  { id: "bank", title: "Connect your bank", group: "Get paid" },
+];
+
+function groupHead(name: string): HTMLElement {
+  return within(guide()).getByRole("button", { name });
+}
+
 beforeEach(() => {
   for (const key of [
     "buttery:setup-guide:test-setup",
     "buttery:setup-guide-open:test-setup",
+    "buttery:setup-guide-groups:test-setup",
   ])
     window.localStorage.removeItem(key);
   publishSettled();
@@ -203,6 +225,129 @@ describe("SetupGuide", () => {
     await browser.keyboard("{Shift}");
     steps.focus();
     expect(getComputedStyle(steps).maskImage).toBe("none");
+  });
+
+  it("lists grouped tasks under headers that fold, the next task's group open and tinted", () => {
+    render(<Guide tasks={GROUPED} defaultOpen />);
+    expect(groupHead("Stock the shop").getAttribute("aria-expanded")).toBe(
+      "false",
+    );
+    expect(groupHead("Take orders").getAttribute("aria-expanded")).toBe("true");
+    expect(groupHead("Get paid").getAttribute("aria-expanded")).toBe("false");
+    expect(within(guide()).getByText("Set shipping rates")).toBeTruthy();
+    expect(within(guide()).queryByText("Add your first coffee")).toBeNull();
+    const tint = (name: string): string => {
+      const group = groupHead(name).parentElement;
+      if (!group) throw new Error(`No ${name} group.`);
+      return getComputedStyle(group).backgroundColor;
+    };
+    expect(tint("Take orders")).not.toBe(tint("Get paid"));
+    expect(tint("Get paid")).toBe("rgba(0, 0, 0, 0)");
+  });
+
+  it("opens and folds a group from its header, and remembers its choice under its storage key", async () => {
+    const { unmount } = render(
+      <Guide tasks={GROUPED} defaultOpen storageKey="test-setup" />,
+    );
+    await browser.click(groupHead("Stock the shop"));
+    expect(groupHead("Stock the shop").getAttribute("aria-expanded")).toBe(
+      "true",
+    );
+    expect(
+      await within(guide()).findByText("Add your first coffee"),
+    ).toBeTruthy();
+    await browser.click(groupHead("Take orders"));
+    expect(groupHead("Take orders").getAttribute("aria-expanded")).toBe(
+      "false",
+    );
+    await waitFor(() => {
+      expect(within(guide()).queryByText("Set shipping rates")).toBeNull();
+    });
+    unmount();
+    render(<Guide tasks={GROUPED} defaultOpen storageKey="test-setup" />);
+    expect(groupHead("Stock the shop").getAttribute("aria-expanded")).toBe(
+      "true",
+    );
+    expect(groupHead("Take orders").getAttribute("aria-expanded")).toBe(
+      "false",
+    );
+  });
+
+  it("opens the group holding the next task as tasks get done, unless it was folded by hand", () => {
+    const { rerender } = render(<Guide tasks={GROUPED} defaultOpen />);
+    const doneShipping = GROUPED.map((task) =>
+      task.id === "shipping" ? { ...task, done: true } : task,
+    );
+    rerender(
+      <ButteryProvider>
+        <SetupGuide tasks={doneShipping} defaultOpen />
+      </ButteryProvider>,
+    );
+    expect(groupHead("Get paid").getAttribute("aria-expanded")).toBe("true");
+    expect(groupHead("Take orders").getAttribute("aria-expanded")).toBe(
+      "false",
+    );
+  });
+
+  it("draws a done task's circle filled with its check knocked out, and a task to do as a ring", () => {
+    render(<Guide defaultOpen />);
+    const circle = (title: string): SVGCircleElement => {
+      const element = within(guide())
+        .getByText(title)
+        .closest('[data-bt-part="step"]')
+        ?.querySelector<SVGCircleElement>('[data-bt-part="check"] circle');
+      if (!element) throw new Error(`No check for ${title}.`);
+      return element;
+    };
+    const done = circle("Add your first coffee");
+    const doneIcon = done.closest("svg");
+    if (!doneIcon) throw new Error("No icon.");
+    expect(getComputedStyle(done).fill).toBe(getComputedStyle(doneIcon).color);
+    expect(getComputedStyle(circle("Connect your bank")).fill).toBe("none");
+  });
+
+  it("shows its footer under a hairline only while it's unfolded", async () => {
+    render(<Guide footer={<a href="#help">Talk to the roasting team</a>} />);
+    expect(
+      within(guide()).queryByRole("link", {
+        name: "Talk to the roasting team",
+      }),
+    ).toBeNull();
+    await userEvent.click(
+      within(guide()).getByRole("button", { name: "Show all steps" }),
+    );
+    const link = await within(guide()).findByRole("link", {
+      name: "Talk to the roasting team",
+    });
+    const footer = link.closest('[data-bt-part="footer"]');
+    if (!(footer instanceof HTMLElement)) throw new Error("No footer.");
+    expect(getComputedStyle(footer).borderTopWidth).toBe("1px");
+  });
+
+  it("keeps a next task's button in its line, taking presses from a 24px band", () => {
+    render(
+      <Guide
+        tasks={[
+          { id: "coffee", title: "Add your first coffee", done: true },
+          {
+            id: "bank",
+            title: "Connect your bank",
+            action: { label: "Connect", onClick: () => undefined },
+          },
+        ]}
+      />,
+    );
+    const button = within(guide()).getByRole("button", {
+      name: "Connect your bank",
+    });
+    const line = button.closest('[data-bt-part="next"]');
+    const hit = button.querySelector('[data-bt-part="hit"]');
+    if (!line || !hit) throw new Error("No line or hit area.");
+    const box = button.getBoundingClientRect();
+    const around = line.getBoundingClientRect();
+    expect(box.top).toBeGreaterThanOrEqual(around.top - 0.5);
+    expect(box.bottom).toBeLessThanOrEqual(around.bottom + 0.5);
+    expect(hit.getBoundingClientRect().height).toBe(24);
   });
 
   it("says it's all set once every task is done", () => {

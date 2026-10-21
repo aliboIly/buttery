@@ -1,6 +1,6 @@
 import { Inline, Stack, Text } from "@buttery/core";
 import type { DemoSection } from "@buttery/core";
-import { Button, SetupGuide } from "@buttery/react";
+import { ArrowLink, Button, SetupGuide } from "@buttery/react";
 import type { SetupTask } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -10,23 +10,32 @@ const TASKS: readonly Omit<SetupTask, "done">[] = [
     id: "coffee",
     title: "Add your first coffee",
     description: "Its origin, roast and bag sizes.",
+    group: "Stock the shop",
+  },
+  {
+    id: "photos",
+    title: "Add photos of your bags",
+    group: "Stock the shop",
   },
   {
     id: "shipping",
     title: "Set shipping rates",
     description: "What a bag costs to send, by region.",
     action: { label: "Set rates", href: "#settings-shipping" },
+    group: "Take orders",
   },
   {
     id: "bank",
     title: "Connect your bank",
     description: "Where payouts go every Friday.",
     action: { label: "Connect", href: "#settings-payouts" },
+    group: "Get paid",
   },
   {
     id: "launch",
     title: "Open the shop",
     description: "Customers can order once it's open.",
+    group: "Get paid",
   },
 ];
 
@@ -65,6 +74,9 @@ function GuideDemo(): ReactElement {
           ...task,
           done: index < finished,
         }))}
+        footer={
+          <ArrowLink href="#setup-guide">Talk to the roasting team</ArrowLink>
+        }
       />
     </Stack>
   );
@@ -74,7 +86,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "A checklist in the lane",
     description:
-      "Unfold it to see every task; the next one has its action. Dismiss it and it fades away.",
+      "Unfold it to see every task in groups that fold, the next one's group open and its action ready. Dismiss it and it fades away.",
     render: () => <GuideDemo />,
   },
 ];

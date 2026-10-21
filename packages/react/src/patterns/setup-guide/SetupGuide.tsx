@@ -4,6 +4,9 @@ import {
   Morph,
   Text,
   cx,
+  durations,
+  easingCurves,
+  hasContent,
   presencePresets,
   reducedPresence,
   useAnimationTracking,
@@ -16,7 +19,7 @@ import { ChevronDown, ChevronUp, Circle, CircleCheck, X } from "lucide-react";
 import { motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
 import { useCallback, useId, useState } from "react";
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { Button } from "../../components/button/Button.tsx";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
 import { useDismissible } from "../../parts/guidance/GuidanceParts.tsx";
@@ -34,6 +37,11 @@ export interface SetupTask {
   readonly done?: boolean | undefined;
   /** Where to do it: the "Next:" link takes the task's title, and the unfolded guide shows this as a button. */
   readonly action?: GuidanceAction | undefined;
+  /**
+   * The group it's listed under when the guide is unfolded, such as "Take payments". Tasks in a row with the
+   * same group sit under its header, which folds; the group holding the next task starts open.
+   */
+  readonly group?: string | undefined;
 }
 
 /** The words a `SetupGuide` shows and announces. */
@@ -77,6 +85,8 @@ export interface SetupGuideProps extends Omit<
   readonly storageKey?: string | undefined;
   /** Called once it has faded and gone. */
   readonly onDismiss?: (() => void) | undefined;
+  /** What sits under the unfolded steps, past a hairline, such as a link to talk to someone. */
+  readonly footer?: ReactNode;
   /** Its words, for another language or your own. */
   readonly labels?: Partial<SetupGuideLabels> | undefined;
 }
@@ -96,6 +106,35 @@ const LABELS: SetupGuideLabels = {
 function isFlag(value: unknown): value is boolean {
   return typeof value === "boolean";
 }
+
+function isChoices(value: unknown): value is Readonly<Record<string, boolean>> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every(isFlag)
+  );
+}
+
+interface TaskSection {
+  readonly group: string | undefined;
+  readonly tasks: readonly SetupTask[];
+}
+
+function sectionsOf(tasks: readonly SetupTask[]): readonly TaskSection[] {
+  const sections: { group: string | undefined; tasks: SetupTask[] }[] = [];
+  for (const task of tasks) {
+    const last = sections.at(-1);
+    if (last !== undefined && last.group === task.group) last.tasks.push(task);
+    else sections.push({ group: task.group, tasks: [task] });
+  }
+  return sections;
+}
+
+const closeChevron = {
+  duration: durations.fast / 1000,
+  ease: easingCurves.standard,
+};
 
 function TaskLink({ task }: { readonly task: SetupTask }): ReactElement {
   const { action } = task;
@@ -119,6 +158,7 @@ function TaskLink({ task }: { readonly task: SetupTask }): ReactElement {
         data-bt-part="next-link"
       >
         {task.title}
+        <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />
       </button>
     );
   return <span data-bt-part="next-title">{task.title}</span>;
@@ -127,8 +167,10 @@ function TaskLink({ task }: { readonly task: SetupTask }): ReactElement {
 /**
  * A floating checklist for getting started, in the `bottom-end` lane: 288 wide, it rises in as toasts do.
  * Folded, it shows its title, a progress bar and the next task as a link; unfolded, its height opens on
- * `spring.smooth` to every task with a check, the next one with its action as a button. With a
- * `storageKey` it remembers being unfolded and being dismissed across visits; which tasks are done comes
+ * `spring.smooth` to every task, a done one checked, the next one with its action as a button, and its
+ * `footer` under them. Tasks with a `group` sit under the group's header, which folds as a sidebar group
+ * does; the group holding the next task starts open and is tinted while it's open. With a `storageKey` it
+ * remembers being unfolded, its open groups and being dismissed across visits; which tasks are done comes
  * from the app.
  *
  * @example
@@ -148,6 +190,7 @@ export function SetupGuide({
   onOpenChange,
   storageKey,
   onDismiss,
+  footer,
   labels,
   className,
   ...rest
@@ -155,8 +198,10 @@ export function SetupGuide({
   const words = { ...LABELS, ...labels };
   const titleId = useId();
   const stepsId = useId();
+  const groupsId = useId();
   const reduced = useMotionPreference() === "reduced";
   const smooth = useButteryTransition("smooth");
+  const openTurn = useButteryTransition("snappy");
   const arrivalTracking = useAnimationTracking();
   const fillTracking = useAnimationTracking();
   const [stored, setStored] = useStoredState(
@@ -167,6 +212,15 @@ export function SetupGuide({
     isFlag,
   );
   const unfolded = open ?? stored;
+  const [groupChoices, setGroupChoices] = useStoredState<
+    Readonly<Record<string, boolean>>
+  >(
+    storageKey === undefined
+      ? undefined
+      : `buttery:setup-guide-groups:${storageKey}`,
+    {},
+    isChoices,
+  );
   const { dismissed, dismiss, motionProps } = useDismissible({
     kind: "setup-guide",
     storageKey,
@@ -196,6 +250,106 @@ export function SetupGuide({
     const change = !unfolded;
     if (open === undefined) setStored(change);
     onOpenChange?.(change);
+  };
+
+  const steps = (list: readonly SetupTask[], id?: string): ReactElement => (
+    <ol id={id} data-bt-part="steps">
+      {list.map((task) => (
+        <li
+          key={task.id}
+          data-bt-part="step"
+          data-done={task.done === true ? "" : undefined}
+        >
+          <Icon
+            icon={task.done === true ? CircleCheck : Circle}
+            data-bt-part="check"
+          />
+          <div data-bt-part="step-text">
+            <Text>
+              <VisuallyHidden.Root>
+                {`${task.done === true ? words.done : words.toDo}: `}
+              </VisuallyHidden.Root>
+              {task.title}
+            </Text>
+            {task.description === undefined ? null : (
+              <Text variant="body-sm">{task.description}</Text>
+            )}
+            {task !== next || task.action === undefined ? null : (
+              <span data-bt-part="step-action">
+                {task.action.href === undefined ? (
+                  <Button
+                    variant="soft"
+                    size="sm"
+                    onClick={task.action.onClick}
+                  >
+                    {task.action.label}
+                  </Button>
+                ) : (
+                  <Button variant="soft" size="sm" asChild>
+                    <a href={task.action.href} onClick={task.action.onClick}>
+                      {task.action.label}
+                    </a>
+                  </Button>
+                )}
+              </span>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+
+  const section = (part: TaskSection, index: number): ReactElement => {
+    const { group } = part;
+    if (group === undefined)
+      return <div key={`tasks-${String(index)}`}>{steps(part.tasks)}</div>;
+    const listId = `${groupsId}-${String(index)}`;
+    const groupOpen = groupChoices[group] ?? group === next?.group;
+    return (
+      <div
+        key={`group-${group}`}
+        data-bt-part="group"
+        data-open={groupOpen ? "" : undefined}
+      >
+        <button
+          type="button"
+          aria-expanded={groupOpen}
+          aria-controls={listId}
+          className="bt-focus"
+          data-bt-part="group-head"
+          onClick={() => {
+            setGroupChoices((choices) => ({ ...choices, [group]: !groupOpen }));
+          }}
+        >
+          <span
+            className="bt-text bt-truncate"
+            data-role="label"
+            data-bt-truncate=""
+            title={group}
+            data-bt-part="group-title"
+          >
+            {group}
+          </span>
+          <motion.span
+            data-bt-part="group-chevron"
+            initial={false}
+            animate={{
+              rotate: groupOpen ? 180 : 0,
+              transition: groupOpen || reduced ? openTurn : closeChevron,
+            }}
+          >
+            <Icon icon={ChevronDown} />
+          </motion.span>
+        </button>
+        <Morph
+          id={listId}
+          disclosure
+          contentKey={groupOpen ? "open" : "closed"}
+        >
+          {groupOpen ? steps(part.tasks) : null}
+        </Morph>
+      </div>
+    );
   };
 
   return (
@@ -254,62 +408,27 @@ export function SetupGuide({
           </div>
           <Morph contentKey={unfolded ? "steps" : "next"}>
             {unfolded ? (
-              <div
-                ref={watchSteps}
-                id={stepsId}
-                role="region"
-                aria-label={words.steps}
-                tabIndex={overflows ? 0 : undefined}
-                className="bt-scroll-fade"
-                data-bt-part="steps-scroll"
-              >
-                <ol data-bt-part="steps">
-                  {tasks.map((task) => (
-                    <li
-                      key={task.id}
-                      data-bt-part="step"
-                      data-done={task.done === true ? "" : undefined}
-                    >
-                      <Icon
-                        icon={task.done === true ? CircleCheck : Circle}
-                        data-bt-part="check"
-                      />
-                      <div data-bt-part="step-text">
-                        <Text>
-                          <VisuallyHidden.Root>
-                            {`${task.done === true ? words.done : words.toDo}: `}
-                          </VisuallyHidden.Root>
-                          {task.title}
-                        </Text>
-                        {task.description === undefined ? null : (
-                          <Text variant="body-sm">{task.description}</Text>
-                        )}
-                        {task !== next || task.action === undefined ? null : (
-                          <span data-bt-part="step-action">
-                            {task.action.href === undefined ? (
-                              <Button
-                                variant="soft"
-                                size="sm"
-                                onClick={task.action.onClick}
-                              >
-                                {task.action.label}
-                              </Button>
-                            ) : (
-                              <Button variant="soft" size="sm" asChild>
-                                <a
-                                  href={task.action.href}
-                                  onClick={task.action.onClick}
-                                >
-                                  {task.action.label}
-                                </a>
-                              </Button>
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
+              <div data-bt-part="unfolded">
+                <div
+                  ref={watchSteps}
+                  id={stepsId}
+                  role="region"
+                  aria-label={words.steps}
+                  tabIndex={overflows ? 0 : undefined}
+                  className="bt-scroll-fade"
+                  data-bt-part="steps-scroll"
+                >
+                  {tasks.some((task) => task.group !== undefined) ? (
+                    <div data-bt-part="groups">
+                      {sectionsOf(tasks).map(section)}
+                    </div>
+                  ) : (
+                    steps(tasks)
+                  )}
+                </div>
+                {hasContent(footer) ? (
+                  <div data-bt-part="footer">{footer}</div>
+                ) : null}
               </div>
             ) : (
               <p className="bt-text" data-role="caption" data-bt-part="next">
