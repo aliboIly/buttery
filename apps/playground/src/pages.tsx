@@ -10,6 +10,7 @@ import { SurfacesPage } from "./pages/SurfacesPage.tsx";
 import { TextStacksPage } from "./pages/TextStacksPage.tsx";
 import { TokensPage } from "./pages/TokensPage.tsx";
 import { CardStudio } from "./card-studio/CardStudio.tsx";
+import { CardStudioSite } from "./card-studio/CardStudioSite.tsx";
 import { components } from "./registry.ts";
 import { demoPages, foundationPages } from "./routes.ts";
 
@@ -23,6 +24,13 @@ export interface PageGroup {
   readonly title: string;
   readonly pages: readonly Page[];
 }
+
+const DEMOS: Readonly<
+  Record<(typeof demoPages)[number]["route"], () => ReactElement>
+> = {
+  "card-studio": () => <CardStudio />,
+  "card-studio-site": () => <CardStudioSite />,
+};
 
 const FOUNDATIONS: Readonly<
   Record<(typeof foundationPages)[number]["route"], () => ReactElement>
@@ -65,7 +73,7 @@ export const pageGroups: readonly PageGroup[] = [
     pages: demoPages.map(({ route, title }) => ({
       route,
       title,
-      render: () => <CardStudio />,
+      render: DEMOS[route],
     })),
   },
   ...KINDS.map(([kind, title]) => ({

@@ -11,6 +11,7 @@ export const foundationPages = [
 /** Original demo apps built from buttery's components. */
 export const demoPages = [
   { route: "card-studio", title: "Card Studio" },
+  { route: "card-studio-site", title: "Card Studio site" },
 ] as const;
 
 /** The playground route for a component: `fit-box` for FitBox. */
