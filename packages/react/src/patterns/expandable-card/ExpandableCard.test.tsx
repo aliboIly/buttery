@@ -4,7 +4,7 @@ import { publishSettled } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Bento } from "../bento/Bento.tsx";
 import { ExpandableCard } from "./ExpandableCard.tsx";
 
@@ -99,6 +99,35 @@ describe("ExpandableCard", () => {
         .querySelector('[data-bt="Bento"]')
         ?.hasAttribute("data-expanded"),
     ).toBe(false);
+  });
+
+  it("tells its owner once when its expand button opens it", async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <ExpandableCard title="Lean" detail={null} onOpenChange={onOpenChange} />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Open Lean" }));
+    await screen.findByRole("dialog");
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+  });
+
+  it("keeps the page unsettled while the card travels back", async () => {
+    cards();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Open Lean it in 3D" }),
+    );
+    await screen.findByRole("dialog");
+    await settled();
+    await userEvent.keyboard("{Escape}");
+    const card = document.querySelector('[data-bt="ExpandableCard"]');
+    await waitFor(() => {
+      expect(card?.hasAttribute("data-travelling")).toBe(true);
+    });
+    expect(document.documentElement.hasAttribute("data-bt-settled")).toBe(
+      false,
+    );
+    await settled();
   });
 
   it("closes from its close button", async () => {

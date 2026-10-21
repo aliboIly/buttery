@@ -128,6 +128,7 @@ export function ExpandableCard({
   const [travelling, setTravelling] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
+  const expand = useRef<HTMLButtonElement>(null);
   const setExpanded = bento?.setExpanded;
   const steppedBack =
     bento !== null && bento.expanded !== null && bento.expanded !== id;
@@ -161,14 +162,22 @@ export function ExpandableCard({
         data-open={isOpen ? "" : undefined}
         data-travelling={travelling ? "" : undefined}
         onLayoutAnimationStart={() => {
+          tracking.onLayoutAnimationStart();
           setTravelling(true);
         }}
         onLayoutAnimationComplete={() => {
+          tracking.onLayoutAnimationComplete();
           setTravelling(false);
         }}
         onClick={(event) => {
           onClick?.(event);
-          if (!event.defaultPrevented) setOpen(true);
+          if (event.defaultPrevented) return;
+          if (
+            event.target instanceof Node &&
+            expand.current?.contains(event.target)
+          )
+            return;
+          setOpen(true);
         }}
       >
         <header data-bt-part="head">
@@ -185,6 +194,7 @@ export function ExpandableCard({
           <div data-bt-part="affordance">
             <RadixDialog.Trigger asChild>
               <IconButton
+                ref={expand}
                 icon={Maximize2}
                 label={openLabel ?? `Open ${title}`}
                 size="sm"
