@@ -2,8 +2,9 @@
   block-size: 100dvh;
 }
 
+/* The playground's chrome takes its header and three of its 16px paddings. */
 .pg-main .cs-root {
-  block-size: calc(100dvh - var(--bt-space-24));
+  block-size: calc(100dvh - var(--bt-h-header) - 3 * var(--bt-space-4));
 }
 
 /* The canvas's own box, so the card's sizes follow the canvas the way the export draws them. */
@@ -58,17 +59,25 @@
 
   display: grid;
   place-items: center;
+  overflow: clip;
   inline-size: var(--cs-card-width);
+  min-block-size: 0;
   aspect-ratio: 1.6;
-  padding: calc(var(--cs-padding) * 100cqi / var(--cs-canvas-width));
-  border-radius: calc(var(--cs-radius) * 100cqi / var(--cs-canvas-width));
+  padding: calc(var(--cs-spacing) * 100cqi / var(--cs-canvas-width));
+  border-radius: calc(var(--cs-corners) * 100cqi / var(--cs-canvas-width));
   background-color: var(--cs-fill);
-  box-shadow: 0 calc(var(--cs-shadow) * 3cqi) calc(var(--cs-shadow) * 8cqi)
+  box-shadow: 0 calc(var(--cs-depth) * 3cqi) calc(var(--cs-depth) * 8cqi)
     var(--cs-shadow-color);
   color: var(--cs-ink);
   transition:
     background-color var(--bt-dur-base) var(--bt-ease-standard),
-    color var(--bt-dur-base) var(--bt-ease-standard);
+    color var(--bt-dur-base) var(--bt-ease-standard),
+    box-shadow var(--bt-dur-base) var(--bt-ease-standard);
+}
+
+/* A slider drag sets the shadow on every frame, so it follows at once. */
+.cs-card[data-live] {
+  transition: none;
 }
 
 .cs-title {

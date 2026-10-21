@@ -50,6 +50,7 @@ const EASE_IN: Curve = [0.4, 0, 1, 1];
 const EASE_STANDARD: Curve = [0.2, 0, 0, 1];
 const LINEAR: Curve = [0, 0, 1, 1];
 const CSS_EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
+const CSS_EASE_STANDARD = "cubic-bezier(0.2, 0, 0, 1)";
 const DURATIONS = { press: 80, reduced: 100, fast: 120, base: 200 } as const;
 const STAGGER = 50;
 const ENTRANCE_MAX = 900;
@@ -980,5 +981,544 @@ test.describe("motion turning reduced mid-animation", () => {
         expect(reading.y).toBe(0);
       }
     }
+  });
+});
+
+test.describe("Card Studio (MOTION_SPEC §3)", () => {
+  const CARD = '[data-testid="title-card"]';
+  const CANVAS = '[data-bt="Stage"] > [data-bt-part="canvas"]';
+  const BACKGROUND = `${CANVAS} > [data-bt-part="background"]`;
+  const CROP = `${CANVAS} > [data-bt-part="crop"]`;
+  const FINISH_INDICATOR = '[aria-label="Finish"] [data-bt-part="indicator"]';
+  const LEAN_KNOB = '[aria-label="Lean"] [data-bt-part="knob"]';
+
+  test.beforeEach(async ({ page }) => {
+    await installSampler(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/?chrome=0&motion=full#/card-studio");
+    await page.getByTestId("title-card").waitFor();
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
+    await page.waitForTimeout(300);
+  });
+
+  /** Clicks inside the page right after sampling starts, so the first frame is the one the click lands in. */
+  async function sampleClickOn(
+    page: Page,
+    target: Locator,
+    selector: string,
+    duration: number,
+  ): Promise<Run> {
+    await startSampling(page, selector);
+    await target.evaluate((element) => {
+      if (element instanceof HTMLElement) element.click();
+    });
+    return finishSampling(page, duration);
+  }
+
+  /**
+   * Drags `handle` in steps while reading, as each frame begins, where `control` is and how big the card
+   * is drawn. A card set in the same commit as the control is drawn by Motion during the frame, after this
+   * read, so it shows one read later: `delay` is the most reads the card took to follow a control move, and
+   * `trailing` counts card changes more than a read after the control's last move.
+   */
+  async function followDrag(
+    page: Page,
+    handle: Locator,
+    control: string,
+    offset: { readonly x: number; readonly y: number },
+  ): Promise<{
+    readonly moved: number;
+    readonly delay: number;
+    readonly trailing: number;
+  }> {
+    const { x, y } = await centerOf(handle);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.evaluate(
+      ({ controlSelector, cardSelector }) => {
+        const controlElement = document.querySelector(controlSelector);
+        const cardElement = document.querySelector(cardSelector);
+        if (!controlElement || !cardElement)
+          throw new Error("No control or card.");
+        const probe = window as unknown as {
+          followed: { control: number; card: number }[];
+          stopped: boolean;
+        };
+        probe.followed = [];
+        probe.stopped = false;
+        const read = (): void => {
+          if (probe.stopped) return;
+          const at = controlElement.getBoundingClientRect();
+          const drawn = cardElement.getBoundingClientRect();
+          probe.followed.push({
+            control: Math.round((at.left + at.top * 1000) * 10),
+            card: Math.round((drawn.width + drawn.height * 1000) * 10),
+          });
+          requestAnimationFrame(read);
+        };
+        requestAnimationFrame(read);
+      },
+      { controlSelector: control, cardSelector: CARD },
+    );
+    for (let step = 1; step <= 8; step += 1) {
+      await page.mouse.move(
+        x + (offset.x * step) / 8,
+        y + (offset.y * step) / 8,
+      );
+      await page.waitForTimeout(TWO_FRAMES);
+    }
+    await page.mouse.up();
+    await page.waitForTimeout(300);
+    const followed = await page.evaluate(() => {
+      const probe = window as unknown as {
+        followed: { control: number; card: number }[];
+        stopped: boolean;
+      };
+      probe.stopped = true;
+      return probe.followed;
+    });
+    const changed = (pick: "control" | "card"): number[] =>
+      followed.flatMap((frame, index) => {
+        const previous = followed[index - 1];
+        return previous && frame[pick] !== previous[pick] ? [index] : [];
+      });
+    const moves = changed("control");
+    const cardChanges = changed("card");
+    const delay = Math.max(
+      0,
+      ...moves.map((move) => {
+        const next = cardChanges.find((index) => index >= move);
+        return next === undefined ? Number.POSITIVE_INFINITY : next - move;
+      }),
+    );
+    const lastMove = moves.at(-1) ?? 0;
+    const trailing = cardChanges.filter((index) => index > lastMove + 1).length;
+    return { moved: moves.length, delay, trailing };
+  }
+
+  for (const { name, control } of [
+    { name: "Scale", control: "scale" },
+    { name: "Turn", control: "turn" },
+  ] as const) {
+    test(`a ${control} drag changes the card in the same frame as the thumb, with nothing left to catch up`, async ({
+      page,
+    }) => {
+      const thumb = page.getByRole("slider", { name, exact: true });
+      await thumb.evaluate((element) => {
+        element.setAttribute("data-dragged", "");
+      });
+      const { moved, delay, trailing } = await followDrag(
+        page,
+        thumb,
+        "[data-dragged]",
+        { x: -60, y: 0 },
+      );
+      report(
+        `${name} drag: the thumb moved on ${String(moved)} frames; the card followed within ${String(delay)} read and changed ${String(trailing)} times after`,
+      );
+      expect(moved).toBeGreaterThanOrEqual(4);
+      expect(delay).toBeLessThanOrEqual(1);
+      expect(trailing).toBe(0);
+    });
+  }
+
+  test("a lean drag turns the card in the same frame as the knob, with nothing left to catch up", async ({
+    page,
+  }) => {
+    const { moved, delay, trailing } = await followDrag(
+      page,
+      page.getByRole("group", { name: "Lean" }),
+      LEAN_KNOB,
+      { x: 24, y: -12 },
+    );
+    report(
+      `Lean drag: the knob moved on ${String(moved)} frames; the card followed within ${String(delay)} read and changed ${String(trailing)} times after`,
+    );
+    expect(moved).toBeGreaterThanOrEqual(4);
+    expect(delay).toBeLessThanOrEqual(1);
+    expect(trailing).toBe(0);
+  });
+
+  test("the Flat chip lays a leaning card flat on spring.smooth", async ({
+    page,
+  }) => {
+    await page.getByRole("slider", { name: "Left and right" }).focus();
+    await page.keyboard.press("Shift+ArrowRight");
+    await page.waitForTimeout(800);
+    const turns = await page.evaluate(async (selector) => {
+      const card = document.querySelector<HTMLElement>(selector);
+      const chip = [...document.querySelectorAll<HTMLElement>("button")].find(
+        (button) => button.textContent.trim() === "Flat",
+      );
+      if (!card || !chip) throw new Error("No card or Flat chip.");
+      const angle = (): number =>
+        Number(/rotateY\((-?[\d.]+)deg\)/.exec(card.style.transform)?.[1] ?? 0);
+      const start = angle();
+      const pressed = performance.now();
+      chip.click();
+      const read: { t: number; value: number }[] = [];
+      while (performance.now() - pressed < 700) {
+        const t = await new Promise<number>((resolve) => {
+          requestAnimationFrame(resolve);
+        });
+        read.push({ t: t - pressed, value: angle() });
+      }
+      return { start, read };
+    }, CARD);
+    expect(turns.start).toBeCloseTo(10, 1);
+    expectSpring(
+      "lean back to flat",
+      progress(turns.read, turns.start, 0),
+      "smooth",
+    );
+  });
+
+  test("a swatch swaps the background in one frame", async ({ page }) => {
+    const frames = await page.evaluate(async (selector) => {
+      const background = document.querySelector(selector);
+      const swatch = [
+        ...document.querySelectorAll<HTMLElement>('[role="radio"]'),
+      ].find((element) => element.getAttribute("aria-label") === "Peach");
+      if (!background || !swatch) throw new Error("No background or swatch.");
+      const before = getComputedStyle(background).backgroundImage;
+      swatch.click();
+      const seen: boolean[] = [];
+      for (let frame = 0; frame < 6; frame += 1) {
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        seen.push(getComputedStyle(background).backgroundImage !== before);
+      }
+      return seen;
+    }, BACKGROUND);
+    expect(frames.indexOf(true)).toBeGreaterThanOrEqual(0);
+    expect(frames.indexOf(true)).toBeLessThanOrEqual(1);
+  });
+
+  test("the finish control's indicator slides on spring.snappy", async ({
+    page,
+  }) => {
+    const run = await sampleClickOn(
+      page,
+      page
+        .getByRole("radiogroup", { name: "Finish" })
+        .getByRole("radio", { name: "Paper" }),
+      FINISH_INDICATOR,
+      500,
+    );
+    expectSpring(
+      "finish indicator",
+      travelled(run, (reading) => reading.left),
+      "snappy",
+    );
+  });
+
+  test("the finish crossfades the card's fill, ink and shadow over dur-base", async ({
+    page,
+  }) => {
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("radio", { name: "Clear" }),
+      CARD,
+      400,
+    );
+    for (const property of ["background-color", "color", "box-shadow"]) {
+      expect(transitionsOf(run, property)).toEqual([
+        [DURATIONS.base, CSS_EASE_STANDARD],
+      ]);
+    }
+  });
+
+  test("a depth drag sets the shadow on every frame, with no transition", async ({
+    page,
+  }) => {
+    const thumb = page.getByRole("slider", { name: "Depth" });
+    const shadow = (): Promise<string> =>
+      page
+        .getByTestId("title-card")
+        .evaluate((element) => getComputedStyle(element).boxShadow);
+    const before = await shadow();
+    const { x, y } = await centerOf(thumb);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await startSampling(page, CARD);
+    for (let step = 1; step <= 6; step += 1) {
+      await page.mouse.move(x + 8 * step, y);
+      await page.waitForTimeout(FRAME);
+    }
+    const run = await finishSampling(page, 100);
+    await page.mouse.up();
+    expect(transitionsOf(run, "box-shadow")).toEqual([]);
+    expect(await shadow()).not.toBe(before);
+  });
+
+  test("switching to a color crossfades the fill's rows over dur-fast while the height follows on spring.smooth", async ({
+    page,
+  }) => {
+    const morph = '[aria-label="Card settings"] [data-bt="Morph"]';
+    const height = await sampleClickOn(
+      page,
+      page.getByRole("radio", { name: "Color" }),
+      morph,
+      700,
+    );
+    expectSpring(
+      "swatch height",
+      travelled(height, (reading) => reading.height),
+      "smooth",
+    );
+    await page.getByRole("radio", { name: "Blend" }).click();
+    await page.waitForTimeout(800);
+    const views = await sampleClickOn(
+      page,
+      page.getByRole("radio", { name: "Color" }),
+      `${morph} [data-bt-part="view"]`,
+      400,
+    );
+    const old = views.before.elements[0]?.id;
+    const next = elementIds(views).find((id) => id !== old);
+    if (old === undefined || next === undefined)
+      throw new Error("The rows never swapped.");
+    expectTween(
+      "old rows",
+      progress(traceOf(views, old, opacity), 1, 0),
+      EASE_STANDARD,
+      DURATIONS.fast,
+    );
+    expectTween(
+      "new rows",
+      progress(traceOf(views, next, opacity), 0, 1),
+      EASE_STANDARD,
+      DURATIONS.fast,
+    );
+  });
+
+  test("a new anchor glides the card there on spring.smooth", async ({
+    page,
+  }) => {
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("radio", { name: "Right", exact: true }),
+      CARD,
+      700,
+    );
+    expectSpring(
+      "anchor glide",
+      travelled(run, (reading) => reading.left),
+      "smooth",
+    );
+  });
+
+  test("a section reset springs the card back on spring.smooth", async ({
+    page,
+  }) => {
+    await page.getByRole("slider", { name: "Scale" }).focus();
+    await page.keyboard.press("End");
+    await page.waitForTimeout(800);
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("button", { name: "Reset Placement" }),
+      CARD,
+      700,
+    );
+    expectSpring(
+      "reset",
+      travelled(run, (reading) => reading.width),
+      "smooth",
+    );
+  });
+
+  test("a new canvas shape reshapes the stage on spring.smooth, the card keeping its shape in the middle", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /^Canvas shape/ }).click();
+    await page.getByRole("option", { name: "Square · 1:1" }).waitFor();
+    await page.waitForTimeout(400);
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("option", { name: "Square · 1:1" }),
+      `${CANVAS}, ${CARD}`,
+      700,
+    );
+    expectSpring(
+      "canvas shape",
+      travelled(run, (reading) => reading.height),
+      "smooth",
+    );
+    for (const { elements } of run.frames) {
+      const [canvas, card] = elements;
+      if (!canvas || !card)
+        throw new Error("The canvas or the card went missing.");
+      expect(card.width / card.height).toBeCloseTo(1.6, 1);
+      expect(card.left + card.width / 2).toBeCloseTo(
+        canvas.left + canvas.width / 2,
+        0,
+      );
+      expect(card.top + card.height / 2).toBeCloseTo(
+        canvas.top + canvas.height / 2,
+        0,
+      );
+    }
+  });
+
+  test("the canvas shape menu grows in on spring.snappy with a dur-base fade", async ({
+    page,
+  }) => {
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("button", { name: /^Canvas shape/ }),
+      '[data-bt="Popover"]',
+      600,
+    );
+    const fading = expectTween(
+      "menu fading in",
+      progress(trace(run, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.base,
+    );
+    const growing = expectSpring(
+      "menu growing",
+      progress(
+        trace(run, (reading) => reading.scale),
+        ENTER_SCALE,
+        1,
+      ),
+      "snappy",
+    );
+    expect(Math.abs(growing.start - fading.start)).toBeLessThanOrEqual(3);
+    const [trigger, active] = await page
+      .getByRole("button", { name: /^Canvas shape/ })
+      .evaluate((element) => {
+        const probe = document.createElement("span");
+        probe.style.backgroundColor = "var(--bt-bg-control-active)";
+        element.append(probe);
+        const colors = [
+          getComputedStyle(element).backgroundColor,
+          getComputedStyle(probe).backgroundColor,
+        ];
+        probe.remove();
+        return colors;
+      });
+    expect(trigger).toBe(active);
+  });
+
+  test("resize mode fades the background over dur-base and brings the handles in after the follow delay", async ({
+    page,
+  }) => {
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("button", { name: "Resize", exact: true }),
+      `${BACKGROUND}, ${CROP}`,
+      600,
+    );
+    const background = run.before.elements[0]?.id;
+    const crop = elementIds(run).find((id) => id !== background);
+    if (background === undefined || crop === undefined)
+      throw new Error("Resize mode didn't start.");
+    const fading = expectTween(
+      "background fading out",
+      progress(traceOf(run, background, opacity), 1, 0),
+      EASE_STANDARD,
+      DURATIONS.base,
+    );
+    const handles = expectTween(
+      "handles fading in",
+      progress(traceOf(run, crop, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    const after = handles.start - fading.start;
+    report(
+      `the background starts fading ${ms(fading.start)} after the press, and the handles ${ms(after)} after that (80ms wanted)`,
+    );
+    expect(fading.start).toBeLessThanOrEqual(START_MAX);
+    expect(after).toBeGreaterThanOrEqual(80 - FRAME);
+    expect(after).toBeLessThanOrEqual(80 + FRAME);
+  });
+
+  test("the resize toolbar rises in on spring.smooth with a dur-base fade after the follow delay", async ({
+    page,
+  }) => {
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("button", { name: "Resize", exact: true }),
+      '[data-bt-part="floating-toolbar-place"] > div',
+      700,
+    );
+    const rising = expectSpringCurve(
+      "toolbar rising",
+      progress(
+        trace(run, (reading) => reading.y),
+        RISE,
+        0,
+      ),
+      "smooth",
+    );
+    const fading = expectTween(
+      "toolbar fading in",
+      progress(trace(run, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.base,
+    );
+    report(
+      `toolbar starts ${ms(rising.start)} after the press (80ms delay wanted)`,
+    );
+    expect(rising.start).toBeGreaterThanOrEqual(80 - FRAME);
+    expect(rising.start).toBeLessThanOrEqual(80 + TWO_FRAMES);
+    expect(Math.abs(rising.start - fading.start)).toBeLessThanOrEqual(FRAME);
+  });
+
+  test("deleting the card swaps the stage for the empty state within a frame", async ({
+    page,
+  }) => {
+    const frames = await page.evaluate(async () => {
+      const remove = document.querySelector<HTMLElement>(
+        '[data-bt="HeaderBar"] button[aria-label="Delete"]',
+      );
+      if (!remove) throw new Error("No Delete button.");
+      remove.click();
+      const seen: (readonly [boolean, boolean])[] = [];
+      for (let frame = 0; frame < 4; frame += 1) {
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        seen.push([
+          document.querySelector('[data-bt="EmptyState"]') !== null,
+          document.querySelector('[data-bt="Stage"]') !== null,
+        ]);
+      }
+      return seen;
+    });
+    expect(frames.findIndex(([empty, stage]) => empty && !stage)).toBe(0);
+  });
+
+  test("the card's removal toast rises on spring.snappy and fades in over dur-base", async ({
+    page,
+  }) => {
+    const toast =
+      '.bt-toaster > [data-bt-part="list"] > [data-bt-part="toast"]';
+    const run = await sampleClickOn(
+      page,
+      page.getByRole("button", { name: "Delete", exact: true }),
+      `${toast}, ${toast} > [data-bt-part="pill"]`,
+      600,
+    );
+    const [item, pill] = elementIds(run);
+    if (item === undefined || pill === undefined)
+      throw new Error("No toast arrived.");
+    const rising = expectSpring(
+      "toast rising",
+      progress(
+        traceOf(run, pill, (reading) => reading.y),
+        RISE,
+        0,
+      ),
+      "snappy",
+    );
+    const fading = expectTween(
+      "toast fading in",
+      progress(traceOf(run, item, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.base,
+    );
+    expect(Math.abs(rising.start - fading.start)).toBeLessThanOrEqual(FRAME);
   });
 });

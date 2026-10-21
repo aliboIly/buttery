@@ -1,20 +1,25 @@
 import { hexToOklch, mixOklab, oklchToHex } from "@buttery/core";
 import {
-  EDGE_COLORS,
+  FINISH_COLORS,
+  LEAN_DEGREES,
   PERSPECTIVE,
-  TILT_DEGREES,
+  TITLE_LEADING,
   TITLE_SIZE,
+  anchorShift,
   cardBox,
   cardShadow,
 } from "./geometry.ts";
+import type { CardBox } from "./geometry.ts";
 import type { Card } from "./state.ts";
 
 type Point = readonly [number, number];
 
 const GRADIENT_STOPS = 24;
 const MESH = 16;
-const CORNER_STEPS = 8;
 const FONT = '"Inter Variable", "Inter Fallback", sans-serif';
+/** The largest side and area a card's texture gets, inside what every browser can allocate. */
+const TEXTURE_SIDE = 8192;
+const TEXTURE_AREA = 32_000_000;
 
 function radians(degrees: number): number {
   return (degrees * Math.PI) / 180;
@@ -56,28 +61,28 @@ async function loadImage(url: string): Promise<HTMLImageElement> {
   return image;
 }
 
-async function paintBackground(
+async function paintBackdrop(
   context: CanvasRenderingContext2D,
   card: Card,
 ): Promise<void> {
-  const { background, width, height } = card;
-  switch (background.kind) {
-    case "gradient":
+  const { backdrop, width, height } = card;
+  switch (backdrop.kind) {
+    case "blend":
       paintGradient(
         context,
         width,
         height,
-        background.from,
-        background.to,
-        background.angle,
+        backdrop.from,
+        backdrop.to,
+        backdrop.sweep,
       );
       return;
-    case "solid":
-      context.fillStyle = background.color;
+    case "flat":
+      context.fillStyle = backdrop.color;
       context.fillRect(0, 0, width, height);
       return;
-    case "image": {
-      const image = await loadImage(background.url);
+    case "picture": {
+      const image = await loadImage(backdrop.url);
       const cover = Math.max(
         width / image.naturalWidth,
         height / image.naturalHeight,
@@ -94,13 +99,18 @@ async function paintBackground(
       return;
     }
     default: {
-      const unknown: never = background;
+      const unknown: never = backdrop;
       return unknown;
     }
   }
 }
 
-/** The title broken into lines that fit `room`, as CSS wraps it. */
+const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+
+/**
+ * The title broken into lines that fit `room`: at spaces, and inside a word that's wider than a line, as
+ * CSS's `overflow-wrap: anywhere` breaks it.
+ */
 function wrap(
   context: CanvasRenderingContext2D,
   text: string,
@@ -108,79 +118,118 @@ function wrap(
 ): string[] {
   const lines: string[] = [];
   let line = "";
+  const fits = (candidate: string): boolean =>
+    context.measureText(candidate).width <= room;
   for (const word of text.split(/\s+/).filter(Boolean)) {
-    const next = line === "" ? word : `${line} ${word}`;
-    if (context.measureText(next).width <= room || line === "") {
-      line = next;
-    } else {
-      lines.push(line);
+    const joined = line === "" ? word : `${line} ${word}`;
+    if (fits(joined)) {
+      line = joined;
+      continue;
+    }
+    if (line !== "") lines.push(line);
+    line = "";
+    if (fits(word)) {
       line = word;
+      continue;
+    }
+    for (const { segment } of graphemes.segment(word)) {
+      if (line !== "" && !fits(line + segment)) {
+        lines.push(line);
+        line = segment;
+      } else {
+        line += segment;
+      }
     }
   }
   if (line !== "") lines.push(line);
   return lines;
 }
 
-/** The card's face, flat, at its size in canvas pixels. */
-function paintFace(
-  card: Card,
-  width: number,
-  height: number,
-  density: number,
-): HTMLCanvasElement {
-  const face = document.createElement("canvas");
-  face.width = Math.ceil(width * density);
-  face.height = Math.ceil(height * density);
-  const context = face.getContext("2d");
-  if (!context) return face;
-  context.scale(density, density);
-  const colors = EDGE_COLORS[card.edge];
+/** The card's face, flat: its fill, its shadow and its title, with room around it for the shadow. */
+interface Face {
+  readonly canvas: HTMLCanvasElement;
+  /** How far the texture reaches past the card on each side, in canvas pixels. */
+  readonly margin: number;
+}
+
+function paintFace(card: Card, box: CardBox, density: number): Face {
+  const colors = FINISH_COLORS[card.finish];
+  const shadow = cardShadow(card);
+  const margin = colors.fill
+    ? Math.ceil(1.5 * shadow.blur + shadow.offsetY)
+    : 0;
+  const width = box.width + 2 * margin;
+  const height = box.height + 2 * margin;
+  const pixels = Math.min(
+    density,
+    TEXTURE_SIDE / Math.max(width, height),
+    Math.sqrt(TEXTURE_AREA / (width * height)),
+  );
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.ceil(width * pixels);
+  canvas.height = Math.ceil(height * pixels);
+  const context = canvas.getContext("2d");
+  if (!context) return { canvas, margin };
+  context.scale(pixels, pixels);
+  context.translate(margin, margin);
+  const radius = Math.min(card.corners, box.width / 2, box.height / 2);
   if (colors.fill) {
+    context.save();
+    context.shadowColor = shadow.color;
+    context.shadowBlur = shadow.blur * pixels;
+    context.shadowOffsetY = shadow.offsetY * pixels;
     context.fillStyle = colors.fill;
     context.beginPath();
-    context.roundRect(
-      0,
-      0,
-      width,
-      height,
-      Math.min(card.roundness, width / 2, height / 2),
-    );
+    context.roundRect(0, 0, box.width, box.height, radius);
     context.fill();
+    context.restore();
   }
-  const size = width * TITLE_SIZE;
+  context.save();
+  context.beginPath();
+  context.roundRect(0, 0, box.width, box.height, radius);
+  context.clip();
+  const size = box.width * TITLE_SIZE;
   context.font = `600 ${String(size)}px ${FONT}`;
   context.letterSpacing = `${String(-0.01 * size)}px`;
   context.fillStyle = colors.ink;
   context.textAlign = "center";
   context.textBaseline = "middle";
-  const lines = wrap(context, card.title, width - 2 * card.padding);
-  const lineHeight = size * 1.15;
-  const top = height / 2 - ((lines.length - 1) * lineHeight) / 2;
+  const lines = wrap(context, card.title, box.width - 2 * card.spacing);
+  const lineHeight = size * TITLE_LEADING;
+  const top = box.height / 2 - ((lines.length - 1) * lineHeight) / 2;
   for (const [index, line] of lines.entries()) {
-    context.fillText(line, width / 2, top + index * lineHeight);
+    context.fillText(line, box.width / 2, top + index * lineHeight);
   }
-  return face;
+  context.restore();
+  return { canvas, margin };
 }
 
 /**
  * Where a point of the card lands on the canvas: rotateY, then rotateX, then rotate, then scale, all about
- * the card's center, seen through the perspective, in the order Motion writes the transform.
+ * the card's center, then the shift toward its anchor, seen through the perspective from the card's
+ * unshifted center, in the order Motion writes the transform. `scale()` is 2D, so depth isn't scaled.
  */
-function projector(card: Card, center: Point): (u: number, v: number) => Point {
-  const tiltY = radians(card.tilt.x * TILT_DEGREES);
-  const tiltX = radians(-card.tilt.y * TILT_DEGREES);
-  const turn = radians(card.rotation);
+function projector(card: Card, box: CardBox): (u: number, v: number) => Point {
+  const leanY = radians(card.lean.x * LEAN_DEGREES);
+  const leanX = radians(-card.lean.y * LEAN_DEGREES);
+  const turn = radians(card.turn);
   const scale = card.scale / 100;
   const distance = PERSPECTIVE * card.width;
+  const shift = anchorShift(card);
+  const centerX = box.x + box.width / 2;
+  const centerY = box.y + box.height / 2;
   return (u, v) => {
-    const x1 = u * Math.cos(tiltY);
-    const z1 = -u * Math.sin(tiltY);
-    const y2 = v * Math.cos(tiltX) - z1 * Math.sin(tiltX);
-    const z2 = v * Math.sin(tiltX) + z1 * Math.cos(tiltX);
+    const x1 = u * Math.cos(leanY);
+    const z1 = -u * Math.sin(leanY);
+    const y2 = v * Math.cos(leanX) - z1 * Math.sin(leanX);
+    const z2 = v * Math.sin(leanX) + z1 * Math.cos(leanX);
     const x3 = x1 * Math.cos(turn) - y2 * Math.sin(turn);
     const y3 = x1 * Math.sin(turn) + y2 * Math.cos(turn);
     const depth = distance / (distance - z2);
-    return [center[0] + x3 * scale * depth, center[1] + y3 * scale * depth];
+    return [
+      centerX + (shift.x * box.width + x3 * scale) * depth,
+      centerY + (shift.y * box.height + y3 * scale) * depth,
+    ];
   };
 }
 
@@ -203,6 +252,7 @@ function drawTriangle(
   const f = ty0 - b * sx0 - d * sy0;
   const middleX = (tx0 + tx1 + tx2) / 3;
   const middleY = (ty0 + ty1 + ty2) / 3;
+  // Each triangle grows a little past its edges, so neighbours overlap and no seam shows between them.
   const grow = (x: number, y: number): Point => {
     const length = Math.hypot(x - middleX, y - middleY) || 1;
     return [
@@ -218,37 +268,8 @@ function drawTriangle(
   context.closePath();
   context.clip();
   context.transform(a, b, c, d, e, f);
-  context.drawImage(
-    image,
-    0,
-    0,
-    image.width,
-    image.height,
-    0,
-    0,
-    image.width,
-    image.height,
-  );
+  context.drawImage(image, 0, 0);
   context.restore();
-}
-
-/** The outline of the card's rounded rectangle, as points around its center. */
-function outline(width: number, height: number, radius: number): Point[] {
-  const corner = Math.min(radius, width / 2, height / 2);
-  const points: Point[] = [];
-  const corners: readonly [number, number, number][] = [
-    [width / 2 - corner, -height / 2 + corner, -90],
-    [width / 2 - corner, height / 2 - corner, 0],
-    [-width / 2 + corner, height / 2 - corner, 90],
-    [-width / 2 + corner, -height / 2 + corner, 180],
-  ];
-  for (const [x, y, start] of corners) {
-    for (let step = 0; step <= CORNER_STEPS; step += 1) {
-      const angle = radians(start + (90 * step) / CORNER_STEPS);
-      points.push([x + Math.cos(angle) * corner, y + Math.sin(angle) * corner]);
-    }
-  }
-  return points;
 }
 
 /** Draws the card at the size it's set to, as the stage shows it, and returns the canvas. */
@@ -263,53 +284,34 @@ export async function renderCard(
   const context = canvas.getContext("2d");
   if (!context) throw new Error("This browser can't draw to a canvas.");
   context.scale(scale, scale);
-  await paintBackground(context, card);
+  await paintBackdrop(context, card);
 
   const box = cardBox(card);
-  const center: Point = [box.x + box.width / 2, box.y + box.height / 2];
-  const project = projector(card, center);
-  const colors = EDGE_COLORS[card.edge];
-
-  if (colors.fill) {
-    const shadow = cardShadow(card);
-    const edge = outline(box.width, box.height, card.roundness).map(([u, v]) =>
-      project(u, v),
-    );
-    context.save();
-    context.shadowColor = shadow.color;
-    context.shadowBlur = shadow.blur * scale;
-    context.shadowOffsetY = shadow.offsetY * scale;
-    context.fillStyle = colors.fill;
-    context.beginPath();
-    for (const [index, [x, y]] of edge.entries()) {
-      if (index === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
-    }
-    context.closePath();
-    context.fill();
-    context.restore();
-  }
-
-  const face = paintFace(card, box.width, box.height, scale * 2);
+  const project = projector(card, box);
+  const face = paintFace(card, box, scale * 2);
+  const left = -box.width / 2 - face.margin;
+  const top = -box.height / 2 - face.margin;
+  const spanX = box.width + 2 * face.margin;
+  const spanY = box.height + 2 * face.margin;
   const texture = (u: number, v: number): Point => [
-    ((u + box.width / 2) / box.width) * face.width,
-    ((v + box.height / 2) / box.height) * face.height,
+    ((u - left) / spanX) * face.canvas.width,
+    ((v - top) / spanY) * face.canvas.height,
   ];
   for (let row = 0; row < MESH; row += 1) {
     for (let column = 0; column < MESH; column += 1) {
-      const u0 = -box.width / 2 + (box.width * column) / MESH;
-      const u1 = -box.width / 2 + (box.width * (column + 1)) / MESH;
-      const v0 = -box.height / 2 + (box.height * row) / MESH;
-      const v1 = -box.height / 2 + (box.height * (row + 1)) / MESH;
+      const u0 = left + (spanX * column) / MESH;
+      const u1 = left + (spanX * (column + 1)) / MESH;
+      const v0 = top + (spanY * row) / MESH;
+      const v1 = top + (spanY * (row + 1)) / MESH;
       drawTriangle(
         context,
-        face,
+        face.canvas,
         [texture(u0, v0), texture(u1, v0), texture(u0, v1)],
         [project(u0, v0), project(u1, v0), project(u0, v1)],
       );
       drawTriangle(
         context,
-        face,
+        face.canvas,
         [texture(u1, v0), texture(u1, v1), texture(u0, v1)],
         [project(u1, v0), project(u1, v1), project(u0, v1)],
       );

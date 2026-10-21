@@ -1,18 +1,26 @@
 import { ArrowLeftRight, CircleHelp, Copy, Redo2, Undo2 } from "lucide-react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { Inline, Kbd, Stack, Surface, Text } from "@buttery/core";
+import { gradientCss, gradientRows } from "@buttery/core/palettes";
 import {
+  AnchorGrid,
   ArrowLink,
   Button,
   ButteryProvider,
   Chip,
+  ColorDot,
+  EmptyState,
   IconButton,
+  Inspector,
   NumberField,
   SegmentedControl,
   Slider,
   SplitButton,
+  SwatchGrid,
+  TiltPad,
   Tooltip,
 } from "@buttery/react";
+import type { Swatch } from "@buttery/react";
 import { referenceRoot } from "virtual:buttery-reference";
 import "./compare-page.css";
 
@@ -40,6 +48,25 @@ const TOAST: Capture = {
   width: 1368,
   height: 1031,
 };
+
+/** The accent arc on a tilted knob, recorded close up. */
+const TILTED: Capture = {
+  file: "frames/tilt-knob-accent-closeup.png",
+  width: 103,
+  height: 68,
+};
+
+const LILAC = gradientRows.cream.find((preset) => preset.id === "lilac");
+
+const SWATCHES: readonly Swatch[] = [
+  ...gradientRows.cream,
+  ...gradientRows.fresh,
+  ...gradientRows.neutral,
+].map((preset) => ({
+  value: preset.id,
+  label: preset.name,
+  fill: gradientCss(preset),
+}));
 
 interface Crop {
   readonly title: string;
@@ -92,7 +119,7 @@ const CROPS: readonly Crop[] = [
     ours: () => (
       <Inline gap={2} align="center">
         <Text>Lean</Text>
-        <Chip disabled>Reset</Chip>
+        <Chip aria-disabled>Flat</Chip>
       </Inline>
     ),
   },
@@ -154,7 +181,7 @@ const CROPS: readonly Crop[] = [
     ours: () => (
       <Inline gap={2} align="center">
         <Text>Lean</Text>
-        <Chip>Reset</Chip>
+        <Chip>Flat</Chip>
       </Inline>
     ),
   },
@@ -212,6 +239,110 @@ const CROPS: readonly Crop[] = [
         </div>
       </div>
     ),
+  },
+  {
+    title: "SwatchGrid",
+    capture: EDITOR,
+    x: 1240,
+    y: 584,
+    width: 302,
+    height: 154,
+    ours: () => (
+      <Inspector label="Backdrop" className="cp-inspector">
+        <Inspector.Section title="Backdrop">
+          <Inspector.Row block>
+            <SwatchGrid
+              label="Blend presets"
+              swatches={SWATCHES}
+              defaultValue="lilac"
+            />
+          </Inspector.Row>
+        </Inspector.Section>
+      </Inspector>
+    ),
+  },
+  {
+    title: "ColorDot",
+    capture: EDITOR,
+    x: 1240,
+    y: 750,
+    width: 300,
+    height: 45,
+    ours: () => (
+      <Inline gap={1.5} align="center">
+        <ColorDot label="First hue" defaultValue={LILAC?.fromHex} />
+        <ColorDot label="Second hue" defaultValue={LILAC?.toHex} />
+        <IconButton icon={ArrowLeftRight} label="Swap hues" size="sm" />
+      </Inline>
+    ),
+  },
+  {
+    title: "TiltPad",
+    capture: EDITOR,
+    x: 1240,
+    y: 418,
+    width: 140,
+    height: 56,
+    ours: () => (
+      <Inline gap={2} align="center">
+        <Text>Lean</Text>
+        <Chip aria-disabled>Flat</Chip>
+        <TiltPad label="Lean" />
+      </Inline>
+    ),
+  },
+  {
+    title: "TiltPad, tilted",
+    capture: TILTED,
+    x: 0,
+    y: 0,
+    width: 103,
+    height: 68,
+    ours: () => <TiltPad label="Lean" defaultValue={{ x: 0.5, y: -0.35 }} />,
+  },
+  {
+    title: "AnchorGrid",
+    capture: EDITOR,
+    x: 1400,
+    y: 418,
+    width: 140,
+    height: 56,
+    ours: () => (
+      <Inline gap={2} align="center">
+        <Text>Anchor</Text>
+        <AnchorGrid label="Anchor" />
+      </Inline>
+    ),
+  },
+  {
+    title: "EmptyState",
+    capture: TOAST,
+    x: 370,
+    y: 488,
+    width: 290,
+    height: 114,
+    ours: () => (
+      <EmptyState
+        title="No card yet"
+        description="Start a new card, or drag a picture in for its backdrop."
+        actions={
+          <>
+            <Button variant="primary">New card</Button>
+            <Button variant="secondary">Pick a picture</Button>
+          </>
+        }
+      />
+    ),
+  },
+  {
+    title: "Select, FloatingToolbar and the removal toast in place",
+    capture: null,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    note: "An open select, the crop toolbar and a toast float over the app, so the phase report compares them as whole screens of Card Studio next to the captures.",
+    ours: () => <ArrowLink href="#/card-studio">Open Card Studio</ArrowLink>,
   },
   {
     title: "Button and ArrowLink with the arrow",

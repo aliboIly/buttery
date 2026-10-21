@@ -18,3 +18,8 @@
   max-inline-size: 100%;
   background-repeat: no-repeat;
 }
+
+/* At the inspector's width, so swatches come out the size they are in the app. */
+.cp-inspector {
+  inline-size: var(--bt-w-inspector);
+}

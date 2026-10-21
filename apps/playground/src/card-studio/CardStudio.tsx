@@ -1,4 +1,10 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import type { ReactElement } from "react";
 import { useShortcut } from "@buttery/core";
 import {
@@ -12,36 +18,47 @@ import {
 } from "@buttery/react";
 import { cardBlob, fileName } from "./export.ts";
 import { StudioHeader } from "./StudioHeader.tsx";
-import { StudioInspector } from "./StudioInspector.tsx";
+import { EmptyStudioInspector, StudioInspector } from "./StudioInspector.tsx";
 import type { ChangeCard } from "./StudioInspector.tsx";
 import { TitleCard } from "./TitleCard.tsx";
 import { SHAPE_SIZES, STUDIO_START, newCard, studioReducer } from "./state.ts";
-import type { Background, Shape } from "./state.ts";
+import type { Backdrop, Shape } from "./state.ts";
 import "./card-studio.css";
 
-/** Changes that run on, like typing, and join one undo step until something else changes. */
-const RUNNING_KEYS = new Set(["title"]);
+/**
+ * Changes that run on, like typing, a color picker or a resize, and join one undo step until they're
+ * sealed or something else changes.
+ */
+const RUNNING_KEYS = new Set([
+  "title",
+  "first-hue",
+  "second-hue",
+  "flat-hue",
+  "size",
+  "resize",
+]);
 
-function backgroundCss(background: Background): string {
-  switch (background.kind) {
-    case "gradient":
-      return `linear-gradient(${String(background.angle)}deg in oklab, ${background.from}, ${background.to})`;
-    case "solid":
-      return background.color;
-    case "image":
-      return `center / cover no-repeat url("${background.url}")`;
+function backdropCss(backdrop: Backdrop): string {
+  switch (backdrop.kind) {
+    case "blend":
+      return `linear-gradient(${String(backdrop.sweep)}deg in oklab, ${backdrop.from}, ${backdrop.to})`;
+    case "flat":
+      return backdrop.color;
+    case "picture":
+      return `center / cover no-repeat url("${backdrop.url}")`;
     default: {
-      const unknown: never = background;
+      const unknown: never = backdrop;
       return unknown;
     }
   }
 }
 
-/** The size crop mode started from, to go back to on Reset or Cancel. */
-interface CropStart {
+/** The size resize mode started from, to go back to on Revert or Discard, and how long the history was then. */
+interface ResizeStart {
   readonly shape: Shape;
   readonly width: number;
   readonly height: number;
+  readonly history: number;
 }
 
 /** Card Studio: style a title card, then export it as an image. */
@@ -49,8 +66,10 @@ export function CardStudio(): ReactElement {
   const [studio, dispatch] = useReducer(studioReducer, STUDIO_START);
   const [live, setLive] = useState(false);
   const liveRef = useRef(false);
-  const [crop, setCrop] = useState<CropStart | null>(null);
+  const [resize, setResize] = useState<ResizeStart | null>(null);
   const canvas = useRef<HTMLDivElement>(null);
+  const newCardButton = useRef<HTMLButtonElement>(null);
+  const focusNewCard = useRef(false);
   const images = useRef<string[]>([]);
   const card = studio.card;
 
@@ -61,14 +80,23 @@ export function CardStudio(): ReactElement {
     [],
   );
 
+  useLayoutEffect(() => {
+    if (card !== null || !focusNewCard.current) return;
+    focusNewCard.current = false;
+    newCardButton.current?.focus();
+  }, [card]);
+
+  const seal = (): void => {
+    dispatch({ type: "seal" });
+  };
   const onLive = (next: boolean): void => {
     liveRef.current = next;
     setLive(next);
-    if (!next) dispatch({ type: "seal" });
+    if (!next) seal();
   };
   const change: ChangeCard = (key, update) => {
     dispatch({ type: "change", key, change: update });
-    if (!liveRef.current && !RUNNING_KEYS.has(key)) dispatch({ type: "seal" });
+    if (!liveRef.current && !RUNNING_KEYS.has(key)) seal();
   };
   const undo = (): void => {
     dispatch({ type: "undo" });
@@ -81,28 +109,32 @@ export function CardStudio(): ReactElement {
 
   const remove = (): void => {
     if (!card) return;
-    setCrop(null);
+    setResize(null);
+    focusNewCard.current = true;
     dispatch({ type: "set", card: null });
-    toast("Card removed", {
-      id: "card-removed",
+    const key = /Mac|iPhone|iPad/.test(navigator.userAgent)
+      ? "Command"
+      : "Control";
+    toast("Card deleted", {
+      id: "card-deleted",
       action: {
         label: "Undo",
-        altText: "Undo with Command Z",
+        altText: `Undo with ${key} Z`,
         onAction: () => {
-          dispatch({ type: "set", card });
+          dispatch({ type: "restore" });
         },
       },
     });
   };
 
-  const takeImage = (files: readonly File[]): void => {
+  const takePicture = (files: readonly File[]): void => {
     const [file] = files;
     if (!file) return;
     const url = URL.createObjectURL(file);
     images.current.push(url);
-    const background: Background = { kind: "image", url, name: file.name };
-    if (card) change("background", (current) => ({ ...current, background }));
-    else dispatch({ type: "set", card: { ...newCard(), background } });
+    const backdrop: Backdrop = { kind: "picture", url, name: file.name };
+    if (card) change("backdrop", (current) => ({ ...current, backdrop }));
+    else dispatch({ type: "set", card: { ...newCard(), backdrop } });
   };
 
   const exportCard = (format: "png" | "jpg", scale: 1 | 2): void => {
@@ -126,8 +158,12 @@ export function CardStudio(): ReactElement {
 
   const copyCard = (): void => {
     if (!card) return;
-    navigator.clipboard
-      .write([new ClipboardItem({ "image/png": cardBlob(card, "png", 1) })])
+    void Promise.resolve()
+      .then(() =>
+        navigator.clipboard.write([
+          new ClipboardItem({ "image/png": cardBlob(card, "png", 1) }),
+        ]),
+      )
       .then(() => {
         toast("Copied the card", { id: "copy" });
       })
@@ -136,15 +172,39 @@ export function CardStudio(): ReactElement {
       });
   };
 
-  const startCrop = (): void => {
-    if (!card) return;
-    setCrop({ shape: card.shape, width: card.width, height: card.height });
+  const startResize = (): void => {
+    if (!card || resize) return;
+    setResize({
+      shape: card.shape,
+      width: card.width,
+      height: card.height,
+      history: studio.past.length,
+    });
   };
-  const endCrop = (keep: boolean): void => {
-    if (crop && !keep) {
-      dispatch({ type: "set", card: card ? { ...card, ...crop } : null });
+  const resized =
+    card !== null &&
+    resize !== null &&
+    (card.width !== resize.width || card.height !== resize.height);
+  const endResize = (keep: boolean): void => {
+    if (!resize) return;
+    const fresh =
+      studio.open === "resize" && studio.past.length === resize.history + 1;
+    if (keep || !resized) {
+      seal();
+    } else if (fresh) {
+      dispatch({ type: "drop", key: "resize" });
+    } else {
+      dispatch({
+        type: "set",
+        card: {
+          ...card,
+          shape: resize.shape,
+          width: resize.width,
+          height: resize.height,
+        },
+      });
     }
-    setCrop(null);
+    setResize(null);
   };
 
   return (
@@ -155,9 +215,10 @@ export function CardStudio(): ReactElement {
         header={
           <StudioHeader
             card={card}
+            resizing={resize !== null}
             canUndo={studio.past.length > 0}
             canRedo={studio.future.length > 0}
-            onCrop={startCrop}
+            onResize={startResize}
             onDelete={remove}
             onShape={(shape) => {
               change("shape", (current) => ({
@@ -173,54 +234,60 @@ export function CardStudio(): ReactElement {
                 ...size,
               }));
             }}
+            onSizeCommit={seal}
             onUndo={undo}
             onRedo={redo}
             onHelp={() => {
               toast(
-                "Pick a background, drag the tilt pad for depth, then export.",
-                {
-                  id: "help",
-                },
+                "Pick a backdrop, lean the card for depth, then export it.",
+                { id: "help" },
               );
             }}
           />
         }
         inspector={
-          <StudioInspector
-            card={card ?? newCard()}
-            exportable={card !== null}
-            onChange={change}
-            onLive={onLive}
-            onCopy={copyCard}
-            onExport={exportCard}
-          />
+          card ? (
+            <StudioInspector
+              card={card}
+              exportable
+              onChange={change}
+              onSeal={seal}
+              onLive={onLive}
+              onPicture={takePicture}
+              onCopy={copyCard}
+              onExport={exportCard}
+            />
+          ) : (
+            <EmptyStudioInspector />
+          )
         }
       >
-        {card ? (
-          <Stage
-            label={`Card preview: ${card.title}`}
-            size={{ width: card.width, height: card.height }}
-            background={backgroundCss(card.background)}
-            cropping={crop !== null}
-            canvasRef={canvas}
-            onSizeChange={(size) => {
-              change("crop", (current) => ({
-                ...current,
-                shape: "custom",
-                ...size,
-              }));
-            }}
-          >
-            <TitleCard card={card} live={live} />
-          </Stage>
-        ) : (
-          <DropZone accept="image/*" onFiles={takeImage}>
+        <DropZone accept="image/*" onFiles={takePicture}>
+          {card ? (
+            <Stage
+              label={`Card preview: ${card.title}`}
+              size={{ width: card.width, height: card.height }}
+              background={backdropCss(card.backdrop)}
+              cropping={resize !== null}
+              canvasRef={canvas}
+              onSizeChange={(size) => {
+                change("resize", (current) => ({
+                  ...current,
+                  shape: "custom",
+                  ...size,
+                }));
+              }}
+            >
+              <TitleCard card={card} live={live} />
+            </Stage>
+          ) : (
             <EmptyState
-              title="Add a card"
-              description="Drop an image for the background, or paste one with ⌘V."
+              title="No card yet"
+              description="Start a new card, or drag a picture in for its backdrop. Pasting one works too."
               actions={
                 <>
                   <Button
+                    ref={newCardButton}
                     variant="primary"
                     onClick={() => {
                       dispatch({ type: "set", card: newCard() });
@@ -229,48 +296,53 @@ export function CardStudio(): ReactElement {
                     New card
                   </Button>
                   <DropZone.Open>
-                    <Button variant="secondary">Choose image</Button>
+                    <Button variant="secondary">Pick a picture</Button>
                   </DropZone.Open>
                 </>
               }
             />
-          </DropZone>
-        )}
+          )}
+        </DropZone>
       </AppShell>
       {card ? (
         <FloatingToolbar
           anchor={canvas}
-          label="Crop"
+          label="Canvas size"
           meta={`${String(card.width)} × ${String(card.height)}`}
-          open={crop !== null}
+          open={resize !== null}
           delayed
+          focusOnOpen
         >
           <FloatingToolbar.Button
             variant="ghost"
-            aria-disabled={
-              crop === null ||
-              (crop.width === card.width && crop.height === card.height)
-            }
+            aria-disabled={!resized}
             onClick={() => {
-              if (crop) dispatch({ type: "set", card: { ...card, ...crop } });
+              if (resize && resized) {
+                change("resize", (current) => ({
+                  ...current,
+                  shape: resize.shape,
+                  width: resize.width,
+                  height: resize.height,
+                }));
+              }
             }}
           >
-            Reset
+            Revert
           </FloatingToolbar.Button>
           <FloatingToolbar.Button
             onClick={() => {
-              endCrop(false);
+              endResize(false);
             }}
           >
-            Cancel
+            Discard
           </FloatingToolbar.Button>
           <FloatingToolbar.Button
             variant="primary"
             onClick={() => {
-              endCrop(true);
+              endResize(true);
             }}
           >
-            Apply crop
+            Keep size
           </FloatingToolbar.Button>
         </FloatingToolbar>
       ) : null}

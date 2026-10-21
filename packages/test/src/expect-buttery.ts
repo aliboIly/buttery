@@ -234,8 +234,9 @@ function label(viewport: ButteryViewport): string {
 /**
  * Checks a page against buttery's layout rules (LAYOUT_RULES §5) in every requested viewport, theme and
  * density, and fails with a report of every problem and how to fix it. Static checks emulate reduced
- * motion and wait for buttery to report settled. Inside a Playwright test, the report is also attached
- * as JSON (`buttery-violations.json`) with annotated screenshots.
+ * motion and wait for buttery to report settled. When it's done, the page goes back to the viewport it
+ * started at, so set the viewport first to keep checking a page at that size. Inside a Playwright test,
+ * the report is also attached as JSON (`buttery-violations.json`) with annotated screenshots.
  *
  * @example
  * test("the settings page is buttery", async ({ page }) => {

@@ -1,7 +1,7 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { expectButtery, fullMatrix, quickMatrix } from "@buttery/test";
-import type { ButteryInteraction } from "@buttery/test";
+import type { ButteryInteraction, ButteryViewport } from "@buttery/test";
 import { routes } from "./routes.ts";
 
 const matrix =
@@ -78,16 +78,16 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   ],
   "card-studio": [
     {
-      name: "enter crop mode",
-      run: headerAction("Crop"),
+      name: "enter resize mode",
+      run: headerAction("Resize"),
       acrossMatrix: true,
     },
     {
-      name: "cancel the crop",
-      run: press("Cancel"),
+      name: "discard the resize",
+      run: press("Discard"),
     },
     {
-      name: "delete the card, showing the empty state and a toast",
+      name: "delete the card, showing the empty state (its toast is checked at the first condition, before it leaves)",
       run: headerAction("Delete"),
       allowMove: ['[data-bt="HeaderBar"]'],
       acrossMatrix: true,
@@ -141,13 +141,19 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     },
   ],
   select: [
-    { name: "open the canvas shape list", run: press("Canvas shape, 16:9") },
+    {
+      name: "open the canvas shape list",
+      run: press("Canvas shape, Wide · 16:9"),
+    },
     escape,
     {
       name: "open the list with width and height fields",
       run: async (page: Page) => {
         await page
-          .getByRole("button", { name: "Canvas shape, 16:9", exact: true })
+          .getByRole("button", {
+            name: "Canvas shape, Wide · 16:9",
+            exact: true,
+          })
           .nth(1)
           .click();
       },
@@ -256,4 +262,73 @@ test("the playground chrome is buttery with its menus open", async ({
       { name: "switch to dark", run: pressIfShown("radio", "dark") },
     ],
   });
+});
+
+/** Window sizes from 1728 × 1117 through 960 × 640 to 390 × 844, about 96px apart, both sides changing together. */
+function resizeSteps(): readonly ButteryViewport[] {
+  const stops: readonly ButteryViewport[] = [
+    { width: 1728, height: 1117 },
+    { width: 960, height: 640 },
+    { width: 390, height: 844 },
+  ];
+  return stops.flatMap((from, index) => {
+    const to = stops[index + 1];
+    if (!to) return [from];
+    const count = Math.ceil((from.width - to.width) / 96);
+    return Array.from({ length: count }, (_, step) => ({
+      width: Math.round(from.width + ((to.width - from.width) * step) / count),
+      height: Math.round(
+        from.height + ((to.height - from.height) * step) / count,
+      ),
+    }));
+  });
+}
+
+test("Card Studio resizes from 1728 to 390 without an overlap or overflow, folding its header and inspector", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1728, height: 1117 });
+  await page.goto("/?chrome=0#/card-studio");
+  const more = page.getByRole("button", { name: "More actions", exact: true });
+  const sheet = page.getByRole("button", { name: "Edit card", exact: true });
+  const inspector = page.locator(
+    '[data-bt="AppShell"] > [data-bt-part="inspector"]',
+  );
+  await expectButtery(page, {
+    name: "card-studio at 1728 with its canvas shape list open",
+    viewports: [{ width: 1728, height: 1117 }],
+    interactions: [
+      {
+        name: "open the canvas shape list",
+        run: async (target: Page) => {
+          await target.getByRole("button", { name: /^Canvas shape/ }).click();
+          await target.getByRole("listbox", { name: "Canvas shape" }).waitFor();
+        },
+      },
+      escape,
+    ],
+  });
+  for (const viewport of resizeSteps()) {
+    await page.setViewportSize(viewport);
+    await expectButtery(page, {
+      name: `card-studio resized to ${String(viewport.width)}`,
+      viewports: [viewport],
+      densities: ["comfortable", "compact"],
+    });
+    const narrow = viewport.width < 840;
+    const at = `at ${String(viewport.width)} × ${String(viewport.height)}`;
+    await expect(sheet, at).toBeVisible({ visible: narrow });
+    await expect(inspector, at).toHaveCount(narrow ? 0 : 1);
+  }
+  await expect(more).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Resize", exact: true }),
+  ).toBeHidden();
+
+  await page.setViewportSize({ width: 1728, height: 1117 });
+  await expect(more).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: "Resize", exact: true }),
+  ).toBeVisible();
+  await expect(inspector).toHaveCount(1);
 });
