@@ -430,3 +430,8 @@ export type {
   SavedView,
   SavedViewsProps,
 } from "./patterns/saved-views/SavedViews.tsx";
+export { FilterBar, FilterPill } from "./patterns/filter-bar/FilterBar.tsx";
+export type {
+  FilterBarProps,
+  FilterPillProps,
+} from "./patterns/filter-bar/FilterBar.tsx";

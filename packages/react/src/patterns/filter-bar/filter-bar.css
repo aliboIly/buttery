@@ -1,0 +1,99 @@
+@layer bt.patterns {
+  .bt-filter-bar,
+  .bt-filter-pill {
+    --bt-filter-bar-line: 1px;
+    --bt-filter-bar-remove: 16px;
+    --bt-filter-bar-hit: 24px;
+  }
+
+  .bt-filter-bar {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-filter-bar > [data-bt-part="pills"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-filter-bar > [data-bt-part="actions"] {
+    display: flex;
+    flex: none;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-filter-bar-sheet {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-filter-pill {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    max-inline-size: 100%;
+    block-size: var(--bt-h-sm);
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-full);
+    outline: var(--bt-filter-bar-line) dashed var(--bt-border-strong);
+    outline-offset: calc(var(--bt-filter-bar-line) * -1);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-filter-pill[data-applied] {
+    gap: var(--bt-space-1);
+    padding-inline-start: var(--bt-space-1);
+    outline-style: solid;
+    outline-color: var(--bt-border);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-filter-pill > button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+    block-size: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: var(--bt-r-full);
+    background: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: var(--bt-text-control-size);
+    font-weight: var(--bt-text-control-weight);
+    line-height: var(--bt-text-control-line);
+    cursor: default;
+  }
+
+  .bt-filter-pill > [data-bt-part="remove"] {
+    position: relative;
+    flex: none;
+    justify-content: center;
+    inline-size: var(--bt-filter-bar-remove);
+    block-size: var(--bt-filter-bar-remove);
+    color: var(--bt-text-tertiary);
+  }
+
+  /* The 16px remove button takes presses from the 24px around it. */
+  .bt-filter-pill > [data-bt-part="remove"] > [data-bt-part="hit"] {
+    position: absolute;
+    inset: calc((var(--bt-filter-bar-remove) - var(--bt-filter-bar-hit)) / 2);
+  }
+
+  .bt-filter-pill [data-bt-part="value"] {
+    color: var(--bt-text);
+  }
+
+  .bt-filter-pill [data-bt-part="divider"] {
+    color: var(--bt-text-tertiary);
+  }
+}
