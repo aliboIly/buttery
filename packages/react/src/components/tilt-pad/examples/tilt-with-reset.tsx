@@ -4,20 +4,22 @@ import { Inline } from "@buttery/core";
 import { Chip, TiltPad } from "@buttery/react";
 import type { TiltValue } from "@buttery/react";
 
-/** A tilt pad paired with a reset chip that turns off once it's level. */
+const LEVEL: TiltValue = { x: 0, y: 0 };
+
+/** A lean pad paired with a chip that lays it flat, quiet but still focusable once it is. */
 export function TiltWithReset(): ReactElement {
-  const [tilt, setTilt] = useState<TiltValue>({ x: 0, y: 0 });
+  const [lean, setLean] = useState<TiltValue>(LEVEL);
   return (
     <Inline gap={2} align="center">
       <Chip
-        disabled={tilt.x === 0 && tilt.y === 0}
+        aria-disabled={lean.x === 0 && lean.y === 0}
         onClick={() => {
-          setTilt({ x: 0, y: 0 });
+          setLean(LEVEL);
         }}
       >
-        Reset
+        Flat
       </Chip>
-      <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
+      <TiltPad label="Lean" value={lean} onValueChange={setLean} />
     </Inline>
   );
 }

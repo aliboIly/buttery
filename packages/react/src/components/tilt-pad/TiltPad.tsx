@@ -1,14 +1,16 @@
 import {
+  AnimationTrackingContext,
   cx,
   spring,
-  useAnimationTracking,
+  trackAnimation,
   useControllableState,
   useMotionPreference,
   useMergedRefs,
 } from "@buttery/core";
-import { motion } from "motion/react";
+import { animate, motion, useMotionValue } from "motion/react";
+import type { MotionStyle, MotionValue } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
-import { useEffect, useId, useRef, useState } from "react";
+import { use, useEffect, useId, useRef, useState } from "react";
 import type {
   ComponentPropsWithRef,
   KeyboardEvent,
@@ -49,7 +51,7 @@ export interface TiltPadProps extends Omit<
   ComponentPropsWithRef<"div">,
   "defaultValue" | "onChange" | "children"
 > {
-  /** What is tilted, such as "Tilt". It names the control. */
+  /** What is tilted, such as "Lean". It names the control. */
   readonly label: string;
   /** The tilt. Pair with `onValueChange` to control it. */
   readonly value?: TiltValue | undefined;
@@ -79,6 +81,14 @@ const LABELS: TiltPadLabels = {
 };
 
 const LEVEL: TiltValue = { x: 0, y: 0 };
+
+/** The knob's position, which its stylesheet reads to place it and draw the arc. */
+interface KnobVariables {
+  readonly "--bt-tilt-pad-x": MotionValue<number>;
+  readonly "--bt-tilt-pad-y": MotionValue<number>;
+}
+
+type Axis = "x" | "y";
 /** How far the pointer travels, in px, to tilt all the way from level. */
 const DRAG_SPAN = 48;
 
@@ -97,12 +107,12 @@ function clampTilt({ x, y }: TiltValue): TiltValue {
 /**
  * A 32px pad with a knob for tilting something in 3D, such as a card. Drag the knob, or use the arrow keys
  * (Shift for bigger steps): left and right tilt sideways, up and down tilt up and down, and Backspace,
- * Delete or Home set it level. An accent arc shows on the knob's edge in the direction it's tilted,
- * stronger the further it goes. Dragging follows the pointer at once; other changes glide on
- * `spring.smooth`. Pair it with a `Chip` that resets it.
+ * Delete or Home set it level, and Page Up and Page Down take big steps. An accent arc shows on the knob's
+ * edge in the direction it's tilted, stronger the further it goes. Dragging moves the knob with the
+ * pointer in the same frame; other changes glide on `spring.smooth`. Pair it with a `Chip` that resets it.
  *
  * @example
- * <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
+ * <TiltPad label="Lean" value={tilt} onValueChange={setTilt} />
  */
 export function TiltPad({
   label,
@@ -124,8 +134,11 @@ export function TiltPad({
     onChange: onValueChange,
   });
   const [dragging, setDragging] = useState(false);
+  const [axis, setAxis] = useState<Axis>("x");
   const reduced = useMotionPreference() === "reduced";
-  const tracking = useAnimationTracking();
+  const tracked = use(AnimationTrackingContext);
+  const knobX = useMotionValue(tilt.x);
+  const knobY = useMotionValue(tilt.y);
   const root = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, root);
   const xInput = useRef<HTMLInputElement>(null);
@@ -136,16 +149,28 @@ export function TiltPad({
     readonly from: TiltValue;
   } | null>(null);
   const latest = useRef(tilt);
-  const pending = useRef<TiltValue | null>(null);
-  const frame = useRef(0);
   const hintId = useId();
 
-  useEffect(
-    () => () => {
-      cancelAnimationFrame(frame.current);
-    },
-    [],
-  );
+  useEffect(() => {
+    if (dragging || (knobX.get() === tilt.x && knobY.get() === tilt.y)) {
+      return undefined;
+    }
+    if (reduced) {
+      knobX.jump(tilt.x);
+      knobY.jump(tilt.y);
+      return undefined;
+    }
+    const release = tracked ? trackAnimation() : undefined;
+    const glides = [
+      animate(knobX, tilt.x, spring.smooth),
+      animate(knobY, tilt.y, spring.smooth),
+    ];
+    void Promise.all(glides).then(() => release?.());
+    return () => {
+      for (const glide of glides) glide.stop();
+      release?.();
+    };
+  }, [tilt.x, tilt.y, dragging, reduced, tracked, knobX, knobY]);
 
   const describe = (
     amount: number,
@@ -175,34 +200,28 @@ export function TiltPad({
   const moveDrag = (event: PointerEvent<HTMLDivElement>): void => {
     const start = drag.current;
     if (!start) return;
-    const next = {
+    const next = clampTilt({
       x: start.from.x + (event.clientX - start.x) / DRAG_SPAN,
       y: start.from.y + (event.clientY - start.y) / DRAG_SPAN,
-    };
-    pending.current = next;
-    cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(applyPending);
-  };
-  const applyPending = (): void => {
-    if (!pending.current) return;
-    change(pending.current, false);
-    pending.current = null;
+    });
+    knobX.jump(next.x);
+    knobY.jump(next.y);
+    change(next, false);
   };
   const endDrag = (): void => {
     if (!drag.current) return;
     drag.current = null;
-    cancelAnimationFrame(frame.current);
-    applyPending();
     setDragging(false);
     onValueCommit?.(latest.current);
   };
 
   const keyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (disabled) return;
-    const amount = event.shiftKey ? step * 5 : step;
+    const big = step * 5;
+    const amount = event.shiftKey ? big : step;
     const next = ((): {
       readonly value: TiltValue;
-      readonly axis: "x" | "y";
+      readonly axis: Axis;
     } | null => {
       switch (event.key) {
         case "ArrowRight":
@@ -213,26 +232,38 @@ export function TiltPad({
           return { value: { ...tilt, y: tilt.y + amount }, axis: "y" };
         case "ArrowUp":
           return { value: { ...tilt, y: tilt.y - amount }, axis: "y" };
+        case "PageUp":
+          return axis === "x"
+            ? { value: { ...tilt, x: tilt.x + big }, axis }
+            : { value: { ...tilt, y: tilt.y - big }, axis };
+        case "PageDown":
+          return axis === "x"
+            ? { value: { ...tilt, x: tilt.x - big }, axis }
+            : { value: { ...tilt, y: tilt.y + big }, axis };
         case "Home":
         case "Backspace":
         case "Delete":
-          return {
-            value: LEVEL,
-            axis: event.currentTarget === yInput.current ? "y" : "x",
-          };
+          return { value: LEVEL, axis };
+        case "End":
+          return { value: tilt, axis };
         default:
           return null;
       }
     })();
     if (!next) return;
     event.preventDefault();
-    change(next.value, true);
+    const settled = clampTilt(next.value);
+    if (settled.x !== tilt.x || settled.y !== tilt.y) change(settled, true);
     (next.axis === "x" ? xInput : yInput).current?.focus({
       preventScroll: true,
     });
   };
 
-  const live = dragging || reduced;
+  const knobStyle: MotionStyle & KnobVariables = {
+    "--bt-tilt-pad-x": knobX,
+    "--bt-tilt-pad-y": knobY,
+  };
+
   return (
     <div
       {...rest}
@@ -248,20 +279,14 @@ export function TiltPad({
       onPointerUp={endDrag}
       onLostPointerCapture={endDrag}
     >
-      <motion.span
-        {...tracking}
-        data-bt-part="knob"
-        aria-hidden="true"
-        initial={false}
-        animate={{ "--bt-tilt-pad-x": tilt.x, "--bt-tilt-pad-y": tilt.y }}
-        transition={live ? spring.instant : spring.smooth}
-      >
+      <motion.span data-bt-part="knob" aria-hidden="true" style={knobStyle}>
         <span data-bt-part="arc" />
       </motion.span>
       <VisuallyHidden.Root asChild>
         <input
           ref={xInput}
           type="range"
+          tabIndex={axis === "x" ? 0 : -1}
           min={-100}
           max={100}
           step={Math.round(step * 100)}
@@ -271,6 +296,9 @@ export function TiltPad({
           aria-describedby={hintId}
           aria-valuetext={describe(tilt.x, words.left, words.right)}
           onKeyDown={keyDown}
+          onFocus={() => {
+            setAxis("x");
+          }}
           onChange={(event) => {
             change({ ...tilt, x: Number(event.target.value) / 100 }, true);
           }}
@@ -280,18 +308,21 @@ export function TiltPad({
         <input
           ref={yInput}
           type="range"
-          tabIndex={-1}
+          tabIndex={axis === "y" ? 0 : -1}
           min={-100}
           max={100}
           step={Math.round(step * 100)}
-          value={Math.round(tilt.y * 100)}
+          value={Math.round(-tilt.y * 100)}
           disabled={disabled}
           aria-label={words.y}
           aria-describedby={hintId}
           aria-valuetext={describe(tilt.y, words.up, words.down)}
           onKeyDown={keyDown}
+          onFocus={() => {
+            setAxis("y");
+          }}
           onChange={(event) => {
-            change({ ...tilt, y: Number(event.target.value) / 100 }, true);
+            change({ ...tilt, y: -Number(event.target.value) / 100 }, true);
           }}
         />
       </VisuallyHidden.Root>

@@ -12,33 +12,33 @@ function Tilt(): ReactElement {
   const level = tilt.x === 0 && tilt.y === 0;
   return (
     <Inline gap={3} align="center">
-      <Text variant="label">Tilt</Text>
+      <Text variant="label">Lean</Text>
       <Chip
-        disabled={level}
+        aria-disabled={level}
         onClick={() => {
           setTilt(LEVEL);
         }}
       >
-        Reset
+        Flat
       </Chip>
-      <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
+      <TiltPad label="Lean" value={tilt} onValueChange={setTilt} />
     </Inline>
   );
 }
 
 export const demos: readonly DemoSection[] = [
   {
-    title: "Tilt with a reset",
+    title: "Lean with a chip that lays it flat",
     description:
-      "Drag the knob or use the arrow keys; the accent arc shows the direction. Reset glides back on spring.smooth.",
+      "Drag the knob or use the arrow keys; the accent arc shows the direction. Flat glides back on spring.smooth.",
     render: () => <Tilt />,
   },
   {
     title: "Level and disabled",
     render: () => (
       <Inline gap={4} align="center">
-        <TiltPad label="Tilt" />
-        <TiltPad label="Tilt" defaultValue={{ x: -0.6, y: 0.6 }} disabled />
+        <TiltPad label="Lean" />
+        <TiltPad label="Lean" defaultValue={{ x: -0.6, y: 0.6 }} disabled />
       </Inline>
     ),
   },

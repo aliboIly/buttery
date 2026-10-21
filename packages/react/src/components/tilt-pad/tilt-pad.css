@@ -41,7 +41,7 @@
     border: var(--bt-tilt-pad-line) solid var(--bt-knob-border);
     border-radius: var(--bt-r-full);
     background: radial-gradient(
-      circle at 50% 35%,
+      circle farthest-side at 50% 30%,
       var(--bt-knob-center),
       var(--bt-knob-edge)
     );
