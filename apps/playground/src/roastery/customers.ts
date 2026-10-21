@@ -1,10 +1,4 @@
-import {
-  CUSTOMERS,
-  ORDERS,
-  SUBSCRIPTIONS,
-  TODAY,
-  grossVolume,
-} from "./data.ts";
+import { CUSTOMERS, ORDERS, SUBSCRIPTIONS, TODAY, salesTotal } from "./data.ts";
 import type { Customer, Order } from "./data.ts";
 
 /** A customer with what they've bought, for the customers table. */
@@ -20,7 +14,7 @@ export const CUSTOMER_ROWS: readonly CustomerRow[] = CUSTOMERS.map(
     return {
       ...customer,
       orders,
-      spent: grossVolume(orders),
+      spent: salesTotal(orders),
       subscribed: SUBSCRIPTIONS.some(
         (subscription) =>
           subscription.customerId === customer.id &&

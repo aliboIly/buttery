@@ -1978,7 +1978,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     page,
   }) => {
     await openDemo(page, "");
-    const plot = page.getByRole("slider", { name: "Total sales" });
+    const plot = page.getByRole("slider", { name: "Sales" });
     await plot.scrollIntoViewIfNeeded();
     const box = await plot.boundingBox();
     if (!box) throw new Error("No chart.");

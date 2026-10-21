@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "A one-line suggestion across a page: an icon, the message, an action and how long it takes, dismissed for good once closed.",
   useWhen: [
-    "Suggesting one thing to set up on the page it helps with, such as automatic refunds above the orders table",
+    "Suggesting one thing to set up on the page it helps with, such as a label printer above the orders table",
     "A notice people can act on or dismiss and not see again",
   ],
   avoidWhen: [

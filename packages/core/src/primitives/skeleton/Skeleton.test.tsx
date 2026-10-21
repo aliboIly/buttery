@@ -17,8 +17,8 @@ describe("Skeleton", () => {
   });
 
   it("is hidden from screen readers and its placeholder text doesn't show", () => {
-    render(<Skeleton variant="label" text="Total sales" />);
-    const skeleton = screen.getByText("Total sales");
+    render(<Skeleton variant="label" text="Sales" />);
+    const skeleton = screen.getByText("Sales");
     expect(skeleton.getAttribute("aria-hidden")).toBe("true");
     expect(getComputedStyle(skeleton).color).toBe("rgba(0, 0, 0, 0)");
   });

@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { userEvent as browser } from "vitest/browser";
 import { InfoButton } from "./InfoButton.tsx";
 
-const INFO = "Everything charged, before refunds and fees.";
+const INFO = "Every sale, before refunds and fees.";
 
 beforeEach(() => {
   publishSettled();

@@ -11,11 +11,11 @@ const shortDollars = new Intl.NumberFormat("en-US", {
   notation: "compact",
 });
 
-/** A week of total sales against the week before, in dollars. */
-export function VolumeAgainstLastPeriod(): ReactElement {
+/** A week of sales against the week before, in dollars. */
+export function SalesAgainstLastPeriod(): ReactElement {
   return (
     <LineChart
-      label="Total sales"
+      label="Sales"
       summary="Up 12% on last week."
       labels={[
         "Oct 8",

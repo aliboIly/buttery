@@ -19,7 +19,7 @@ export const demos: readonly DemoSection[] = [
       "The previous period is gray and beneath; the tooltip shows the change at each point.",
     render: () => (
       <LineChart
-        label="Total sales"
+        label="Sales"
         summary="Up 9% on the previous two weeks."
         labels={DAYS}
         series={[

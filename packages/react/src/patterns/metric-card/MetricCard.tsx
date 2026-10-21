@@ -16,7 +16,7 @@ export interface MetricCardProps extends Omit<
   ComponentPropsWithRef<"div">,
   "title"
 > {
-  /** What it measures, such as "Total sales". It names the card and its chart. */
+  /** What it measures, such as "Sales". It names the card and its chart. */
   readonly title: string;
   /** The title's element. Defaults to `"h3"`, under an `AppPage.Section`'s `h2`. */
   readonly titleAs?: TextStackTitleElement | undefined;
@@ -65,14 +65,14 @@ const signedPercent = new Intl.NumberFormat(undefined, {
  *
  * @example
  * <MetricCard
- *   title="Total sales"
- *   info="Everything charged, before refunds and fees."
+ *   title="Sales"
+ *   info="Every sale, before refunds and fees."
  *   value="$12,480.00"
  *   delta={0.124}
  *   labels={days}
  *   series={[thisPeriod, { ...lastPeriod, comparison: true }]}
  *   updated="Updated 4 min ago"
- *   href="/reports/gross-volume"
+ *   href="/reports/sales"
  * />
  */
 export function MetricCard({

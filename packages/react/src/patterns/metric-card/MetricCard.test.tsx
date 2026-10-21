@@ -30,8 +30,8 @@ function Card(props: Partial<MetricCardProps>): ReactElement {
   return (
     <div style={{ inlineSize: "360px" }}>
       <MetricCard
-        title="Total sales"
-        info="Everything charged, before refunds and fees."
+        title="Sales"
+        info="Every sale, before refunds and fees."
         value="$12,405.00"
         delta={0.124}
         labels={DAYS}
@@ -49,7 +49,7 @@ function Card(props: Partial<MetricCardProps>): ReactElement {
           },
         ]}
         updated="Updated 4 min ago"
-        href="#gross-volume"
+        href="#sales"
         {...props}
       />
     </div>
@@ -68,12 +68,12 @@ describe("MetricCard", () => {
     await user.pointer({
       keys: "[TouchA]",
       target: screen.getByRole("button", {
-        name: "Everything charged, before refunds and fees.",
+        name: "Every sale, before refunds and fees.",
       }),
     });
     expect(
       await screen.findByRole("dialog", {
-        name: "Everything charged, before refunds and fees.",
+        name: "Every sale, before refunds and fees.",
       }),
     ).toBeTruthy();
   });
@@ -88,19 +88,19 @@ describe("MetricCard", () => {
 
   it("is a group named by its h3 title, with an info button named by the explanation", () => {
     render(<Card />);
-    const card = screen.getByRole("group", { name: "Total sales" });
+    const card = screen.getByRole("group", { name: "Sales" });
     expect(
-      within(card).getByRole("heading", { level: 3, name: "Total sales" }),
+      within(card).getByRole("heading", { level: 3, name: "Sales" }),
     ).toBeTruthy();
     expect(
       within(card).getByRole("button", {
-        name: "Everything charged, before refunds and fees.",
+        name: "Every sale, before refunds and fees.",
       }),
     ).toBeTruthy();
     cleanup();
     render(<Card titleAs="h2" />);
     expect(
-      screen.getByRole("heading", { level: 2, name: "Total sales" }),
+      screen.getByRole("heading", { level: 2, name: "Sales" }),
     ).toBeTruthy();
   });
 
@@ -122,7 +122,7 @@ describe("MetricCard", () => {
 
   it("charts the period against the last one, described by the change", () => {
     render(<Card />);
-    const plot = screen.getByRole("slider", { name: "Total sales" });
+    const plot = screen.getByRole("slider", { name: "Sales" });
     const summary = document.getElementById(
       plot.getAttribute("aria-describedby") ?? "",
     );
@@ -138,23 +138,23 @@ describe("MetricCard", () => {
     );
     render(<Card onNavigate={onNavigate} />);
     const details = screen.getByRole("link", {
-      name: "Details for Total sales",
+      name: "Details for Sales",
     });
-    expect(details.getAttribute("href")).toBe("#gross-volume");
+    expect(details.getAttribute("href")).toBe("#sales");
     expect(screen.getAllByRole("link")).toHaveLength(1);
     const expand = document.querySelector<HTMLAnchorElement>(
       "a[aria-hidden='true']",
     );
-    expect(expand?.getAttribute("href")).toBe("#gross-volume");
+    expect(expand?.getAttribute("href")).toBe("#sales");
     expect(expand?.tabIndex).toBe(-1);
     await userEvent.click(details);
-    expect(onNavigate).toHaveBeenCalledWith("#gross-volume", expect.anything());
+    expect(onNavigate).toHaveBeenCalledWith("#sales", expect.anything());
     expect(screen.getByText("Updated 4 min ago")).toBeTruthy();
   });
 
   it("holds every part in its place while loading, so nothing moves when the numbers arrive", () => {
     const { rerender } = render(<Card loading />);
-    const card = screen.getByRole("group", { name: "Total sales" });
+    const card = screen.getByRole("group", { name: "Sales" });
     expect(card.getAttribute("aria-busy")).toBe("true");
     expect(
       screen.getByText("$12,405.00").classList.contains("bt-skeleton"),
@@ -172,8 +172,8 @@ describe("MetricCard", () => {
     rerender(
       <div style={{ inlineSize: "360px" }}>
         <MetricCard
-          title="Total sales"
-          info="Everything charged, before refunds and fees."
+          title="Sales"
+          info="Every sale, before refunds and fees."
           value="$12,405.00"
           delta={0.124}
           labels={DAYS}
@@ -181,7 +181,7 @@ describe("MetricCard", () => {
             { key: "now", label: "This week", values: [1, 2, 3, 4, 5, 6, 7] },
           ]}
           updated="Updated 4 min ago"
-          href="#gross-volume"
+          href="#sales"
         />
       </div>,
     );
@@ -209,9 +209,9 @@ describe("MetricCard", () => {
     const { rerender } = render(<Card loading />);
     expect(
       screen
-        .getByRole("heading", { level: 3, name: "Total sales" })
+        .getByRole("heading", { level: 3, name: "Sales" })
         .getAttribute("title"),
-    ).toBe("Total sales");
+    ).toBe("Sales");
     rerender(<Card />);
     const views = (): number =>
       document.querySelectorAll(

@@ -18,7 +18,7 @@ import {
   bagCount,
   daily,
   dayLabels,
-  grossVolume,
+  salesTotal,
   sum,
 } from "./data.ts";
 import type { Order } from "./data.ts";
@@ -110,7 +110,7 @@ export function OverviewPage(): ReactElement {
       period.comparison === "previous-period" ? change(now, before) : undefined,
     ];
   };
-  const [volume, volumeChange] = metric(grossVolume);
+  const [volume, volumeChange] = metric(salesTotal);
   const [orders, ordersChange] = metric((list) => list.length);
   const [bags, bagsChange] = metric(bagCount);
   const refunded = (list: readonly Order[]): number =>
@@ -128,7 +128,7 @@ export function OverviewPage(): ReactElement {
             <RecommendationCard
               title="Get an alert when green coffee runs low"
               action={{ label: "Turn on alerts", href: "#/roastery/stock" }}
-              estimate="1 min"
+              estimate="2 min"
               storageKey="roastery-low-stock"
             >
               Nyeri is down to 180 kg, about nine days of roasting.
@@ -165,12 +165,12 @@ export function OverviewPage(): ReactElement {
         <DateRangeBar value={period} onValueChange={setPeriod} />
         <Grid columns={{ base: 1, md: 2 }} gap={4}>
           <MetricCard
-            title="Total sales"
-            info="Everything charged, before refunds and fees."
+            title="Sales"
+            info="Every sale, before refunds and fees."
             value={money(volume)}
             delta={volumeChange}
             labels={labels}
-            series={comparison(grossVolume, days, period, "This period")}
+            series={comparison(salesTotal, days, period, "This period")}
             formatValue={money}
             formatTick={shortMoney}
             updated="Updated just now"

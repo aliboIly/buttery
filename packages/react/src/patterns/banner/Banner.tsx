@@ -21,7 +21,7 @@ export interface BannerProps extends Omit<
   readonly icon?: ComponentType<IconComponentProps> | undefined;
   /** What to do about it, as a link in the accent color after the message. */
   readonly action?: GuidanceAction | undefined;
-  /** How long the action takes, such as "1 min", beside it with a clock. */
+  /** How long the action takes, such as "3 min", beside it with a clock. */
   readonly estimate?: string | undefined;
   /** Names the dismiss button. Defaults to `"Dismiss"`. */
   readonly dismissLabel?: string | undefined;
@@ -39,11 +39,11 @@ export interface BannerProps extends Omit<
  *
  * @example
  * <Banner
- *   action={{ label: "Turn on automatic refunds", href: "/settings/refunds" }}
- *   estimate="1 min"
- *   storageKey="automatic-refunds"
+ *   action={{ label: "Connect a label printer", href: "/settings/printing" }}
+ *   estimate="3 min"
+ *   storageKey="label-printer"
  * >
- *   Refund orders flagged as fraud before they turn into disputes.
+ *   Print a shipping label from any order without leaving the page.
  * </Banner>
  */
 export function Banner({

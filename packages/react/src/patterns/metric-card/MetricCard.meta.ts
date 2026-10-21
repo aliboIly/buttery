@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "One metric on a card: its title, value and change against the previous period, a small chart of both periods, and when it was updated.",
   useWhen: [
-    "An overview page's headline numbers: total sales, new subscribers, refund rate",
+    "An overview page's headline numbers: sales, new subscribers, refund rate",
     "A number whose trend matters as much as its value",
   ],
   avoidWhen: [

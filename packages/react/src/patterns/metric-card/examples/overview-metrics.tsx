@@ -21,8 +21,8 @@ export function OverviewMetrics(): ReactElement {
   return (
     <Grid columns={{ base: 1, md: 2 }} gap={4}>
       <MetricCard
-        title="Total sales"
-        info="Everything charged, before refunds and fees."
+        title="Sales"
+        info="Every sale, before refunds and fees."
         value="$12,405.00"
         delta={0.124}
         labels={DAYS}
@@ -41,7 +41,7 @@ export function OverviewMetrics(): ReactElement {
         ]}
         formatValue={(value) => dollars.format(value)}
         updated="Updated just now"
-        href="#reports-gross-volume"
+        href="#reports-sales"
       />
       <MetricCard
         title="Orders"

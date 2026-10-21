@@ -57,7 +57,7 @@ export interface ChartFrameProps extends Omit<
   ComponentPropsWithRef<"div">,
   "children"
 > {
-  /** Names the chart for screen readers and captions its data table, such as "Total sales". */
+  /** Names the chart for screen readers and captions its data table, such as "Sales". */
   readonly label: string;
   /** One line on what the chart shows, read after its name, such as "Up 12% on last week". */
   readonly summary?: string | undefined;

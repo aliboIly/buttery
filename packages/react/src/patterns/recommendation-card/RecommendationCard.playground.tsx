@@ -14,7 +14,7 @@ function RailNote(): ReactElement {
   );
 }
 
-function Bands(): ReactElement {
+function PhoneSketch(): ReactElement {
   return (
     <svg
       viewBox="0 0 320 96"
@@ -61,7 +61,7 @@ export const demos: readonly DemoSection[] = [
             title="Send low-stock alerts to the roastery"
             action={{ label: "Turn on alerts", href: "#settings-alerts" }}
             estimate="2 min"
-            media={<Bands />}
+            media={<PhoneSketch />}
           >
             Get a message when a green coffee drops under two weeks of roasting.
           </RecommendationCard>

@@ -19,7 +19,7 @@ import type { ComponentPropsWithRef, MouseEvent, ReactElement } from "react";
 
 /** What a guidance part points to: a label, and where it goes or what it does. */
 export interface GuidanceAction {
-  /** What it says, such as "Turn on automatic refunds". */
+  /** What it says, such as "Connect a label printer". */
   readonly label: string;
   /** Makes it a link to this page. */
   readonly href?: string | undefined;

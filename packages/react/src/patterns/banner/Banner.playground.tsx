@@ -1,7 +1,7 @@
 import { Inline, ReflowGroup, Stack, Text, useReflow } from "@buttery/core";
 import type { DemoFrame, DemoSection } from "@buttery/core";
 import { Banner, Button } from "@buttery/react";
-import { BarChart3 } from "lucide-react";
+import { Printer } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -24,14 +24,14 @@ function DismissDemo(): ReactElement {
         <Stack gap={4}>
           <Banner
             key={round}
-            icon={BarChart3}
+            icon={Printer}
             action={{
-              label: "Turn on automatic refunds",
-              href: "#settings-refunds",
+              label: "Connect a label printer",
+              href: "#settings-printing",
             }}
-            estimate="1 min"
+            estimate="3 min"
           >
-            Refund orders flagged as fraud before they turn into disputes.
+            Print a shipping label from any order without leaving the page.
           </Banner>
           <Below />
         </Stack>

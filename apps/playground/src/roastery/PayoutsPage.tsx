@@ -12,7 +12,7 @@ import {
 import type { DataTableColumn, StatusTone } from "@buttery/react";
 import { CalendarClock, Download, Send } from "lucide-react";
 import type { ReactElement } from "react";
-import { ORDERS, PAYOUTS, grossVolume } from "./data.ts";
+import { ORDERS, PAYOUTS, salesTotal } from "./data.ts";
 import type { Payout } from "./data.ts";
 import { money, shortDate, shortMoney } from "./format.ts";
 
@@ -57,7 +57,7 @@ const COLUMNS: readonly DataTableColumn<Payout>[] = [
 
 /** What's on its way to the bank, and what has arrived. */
 export function PayoutsPage(): ReactElement {
-  const incoming = grossVolume(
+  const incoming = salesTotal(
     ORDERS.filter(
       (order) => order.status === "paid" || order.status === "roasting",
     ),
@@ -106,7 +106,7 @@ export function PayoutsPage(): ReactElement {
             <GroupedList.Item
               title="Incoming"
               description="Paid orders, not yet paid out"
-              media={<InitialsTile name="Money on the way" size="md" />}
+              media={<InitialsTile name="Incoming" size="md" />}
               value={money(incoming)}
             />
           </GroupedList.Group>

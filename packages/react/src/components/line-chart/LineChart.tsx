@@ -16,7 +16,7 @@ export type LineChartProps = Omit<
  *
  * @example
  * <LineChart
- *   label="Total sales"
+ *   label="Sales"
  *   labels={["Oct 8", "Oct 9", "Oct 10"]}
  *   series={[
  *     { key: "now", label: "This week", values: [1240, 1380, 1310] },

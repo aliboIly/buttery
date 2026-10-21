@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent as browser } from "vitest/browser";
 import { Banner } from "./Banner.tsx";
 
-const KEY = "buttery:banner:test-refunds";
+const KEY = "buttery:banner:test-printer";
 
 beforeEach(() => {
   window.localStorage.removeItem(KEY);
@@ -18,17 +18,17 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-function Refunds(props: {
+function Printing(props: {
   readonly onDismiss?: () => void;
   readonly storageKey?: string;
 }): ReactElement {
   return (
     <Banner
-      action={{ label: "Turn on automatic refunds", href: "#refunds" }}
-      estimate="1 min"
+      action={{ label: "Connect a label printer", href: "#printing" }}
+      estimate="3 min"
       {...props}
     >
-      Refund orders flagged as fraud before they turn into disputes.
+      Print a shipping label from any order without leaving the page.
     </Banner>
   );
 }
@@ -47,19 +47,19 @@ describe("Banner", () => {
   });
 
   it("reads as its message, a link to act on it, how long it takes and a dismiss button", () => {
-    render(<Refunds />);
-    expect(screen.getByText(/^Refund orders flagged/).dataset["role"]).toBe(
+    render(<Printing />);
+    expect(screen.getByText(/^Print a shipping label/).dataset["role"]).toBe(
       "body-sm",
     );
     expect(
       screen
-        .getByRole("link", { name: "Turn on automatic refunds" })
+        .getByRole("link", { name: "Connect a label printer" })
         .getAttribute("href"),
-    ).toBe("#refunds");
+    ).toBe("#printing");
     expect(
       screen.getByText("Takes about", { exact: false }).parentElement
         ?.textContent,
-    ).toBe("Takes about 1 min");
+    ).toBe("Takes about 3 min");
     expect(screen.getByRole("button", { name: "Dismiss" })).toBeTruthy();
   });
 
@@ -78,7 +78,7 @@ describe("Banner", () => {
 
   it("fades out when dismissed, then goes, and stays gone under its storage key", async () => {
     const onDismiss = vi.fn();
-    render(<Refunds onDismiss={onDismiss} storageKey="test-refunds" />);
+    render(<Printing onDismiss={onDismiss} storageKey="test-printer" />);
     await userEvent.click(screen.getByRole("button", { name: "Dismiss" }));
     expect(onDismiss).not.toHaveBeenCalled();
     await waitFor(() => {
@@ -87,7 +87,7 @@ describe("Banner", () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
     expect(window.localStorage.getItem(KEY)).toBe("true");
     cleanup();
-    render(<Refunds storageKey="test-refunds" />);
+    render(<Printing storageKey="test-printer" />);
     expect(document.querySelector(".bt-banner")).toBeNull();
   });
 
@@ -95,7 +95,7 @@ describe("Banner", () => {
     render(
       <>
         <button type="button">Before</button>
-        <Refunds />
+        <Printing />
         <button type="button">After</button>
       </>,
     );
@@ -112,7 +112,7 @@ describe("Banner", () => {
     render(
       <>
         <button type="button">Before</button>
-        <Refunds />
+        <Printing />
       </>,
     );
     screen.getByRole("button", { name: "Dismiss" }).focus();
@@ -143,7 +143,7 @@ describe("Banner", () => {
             inlineSize: "800px",
           }}
         >
-          <Refunds />
+          <Printing />
           <Below />
         </div>
       </ReflowGroup>,
@@ -172,19 +172,19 @@ describe("Banner", () => {
   it("keeps the action beside the message with room, and puts it under the message under 640px", () => {
     const { rerender } = render(
       <div style={{ inlineSize: "900px" }}>
-        <Refunds />
+        <Printing />
       </div>,
     );
     const message = (): DOMRect =>
-      screen.getByText(/^Refund orders/).getBoundingClientRect();
+      screen.getByText(/^Print a shipping label/).getBoundingClientRect();
     const link = (): DOMRect =>
       screen
-        .getByRole("link", { name: "Turn on automatic refunds" })
+        .getByRole("link", { name: "Connect a label printer" })
         .getBoundingClientRect();
     expect(link().left).toBeGreaterThan(message().right);
     rerender(
       <div style={{ inlineSize: "360px" }}>
-        <Refunds />
+        <Printing />
       </div>,
     );
     expect(link().top).toBeGreaterThan(message().bottom);

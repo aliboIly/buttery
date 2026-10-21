@@ -28,7 +28,7 @@ export interface InfoButtonProps extends Omit<
  * press elsewhere, so a touch screen shows them too.
  *
  * @example
- * <InfoButton info="Everything charged, before refunds and fees." />
+ * <InfoButton info="Every sale, before refunds and fees." />
  */
 export function InfoButton({
   info,

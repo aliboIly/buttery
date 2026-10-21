@@ -14,8 +14,8 @@ const shortDollars = new Intl.NumberFormat("en-US", {
 });
 
 const volume = {
-  title: "Total sales",
-  info: "Everything charged, before refunds and fees.",
+  title: "Sales",
+  info: "Every sale, before refunds and fees.",
   value: "$23,405.00",
   delta: 0.094,
   labels: DAYS,
@@ -41,7 +41,7 @@ const volume = {
   formatValue: (value: number) => dollars.format(value),
   formatTick: (value: number) => shortDollars.format(value),
   updated: "Updated 4 min ago",
-  href: "#reports-gross-volume",
+  href: "#reports-sales",
 };
 
 export const demos: readonly DemoSection[] = [
