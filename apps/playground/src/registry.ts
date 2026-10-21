@@ -55,8 +55,12 @@ function examplesIn(folder: string): Example[] {
   return Object.entries(exampleModules)
     .filter(([path]) => folderOf(folderOf(path)) === folder)
     .flatMap(([path, module]) => {
-      const Component = Object.values(module).find(isComponent);
-      return Component ? [{ title: titleOf(path), Component }] : [];
+      const Component = Object.entries(module).find(
+        ([name, value]) => name !== "play" && isComponent(value),
+      )?.[1];
+      return isComponent(Component)
+        ? [{ title: titleOf(path), Component }]
+        : [];
     });
 }
 

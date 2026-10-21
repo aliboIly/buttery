@@ -1,6 +1,7 @@
+import type { ExamplePlay } from "@buttery/core";
+import { MetricCard } from "@buttery/react";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { MetricCard } from "@buttery/react";
 
 const DAYS = [
   "Oct 8",
@@ -38,3 +39,7 @@ export function MetricThatLoads(): ReactElement {
     />
   );
 }
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("169");
+};

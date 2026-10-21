@@ -120,6 +120,11 @@ export type {
   ComponentMeta,
   DemoFrame,
   DemoSection,
+  DocsPage,
+  DocsSection,
+  DocsStatus,
+  ExamplePlay,
+  ExamplePlayContext,
   MotionClass,
 } from "./meta.ts";
 export {
