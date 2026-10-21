@@ -28,6 +28,10 @@
     overflow: auto;
     overscroll-behavior: contain;
     isolation: isolate;
+  }
+
+  /* Pinned in a filled page, the table scrolls inside, so its own end keeps clear of the floating lanes. */
+  .bt-data-table[data-pinned] > [data-bt-part="scroll"] {
     padding-block-end: var(--bt-lane-clearance, 0px);
   }
 

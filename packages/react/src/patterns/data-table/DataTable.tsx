@@ -5,6 +5,7 @@ import {
   cx,
   hasContent,
   useControllableState,
+  useFloatingObstacle,
 } from "@buttery/core";
 import type { CssVariables } from "@buttery/core";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
@@ -20,6 +21,7 @@ import { Button } from "../../components/button/Button.tsx";
 import { Checkbox } from "../../components/checkbox/Checkbox.tsx";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
 import { Tooltip } from "../../components/tooltip/Tooltip.tsx";
+import { useAppPage } from "../app-page/app-page-context.ts";
 
 /** A column's least width: `xs` 64, `sm` 96, `md` 144, `lg` 192 or `xl` 256. */
 export type ColumnWidth = "xs" | "sm" | "md" | "lg" | "xl";
@@ -228,6 +230,8 @@ function DataTableRoot<Row>({
   const compact = size === "compact";
   const withSelection = selectable && !compact;
   const withActions = rowActions !== undefined;
+  const pinned = useAppPage()?.fill === true;
+  const obstacle = useFloatingObstacle();
   const [chosen, choose] = useControllableState<ReadonlySet<string>>({
     value: selected,
     defaultValue: defaultSelected ?? new Set<string>(),
@@ -322,6 +326,7 @@ function DataTableRoot<Row>({
     <div
       {...rest}
       style={layout}
+      data-pinned={pinned ? "" : undefined}
       className={cx("bt-data-table", className)}
       data-bt="DataTable"
       data-size={size}
@@ -555,7 +560,7 @@ function DataTableRoot<Row>({
         </div>
       </div>
       {pagination && !compact ? (
-        <div data-bt-part="pagination">
+        <div ref={pinned ? obstacle : undefined} data-bt-part="pagination">
           <span className="bt-text" data-role="body-sm" data-bt-part="range">
             {rows.length === 0
               ? words.range(0, 0, pagination.total)

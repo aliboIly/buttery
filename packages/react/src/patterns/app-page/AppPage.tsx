@@ -7,8 +7,9 @@ import {
 } from "@buttery/core";
 import type { MotionElementProps } from "@buttery/core";
 import { motion } from "motion/react";
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import { AppPageContext } from "./app-page-context.ts";
 
 /** Props for `AppPage`. */
 export interface AppPageProps extends ComponentPropsWithRef<"main"> {
@@ -22,7 +23,8 @@ export interface AppPageProps extends ComponentPropsWithRef<"main"> {
   readonly asideLabel?: string | undefined;
   /**
    * Gives the page's last block the rest of the height, so a table scrolls inside it with its header
-   * sticky while the header and filters stay put. Defaults to `false`.
+   * sticky while the header and filters stay put; the table's pagination then keeps floating lanes above
+   * it. Defaults to `false`.
    */
   readonly fill?: boolean | undefined;
 }
@@ -38,6 +40,7 @@ function AppPageRoot({
   ...rest
 }: AppPageProps): ReactElement {
   const withAside = hasContent(aside);
+  const page = useMemo(() => ({ fill }), [fill]);
   return (
     <main
       {...rest}
@@ -47,19 +50,21 @@ function AppPageRoot({
       data-fill={fill ? "" : undefined}
     >
       <ReflowGroup>
-        <div data-bt-part="frame">
-          {hasContent(header) ? (
-            <div data-bt-part="header">{header}</div>
-          ) : null}
-          <div data-bt-part="body" data-aside={withAside ? "" : undefined}>
-            <div data-bt-part="main">{children}</div>
-            {withAside ? (
-              <aside aria-label={asideLabel} data-bt-part="aside">
-                {aside}
-              </aside>
+        <AppPageContext value={page}>
+          <div data-bt-part="frame">
+            {hasContent(header) ? (
+              <div data-bt-part="header">{header}</div>
             ) : null}
+            <div data-bt-part="body" data-aside={withAside ? "" : undefined}>
+              <div data-bt-part="main">{children}</div>
+              {withAside ? (
+                <aside aria-label={asideLabel} data-bt-part="aside">
+                  {aside}
+                </aside>
+              ) : null}
+            </div>
           </div>
-        </div>
+        </AppPageContext>
       </ReflowGroup>
     </main>
   );

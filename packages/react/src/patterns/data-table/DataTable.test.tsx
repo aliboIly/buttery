@@ -1,6 +1,6 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { Menu, publishSettled } from "@buttery/core";
+import { FloatingLanes, Menu, publishSettled } from "@buttery/core";
 import {
   cleanup,
   render,
@@ -12,6 +12,7 @@ import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AppPage } from "../app-page/AppPage.tsx";
 import { DataTable } from "./DataTable.tsx";
 import type { DataTableColumn, DataTableSort } from "./DataTable.tsx";
 
@@ -309,5 +310,54 @@ describe("DataTable", () => {
     );
     expect(screen.queryByRole("checkbox")).toBeNull();
     expect(screen.queryByRole("button", { name: "Next" })).toBeNull();
+  });
+
+  it("keeps the floating lanes above its pagination in a filled page, and its end clear of them", async () => {
+    render(
+      <>
+        <FloatingLanes />
+        <div style={{ display: "flex", blockSize: "520px" }}>
+          <AppPage fill>
+            <AppPage.Section>
+              <Orders
+                pagination={{
+                  page: 1,
+                  pageSize: 6,
+                  total: 42,
+                  onPageChange: () => undefined,
+                }}
+              />
+            </AppPage.Section>
+          </AppPage>
+        </div>
+        <FloatingLanes.Item>
+          <div style={{ inlineSize: "240px", blockSize: "36px" }}>
+            Order refunded
+          </div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const table = document.querySelector<HTMLElement>(".bt-data-table");
+    expect(table?.hasAttribute("data-pinned")).toBe(true);
+    const pagination = document.querySelector('[data-bt-part="pagination"]');
+    await waitFor(() => {
+      const toast = screen.getByText("Order refunded").getBoundingClientRect();
+      expect(toast.bottom).toBeLessThanOrEqual(
+        (pagination?.getBoundingClientRect().top ?? 0) - 8 + 0.5,
+      );
+    });
+    const scroll = table?.querySelector<HTMLElement>('[data-bt-part="scroll"]');
+    expect(
+      Number.parseFloat(
+        getComputedStyle(scroll ?? document.body).paddingBlockEnd,
+      ),
+    ).toBeGreaterThan(0);
+  });
+
+  it("isn't pinned outside a filled page", () => {
+    render(<Orders />);
+    expect(
+      document.querySelector(".bt-data-table")?.hasAttribute("data-pinned"),
+    ).toBe(false);
   });
 });

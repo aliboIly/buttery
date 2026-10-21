@@ -409,6 +409,11 @@ export type {
   TopBarProps,
 } from "./patterns/top-bar/TopBar.tsx";
 export { AppPage } from "./patterns/app-page/AppPage.tsx";
+export {
+  AppPageContext,
+  useAppPage,
+} from "./patterns/app-page/app-page-context.ts";
+export type { AppPageState } from "./patterns/app-page/app-page-context.ts";
 export type {
   AppPageComponent,
   AppPageProps,
