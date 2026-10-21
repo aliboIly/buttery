@@ -14,12 +14,21 @@ import type { SelectOption } from "./Select.tsx";
 type Shape = "match" | "16:9" | "4:3" | "1:1" | "3:2" | "9:16";
 
 const SHAPES: readonly SelectOption<Shape>[] = [
-  { value: "match", label: "Match card" },
-  { value: "16:9", label: "16:9" },
-  { value: "4:3", label: "4:3" },
-  { value: "1:1", label: "1:1", disabled: true },
-  { value: "3:2", label: "3:2" },
-  { value: "9:16", label: "9:16" },
+  { value: "match", label: "Fit to card" },
+  { value: "16:9", label: "Wide · 16:9" },
+  { value: "4:3", label: "Classic · 4:3" },
+  { value: "1:1", label: "Square · 1:1", disabled: true },
+  { value: "3:2", label: "Photo · 3:2" },
+  { value: "9:16", label: "Tall · 9:16" },
+];
+
+type Format = "png" | "jpg" | "jpeg" | "webp";
+
+const FORMATS: readonly SelectOption<Format>[] = [
+  { value: "png", label: "PNG" },
+  { value: "jpg", label: "JPG" },
+  { value: "jpeg", label: "JPEG" },
+  { value: "webp", label: "WebP" },
 ];
 
 beforeEach(() => {
@@ -82,7 +91,7 @@ describe("Select", () => {
   it("is a button named by its label and value that opens a listbox", async () => {
     render(<Shapes />);
     await expect
-      .element(page.getByRole("button", { name: "Canvas shape, 16:9" }))
+      .element(page.getByRole("button", { name: "Canvas shape, Wide · 16:9" }))
       .toBeInTheDocument();
     expect(trigger().getAttribute("aria-haspopup")).toBe("listbox");
     expect(trigger().getAttribute("aria-expanded")).toBe("false");
@@ -90,8 +99,8 @@ describe("Select", () => {
     const list = screen.getByRole("listbox", { name: "Canvas shape" });
     expect(trigger().getAttribute("aria-expanded")).toBe("true");
     expect(trigger().getAttribute("aria-controls")).toBe(list.id);
-    expect(option("16:9").getAttribute("aria-selected")).toBe("true");
-    expect(option("1:1").getAttribute("aria-disabled")).toBe("true");
+    expect(option("Wide · 16:9").getAttribute("aria-selected")).toBe("true");
+    expect(option("Square · 1:1").getAttribute("aria-disabled")).toBe("true");
   });
 
   it("opens with focus on the chosen option and its check, lined up with the trigger's end", async () => {
@@ -102,10 +111,10 @@ describe("Select", () => {
     );
     await userEvent.click(trigger());
     await settled();
-    expect(document.activeElement).toBe(option("16:9"));
-    expect(option("16:9").querySelector("svg")).not.toBeNull();
-    expect(option("4:3").querySelector("svg")).toBeNull();
-    const panel = option("16:9").closest('[data-bt="Popover"]');
+    expect(document.activeElement).toBe(option("Wide · 16:9"));
+    expect(option("Wide · 16:9").querySelector("svg")).not.toBeNull();
+    expect(option("Classic · 4:3").querySelector("svg")).toBeNull();
+    const panel = option("Wide · 16:9").closest('[data-bt="Popover"]');
     expect(Math.round(panel?.getBoundingClientRect().right ?? 0)).toBe(
       Math.round(trigger().getBoundingClientRect().right),
     );
@@ -118,17 +127,19 @@ describe("Select", () => {
     await userEvent.keyboard("{Enter}");
     await settled();
     await userEvent.keyboard("{ArrowDown}{ArrowDown}");
-    expect(document.activeElement).toBe(option("3:2"));
+    expect(document.activeElement).toBe(option("Photo · 3:2"));
     await userEvent.keyboard("{End}");
-    expect(document.activeElement).toBe(option("9:16"));
+    expect(document.activeElement).toBe(option("Tall · 9:16"));
     await userEvent.keyboard("{ArrowDown}");
-    expect(document.activeElement).toBe(option("9:16"));
+    expect(document.activeElement).toBe(option("Tall · 9:16"));
     await userEvent.keyboard("{Home}");
-    expect(document.activeElement).toBe(option("Match card"));
+    expect(document.activeElement).toBe(option("Fit to card"));
     await userEvent.keyboard("{ArrowDown}{ArrowDown}{Enter}");
     expect(onValueChange).toHaveBeenCalledWith("4:3");
     expect(document.activeElement).toBe(trigger());
-    expect(trigger().getAttribute("aria-label")).toBe("Canvas shape, 4:3");
+    expect(trigger().getAttribute("aria-label")).toBe(
+      "Canvas shape, Classic · 4:3",
+    );
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).toBeNull();
     });
@@ -138,18 +149,52 @@ describe("Select", () => {
     render(<Shapes />);
     await userEvent.click(trigger());
     await settled();
-    await userEvent.keyboard("9");
-    expect(document.activeElement).toBe(option("9:16"));
+    await userEvent.keyboard("t");
+    expect(document.activeElement).toBe(option("Tall · 9:16"));
     await new Promise((resolve) => setTimeout(resolve, 600));
-    await userEvent.keyboard("ma");
-    expect(document.activeElement).toBe(option("Match card"));
+    await userEvent.keyboard("fi");
+    expect(document.activeElement).toBe(option("Fit to card"));
+  });
+
+  it("keeps a typed match while more letters still fit it, and cycles on one letter typed again", async () => {
+    render(<Select label="Format" options={FORMATS} defaultValue="png" />);
+    await userEvent.click(screen.getByRole("button", { name: /^Format/ }));
+    await settled();
+    await userEvent.keyboard("jp");
+    expect(document.activeElement).toBe(option("JPG"));
+    await userEvent.keyboard("e");
+    expect(document.activeElement).toBe(option("JPEG"));
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    await userEvent.keyboard("j");
+    expect(document.activeElement).toBe(option("JPG"));
+    await userEvent.keyboard("j");
+    expect(document.activeElement).toBe(option("JPEG"));
+  });
+
+  it("types a space into a search instead of choosing", async () => {
+    const onValueChange = vi.fn();
+    render(<Shapes onValueChange={onValueChange} />);
+    await userEvent.click(trigger());
+    await settled();
+    await userEvent.keyboard("fit to");
+    expect(document.activeElement).toBe(option("Fit to card"));
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("listbox")).toBeTruthy();
+  });
+
+  it("opens from the trigger with the arrow keys", async () => {
+    render(<Shapes />);
+    trigger().focus();
+    await userEvent.keyboard("{ArrowDown}");
+    await settled();
+    expect(document.activeElement).toBe(option("Wide · 16:9"));
   });
 
   it("chooses an option that's clicked, and closes on Escape without choosing", async () => {
     const onValueChange = vi.fn();
     render(<Shapes onValueChange={onValueChange} />);
     await userEvent.click(trigger());
-    await userEvent.click(option("3:2"));
+    await userEvent.click(option("Photo · 3:2"));
     expect(onValueChange).toHaveBeenCalledWith("3:2");
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).toBeNull();
@@ -165,7 +210,7 @@ describe("Select", () => {
     const onValueChange = vi.fn();
     render(<Shapes onValueChange={onValueChange} />);
     await userEvent.click(trigger());
-    await userEvent.click(option("1:1"));
+    await userEvent.click(option("Square · 1:1"));
     expect(onValueChange).not.toHaveBeenCalled();
     expect(screen.getByRole("listbox")).toBeTruthy();
   });
@@ -175,7 +220,7 @@ describe("Select", () => {
     await userEvent.click(trigger());
     await settled();
     await userEvent.tab();
-    expect(document.activeElement).toBe(option("16:9"));
+    expect(document.activeElement).toBe(option("Wide · 16:9"));
     await userEvent.keyboard("{Escape}");
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).toBeNull();
@@ -211,9 +256,56 @@ describe("Select", () => {
     await userEvent.tab();
     expect(document.activeElement).toBe(height);
     await userEvent.tab();
-    expect(document.activeElement).toBe(option("16:9"));
+    expect(document.activeElement).toBe(option("Wide · 16:9"));
     await userEvent.tab({ shift: true });
     expect(document.activeElement).toBe(height);
+  });
+
+  it("puts a footer field back on the first Escape, without saving it or closing, and closes on the second", async () => {
+    const onWidth = vi.fn();
+    render(
+      <Shapes
+        footer={
+          <NumberField
+            label="Width"
+            labelPosition="top"
+            defaultValue={1600}
+            onValueChange={onWidth}
+          />
+        }
+      />,
+    );
+    await userEvent.click(trigger());
+    await settled();
+    const width = screen.getByRole("spinbutton", { name: "Width" });
+    await userEvent.tab();
+    await userEvent.keyboard("{Control>}a{/Control}1200");
+    await userEvent.keyboard("{Escape}");
+    expect((width as HTMLInputElement).value).toBe("1600");
+    expect(document.activeElement).toBe(width);
+    expect(screen.getByRole("listbox")).toBeTruthy();
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(screen.queryByRole("listbox")).toBeNull();
+    });
+    expect(onWidth).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(trigger());
+  });
+
+  it("leaves focus in the footer while the pointer moves over the options", async () => {
+    render(
+      <Shapes
+        footer={
+          <NumberField label="Width" labelPosition="top" defaultValue={1600} />
+        }
+      />,
+    );
+    await userEvent.click(trigger());
+    await settled();
+    const width = screen.getByRole("spinbutton", { name: "Width" });
+    width.focus();
+    await userEvent.hover(option("Photo · 3:2"));
+    expect(document.activeElement).toBe(width);
   });
 
   it("shows a value label or a placeholder when no option says it", () => {
@@ -252,7 +344,7 @@ describe("Select", () => {
     }
     render(<Controlled />);
     await userEvent.click(trigger());
-    await userEvent.click(option("9:16"));
+    await userEvent.click(option("Tall · 9:16"));
     expect(screen.getByText("9:16", { selector: "output" })).toBeTruthy();
   });
 });

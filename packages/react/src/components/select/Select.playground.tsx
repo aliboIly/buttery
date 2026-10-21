@@ -8,18 +8,18 @@ import type { SelectOption } from "@buttery/react";
 type Shape = "match" | "16:9" | "4:3" | "1:1" | "3:2" | "9:16";
 
 const SHAPES: readonly SelectOption<Shape>[] = [
-  { value: "match", label: "Match card" },
-  { value: "16:9", label: "16:9" },
-  { value: "4:3", label: "4:3" },
-  { value: "1:1", label: "1:1" },
-  { value: "3:2", label: "3:2" },
-  { value: "9:16", label: "9:16" },
+  { value: "1:1", label: "Square · 1:1" },
+  { value: "4:3", label: "Classic · 4:3" },
+  { value: "3:2", label: "Photo · 3:2" },
+  { value: "16:9", label: "Wide · 16:9" },
+  { value: "9:16", label: "Tall · 9:16" },
+  { value: "match", label: "Fit to card" },
 ];
 
 function CanvasSize(): ReactElement {
   const [shape, setShape] = useState<Shape>("16:9");
-  const [width, setWidth] = useState(1600);
-  const [height, setHeight] = useState(900);
+  const [width, setWidth] = useState(1920);
+  const [height, setHeight] = useState(1080);
   return (
     <Inline justify="end">
       <Select

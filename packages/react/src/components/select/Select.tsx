@@ -78,20 +78,12 @@ function Check(props: IconComponentProps): ReactElement {
   );
 }
 
-/** The elements Tab moves between inside the open list: the option holding focus, then the footer's controls. */
-function tabStops(panel: HTMLElement): HTMLElement[] {
-  return [
-    ...panel.querySelectorAll<HTMLElement>(
-      '[role="option"][tabindex="0"], [data-bt-part="footer"] :is(input, select, textarea, button, a[href], [tabindex]):not([tabindex="-1"], :disabled)',
-    ),
-  ];
-}
-
 /**
  * A ghost pill showing the chosen value; it opens a list to pick another, lined up with its end, and an
  * optional footer for a custom value, such as width and height fields. The open list moves like a menu:
  * arrow keys, Home and End move, typing jumps to an option, Enter or Space chooses, Escape closes, and
- * focus goes back to the trigger. With a footer, Tab moves between the list and the footer's controls.
+ * focus goes back to the trigger. The arrow keys also open it from the trigger. With a footer, Tab moves
+ * between the list and the footer's controls.
  *
  * @example
  * <Select
@@ -118,6 +110,7 @@ export function Select<Value extends string = string>({
   size = "md",
   className,
   disabled,
+  onKeyDown,
   ref,
   ...rest
 }: SelectProps<Value>): ReactElement {
@@ -175,31 +168,30 @@ export function Select<Value extends string = string>({
     else if (key === "End") focusOption(enabled.at(-1));
   };
 
+  const searching = (now: number): boolean =>
+    typed.current.text !== "" && now - typed.current.at <= timing.typeahead;
+
+  /**
+   * Moves to the option the typed letters start: one letter, or the same one again, moves on to the next
+   * option starting with it, and more letters keep the current option while it still matches.
+   */
   const typeahead = (
     option: SelectOption<Value>,
     character: string,
     now: number,
   ): void => {
-    const text =
-      now - typed.current.at > timing.typeahead
-        ? character
-        : typed.current.text + character;
+    const text = searching(now) ? typed.current.text + character : character;
     typed.current = { text, at: now };
-    const from = enabled.indexOf(option);
-    const ordered = [...enabled.slice(from + 1), ...enabled.slice(0, from + 1)];
-    const search = text.toLocaleLowerCase();
-    const match =
+    const letter = character.toLocaleLowerCase();
+    const repeated = text.toLocaleLowerCase().replaceAll(letter, "") === "";
+    const search = repeated ? letter : text.toLocaleLowerCase();
+    const from = enabled.indexOf(option) + (repeated ? 1 : 0);
+    const ordered = [...enabled.slice(from), ...enabled.slice(0, from)];
+    focusOption(
       ordered.find((candidate) =>
         candidate.label.toLocaleLowerCase().startsWith(search),
-      ) ??
-      (text.length > 1
-        ? undefined
-        : ordered.find((candidate) =>
-            candidate.label
-              .toLocaleLowerCase()
-              .startsWith(character.toLocaleLowerCase()),
-          ));
-    focusOption(match);
+      ),
+    );
   };
 
   const optionKeyDown =
@@ -208,6 +200,9 @@ export function Select<Value extends string = string>({
       if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
         event.preventDefault();
         moveFrom(option, event.key);
+      } else if (event.key === " " && searching(event.timeStamp)) {
+        event.preventDefault();
+        typeahead(option, " ", event.timeStamp);
       } else if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         choose(option);
@@ -220,21 +215,6 @@ export function Select<Value extends string = string>({
         typeahead(option, event.key, event.timeStamp);
       }
     };
-
-  const panelKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
-    if (event.key !== "Tab" || !panel.current) return;
-    const stops = tabStops(panel.current);
-    const first = stops[0];
-    const last = stops.at(-1);
-    if (!first || !last) return;
-    if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    } else if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    }
-  };
 
   return (
     <Popover
@@ -253,6 +233,14 @@ export function Select<Value extends string = string>({
             disabled={disabled}
             aria-haspopup="listbox"
             aria-controls={isOpen ? listId : undefined}
+            onKeyDown={(event) => {
+              onKeyDown?.(event);
+              if (event.defaultPrevented) return;
+              if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                event.preventDefault();
+                setOpen(true);
+              }
+            }}
             aria-label={`${label}, ${shown}`}
             className={cx("bt-select", className)}
             data-bt="Select"
@@ -276,9 +264,9 @@ export function Select<Value extends string = string>({
         className="bt-select-panel"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
+          setActive(undefined);
           if (resting) optionElement(resting)?.focus();
         }}
-        onKeyDown={panelKeyDown}
       >
         <div role="listbox" id={listId} aria-label={label} data-bt-part="list">
           {options.map((option) => {
@@ -299,9 +287,11 @@ export function Select<Value extends string = string>({
                 }}
                 onKeyDown={optionKeyDown(option)}
                 onPointerMove={(event) => {
+                  const list = event.currentTarget.parentElement;
                   if (
                     option.disabled !== true &&
-                    document.activeElement !== event.currentTarget
+                    document.activeElement !== event.currentTarget &&
+                    list?.contains(document.activeElement) === true
                   ) {
                     focusOption(option);
                   }
