@@ -45,12 +45,13 @@ export interface FieldProps extends Omit<
 }
 
 /**
- * A label, an optional hint and an error wired to a control you bring, native or not, for controls buttery
- * doesn't wrap itself. `TextField`, `PasswordField` and `TextArea` already do this.
+ * A label, an optional hint and an error wired to a control you bring: a buttery control without a form
+ * label of its own, such as an outline `Select` or a `SegmentedControl`, or your own. `TextField`,
+ * `PasswordField` and `TextArea` already do this.
  *
  * @example
- * <Field label="Card size" hint="In pixels" error={sizeError}>
- *   {(control) => <input {...control} type="range" min={100} max={2000} />}
+ * <Field label="Export as" hint="PNG keeps transparent corners." error={formatError}>
+ *   {(control) => <Select {...control} label="Export as" variant="outline" options={formats} />}
  * </Field>
  */
 export function Field({
