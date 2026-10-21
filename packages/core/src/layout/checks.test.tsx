@@ -122,6 +122,7 @@ describe("runLayoutChecks", () => {
     expect(found?.message).toBe(
       '2 primary buttons in one region: "Delete", "Archive"',
     );
+    expect(found?.px).toBeUndefined();
   });
 
   it("names both elements and the overlap in px", () => {

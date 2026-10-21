@@ -1124,9 +1124,8 @@ export function createLayoutToolkit(): LayoutToolkit {
         report({
           rule: "emphasis",
           a: selectorFor(region),
-          px: buttons.length,
           message: `${String(buttons.length)} primary buttons in one region: ${names}`,
-          fix: "Keep one primary button per region (a page header, a section, a dialog, a panel, a plan card); make the others secondary, ghost or a link.",
+          fix: "Keep one primary button per region (a page header, a section, a dialog, a panel, a plan); make the others secondary, ghost or a link.",
         });
       }
     }
