@@ -15,7 +15,6 @@
     container-type: size;
   }
 
-  /* The largest box of the canvas's shape that fits inside the margin. */
   .bt-stage > [data-bt-part="canvas"] {
     position: relative;
     inline-size: min(100cqi, 100cqb * var(--bt-stage-ratio, 1));
@@ -53,7 +52,6 @@
     border-radius: inherit;
   }
 
-  /* The crop frame and its handles arrive a beat after the background starts to fade. */
   .bt-stage > [data-bt-part="canvas"] > [data-bt-part="crop"] {
     position: absolute;
     inset: 0;
@@ -94,11 +92,11 @@
       [data-handle="n"],
       [data-handle="ne"]
     ) {
-    inset-block-start: 0;
+    top: 0;
   }
 
   .bt-stage [data-bt-part="handle"]:is([data-handle="w"], [data-handle="e"]) {
-    inset-block-start: 50%;
+    top: 50%;
     cursor: ew-resize;
   }
 
@@ -108,7 +106,7 @@
       [data-handle="s"],
       [data-handle="se"]
     ) {
-    inset-block-start: 100%;
+    top: 100%;
   }
 
   .bt-stage
@@ -117,11 +115,11 @@
       [data-handle="w"],
       [data-handle="sw"]
     ) {
-    inset-inline-start: 0;
+    left: 0;
   }
 
   .bt-stage [data-bt-part="handle"]:is([data-handle="n"], [data-handle="s"]) {
-    inset-inline-start: 50%;
+    left: 50%;
     cursor: ns-resize;
   }
 
@@ -131,7 +129,7 @@
       [data-handle="e"],
       [data-handle="se"]
     ) {
-    inset-inline-start: 100%;
+    left: 100%;
   }
 
   .bt-stage [data-bt-part="handle"]:is([data-handle="nw"], [data-handle="se"]) {

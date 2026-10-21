@@ -45,7 +45,7 @@ function Preview(): ReactElement {
             setCropping(true);
           }}
         >
-          Crop
+          Resize
         </Button>
       </Inline>
       <div style={{ blockSize: "var(--bt-bento-row)", display: "grid" }}>
@@ -64,7 +64,7 @@ function Preview(): ReactElement {
       </div>
       <FloatingToolbar
         anchor={canvas}
-        label="Crop"
+        label="Canvas size"
         meta={`${String(size.width)} × ${String(size.height)}`}
         open={cropping}
         delayed
@@ -75,7 +75,7 @@ function Preview(): ReactElement {
             setSize(before);
           }}
         >
-          Reset
+          Revert
         </FloatingToolbar.Button>
         <FloatingToolbar.Button
           onClick={() => {
@@ -83,7 +83,7 @@ function Preview(): ReactElement {
             setCropping(false);
           }}
         >
-          Cancel
+          Discard
         </FloatingToolbar.Button>
         <FloatingToolbar.Button
           variant="primary"
@@ -91,7 +91,7 @@ function Preview(): ReactElement {
             setCropping(false);
           }}
         >
-          Apply crop
+          Keep size
         </FloatingToolbar.Button>
       </FloatingToolbar>
     </Stack>
@@ -102,7 +102,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Canvas and crop",
     description:
-      "Change the shape and the canvas reshapes on spring.smooth; Crop fades the background and shows the handles and the toolbar.",
+      "Change the shape and the canvas reshapes on spring.smooth; Resize fades the background and shows the handles and the toolbar.",
     render: () => <Preview />,
   },
 ];

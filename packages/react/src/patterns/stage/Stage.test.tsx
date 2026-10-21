@@ -5,8 +5,9 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { motion } from "motion/react";
 import { userEvent as browser } from "vitest/browser";
-import { Stage } from "./Stage.tsx";
+import { Stage, useStageLayout } from "./Stage.tsx";
 import type { StageSize } from "./Stage.tsx";
 
 beforeEach(() => {
@@ -25,14 +26,28 @@ function canvas(): HTMLElement {
   return screen.getByRole("img", { name: "Card preview" });
 }
 
+function Card(): ReactElement {
+  return (
+    <motion.div
+      {...useStageLayout()}
+      data-testid="card"
+      style={{ inlineSize: "50%", aspectRatio: "2", placeSelf: "center" }}
+    />
+  );
+}
+
 function Frame({
   size,
   cropping = false,
   onSizeChange,
+  onSizeCommit,
+  children = <p>Launch card</p>,
 }: {
   readonly size: StageSize;
   readonly cropping?: boolean;
   readonly onSizeChange?: (size: StageSize) => void;
+  readonly onSizeCommit?: (size: StageSize) => void;
+  readonly children?: ReactElement;
 }): ReactElement {
   return (
     <div style={{ inlineSize: "400px", blockSize: "360px", display: "grid" }}>
@@ -42,8 +57,9 @@ function Frame({
         background="linear-gradient(135deg, #c7d2fe, #f5d0fe)"
         cropping={cropping}
         onSizeChange={onSizeChange}
+        onSizeCommit={onSizeCommit}
       >
-        <p>Launch card</p>
+        {children}
       </Stage>
     </div>
   );
@@ -103,6 +119,38 @@ describe("Stage", () => {
     ).toBeLessThanOrEqual(1);
   });
 
+  it("keeps content that spreads useStageLayout in shape while it reshapes", async () => {
+    const { rerender } = render(
+      <Frame size={{ width: 1600, height: 900 }}>
+        <Card />
+      </Frame>,
+    );
+    await settled();
+    const card = screen.getByTestId("card");
+    const ratios: number[] = [];
+    const heights: number[] = [];
+    let sampling = true;
+    const sample = (): void => {
+      const box = card.getBoundingClientRect();
+      ratios.push(box.width / box.height);
+      heights.push(canvas().getBoundingClientRect().height);
+      if (sampling) requestAnimationFrame(sample);
+    };
+    rerender(
+      <Frame size={{ width: 900, height: 1600 }}>
+        <Card />
+      </Frame>,
+    );
+    requestAnimationFrame(sample);
+    await waitFor(() => {
+      expect(Math.round(canvas().getBoundingClientRect().height)).toBe(296);
+    });
+    await settled();
+    sampling = false;
+    expect(heights.some((height) => height > 190 && height < 295)).toBe(true);
+    for (const ratio of ratios) expect(ratio).toBeCloseTo(2, 1);
+  });
+
   it("fades its background and shows eight handles in crop mode", async () => {
     render(<Frame size={{ width: 1600, height: 900 }} cropping />);
     await waitFor(() => {
@@ -155,5 +203,48 @@ describe("Stage", () => {
     expect(
       Math.abs(last.width - (1600 - (2 * 10) / scale)),
     ).toBeLessThanOrEqual(4 / scale);
+  });
+
+  it("commits a crop drag once, with the size it ends on, and fits the canvas again on release", async () => {
+    function Cropping({
+      onSizeCommit,
+    }: {
+      readonly onSizeCommit: (size: StageSize) => void;
+    }): ReactElement {
+      const [size, setSize] = useState<StageSize>({ width: 1600, height: 900 });
+      return (
+        <>
+          <output>{`${String(size.width)}x${String(size.height)}`}</output>
+          <Frame
+            size={size}
+            cropping
+            onSizeChange={setSize}
+            onSizeCommit={onSizeCommit}
+          />
+        </>
+      );
+    }
+    const onSizeCommit = vi.fn<(size: StageSize) => void>();
+    render(<Cropping onSizeCommit={onSizeCommit} />);
+    await settled();
+    const handle = canvas().querySelector<HTMLElement>(
+      '[data-handle="e"] [data-bt-part="hit"]',
+    );
+    if (!handle) throw new Error("No hit area.");
+    await browser.dragAndDrop(handle, canvas(), {
+      sourcePosition: { x: 12, y: 12 },
+      targetPosition: { x: canvas().offsetWidth - 100, y: 20 },
+    });
+    await waitFor(() => {
+      expect(onSizeCommit).toHaveBeenCalledTimes(1);
+    });
+    const shown = screen.getByRole("status").textContent;
+    const committed = onSizeCommit.mock.lastCall?.[0];
+    expect(
+      committed && `${String(committed.width)}x${String(committed.height)}`,
+    ).toBe(shown);
+    expect(committed?.width).toBeLessThan(1021);
+    await settled();
+    expect(Math.round(canvas().getBoundingClientRect().height)).toBe(296);
   });
 });

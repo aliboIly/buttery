@@ -6,8 +6,14 @@ import {
 } from "@buttery/core";
 import { motion } from "motion/react";
 import type { MotionStyle } from "motion/react";
-import { useRef, useState } from "react";
-import type { CssVariables } from "@buttery/core";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
+import type { CssVariables, LayoutAnimation } from "@buttery/core";
 import type {
   CSSProperties,
   ComponentPropsWithRef,
@@ -45,12 +51,43 @@ export interface StageProps extends Omit<
   readonly cropping?: boolean | undefined;
   /** Called while a crop handle is dragged, with the new size. */
   readonly onSizeChange?: ((size: StageSize) => void) | undefined;
+  /** Called when a crop drag ends, with the size it settled on, for one undo step per drag. */
+  readonly onSizeCommit?: ((size: StageSize) => void) | undefined;
   /** The smallest side a crop can leave, in output pixels. Defaults to 64. */
   readonly minSize?: number | undefined;
   /** The canvas element, to anchor a `FloatingToolbar` under it. */
   readonly canvasRef?: Ref<HTMLDivElement> | undefined;
   /** What's drawn on the canvas. It may overlap the canvas's edges, which clip it. */
   readonly children?: ReactNode;
+}
+
+/** What makes the canvas reshape, for the content on it to measure at the same moment. */
+const StageReshape = createContext("");
+
+/** Props from `useStageLayout`, to spread on a Motion element on a `Stage` canvas. */
+export interface StageLayout extends LayoutAnimation {
+  /** Changes when the canvas reshapes or `dependency` changes, so the element measures then. */
+  readonly layoutDependency: string;
+}
+
+/**
+ * Keeps a Motion element on a `Stage` canvas in shape while the canvas reshapes. The canvas reshapes with a
+ * layout animation, which stretches what's on it; spread this on the element and it measures with the
+ * canvas and scales evenly from its old box to its new one instead. Pass what else moves it, such as its
+ * anchor, as `dependency`. With reduced motion, it turns the animation off as the canvas does.
+ *
+ * @example
+ * <motion.div {...useStageLayout(anchor)} className="slot" />
+ */
+export function useStageLayout(
+  dependency?: string | number | boolean,
+): StageLayout {
+  const reshape = useContext(StageReshape);
+  const animation = useLayoutAnimation("smooth");
+  return {
+    ...animation,
+    layoutDependency: `${reshape} ${String(dependency)}`,
+  };
 }
 
 interface Drag {
@@ -63,7 +100,8 @@ interface Drag {
 
 /**
  * The canvas an editor works on: the largest box of its shape that fits, at least 32px from the edges,
- * r12 with a card shadow. When its shape changes, it reshapes on `spring.smooth` and stays centered. In
+ * r12 with a card shadow. When its shape changes, it reshapes on `spring.smooth` and stays centered; content
+ * that has to keep its own shape meanwhile, such as a card, spreads `useStageLayout`. In
  * crop mode its background fades out and eight handles appear on its frame a beat later; dragging one
  * resizes the canvas, its opposite edge mirroring the one held, and the canvas fits again when it's let go.
  * The width and height can also be typed, such as in a canvas `Select`'s footer.
@@ -79,6 +117,7 @@ export function Stage({
   background,
   cropping = false,
   onSizeChange,
+  onSizeCommit,
   minSize = 64,
   canvasRef,
   className,
@@ -90,10 +129,12 @@ export function Stage({
   const refs = useMergedRefs(canvasRef, canvas);
   const drag = useRef<Drag | null>(null);
   const frame = useRef(0);
+  const pending = useRef<StageSize | null>(null);
   const [held, setHeld] = useState<{ readonly scale: number } | null>(null);
   const { layout, transition } = useLayoutAnimation("smooth");
   const tracking = useAnimationTracking();
   const ratio = size.width / size.height;
+  const reshape = held ? "held" : String(ratio);
 
   const startDrag =
     (handle: Handle) =>
@@ -128,20 +169,40 @@ export function Stage({
       : start.handle.includes("n")
         ? -dy
         : 0;
-    const next = {
+    pending.current = {
       width: Math.max(minSize, Math.round(start.from.width + 2 * across)),
       height: Math.max(minSize, Math.round(start.from.height + 2 * down)),
     };
     cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => {
-      onSizeChange?.(next);
-    });
+    frame.current = requestAnimationFrame(flush);
+  };
+  const flush = (): void => {
+    cancelAnimationFrame(frame.current);
+    const next = pending.current;
+    pending.current = null;
+    if (next) onSizeChange?.(next);
   };
   const endDrag = (): void => {
-    if (!drag.current) return;
+    const start = drag.current;
+    if (!start) return;
+    const last = pending.current ?? size;
+    flush();
     drag.current = null;
     setHeld(null);
+    onSizeCommit?.(last);
   };
+  // Crop mode can end in the middle of a drag, taking the handles and their pointer events with it.
+  const cropFrame = useCallback((element: HTMLDivElement | null) => {
+    if (!element) return undefined;
+    return () => {
+      cancelAnimationFrame(frame.current);
+      pending.current = null;
+      if (drag.current) {
+        drag.current = null;
+        setHeld(null);
+      }
+    };
+  }, []);
 
   const stageStyle: CSSProperties & CssVariables = {
     ...style,
@@ -168,9 +229,7 @@ export function Stage({
         role="img"
         aria-label={label}
         layout={layout}
-        layoutDependency={
-          held ? "held" : `${String(ratio)} ${String(cropping)}`
-        }
+        layoutDependency={reshape}
         transition={transition}
         style={canvasStyle}
         data-bt-part="canvas"
@@ -180,10 +239,15 @@ export function Stage({
           style={background === undefined ? undefined : { background }}
         />
         <div data-bt-part="artwork" data-bt-allow-overlap="">
-          {children}
+          <StageReshape value={reshape}>{children}</StageReshape>
         </div>
         {cropping ? (
-          <div data-bt-part="crop" data-bt-allow-overlap="" aria-hidden="true">
+          <div
+            ref={cropFrame}
+            data-bt-part="crop"
+            data-bt-allow-overlap=""
+            aria-hidden="true"
+          >
             {HANDLES.map((handle) => (
               <span
                 key={handle}
