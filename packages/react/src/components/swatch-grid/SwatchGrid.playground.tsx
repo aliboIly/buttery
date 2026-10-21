@@ -21,11 +21,7 @@ export const demos: readonly DemoSection[] = [
     description:
       "buttery's 24 gradients, six to a row. The chosen one gets the selection ring at once.",
     render: () => (
-      <SwatchGrid
-        label="Background"
-        swatches={GRADIENTS}
-        defaultValue="lilac"
-      />
+      <SwatchGrid label="Backdrop" swatches={GRADIENTS} defaultValue="lilac" />
     ),
   },
   {

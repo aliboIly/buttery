@@ -5,12 +5,12 @@ import type { DemoSection } from "@buttery/core";
 import { SegmentedControl } from "@buttery/react";
 
 function FillDemo(): ReactElement {
-  const [fill, setFill] = useState("Gradient");
+  const [fill, setFill] = useState("Blend");
   return (
     <Stack gap={3} align="start">
       <SegmentedControl
         label="Fill"
-        options={["Gradient", "Solid"]}
+        options={["Blend", "Color"]}
         value={fill}
         onValueChange={setFill}
       />

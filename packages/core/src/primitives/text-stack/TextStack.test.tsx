@@ -69,13 +69,13 @@ describe("TextStack", () => {
           size="empty"
           align="center"
           title="Your canvas is empty"
-          body="Bring in a photo, or start from a blank card."
+          body="Start a fresh card, or open one from your library."
         />
       </div>,
     );
     await document.fonts.ready;
     const title = box("Your canvas is empty");
-    const body = box("Bring in a photo, or start from a blank card.");
+    const body = box("Start a fresh card, or open one from your library.");
     expect(Math.round(body.top - title.bottom)).toBe(12);
     expect(Math.abs(title.left + title.width / 2 - 200)).toBeLessThanOrEqual(1);
     expect(screen.getByText("Your canvas is empty").dataset["role"]).toBe(

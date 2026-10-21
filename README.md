@@ -166,7 +166,7 @@ Without React, the same recipes are plain markup:
 ```html
 <section class="bt-surface" data-level="card">
   <h2 class="bt-text" data-role="title">Your canvas is empty</h2>
-  <p class="bt-text" data-role="body-sm">Bring in a photo, or start from a blank card.</p>
+  <p class="bt-text" data-role="body-sm">Start a fresh card, or open one from your library.</p>
 </section>
 ```
 

@@ -7,7 +7,7 @@ export function StarterEmptyState(): ReactElement {
     <EmptyState
       data-testid="empty-state"
       title="Your canvas is empty"
-      description="Bring in a photo, or start from a blank card."
+      description="Start a fresh card, or open one from your library."
       actions={
         <>
           <Button variant="primary">Import photo</Button>

@@ -9,7 +9,7 @@ export function EmptyCopy(): ReactElement {
       align="center"
       titleAs="p"
       title="Your canvas is empty"
-      body="Bring in a photo, or start from a blank card."
+      body="Start a fresh card, or open one from your library."
     />
   );
 }

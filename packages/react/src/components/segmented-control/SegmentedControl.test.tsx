@@ -25,7 +25,7 @@ describe("SegmentedControl", () => {
       <SegmentedControl
         ref={ref}
         label="Fill"
-        options={["Gradient", "Solid"]}
+        options={["Blend", "Color"]}
         className="custom"
         data-testid="fill"
       />,
@@ -36,10 +36,10 @@ describe("SegmentedControl", () => {
   });
 
   it("is a radio group named by its label, with the first option chosen", () => {
-    render(<SegmentedControl label="Fill" options={["Gradient", "Solid"]} />);
+    render(<SegmentedControl label="Fill" options={["Blend", "Color"]} />);
     expect(screen.getByRole("radiogroup", { name: "Fill" })).toBeTruthy();
     expect(screen.getAllByRole("radio")).toHaveLength(2);
-    expect(checked()).toBe("Gradient");
+    expect(checked()).toBe("Blend");
   });
 
   it("picks on click, reports the value and never deselects", async () => {
@@ -47,14 +47,14 @@ describe("SegmentedControl", () => {
     render(
       <SegmentedControl
         label="Fill"
-        options={["Gradient", "Solid"]}
+        options={["Blend", "Color"]}
         onValueChange={change}
       />,
     );
-    await userEvent.click(screen.getByRole("radio", { name: "Solid" }));
-    expect(change).toHaveBeenLastCalledWith("Solid");
-    await userEvent.click(screen.getByRole("radio", { name: "Solid" }));
-    expect(checked()).toBe("Solid");
+    await userEvent.click(screen.getByRole("radio", { name: "Color" }));
+    expect(change).toHaveBeenLastCalledWith("Color");
+    await userEvent.click(screen.getByRole("radio", { name: "Color" }));
+    expect(checked()).toBe("Color");
     expect(change).toHaveBeenCalledTimes(1);
   });
 
@@ -62,18 +62,18 @@ describe("SegmentedControl", () => {
     const { rerender } = render(
       <SegmentedControl
         label="Fill"
-        options={["Gradient", "Solid"]}
-        value="Gradient"
+        options={["Blend", "Color"]}
+        value="Blend"
       />,
     );
     rerender(
       <SegmentedControl
         label="Fill"
-        options={["Gradient", "Solid"]}
-        value="Solid"
+        options={["Blend", "Color"]}
+        value="Color"
       />,
     );
-    expect(checked()).toBe("Solid");
+    expect(checked()).toBe("Color");
   });
 
   it("moves the choice with arrow keys, skipping disabled options", async () => {
@@ -113,10 +113,10 @@ describe("SegmentedControl", () => {
   });
 
   it("draws the sliding selection inside the chosen segment", () => {
-    render(<SegmentedControl label="Fill" options={["Gradient", "Solid"]} />);
+    render(<SegmentedControl label="Fill" options={["Blend", "Color"]} />);
     const indicator = document.querySelector('[data-bt-part="indicator"]');
     expect(indicator?.closest('[data-bt-part="segment"]')).toBe(
-      screen.getByRole("radio", { name: "Gradient" }),
+      screen.getByRole("radio", { name: "Blend" }),
     );
   });
 });

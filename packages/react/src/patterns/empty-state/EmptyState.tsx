@@ -9,7 +9,7 @@ export interface EmptyStateProps extends Omit<
 > {
   /** What's missing, such as "Add a card". */
   readonly title: ReactNode;
-  /** How to add it, 12px under the title, such as "Drop an image here, or paste one with ⌘V." */
+  /** How to add it, 12px under the title, such as "Drag a picture onto the canvas, or paste it from your clipboard." */
   readonly description?: ReactNode;
   /** The ways to add it, 24px under the text: a primary and a secondary pill. */
   readonly actions?: ReactNode;
@@ -23,9 +23,9 @@ export interface EmptyStateProps extends Omit<
  *
  * @example
  * <EmptyState
- *   title="Add a card"
- *   description="Start from a template, or paste text with ⌘V."
- *   actions={<><Button variant="primary">New card</Button><Button variant="secondary">How it works</Button></>}
+ *   title="An empty canvas"
+ *   description="Start a fresh card, or open one from your library."
+ *   actions={<><Button variant="primary">New card</Button><Button variant="secondary">Open library</Button></>}
  * />
  */
 export function EmptyState({

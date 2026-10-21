@@ -14,7 +14,7 @@ describe("EmptyState", () => {
     render(
       <EmptyState
         ref={ref}
-        title="Add a card"
+        title="An empty canvas"
         className="custom"
         data-testid="empty"
       />,
@@ -27,18 +27,18 @@ describe("EmptyState", () => {
   it("centers a heading and its line, with the actions 24px under the text", () => {
     render(
       <EmptyState
-        title="Add a card"
-        description="Start from a template, or paste text with ⌘V."
+        title="An empty canvas"
+        description="Start a fresh card, or open one from your library."
         actions={
           <>
             <Button variant="primary">New card</Button>
-            <Button variant="secondary">How it works</Button>
+            <Button variant="secondary">Open library</Button>
           </>
         }
       />,
     );
     expect(
-      screen.getByRole("heading", { name: "Add a card", level: 2 }),
+      screen.getByRole("heading", { name: "An empty canvas", level: 2 }),
     ).toBeTruthy();
     const text = document
       .querySelector<HTMLElement>('[data-bt="TextStack"]')
@@ -51,7 +51,7 @@ describe("EmptyState", () => {
       .getByRole("button", { name: "New card" })
       .getBoundingClientRect();
     const secondary = screen
-      .getByRole("button", { name: "How it works" })
+      .getByRole("button", { name: "Open library" })
       .getBoundingClientRect();
     expect(Math.round(secondary.left - primary.right)).toBe(8);
   });

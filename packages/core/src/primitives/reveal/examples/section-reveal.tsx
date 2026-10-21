@@ -11,7 +11,7 @@ export function SectionReveal(): ReactElement {
             <h2>Every card, one click from done</h2>
           </Text>
           <Text variant="body-lg">
-            Start from a template, swap the photo and export.
+            Write a title, pick a backdrop, and send the card off.
           </Text>
         </Stack>
       </Surface>

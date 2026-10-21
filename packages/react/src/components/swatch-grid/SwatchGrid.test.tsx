@@ -35,7 +35,7 @@ describe("SwatchGrid", () => {
     render(
       <SwatchGrid
         ref={ref}
-        label="Background"
+        label="Backdrop"
         swatches={SWATCHES}
         className="custom"
         data-testid="grid"
@@ -49,14 +49,10 @@ describe("SwatchGrid", () => {
   it("is a radio group of named swatches, six to a row, each square and painted", () => {
     render(
       <div style={{ inlineSize: "296px" }}>
-        <SwatchGrid
-          label="Background"
-          swatches={SWATCHES}
-          defaultValue="peach"
-        />
+        <SwatchGrid label="Backdrop" swatches={SWATCHES} defaultValue="peach" />
       </div>,
     );
-    expect(screen.getByRole("radiogroup", { name: "Background" })).toBeTruthy();
+    expect(screen.getByRole("radiogroup", { name: "Backdrop" })).toBeTruthy();
     expect(swatch("Peach").getAttribute("aria-checked")).toBe("true");
     const first = swatch("Cream").getBoundingClientRect();
     const seventh = swatch("Honey").getBoundingClientRect();
@@ -72,11 +68,7 @@ describe("SwatchGrid", () => {
 
   it("rings the chosen swatch at once", async () => {
     render(
-      <SwatchGrid
-        label="Background"
-        swatches={SWATCHES}
-        defaultValue="cream"
-      />,
+      <SwatchGrid label="Backdrop" swatches={SWATCHES} defaultValue="cream" />,
     );
     await userEvent.click(swatch("Rose"));
     expect(swatch("Rose").getAttribute("aria-checked")).toBe("true");
@@ -88,7 +80,7 @@ describe("SwatchGrid", () => {
     const onValueChange = vi.fn();
     render(
       <SwatchGrid
-        label="Background"
+        label="Backdrop"
         swatches={SWATCHES}
         defaultValue="peach"
         onValueChange={onValueChange}
@@ -114,11 +106,7 @@ describe("SwatchGrid", () => {
   it("is one tab stop, on the chosen swatch", async () => {
     render(
       <>
-        <SwatchGrid
-          label="Background"
-          swatches={SWATCHES}
-          defaultValue="mist"
-        />
+        <SwatchGrid label="Backdrop" swatches={SWATCHES} defaultValue="mist" />
         <button type="button">After</button>
       </>,
     );
@@ -134,7 +122,7 @@ describe("SwatchGrid", () => {
     const onValueChange = vi.fn();
     render(
       <SwatchGrid
-        label="Background"
+        label="Backdrop"
         swatches={SWATCHES}
         disabled
         onValueChange={onValueChange}

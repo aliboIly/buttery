@@ -23,7 +23,7 @@ export interface SwatchGridProps<Value extends string = string> extends Omit<
   ComponentPropsWithRef<"div">,
   "defaultValue" | "onChange" | "children"
 > {
-  /** What the swatches choose, such as "Background". It names the group. */
+  /** What the swatches choose, such as "Backdrop". It names the group. */
   readonly label: string;
   /** The swatches, row by row. */
   readonly swatches: readonly Swatch<Value>[];
@@ -46,7 +46,7 @@ export interface SwatchGridProps<Value extends string = string> extends Omit<
  *
  * @example
  * <SwatchGrid
- *   label="Background"
+ *   label="Backdrop"
  *   value={background}
  *   onValueChange={setBackground}
  *   swatches={gradients.map((preset) => ({ value: preset.id, label: preset.name, fill: gradientCss(preset) }))}

@@ -4,12 +4,12 @@ import { Inline, Morph, Pressable, Stack, Surface, Text } from "@buttery/core";
 
 const STEPS = [
   {
-    title: "Bring in a photo",
-    body: "Drop an image on the canvas, or paste one.",
+    title: "Soften the butter",
+    body: "Leave it out for half an hour, until a spoon slides in.",
   },
   {
-    title: "Give it a style",
-    body: "Pick an edge, a backdrop and a little depth. Everything updates as you go, so try a few before you settle.",
+    title: "Cream it with sugar",
+    body: "Beat them together until pale and fluffy. It takes a few minutes longer than you'd think, so keep going until it looks like whipped cream.",
   },
 ] as const;
 

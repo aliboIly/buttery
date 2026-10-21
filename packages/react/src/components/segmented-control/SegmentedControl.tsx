@@ -44,7 +44,7 @@ function optionOf<Value extends string>(
  * segment is always chosen; arrow keys move the choice. Segments share one width, the widest label's.
  *
  * @example
- * <SegmentedControl label="Fill" options={["Gradient", "Solid"]} value={fill} onValueChange={setFill} />
+ * <SegmentedControl label="Fill" options={["Blend", "Color"]} value={fill} onValueChange={setFill} />
  */
 export function SegmentedControl<Value extends string = string>({
   options,

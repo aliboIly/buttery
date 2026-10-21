@@ -8,12 +8,12 @@ export const demos: readonly DemoSection[] = [
       "The title, its line 12px under it, and two pills 24px under the text.",
     render: () => (
       <EmptyState
-        title="Add a card"
-        description="Start from a template, or paste text with ⌘V."
+        title="An empty canvas"
+        description="Start a fresh card, or open one from your library."
         actions={
           <>
             <Button variant="primary">New card</Button>
-            <Button variant="secondary">How it works</Button>
+            <Button variant="secondary">Open library</Button>
           </>
         }
       />

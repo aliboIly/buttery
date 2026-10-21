@@ -5,8 +5,8 @@ import { Button, EmptyState, toast } from "@buttery/react";
 export function EmptyCanvas(): ReactElement {
   return (
     <EmptyState
-      title="Add a card"
-      description="Start from a template, or paste text with ⌘V."
+      title="An empty canvas"
+      description="Start a fresh card, or open one from your library."
       actions={
         <>
           <Button
@@ -17,7 +17,7 @@ export function EmptyCanvas(): ReactElement {
           >
             New card
           </Button>
-          <Button variant="secondary">How it works</Button>
+          <Button variant="secondary">Open library</Button>
         </>
       }
     />

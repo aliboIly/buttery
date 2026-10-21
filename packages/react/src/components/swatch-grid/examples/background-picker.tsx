@@ -15,7 +15,7 @@ export function BackgroundPicker(): ReactElement {
   const [background, setBackground] = useState("lilac");
   return (
     <SwatchGrid
-      label="Background"
+      label="Backdrop"
       swatches={SWATCHES}
       value={background}
       onValueChange={setBackground}

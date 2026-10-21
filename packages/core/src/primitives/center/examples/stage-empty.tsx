@@ -9,7 +9,7 @@ export function StageEmpty(): ReactElement {
         <Stack gap={3} align="center">
           <Text variant="title">Your canvas is empty</Text>
           <Text variant="body-sm">
-            Bring in a photo, or start from a blank card.
+            Start a fresh card, or open one from your library.
           </Text>
         </Stack>
       </Center>

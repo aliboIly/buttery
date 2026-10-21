@@ -2,10 +2,10 @@ import type { ReactElement } from "react";
 import { Stack, Stagger, Text } from "@buttery/core";
 
 const STEPS = [
-  "Bring in a photo",
-  "Give it a style",
-  "Place it on the canvas",
-  "Export the card",
+  "Soften the butter",
+  "Cream it with sugar",
+  "Fold in the flour",
+  "Bake until golden",
 ] as const;
 
 /** A numbered list whose steps land in order. */

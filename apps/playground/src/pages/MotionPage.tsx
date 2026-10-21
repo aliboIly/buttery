@@ -131,8 +131,8 @@ function MorphDemo(): ReactElement {
         <Morph contentKey={long ? "long" : "short"} data-testid="morph">
           <Text variant="body">
             {long
-              ? "Pick an edge, a backdrop and a little depth. Everything updates as you go, so try a few before you settle on one you like."
-              : "Pick an edge and a backdrop."}
+              ? "Beat the butter and sugar together until pale and fluffy. It takes a few minutes longer than you'd think, so keep going until it looks like whipped cream."
+              : "Beat the butter and sugar together."}
           </Text>
         </Morph>
       </Surface>
