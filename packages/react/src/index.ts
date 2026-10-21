@@ -465,3 +465,9 @@ export type {
   ChartSeries,
   ChartSize,
 } from "./components/chart-frame/ChartFrame.tsx";
+export { LineChart } from "./components/line-chart/LineChart.tsx";
+export type { LineChartProps } from "./components/line-chart/LineChart.tsx";
+export { AreaChart } from "./components/area-chart/AreaChart.tsx";
+export type { AreaChartProps } from "./components/area-chart/AreaChart.tsx";
+export { BarChart } from "./components/bar-chart/BarChart.tsx";
+export type { BarChartProps } from "./components/bar-chart/BarChart.tsx";
