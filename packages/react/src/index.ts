@@ -495,3 +495,5 @@ export type {
   DateRangePreset,
   DateRangeValue,
 } from "./patterns/date-range-bar/DateRangeBar.tsx";
+export { Banner } from "./patterns/banner/Banner.tsx";
+export type { BannerProps } from "./patterns/banner/Banner.tsx";
