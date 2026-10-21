@@ -5,10 +5,12 @@ import {
   reducedTransition,
   useAnimationTracking,
   useMotionPreference,
+  useReflow,
   useReflowDeparture,
   useStoredState,
 } from "@buttery/core";
 import { Clock } from "lucide-react";
+import type { ReflowLayout } from "@buttery/core";
 import type { Transition } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
 import { useState } from "react";
@@ -71,13 +73,20 @@ export interface Dismissible {
   readonly dismissed: boolean;
   /** Starts it leaving: it fades, then it's gone. */
   readonly dismiss: () => void;
-  /** Spread onto its Motion root: the fade out, reported to the settled flag. */
-  readonly fade: {
+  /**
+   * Spread onto its Motion root: the fade out, and the slide into place when something above it in its
+   * `ReflowGroup` leaves, both reported to the settled flag.
+   */
+  readonly motionProps: {
     readonly initial: false;
     readonly animate: { readonly opacity: number };
     readonly transition: Transition;
+    readonly layout: ReflowLayout["layout"];
+    readonly layoutDependency: ReflowLayout["layoutDependency"];
     readonly onAnimationStart: () => void;
     readonly onAnimationComplete: () => void;
+    readonly onLayoutAnimationStart: () => void;
+    readonly onLayoutAnimationComplete: () => void;
   };
 }
 
@@ -87,13 +96,13 @@ function isFlag(value: unknown): value is boolean {
 
 /**
  * The state behind a part people can dismiss for good, such as a banner: it fades where it is over
- * `dur-fast`, then it's gone, and in a `ReflowGroup` (an `AppPage`) what's below slides up into its place.
- * With a `storageKey` it stays gone on later visits.
+ * `dur-fast`, then it's gone, and in a `ReflowGroup` (an `AppPage`) what's below slides up into its place,
+ * as it does itself when something above it leaves. With a `storageKey` it stays gone on later visits.
  *
  * @example
- * const { dismissed, dismiss, fade } = useDismissible({ kind: "tip", storageKey });
+ * const { dismissed, dismiss, motionProps } = useDismissible({ kind: "tip", storageKey });
  * if (dismissed) return null;
- * return <motion.div {...fade}>… <IconButton icon={X} label="Dismiss" onClick={dismiss} /></motion.div>;
+ * return <motion.div {...motionProps}>… <IconButton icon={X} label="Dismiss" onClick={dismiss} /></motion.div>;
  */
 export function useDismissible({
   kind,
@@ -107,6 +116,7 @@ export function useDismissible({
   );
   const [leaving, setLeaving] = useState(false);
   const depart = useReflowDeparture();
+  const reflow = useReflow();
   const reduced = useMotionPreference() === "reduced";
   const tracking = useAnimationTracking();
   return {
@@ -114,10 +124,17 @@ export function useDismissible({
     dismiss: () => {
       setLeaving(true);
     },
-    fade: {
+    motionProps: {
       initial: false,
       animate: { opacity: leaving ? 0 : 1 },
-      transition: reduced ? reducedTransition : fadeOut,
+      transition: {
+        ...(reduced ? reducedTransition : fadeOut),
+        layout: reflow.transition,
+      },
+      layout: reflow.layout,
+      layoutDependency: reflow.layoutDependency,
+      onLayoutAnimationStart: tracking.onLayoutAnimationStart,
+      onLayoutAnimationComplete: tracking.onLayoutAnimationComplete,
       onAnimationStart: tracking.onAnimationStart,
       onAnimationComplete: () => {
         tracking.onAnimationComplete();

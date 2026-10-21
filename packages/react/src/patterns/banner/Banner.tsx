@@ -57,7 +57,7 @@ export function Banner({
   className,
   ...rest
 }: BannerProps): ReactElement | null {
-  const { dismissed, dismiss, fade } = useDismissible({
+  const { dismissed, dismiss, motionProps } = useDismissible({
     kind: "banner",
     storageKey,
     onDismiss,
@@ -66,7 +66,7 @@ export function Banner({
   return (
     <motion.div
       {...rest}
-      {...fade}
+      {...motionProps}
       className={cx("bt-banner", className)}
       data-bt="Banner"
     >
