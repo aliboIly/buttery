@@ -127,6 +127,12 @@ export const widths = {
     value: 320,
     description: "Bento grid row unit.",
   },
+  "nav-panel-min": {
+    cssVar: "--bt-nav-panel-min",
+    value: 200,
+    description:
+      "The least a nav menu's panel shows below its bar in a short window; a taller menu scrolls inside it.",
+  },
   "inset-titlebar": {
     cssVar: "--bt-inset-titlebar",
     value: 84,

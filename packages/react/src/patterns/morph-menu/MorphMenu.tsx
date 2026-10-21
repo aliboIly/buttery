@@ -6,6 +6,7 @@ import {
   easingCurves,
   hasContent,
   reducedTransition,
+  space,
   spring,
   tabbables,
   timing,
@@ -13,6 +14,7 @@ import {
   useAnimationTracking,
   useControllableState,
   useMotionPreference,
+  widths,
 } from "@buttery/core";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, cancelFrame, frame, motion } from "motion/react";
@@ -80,10 +82,10 @@ interface Geometry {
 }
 
 /** The least the panel shows below the row, however little room the window has left. */
-const SHORTEST = 200;
+const SHORTEST = widths["nav-panel-min"].value;
 
 /** How far the panel stays inside the window's bottom edge, as every floating surface does. */
-const GUTTER = 8;
+const GUTTER = space["2"];
 
 function sameGeometry(a: Geometry | null, b: Geometry): boolean {
   return (
