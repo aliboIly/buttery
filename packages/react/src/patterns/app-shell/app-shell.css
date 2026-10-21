@@ -7,16 +7,21 @@
       "header inspector"
       "stage inspector";
     grid-template-rows: auto minmax(0, 1fr);
-    grid-template-columns: minmax(0, 1fr) var(--bt-w-inspector);
+    grid-template-columns:
+      minmax(
+        0,
+        calc(
+          var(--bt-w-shell-max) - var(--bt-w-inspector) -
+            var(--bt-app-shell-gap)
+        )
+      )
+      var(--bt-w-inspector);
     gap: var(--bt-app-shell-gap);
+    justify-content: center;
     inline-size: 100%;
     block-size: 100%;
     min-block-size: 0;
-    padding-block: var(--bt-app-shell-gap);
-    padding-inline: max(
-      var(--bt-app-shell-gap),
-      calc((100% - var(--bt-w-shell-max)) / 2)
-    );
+    padding: var(--bt-app-shell-gap);
     background-color: var(--bt-bg-app);
   }
 
@@ -56,13 +61,12 @@
     grid-area: sheet-bar;
   }
 
-  /* The sheet rises from the bottom, 8px in from the edges, and the inspector inside it fills it. */
-  [data-bt-part="sheet-scrim"] {
+  .bt-app-shell-scrim[data-bt-part="sheet-scrim"] {
     position: absolute;
     inset: 0;
   }
 
-  [data-bt-part="sheet"] {
+  .bt-app-shell-sheet[data-bt-part="sheet"] {
     position: absolute;
     inset-block-end: var(--bt-space-2);
     inset-inline: var(--bt-space-2);
@@ -72,8 +76,7 @@
     outline: none;
   }
 
-  /* The inspector shrinks to the sheet's height and scrolls its sections inside. */
-  [data-bt-part="sheet"] > .bt-inspector {
+  .bt-app-shell-sheet > .bt-inspector {
     flex: 1 1 auto;
     inline-size: 100%;
     min-block-size: 0;

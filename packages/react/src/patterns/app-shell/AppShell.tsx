@@ -5,13 +5,19 @@ import {
   presencePresets,
   reducedPresence,
   useAnimationTracking,
+  useControllableState,
   useMergedRefs,
   useMotionPreference,
 } from "@buttery/core";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { useLayoutEffect, useRef, useState } from "react";
-import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import type {
+  ComponentPropsWithRef,
+  ReactElement,
+  ReactNode,
+  RefObject,
+} from "react";
 import { Button } from "../../components/button/Button.tsx";
 
 /** Props for `AppShell`. */
@@ -27,6 +33,12 @@ export interface AppShellProps extends Omit<
   readonly inspectorLabel: string;
   /** The button that opens the sheet on narrow screens. Defaults to `"Edit"`. */
   readonly openInspectorLabel?: string | undefined;
+  /** Whether the inspector's sheet is open on a narrow screen. Pair with `onOpenChange` to control it. */
+  readonly open?: boolean | undefined;
+  /** Whether the sheet starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
+  /** Called when the sheet opens or closes, including when the screen widens and the inspector moves back beside the stage. */
+  readonly onOpenChange?: ((open: boolean) => void) | undefined;
   /** The work area, such as a `Stage`. */
   readonly children: ReactNode;
 }
@@ -36,9 +48,11 @@ const SHEET_BELOW = 840;
 
 function Sheet({
   label,
+  sheet,
   children,
 }: {
   readonly label: string;
+  readonly sheet: RefObject<HTMLDivElement | null>;
   readonly children: ReactNode;
 }): ReactElement {
   const reduced = useMotionPreference() === "reduced";
@@ -52,6 +66,7 @@ function Sheet({
           initial={fade.initial}
           animate={fade.animate}
           exit={fade.exit}
+          className="bt-app-shell-scrim"
           data-bt-part="sheet-scrim"
         >
           <Scrim />
@@ -60,9 +75,11 @@ function Sheet({
       <Dialog.Content forceMount asChild aria-describedby={undefined}>
         <motion.div
           {...tracking}
+          ref={sheet}
           initial={preset.initial}
           animate={preset.animate}
           exit={preset.exit}
+          className="bt-app-shell-sheet"
           data-bt-part="sheet"
         >
           <VisuallyHidden.Root asChild>
@@ -79,7 +96,8 @@ function Sheet({
  * A whole editor screen inside the app's background: the header and the stage in one column and the
  * inspector, full height, beside them, the whole thing at most 1380px wide and centered. On a narrow
  * screen (under 840px) the inspector moves into a sheet that rises from the bottom, opened by a button
- * under the stage, so nothing ever overlaps or squeezes.
+ * under the stage, so nothing ever overlaps or squeezes. When the screen widens again the sheet closes
+ * and the inspector goes back beside the stage, taking focus along if it was in the sheet.
  *
  * @example
  * <AppShell header={<HeaderBar title="Launch card" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">
@@ -91,6 +109,9 @@ export function AppShell({
   inspector,
   inspectorLabel,
   openInspectorLabel = "Edit",
+  open,
+  defaultOpen = false,
+  onOpenChange,
   className,
   children,
   ref,
@@ -98,14 +119,33 @@ export function AppShell({
 }: AppShellProps): ReactElement {
   const root = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, root);
+  const sheet = useRef<HTMLDivElement>(null);
+  const inline = useRef<HTMLDivElement>(null);
+  const refocus = useRef(false);
   const [narrow, setNarrow] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+  const closeSheet = useRef(setSheetOpen);
+
+  useLayoutEffect(() => {
+    closeSheet.current = setSheetOpen;
+  });
 
   useLayoutEffect(() => {
     const element = root.current;
     if (!element) return undefined;
     const measure = (): void => {
-      setNarrow(element.clientWidth < SHEET_BELOW);
+      const isNarrow = element.clientWidth < SHEET_BELOW;
+      if (!isNarrow) {
+        if (sheet.current?.contains(document.activeElement) === true) {
+          refocus.current = true;
+        }
+        closeSheet.current(false);
+      }
+      setNarrow(isNarrow);
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -114,6 +154,16 @@ export function AppShell({
       observer.disconnect();
     };
   }, []);
+
+  useLayoutEffect(() => {
+    if (narrow || !refocus.current) return;
+    refocus.current = false;
+    inline.current
+      ?.querySelector<HTMLElement>(
+        'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [href], [tabindex]:not([tabindex="-1"])',
+      )
+      ?.focus();
+  }, [narrow]);
 
   return (
     <div
@@ -136,14 +186,16 @@ export function AppShell({
           </div>
           <AnimatePresence>
             {sheetOpen ? (
-              <Sheet key="sheet" label={inspectorLabel}>
+              <Sheet key="sheet" label={inspectorLabel} sheet={sheet}>
                 {inspector}
               </Sheet>
             ) : null}
           </AnimatePresence>
         </Dialog.Root>
       ) : (
-        <div data-bt-part="inspector">{inspector}</div>
+        <div ref={inline} data-bt-part="inspector">
+          {inspector}
+        </div>
       )}
     </div>
   );

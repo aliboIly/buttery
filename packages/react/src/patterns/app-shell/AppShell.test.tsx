@@ -5,7 +5,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HeaderBar } from "../header-bar/HeaderBar.tsx";
 import { Inspector } from "../inspector/Inspector.tsx";
 import { AppShell } from "./AppShell.tsx";
@@ -16,15 +16,27 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-function Editor({ width }: { readonly width: string }): ReactElement {
+function Editor({
+  width,
+  open,
+  onOpenChange,
+}: {
+  readonly width: string;
+  readonly open?: boolean;
+  readonly onOpenChange?: (open: boolean) => void;
+}): ReactElement {
   return (
     <div style={{ inlineSize: width, blockSize: "600px" }}>
       <AppShell
+        open={open}
+        onOpenChange={onOpenChange}
         header={<HeaderBar title="Launch card" />}
         inspector={
           <Inspector label="Card settings">
             <Inspector.Section title="Card">
-              <Inspector.Row label="Edge" />
+              <Inspector.Row label="Edge">
+                <button type="button">Plain</button>
+              </Inspector.Row>
             </Inspector.Section>
           </Inspector>
         }
@@ -99,5 +111,44 @@ describe("AppShell", () => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
     expect(document.activeElement).toBe(edit);
+  });
+
+  it("closes the sheet when the screen widens, takes focus along to the inspector beside the stage, and leaves it closed when it narrows again", async () => {
+    const onOpenChange = vi.fn();
+    const { rerender } = render(
+      <Editor width="390px" onOpenChange={onOpenChange} />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Edit" }));
+    const sheet = await screen.findByRole("dialog", { name: "Card settings" });
+    expect(sheet.contains(document.activeElement)).toBe(true);
+    rerender(<Editor width="1100px" onOpenChange={onOpenChange} />);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    const inline = document.querySelector('[data-bt-part="inspector"]');
+    expect(inline?.contains(document.activeElement)).toBe(true);
+    expect(document.activeElement).not.toBe(inline);
+    rerender(<Editor width="390px" onOpenChange={onOpenChange} />);
+    await screen.findByRole("button", { name: "Edit" });
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("can be controlled", async () => {
+    const onOpenChange = vi.fn();
+    const { rerender } = render(
+      <Editor width="390px" open onOpenChange={onOpenChange} />,
+    );
+    expect(
+      await screen.findByRole("dialog", { name: "Card settings" }),
+    ).toBeTruthy();
+    await userEvent.keyboard("{Escape}");
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.getByRole("dialog", { name: "Card settings" })).toBeTruthy();
+    rerender(<Editor width="390px" open={false} onOpenChange={onOpenChange} />);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
   });
 });
