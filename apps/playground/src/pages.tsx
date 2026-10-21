@@ -11,6 +11,7 @@ import { TextStacksPage } from "./pages/TextStacksPage.tsx";
 import { TokensPage } from "./pages/TokensPage.tsx";
 import { CardStudio } from "./card-studio/CardStudio.tsx";
 import { CardStudioSite } from "./card-studio/CardStudioSite.tsx";
+import { Roastery } from "./roastery/Roastery.tsx";
 import { components } from "./registry.ts";
 import { demoPages, foundationPages } from "./routes.ts";
 
@@ -18,6 +19,8 @@ export interface Page {
   readonly route: string;
   readonly title: string;
   readonly render: () => ReactElement;
+  /** A whole app that brings its own landmarks, shown without the playground's chrome. */
+  readonly fullWindow?: boolean;
 }
 
 export interface PageGroup {
@@ -26,10 +29,14 @@ export interface PageGroup {
 }
 
 const DEMOS: Readonly<
-  Record<(typeof demoPages)[number]["route"], () => ReactElement>
+  Record<
+    (typeof demoPages)[number]["route"],
+    Pick<Page, "render" | "fullWindow">
+  >
 > = {
-  "card-studio": () => <CardStudio />,
-  "card-studio-site": () => <CardStudioSite />,
+  "card-studio": { render: () => <CardStudio /> },
+  "card-studio-site": { render: () => <CardStudioSite /> },
+  roastery: { render: () => <Roastery />, fullWindow: true },
 };
 
 const FOUNDATIONS: Readonly<
@@ -73,7 +80,7 @@ export const pageGroups: readonly PageGroup[] = [
     pages: demoPages.map(({ route, title }) => ({
       route,
       title,
-      render: DEMOS[route],
+      ...DEMOS[route],
     })),
   },
   ...KINDS.map(([kind, title]) => ({

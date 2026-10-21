@@ -1,0 +1,161 @@
+import {
+  AppPage,
+  BarChart,
+  DataTable,
+  GroupedList,
+  InitialsTile,
+  PageHeader,
+  QuickActions,
+  StatusBadge,
+  toast,
+} from "@buttery/react";
+import type { DataTableColumn, StatusTone } from "@buttery/react";
+import { CalendarClock, Download, Send } from "lucide-react";
+import type { ReactElement } from "react";
+import { ORDERS, PAYOUTS, grossVolume } from "./data.ts";
+import type { Payout } from "./data.ts";
+import { money, shortDate, shortMoney } from "./format.ts";
+
+const STATES: Readonly<
+  Record<
+    Payout["status"],
+    { readonly label: string; readonly tone: StatusTone }
+  >
+> = {
+  paid: { label: "Paid", tone: "success" },
+  "in transit": { label: "In transit", tone: "info" },
+  scheduled: { label: "Scheduled", tone: "neutral" },
+};
+
+const COLUMNS: readonly DataTableColumn<Payout>[] = [
+  {
+    id: "arrives",
+    header: "Arrives",
+    cell: (payout) => shortDate(payout.arrives),
+    minWidth: "sm",
+    grow: 2,
+  },
+  {
+    id: "amount",
+    header: "Amount",
+    cell: (payout) => <DataTable.Amount value={payout.amount} currency="USD" />,
+    minWidth: "md",
+    align: "end",
+  },
+  {
+    id: "status",
+    header: "Status",
+    cell: (payout) => (
+      <StatusBadge tone={STATES[payout.status].tone}>
+        {STATES[payout.status].label}
+      </StatusBadge>
+    ),
+    minWidth: "sm",
+    skeleton: "badge",
+  },
+];
+
+/** What's on its way to the bank, and what has arrived. */
+export function PayoutsPage(): ReactElement {
+  const incoming = grossVolume(
+    ORDERS.filter(
+      (order) => order.status === "paid" || order.status === "roasting",
+    ),
+  );
+  const next = PAYOUTS[0];
+  const weeks = [...PAYOUTS].reverse();
+  return (
+    <AppPage
+      header={
+        <PageHeader
+          title="Payouts"
+          value={money(incoming)}
+          valueInfo="Paid orders not yet paid out."
+        >
+          <QuickActions label="Payout actions">
+            <QuickActions.Action
+              label="Pay out now"
+              icon={Send}
+              priority={2}
+              onSelect={() => {
+                toast.success(`${money(incoming)} is on its way to your bank.`);
+              }}
+            />
+            <QuickActions.Action
+              label="Download statement"
+              icon={Download}
+              priority={1}
+              onSelect={() => {
+                toast("Downloaded the October statement.");
+              }}
+            />
+            <QuickActions.Action
+              label="Change schedule"
+              icon={CalendarClock}
+              onSelect={() => {
+                toast("Payouts stay on Fridays in this demo.");
+              }}
+            />
+          </QuickActions>
+        </PageHeader>
+      }
+    >
+      <AppPage.Section title="Balances">
+        <GroupedList>
+          <GroupedList.Group>
+            <GroupedList.Item
+              title="Incoming"
+              description="Paid orders, not yet paid out"
+              media={<InitialsTile name="Money on the way" size="md" />}
+              value={money(incoming)}
+            />
+          </GroupedList.Group>
+          <GroupedList.Group title="Bank account">
+            <GroupedList.Item
+              title="Cascade Credit Union •• 4410"
+              description={
+                next === undefined
+                  ? undefined
+                  : `Next payout ${shortDate(next.arrives)}`
+              }
+              media={<InitialsTile name="Cascade Credit" size="md" />}
+              value={next === undefined ? undefined : money(next.amount)}
+            />
+          </GroupedList.Group>
+          <GroupedList.Add
+            label="Add a bank account"
+            onClick={() => {
+              toast("One bank account is all this demo needs.");
+            }}
+          />
+        </GroupedList>
+      </AppPage.Section>
+      <AppPage.Section title="By week">
+        <BarChart
+          label="Payouts by week"
+          labels={weeks.map((payout) => shortDate(payout.arrives))}
+          labelsHeading="Arrives"
+          series={[
+            {
+              key: "payouts",
+              label: "Payout",
+              values: weeks.map((payout) => payout.amount),
+            },
+          ]}
+          formatValue={money}
+          formatTick={shortMoney}
+          size="sm"
+        />
+      </AppPage.Section>
+      <AppPage.Section title="Recent payouts">
+        <DataTable<Payout>
+          label="Recent payouts"
+          size="compact"
+          columns={COLUMNS}
+          rows={PAYOUTS}
+          rowKey={(payout) => payout.id}
+        />
+      </AppPage.Section>
+    </AppPage>
+  );
+}

@@ -450,6 +450,178 @@ test("the playground chrome is buttery with its menus open", async ({
   });
 });
 
+/** Marks the roastery's first-visit announcement and nudge as seen, as they are for anyone coming back. */
+async function returningVisitor(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "buttery:announcement:roastery-roast-planning",
+      "true",
+    );
+    localStorage.setItem("buttery:nudge:roastery-delivery-questions", "true");
+  });
+}
+
+/** Opens a list's filters: the folded Filters button on a phone, the named pill otherwise. */
+function openFilter(name: string): ButteryInteraction["run"] {
+  return async (page: Page) => {
+    const folded = page.getByRole("button", { name: /^Filters/ }).first();
+    if (await folded.isVisible()) {
+      await folded.click();
+      return;
+    }
+    await page.getByRole("button", { name, exact: true }).first().click();
+  };
+}
+
+const roasteryInteractions: Readonly<
+  Record<string, readonly ButteryInteraction[]>
+> = {
+  roastery: [
+    { name: "close the first-visit announcement", run: press("Got it") },
+    {
+      name: "open the navigation sheet and the workspace menu in it",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Open navigation", exact: true })
+          .click();
+        await page
+          .getByRole("button", { name: "Workspace: Halfmoon Roastery" })
+          .click();
+      },
+    },
+    escape,
+    escape,
+    { name: "start a new order", run: press("New order") },
+  ],
+  "roastery/orders": [
+    { name: "open the filters", run: openFilter("Channel") },
+    escape,
+    {
+      name: "select an order",
+      run: async (page: Page) => {
+        await page
+          .getByRole("checkbox", { name: /^Select ord_/ })
+          .first()
+          .check();
+      },
+    },
+    {
+      name: "export, showing a toast while the setup guide is open",
+      run: async (page: Page) => {
+        await headerAction("Export")(page);
+        await page.getByRole("region", { name: "Notifications (F8)" }).hover();
+      },
+    },
+  ],
+  "roastery/customers": [{ name: "open the filters", run: openFilter("City") }],
+};
+
+const roasteryPages = [
+  "roastery/orders",
+  "roastery/customers",
+  "roastery/subscriptions",
+  "roastery/payouts",
+  "roastery/stock",
+  "roastery/wholesale",
+  "roastery/settings",
+];
+
+for (const route of roasteryPages) {
+  test(`${route} is buttery`, async ({ page }) => {
+    await returningVisitor(page);
+    await page.goto(`/#/${route}`);
+    await expectButtery(page, {
+      ...matrix,
+      name: route,
+      interactions: roasteryInteractions[route],
+    });
+  });
+}
+
+test("a roastery customer's page is buttery", async ({ page }) => {
+  await returningVisitor(page);
+  await page.goto("/#/roastery/customers");
+  await page
+    .locator('[data-bt="DataTable"] [data-bt-part="link"]')
+    .first()
+    .click();
+  await page.getByRole("tablist", { name: "Customer" }).waitFor();
+  await expectButtery(page, {
+    ...matrix,
+    name: "roastery customer",
+    interactions: [
+      {
+        name: "show their orders",
+        allowMove: ['[data-bt="AppPage"] [data-bt-part="aside"]'],
+        run: async (target: Page) => {
+          await target
+            .getByRole("tab", { name: "Orders", exact: true })
+            .click();
+        },
+      },
+    ],
+  });
+});
+
+test("the roastery's sidebar, menus and guide are buttery with the sidebar full and as a rail", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/#/roastery");
+  await expectButtery(page, {
+    name: "roastery with its sidebar full",
+    viewports: [{ width: 1280, height: 800 }],
+    interactions: [
+      {
+        name: "open the workspace menu",
+        run: async (target: Page) => {
+          await target
+            .getByRole("button", { name: "Workspace: Halfmoon Roastery" })
+            .click();
+        },
+      },
+      escape,
+      {
+        name: "open the Roastery group",
+        allowMove: ['[data-bt="Sidebar"]'],
+        run: press("Roastery"),
+      },
+      {
+        name: "open the setup guide",
+        allowMove: ['[data-bt="SetupGuide"]'],
+        run: press("Show all steps"),
+      },
+      { name: "open What's new", run: press("What's new") },
+      escape,
+    ],
+  });
+  await page.setViewportSize({ width: 960, height: 640 });
+  await page.goto("/#/roastery/orders");
+  await expectButtery(page, {
+    name: "roastery with its sidebar as a rail",
+    viewports: [{ width: 960, height: 640 }],
+    interactions: [
+      {
+        name: "open the Roastery group's flyout",
+        run: press("Roastery"),
+      },
+      escape,
+      {
+        name: "scroll the orders table sideways",
+        allowMove: ['[data-bt="DataTable"]'],
+        run: async (target: Page) => {
+          await target
+            .locator('[data-bt="DataTable"] > [data-bt-part="scroll"]')
+            .evaluate((scroller) => {
+              scroller.scrollLeft = scroller.scrollWidth;
+            });
+        },
+      },
+    ],
+  });
+});
+
 /** Window sizes from 1728 × 1117 through 960 × 640 to 390 × 844, about 96px apart, both sides changing together. */
 function resizeSteps(): readonly ButteryViewport[] {
   const stops: readonly ButteryViewport[] = [

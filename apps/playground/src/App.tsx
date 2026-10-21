@@ -12,7 +12,11 @@ const REDUCED_MOTION: Readonly<Record<MotionSetting, ReducedMotionPreference>> =
 export function App(): ReactElement {
   const settings = useSettings();
   const page =
-    pages.find((candidate) => candidate.route === settings.route) ?? pages[0];
+    pages.find((candidate) => candidate.route === settings.route) ??
+    pages.find((candidate) =>
+      settings.route.startsWith(`${candidate.route}/`),
+    ) ??
+    pages[0];
   if (!page) throw new Error("The playground needs at least one page.");
   const content = page.render();
   return (
@@ -21,7 +25,7 @@ export function App(): ReactElement {
       density={settings.density}
       reducedMotion={REDUCED_MOTION[settings.motion]}
     >
-      {settings.chrome ? (
+      {settings.chrome && page.fullWindow !== true ? (
         <Chrome current={page.route} settings={settings}>
           {content}
         </Chrome>

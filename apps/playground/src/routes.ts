@@ -12,6 +12,7 @@ export const foundationPages = [
 export const demoPages = [
   { route: "card-studio", title: "Card Studio" },
   { route: "card-studio-site", title: "Card Studio site" },
+  { route: "roastery", title: "Halfmoon Roastery" },
 ] as const;
 
 /** The playground route for a component: `fit-box` for FitBox. */
