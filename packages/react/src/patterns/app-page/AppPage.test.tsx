@@ -138,4 +138,22 @@ describe("AppPage", () => {
     );
     expect(page.scrollHeight).toBe(page.clientHeight);
   });
+
+  it("styles only its own parts, not parts with the same names inside its blocks", () => {
+    render(
+      <AppPage fill>
+        <AppPage.Section>
+          <div data-bt-part="body" data-testid="inner-body">
+            <div data-bt-part="main" data-testid="inner-main" />
+          </div>
+        </AppPage.Section>
+      </AppPage>,
+    );
+    expect(getComputedStyle(screen.getByTestId("inner-body")).display).toBe(
+      "block",
+    );
+    expect(getComputedStyle(screen.getByTestId("inner-main")).display).toBe(
+      "block",
+    );
+  });
 });

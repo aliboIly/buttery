@@ -319,7 +319,12 @@ describe("DataTable", () => {
         <div style={{ display: "flex", blockSize: "520px" }}>
           <AppPage fill>
             <AppPage.Section>
-              <Orders
+              <DataTable<Order>
+                label="Orders"
+                columns={COLUMNS}
+                rows={ORDERS}
+                rowKey={(order) => order.id}
+                rowLabel={(order) => order.id}
                 pagination={{
                   page: 1,
                   pageSize: 6,

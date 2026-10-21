@@ -44,7 +44,7 @@
     }
   }
 
-  .bt-choice-dialog [data-bt-part="tile"] {
+  .bt-choice-dialog [data-bt-part="choice"] > [data-bt-part="tile"] {
     display: grid;
     place-items: center;
     inline-size: var(--bt-choice-dialog-tile);
@@ -54,7 +54,7 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-choice-dialog [data-bt-part="text"] {
+  .bt-choice-dialog [data-bt-part="choice"] > [data-bt-part="text"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-1);
