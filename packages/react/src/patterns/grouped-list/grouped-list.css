@@ -26,7 +26,6 @@
     list-style: none;
   }
 
-  /* The title lines up with the rows' media; the "…" button's icon with their values. */
   .bt-grouped-list-group > [data-bt-part="group-head"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

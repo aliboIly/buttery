@@ -79,11 +79,6 @@ function widthOf(element: Element | null | undefined): number {
   return element ? element.getBoundingClientRect().width : 0;
 }
 
-/**
- * Whether the bar's menus and actions fold into the menu button: under 640px of bar, or once they no longer
- * fit beside the brand. It remembers the width they needed, since folded they can't be measured, and
- * unfolds once there's room.
- */
 /** Measures what the bar's menus and actions need while they show, and whether they fit beside the brand. */
 function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
   const list = row.querySelector('[data-bt-part="list"]');
@@ -107,6 +102,11 @@ function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
   );
 }
 
+/**
+ * Whether the bar's menus and actions fold into the menu button: under 640px of bar, or once they no longer
+ * fit beside the brand. It remembers the width they needed, since folded they can't be measured, and
+ * unfolds once there's room.
+ */
 function useFolded(bar: RefObject<HTMLElement | null>): boolean {
   const [folded, setFolded] = useState(false);
   const needed = useRef(0);

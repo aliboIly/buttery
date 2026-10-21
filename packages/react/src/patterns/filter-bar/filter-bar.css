@@ -28,7 +28,6 @@
     gap: var(--bt-space-2);
   }
 
-  /* Folded, the Filters button keeps its label and the actions, such as a search, narrow instead. */
   .bt-filter-bar[data-folded] > [data-bt-part="pills"] {
     flex: none;
   }

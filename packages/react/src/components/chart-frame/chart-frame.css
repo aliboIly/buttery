@@ -272,7 +272,6 @@
     pointer-events: none;
   }
 
-  /* The chart fades in where its loading pill was, as the pill fades away. */
   .bt-chart-frame[data-arrived]
     > :is(
       [data-bt-part="y-axis"],

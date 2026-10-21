@@ -129,8 +129,6 @@ export function NotificationNudge({
         waiting?.disconnect();
         waiting = null;
         if (entry?.isIntersecting !== true) {
-          // Its button left the view, folded into a menu or scrolled away: the nudge goes with it, not
-          // yet seen, and comes back with it.
           if (byItself.current) setOpen(false);
           return;
         }

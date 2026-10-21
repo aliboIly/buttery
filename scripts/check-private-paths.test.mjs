@@ -18,14 +18,22 @@ describe("findNames", () => {
     ]);
   });
 
-  it("leaves other words alone: another case, longer words, none to look for", () => {
-    expect(findNames("acme Acmeville MegaAcme", ["Acme"])).toEqual([]);
+  it("finds a name in any case and inside camelCase, kebab, snake and dotted compounds", () => {
+    const text =
+      "acme\nacmeCard\nMegaAcme\ninspiration-acme\nACME_LIKE\nacme.css";
+    expect(findNames(text, ["Acme"]).map(({ line }) => line)).toEqual([
+      1, 2, 3, 4, 5, 6,
+    ]);
+  });
+
+  it("leaves longer words alone, and finds nothing with no names to look for", () => {
+    expect(findNames("Acmeville acmestore", ["Acme"])).toEqual([]);
     expect(findNames("Acme", [])).toEqual([]);
   });
 
-  it("matches names with dots or spaces literally", () => {
-    expect(findNames("see acme.io or acmexio", ["acme.io"])).toEqual([
-      { line: 1, name: "acme.io" },
+  it("matches names with dots or spaces as that phrase, in any case", () => {
+    expect(findNames("see Acme.io or acmexio", ["acme.io"])).toEqual([
+      { line: 1, name: "Acme.io" },
     ]);
   });
 });

@@ -26,17 +26,50 @@ export function parseNames(text) {
     .filter(Boolean);
 }
 
+/** The words of a line, split at spaces, punctuation and camelCase humps, so `acmeCard` gives `acme`, `Card`. */
+function wordsOf(line) {
+  return line
+    .split(/[^\p{L}\p{N}]+/u)
+    .flatMap((part) =>
+      part.split(/(?<=\p{Ll})(?=\p{Lu})|(?<=\p{Lu})(?=\p{Lu}\p{Ll})/u),
+    )
+    .filter(Boolean);
+}
+
 /**
- * Where `text` names one of `names`: each as a whole word, as written or plural, such as `Acme` and
- * `Acmes` but not `acme` or `Acmeville`. Returns the 1-based line and the name found.
+ * Where `text` names one of `names`, in any case: as a word of its own or a word inside a compound, as
+ * written or plural, such as `Acme`, `acmes`, `acmeCard` and `inspiration-acme`, but not `Acmeville`. A
+ * name with spaces or dots in it matches as that phrase, in any case. Returns the 1-based line and the
+ * text found.
  */
 export function findNames(text, names) {
   if (names.length === 0) return [];
-  const pattern = new RegExp(`\\b(?:${names.map(escape).join("|")})s?\\b`, "g");
+  const single = new Set(
+    names
+      .filter((name) => /^[\p{L}\p{N}]+$/u.test(name))
+      .map((name) => name.toLowerCase()),
+  );
+  const phrases = names.filter((name) => !/^[\p{L}\p{N}]+$/u.test(name));
+  const phrase =
+    phrases.length === 0
+      ? null
+      : new RegExp(
+          `(?<![\\p{L}\\p{N}])(?:${phrases.map(escape).join("|")})(?![\\p{L}\\p{N}])`,
+          "giu",
+        );
   const found = [];
   for (const [index, line] of text.split("\n").entries()) {
-    for (const match of line.matchAll(pattern))
-      found.push({ line: index + 1, name: match[0] });
+    for (const word of wordsOf(line)) {
+      const lower = word.toLowerCase();
+      if (
+        single.has(lower) ||
+        (lower.endsWith("s") && single.has(lower.slice(0, -1)))
+      )
+        found.push({ line: index + 1, name: word });
+    }
+    if (phrase !== null)
+      for (const match of line.matchAll(phrase))
+        found.push({ line: index + 1, name: match[0] });
   }
   return found;
 }

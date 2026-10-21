@@ -85,7 +85,6 @@
     display: none;
   }
 
-  /* With too little room, the menus and actions fold into the menu button. */
   .bt-nav-bar [data-bt-part="bar"][data-folded] {
     justify-content: space-between;
   }
@@ -116,7 +115,6 @@
     inset: 0;
   }
 
-  /* The full-height sheet floats 8px inside the window, like every floating surface. */
   .bt-nav-bar-sheet[data-bt-part="sheet"] {
     position: absolute;
     inset: var(--bt-space-2);

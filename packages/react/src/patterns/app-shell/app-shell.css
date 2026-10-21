@@ -104,7 +104,6 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* A Sidebar fills the column and scrolls its own nav; anything else scrolls in the column. */
   .bt-app-shell[data-layout="sidebar"] > [data-bt-part="sidebar"] {
     grid-area: sidebar;
     min-block-size: 0;

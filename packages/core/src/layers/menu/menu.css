@@ -104,7 +104,6 @@
     color: var(--bt-text-secondary);
   }
 
-  /* One element: the 1px line sits centered in 6px of space above and below. */
   .bt-menu > [data-bt-part="menu-separator"] {
     flex: none;
     block-size: calc(var(--bt-menu-line) + 2 * var(--bt-space-1_5));
