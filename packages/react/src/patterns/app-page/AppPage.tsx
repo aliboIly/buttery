@@ -1,4 +1,12 @@
-import { cx, hasContent } from "@buttery/core";
+import {
+  ReflowGroup,
+  cx,
+  hasContent,
+  useAnimationTracking,
+  useReflow,
+} from "@buttery/core";
+import type { MotionElementProps } from "@buttery/core";
+import { motion } from "motion/react";
 import { useId } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 
@@ -38,24 +46,28 @@ function AppPageRoot({
       data-width={width}
       data-fill={fill ? "" : undefined}
     >
-      <div data-bt-part="frame">
-        {hasContent(header) ? <div data-bt-part="header">{header}</div> : null}
-        <div data-bt-part="body" data-aside={withAside ? "" : undefined}>
-          <div data-bt-part="main">{children}</div>
-          {withAside ? (
-            <aside aria-label={asideLabel} data-bt-part="aside">
-              {aside}
-            </aside>
+      <ReflowGroup>
+        <div data-bt-part="frame">
+          {hasContent(header) ? (
+            <div data-bt-part="header">{header}</div>
           ) : null}
+          <div data-bt-part="body" data-aside={withAside ? "" : undefined}>
+            <div data-bt-part="main">{children}</div>
+            {withAside ? (
+              <aside aria-label={asideLabel} data-bt-part="aside">
+                {aside}
+              </aside>
+            ) : null}
+          </div>
         </div>
-      </div>
+      </ReflowGroup>
     </main>
   );
 }
 
 /** Props for `AppPage.Section`. */
 export interface AppPageSectionProps extends Omit<
-  ComponentPropsWithRef<"section">,
+  MotionElementProps<"section">,
   "title"
 > {
   /** The section's heading, an `h2` in `title-md`, which names it. */
@@ -64,7 +76,10 @@ export interface AppPageSectionProps extends Omit<
   readonly actions?: ReactNode;
 }
 
-/** One block of a page, 32px from the next: an optional `title-md` heading with actions at its end, then its content 16px under it. */
+/**
+ * One block of a page, 32px from the next: an optional `title-md` heading with actions at its end, then its
+ * content 16px under it. When a banner or card above it in the page is dismissed, it slides up into the space.
+ */
 export function AppPageSection({
   title,
   actions,
@@ -74,10 +89,15 @@ export function AppPageSection({
 }: AppPageSectionProps): ReactElement {
   const titleId = useId();
   const titled = title !== undefined;
+  const reflow = useReflow();
+  const tracking = useAnimationTracking();
   return (
-    <section
+    <motion.section
       aria-labelledby={titled ? titleId : undefined}
       {...rest}
+      {...reflow}
+      onLayoutAnimationStart={tracking.onLayoutAnimationStart}
+      onLayoutAnimationComplete={tracking.onLayoutAnimationComplete}
       className={cx("bt-app-page-section", className)}
       data-bt-part="section"
     >
@@ -101,7 +121,7 @@ export function AppPageSection({
         </div>
       ) : null}
       {children}
-    </section>
+    </motion.section>
   );
 }
 
