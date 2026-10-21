@@ -168,6 +168,13 @@ function formatCustom(range: CustomDateRange): string {
   }).formatRange(start, end);
 }
 
+/** The two dates in order, so a range typed end first still runs forward. */
+function ordered(range: CustomDateRange): CustomDateRange {
+  return range.start <= range.end
+    ? range
+    : { start: range.end, end: range.start };
+}
+
 function sameDates(
   a: CustomDateRange | undefined,
   b: CustomDateRange | undefined,
@@ -178,8 +185,8 @@ function sameDates(
 /**
  * The period a report covers, as three small outline selects 8 apart: the range (presets ending today,
  * or two dates in fields under its list), the interval its charts group by, and, after "compared to", the
- * period it's set against. One value holds all of it, for fetching the report's data. Under 640px of its
- * own width the range and interval share a row over the comparison.
+ * period it's set against. One value holds all of it, for fetching the report's data. It fills the width
+ * it's given, and under 640px of it the range and interval share a row over the comparison.
  *
  * @example
  * <DateRangeBar value={period} onValueChange={setPeriod} />
@@ -221,7 +228,9 @@ export function DateRangeBar({
       return;
     }
     if (draft.start !== "" && draft.end !== "") {
-      setCurrent({ ...current, range, custom: draft });
+      const dates = ordered(draft);
+      setDraft(dates);
+      setCurrent({ ...current, range, custom: dates });
       return;
     }
     const end = new Date();

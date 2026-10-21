@@ -1,6 +1,10 @@
 @layer bt.patterns {
+  /* Its layout follows its own width, so its content can't size it: in a row it asks for its one-row width. */
   .bt-date-range-bar {
+    --bt-date-range-bar-one-row: 640px;
+
     container: bt-date-range-bar / inline-size;
+    contain-intrinsic-inline-size: var(--bt-date-range-bar-one-row);
     min-inline-size: 0;
   }
 
