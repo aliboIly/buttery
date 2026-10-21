@@ -38,6 +38,7 @@ import { StockPage } from "./StockPage.tsx";
 import { SubscriptionsPage } from "./SubscriptionsPage.tsx";
 import { WholesalePage } from "./WholesalePage.tsx";
 import { WeekPlan } from "./WeekPlan.tsx";
+import { go } from "./navigation.ts";
 import "./roastery.css";
 
 type Place =
@@ -69,11 +70,6 @@ function placeOf(route: string): Place {
     default:
       return { page: "overview" };
   }
-}
-
-/** Goes to a page of the demo, keeping the playground's settings in the address. */
-export function go(href: string): void {
-  window.location.hash = href.replace(/^#/, "");
 }
 
 const SETUP_TASKS = [

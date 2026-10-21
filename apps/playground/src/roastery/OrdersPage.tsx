@@ -25,7 +25,7 @@ import { customerCell } from "./customer-cell.tsx";
 import { ORDERS, coffeeOf, customerOf } from "./data.ts";
 import type { Order, OrderStatus } from "./data.ts";
 import { dateTime } from "./format.ts";
-import { go } from "./Roastery.tsx";
+import { go } from "./navigation.ts";
 
 const PAGE_SIZE = 25;
 

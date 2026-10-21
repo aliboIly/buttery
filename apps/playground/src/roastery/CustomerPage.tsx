@@ -20,7 +20,7 @@ import { CUSTOMER_ROWS } from "./customers.ts";
 import { SUBSCRIPTIONS, coffeeOf } from "./data.ts";
 import type { Order } from "./data.ts";
 import { dateTime, money, number, shortDate, since } from "./format.ts";
-import { go } from "./Roastery.tsx";
+import { go } from "./navigation.ts";
 
 const ORDER_COLUMNS: readonly DataTableColumn<Order>[] = [
   {

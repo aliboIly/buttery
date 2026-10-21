@@ -18,7 +18,7 @@ import type { ReactElement } from "react";
 import { CUSTOMER_ROWS, isNew } from "./customers.ts";
 import type { CustomerRow } from "./customers.ts";
 import { number, since } from "./format.ts";
-import { go } from "./Roastery.tsx";
+import { go } from "./navigation.ts";
 
 const PAGE_SIZE = 25;
 

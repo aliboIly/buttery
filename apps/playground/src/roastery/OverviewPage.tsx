@@ -23,7 +23,7 @@ import {
 } from "./data.ts";
 import type { Order } from "./data.ts";
 import { change, money, number, shortDate, shortMoney } from "./format.ts";
-import { go } from "./Roastery.tsx";
+import { go } from "./navigation.ts";
 import { StockList } from "./stock.tsx";
 
 const WEEKDAYS = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
