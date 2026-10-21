@@ -1,8 +1,11 @@
 import { useEffect, useRef } from "react";
+import { warnOnce } from "../utils/dev.ts";
 
 /**
  * A key combination: modifiers joined with `+` before one key, such as `"mod+o"`, `"mod+shift+z"` or
- * `"escape"`. `mod` is ⌘ on Apple platforms and Ctrl elsewhere.
+ * `"escape"`. `mod` is ⌘ on Apple platforms and Ctrl elsewhere; `cmd`, `command` and `meta` mean `mod`
+ * too, `option` and `opt` mean `alt`, and `control` means `ctrl`. A shortcut naming any other modifier
+ * never fires, and says so in development.
  */
 export type Shortcut = string;
 
@@ -17,13 +20,36 @@ export interface ShortcutOptions {
   readonly inFields?: boolean | undefined;
 }
 
-interface ParsedShortcut {
+/** A shortcut split into its key and modifiers, from `parseShortcut`. */
+export interface ParsedShortcut {
+  /** The key, lowercased, as `KeyboardEvent.key` names it, such as `"z"` or `"escape"`. */
   readonly key: string;
+  /** ⌘ on Apple platforms, Ctrl elsewhere. */
   readonly mod: boolean;
+  /** Shift. */
   readonly shift: boolean;
+  /** Alt, Option on Apple platforms. */
   readonly alt: boolean;
+  /** Ctrl on every platform. */
   readonly ctrl: boolean;
+  /** Whether every modifier it names is one buttery knows; a shortcut that names another never matches. */
+  readonly known: boolean;
 }
+
+type Modifier = "mod" | "shift" | "alt" | "ctrl";
+
+const MODIFIER_NAMES: Readonly<Partial<Record<string, Modifier>>> = {
+  mod: "mod",
+  cmd: "mod",
+  command: "mod",
+  meta: "mod",
+  shift: "shift",
+  alt: "alt",
+  option: "alt",
+  opt: "alt",
+  ctrl: "ctrl",
+  control: "ctrl",
+};
 
 const KEY_NAMES: Readonly<Partial<Record<string, string>>> = {
   escape: "escape",
@@ -43,13 +69,27 @@ const KEY_NAMES: Readonly<Partial<Record<string, string>>> = {
 export function parseShortcut(shortcut: Shortcut): ParsedShortcut {
   const parts = shortcut.toLowerCase().split("+");
   const key = parts.at(-1) ?? "";
-  const modifiers = new Set(parts.slice(0, -1));
+  const modifiers = new Set<Modifier>();
+  let known = true;
+  for (const name of parts.slice(0, -1)) {
+    const modifier = MODIFIER_NAMES[name];
+    if (modifier) {
+      modifiers.add(modifier);
+    } else {
+      known = false;
+      warnOnce(
+        "useShortcut",
+        `"${shortcut}" names a modifier buttery doesn't know, "${name}", so it never fires. Fix: use mod (⌘ on Apple platforms, Ctrl elsewhere), shift, alt or ctrl, such as "mod+shift+z".`,
+      );
+    }
+  }
   return {
     key: KEY_NAMES[key] ?? key,
     mod: modifiers.has("mod"),
     shift: modifiers.has("shift"),
     alt: modifiers.has("alt"),
     ctrl: modifiers.has("ctrl"),
+    known,
   };
 }
 
@@ -57,16 +97,29 @@ function onApplePlatform(): boolean {
   return /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
 }
 
-function isField(target: EventTarget | null): boolean {
+/**
+ * Whether a key or paste event's target is a field someone types in: a text input, a text area, a select
+ * or editable content. Checkboxes, radios, sliders, color and file inputs and buttons don't count.
+ */
+export function isTypingField(target: EventTarget | null): boolean {
   return (
     target instanceof HTMLElement &&
     (target.isContentEditable ||
       target instanceof HTMLTextAreaElement ||
       target instanceof HTMLSelectElement ||
       (target instanceof HTMLInputElement &&
-        !["checkbox", "radio", "button", "range", "color"].includes(
-          target.type,
-        )))
+        ![
+          "checkbox",
+          "radio",
+          "button",
+          "submit",
+          "reset",
+          "image",
+          "file",
+          "hidden",
+          "range",
+          "color",
+        ].includes(target.type)))
   );
 }
 
@@ -77,6 +130,7 @@ export function matchesShortcut(
   apple: boolean,
 ): boolean {
   const wanted = parseShortcut(shortcut);
+  if (!wanted.known) return false;
   const meta = apple ? wanted.mod : false;
   const control = apple ? wanted.ctrl : wanted.mod || wanted.ctrl;
   return (
@@ -114,7 +168,7 @@ export function useShortcut(
     const apple = onApplePlatform();
     const listen = (event: KeyboardEvent): void => {
       if (event.defaultPrevented || event.isComposing) return;
-      if (!inFields && isField(event.target)) return;
+      if (!inFields && isTypingField(event.target)) return;
       if (!matchesShortcut(event, shortcut, apple)) return;
       event.preventDefault();
       latest.current(event);

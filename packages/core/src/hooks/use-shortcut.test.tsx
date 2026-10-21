@@ -2,7 +2,12 @@ import { cleanup, render } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { matchesShortcut, parseShortcut, useShortcut } from "./use-shortcut.ts";
+import {
+  isTypingField,
+  matchesShortcut,
+  parseShortcut,
+  useShortcut,
+} from "./use-shortcut.ts";
 import type { ShortcutOptions } from "./use-shortcut.ts";
 
 afterEach(cleanup);
@@ -31,6 +36,7 @@ describe("useShortcut", () => {
       shift: true,
       alt: false,
       ctrl: false,
+      known: true,
     });
     expect(parseShortcut("escape").key).toBe("escape");
   });
@@ -76,7 +82,12 @@ describe("useShortcut", () => {
 
   it("stops listening when disabled", async () => {
     const handler = vi.fn();
-    render(
+    const { rerender } = render(
+      <Listener shortcut="escape" handler={handler} />,
+    );
+    await userEvent.keyboard("{Escape}");
+    expect(handler).toHaveBeenCalledTimes(1);
+    rerender(
       <Listener
         shortcut="escape"
         handler={handler}
@@ -84,6 +95,38 @@ describe("useShortcut", () => {
       />,
     );
     await userEvent.keyboard("{Escape}");
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it("never fires a shortcut that names a modifier it doesn't know", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const handler = vi.fn();
+    render(<Listener shortcut="hyper+k" handler={handler} />);
+    await userEvent.keyboard("k");
     expect(handler).not.toHaveBeenCalled();
+    expect(parseShortcut("opt+k")).toEqual(parseShortcut("alt+k"));
+  });
+
+  it("counts text fields as typing, and buttons, checkboxes, sliders and file inputs as not", () => {
+    const make = (type: string): HTMLInputElement => {
+      const input = document.createElement("input");
+      input.type = type;
+      return input;
+    };
+    expect(isTypingField(make("text"))).toBe(true);
+    expect(isTypingField(make("search"))).toBe(true);
+    expect(isTypingField(document.createElement("textarea"))).toBe(true);
+    for (const type of ["submit", "file", "range", "checkbox", "color"]) {
+      expect(isTypingField(make(type))).toBe(false);
+    }
+  });
+
+  it("reads cmd, meta and option as mod and alt, and warns with the fix about a modifier it doesn't know", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    expect(parseShortcut("cmd+option+k")).toEqual(parseShortcut("mod+alt+k"));
+    expect(parseShortcut("meta+k")).toEqual(parseShortcut("mod+k"));
+    expect(parseShortcut("super+k").known).toBe(false);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('"super"'));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("Fix: use mod"));
   });
 });
