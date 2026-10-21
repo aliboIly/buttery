@@ -44,6 +44,12 @@ describe("LoadingPill", () => {
     expect(pill()?.getAttribute("aria-hidden")).toBe("true");
   });
 
+  it("shows without a status when something around it says it's loading", async () => {
+    render(<LoadingPill label="Loading orders" announce={false} />);
+    await shown();
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
   it("never shows for a load quicker than 300ms", async () => {
     const { rerender } = render(<LoadingPill loading />);
     await wait(150);

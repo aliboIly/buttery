@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "A trend in a table row or beside a number: use Sparkline",
   ],
   related: ["LineChart", "AreaChart", "BarChart", "Sparkline", "MetricCard"],
-  a11y: "The plot is one Tab stop, a slider over the points named by the chart's label and described by its summary: Left and Right (or Down and Up) step through the points, Home and End jump to the ends, and each step announces the point's label, its values and the change against the comparison. Escape hides the tooltip. A visually hidden table holds every value. With no data, the box is an image named by the label and the empty message; while loading it's marked busy and the pill is a status.",
+  a11y: "The plot is one Tab stop, a slider over the points named by the chart's label and described by its summary: Left and Right (or Down and Up) step through the points, Home and End jump to the ends, and each step announces the point's label, its values and the change against the comparison. Escape hides the tooltip. A visually hidden table holds every value. With no data, the box is an image named by the label and the empty message; while loading the pill is a status, outside any busy region so it's read out; announceLoading turns it off when what holds the chart is marked busy.",
   motion: "none",
 };

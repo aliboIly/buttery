@@ -215,6 +215,7 @@ export function MetricCard({
           formatTick={formatTick}
           lowerIsBetter={lowerIsBetter}
           loading={loading}
+          announceLoading={false}
         />
       )}
       {updated === undefined && href === undefined ? null : (

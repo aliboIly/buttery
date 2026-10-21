@@ -22,6 +22,11 @@ export interface LoadingPillProps extends MotionElementProps<"div"> {
    * so a quick load never flashes it, and fades away as soon as it turns false. Defaults to `true`.
    */
   readonly loading?: boolean | undefined;
+  /**
+   * Whether its words are read out as it shows. Defaults to `true`; turn it off when something around it
+   * already says it's loading, such as a card marked busy.
+   */
+  readonly announce?: boolean | undefined;
 }
 
 /**
@@ -35,6 +40,7 @@ export interface LoadingPillProps extends MotionElementProps<"div"> {
 export function LoadingPill({
   label = "Loading",
   loading = true,
+  announce = true,
   className,
   ...rest
 }: LoadingPillProps): ReactElement {
@@ -63,9 +69,11 @@ export function LoadingPill({
   return (
     <>
       {/* Mounted while the pill isn't, so its words are announced as they arrive rather than with it. */}
-      <VisuallyHidden.Root role="status">
-        {showing ? label : ""}
-      </VisuallyHidden.Root>
+      {announce ? (
+        <VisuallyHidden.Root role="status">
+          {showing ? label : ""}
+        </VisuallyHidden.Root>
+      ) : null}
       <AnimatePresence>
         {showing ? (
           <motion.div

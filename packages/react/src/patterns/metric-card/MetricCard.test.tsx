@@ -158,6 +158,7 @@ describe("MetricCard", () => {
     );
     const card = screen.getByRole("group", { name: "Sales" });
     expect(card.getAttribute("aria-busy")).toBe("true");
+    expect(screen.queryByRole("status")).toBeNull();
     expect(
       screen.getByText("$00,000.00").classList.contains("bt-skeleton"),
     ).toBe(true);

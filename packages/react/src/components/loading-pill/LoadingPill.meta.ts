@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "A button's own action: use Button's loading state",
   ],
   related: ["Button", "DataTable", "MetricCard"],
-  a11y: "A polite status region stays mounted and gets its words when the pill appears, so they're announced; the pill itself is hidden from screen readers. The spinner is decorative and holds still with reduced motion.",
+  a11y: "A polite status region stays mounted and gets its words when the pill appears, so they're announced, unless announce is off because something around it, such as a card marked busy, already says it's loading; the pill itself is hidden from screen readers. The spinner is decorative and holds still with reduced motion.",
   motion: "presence",
 };

@@ -283,15 +283,23 @@ describe("ChartFrame", () => {
     expect(frame?.height).toBe(220);
   });
 
-  it("shows a loading pill over the same box, marked busy", async () => {
+  it("shows a loading pill over the same box, its words in a status no busy region holds back", async () => {
     render(<Chart loading size="sm" />);
     const frame = document.querySelector<HTMLElement>(".bt-chart-frame");
-    expect(frame?.getAttribute("aria-busy")).toBe("true");
     expect(frame?.getBoundingClientRect().height).toBe(160);
     expect(screen.queryByRole("slider")).toBeNull();
     await waitFor(() => {
       expect(screen.getByRole("status").textContent).toBe("Loading data");
     });
+    expect(screen.getByRole("status").closest('[aria-busy="true"]')).toBeNull();
+  });
+
+  it("loads without a status when what holds it says it's loading", async () => {
+    render(<Chart loading size="sm" announceLoading={false} />);
+    await waitFor(() => {
+      expect(document.querySelector('[data-bt="LoadingPill"]')).not.toBeNull();
+    });
+    expect(screen.queryByRole("status")).toBeNull();
   });
 
   it("warns, with the fix, when a series has a value count that doesn't match its labels", () => {

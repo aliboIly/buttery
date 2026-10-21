@@ -79,6 +79,11 @@ export interface ChartFrameProps extends Omit<
   readonly loading?: boolean | undefined;
   /** What the loading pill says. Defaults to `"Loading data"`. */
   readonly loadingLabel?: string | undefined;
+  /**
+   * Whether the loading pill's words are read out. Defaults to `true`; turn it off when what holds the
+   * chart is marked busy, as `MetricCard` is, so a page of loading charts isn't read out once per chart.
+   */
+  readonly announceLoading?: boolean | undefined;
   /** What it says with no values to draw. Defaults to `"No data for this period"`. */
   readonly emptyLabel?: string | undefined;
   /** Heads the labels' column in the screen-reader table. Defaults to `"Date"`. */
@@ -226,6 +231,7 @@ function ChartFrameRoot({
   lowerIsBetter = false,
   loading = false,
   loadingLabel = "Loading data",
+  announceLoading = true,
   emptyLabel = "No data for this period",
   labelsHeading = "Date",
   className,
@@ -443,7 +449,6 @@ function ChartFrameRoot({
       data-layout={layout}
       data-state={state}
       data-arrived={arrived && state === "ready" ? "" : undefined}
-      aria-busy={loading ? true : undefined}
       style={frameStyle}
       onAnimationEnd={(event) => {
         onAnimationEnd?.(event);
@@ -584,7 +589,11 @@ function ChartFrameRoot({
         </div>
       ) : null}
       <div data-bt-part="loading">
-        <LoadingPill label={loadingLabel} loading={loading} />
+        <LoadingPill
+          label={loadingLabel}
+          loading={loading}
+          announce={announceLoading}
+        />
       </div>
     </div>
   );
