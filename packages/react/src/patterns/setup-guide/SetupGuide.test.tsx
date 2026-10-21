@@ -12,6 +12,7 @@ import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { ButteryProvider } from "../../provider/ButteryProvider.tsx";
 import { SetupGuide } from "./SetupGuide.tsx";
 import type { SetupGuideProps, SetupTask } from "./SetupGuide.tsx";
@@ -140,6 +141,29 @@ describe("SetupGuide", () => {
     cleanup();
     render(<Guide storageKey="test-setup" />);
     expect(screen.queryByRole("region", { name: "Setup guide" })).toBeNull();
+  });
+
+  it("hands keyboard focus back to where it was as it's dismissed, without scrolling the page", async () => {
+    render(
+      <ButteryProvider>
+        <input aria-label="Search" />
+        <div style={{ blockSize: "300vh" }} />
+        <button type="button">Last on the page</button>
+        <SetupGuide tasks={TASKS} />
+      </ButteryProvider>,
+    );
+    const search = screen.getByRole("textbox", { name: "Search" });
+    await browser.keyboard("{Shift}");
+    search.focus();
+    const dismiss = within(guide()).getByRole("button", { name: "Dismiss" });
+    dismiss.focus();
+    const scrolled = window.scrollY;
+    await browser.keyboard("{Enter}");
+    await waitFor(() => {
+      expect(screen.queryByRole("region", { name: "Setup guide" })).toBeNull();
+    });
+    expect(document.activeElement).toBe(search);
+    expect(window.scrollY).toBe(scrolled);
   });
 
   it("lets the keyboard reach and scroll its steps while they overflow with nothing in them to focus", async () => {

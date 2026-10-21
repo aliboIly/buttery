@@ -2,6 +2,7 @@ import {
   Icon,
   cx,
   fadeOut,
+  lastFocusedOutside,
   reducedTransition,
   tabbables,
   useAnimationTracking,
@@ -98,12 +99,20 @@ function isFlag(value: unknown): value is boolean {
   return typeof value === "boolean";
 }
 
-/** Moves focus out of a part that's leaving, to the next tab stop after it or else the one before. */
+/**
+ * Moves focus out of a part that's leaving: to the next tab stop after it in the page, or else the one
+ * before; or, for a part floating in a lane outside the page's order, back to where focus was before it,
+ * without scrolling.
+ */
 function moveFocusOff(): void {
   const part = document.activeElement?.closest(
     '[data-bt-dismissible="leaving"]',
   );
   if (!part) return;
+  if (part.closest("[data-bt-layer]") !== null) {
+    lastFocusedOutside(part)?.focus({ preventScroll: true });
+    return;
+  }
   const stops = tabbables(document.body).filter((stop) => !part.contains(stop));
   const after = stops.find(
     (stop) =>

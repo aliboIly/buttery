@@ -5,14 +5,15 @@ function rendered(element: HTMLElement): boolean {
   return (
     element.getClientRects().length > 0 &&
     getComputedStyle(element).visibility !== "hidden" &&
-    element.closest("[inert]") === null
+    element.closest("[inert]") === null &&
+    !element.hasAttribute("data-radix-focus-guard")
   );
 }
 
 /**
  * The elements inside `element` that the Tab key stops on, in document order: buttons, links, fields and
- * `tabindex` 0 or more, leaving out any that aren't rendered (`display: none`, `visibility: hidden`) or sit
- * under `inert`.
+ * `tabindex` 0 or more, leaving out any that aren't rendered (`display: none`, `visibility: hidden`), sit
+ * under `inert`, or are the invisible guards an open dialog or popover puts around the page.
  */
 export function tabbables(element: Element | null): HTMLElement[] {
   if (element === null) return [];

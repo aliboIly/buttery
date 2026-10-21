@@ -45,6 +45,13 @@ describe("hasTabbable", () => {
     expect(hasTabbable(holding("<div inert><button>Go</button></div>"))).toBe(
       false,
     );
+    expect(
+      hasTabbable(
+        holding(
+          '<span data-radix-focus-guard tabindex="0" style="position: fixed; opacity: 0"></span>',
+        ),
+      ),
+    ).toBe(false);
   });
 
   it("lists the tab stops in document order", () => {
