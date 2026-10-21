@@ -513,3 +513,5 @@ export { ChoiceDialog } from "./patterns/choice-dialog/ChoiceDialog.tsx";
 export type { ChoiceDialogProps } from "./patterns/choice-dialog/ChoiceDialog.tsx";
 export { AnnouncementDialog } from "./patterns/announcement-dialog/AnnouncementDialog.tsx";
 export type { AnnouncementDialogProps } from "./patterns/announcement-dialog/AnnouncementDialog.tsx";
+export { SettingsIndex } from "./patterns/settings-index/SettingsIndex.tsx";
+export type { SettingsIndexProps } from "./patterns/settings-index/SettingsIndex.tsx";
