@@ -42,8 +42,9 @@ const STATUSES: Readonly<
   refunded: { label: "Refunded", tone: "danger" },
 };
 
-/** A view someone saved: the filters it keeps. */
+/** A view someone saved: the built-in view it was made from and the filters it keeps. */
 interface Filters {
+  readonly base: string;
   readonly channel: Order["channel"] | undefined;
   readonly query: string;
 }
@@ -179,9 +180,10 @@ export function OrdersPage({
     visible: new Set(COLUMNS.map((column) => column.id)),
   });
   const search = query.trim().toLowerCase();
+  const base = saved.get(view)?.base ?? view;
   const matching = ORDERS.filter(
     (order) =>
-      inView(view, order) &&
+      inView(base, order) &&
       (channel === undefined || order.channel === channel) &&
       (search === "" ||
         order.id.toLowerCase().includes(search) ||
@@ -206,7 +208,7 @@ export function OrdersPage({
     const label =
       CHANNELS.find((option) => option.value === channel)?.label ??
       (query.trim() === "" ? "My orders" : `“${query.trim()}”`);
-    setSaved(new Map(saved).set(id, { channel, query }));
+    setSaved(new Map(saved).set(id, { base, channel, query }));
     setViews([...views, { id, label }]);
     setView(id);
     toast.success(`Saved the view “${label}”`);
@@ -230,7 +232,7 @@ export function OrdersPage({
                 icon={Download}
                 onSelect={() => {
                   toast(
-                    `Exported ${String(matching.length)} orders to orders.csv`,
+                    `Exported ${String(matching.length)} ${matching.length === 1 ? "order" : "orders"} to orders.csv`,
                   );
                 }}
               />
@@ -308,12 +310,12 @@ export function OrdersPage({
                   }
             }
           >
-            <SegmentedControl<Order["channel"]>
+            <SegmentedControl<Order["channel"] | "all">
               label="Channel"
-              options={CHANNELS}
-              value={channel}
+              options={[{ value: "all", label: "All" }, ...CHANNELS]}
+              value={channel ?? "all"}
               onValueChange={(next) => {
-                setChannel(next);
+                setChannel(next === "all" ? undefined : next);
                 setPage(1);
               }}
             />

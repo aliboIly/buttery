@@ -185,3 +185,88 @@ for (const [width, height] of [
     });
   });
 }
+
+test("a view saved from another view keeps that view's orders and adds its filters", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery/orders");
+  await page.locator("h1").first().waitFor();
+  const views = page.getByRole("radiogroup", { name: "Order views" });
+  await views.getByRole("radio", { name: "Unpaid", exact: true }).click();
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+  await page.getByRole("button", { name: /^Channel/ }).click();
+  await page
+    .getByRole("radiogroup", { name: "Channel" })
+    .getByRole("radio", { name: "Web", exact: true })
+    .click();
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "More views" }).click();
+  await page.getByRole("menuitem", { name: "Save as a new view" }).click();
+  await expect(
+    views.getByRole("radio", { name: "Web", exact: true }),
+  ).toHaveAttribute("aria-checked", "true");
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+  const statuses = await page
+    .locator('[data-bt="DataTable"] [data-bt="StatusBadge"]')
+    .allTextContents();
+  expect(statuses.length).toBeGreaterThan(0);
+  expect(new Set(statuses)).toEqual(new Set(["Unpaid"]));
+});
+
+test("an export of one order says one order", async ({ page }) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery/orders");
+  await page.locator("h1").first().waitFor();
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+  const id =
+    (await page
+      .locator('[data-bt="DataTable"] [data-bt-part="id"]')
+      .first()
+      .textContent()) ?? "";
+  await page.getByRole("searchbox", { name: "Search orders" }).fill(id);
+  await page.getByRole("button", { name: "Export", exact: true }).click();
+  await expect(
+    page.locator('[data-bt-part="toast"]').filter({
+      hasText: "Exported 1 order to orders.csv",
+    }),
+  ).toBeVisible();
+});
+
+test("inviting someone twice lists them once", async ({ page }) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery/settings/team");
+  await page.locator("h1").first().waitFor();
+  for (const address of ["june@example.com", "June@example.com"]) {
+    await page.getByRole("button", { name: "Invite someone" }).click();
+    await page.getByLabel("Email address").fill(address);
+    await page.getByRole("button", { name: "Send the invite" }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  }
+  await expect(page.getByText(/^june@example\.com$/i)).toHaveCount(1);
+  await expect(
+    page.locator('[data-bt-part="toast"]').filter({
+      hasText: "is already invited",
+    }),
+  ).toBeVisible();
+});
+
+test("switching workspace says what happened", async ({ page }) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery");
+  await page.locator("h1").first().waitFor();
+  await page
+    .getByRole("button", { name: /^Workspace: Halfmoon Roastery/ })
+    .click();
+  await page.getByRole("menuitem", { name: "Switch workspace" }).click();
+  await page.getByRole("menuitemradio", { name: /Halfmoon Café/ }).click();
+  await expect(
+    page.locator('[data-bt-part="toast"]').filter({
+      hasText: "Halfmoon Café has no orders of its own in this demo.",
+    }),
+  ).toBeVisible();
+});

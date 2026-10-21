@@ -83,7 +83,21 @@ export function comparisonDays(
   }
 }
 
-/** The period's days in the groups its charts plot: one a day, seven a week counted back from today, or a calendar month each. */
+/** Leaves out a first group that only part of a week or month falls in, which would plot as a dip. */
+function fromFirstWhole(
+  groups: Date[][],
+  whole: (group: readonly Date[]) => boolean,
+): Date[][] {
+  const [first] = groups;
+  return groups.length > 1 && first !== undefined && !whole(first)
+    ? groups.slice(1)
+    : groups;
+}
+
+/**
+ * The period's days in the groups its charts plot: one a day, seven a week counted back from today, or a
+ * calendar month each, starting at the first whole week or month. The month to date stays at the end.
+ */
 export function buckets(
   days: readonly Date[],
   interval: DateRangeValue["interval"],
@@ -95,7 +109,7 @@ export function buckets(
       const groups: Date[][] = [];
       for (let end = days.length; end > 0; end -= 7)
         groups.unshift(days.slice(Math.max(0, end - 7), end));
-      return groups;
+      return fromFirstWhole(groups, (group) => group.length === 7);
     }
     case "monthly": {
       const groups: Date[][] = [];
@@ -109,17 +123,23 @@ export function buckets(
           last?.push(day);
         else groups.push([day]);
       }
-      return groups;
+      return fromFirstWhole(groups, (group) => group[0]?.getDate() === 1);
     }
   }
 }
 
-/** The comparison's days in groups the same size as the period's, so its points line up with them. */
+/**
+ * The comparison's days in groups the same size as the period's, so its points line up with them. Both end
+ * where their periods do, so a first group left out of the chart is left out here too.
+ */
 export function alignedBuckets(
   groups: readonly (readonly Date[])[],
   days: readonly Date[],
 ): Date[][] {
-  let from = 0;
+  let from = Math.max(
+    0,
+    days.length - groups.reduce((total, group) => total + group.length, 0),
+  );
   return groups.map((group) => {
     const part = days.slice(from, from + group.length);
     from += group.length;

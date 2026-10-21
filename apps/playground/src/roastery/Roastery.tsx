@@ -10,6 +10,7 @@ import {
   SetupGuide,
   Sidebar,
   TopBar,
+  toast,
 } from "@buttery/react";
 import {
   ArrowLeft,
@@ -147,7 +148,10 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
               { id: "halfmoon-cafe", name: "Halfmoon Café" },
             ]}
             current="halfmoon"
-            onSwitch={() => undefined}
+            onSwitch={(id) => {
+              if (id !== "halfmoon")
+                toast("Halfmoon Café has no orders of its own in this demo.");
+            }}
           />
           <Menu.Link href="#/roastery/settings" icon={Settings}>
             Settings

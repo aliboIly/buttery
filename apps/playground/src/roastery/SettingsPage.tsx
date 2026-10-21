@@ -193,11 +193,19 @@ function TeamSetting(): ReactElement {
   const [invites, setInvites] = useInvites();
   const [inviting, setInviting] = useState(false);
   const [email, setEmail] = useState("");
+  const people = invites.filter(
+    (address, index) =>
+      invites.findIndex(
+        (other) => other.toLowerCase() === address.toLowerCase(),
+      ) === index,
+  );
   const invite = (event: SubmitEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const address = email.trim();
-    if (address !== "") {
-      setInvites((current) => [...current, address]);
+    if (people.some((other) => other.toLowerCase() === address.toLowerCase())) {
+      toast(`${address} is already invited.`);
+    } else if (address !== "") {
+      setInvites([...people, address]);
       toast.success(`Invited ${address}`);
     }
     setEmail("");
@@ -212,7 +220,7 @@ function TeamSetting(): ReactElement {
             description="Owner"
             media={<InitialsTile name="Rosa Delgado" size="md" />}
           />
-          {invites.map((address) => (
+          {people.map((address) => (
             <GroupedList.Item
               key={address}
               title={address}

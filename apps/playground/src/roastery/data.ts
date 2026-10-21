@@ -429,6 +429,24 @@ export const NEXT_PAYOUT: Payout | undefined = PAYOUTS.findLast(
   (payout) => dayNumber(payout.arrives) > dayNumber(TODAY),
 );
 
+/**
+ * Paid orders no payout has taken yet: those placed on or after the day the newest payout that's paid or
+ * in transit stopped counting, so none of them is in a payout already on its way.
+ */
+export const AWAITING_PAYOUT: readonly Order[] = ((): readonly Order[] => {
+  const sent = PAYOUTS.find((payout) => payout.status !== "scheduled");
+  const from =
+    sent === undefined
+      ? Number.NEGATIVE_INFINITY
+      : dayNumber(sent.arrives) - TRANSIT;
+  return ORDERS.filter(
+    (order) =>
+      order.status !== "refunded" &&
+      order.status !== "unpaid" &&
+      dayNumber(order.placed) >= from,
+  );
+})();
+
 export interface StockLot {
   readonly id: string;
   readonly coffeeId: string;

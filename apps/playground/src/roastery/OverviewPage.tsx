@@ -45,17 +45,18 @@ function measure(
   const days = periodDays(period);
   const groups = buckets(days, period.interval);
   const now = measured(count, groups);
+  const total = sum(measured(count, [days]));
   const before = comparisonDays(period, days);
   if (before === undefined)
     return {
-      value: sum(now),
+      value: total,
       delta: undefined,
       series: [{ key: "now", label: "This period", values: now }],
     };
   const then = measured(count, alignedBuckets(groups, before));
   return {
-    value: sum(now),
-    delta: change(sum(now), sum(then)),
+    value: total,
+    delta: change(total, sum(measured(count, [before]))),
     series: [
       { key: "now", label: "This period", values: now },
       {
@@ -146,7 +147,7 @@ export function OverviewPage(): ReactElement {
         <Grid columns={{ base: 1, md: 2 }} gap={4}>
           <MetricCard
             title="Sales"
-            info="Every sale, before refunds and fees."
+            info="Every sale, after refunds and before fees."
             value={loading ? undefined : money(sales.value)}
             delta={loading ? undefined : sales.delta}
             labels={labels}
