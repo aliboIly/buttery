@@ -5,7 +5,7 @@ import { kilograms, shortDate } from "./format.ts";
 
 const WAREHOUSES = ["Harbor Street", "Mill Lane"] as const;
 
-/** Green coffee on hand, a well per warehouse, with a row that adds a lot. Rows link to `href` when given. */
+/** Green coffee on hand in one well, grouped by warehouse, with a row that adds a lot. Rows link to `href` when given. */
 export function StockList({
   addLabel = "Add a lot",
   href,

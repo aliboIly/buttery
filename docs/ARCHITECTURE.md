@@ -123,7 +123,7 @@ The generated files are committed and Prettier skips them; a unit test fails whe
 | `@buttery/core/styles.css` | Layer order, reset, Inter, tokens, base styles and recipes in one file |
 | `@buttery/core/tailwind.css` | The Tailwind v4 bridge |
 | `@buttery/core/tokens.json` | The token data as JSON |
-| `@buttery/react` | `ButteryProvider` (and `ButteryContext`), the components, the parts they share (`Arrow`, `Spinner`, `FormFieldCaption`, `FormFieldError`, `useFormFieldIds`, `TextFieldShell`, `TooltipProvider`, the auth form parts), `celebrate` and the `buttery` factory |
+| `@buttery/react` | `ButteryProvider` (and `ButteryContext`), the components, the parts they share (`Arrow`, `Spinner`, `FormFieldCaption`, `FormFieldError`, `useFormFieldIds`, `TextFieldShell`, `TooltipProvider`, the auth form parts, and the guidance parts `TimeEstimate`, `GuidanceAction` and `useDismissible`), the shell hooks (`useAppShell`, `useAppPage`, `useSidebarMode`), `celebrate` and the `buttery` factory |
 | `@buttery/react/styles.css` | The components' styles in the `bt.components` layer, after the same layer order statement so it works on its own |
 
 ## "Make anything buttery" — four levels of effort

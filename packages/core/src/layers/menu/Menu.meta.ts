@@ -8,13 +8,14 @@ export const meta: ComponentMeta = {
   useWhen: [
     "Actions that don't fit, or don't need to show, next to their control: duplicate, rename, delete",
     "Picking one of a few settings that apply at once, with Menu.RadioGroup",
+    "A few pages to go to, such as an account menu's, with Menu.Link",
   ],
   avoidWhen: [
     "Choosing a value a form submits or a control shows: use Select",
     "A small form or anything with inputs: use Popover",
-    "Navigation between pages: use NavBar (Phase 6)",
+    "A site's main navigation: use NavBar, or Sidebar in an app",
   ],
   related: ["Select", "Popover", "SplitButton", "OverflowCluster"],
-  a11y: "The trigger gets aria-haspopup and aria-expanded; the content is a menu of menuitems (menuitemradio in a radio group, with aria-checked). Arrow keys move, typing jumps to an item, Enter or Space chooses, Escape closes. Focus goes back to the trigger as it closes, unless a press elsewhere closed it, and it never takes focus back once you've moved on. Groups are named by their headings. A submenu's item has aria-haspopup and aria-expanded; ArrowRight opens it and ArrowLeft closes it.",
+  a11y: "The trigger gets aria-haspopup and aria-expanded; the content is a menu of menuitems (menuitemradio in a radio group, with aria-checked). Arrow keys move, typing jumps to an item, Enter or Space chooses, Escape closes. Focus goes back to the trigger as it closes, unless a press elsewhere closed it, and it never takes focus back once you've moved on. Groups are named by their headings. An item's shortcut is announced through aria-keyshortcuts, and a dot adds \", new\" to its name. A submenu's item has aria-haspopup and aria-expanded; ArrowRight opens it and ArrowLeft closes it.",
   motion: "presence",
 };

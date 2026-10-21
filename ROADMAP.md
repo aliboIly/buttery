@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 6 (overlays and choreography) is done. Next: Phase 6B (the App kit), then Phase 7 (hardening and brand). The public-kit rule is in place.
+**Now:** Phase 6B (the App kit) is at its gate: the review fixes are in and the full checks and the push come next. Then Phase 7 (hardening and brand) and Phase 8 (developer and agent experience). The public-kit rule is in place.
 
 ---
 
