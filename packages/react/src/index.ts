@@ -497,3 +497,5 @@ export type {
 } from "./patterns/date-range-bar/DateRangeBar.tsx";
 export { Banner } from "./patterns/banner/Banner.tsx";
 export type { BannerProps } from "./patterns/banner/Banner.tsx";
+export { RecommendationCard } from "./patterns/recommendation-card/RecommendationCard.tsx";
+export type { RecommendationCardProps } from "./patterns/recommendation-card/RecommendationCard.tsx";

@@ -1,0 +1,51 @@
+@layer bt.patterns {
+  .bt-recommendation-card {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    overflow: clip;
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  .bt-recommendation-card > [data-bt-part="content"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    padding: var(--bt-space-4);
+  }
+
+  .bt-recommendation-card [data-bt-part="top"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bt-space-2);
+    min-block-size: var(--bt-h-sm);
+  }
+
+  /* The footer sits a step further from the body than the lines above it sit from each other. */
+  .bt-recommendation-card [data-bt-part="foot"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--bt-space-3);
+    padding-block-start: var(--bt-space-2);
+  }
+
+  .bt-recommendation-card [data-bt-part="foot"] > .bt-time-estimate {
+    grid-column: 2;
+  }
+
+  .bt-recommendation-card > [data-bt-part="media"] {
+    display: block;
+    min-inline-size: 0;
+  }
+
+  .bt-recommendation-card > [data-bt-part="media"] > :is(img, svg, picture) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+}
