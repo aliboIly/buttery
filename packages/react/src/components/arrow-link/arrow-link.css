@@ -16,6 +16,15 @@
     transition: color var(--bt-dur-fast) var(--bt-ease-standard);
   }
 
+  /* As a button it stands alone, so it takes a standalone button's 28px. */
+  button.bt-arrow-link {
+    min-block-size: var(--bt-h-sm);
+    padding-inline: 0;
+    border: 0;
+    background: none;
+    font-family: inherit;
+  }
+
   /* A link has no padding for the head to nudge into, so its arrow box keeps that room itself. */
   .bt-arrow-link > .bt-arrow {
     inline-size: calc(var(--bt-arrow-width) + var(--bt-arrow-nudge));
