@@ -21,7 +21,7 @@ export function DocumentHeader(): ReactElement {
           icon={Trash2}
           iconOnly
           onSelect={() => {
-            toast("Card removed", { id: "delete" });
+            toast("Spring launch deleted", { id: "delete" });
           }}
         />
       </HeaderBar.Actions>
@@ -29,8 +29,9 @@ export function DocumentHeader(): ReactElement {
       <IconButton
         icon={Undo2}
         label="Undo"
-        disabled={past === 0}
+        aria-disabled={past === 0}
         onClick={() => {
+          if (past === 0) return;
           setPast(past - 1);
           setFuture(future + 1);
         }}
@@ -38,8 +39,9 @@ export function DocumentHeader(): ReactElement {
       <IconButton
         icon={Redo2}
         label="Redo"
-        disabled={future === 0}
+        aria-disabled={future === 0}
         onClick={() => {
+          if (future === 0) return;
           setFuture(future - 1);
           setPast(past + 1);
         }}

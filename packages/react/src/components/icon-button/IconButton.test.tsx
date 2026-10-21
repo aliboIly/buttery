@@ -3,7 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { BookOpen, Undo2 } from "lucide-react";
 import { createRef } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { IconButton } from "./IconButton.tsx";
 
@@ -74,5 +74,18 @@ describe("IconButton", () => {
     const link = screen.getByRole("link", { name: "Guide" });
     expect(link.dataset["bt"]).toBe("IconButton");
     expect(link.querySelector('[data-bt="Icon"]')).not.toBeNull();
+  });
+
+  it("ignores presses while aria-disabled and keeps focus", async () => {
+    const onClick = vi.fn();
+    render(
+      <IconButton icon={Undo2} label="Undo" aria-disabled onClick={onClick} />,
+    );
+    const button = screen.getByRole("button", { name: "Undo" });
+    button.focus();
+    await userEvent.keyboard("{Enter}");
+    button.click();
+    expect(onClick).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(button);
   });
 });

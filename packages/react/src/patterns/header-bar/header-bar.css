@@ -8,7 +8,7 @@
     min-inline-size: 0;
     block-size: var(--bt-h-header);
     padding-inline: var(--bt-space-4);
-    border-radius: var(--bt-r-2xl);
+    border-radius: var(--bt-r-3xl);
     background-color: var(--bt-bg-surface);
     box-shadow: var(--bt-shadow-card);
   }

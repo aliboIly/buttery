@@ -1,7 +1,12 @@
 import { Icon, Slot, cx } from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
 import { Slot as RadixSlot } from "radix-ui";
-import type { ComponentPropsWithRef, ComponentType, ReactElement } from "react";
+import type {
+  ComponentPropsWithRef,
+  ComponentType,
+  MouseEvent,
+  ReactElement,
+} from "react";
 import { Tooltip } from "../tooltip/Tooltip.tsx";
 import type { TooltipSide } from "../tooltip/Tooltip.tsx";
 
@@ -21,7 +26,9 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
 
 /**
  * A square button that shows only an icon, named by a `label` that also appears as its tooltip. Ghost by
- * default: the background shows on hover, and `aria-pressed` holds it on for toggles.
+ * default: the background shows on hover, and `aria-pressed` holds it on for toggles. Use `aria-disabled`
+ * instead of `disabled` to keep it focusable while it can't act, such as Undo with nothing left to undo:
+ * it looks disabled and ignores presses, and focus stays where it was.
  *
  * @example
  * <IconButton icon={Undo2} label="Undo" onClick={undo} />
@@ -34,15 +41,26 @@ export function IconButton({
   asChild = false,
   className,
   type,
+  onClick,
   children,
   ...rest
 }: IconButtonProps): ReactElement {
   const classes = cx("bt-icon-button bt-press bt-focus", className);
+  const unavailable =
+    rest["aria-disabled"] === true || rest["aria-disabled"] === "true";
+  const press = (event: MouseEvent<HTMLButtonElement>): void => {
+    if (unavailable) {
+      event.preventDefault();
+      return;
+    }
+    onClick?.(event);
+  };
   return (
     <Tooltip label={label} side={tooltipSide}>
       {asChild ? (
         <Slot
           {...rest}
+          onClick={press}
           aria-label={label}
           className={classes}
           data-bt="IconButton"
@@ -56,6 +74,7 @@ export function IconButton({
         <button
           {...rest}
           type={type ?? "button"}
+          onClick={press}
           aria-label={label}
           className={classes}
           data-bt="IconButton"

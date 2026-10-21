@@ -85,7 +85,10 @@ export interface HeaderBarActionProps {
   readonly icon?: ComponentType<IconComponentProps> | undefined;
   /** Shows only the icon in the bar, with the label as its tooltip and name. Needs `icon`. */
   readonly iconOnly?: boolean | undefined;
-  /** Keeps it from being chosen. */
+  /**
+   * Keeps it from being chosen. The bar's button stays focusable (`aria-disabled`), so pressing the last
+   * Undo or Delete doesn't drop keyboard focus.
+   */
   readonly disabled?: boolean | undefined;
   /** Higher stays in the bar longer. Defaults to 0. */
   readonly priority?: number | undefined;
@@ -109,11 +112,15 @@ export function HeaderBarAction({
         <IconButton
           icon={icon}
           label={label}
-          disabled={disabled}
+          aria-disabled={disabled || undefined}
           onClick={onSelect}
         />
       ) : (
-        <Button variant="ghost" disabled={disabled} onClick={onSelect}>
+        <Button
+          variant="ghost"
+          aria-disabled={disabled || undefined}
+          onClick={onSelect}
+        >
           {label}
         </Button>
       )}

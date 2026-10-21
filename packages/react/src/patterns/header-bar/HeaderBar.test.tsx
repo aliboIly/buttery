@@ -3,7 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { Trash2, Undo2 } from "lucide-react";
-import { createRef } from "react";
+import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
@@ -113,5 +113,34 @@ describe("HeaderBar", () => {
     expect(box?.width).toBe(1);
     expect(box?.height).toBe(24);
     expect(separator?.getAttribute("role")).toBe("none");
+  });
+
+  it("keeps keyboard focus on an action that disables itself, such as the last Delete", async () => {
+    function Deleting(): ReactElement {
+      const [cards, setCards] = useState(1);
+      return (
+        <HeaderBar title="Launch card">
+          <HeaderBar.Actions>
+            <HeaderBar.Action
+              label="Delete"
+              icon={Trash2}
+              iconOnly
+              disabled={cards === 0}
+              onSelect={() => {
+                setCards(cards - 1);
+              }}
+            />
+          </HeaderBar.Actions>
+        </HeaderBar>
+      );
+    }
+    render(<Deleting />);
+    const remove = screen.getByRole("button", { name: "Delete" });
+    remove.focus();
+    await userEvent.keyboard("{Enter}");
+    expect(remove.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(remove);
+    await userEvent.keyboard("{Enter}");
+    expect(remove.getAttribute("aria-disabled")).toBe("true");
   });
 });
