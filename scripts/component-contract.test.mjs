@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 import { kebabCase } from "./new-component.mjs";
@@ -30,6 +30,67 @@ function componentFolders() {
 }
 
 const folders = componentFolders();
+
+/** The names a package's entry point exports, values and types alike. */
+function exportedNames(packageName) {
+  const index = readFileSync(
+    join(root, "packages", packageName, "src", "index.ts"),
+    "utf8",
+  );
+  const names = new Set();
+  for (const [, list] of index.matchAll(
+    /export\s+(?:type\s+)?\{([^}]*)\}\s+from/g,
+  )) {
+    for (const part of list.split(",")) {
+      const name = part
+        .trim()
+        .split(/\s+as\s+/)
+        .pop();
+      if (name) names.add(name);
+    }
+  }
+  return names;
+}
+
+const PUBLIC = new Set(
+  readdirSync(join(root, "packages"))
+    .filter((packageName) =>
+      existsSync(join(root, "packages", packageName, "src", "index.ts")),
+    )
+    .flatMap((packageName) => [...exportedNames(packageName)]),
+);
+
+/** Names a component takes from outside its own folder that no package exports, so a user couldn't build it. */
+function privateImports(folder) {
+  const found = [];
+  const files = readdirSync(folder, { recursive: true })
+    .map(String)
+    .filter(
+      (file) =>
+        /\.tsx?$/.test(file) &&
+        !/\.(test|meta|playground)\.tsx?$/.test(file) &&
+        !file.startsWith(`examples${sep}`),
+    );
+  for (const file of files) {
+    const path = join(folder, file);
+    const source = readFileSync(path, "utf8");
+    for (const [, list, from] of source.matchAll(
+      /import\s+(?:type\s+)?\{([^}]*)\}\s+from\s+"(\.[^"]+)"/g,
+    )) {
+      const target = resolve(dirname(path), from);
+      if (target.startsWith(folder + sep)) continue;
+      for (const part of list.split(",")) {
+        const name = part
+          .trim()
+          .replace(/^type\s+/, "")
+          .split(/\s+as\s+/)[0];
+        if (name && !PUBLIC.has(name))
+          found.push(`${name} from ${relative(root, target)}`);
+      }
+    }
+  }
+  return found;
+}
 
 /** Exported types, and members of exported interfaces, in `source` with no JSDoc comment right before them. */
 function undocumentedMembers(source) {
@@ -191,6 +252,14 @@ describe("component contract", () => {
           meta.a11y.length,
           `${name}.meta.ts: describe keyboard and screen-reader behavior`,
         ).toBeGreaterThan(10);
+      });
+
+      it("uses only what a user can import", () => {
+        const found = privateImports(folder);
+        expect(
+          found,
+          `${name} uses helpers no package exports: ${found.join(", ")}. Fix: export them from the package's index.ts with JSDoc, so anyone can build a component the way buttery builds its own.`,
+        ).toEqual([]);
       });
 
       it("is exported from its package", () => {
