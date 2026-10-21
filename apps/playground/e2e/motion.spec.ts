@@ -1847,7 +1847,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     await startSampling(page, menu, ["keydown"]);
     await page.keyboard.press("Escape");
     const closing = framesFrom(await finishSampling(page, 300), "keydown");
-    // Transparent is gone: the menu's last frame in the page draws nothing, and it unmounts the next.
+    // It unmounts as it closes; a frame where it's still there but transparent counts as gone too.
     const gone = closing.findIndex(({ elements }) =>
       elements.every((reading) => reading.opacity === 0),
     );
@@ -1882,11 +1882,17 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
       DURATIONS.fast,
     );
     const arrived = run.marks["pointermove"] ?? 0;
+    const full = traceOf(run, submenu, opacity).find(
+      (point) => point.value >= 0.99,
+    );
     report(
-      `submenu: starts ${ms(fading.start - arrived)} after the pointer arrives (40ms wanted)`,
+      `submenu: starts ${ms(fading.start - arrived)} after the pointer arrives (40ms wanted), fully in at ${ms((full?.t ?? Number.NaN) - arrived)}`,
     );
     expect(fading.start - arrived).toBeGreaterThanOrEqual(40 - FRAME);
-    expect(fading.start - arrived).toBeLessThanOrEqual(40 + TWO_FRAMES);
+    expect(fading.start - arrived).toBeLessThanOrEqual(40 + FRAME);
+    expect((full?.t ?? Number.POSITIVE_INFINITY) - arrived).toBeLessThanOrEqual(
+      40 + DURATIONS.fast + TWO_FRAMES,
+    );
   });
 
   test("a dialog in the app fades in over dur-fast growing from 97%, and fades out over dur-fast", async ({
@@ -1960,16 +1966,14 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
       EASE_STANDARD,
       DURATIONS.fast,
     );
-    const shut = settleTime(
-      progress(
-        traceOf(closing, box, (reading) => reading.height),
-        open,
-        0,
-      ),
-    );
+    const shut =
+      traceOf(closing, box, (reading) => reading.height).find(
+        (point) => point.value <= 0.5,
+      )?.t ?? Number.POSITIVE_INFINITY;
     report(
-      `sidebar group closing: 95% of its height ${ms(shut - fading.start)} after it starts (dur-fast is ${String(DURATIONS.fast)}ms)`,
+      `sidebar group closing: all of its height gone ${ms(shut - fading.start)} after it starts (dur-fast is ${String(DURATIONS.fast)}ms)`,
     );
+    // The height moves on the main thread and can trail the fade by a frame or two, never more.
     expect(shut - fading.start).toBeLessThanOrEqual(
       DURATIONS.fast + TWO_FRAMES,
     );
@@ -1999,6 +2003,12 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
         readonly shown: boolean;
         readonly center: number;
         readonly nearest: number;
+        readonly tipLeft: number;
+        readonly tipRight: number;
+        readonly tipNext: number;
+        readonly date: string;
+        readonly label: string;
+        readonly frameRight: number;
       }[] = [];
       for (const share of [0.1, 0.35, 0.6, 0.9]) {
         element.dispatchEvent(
@@ -2010,6 +2020,10 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
           }),
         );
         const box = crosshair.getBoundingClientRect();
+        const tip = tooltip.getBoundingClientRect();
+        const date =
+          tooltip.querySelector('[data-bt-part="tooltip-date"]')?.textContent ??
+          "";
         await new Promise((resolve) => requestAnimationFrame(resolve));
         seen.push({
           now: box.left,
@@ -2017,17 +2031,100 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
           shown: !tooltip.hidden && !crosshair.hidden,
           center: box.left + box.width / 2,
           nearest: area.x + (Math.round(share * last) / last) * area.width,
+          tipLeft: tip.left,
+          tipRight: tip.right,
+          tipNext: tooltip.getBoundingClientRect().left,
+          date,
+          label:
+            frame?.querySelectorAll('tbody th[scope="row"]')[
+              Math.round(share * last)
+            ]?.textContent ?? "",
+          frameRight: frame?.getBoundingClientRect().right ?? 0,
         });
       }
       return seen;
     }, box);
-    for (const { now, next, shown, center, nearest } of readings) {
-      expect(shown).toBe(true);
-      expect(next).toBe(now);
-      expect(Math.abs(center - nearest)).toBeLessThanOrEqual(1);
+    for (const reading of readings) {
+      expect(reading.shown).toBe(true);
+      expect(reading.next).toBe(reading.now);
+      expect(Math.abs(reading.center - reading.nearest)).toBeLessThanOrEqual(1);
+      // The tooltip moved in the same handler, so the next frame shows it where it was read.
+      expect(reading.tipNext).toBe(reading.tipLeft);
+      expect(reading.date).not.toBe("");
+      expect(reading.date).toBe(reading.label);
     }
     const lefts = readings.map(({ now }) => now);
     expect(new Set(lefts).size).toBe(lefts.length);
+    expect(new Set(readings.map(({ date }) => date)).size).toBe(
+      readings.length,
+    );
+    const [first] = readings;
+    const last = readings.at(-1);
+    if (!first || !last) throw new Error("No readings.");
+    // 8px to the right of the crosshair, until that would cross the chart's edge; then 8px to its left.
+    expect(Math.abs(first.tipLeft - (first.center + 8))).toBeLessThanOrEqual(1);
+    expect(first.center + 8 + (last.tipRight - last.tipLeft)).toBeLessThan(
+      first.frameRight,
+    );
+    expect(last.center + 8 + (last.tipRight - last.tipLeft)).toBeGreaterThan(
+      last.frameRight,
+    );
+    expect(Math.abs(last.tipRight - (last.center - 8))).toBeLessThanOrEqual(1);
+  });
+
+  /** Every sampled element's edges, each held within 1px through the run. */
+  function expectStill(run: Run): void {
+    const edges = new Map<number, number[][]>();
+    for (const { elements } of run.frames) {
+      for (const reading of elements) {
+        const seen = edges.get(reading.id) ?? [[], [], [], []];
+        seen[0]?.push(reading.top);
+        seen[1]?.push(reading.top + reading.height);
+        seen[2]?.push(reading.left);
+        seen[3]?.push(reading.left + reading.width);
+        edges.set(reading.id, seen);
+      }
+    }
+    expect(edges.size).toBeGreaterThan(0);
+    for (const sides of edges.values()) {
+      for (const side of sides)
+        expect(Math.max(...side) - Math.min(...side)).toBeLessThanOrEqual(1);
+    }
+  }
+
+  test("the overview's cards turn from skeletons into their numbers in place, nothing moving more than 1px", async ({
+    page,
+  }) => {
+    await openDemo(page, "");
+    const cards = '[data-bt="AppPage"] [data-bt="MetricCard"]';
+    await page.getByRole("button", { name: /^Date range/ }).click();
+    await page
+      .getByRole("option", { name: "Last 4 weeks", exact: true })
+      .click();
+    await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(4);
+    await startSampling(
+      page,
+      `${cards}, ${cards} > [data-bt-part="head"] > [data-bt="Morph"], ${cards} .bt-chart-frame, ${cards} > [data-bt-part="foot"]`,
+    );
+    const run = await finishSampling(page, 1600);
+    await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(0);
+    expectStill(run);
+  });
+
+  test("the orders table turns its skeleton rows into orders in place, nothing moving more than 1px", async ({
+    page,
+  }) => {
+    await openDemo(page, "/orders");
+    const table = '[data-bt="DataTable"]';
+    await page.getByRole("radio", { name: "To roast", exact: true }).click();
+    await expect(page.locator(`${table} [aria-busy="true"]`)).toHaveCount(1);
+    await startSampling(
+      page,
+      `${table}, ${table} [role="columnheader"], ${table} [data-bt-part="body"] > [data-bt-part="row"]:nth-child(2), ${table} > [data-bt-part="pagination"]`,
+    );
+    const run = await finishSampling(page, 1300);
+    await expect(page.locator(`${table} [aria-busy="true"]`)).toHaveCount(0);
+    expectStill(run);
   });
 
   test("a metric's skeleton turns into its numbers in place, nothing moving more than 1px", async ({

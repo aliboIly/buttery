@@ -52,6 +52,9 @@ const escape: ButteryInteraction = {
 };
 
 const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
+  "data-table": [
+    { name: "reload, showing skeleton rows", run: press("Reload") },
+  ],
   "floating-lanes": [
     {
       name: "add a message to the bottom-center lane",
@@ -409,7 +412,7 @@ for (const route of routes) {
     await expectButtery(page, {
       ...matrix,
       name: route,
-      interactions: interactions[route],
+      interactions: interactions[route] ?? roasteryInteractions[route],
     });
   });
 }
@@ -473,27 +476,90 @@ function openFilter(name: string): ButteryInteraction["run"] {
   };
 }
 
+/** Waits for the roastery's pretend fetch to end, so the page is checked with its numbers in. */
+async function loaded(page: Page): Promise<void> {
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+}
+
+/** Chooses `option` from the select whose name starts with `select`. */
+async function choose(
+  page: Page,
+  select: string,
+  option: string,
+): Promise<void> {
+  await page
+    .getByRole("button", { name: new RegExp(`^${select}`) })
+    .first()
+    .click();
+  await page.getByRole("option", { name: option, exact: true }).click();
+}
+
 const roasteryInteractions: Readonly<
   Record<string, readonly ButteryInteraction[]>
 > = {
   roastery: [
-    { name: "close the first-visit announcement", run: press("Got it") },
     {
-      name: "open the navigation sheet and the workspace menu in it",
+      name: "close the first-visit announcement",
+      run: pressIfShown("button", "Got it"),
+    },
+    {
+      name: "open the workspace menu, from the navigation sheet on a phone",
       run: async (page: Page) => {
-        await page
-          .getByRole("button", { name: "Open navigation", exact: true })
-          .click();
+        const sheet = page.getByRole("button", {
+          name: "Open navigation",
+          exact: true,
+        });
+        if (await sheet.isVisible()) await sheet.click();
         await page
           .getByRole("button", { name: "Workspace: Halfmoon Roastery" })
           .click();
       },
     },
     escape,
-    escape,
+    {
+      name: "close the navigation sheet where it opened",
+      run: async (page: Page) => {
+        const sheet = page.getByRole("dialog", { name: "Halfmoon Roastery" });
+        if (await sheet.isVisible()) await page.keyboard.press("Escape");
+      },
+    },
     { name: "start a new order", run: press("New order") },
+    escape,
+    {
+      name: "show the last 12 months by month against the year before",
+      run: async (page: Page) => {
+        await choose(page, "Date range", "Last 12 months");
+        await choose(page, "Interval", "Monthly");
+        await choose(page, "Comparison", "Previous year");
+        await loaded(page);
+      },
+    },
   ],
   "roastery/orders": [
+    {
+      name: "switch to another saved view, its rows loading first",
+      run: async (page: Page) => {
+        const view = page.getByRole("radio", { name: "Unpaid", exact: true });
+        if (await view.isVisible()) await view.click();
+        else {
+          await page.getByRole("button", { name: "More views" }).click();
+          await page
+            .getByRole("menuitemradio", { name: "Unpaid", exact: true })
+            .click();
+        }
+        await loaded(page);
+      },
+    },
+    {
+      name: "open the dialog that renames the view",
+      run: async (page: Page) => {
+        await page.getByRole("button", { name: "More views" }).click();
+        await page
+          .getByRole("menuitem", { name: "Rename view", exact: true })
+          .click();
+      },
+    },
+    escape,
     { name: "open the filters", run: openFilter("Channel") },
     escape,
     {
@@ -514,6 +580,18 @@ const roasteryInteractions: Readonly<
     },
   ],
   "roastery/customers": [{ name: "open the filters", run: openFilter("City") }],
+  "roastery/wholesale": [
+    {
+      name: "show the accounts as a list",
+      allowMove: ['[data-bt="AppPage"]'],
+      run: async (page: Page) => {
+        await page.getByRole("radio", { name: "List", exact: true }).click();
+      },
+    },
+  ],
+  "roastery/settings/team": [
+    { name: "invite someone", run: press("Invite someone") },
+  ],
 };
 
 const roasteryPages = [
@@ -521,9 +599,14 @@ const roasteryPages = [
   "roastery/customers",
   "roastery/subscriptions",
   "roastery/payouts",
+  "roastery/roasts",
   "roastery/stock",
   "roastery/wholesale",
+  "roastery/wholesale/prices",
   "roastery/settings",
+  "roastery/settings/pickup",
+  "roastery/settings/team",
+  "roastery/settings/fraud",
 ];
 
 for (const route of roasteryPages) {

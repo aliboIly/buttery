@@ -77,6 +77,21 @@ describe("BarChart", () => {
       ...document.querySelectorAll<HTMLElement>('[data-bt-part="bar"]'),
     ];
     expect(loss?.hasAttribute("data-negative")).toBe(true);
+    const corners = (bar: HTMLElement | undefined): string[] => {
+      const style = getComputedStyle(bar ?? document.body);
+      return [
+        style.borderTopLeftRadius,
+        style.borderTopRightRadius,
+        style.borderBottomLeftRadius,
+        style.borderBottomRightRadius,
+      ];
+    };
+    const [gainTop, , gainBottom] = corners(gain);
+    const [lossTop, , lossBottom] = corners(loss);
+    expect(gainTop).not.toBe("0px");
+    expect(gainBottom).toBe("0px");
+    expect(lossTop).toBe("0px");
+    expect(lossBottom).not.toBe("0px");
     expect(loss?.getBoundingClientRect().top).toBeCloseTo(
       gain?.getBoundingClientRect().bottom ?? 0,
       0,

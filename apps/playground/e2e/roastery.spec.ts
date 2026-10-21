@@ -21,6 +21,19 @@ function pageRegion(page: Page): Locator {
   );
 }
 
+/** The space between two boxes, along whichever axis they're apart on; negative when they overlap. */
+async function gap(one: Locator, two: Locator): Promise<number> {
+  const a = await one.boundingBox();
+  const b = await two.boundingBox();
+  if (!a || !b) throw new Error("Both have to be on the page.");
+  return Math.max(
+    b.y - (a.y + a.height),
+    a.y - (b.y + b.height),
+    b.x - (a.x + a.width),
+    a.x - (b.x + b.width),
+  );
+}
+
 async function overlap(one: Locator, two: Locator): Promise<boolean> {
   const a = await one.boundingBox();
   const b = await two.boundingBox();
@@ -91,28 +104,42 @@ test("a customer's name in the list opens their page, and each page starts at th
   page,
 }) => {
   await returningVisitor(page);
-  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.setViewportSize({ width: 1440, height: 640 });
   await page.goto("/#/roastery");
   await page.locator("h1").first().waitFor();
-  await pageRegion(page).evaluate((region) => {
-    region.scrollTop = region.scrollHeight;
-  });
+  const scrolled = async (): Promise<void> => {
+    await pageRegion(page).evaluate((region) => {
+      region.scrollTop = region.scrollHeight;
+    });
+    expect(
+      await pageRegion(page).evaluate((region) => region.scrollTop),
+    ).toBeGreaterThan(0);
+  };
+  const atTop = async (title: RegExp | string): Promise<void> => {
+    await expect(page.locator("h1").first()).toHaveText(title);
+    expect(await pageRegion(page).evaluate((region) => region.scrollTop)).toBe(
+      0,
+    );
+  };
+  await scrolled();
   await page.getByRole("link", { name: "Customers", exact: true }).click();
-  await expect(page.locator("h1").first()).toHaveText(/^Customers/);
+  await atTop(/^Customers/);
   const first = page
     .locator('[data-bt="DataTable"] [data-bt-part="link"]')
     .first();
   const name = (await first.textContent()) ?? "";
   await first.click();
-  await expect(page.locator("h1").first()).toHaveText(name);
+  await atTop(name);
   await expect(page.getByRole("tablist", { name: "Customer" })).toBeVisible();
+  await scrolled();
   await page.getByRole("link", { name: "Payouts", exact: true }).click();
-  await pageRegion(page).evaluate((region) => {
-    region.scrollTop = region.scrollHeight;
-  });
+  await atTop(/^Payouts/);
+  await scrolled();
+  await page.getByRole("link", { name: "Roast plan", exact: true }).click();
+  await atTop(/^Roast plan/);
+  await scrolled();
   await page.getByRole("link", { name: "Home", exact: true }).click();
-  await expect(page.locator("h1").first()).toHaveText("Overview");
-  expect(await pageRegion(page).evaluate((region) => region.scrollTop)).toBe(0);
+  await atTop("Overview");
 });
 
 for (const [width, height] of [
@@ -139,12 +166,14 @@ for (const [width, height] of [
       await more.first().click();
       await page.getByRole("menuitem", { name: "Export", exact: true }).click();
     }
-    const toast = page.getByText(/^Exported \d+ orders to orders\.csv$/);
+    const toast = page.locator('[data-bt-part="toast"]').filter({
+      hasText: /^Exported \d+ orders to orders\.csv/,
+    });
     await expect(toast).toBeVisible();
     await page.getByRole("region", { name: "Notifications (F8)" }).hover();
     const guide = page.locator('[data-bt="SetupGuide"]');
     await expect(guide).toBeVisible();
-    expect(await overlap(toast, guide)).toBe(false);
+    expect(await gap(toast, guide)).toBeGreaterThanOrEqual(7.5);
     const pagination = page.locator('[data-bt-part="pagination"]');
     expect(await overlap(guide, pagination)).toBe(false);
     expect(await overlap(toast, pagination)).toBe(false);

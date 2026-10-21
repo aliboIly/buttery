@@ -71,3 +71,34 @@ for (const { route, name } of componentRoutes) {
     expect(problems).toEqual([]);
   });
 }
+
+const demos = [
+  { route: "card-studio", ready: '[data-testid="card-studio"]' },
+  { route: "card-studio-site", ready: '[data-bt="NavBar"]' },
+  ...[
+    "roastery",
+    "roastery/orders",
+    "roastery/customers",
+    "roastery/subscriptions",
+    "roastery/payouts",
+    "roastery/roasts",
+    "roastery/stock",
+    "roastery/wholesale",
+    "roastery/wholesale/prices",
+    "roastery/settings",
+    "roastery/settings/pickup",
+    "roastery/settings/team",
+  ].map((route) => ({ route, ready: '[data-testid="roastery"] h1' })),
+] as const;
+
+for (const { route, ready } of demos) {
+  test(`renders the ${route} demo with no console problems`, async ({
+    page,
+  }) => {
+    const problems = await watchConsole(page);
+    await page.goto(`/#/${route}`);
+    await expect(page.locator(ready).first()).toBeVisible();
+    await settle(page);
+    expect(problems).toEqual([]);
+  });
+}

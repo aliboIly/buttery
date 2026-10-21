@@ -153,11 +153,13 @@ describe("MetricCard", () => {
   });
 
   it("holds every part in its place while loading, so nothing moves when the numbers arrive", () => {
-    const { rerender } = render(<Card loading />);
+    const { rerender } = render(
+      <Card loading value={undefined} delta={undefined} />,
+    );
     const card = screen.getByRole("group", { name: "Sales" });
     expect(card.getAttribute("aria-busy")).toBe("true");
     expect(
-      screen.getByText("$12,405.00").classList.contains("bt-skeleton"),
+      screen.getByText("$00,000.00").classList.contains("bt-skeleton"),
     ).toBe(true);
     expect(screen.queryByText("+12.4%")).toBeNull();
     expect(
@@ -206,7 +208,9 @@ describe("MetricCard", () => {
   });
 
   it("crossfades each skeleton into its content in place, and titles its name with its full text", async () => {
-    const { rerender } = render(<Card loading />);
+    const { rerender } = render(
+      <Card loading value={undefined} delta={undefined} />,
+    );
     expect(
       screen
         .getByRole("heading", { level: 3, name: "Sales" })
