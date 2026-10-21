@@ -427,4 +427,36 @@ describe("NavBar", () => {
     expect(screen.getByRole("button", { name: "Menu" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Templates" })).toBeNull();
   });
+
+  it("stays folded when it widens past 640px from a narrow start, if its menus still don't fit", async () => {
+    render(
+      <div data-testid="frame" style={{ inlineSize: "390px" }}>
+        <NavBar
+          brand={<a href="#top">Card Studio</a>}
+          actions={<Button>Start a long free trial now</Button>}
+        >
+          {["Product", "Templates", "Guides", "Company", "Community"].map(
+            (label) => (
+              <MorphMenu.Item key={label} label={label}>
+                <MorphMenu.Column>
+                  <MorphMenu.Entry href={`#${label}`} title={label} />
+                </MorphMenu.Column>
+              </MorphMenu.Item>
+            ),
+          )}
+        </NavBar>
+      </div>,
+    );
+    expect(screen.getByRole("button", { name: "Menu" })).toBeTruthy();
+    screen.getByTestId("frame").style.inlineSize = "700px";
+    await new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(resolve));
+    });
+    expect(screen.getByRole("button", { name: "Menu" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Templates" })).toBeNull();
+    screen.getByTestId("frame").style.inlineSize = "1400px";
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Templates" })).toBeTruthy();
+    });
+  });
 });

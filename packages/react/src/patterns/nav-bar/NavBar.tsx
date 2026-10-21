@@ -84,33 +84,38 @@ function widthOf(element: Element | null | undefined): number {
  * fit beside the brand. It remembers the width they needed, since folded they can't be measured, and
  * unfolds once there's room.
  */
+/** Measures what the bar's menus and actions need while they show, and whether they fit beside the brand. */
+function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
+  const list = row.querySelector('[data-bt-part="list"]');
+  if (list && list.getClientRects().length > 0) {
+    const items = Array.from(list.children).reduce(
+      (sum, item) => sum + widthOf(item),
+      0,
+    );
+    const groups = [
+      row.querySelector(':scope > [data-bt-part="brand"]'),
+      row.querySelector(':scope > [data-bt-part="actions"]'),
+    ].filter((group) => group !== null);
+    const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
+    needed.current =
+      items +
+      groups.reduce((sum, group) => sum + widthOf(group), 0) +
+      gap * groups.length;
+  }
+  return (
+    row.clientWidth < displayBreakpoints.md || needed.current > row.clientWidth
+  );
+}
+
 function useFolded(bar: RefObject<HTMLElement | null>): boolean {
   const [folded, setFolded] = useState(false);
   const needed = useRef(0);
+
   useLayoutEffect(() => {
     const row = bar.current;
     if (!row) return undefined;
     const measure = (): void => {
-      const list = row.querySelector('[data-bt-part="list"]');
-      if (list && list.getClientRects().length > 0) {
-        const items = Array.from(list.children).reduce(
-          (sum, item) => sum + widthOf(item),
-          0,
-        );
-        const groups = [
-          row.querySelector(':scope > [data-bt-part="brand"]'),
-          row.querySelector(':scope > [data-bt-part="actions"]'),
-        ].filter((group) => group !== null);
-        const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
-        needed.current =
-          items +
-          groups.reduce((sum, group) => sum + widthOf(group), 0) +
-          gap * groups.length;
-      }
-      setFolded(
-        row.clientWidth < displayBreakpoints.md ||
-          needed.current > row.clientWidth,
-      );
+      setFolded(shouldFold(row, needed));
     };
     const observer = new ResizeObserver(measure);
     observer.observe(row);
@@ -119,6 +124,13 @@ function useFolded(bar: RefObject<HTMLElement | null>): boolean {
       observer.disconnect();
     };
   }, [bar]);
+
+  // A bar folded from the start has never measured its menus; once it unfolds they can be, before paint.
+  useLayoutEffect(() => {
+    const row = bar.current;
+    if (!folded && row) setFolded(shouldFold(row, needed));
+  }, [bar, folded]);
+
   return folded;
 }
 
