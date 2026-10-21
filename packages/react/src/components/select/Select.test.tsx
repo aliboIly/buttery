@@ -1,12 +1,13 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { Stack, publishSettled } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
+import { Field } from "../field/Field.tsx";
 import { NumberField } from "../number-field/NumberField.tsx";
 import { Select } from "./Select.tsx";
 import type { SelectOption } from "./Select.tsx";
@@ -346,5 +347,47 @@ describe("Select", () => {
     await userEvent.click(trigger());
     await userEvent.click(option("Tall · 9:16"));
     expect(screen.getByText("9:16", { selector: "output" })).toBeTruthy();
+  });
+
+  it("as an outline box in a Field, is named by the field's label and its value, and described by the hint and the error", async () => {
+    render(
+      <Stack pad={8}>
+        <Field
+          label="Export as"
+          hint="PNG keeps transparent corners."
+          error="JPG fills them with white."
+        >
+          {(control) => (
+            <Select
+              {...control}
+              label="Export as"
+              variant="outline"
+              options={FORMATS}
+              defaultValue="jpg"
+            />
+          )}
+        </Field>
+      </Stack>,
+    );
+    const box = screen.getByRole("button", { name: "Export as JPG" });
+    expect(box.dataset["variant"]).toBe("outline");
+    expect(box.getAttribute("aria-invalid")).toBe("true");
+    expect(box.getAttribute("aria-describedby")).not.toBeNull();
+    expect(box.hasAttribute("data-bt-control")).toBe(true);
+    expect(box.getBoundingClientRect().height).toBe(34);
+    await userEvent.click(screen.getByText("Export as", { selector: "label" }));
+    await settled();
+    const list = screen.getByRole("listbox", { name: "Export as" });
+    const panel = list.parentElement;
+    if (!panel) throw new Error("no panel");
+    expect(panel.getBoundingClientRect().left).toBeCloseTo(
+      box.getBoundingClientRect().left,
+      0,
+    );
+    expect(panel.getBoundingClientRect().width).toBeGreaterThanOrEqual(
+      box.getBoundingClientRect().width - 1,
+    );
+    await userEvent.click(option("WebP"));
+    expect(screen.getByRole("button", { name: "Export as WebP" })).toBeTruthy();
   });
 });

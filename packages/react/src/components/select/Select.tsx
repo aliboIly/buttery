@@ -57,9 +57,14 @@ export interface SelectProps<Value extends string = string> extends Omit<
   readonly footer?: ReactNode;
   /** Names the footer for screen readers. Defaults to `label`. */
   readonly footerLabel?: string | undefined;
-  /** Which edge of the trigger the list lines up with. Defaults to `"end"`. */
+  /** Which edge of the trigger the list lines up with. Defaults to `"end"`, or `"start"` for `"outline"`. */
   readonly align?: "start" | "center" | "end" | undefined;
-  /** The trigger's height: `"sm"` (28px) or `"md"` (36px, the default). */
+  /**
+   * How the trigger looks: `"ghost"` (the default), a pill for header bars and toolbars, or `"outline"`, a
+   * box like a text field's that fills its column, for forms. An outline list is at least as wide as its box.
+   */
+  readonly variant?: "ghost" | "outline" | undefined;
+  /** The trigger's height: `"sm"` (28px) or `"md"`, the default (36px as a pill, 34px as a box). */
   readonly size?: "sm" | "md" | undefined;
 }
 
@@ -79,8 +84,10 @@ function Check(props: IconComponentProps): ReactElement {
 }
 
 /**
- * A ghost pill showing the chosen value; it opens a list to pick another, lined up with its end, and an
- * optional footer for a custom value, such as width and height fields. The open list moves like a menu:
+ * A ghost pill showing the chosen value, or with `variant="outline"` a box like a text field's for forms;
+ * it opens a list to pick another, lined up with its end (its start as a box), and an optional footer for
+ * a custom value, such as width and height fields. Inside a `Field`, spread the field's props onto it and
+ * the field's label names it, followed by the chosen value. The open list moves like a menu:
  * arrow keys, Home and End move, typing jumps to an option, Enter or Space chooses, Escape closes, and
  * focus goes back to the trigger. The arrow keys also open it from the trigger. With a footer, Tab moves
  * between the list and the footer's controls.
@@ -106,11 +113,13 @@ export function Select<Value extends string = string>({
   placeholder = "Choose",
   footer,
   footerLabel,
-  align = "end",
+  align,
+  variant = "ghost",
   size = "md",
   className,
   disabled,
   onKeyDown,
+  "aria-labelledby": labelledBy,
   ref,
   ...rest
 }: SelectProps<Value>): ReactElement {
@@ -131,6 +140,7 @@ export function Select<Value extends string = string>({
   const panel = useRef<HTMLDivElement>(null);
   const typed = useRef({ text: "", at: 0 });
   const listId = useId();
+  const valueId = useId();
   const selected = options.find((option) => option.value === current);
   const shown = valueLabel ?? selected?.label ?? placeholder;
   const enabled = options.filter((option) => option.disabled !== true);
@@ -216,6 +226,47 @@ export function Select<Value extends string = string>({
       }
     };
 
+  const triggerButton = (
+    <button
+      {...rest}
+      ref={triggerRefs}
+      type="button"
+      disabled={disabled}
+      aria-haspopup="listbox"
+      aria-controls={isOpen ? listId : undefined}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented) return;
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          setOpen(true);
+        }
+      }}
+      aria-label={labelledBy === undefined ? `${label}, ${shown}` : undefined}
+      aria-labelledby={
+        labelledBy === undefined ? undefined : `${labelledBy} ${valueId}`
+      }
+      className={cx("bt-select", className)}
+      data-bt="Select"
+      data-variant={variant}
+      data-size={size}
+      data-bt-control={variant === "outline" ? "" : undefined}
+    >
+      <span
+        id={valueId}
+        className="bt-truncate"
+        data-bt-part="value"
+        data-bt-truncate=""
+        title={shown}
+      >
+        {shown}
+      </span>
+      {variant === "outline" ? (
+        <Icon icon={ChevronDown} data-bt-part="chevron" />
+      ) : null}
+    </button>
+  );
+
   return (
     <Popover
       open={isOpen}
@@ -225,43 +276,21 @@ export function Select<Value extends string = string>({
       }}
     >
       <Popover.Trigger asChild>
-        <Button asChild variant="ghost" size={size} iconEnd={ChevronDown}>
-          <button
-            {...rest}
-            ref={triggerRefs}
-            type="button"
-            disabled={disabled}
-            aria-haspopup="listbox"
-            aria-controls={isOpen ? listId : undefined}
-            onKeyDown={(event) => {
-              onKeyDown?.(event);
-              if (event.defaultPrevented) return;
-              if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-                event.preventDefault();
-                setOpen(true);
-              }
-            }}
-            aria-label={`${label}, ${shown}`}
-            className={cx("bt-select", className)}
-            data-bt="Select"
-          >
-            <span
-              className="bt-truncate"
-              data-bt-part="value"
-              data-bt-truncate=""
-              title={shown}
-            >
-              {shown}
-            </span>
-          </button>
-        </Button>
+        {variant === "outline" ? (
+          triggerButton
+        ) : (
+          <Button asChild variant="ghost" size={size} iconEnd={ChevronDown}>
+            {triggerButton}
+          </Button>
+        )}
       </Popover.Trigger>
       <Popover.Content
         ref={panel}
-        align={align}
+        align={align ?? (variant === "outline" ? "start" : "end")}
         role={footer === undefined ? "none" : "dialog"}
         aria-label={footer === undefined ? undefined : label}
         className="bt-select-panel"
+        data-variant={variant}
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           setActive(undefined);
