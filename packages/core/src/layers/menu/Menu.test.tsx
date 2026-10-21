@@ -24,12 +24,14 @@ async function settled(): Promise<void> {
 
 function CardActions({
   onDuplicate = () => undefined,
+  onOpenChange,
 }: {
   readonly onDuplicate?: () => void;
+  readonly onOpenChange?: (open: boolean) => void;
 }): ReactElement {
   return (
     <>
-      <Menu>
+      <Menu onOpenChange={onOpenChange}>
         <Menu.Trigger
           style={{ marginBlockStart: "40px", marginInlineStart: "240px" }}
         >
@@ -122,6 +124,73 @@ describe("Menu", () => {
     await waitFor(() => {
       expect(screen.queryByRole("menu")).toBeNull();
     });
+    expect(document.activeElement).toBe(trigger());
+  });
+
+  it("reports one close for Escape, for choosing an item and for its trigger pressed again", async () => {
+    const onOpenChange = vi.fn();
+    render(<CardActions onOpenChange={onOpenChange} />);
+    await userEvent.click(trigger());
+    await settled();
+    await userEvent.keyboard("{Escape}");
+    await userEvent.click(trigger());
+    await settled();
+    await userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
+    await userEvent.click(trigger());
+    await settled();
+    await userEvent.click(trigger());
+    expect(onOpenChange.mock.calls).toEqual([
+      [true],
+      [false],
+      [true],
+      [false],
+      [true],
+      [false],
+    ]);
+  });
+
+  it("passes presses on its spot to the page while it fades out", async () => {
+    render(<CardActions />);
+    await userEvent.click(trigger());
+    await settled();
+    const box = screen.getByRole("menu").getBoundingClientRect();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.getByRole("menu").dataset["state"]).toBe("closed");
+    const under = document.elementFromPoint(
+      box.left + box.width / 2,
+      box.top + box.height / 2,
+    );
+    expect(under?.closest("[data-bt-layer]")).toBeNull();
+  });
+
+  it("hands focus back to its trigger when its owner closes it", async () => {
+    function Owned(): ReactElement {
+      const [open, setOpen] = useState(false);
+      return (
+        <Menu open={open} onOpenChange={setOpen}>
+          <Menu.Trigger>Card actions</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item
+              onSelect={(event) => {
+                event.preventDefault();
+                setOpen(false);
+              }}
+            >
+              Duplicate
+            </Menu.Item>
+          </Menu.Content>
+        </Menu>
+      );
+    }
+    render(<Owned />);
+    trigger().focus();
+    await userEvent.keyboard("{Enter}");
+    await settled();
+    expect(document.activeElement).toBe(
+      screen.getByRole("menuitem", { name: "Duplicate" }),
+    );
+    await userEvent.keyboard("{Enter}");
+    expect(screen.getByRole("menu").dataset["state"]).toBe("closed");
     expect(document.activeElement).toBe(trigger());
   });
 

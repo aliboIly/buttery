@@ -1,6 +1,6 @@
 import { AnimatePresence } from "motion/react";
 import { DropdownMenu } from "radix-ui";
-import { createContext, use, useId, useRef } from "react";
+import { createContext, use, useId, useLayoutEffect, useRef } from "react";
 import type {
   ComponentPropsWithRef,
   ComponentType,
@@ -81,8 +81,10 @@ function MenuRoot({
   const trigger = useRef<HTMLButtonElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const outside = useRef(false);
-  const change = (next: boolean): void => {
-    if (next) {
+
+  // After the close commits, so the leaving panel can't take keys and the focus move can't count as an outside press.
+  useLayoutEffect(() => {
+    if (isOpen) {
       outside.current = false;
     } else if (
       !outside.current &&
@@ -90,8 +92,7 @@ function MenuRoot({
     ) {
       trigger.current?.focus();
     }
-    setOpen(next);
-  };
+  }, [isOpen]);
   return (
     <MenuContext
       value={{
@@ -103,7 +104,7 @@ function MenuRoot({
         },
       }}
     >
-      <DropdownMenu.Root open={isOpen} onOpenChange={change} modal={false}>
+      <DropdownMenu.Root open={isOpen} onOpenChange={setOpen} modal={false}>
         {children}
       </DropdownMenu.Root>
     </MenuContext>
@@ -160,6 +161,13 @@ export function MenuContent({
             collisionPadding={space["2"]}
             onInteractOutside={(event) => {
               onInteractOutside?.(event);
+              if (
+                event.target instanceof Node &&
+                menu.trigger.current?.contains(event.target) === true
+              ) {
+                event.preventDefault();
+                return;
+              }
               menu.pressedOutside();
             }}
             onCloseAutoFocus={(event) => {

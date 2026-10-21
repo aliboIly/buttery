@@ -1,6 +1,6 @@
 import { AnimatePresence } from "motion/react";
 import { Popover as RadixPopover } from "radix-ui";
-import { createContext, use, useRef } from "react";
+import { createContext, use, useLayoutEffect, useRef } from "react";
 import type {
   ComponentPropsWithRef,
   Context,
@@ -66,8 +66,10 @@ function PopoverRoot({
   const trigger = useRef<HTMLButtonElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const outside = useRef(false);
-  const change = (next: boolean): void => {
-    if (next) {
+
+  // After the close commits, so the leaving panel can't take keys and the focus move can't count as an outside press.
+  useLayoutEffect(() => {
+    if (isOpen) {
       outside.current = false;
     } else if (
       !outside.current &&
@@ -75,8 +77,7 @@ function PopoverRoot({
     ) {
       trigger.current?.focus();
     }
-    setOpen(next);
-  };
+  }, [isOpen]);
   return (
     <PopoverContext
       value={{
@@ -88,7 +89,7 @@ function PopoverRoot({
         },
       }}
     >
-      <RadixPopover.Root open={isOpen} onOpenChange={change} modal={modal}>
+      <RadixPopover.Root open={isOpen} onOpenChange={setOpen} modal={modal}>
         {children}
       </RadixPopover.Root>
     </PopoverContext>
@@ -159,7 +160,8 @@ function PopoverScrim({
  * The floating panel. It sits 8px from its trigger, flips or shifts to stay 8px inside the viewport,
  * never covers the trigger, and scrolls inside when it's taller than the space available. It grows in
  * from the trigger's side and fades out; focus goes back to the trigger as it closes, unless the press
- * that closed it was somewhere else.
+ * that closed it was somewhere else. In a field holding an unsaved edit (`data-bt-draft`, as NumberField
+ * marks one), the first Escape puts the field back and the second closes the popover.
  */
 export function PopoverContent({
   className,
@@ -168,6 +170,7 @@ export function PopoverContent({
   scrim,
   children,
   onInteractOutside,
+  onEscapeKeyDown,
   onCloseAutoFocus,
   ref,
   ...rest
@@ -191,6 +194,15 @@ export function PopoverContent({
             onInteractOutside={(event) => {
               onInteractOutside?.(event);
               popover.pressedOutside();
+            }}
+            onEscapeKeyDown={(event) => {
+              onEscapeKeyDown?.(event);
+              if (
+                event.target instanceof Element &&
+                event.target.closest("[data-bt-draft]") !== null
+              ) {
+                event.preventDefault();
+              }
             }}
             onCloseAutoFocus={(event) => {
               onCloseAutoFocus?.(event);

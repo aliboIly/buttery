@@ -9,7 +9,7 @@ const ORDERS = {
 } as const;
 
 function isOrder(value: string): value is keyof typeof ORDERS {
-  return value in ORDERS;
+  return Object.hasOwn(ORDERS, value);
 }
 
 /** A sort order picked from a radio group, applied as soon as it's chosen. */

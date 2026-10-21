@@ -9,4 +9,15 @@
     position: relative;
     pointer-events: auto;
   }
+
+  /* Radix's popper wrapper never takes presses itself, so a menu or popover that's leaving lets them through. */
+  [data-bt-layer] > [data-radix-popper-content-wrapper] {
+    pointer-events: none;
+  }
+
+  [data-bt-layer]
+    > [data-radix-popper-content-wrapper]
+    > :not([data-state="closed"]) {
+    pointer-events: auto;
+  }
 }
