@@ -12,7 +12,7 @@ import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent as browser } from "vitest/browser";
 import { Button } from "../../components/button/Button.tsx";
 import { AnnouncementDialog } from "./AnnouncementDialog.tsx";
 import type { AnnouncementDialogProps } from "./AnnouncementDialog.tsx";
@@ -93,6 +93,25 @@ describe("AnnouncementDialog", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
     await userEvent.click(screen.getByRole("button", { name: "What's new" }));
     expect(await screen.findByRole("dialog")).toBeTruthy();
+  });
+
+  it("leaves focus off its trigger after it opened by itself, and hands it back after it was opened there", async () => {
+    render(<News storageKey="test-news" />);
+    await screen.findByRole("dialog");
+    await browser.keyboard("{Enter}");
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const trigger = screen.getByRole("button", { name: "What's new" });
+    expect(document.activeElement).not.toBe(trigger);
+    trigger.focus();
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog");
+    await browser.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(trigger);
+    });
   });
 
   it("puts the media beside the copy when wide, and above it in a narrow window", async () => {

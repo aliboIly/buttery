@@ -50,6 +50,8 @@ function TopBarRoot({
         <IconButton
           icon={MenuIcon}
           label={menuLabel}
+          aria-haspopup="dialog"
+          aria-expanded={shell.sidebarOpen}
           onClick={shell.openSidebar}
         />
       ) : null}

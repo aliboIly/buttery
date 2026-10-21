@@ -10,6 +10,8 @@ export interface AppShellState {
   readonly sidebar: SidebarMode;
   /** Opens the sidebar's sheet, while it's in sheet mode. */
   readonly openSidebar: () => void;
+  /** Whether the sidebar's sheet is open. */
+  readonly sidebarOpen: boolean;
   /** Scrolls the page region back to its top, as `AppPage` does when a new page mounts. */
   readonly scrollPageToTop: () => void;
 }
@@ -17,6 +19,7 @@ export interface AppShellState {
 const OUTSIDE_A_SHELL: AppShellState = {
   sidebar: "full",
   openSidebar: () => undefined,
+  sidebarOpen: false,
   scrollPageToTop: () => undefined,
 };
 

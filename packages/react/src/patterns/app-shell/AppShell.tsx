@@ -9,10 +9,12 @@ import {
   reducedPresence,
   tabbables,
   useAnimationTracking,
+  useCloseFocus,
   useControllableState,
   useMergedRefs,
   useMotionPreference,
 } from "@buttery/core";
+import type { CloseFocusFallback } from "@buttery/core";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -234,10 +236,13 @@ function InspectorShell({
 function SidebarSheet({
   label,
   close,
+  inline,
   children,
 }: {
   readonly label: string;
   readonly close: () => void;
+  /** Where focus goes if the sheet closes because the shell widened and its menu button went away. */
+  readonly inline: CloseFocusFallback;
   readonly children: ReactNode;
 }): ReactElement {
   const reduced = useMotionPreference() === "reduced";
@@ -245,6 +250,7 @@ function SidebarSheet({
   const preset = reduced ? reducedPresence : presencePresets.rise;
   const scrim = reduced ? reducedPresence : presencePresets.fade;
   const panel = useRef<HTMLDivElement>(null);
+  const closeFocus = useCloseFocus(true, panel, undefined, inline);
   return (
     <Layer band="modal" key="sidebar">
       <Dialog.Overlay forceMount asChild>
@@ -268,6 +274,7 @@ function SidebarSheet({
           event.preventDefault();
           first.focus();
         }}
+        onCloseAutoFocus={closeFocus}
       >
         <motion.div
           {...tracking}
@@ -354,7 +361,17 @@ function SidebarShell({
     openSidebar: () => {
       setSheetOpen(true);
     },
+    sidebarOpen: mode === "sheet" && sheetOpen,
     scrollPageToTop,
+  };
+  const inlineSidebar = (): HTMLElement | undefined => {
+    const sidebar = root.current?.querySelector(
+      ':scope > [data-bt-part="sidebar"]',
+    );
+    return (
+      sidebar?.querySelector<HTMLElement>('[aria-current="page"]') ??
+      tabbables(sidebar ?? null)[0]
+    );
   };
   const inSheet: AppShellState = { ...shell, sidebar: "full" };
 
@@ -388,6 +405,7 @@ function SidebarShell({
                     <SidebarSheet
                       key="sidebar"
                       label={sidebarLabel}
+                      inline={inlineSidebar}
                       close={() => {
                         setSheetOpen(false);
                       }}

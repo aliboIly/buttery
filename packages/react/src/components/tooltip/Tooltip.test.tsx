@@ -3,6 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
+import { ButteryProvider } from "../../provider/ButteryProvider.tsx";
 import { Button } from "../button/Button.tsx";
 import { Tooltip } from "./Tooltip.tsx";
 
@@ -69,5 +70,25 @@ describe("Tooltip", () => {
       </Tooltip>,
     );
     expect(tooltip()).not.toBeNull();
+  });
+
+  it("stays shut when code hands it focus after a pointer press, and opens for the keyboard", async () => {
+    render(
+      <ButteryProvider>
+        <Button>Got it</Button>
+        <Tooltip label="What's new">
+          <Button>Sparkle</Button>
+        </Tooltip>
+      </ButteryProvider>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Got it" }));
+    screen.getByRole("button", { name: "Sparkle" }).focus();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    screen.getByRole("button", { name: "Got it" }).focus();
+    await userEvent.keyboard("{Shift}");
+    screen.getByRole("button", { name: "Sparkle" }).blur();
+    screen.getByRole("button", { name: "Sparkle" }).focus();
+    expect(await screen.findByRole("tooltip")).toBeTruthy();
   });
 });

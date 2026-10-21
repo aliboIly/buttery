@@ -1,5 +1,5 @@
 import { Text, cx, useControllableState, useStoredState } from "@buttery/core";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ReactElement, ReactNode, Ref } from "react";
 import { ArrowLink } from "../../components/arrow-link/ArrowLink.tsx";
 import { Button } from "../../components/button/Button.tsx";
@@ -81,6 +81,7 @@ export function AnnouncementDialog({
     isFlag,
   );
   const [firstTime] = useState(storageKey !== undefined && !seen);
+  const openedByItself = useRef(firstTime);
   const [isOpen, setOpen] = useControllableState({
     value: open,
     defaultValue: firstTime,
@@ -97,7 +98,16 @@ export function AnnouncementDialog({
       {trigger === undefined ? null : (
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       )}
-      <Dialog.Content size="lg" ref={ref} closeLabel={closeLabel}>
+      <Dialog.Content
+        size="lg"
+        ref={ref}
+        closeLabel={closeLabel}
+        onCloseAutoFocus={(event) => {
+          // Opened by itself, it wasn't opened from its trigger, so focus goes back to the page, not there.
+          if (openedByItself.current) event.preventDefault();
+          openedByItself.current = false;
+        }}
+      >
         <div
           className={cx("bt-announcement-dialog", className)}
           data-bt="AnnouncementDialog"

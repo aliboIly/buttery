@@ -13,8 +13,11 @@ import { createRef } from "react";
 import type { ReactElement } from "react";
 import { Menu } from "@buttery/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { HeaderBar } from "../header-bar/HeaderBar.tsx";
 import { Inspector } from "../inspector/Inspector.tsx";
+import { Sidebar } from "../sidebar/Sidebar.tsx";
+import { TopBar } from "../top-bar/TopBar.tsx";
 import { AppShell } from "./AppShell.tsx";
 import { useAppShell } from "./app-shell-context.ts";
 
@@ -205,6 +208,28 @@ function Dashboard({ width }: { readonly width: number }): ReactElement {
   );
 }
 
+function Shop({ width }: { readonly width: number }): ReactElement {
+  return (
+    <div
+      data-testid="frame"
+      style={{ inlineSize: `${String(width)}px`, blockSize: "600px" }}
+    >
+      <AppShell
+        layout="sidebar"
+        sidebar={
+          <Sidebar label="Main">
+            <Sidebar.Item label="Home" href="#home" />
+            <Sidebar.Item label="Orders" href="#orders" current />
+          </Sidebar>
+        }
+        topBar={<TopBar />}
+      >
+        Page
+      </AppShell>
+    </div>
+  );
+}
+
 function part(name: string): HTMLElement {
   const element = document.querySelector<HTMLElement>(
     `[data-bt="AppShell"] > [data-bt-part="${name}"], [data-bt="AppShell"] > [data-bt-part="column"] > [data-bt-part="${name}"]`,
@@ -270,6 +295,37 @@ describe("AppShell layout=sidebar", () => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
     expect(screen.getByRole("navigation", { name: "Main" })).toBeTruthy();
+  });
+
+  it("hands focus back to its menu button when the sheet closes, the button saying whether it's open", async () => {
+    render(<Shop width={500} />);
+    const button = screen.getByRole("button", { name: "Open navigation" });
+    expect(button.getAttribute("aria-haspopup")).toBe("dialog");
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    button.focus();
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog", { name: "Navigation" });
+    expect(button.getAttribute("aria-expanded")).toBe("true");
+    await browser.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(button);
+    });
+  });
+
+  it("takes focus to the sidebar's current page when it widens with the sheet open", async () => {
+    render(<Shop width={500} />);
+    screen.getByRole("button", { name: "Open navigation" }).focus();
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog", { name: "Navigation" });
+    screen.getByTestId("frame").style.inlineSize = "1280px";
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("link", { name: "Orders" }),
+      );
+    });
   });
 
   it("makes the menus inside it arrive at once, as app chrome does", async () => {

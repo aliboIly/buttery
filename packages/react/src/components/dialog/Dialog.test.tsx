@@ -1,12 +1,20 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { publishSettled, watchFocusHistory } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from "vitest";
+import { page, userEvent as browser } from "vitest/browser";
 import { Button } from "../button/Button.tsx";
 import { Dialog } from "./Dialog.tsx";
 import type { DialogSize } from "./Dialog.tsx";
@@ -274,5 +282,78 @@ describe("Dialog", () => {
     );
     await new Promise((resolve) => setTimeout(resolve, 200));
     expect(getComputedStyle(dialog).opacity).toBe("1");
+  });
+
+  it("hands focus back to what opened it when it has no trigger", async () => {
+    function Opener(): ReactElement {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <Button
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            New order
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog.Content label="What kind of order?">
+              <Dialog.Body>
+                <Button>Retail</Button>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog>
+        </>
+      );
+    }
+    render(<Opener />);
+    screen.getByRole("button", { name: "New order" }).focus();
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog", { name: "What kind of order?" });
+    await browser.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "New order" }),
+      );
+    });
+  });
+
+  it("hands focus to where it last was outside when what opened it has gone", async () => {
+    onTestFinished(watchFocusHistory());
+    function Opener(): ReactElement {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <Button>Orders</Button>
+          {open ? null : (
+            <Button
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              What's new
+            </Button>
+          )}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog.Content label="Roasts plan themselves now">
+              <Dialog.Body>
+                <Button>Got it</Button>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog>
+        </>
+      );
+    }
+    render(<Opener />);
+    screen.getByRole("button", { name: "Orders" }).focus();
+    screen.getByRole("button", { name: "What's new" }).focus();
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog", { name: "Roasts plan themselves now" });
+    await browser.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Orders" }),
+      );
+    });
   });
 });

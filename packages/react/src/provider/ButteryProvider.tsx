@@ -1,5 +1,11 @@
 import { MotionConfig } from "motion/react";
-import { use, useLayoutEffect, useMemo, useSyncExternalStore } from "react";
+import {
+  use,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useSyncExternalStore,
+} from "react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import {
   FloatingLanes,
@@ -8,6 +14,7 @@ import {
   MotionPreferenceContext,
   publishSettled,
   spring,
+  watchFocusHistory,
 } from "@buttery/core";
 import type {
   ButteryTheme,
@@ -166,6 +173,7 @@ export function ButteryProvider({
   const isRoot = parent === null;
 
   useSettledFlag(isRoot);
+  useEffect(() => (isRoot ? watchFocusHistory() : undefined), [isRoot]);
   useRootAttribute("data-bt-theme", attributes["data-bt-theme"], isRoot);
   useRootAttribute("data-bt-density", attributes["data-bt-density"], isRoot);
   useRootAttribute("data-bt-platform", attributes["data-bt-platform"], isRoot);

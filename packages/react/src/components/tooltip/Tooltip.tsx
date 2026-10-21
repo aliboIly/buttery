@@ -1,4 +1,11 @@
-import { Layer, cx, space, timing, useControllableState } from "@buttery/core";
+import {
+  Layer,
+  cx,
+  lastInput,
+  space,
+  timing,
+  useControllableState,
+} from "@buttery/core";
 import { Tooltip as RadixTooltip } from "radix-ui";
 import { use } from "react";
 import type { ReactElement, ReactNode } from "react";
@@ -70,7 +77,15 @@ export function Tooltip({
   });
   const tooltip = (
     <RadixTooltip.Root open={isOpen} onOpenChange={setOpen}>
-      <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+      <RadixTooltip.Trigger
+        asChild
+        onFocus={(event) => {
+          // Focus code hands back after a pointer press, such as to a trigger as its dialog closes, shows no tooltip.
+          if (lastInput() === "pointer") event.preventDefault();
+        }}
+      >
+        {children}
+      </RadixTooltip.Trigger>
       {isOpen ? (
         <Layer band="tooltip">
           <RadixTooltip.Content

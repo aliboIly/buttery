@@ -7,6 +7,7 @@ import {
   reducedPresence,
   tabbables,
   useAnimationTracking,
+  useCloseFocus,
   useControllableState,
   useMergedRefs,
   useMotionPreference,
@@ -24,13 +25,22 @@ import {
   useRef,
   useState,
 } from "react";
-import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import type {
+  ComponentPropsWithRef,
+  ReactElement,
+  ReactNode,
+  RefObject,
+} from "react";
 import { IconButton } from "../icon-button/IconButton.tsx";
 
 /** How wide a dialog is: `"sm"` (400px), `"md"` (560px) or `"lg"` (880px), never wider than the window allows. */
 export type DialogSize = "sm" | "md" | "lg";
 
 const OpenContext = createContext(false);
+
+const TriggerContext = createContext<RefObject<HTMLElement | null> | null>(
+  null,
+);
 
 /**
  * How `Dialog.Text` tells the content around it that it has a title, and a description when it has a body.
@@ -65,9 +75,12 @@ function DialogRoot({
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
+  const trigger = useRef<HTMLElement>(null);
   return (
     <RadixDialog.Root open={isOpen} onOpenChange={setOpen}>
-      <OpenContext value={isOpen}>{children}</OpenContext>
+      <TriggerContext value={trigger}>
+        <OpenContext value={isOpen}>{children}</OpenContext>
+      </TriggerContext>
     </RadixDialog.Root>
   );
 }
@@ -78,8 +91,13 @@ export type DialogTriggerProps = ComponentPropsWithRef<
 >;
 
 /** The control that opens the dialog. Use `asChild` to make your own button the trigger. */
-export function DialogTrigger(props: DialogTriggerProps): ReactElement {
-  return <RadixDialog.Trigger {...props} />;
+export function DialogTrigger({
+  ref,
+  ...props
+}: DialogTriggerProps): ReactElement {
+  const trigger = use(TriggerContext);
+  const refs = useMergedRefs(ref, trigger ?? undefined);
+  return <RadixDialog.Trigger {...props} ref={refs} />;
 }
 
 /** Props for `Dialog.Close`. */
@@ -122,10 +140,12 @@ export function DialogContent({
   className,
   children,
   onOpenAutoFocus,
+  onCloseAutoFocus,
   ref,
   ...rest
 }: DialogContentProps): ReactElement {
   const open = use(OpenContext);
+  const trigger = use(TriggerContext);
   const reduced = useMotionPreference() === "reduced";
   const tracking = useAnimationTracking();
   const [described, setDescribed] = useState(false);
@@ -134,6 +154,7 @@ export function DialogContent({
   const element = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, element);
   const body = useRef<HTMLDivElement>(null);
+  const closeFocus = useCloseFocus(open, element, trigger ?? undefined);
   const registry = useMemo<ContentRegistry>(
     () => ({
       register: (withBody) => {
@@ -192,6 +213,10 @@ export function DialogContent({
                 // Radix skips links and falls back to the close button, whose tooltip would open; links can be what a dialog offers.
                 event.preventDefault();
                 (tabbables(body.current)[0] ?? element.current)?.focus();
+              }}
+              onCloseAutoFocus={(event) => {
+                onCloseAutoFocus?.(event);
+                if (!event.defaultPrevented) closeFocus(event);
               }}
             >
               <motion.div
