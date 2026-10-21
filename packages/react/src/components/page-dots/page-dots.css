@@ -1,0 +1,26 @@
+@layer bt.components {
+  .bt-page-dots {
+    --bt-page-dots-dot: 6px;
+    --bt-page-dots-active: 18px;
+
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1_5);
+  }
+
+  .bt-page-dots > [data-bt-part="dot"] {
+    flex: none;
+    inline-size: var(--bt-page-dots-dot);
+    block-size: var(--bt-page-dots-dot);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-dot);
+    transition: background-color calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-standard);
+  }
+
+  .bt-page-dots > [data-bt-part="dot"][data-active] {
+    inline-size: var(--bt-page-dots-active);
+    background-color: var(--bt-dot-active);
+  }
+}

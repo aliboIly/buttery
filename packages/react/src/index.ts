@@ -241,3 +241,5 @@ export type {
   DialogTextProps,
   DialogTriggerProps,
 } from "./components/dialog/Dialog.tsx";
+export { PageDots } from "./components/page-dots/PageDots.tsx";
+export type { PageDotsProps } from "./components/page-dots/PageDots.tsx";
