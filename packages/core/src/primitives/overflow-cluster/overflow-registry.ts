@@ -77,7 +77,8 @@ export interface Prioritized {
 
 /**
  * Which entries to hide so the rest fit in `available` px, given each entry's width, the gap between
- * items and the width of the "More" trigger. Lowest priority goes first; among equals, the last one.
+ * items and the width of the "More" trigger, which takes room whenever something is hidden or, with
+ * `alwaysTrigger`, always. Lowest priority goes first; among equals, the last one.
  */
 export function entriesToHide(
   entries: readonly Prioritized[],
@@ -85,6 +86,7 @@ export function entriesToHide(
   available: number,
   gap: number,
   triggerWidth: number,
+  alwaysTrigger = false,
 ): ReadonlySet<string> {
   const widthOf = (entry: Prioritized): number => widths.get(entry.id) ?? 0;
   const total = (
@@ -97,7 +99,7 @@ export function entriesToHide(
       content + (withTrigger ? triggerWidth : 0) + gap * Math.max(0, count - 1)
     );
   };
-  if (total(entries, false) <= available) return new Set();
+  if (total(entries, alwaysTrigger) <= available) return new Set();
   const order = entries
     .map((entry, index) => ({ entry, index }))
     .sort((a, b) => a.entry.priority - b.entry.priority || b.index - a.index);

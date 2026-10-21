@@ -59,6 +59,11 @@ export interface OverflowClusterProps
    * default). Compact density shortens them like any control.
    */
   readonly size?: "sm" | "control" | "button" | undefined;
+  /**
+   * Your own items for the "More" menu, which then always shows, such as every choice with actions on
+   * them. Without it, the menu lists the items that don't fit and shows only when something doesn't.
+   */
+  readonly menu?: ReactNode;
 }
 
 function OverflowClusterRoot({
@@ -66,6 +71,7 @@ function OverflowClusterRoot({
   moreLabel = "More",
   justify = "start",
   size = "button",
+  menu,
   ref,
   className,
   children,
@@ -83,6 +89,7 @@ function OverflowClusterRoot({
   const widths = useRef(new Map<string, number>());
   const committed = useRef<ReadonlySet<string>>(hidden);
   const latest = useRef(entries);
+  const ownMenu = useRef(menu !== undefined);
   const merged = useMergedRefs(ref, root);
   const lineup = entries
     .map((entry) => `${entry.id}:${String(entry.priority)}`)
@@ -90,6 +97,7 @@ function OverflowClusterRoot({
 
   useLayoutEffect(() => {
     latest.current = entries;
+    ownMenu.current = menu !== undefined;
   });
 
   useLayoutEffect(() => {
@@ -103,14 +111,18 @@ function OverflowClusterRoot({
         if (width > 0) widths.current.set(entry.id, width);
       }
       const style = getComputedStyle(element);
+      const padding =
+        (Number.parseFloat(style.paddingInlineStart) || 0) +
+        (Number.parseFloat(style.paddingInlineEnd) || 0);
       return entriesToHide(
         entries,
         widths.current,
-        element.clientWidth,
+        element.clientWidth - padding,
         Number.parseFloat(style.columnGap) || 0,
         Number.parseFloat(
           style.getPropertyValue("--bt-overflow-cluster-more-size"),
         ) || 0,
+        ownMenu.current,
       );
     };
     const commit = (next: ReadonlySet<string>): void => {
@@ -118,7 +130,7 @@ function OverflowClusterRoot({
       committed.current = next;
       flushSync(() => {
         setHidden(next);
-        if (next.size === 0) setMenuOpen(false);
+        if (next.size === 0 && !ownMenu.current) setMenuOpen(false);
       });
     };
     const observer = new ResizeObserver((records) => {
@@ -160,7 +172,7 @@ function OverflowClusterRoot({
           {...spacingAttributes({ gap })}
         >
           {children}
-          {overflowed.length > 0 ? (
+          {menu !== undefined || overflowed.length > 0 ? (
             <Menu open={menuOpen} onOpenChange={setMenuOpen}>
               <Menu.Trigger
                 aria-label={moreLabel}
@@ -170,16 +182,17 @@ function OverflowClusterRoot({
                 <Icon icon={MoreDots} />
               </Menu.Trigger>
               <Menu.Content>
-                {overflowed.map(({ id, menuItem }) => (
-                  <Menu.Item
-                    key={id}
-                    icon={menuItem.icon}
-                    disabled={menuItem.disabled}
-                    onSelect={menuItem.onSelect}
-                  >
-                    {menuItem.label}
-                  </Menu.Item>
-                ))}
+                {menu ??
+                  overflowed.map(({ id, menuItem }) => (
+                    <Menu.Item
+                      key={id}
+                      icon={menuItem.icon}
+                      disabled={menuItem.disabled}
+                      onSelect={menuItem.onSelect}
+                    >
+                      {menuItem.label}
+                    </Menu.Item>
+                  ))}
               </Menu.Content>
             </Menu>
           ) : null}
