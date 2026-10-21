@@ -1,6 +1,7 @@
 @layer bt.patterns {
   .bt-app-shell {
     --bt-app-shell-gap: var(--bt-space-2);
+    --bt-app-shell-line: 1px;
 
     display: grid;
     grid-template-areas:
@@ -80,5 +81,67 @@
     flex: 1 1 auto;
     inline-size: 100%;
     min-block-size: 0;
+  }
+
+  /* The dashboard layout: the sidebar beside a column of the top bar over the page, each scrolling on its own. */
+  .bt-app-shell[data-layout="sidebar"] {
+    container: bt-shell / inline-size;
+    grid-template-areas: "sidebar column";
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
+    gap: 0;
+    justify-content: stretch;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-app-shell[data-layout="sidebar"][data-sidebar="rail"] {
+    grid-template-columns: var(--bt-w-sidebar-rail) minmax(0, 1fr);
+  }
+
+  .bt-app-shell[data-layout="sidebar"][data-sidebar="sheet"] {
+    grid-template-areas: "column";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bt-app-shell[data-layout="sidebar"] > [data-bt-part="sidebar"] {
+    grid-area: sidebar;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-inline-end: var(--bt-app-shell-line) solid var(--bt-border);
+  }
+
+  /* The column is a container of its own, so the top bar and the page pad by its width. */
+  .bt-app-shell[data-layout="sidebar"] > [data-bt-part="column"] {
+    container: bt-column / inline-size;
+    display: grid;
+    grid-area: column;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+
+  .bt-app-shell[data-layout="sidebar"]
+    > [data-bt-part="column"]
+    > [data-bt-part="page"] {
+    grid-row: 2;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* On a phone the sidebar opens as a sheet from the start edge, 8px inside the window. */
+  .bt-app-shell-sidebar-sheet[data-bt-part="sidebar-sheet"] {
+    position: absolute;
+    inset-block: var(--bt-space-2);
+    inset-inline-start: var(--bt-space-2);
+    inline-size: min(var(--bt-w-sidebar), calc(100% - var(--bt-space-4)));
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    outline: none;
   }
 }

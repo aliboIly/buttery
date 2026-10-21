@@ -213,7 +213,19 @@ export type {
   StageSize,
 } from "./patterns/stage/Stage.tsx";
 export { AppShell } from "./patterns/app-shell/AppShell.tsx";
-export type { AppShellProps } from "./patterns/app-shell/AppShell.tsx";
+export type {
+  AppShellInspectorProps,
+  AppShellProps,
+  AppShellSidebarProps,
+} from "./patterns/app-shell/AppShell.tsx";
+export {
+  AppShellContext,
+  useAppShell,
+} from "./patterns/app-shell/app-shell-context.ts";
+export type {
+  AppShellState,
+  SidebarMode,
+} from "./patterns/app-shell/app-shell-context.ts";
 export { ColorPicker } from "./components/color-picker/ColorPicker.tsx";
 export type {
   ColorPickerLabels,

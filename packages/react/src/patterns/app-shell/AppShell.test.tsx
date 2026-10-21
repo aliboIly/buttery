@@ -1,14 +1,22 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
 import { publishSettled } from "@buttery/core";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
+import { Menu } from "@buttery/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HeaderBar } from "../header-bar/HeaderBar.tsx";
 import { Inspector } from "../inspector/Inspector.tsx";
 import { AppShell } from "./AppShell.tsx";
+import { useAppShell } from "./app-shell-context.ts";
 
 beforeEach(() => {
   publishSettled();
@@ -150,5 +158,109 @@ describe("AppShell", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
+  });
+});
+
+function OpenNavigation(): ReactElement | null {
+  const shell = useAppShell();
+  if (shell.sidebar !== "sheet") return null;
+  return (
+    <button type="button" onClick={shell.openSidebar}>
+      Open navigation
+    </button>
+  );
+}
+
+function Dashboard({ width }: { readonly width: number }): ReactElement {
+  return (
+    <div
+      data-testid="frame"
+      style={{ inlineSize: `${String(width)}px`, blockSize: "600px" }}
+    >
+      <AppShell
+        layout="sidebar"
+        data-testid="shell"
+        sidebar={
+          <nav aria-label="Main" style={{ blockSize: "1200px" }}>
+            <a href="#orders">Orders</a>
+          </nav>
+        }
+        topBar={
+          <div style={{ blockSize: "56px" }}>
+            <OpenNavigation />
+            <Menu>
+              <Menu.Trigger>Account</Menu.Trigger>
+              <Menu.Content>
+                <Menu.Item>Sign out</Menu.Item>
+              </Menu.Content>
+            </Menu>
+          </div>
+        }
+      >
+        <div data-testid="page" style={{ blockSize: "2000px" }}>
+          Page
+        </div>
+      </AppShell>
+    </div>
+  );
+}
+
+function part(name: string): HTMLElement {
+  const element = document.querySelector<HTMLElement>(
+    `[data-bt="AppShell"] > [data-bt-part="${name}"], [data-bt="AppShell"] > [data-bt-part="column"] > [data-bt-part="${name}"]`,
+  );
+  if (!element) throw new Error(`No ${name}.`);
+  return element;
+}
+
+describe("AppShell layout=sidebar", () => {
+  it("lays the sidebar beside the top bar and the page, each scrolling on its own while the shell doesn't", () => {
+    render(<Dashboard width={1280} />);
+    expect(part("sidebar").getBoundingClientRect().width).toBe(240);
+    expect(part("top").getBoundingClientRect().left).toBe(240);
+    const page = part("page");
+    expect(page.getBoundingClientRect().top).toBe(56);
+    page.scrollTop = 300;
+    expect(page.scrollTop).toBe(300);
+    part("sidebar").scrollTop = 200;
+    expect(part("sidebar").scrollTop).toBe(200);
+    const shell = screen.getByTestId("shell");
+    expect(shell.scrollHeight).toBe(shell.clientHeight);
+  });
+
+  it("turns the sidebar into a 56px rail under 1100px of shell", () => {
+    render(<Dashboard width={900} />);
+    expect(screen.getByTestId("shell").dataset["sidebar"]).toBe("rail");
+    expect(part("sidebar").getBoundingClientRect().width).toBe(56);
+  });
+
+  it("opens the sidebar as a sheet under 640px, closing it on a link and when the shell widens", async () => {
+    render(<Dashboard width={500} />);
+    expect(screen.queryByRole("navigation", { name: "Main" })).toBeNull();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Open navigation" }),
+    );
+    const sheet = await screen.findByRole("dialog", { name: "Navigation" });
+    await userEvent.click(within(sheet).getByRole("link", { name: "Orders" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await userEvent.click(
+      screen.getByRole("button", { name: "Open navigation" }),
+    );
+    await screen.findByRole("dialog", { name: "Navigation" });
+    screen.getByTestId("frame").style.inlineSize = "1280px";
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(screen.getByRole("navigation", { name: "Main" })).toBeTruthy();
+  });
+
+  it("makes the menus inside it arrive at once, as app chrome does", async () => {
+    render(<Dashboard width={1280} />);
+    await userEvent.click(screen.getByRole("button", { name: "Account" }));
+    const menu = screen.getByRole("menu");
+    expect(getComputedStyle(menu).opacity).toBe("1");
+    expect(new DOMMatrix(getComputedStyle(menu).transform).a).toBe(1);
   });
 });

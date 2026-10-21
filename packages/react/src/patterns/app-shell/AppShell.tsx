@@ -1,9 +1,13 @@
 import {
+  FloatingEntranceContext,
   Layer,
   Scrim,
   cx,
+  hasContent,
+  opensElsewhere,
   presencePresets,
   reducedPresence,
+  tabbables,
   useAnimationTracking,
   useControllableState,
   useMergedRefs,
@@ -19,12 +23,16 @@ import type {
   RefObject,
 } from "react";
 import { Button } from "../../components/button/Button.tsx";
+import { AppShellContext } from "./app-shell-context.ts";
+import type { AppShellState, SidebarMode } from "./app-shell-context.ts";
 
-/** Props for `AppShell`. */
-export interface AppShellProps extends Omit<
+/** Props for `AppShell` in its editor layout: a work area with an inspector beside it. */
+export interface AppShellInspectorProps extends Omit<
   ComponentPropsWithRef<"div">,
   "children"
 > {
+  /** `"inspector"` (the default) for an editor: the work area with an inspector beside it. */
+  readonly layout?: "inspector" | undefined;
   /** The bar at the top of the work area, such as a `HeaderBar`. */
   readonly header: ReactNode;
   /** The settings beside the work area, such as an `Inspector`. On narrow screens it opens as a sheet. */
@@ -43,8 +51,40 @@ export interface AppShellProps extends Omit<
   readonly children: ReactNode;
 }
 
+/** Props for `AppShell` in its dashboard layout: a sidebar beside the top bar and the page. */
+export interface AppShellSidebarProps extends Omit<
+  ComponentPropsWithRef<"div">,
+  "children"
+> {
+  /** `"sidebar"` for a dashboard: a sidebar beside a column holding the top bar and the page. */
+  readonly layout: "sidebar";
+  /** The app's navigation, a `Sidebar`. It becomes an icon rail under 1100px of shell and a sheet under 640. */
+  readonly sidebar: ReactNode;
+  /** The bar over the page, a `TopBar`. */
+  readonly topBar?: ReactNode;
+  /** Names the sidebar's sheet on narrow screens. Defaults to `"Navigation"`. */
+  readonly sidebarLabel?: string | undefined;
+  /** Whether the sidebar's sheet is open on a narrow screen. Pair with `onOpenChange` to control it. */
+  readonly open?: boolean | undefined;
+  /** Whether the sheet starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
+  /** Called when the sheet opens or closes, including when the shell widens and the sidebar comes back. */
+  readonly onOpenChange?: ((open: boolean) => void) | undefined;
+  /** The page, an `AppPage`. */
+  readonly children: ReactNode;
+}
+
+/** Props for `AppShell`: the editor layout (the default) or the dashboard layout with `layout="sidebar"`. */
+export type AppShellProps = AppShellInspectorProps | AppShellSidebarProps;
+
 /** Narrower than this, the inspector no longer fits beside a useful stage and opens as a sheet. */
 const SHEET_BELOW = 840;
+
+/** Narrower than this, the sidebar becomes an icon rail. */
+const RAIL_BELOW = 1100;
+
+/** Narrower than this, the sidebar leaves the shell and opens as a sheet from the top bar. */
+const SIDEBAR_SHEET_BELOW = 640;
 
 function Sheet({
   label,
@@ -92,19 +132,7 @@ function Sheet({
   );
 }
 
-/**
- * A whole editor screen inside the app's background: the header and the stage in one column and the
- * inspector, full height, beside them, the whole thing at most 1380px wide and centered. On a narrow
- * screen (under 840px) the inspector moves into a sheet that rises from the bottom, opened by a button
- * under the stage, so nothing ever overlaps or squeezes. When the screen widens again the sheet closes
- * and the inspector goes back beside the stage, taking focus along if it was in the sheet.
- *
- * @example
- * <AppShell header={<HeaderBar title="Launch card" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">
- *   <Stage label="Card preview" size={size}>…</Stage>
- * </AppShell>
- */
-export function AppShell({
+function InspectorShell({
   header,
   inspector,
   inspectorLabel,
@@ -115,8 +143,9 @@ export function AppShell({
   className,
   children,
   ref,
+  layout = "inspector",
   ...rest
-}: AppShellProps): ReactElement {
+}: AppShellInspectorProps): ReactElement {
   const root = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, root);
   const sheet = useRef<HTMLDivElement>(null);
@@ -171,6 +200,7 @@ export function AppShell({
       ref={refs}
       className={cx("bt-app-shell", className)}
       data-bt="AppShell"
+      data-layout={layout}
       data-narrow={narrow ? "" : undefined}
     >
       <div data-bt-part="header">{header}</div>
@@ -198,5 +228,200 @@ export function AppShell({
         </div>
       )}
     </div>
+  );
+}
+
+function SidebarSheet({
+  label,
+  close,
+  children,
+}: {
+  readonly label: string;
+  readonly close: () => void;
+  readonly children: ReactNode;
+}): ReactElement {
+  const reduced = useMotionPreference() === "reduced";
+  const tracking = useAnimationTracking();
+  const preset = reduced ? reducedPresence : presencePresets.rise;
+  const scrim = reduced ? reducedPresence : presencePresets.fade;
+  const panel = useRef<HTMLDivElement>(null);
+  return (
+    <Layer band="modal" key="sidebar">
+      <Dialog.Overlay forceMount asChild>
+        <motion.div
+          initial={scrim.initial}
+          animate={scrim.animate}
+          exit={scrim.exit}
+          className="bt-app-shell-scrim"
+          data-bt-part="sheet-scrim"
+        >
+          <Scrim />
+        </motion.div>
+      </Dialog.Overlay>
+      <Dialog.Content
+        forceMount
+        asChild
+        aria-describedby={undefined}
+        onOpenAutoFocus={(event) => {
+          const [first] = tabbables(panel.current);
+          if (!first) return;
+          event.preventDefault();
+          first.focus();
+        }}
+      >
+        <motion.div
+          {...tracking}
+          ref={panel}
+          initial={preset.initial}
+          animate={preset.animate}
+          exit={preset.exit}
+          className="bt-app-shell-sidebar-sheet bt-surface"
+          data-level="floating"
+          data-bt-part="sidebar-sheet"
+          onClickCapture={(event) => {
+            if (opensElsewhere(event)) return;
+            if (!(event.target instanceof Element)) return;
+            if (!event.target.closest("a[href]")) return;
+            close();
+          }}
+        >
+          <VisuallyHidden.Root asChild>
+            <Dialog.Title>{label}</Dialog.Title>
+          </VisuallyHidden.Root>
+          {children}
+        </motion.div>
+      </Dialog.Content>
+    </Layer>
+  );
+}
+
+function modeAt(width: number): SidebarMode {
+  if (width >= RAIL_BELOW) return "full";
+  if (width >= SIDEBAR_SHEET_BELOW) return "rail";
+  return "sheet";
+}
+
+function SidebarShell({
+  sidebar,
+  topBar,
+  sidebarLabel = "Navigation",
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  className,
+  children,
+  ref,
+  layout,
+  ...rest
+}: AppShellSidebarProps): ReactElement {
+  const root = useRef<HTMLDivElement>(null);
+  const refs = useMergedRefs(ref, root);
+  const [mode, setMode] = useState<SidebarMode>("full");
+  const [sheetOpen, setSheetOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+  const closeSheet = useRef(setSheetOpen);
+
+  useLayoutEffect(() => {
+    closeSheet.current = setSheetOpen;
+  });
+
+  useLayoutEffect(() => {
+    const element = root.current;
+    if (!element) return undefined;
+    const measure = (): void => {
+      const next = modeAt(element.clientWidth);
+      if (next !== "sheet") closeSheet.current(false);
+      setMode(next);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  const shell: AppShellState = {
+    sidebar: mode,
+    openSidebar: () => {
+      setSheetOpen(true);
+    },
+  };
+  const inSheet: AppShellState = { ...shell, sidebar: "full" };
+
+  return (
+    <AppShellContext value={shell}>
+      <FloatingEntranceContext value="instant">
+        <div
+          {...rest}
+          ref={refs}
+          className={cx("bt-app-shell", className)}
+          data-bt="AppShell"
+          data-layout={layout}
+          data-sidebar={mode}
+        >
+          {mode === "sheet" ? null : (
+            <div data-bt-part="sidebar" className="bt-scroll-fade">
+              {sidebar}
+            </div>
+          )}
+          <div data-bt-part="column">
+            {hasContent(topBar) ? <div data-bt-part="top">{topBar}</div> : null}
+            <div data-bt-part="page" className="bt-scroll-fade">
+              {children}
+            </div>
+          </div>
+          {mode === "sheet" ? (
+            <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
+              <AnimatePresence>
+                {sheetOpen ? (
+                  <AppShellContext value={inSheet}>
+                    <SidebarSheet
+                      key="sidebar"
+                      label={sidebarLabel}
+                      close={() => {
+                        setSheetOpen(false);
+                      }}
+                    >
+                      {sidebar}
+                    </SidebarSheet>
+                  </AppShellContext>
+                ) : null}
+              </AnimatePresence>
+            </Dialog.Root>
+          ) : null}
+        </div>
+      </FloatingEntranceContext>
+    </AppShellContext>
+  );
+}
+
+/**
+ * A whole app screen. The default layout is an editor inside the app's background: the header and the
+ * stage in one column and the inspector, full height, beside them, at most 1380px wide and centered; under
+ * 840px the inspector moves into a sheet that rises from the bottom, opened by a button under the stage.
+ *
+ * `layout="sidebar"` is a dashboard: the sidebar beside a column holding the top bar and the page, each
+ * scrolling on its own, the shell never scrolling. Measured on the shell's own width, the sidebar is full
+ * from 1100px, an icon rail under that, and under 640 it leaves the shell and opens as a sheet from the top
+ * bar's menu button, closing on navigation, Escape or the scrim. Menus and popovers inside it arrive
+ * instantly, as app chrome does.
+ *
+ * @example
+ * <AppShell header={<HeaderBar title="Launch card" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">
+ *   <Stage label="Card preview" size={size}>…</Stage>
+ * </AppShell>
+ * <AppShell layout="sidebar" sidebar={<Sidebar label="Main">…</Sidebar>} topBar={<TopBar />}>
+ *   <AppPage header={<PageHeader title="Orders" />}>…</AppPage>
+ * </AppShell>
+ */
+export function AppShell(props: AppShellProps): ReactElement {
+  return props.layout === "sidebar" ? (
+    <SidebarShell {...props} />
+  ) : (
+    <InspectorShell {...props} />
   );
 }
