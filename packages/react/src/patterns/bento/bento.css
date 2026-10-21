@@ -1,0 +1,108 @@
+@layer bt.patterns {
+  /* The bento is its own size container, so its columns follow the room it has. */
+  .bt-bento {
+    min-inline-size: 0;
+    container-type: inline-size;
+  }
+
+  .bt-bento > [data-bt-part="grid"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: var(--bt-bento-row);
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  @container (width >= 640px) {
+    .bt-bento > [data-bt-part="grid"] {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .bt-bento-card {
+      grid-column: span 3;
+    }
+
+    .bt-bento-card:is([data-span="8"], [data-span="12"]) {
+      grid-column: span 6;
+    }
+  }
+
+  @container (width >= 1024px) {
+    .bt-bento > [data-bt-part="grid"] {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .bt-bento-card[data-span="4"] {
+      grid-column: span 4;
+    }
+
+    .bt-bento-card[data-span="6"] {
+      grid-column: span 6;
+    }
+
+    .bt-bento-card[data-span="8"] {
+      grid-column: span 8;
+    }
+
+    .bt-bento-card[data-span="12"] {
+      grid-column: span 12;
+    }
+  }
+
+  .bt-bento-card {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: clip;
+    border-radius: var(--bt-r-3xl);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+    transition:
+      translate calc(var(--bt-dur-fast) * var(--bt-motion)) var(--bt-ease-out),
+      box-shadow var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  .bt-bento-card[data-rows="2"] {
+    grid-row: span 2;
+  }
+
+  /* While a card is open, the others step back so it has the page to itself. An ExpandableCard steps back through Motion, which owns its opacity. */
+  .bt-bento[data-expanded] .bt-bento-card[data-bt-part="card"] {
+    opacity: 0;
+    transition: opacity var(--bt-dur-base) var(--bt-ease-standard);
+  }
+
+  @media (hover: hover) {
+    .bt-bento-card:hover {
+      box-shadow: var(--bt-shadow-raised);
+      translate: 0 calc(var(--bt-space-0_5) * -1 * var(--bt-motion));
+    }
+  }
+
+  .bt-bento-card > [data-bt-part="head"] {
+    display: flex;
+    flex: none;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--bt-space-4);
+    padding: var(--bt-space-6);
+  }
+
+  .bt-bento-card > [data-bt-part="head"] > [data-bt-part="title"] {
+    min-inline-size: 0;
+    max-inline-size: 22ch;
+  }
+
+  .bt-bento-card > [data-bt-part="head"] > [data-bt-part="affordance"] {
+    flex: none;
+  }
+
+  /* The visual sits at the bottom and runs to the card's edges, which clip it. */
+  .bt-bento-card > [data-bt-part="visual"] {
+    display: grid;
+    flex: 1;
+    align-items: end;
+    min-block-size: 0;
+  }
+}

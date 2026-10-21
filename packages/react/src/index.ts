@@ -278,3 +278,11 @@ export type {
   LogoStripMarkProps,
   LogoStripProps,
 } from "./patterns/logo-strip/LogoStrip.tsx";
+export { Bento, BentoCard, BentoContext } from "./patterns/bento/Bento.tsx";
+export type {
+  BentoCardProps,
+  BentoComponent,
+  BentoProps,
+  BentoSpan,
+  BentoState,
+} from "./patterns/bento/Bento.tsx";
