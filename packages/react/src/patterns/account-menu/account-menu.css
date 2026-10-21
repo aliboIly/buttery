@@ -40,7 +40,8 @@
     }
   }
 
-  .bt-account-menu-trigger[data-state="open"] {
+  /* aria-expanded, since in a rail the tooltip's data-state takes the place of the menu's. */
+  .bt-account-menu-trigger[aria-expanded="true"] {
     background-color: var(--bt-bg-item-hover);
   }
 

@@ -166,6 +166,24 @@ describe("AccountMenu", () => {
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
+  it("shows its trigger as open while its menu is open, in a sidebar's rail too", async () => {
+    render(<RailFrame width={900} />);
+    const trigger = screen.getByRole("button", {
+      name: "Workspace: Northside Roasters",
+    });
+    const probe = document.createElement("div");
+    probe.style.backgroundColor = "var(--bt-bg-item-hover)";
+    document.body.append(probe);
+    const open = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    await browser.keyboard("{Shift}");
+    trigger.focus();
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("menu");
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    expect(getComputedStyle(trigger).backgroundColor).toBe(open);
+  });
+
   it("opens a 280px menu with the workspace at the top and its items under it", async () => {
     const onSignOut = vi.fn();
     render(<Account onSignOut={onSignOut} />);
