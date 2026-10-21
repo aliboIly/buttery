@@ -45,8 +45,16 @@ export {
   notifyObstacleMoved,
 } from "./layers/floating-lanes/lanes-store.ts";
 export type { LaneName } from "./layers/floating-lanes/lanes-store.ts";
-export { FloatingMotion, focusMovedOn } from "./layers/floating-motion.tsx";
-export type { FloatingMotionProps } from "./layers/floating-motion.tsx";
+export {
+  FloatingEntranceContext,
+  FloatingMotion,
+  focusMovedOn,
+  useFloatingEntrance,
+} from "./layers/floating-motion.tsx";
+export type {
+  FloatingEntrance,
+  FloatingMotionProps,
+} from "./layers/floating-motion.tsx";
 export { Layer, Portal } from "./layers/layer/Layer.tsx";
 export type { LayerProps, PortalProps } from "./layers/layer/Layer.tsx";
 export { LayerContext, useCurrentLayer } from "./layers/layer/layer-manager.ts";

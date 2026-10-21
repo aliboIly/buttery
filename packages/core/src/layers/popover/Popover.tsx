@@ -12,12 +12,18 @@ import { useControllableState } from "../../hooks/use-controllable-state.ts";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
-import { FloatingMotion, focusMovedOn } from "../floating-motion.tsx";
+import {
+  FloatingMotion,
+  focusMovedOn,
+  useFloatingEntrance,
+} from "../floating-motion.tsx";
+import type { FloatingEntrance } from "../floating-motion.tsx";
 import { Layer } from "../layer/Layer.tsx";
 import { Scrim } from "../scrim/Scrim.tsx";
 
 interface PopoverState {
   readonly open: boolean;
+  readonly entrance: FloatingEntrance;
   readonly trigger: RefObject<HTMLButtonElement | null>;
   readonly content: RefObject<HTMLDivElement | null>;
   /** Records that a press or focus outside the popover is what's closing it. */
@@ -47,6 +53,11 @@ export interface PopoverProps {
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
   /** Keep focus inside and make the page inert while open. Defaults to `false`. */
   readonly modal?: boolean | undefined;
+  /**
+   * `"grow"` from the trigger with a fade, or `"instant"`, complete in the next frame, as app chrome moves.
+   * Defaults to what's set around it (`"instant"` inside `AppShell layout="sidebar"`), else `"grow"`.
+   */
+  readonly entrance?: FloatingEntrance | undefined;
   /** The trigger and content: `Popover.Trigger`, `Popover.Content` and, optionally, `Popover.Anchor`. */
   readonly children?: ReactNode;
 }
@@ -56,8 +67,10 @@ function PopoverRoot({
   defaultOpen = false,
   onOpenChange,
   modal = false,
+  entrance,
   children,
 }: PopoverProps): ReactElement {
+  const arrival = useFloatingEntrance(entrance);
   const [isOpen, setOpen] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
@@ -82,6 +95,7 @@ function PopoverRoot({
     <PopoverContext
       value={{
         open: isOpen,
+        entrance: arrival,
         trigger,
         content,
         pressedOutside: () => {
@@ -214,6 +228,7 @@ export function PopoverContent({
             <FloatingMotion
               ref={refs}
               origin="--radix-popover-content-transform-origin"
+              entrance={popover.entrance}
               className={cx("bt-surface bt-popover", className)}
               data-level="floating"
               data-bt="Popover"

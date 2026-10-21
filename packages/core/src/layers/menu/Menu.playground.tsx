@@ -35,6 +35,22 @@ export const demos: readonly DemoSection[] = [
     ),
   },
   {
+    title: "Instant, as app chrome",
+    description:
+      'entrance="instant" shows the menu complete in the next frame and removes it at once.',
+    render: () => (
+      <Inline>
+        <Menu entrance="instant">
+          <Trigger label="Row actions" />
+          <Menu.Content align="start">
+            <Menu.Item>Refund</Menu.Item>
+            <Menu.Item>Resend receipt</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      </Inline>
+    ),
+  },
+  {
     title: "Groups and choices",
     description:
       "A heading names each group; in a radio group the chosen item shows a check.",

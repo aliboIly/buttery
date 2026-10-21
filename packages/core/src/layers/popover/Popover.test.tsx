@@ -99,6 +99,19 @@ describe("Popover", () => {
     expect(new DOMMatrix(getComputedStyle(content).transform).a).toBe(1);
   });
 
+  it("shows complete in its first frame with entrance instant", async () => {
+    render(
+      <Popover entrance="instant">
+        <Popover.Trigger>Filters</Popover.Trigger>
+        <Popover.Content aria-label="Filters">Roast level</Popover.Content>
+      </Popover>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Filters" }));
+    const content = screen.getByRole("dialog", { name: "Filters" });
+    expect(getComputedStyle(content).opacity).toBe("1");
+    expect(new DOMMatrix(getComputedStyle(content).transform).a).toBe(1);
+  });
+
   it("can be controlled", async () => {
     function Controlled(): ReactElement {
       const [open, setOpen] = useState(true);

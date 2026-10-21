@@ -5,6 +5,7 @@ import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { publishSettled } from "../../motion/settle.ts";
+import { FloatingEntranceContext } from "../floating-motion.tsx";
 import { Menu } from "./Menu.tsx";
 
 beforeEach(() => {
@@ -12,6 +13,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   cleanup();
   vi.restoreAllMocks();
 });
@@ -290,5 +292,58 @@ describe("Menu", () => {
     expect(() => render(<Menu.Trigger>Orphan</Menu.Trigger>)).toThrow(
       /\[buttery:Menu\] Menu\.Trigger has to be inside a <Menu>\. Fix:/,
     );
+  });
+
+  it("shows complete in its first frame and goes at once with entrance instant", async () => {
+    render(
+      <Menu entrance="instant">
+        <Menu.Trigger>Card actions</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Item>Duplicate</Menu.Item>
+        </Menu.Content>
+      </Menu>,
+    );
+    await userEvent.click(trigger());
+    const menu = screen.getByRole("menu");
+    expect(getComputedStyle(menu).opacity).toBe("1");
+    expect(new DOMMatrix(getComputedStyle(menu).transform).a).toBe(1);
+    await userEvent.keyboard("{Escape}");
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    );
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("takes its entrance from around it unless it sets its own", async () => {
+    render(
+      <FloatingEntranceContext value="instant">
+        <Menu>
+          <Menu.Trigger>Card actions</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item>Duplicate</Menu.Item>
+          </Menu.Content>
+        </Menu>
+        <Menu entrance="grow">
+          <Menu.Trigger>Order actions</Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item>Refund</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      </FloatingEntranceContext>,
+    );
+    await userEvent.click(trigger());
+    expect(
+      new DOMMatrix(getComputedStyle(screen.getByRole("menu")).transform).a,
+    ).toBe(1);
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    await userEvent.click(
+      screen.getByRole("button", { name: "Order actions" }),
+    );
+    expect(
+      new DOMMatrix(getComputedStyle(screen.getByRole("menu")).transform).a,
+    ).toBeLessThan(1);
   });
 });

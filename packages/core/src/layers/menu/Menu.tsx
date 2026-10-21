@@ -15,11 +15,17 @@ import type { IconComponentProps } from "../../primitives/icon/Icon.tsx";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
-import { FloatingMotion, focusMovedOn } from "../floating-motion.tsx";
+import {
+  FloatingMotion,
+  focusMovedOn,
+  useFloatingEntrance,
+} from "../floating-motion.tsx";
+import type { FloatingEntrance } from "../floating-motion.tsx";
 import { Layer } from "../layer/Layer.tsx";
 
 interface MenuState {
   readonly open: boolean;
+  readonly entrance: FloatingEntrance;
   readonly trigger: RefObject<HTMLButtonElement | null>;
   readonly content: RefObject<HTMLDivElement | null>;
   /** Records that a press or focus outside the menu is what's closing it. */
@@ -63,6 +69,11 @@ export interface MenuProps {
   readonly defaultOpen?: boolean | undefined;
   /** Called when the menu opens or closes. */
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
+  /**
+   * `"grow"` from the trigger with a fade, or `"instant"`, complete in the next frame, as app chrome moves.
+   * Defaults to what's set around it (`"instant"` inside `AppShell layout="sidebar"`), else `"grow"`.
+   */
+  readonly entrance?: FloatingEntrance | undefined;
   /** The trigger and the content: `Menu.Trigger` and `Menu.Content`. */
   readonly children?: ReactNode;
 }
@@ -71,8 +82,10 @@ function MenuRoot({
   open,
   defaultOpen = false,
   onOpenChange,
+  entrance,
   children,
 }: MenuProps): ReactElement {
+  const arrival = useFloatingEntrance(entrance);
   const [isOpen, setOpen] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
@@ -97,6 +110,7 @@ function MenuRoot({
     <MenuContext
       value={{
         open: isOpen,
+        entrance: arrival,
         trigger,
         content,
         pressedOutside: () => {
@@ -178,6 +192,7 @@ export function MenuContent({
             <FloatingMotion
               ref={refs}
               origin="--radix-dropdown-menu-content-transform-origin"
+              entrance={menu.entrance}
               className={cx("bt-surface bt-menu", className)}
               data-level="floating"
               data-bt="Menu"
