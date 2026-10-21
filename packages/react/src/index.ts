@@ -435,3 +435,10 @@ export type {
   FilterBarProps,
   FilterPillProps,
 } from "./patterns/filter-bar/FilterBar.tsx";
+export { ColumnSettings } from "./patterns/column-settings/ColumnSettings.tsx";
+export type {
+  ColumnLayout,
+  ColumnSetting,
+  ColumnSettingsLabels,
+  ColumnSettingsProps,
+} from "./patterns/column-settings/ColumnSettings.tsx";
