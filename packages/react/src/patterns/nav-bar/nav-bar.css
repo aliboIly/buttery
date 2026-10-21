@@ -1,0 +1,159 @@
+@layer bt.patterns {
+  /* The bar stacks at the sticky band whatever its behavior, so its menu panel stays over the blur. */
+  .bt-nav-bar {
+    z-index: var(--bt-z-sticky);
+    min-inline-size: 0;
+    transition:
+      background-color var(--bt-dur-base) var(--bt-ease-standard),
+      box-shadow var(--bt-dur-base) var(--bt-ease-standard);
+  }
+
+  .bt-nav-bar[data-behavior="static"] {
+    position: relative;
+  }
+
+  /* While its panel is out, the bar rises over sticky bars that follow it, such as a sub nav. */
+  .bt-nav-bar[data-raised] {
+    z-index: var(--bt-z-floating);
+  }
+
+  .bt-nav-bar[data-scrolled] {
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  /* The bar row is the panel's frame: the panel reaches up behind it and stays inside its width. */
+  .bt-nav-bar [data-bt-part="bar"] {
+    position: relative;
+    container: bt-nav / inline-size;
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-6);
+    block-size: var(--bt-h-nav-bar);
+    min-inline-size: 0;
+  }
+
+  .bt-nav-bar [data-bt-part="brand"],
+  .bt-nav-bar-sheet [data-bt-part="brand"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    min-inline-size: 0;
+    color: var(--bt-text-strong);
+    font-size: var(--bt-text-title-size);
+    font-weight: var(--bt-text-title-weight);
+    line-height: var(--bt-text-title-line);
+    letter-spacing: var(--bt-text-title-tracking);
+  }
+
+  /* A brand is usually a link home: it keeps the brand's color rather than a link's, and a target's height. */
+  :is(.bt-nav-bar, .bt-nav-bar-sheet) [data-bt-part="brand"] :where(a) {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-block-size: var(--bt-h-sm);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /*
+   * In a bar the menu sets no stacking context or size container of its own, so its panel sits behind the
+   * brand and actions too and may take the bar's whole width. The bar folds rather than scrolling its row.
+   */
+  .bt-nav-bar .bt-morph-menu {
+    --bt-morph-menu-reach: var(--bt-h-nav-bar);
+
+    position: static;
+    z-index: auto;
+    flex: 1 1 auto;
+    container-type: normal;
+  }
+
+  .bt-nav-bar .bt-morph-menu-list {
+    padding: 0;
+    overflow: visible;
+  }
+
+  .bt-nav-bar [data-bt-part="actions"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-nav-bar [data-bt-part="menu-button"] {
+    display: none;
+  }
+
+  /* With too little room, the menus and actions fold into the menu button. */
+  .bt-nav-bar [data-bt-part="bar"][data-folded] {
+    justify-content: space-between;
+  }
+
+  .bt-nav-bar [data-folded] > .bt-morph-menu,
+  .bt-nav-bar [data-folded] > [data-bt-part="actions"] {
+    display: none;
+  }
+
+  .bt-nav-bar [data-folded] > [data-bt-part="menu-button"] {
+    display: inline-flex;
+  }
+
+  @container bt-nav (width < 640px) {
+    .bt-nav-bar [data-bt-part="bar"] {
+      justify-content: space-between;
+    }
+
+    .bt-nav-bar .bt-morph-menu,
+    .bt-nav-bar [data-bt-part="actions"] {
+      display: none;
+    }
+
+    .bt-nav-bar [data-bt-part="menu-button"] {
+      display: inline-flex;
+    }
+  }
+
+  .bt-nav-bar-scrim[data-bt-part="scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The full-height sheet floats 8px inside the window, like every floating surface. */
+  .bt-nav-bar-sheet[data-bt-part="sheet"] {
+    position: absolute;
+    inset: var(--bt-space-2);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    outline: none;
+  }
+
+  .bt-nav-bar-sheet > [data-bt-part="sheet-bar"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bt-space-4);
+    block-size: var(--bt-h-nav-bar);
+    padding-inline: var(--bt-space-2) var(--bt-space-4);
+  }
+
+  .bt-nav-bar-sheet > [data-bt-part="sheet-body"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-6);
+    min-block-size: 0;
+    padding: var(--bt-space-2) var(--bt-space-4) var(--bt-space-8);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bt-nav-bar-sheet [data-bt-part="sheet-actions"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+  }
+}

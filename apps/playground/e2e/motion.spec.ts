@@ -559,6 +559,121 @@ test.describe("full motion", () => {
     await expect(expand).toBeFocused();
   });
 
+  test("a nav bar's menu unfolds from the bar in dur-fast with ease-out once the pointer has rested on its trigger for 150ms", async ({
+    page,
+  }) => {
+    await page.goto("/?chrome=0&motion=full#/nav-bar");
+    const panel = '[data-bt-part="panel"]';
+    const body = `${panel} > [data-bt-part="body"]`;
+    const product = page
+      .getByRole("button", { name: "Product", exact: true })
+      .first();
+    await product.evaluate((element) => {
+      element.scrollIntoView({ block: "start" });
+    });
+    // The page's first menu pays one-time costs (mounting Radix's viewport, a first blur); measure the open
+    // every later visit gets.
+    await product.hover();
+    await page.locator(body).first().waitFor();
+    await page.mouse.move(4, 4);
+    await page.locator(body).first().waitFor({ state: "detached" });
+    // Back on a trigger within 300ms of closing, a menu opens at once, as in any menu bar.
+    await page.waitForTimeout(400);
+    await startSampling(page, `${panel}, ${body}`, ["pointerover"]);
+    await product.hover();
+    const run = await finishSampling(page, 600);
+    // The surface's fade and the body's height share one transition; the fade runs on the compositor, so
+    // its curve is the precise one to fit, and the height has to keep up with it.
+    const fading = expectTween(
+      "panel unfolding (its fade)",
+      progress(trace(run, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    const heights = run.frames.flatMap(({ t, elements }) => {
+      const reading = elements[1];
+      return reading ? [{ t, value: reading.height }] : [];
+    });
+    const open = heights.at(-1)?.value ?? 0;
+    expect(open).toBeGreaterThan(100);
+    const grown = settleTime(progress(heights, 0, open));
+    report(
+      `panel unfolding: 95% of its height ${ms(grown - fading.start)} after it starts (dur-fast is ${String(DURATIONS.fast)}ms)`,
+    );
+    expect(grown - fading.start).toBeLessThanOrEqual(
+      DURATIONS.fast + TWO_FRAMES,
+    );
+    const arrived = run.marks["pointerover"] ?? 0;
+    report(
+      `panel unfolding: starts ${ms(fading.start - arrived)} after the pointer arrives (150ms hover intent)`,
+    );
+    expect(fading.start - arrived).toBeGreaterThanOrEqual(150 - FRAME);
+    expect(fading.start - arrived).toBeLessThanOrEqual(150 + TWO_FRAMES * 2);
+  });
+
+  test("moving to the next trigger reshapes the nav bar's panel at once on spring.snappy, and leaving folds it after 100ms in dur-fast with ease-in", async ({
+    page,
+  }) => {
+    await page.goto("/?chrome=0&motion=full#/nav-bar");
+    const panel = '[data-bt-part="panel"]';
+    const product = page
+      .getByRole("button", { name: "Product", exact: true })
+      .first();
+    await product.evaluate((element) => {
+      element.scrollIntoView({ block: "start" });
+    });
+    await product.hover();
+    await page.locator(panel).first().waitFor();
+    await page.waitForTimeout(500);
+    const before = await peek(page, panel);
+    if (!before) throw new Error("The menu never opened.");
+    await startSampling(page, panel);
+    await page
+      .getByRole("button", { name: "Guides", exact: true })
+      .first()
+      .hover();
+    const switching = await finishSampling(page, 600);
+    const widths = trace(switching, (reading) => reading.width);
+    const after = widths.at(-1)?.value ?? before.width;
+    expect(Math.abs(after - before.width)).toBeGreaterThan(40);
+    expectSpring(
+      "panel reshaping",
+      progress(widths, before.width, after),
+      "snappy",
+    );
+
+    const body = `${panel} > [data-bt-part="body"]`;
+    const open = (await peek(page, body))?.height ?? 0;
+    expect(open).toBeGreaterThan(100);
+    await startSampling(page, `${panel}, ${body}`, ["pointerout"]);
+    await page.mouse.move(4, 4);
+    const closing = await finishSampling(page, 500);
+    // As in the unfold, the fade is the precise channel of the shared transition; the height keeps up.
+    const fold = expectTween(
+      "panel folding (its fade)",
+      progress(trace(closing, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+    const heights = closing.frames.flatMap(({ t, elements }) => {
+      const reading = elements[1];
+      return reading ? [{ t, value: reading.height }] : [];
+    });
+    const folded = settleTime(progress(heights, open, 0));
+    report(
+      `panel folding: 95% folded ${ms(folded - fold.start)} after it starts (dur-fast is ${String(DURATIONS.fast)}ms)`,
+    );
+    expect(folded - fold.start).toBeLessThanOrEqual(
+      DURATIONS.fast + TWO_FRAMES,
+    );
+    const left = closing.marks["pointerout"] ?? 0;
+    report(
+      `panel folding: starts ${ms(fold.start - left)} after the pointer leaves (100ms grace)`,
+    );
+    expect(fold.start - left).toBeGreaterThanOrEqual(100 - FRAME);
+    expect(fold.start - left).toBeLessThanOrEqual(100 + TWO_FRAMES * 2);
+  });
+
   test("pressing scales to 97% over dur-press and lets go over dur-fast", async ({
     page,
   }) => {

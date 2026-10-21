@@ -315,3 +315,8 @@ export type {
   MorphMenuLinkProps,
   MorphMenuProps,
 } from "./patterns/morph-menu/MorphMenu.tsx";
+export { NavBar } from "./patterns/nav-bar/NavBar.tsx";
+export type {
+  NavBarBehavior,
+  NavBarProps,
+} from "./patterns/nav-bar/NavBar.tsx";

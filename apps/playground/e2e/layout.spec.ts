@@ -230,6 +230,27 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
   ],
+  "nav-bar": [
+    {
+      name: "open the first menu, or the sheet when the bar is folded",
+      run: async (page: Page) => {
+        const sheet = page
+          .getByRole("button", { name: "Menu", exact: true })
+          .first();
+        if (await sheet.isVisible()) {
+          await sheet.click();
+          await page.getByRole("dialog").waitFor();
+          return;
+        }
+        await page
+          .getByRole("button", { name: "Product", exact: true })
+          .first()
+          .click();
+        await page.locator('[data-bt-part="panel"]').first().waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
   onboarding: [
     {
       name: "open the tour",
