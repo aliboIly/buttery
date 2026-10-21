@@ -8,7 +8,11 @@
     flex: none;
     inline-size: var(--bt-color-dot-size);
     block-size: var(--bt-color-dot-size);
+    padding: 0;
+    border: 0;
     border-radius: var(--bt-r-full);
+    background: none;
+    appearance: none;
   }
 
   .bt-color-dot > [data-bt-part="dot"] {
@@ -22,12 +26,12 @@
     border-radius: var(--bt-r-full);
   }
 
-  .bt-color-dot:has(> input:focus-visible) > [data-bt-part="dot"] {
-    outline: var(--bt-focus-width) solid var(--bt-accent);
-    outline-offset: var(--bt-focus-offset);
+  .bt-color-dot:disabled > [data-bt-part="dot"] {
+    opacity: 0.4;
   }
 
-  .bt-color-dot[data-disabled] > [data-bt-part="dot"] {
-    opacity: 0.4;
+  /* The panel renders in the dropdown layer, away from the dot, so it carries its own class. */
+  .bt-color-dot-panel {
+    padding: var(--bt-space-3);
   }
 }

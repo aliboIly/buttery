@@ -29,7 +29,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "A gradient's colors",
     description:
-      "Two dots 6px apart with a button that swaps them. Each opens the system color picker.",
+      "Two dots 6px apart with a button that swaps them. Each opens buttery's color picker in a popover.",
     render: () => <GradientColors />,
   },
   {
