@@ -115,6 +115,41 @@ describe("Morph", () => {
     );
   });
 
+  it("follows a size change it didn't render, such as a web font swapping in, at once", async () => {
+    render(
+      <Morph data-testid="morph">
+        <div data-testid="box" style={{ blockSize: "40px" }} />
+      </Morph>,
+    );
+    await measured(40);
+    await nextFrames(3);
+    screen.getByTestId("box").style.blockSize = "120px";
+    await nextFrames(1);
+    expect(height()).toBe(120);
+    expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
+      false,
+    );
+  });
+
+  it("still follows content it rendered bigger with a spring, with no contentKey", async () => {
+    const { rerender } = render(
+      <Morph data-testid="morph">
+        <div style={{ blockSize: "40px" }} />
+      </Morph>,
+    );
+    await measured(40);
+    await nextFrames(3);
+    rerender(
+      <Morph data-testid="morph">
+        <div style={{ blockSize: "120px" }} />
+      </Morph>,
+    );
+    await nextFrames(2);
+    expect(height()).toBeGreaterThan(40);
+    expect(height()).toBeLessThan(120);
+    await measured(120);
+  });
+
   it("sits at its natural height between changes, so rewrapped text never spills out", async () => {
     const paragraph = (
       <p style={{ margin: 0, lineHeight: "20px" }}>

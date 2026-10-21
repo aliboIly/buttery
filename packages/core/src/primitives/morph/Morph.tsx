@@ -70,8 +70,8 @@ export interface MorphProps extends MotionElementProps<"div"> {
 /**
  * One container whose content can swap or grow: its height follows the content with `spring.smooth` and
  * swapped content crossfades in place. Between changes it sits at its natural height, so text that
- * rewraps when the window resizes never spills out. With reduced motion the height jumps and the
- * crossfade takes 100ms.
+ * rewraps when the window resizes never spills out, and a size change it didn't render, such as a web font
+ * swapping in, takes effect at once. With reduced motion the height jumps and the crossfade takes 100ms.
  *
  * @example
  * <Morph contentKey={fill}>
@@ -99,6 +99,26 @@ export function Morph({
   const content = useRef<HTMLDivElement>(null);
   const busy = useRef<Busy>({ growing: false, leaving: false });
   const shownKey = useRef(contentKey);
+  const rendered = useRef(false);
+  const shownChildren = useRef<ReactNode>(children);
+
+  // New content marks the next layouts as its own for two frames. A size change no new content made, such
+  // as a web font swapping in just after the page loads, is followed at once rather than animated.
+  useLayoutEffect(() => {
+    if (shownChildren.current === children) return undefined;
+    shownChildren.current = children;
+    rendered.current = true;
+    let later = 0;
+    const next = requestAnimationFrame(() => {
+      later = requestAnimationFrame(() => {
+        rendered.current = false;
+      });
+    });
+    return () => {
+      cancelAnimationFrame(next);
+      cancelAnimationFrame(later);
+    };
+  }, [children]);
 
   useLayoutEffect(() => {
     if (shownKey.current === contentKey) return;
@@ -130,9 +150,15 @@ export function Morph({
       const to = size.blockSize;
       width = size.inlineSize;
       last = to;
+      const animating = running !== null;
       running?.stop();
-      if (resized || reduced || Math.abs(to - from) < 0.5) {
-        if (running) settle();
+      if (
+        resized ||
+        reduced ||
+        Math.abs(to - from) < 0.5 ||
+        (!rendered.current && !animating)
+      ) {
+        if (animating) settle();
         return;
       }
       box.style.height = `${String(from)}px`;
