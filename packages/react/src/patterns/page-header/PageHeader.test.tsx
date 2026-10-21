@@ -88,6 +88,22 @@ describe("PageHeader", () => {
     );
   });
 
+  it("opens its value's explanation on a tap, where no tooltip shows", async () => {
+    render(<Orders />);
+    const user = userEvent.setup();
+    await user.pointer({
+      keys: "[TouchA]",
+      target: screen.getByRole("button", {
+        name: "Orders placed in the last 30 days.",
+      }),
+    });
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Orders placed in the last 30 days.",
+      }),
+    ).toBeTruthy();
+  });
+
   it("puts its actions at the end, 8px apart, the primary one with its shortcut", async () => {
     const onNew = vi.fn();
     render(<Orders onNew={onNew} />);

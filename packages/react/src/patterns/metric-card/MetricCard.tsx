@@ -1,12 +1,13 @@
 import { Morph, Skeleton, Text, cx } from "@buttery/core";
 import type { TextStackTitleElement } from "@buttery/core";
-import { ArrowDown, ArrowUp, ArrowUpRight, Info } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
 import { useId } from "react";
 import type { ComponentPropsWithRef, MouseEvent, ReactElement } from "react";
 import { ArrowLink } from "../../components/arrow-link/ArrowLink.tsx";
 import type { ChartSeries } from "../../components/chart-frame/ChartFrame.tsx";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
+import { InfoButton } from "../../components/info-button/InfoButton.tsx";
 import { LineChart } from "../../components/line-chart/LineChart.tsx";
 import { StatusBadge } from "../../components/status-badge/StatusBadge.tsx";
 
@@ -19,7 +20,7 @@ export interface MetricCardProps extends Omit<
   readonly title: string;
   /** The title's element. Defaults to `"h3"`, under an `AppPage.Section`'s `h2`. */
   readonly titleAs?: TextStackTitleElement | undefined;
-  /** What the metric means, behind an info button after the title. */
+  /** What the metric means, behind an `InfoButton` after the title: a tooltip on hover and focus, a popover on a press or a tap. */
   readonly info?: string | undefined;
   /** The value, written out, such as "$12,480.00". Leave it out while loading. */
   readonly value?: string | undefined;
@@ -128,9 +129,7 @@ export function MetricCard({
             <Text id={titleId} tone="secondary" truncate asChild>
               <Title title={title}>{title}</Title>
             </Text>
-            {info === undefined ? null : (
-              <IconButton icon={Info} label={info} size="sm" />
-            )}
+            {info === undefined ? null : <InfoButton info={info} />}
           </div>
           {href === undefined ? null : (
             <IconButton

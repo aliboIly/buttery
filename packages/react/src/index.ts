@@ -522,3 +522,5 @@ export { AnnouncementDialog } from "./patterns/announcement-dialog/AnnouncementD
 export type { AnnouncementDialogProps } from "./patterns/announcement-dialog/AnnouncementDialog.tsx";
 export { SettingsIndex } from "./patterns/settings-index/SettingsIndex.tsx";
 export type { SettingsIndexProps } from "./patterns/settings-index/SettingsIndex.tsx";
+export { InfoButton } from "./components/info-button/InfoButton.tsx";
+export type { InfoButtonProps } from "./components/info-button/InfoButton.tsx";

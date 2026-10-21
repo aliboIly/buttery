@@ -1,6 +1,5 @@
 import { OverflowCluster, cx, hasContent } from "@buttery/core";
 import type { IconComponentProps, Shortcut } from "@buttery/core";
-import { Info } from "lucide-react";
 import type {
   ComponentPropsWithRef,
   ComponentType,
@@ -10,6 +9,7 @@ import type {
 import { Button } from "../../components/button/Button.tsx";
 import type { ButtonVariant } from "../../components/button/Button.tsx";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
+import { InfoButton } from "../../components/info-button/InfoButton.tsx";
 
 /** Props for `PageHeader`. */
 export interface PageHeaderProps extends Omit<
@@ -20,7 +20,7 @@ export interface PageHeaderProps extends Omit<
   readonly title: string;
   /** A figure after the title, such as a count or a balance, in the title's size at regular weight. */
   readonly value?: ReactNode;
-  /** What the value means, behind an info button after it. */
+  /** What the value means, behind an `InfoButton` after it: a tooltip on hover and focus, a popover on a press or a tap. */
   readonly valueInfo?: string | undefined;
   /** The page's actions at the end of the row: `PageHeader.Action`s, which fold into "…" when they don't fit. */
   readonly actions?: ReactNode;
@@ -62,9 +62,7 @@ function PageHeaderRoot({
               {value}
             </span>
           ) : null}
-          {valueInfo === undefined ? null : (
-            <IconButton icon={Info} label={valueInfo} size="sm" />
-          )}
+          {valueInfo === undefined ? null : <InfoButton info={valueInfo} />}
         </div>
         {hasContent(actions) ? (
           <OverflowCluster

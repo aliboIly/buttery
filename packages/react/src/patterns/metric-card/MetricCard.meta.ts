@@ -13,7 +13,14 @@ export const meta: ComponentMeta = {
     "A number with no history: use StatStrip or plain Text",
     "Many numbers in rows: use DataTable, with a Sparkline per row",
   ],
-  related: ["LineChart", "DateRangeBar", "Sparkline", "AppPage", "StatTabs"],
+  related: [
+    "LineChart",
+    "DateRangeBar",
+    "Sparkline",
+    "AppPage",
+    "StatTabs",
+    "InfoButton",
+  ],
   a11y: "A group named by its title, which is an h3 by default. The info button is named by the explanation its tooltip shows. The chart is a slider over its points, described by the change. The footer's link is named Details for and the title; the expand button repeats it for the pointer only, so it's hidden from screen readers and Tab. While loading the card is marked busy and its skeletons are hidden.",
   motion: "morph",
 };

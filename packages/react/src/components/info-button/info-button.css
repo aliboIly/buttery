@@ -1,0 +1,9 @@
+@layer bt.components {
+  .bt-info-button-popover {
+    max-inline-size: min(
+      var(--bt-w-aside),
+      var(--radix-popover-content-available-width)
+    );
+    padding: var(--bt-space-3);
+  }
+}

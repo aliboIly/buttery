@@ -62,6 +62,22 @@ function rectOf(element: Element | null): DOMRect {
 }
 
 describe("MetricCard", () => {
+  it("opens what the metric means on a press or a tap, where no tooltip shows", async () => {
+    render(<Card />);
+    const user = userEvent.setup();
+    await user.pointer({
+      keys: "[TouchA]",
+      target: screen.getByRole("button", {
+        name: "Everything charged, before refunds and fees.",
+      }),
+    });
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Everything charged, before refunds and fees.",
+      }),
+    ).toBeTruthy();
+  });
+
   it("stamps its class and data-bt, forwards its ref and spreads props", () => {
     const ref = createRef<HTMLDivElement>();
     render(<Card ref={ref} className="custom" id="volume" />);

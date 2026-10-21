@@ -13,7 +13,7 @@ export const meta: ComponentMeta = {
     "A marketing page's opening: use SplitHero or CenteredHero",
     "The app's top bar with search: use TopBar",
   ],
-  related: ["AppPage", "Tabs", "QuickActions", "Button"],
+  related: ["AppPage", "Tabs", "QuickActions", "Button", "InfoButton"],
   a11y: "The title is the page's h1. The info button is named by the explanation, which its tooltip shows. Actions are buttons; a disabled one stays focusable, and those folded into the menu stay reachable from the More actions button. A primary action's shortcut is announced through aria-keyshortcuts.",
   motion: "none",
 };
