@@ -5,6 +5,7 @@
 @import "./parts/form-field/form-field.css";
 @import "./parts/auth/auth.css";
 @import "./parts/hero/hero-text.css";
+@import "./parts/guidance/guidance.css";
 @import "./components/confetti/confetti.css";
 @import "./components/button/button.css";
 @import "./components/arrow-link/arrow-link.css";

@@ -1,0 +1,16 @@
+@layer bt.components {
+  .bt-time-estimate {
+    --bt-guidance-clock: 14px;
+
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1);
+    white-space: nowrap;
+  }
+
+  .bt-time-estimate > .bt-icon {
+    inline-size: var(--bt-guidance-clock);
+    block-size: var(--bt-guidance-clock);
+  }
+}

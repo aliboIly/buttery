@@ -26,6 +26,16 @@ export type {
 export { Arrow } from "./parts/arrow/Arrow.tsx";
 export type { ArrowDirection, ArrowProps } from "./parts/arrow/Arrow.tsx";
 export { Spinner } from "./parts/spinner/Spinner.tsx";
+export {
+  TimeEstimate,
+  useDismissible,
+} from "./parts/guidance/GuidanceParts.tsx";
+export type {
+  Dismissible,
+  DismissibleOptions,
+  GuidanceAction,
+  TimeEstimateProps,
+} from "./parts/guidance/GuidanceParts.tsx";
 export { ArrowLink } from "./components/arrow-link/ArrowLink.tsx";
 export type { ArrowLinkProps } from "./components/arrow-link/ArrowLink.tsx";
 export { Tooltip, TooltipProvider } from "./components/tooltip/Tooltip.tsx";
