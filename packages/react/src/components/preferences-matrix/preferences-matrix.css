@@ -55,8 +55,10 @@
     padding-inline-start: var(--bt-space-2);
   }
 
-  .bt-preferences-matrix [data-bt-part="topic"] > span {
-    display: block;
+  .bt-preferences-matrix [data-bt-part="topic-text"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
     min-inline-size: 0;
   }
 

@@ -54,15 +54,28 @@
     min-inline-size: 0;
   }
 
+  /* It takes body-sm's type, not its measure: the hairline runs the page's width. */
   .bt-app-page > [data-bt-part="frame"] > [data-bt-part="footer"] {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--bt-space-2) var(--bt-space-4);
+    max-inline-size: none;
     min-inline-size: 0;
     padding-block-start: var(--bt-space-4);
     border-block-start: var(--bt-app-page-line) solid var(--bt-border);
     color: var(--bt-text-secondary);
+  }
+
+  .bt-app-page > [data-bt-part="frame"] > [data-bt-part="footer"] a {
+    color: inherit;
+    text-underline-offset: var(--bt-space-0_5);
+  }
+
+  @media (hover: hover) {
+    .bt-app-page > [data-bt-part="frame"] > [data-bt-part="footer"] a:hover {
+      color: var(--bt-text);
+    }
   }
 
   .bt-app-page-section {

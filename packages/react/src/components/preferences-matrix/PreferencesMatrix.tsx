@@ -143,18 +143,20 @@ export function PreferencesMatrix({
             {group.rows.map((row) => (
               <tr key={row.id} data-bt-part="row">
                 <th scope="row" data-bt-part="topic">
-                  <span className="bt-text" data-role="body-sm">
-                    {row.label}
-                  </span>
-                  {row.description === undefined ? null : (
-                    <span
-                      className="bt-text"
-                      data-role="caption"
-                      data-bt-part="description"
-                    >
-                      {row.description}
+                  <span data-bt-part="topic-text">
+                    <span className="bt-text" data-role="body-sm">
+                      {row.label}
                     </span>
-                  )}
+                    {row.description === undefined ? null : (
+                      <span
+                        className="bt-text"
+                        data-role="caption"
+                        data-bt-part="description"
+                      >
+                        {row.description}
+                      </span>
+                    )}
+                  </span>
                 </th>
                 {channels.map((channel) => {
                   const locked = row.locked?.[channel.id];

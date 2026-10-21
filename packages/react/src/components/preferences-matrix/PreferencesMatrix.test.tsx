@@ -171,4 +171,15 @@ describe("PreferencesMatrix", () => {
       Math.abs(box.left + box.width / 2 - (column.left + column.width / 2)),
     ).toBeLessThanOrEqual(0.5);
   });
+
+  it("sets a row's line 4px under its label", () => {
+    render(<Matrix />);
+    const label = screen.getByText("Payouts", {
+      selector: '[data-bt-part="topic-text"] > span',
+    });
+    const line = screen.getByText("When one is sent");
+    expect(
+      line.getBoundingClientRect().top - label.getBoundingClientRect().bottom,
+    ).toBe(4);
+  });
 });

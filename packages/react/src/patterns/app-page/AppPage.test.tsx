@@ -108,6 +108,9 @@ describe("AppPage", () => {
     expect(part?.tagName).toBe("FOOTER");
     if (!part) throw new Error("No footer.");
     expect(getComputedStyle(part).borderTopWidth).toBe("1px");
+    expect(footer.width).toBe(box("frame").width - 64);
+    const link = screen.getByRole("link", { name: "Share feedback" });
+    expect(getComputedStyle(link).color).toBe(getComputedStyle(part).color);
     const heading = screen
       .getByRole("heading", { level: 2, name: "Hours" })
       .getBoundingClientRect();
