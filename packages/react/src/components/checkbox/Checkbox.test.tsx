@@ -52,6 +52,24 @@ describe("Checkbox", () => {
     expect(hit?.getBoundingClientRect().width).toBe(24);
   });
 
+  it("centers its error's icon on the error's first line", () => {
+    render(
+      <Checkbox
+        label="I agree to the terms"
+        error="Agree to the terms to make an account."
+      />,
+    );
+    const error = document.querySelector('[data-bt-part="error"]');
+    const icon = error?.querySelector("svg")?.getBoundingClientRect();
+    const text = error?.querySelector(".bt-text")?.getBoundingClientRect();
+    if (!icon || !text) throw new Error("no error icon or text");
+    expect(text.height).toBe(16);
+    expect(icon.top + icon.height / 2).toBeCloseTo(
+      text.top + text.height / 2,
+      0,
+    );
+  });
+
   it("describes the box with its hint and error, and marks it invalid", () => {
     render(
       <Checkbox

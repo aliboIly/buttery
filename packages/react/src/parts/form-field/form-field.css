@@ -31,8 +31,10 @@
     color: var(--bt-danger);
   }
 
+  /* Untrimmed, the text's 16px line matches the icon, so the icon centers on the error's first line. */
   .bt-form-field > [data-bt-part="error"] > .bt-text {
     color: inherit;
+    text-box: normal;
   }
 
   /* The box a field types into: the input fills it edge to edge, so a press anywhere in it lands in the input. */
