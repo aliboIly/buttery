@@ -44,9 +44,11 @@ export {
   notifyObstacleMoved,
 } from "./layers/floating-lanes/lanes-store.ts";
 export type { LaneName } from "./layers/floating-lanes/lanes-store.ts";
+export { FloatingMotion, focusMovedOn } from "./layers/floating-motion.tsx";
+export type { FloatingMotionProps } from "./layers/floating-motion.tsx";
 export { Layer, Portal } from "./layers/layer/Layer.tsx";
 export type { LayerProps, PortalProps } from "./layers/layer/Layer.tsx";
-export { useCurrentLayer } from "./layers/layer/layer-manager.ts";
+export { LayerContext, useCurrentLayer } from "./layers/layer/layer-manager.ts";
 export type { LayerBand, LayerInfo } from "./layers/layer/layer-manager.ts";
 export {
   Popover,
@@ -106,6 +108,8 @@ export {
 } from "./motion/preference.ts";
 export type { MotionPreference } from "./motion/preference.ts";
 export { presencePresets, reducedPresence } from "./motion/presets.ts";
+export { revealOnce } from "./motion/reveal.ts";
+export type { RevealOnceOptions } from "./motion/reveal.ts";
 export type { PresenceMotion, PresencePreset } from "./motion/presets.ts";
 export type { MotionElementProps } from "./motion/props.ts";
 export { isSettled, publishSettled, trackAnimation } from "./motion/settle.ts";
@@ -249,6 +253,7 @@ export type {
   ZToken,
 } from "./tokens/index.ts";
 export { cx } from "./utils/cx.ts";
+export { elementRef } from "./utils/element-ref.ts";
 export { isDevelopment, warnOnce } from "./utils/dev.ts";
 export { hasContent } from "./utils/has-content.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";

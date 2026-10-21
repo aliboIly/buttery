@@ -13,6 +13,7 @@ export interface LayerInfo {
   readonly container: HTMLElement;
 }
 
+/** The layer a subtree renders in: `Layer` provides it, `useCurrentLayer` reads it, and a lane host passes its own on. */
 export const LayerContext: Context<LayerInfo | null> =
   createContext<LayerInfo | null>(null);
 

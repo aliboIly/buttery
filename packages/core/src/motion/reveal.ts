@@ -85,6 +85,19 @@ function whenInView(element: HTMLElement, onEnter: () => void): () => void {
   return stop;
 }
 
+/** Options for `revealOnce`. */
+export interface RevealOnceOptions {
+  /** Whether the entrance reports to the settled flag, as `useAnimationTracking` says. */
+  readonly tracked: boolean;
+  /**
+   * Whether the targets arrive one after another, `--bt-stagger` apart, as a list's items do. A stepped
+   * entrance plays even when it starts in view, where an unstepped one only fades in.
+   */
+  readonly stepped: boolean;
+  /** Runs once the targets have arrived. */
+  readonly onShown?: (() => void) | undefined;
+}
+
 /**
  * Runs the scroll-in entrance on `targets` the first time `trigger` is 15% in view (15% of the viewport for
  * content taller than it), and reports it to the settled flag when `tracked`. Content already in view on the
@@ -97,15 +110,7 @@ function whenInView(element: HTMLElement, onEnter: () => void): () => void {
 export function revealOnce(
   trigger: HTMLElement,
   targets: readonly HTMLElement[],
-  {
-    tracked,
-    stepped,
-    onShown,
-  }: {
-    readonly tracked: boolean;
-    readonly stepped: boolean;
-    readonly onShown?: (() => void) | undefined;
-  },
+  { tracked, stepped, onShown }: RevealOnceOptions,
 ): () => void {
   let release: (() => void) | null = null;
   let running: { complete: () => void } | null = null;
