@@ -226,6 +226,13 @@ export function createLayoutToolkit(): LayoutToolkit {
     );
   }
 
+  /** Whether `element` is, or sits inside, a screen-reader-only element, which draws nothing to overflow. */
+  function withinVisuallyHidden(element: Element): boolean {
+    for (let node: Element | null = element; node; node = node.parentElement)
+      if (isVisuallyHidden(node)) return true;
+    return false;
+  }
+
   function isTooling(element: Element): boolean {
     return (
       element.closest('[data-bt-layer="dev"], [data-bt-annotations]') !== null
@@ -648,7 +655,7 @@ export function createLayoutToolkit(): LayoutToolkit {
           style.overflowY === "visible" &&
           element.scrollHeight > element.clientHeight + 1;
         if (!scrollsWide && !scrollsTall) continue;
-        if (!isVisible(element)) continue;
+        if (!isVisible(element) || withinVisuallyHidden(element)) continue;
         const rect = element.getBoundingClientRect();
         const extent = extentOf(element);
         const wide = scrollsWide

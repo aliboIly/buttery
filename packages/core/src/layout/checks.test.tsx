@@ -170,6 +170,19 @@ describe("runLayoutChecks", () => {
     ]);
   });
 
+  it("doesn't flag a block inside a screen-reader-only element, such as a hidden table row's cell", () => {
+    expect(
+      check(
+        `<div role="table" style="inline-size: 300px">
+           <div role="row" style="position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap">
+             <div role="cell">Loading the orders, a moment</div>
+           </div>
+         </div>`,
+        ["overflow"],
+      ),
+    ).toEqual([]);
+  });
+
   it("doesn't flag text trimmed to its cap height as overflow", () => {
     expect(
       check(
