@@ -1,0 +1,70 @@
+@layer bt.patterns {
+  .bt-announcement-dialog {
+    container: bt-announcement-dialog / inline-size;
+    min-inline-size: 0;
+    padding: var(--bt-space-8);
+  }
+
+  .bt-announcement-dialog > [data-bt-part="layout"] {
+    display: grid;
+    grid-template-areas: "copy";
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-8);
+    min-inline-size: 0;
+  }
+
+  .bt-announcement-dialog > [data-bt-part="layout"][data-media] {
+    grid-template-areas:
+      "media"
+      "copy";
+  }
+
+  .bt-announcement-dialog [data-bt-part="copy"] {
+    display: flex;
+    flex-direction: column;
+    grid-area: copy;
+    gap: var(--bt-space-6);
+    min-inline-size: 0;
+  }
+
+  /* The dialog pads its own text for dialogs without a layout; here the grid around it does. */
+  .bt-announcement-dialog .bt-dialog-text {
+    padding: 0;
+  }
+
+  .bt-announcement-dialog [data-bt-part="section"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-announcement-dialog [data-bt-part="actions"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--bt-space-4);
+    padding-block-start: var(--bt-space-2);
+  }
+
+  .bt-announcement-dialog [data-bt-part="media"] {
+    grid-area: media;
+    min-inline-size: 0;
+    overflow: clip;
+    border-radius: var(--bt-r-lg);
+  }
+
+  .bt-announcement-dialog [data-bt-part="media"] > :is(img, svg, picture) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  /* From 720px the copy and the media sit side by side; stacked, the media comes first. */
+  @container bt-announcement-dialog (width >= 720px) {
+    .bt-announcement-dialog > [data-bt-part="layout"][data-media] {
+      grid-template-areas: "copy media";
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+    }
+  }
+}
