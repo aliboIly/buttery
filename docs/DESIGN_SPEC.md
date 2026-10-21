@@ -6,6 +6,7 @@ Every value below was measured from local reference captures that aren't part of
 
 - **Look & feel** (this doc) comes from the app captures: quiet neutral grays, nested rounded surfaces, dark pill actions, tactile knobs.
 - **Layout & motion choreography** comes from a second set of page captures; see `LAYOUT_RULES.md` and `MOTION_SPEC.md`.
+- **The App kit's structure, density and timing** (§6) come from frames of a product dashboard; its look is this doc's.
 
 Never copy either product's branding, names, icons, illustrations, copy or gradients-as-brand. Recreate the *qualities*, with buttery's own components. Every buttery component uses these tokens and nothing else.
 
@@ -380,3 +381,84 @@ Keycap: 20h, min-width 20, r5, `bg-surface`, 1px `border-strong` plus a 1px bott
 
 ### TextStack
 A title over body text and an optional caption, the text block of dialogs, empty states and page sections, measured between trimmed text (§2). `size="dialog"` (the default): `dialog-title`, `body` 16 below, `caption` 20 below. `size="empty"`: `title`, `body-sm` 12 below, `caption` 12 below. `size="section"`: `heading-2`, `body-lg` 16 below, `caption` 16 below. `align="center"` centers it. The title is an `h2` unless `titleAs` names another level or `p`.
+
+---
+
+## 6. App kit (Phase 6B, _derived_)
+
+Measured from local frames of a product dashboard (`reference/inspiration-dashboard/`, not in the repo), taken for structure, density and timing; the look is buttery's own. A dashboard built from these parts is white chrome around gray wells holding white cards (the nesting recipe, §4), quiet grays, dark primary pills and the accent only for focus, selection, links and charts.
+
+### New tokens (Phase 6B)
+
+| Token | Value | Used by |
+|---|---|---|
+| `--bt-w-sidebar` | 240 | Sidebar |
+| `--bt-w-sidebar-rail` | 56 | Sidebar as an icon rail |
+| `--bt-w-app-page` | 1280 | `AppPage width="contained"`: the content's max width, padding included |
+| `--bt-w-aside` | 320 | `AppPage`'s right rail |
+| `--bt-w-search` | 360 | The top bar's search field, at most |
+| `--bt-w-dialog-md` / `--bt-w-dialog-lg` | 560 / 880 | `ChoiceDialog` / `AnnouncementDialog` (`--bt-w-dialog`, 400, stays the default) |
+| `--bt-h-table-row` | 36 comfortable · 32 compact (35 + a 1px divider) | Table header and body rows |
+| `title-lg` | 24 / 30, 600, tight | Page titles, metric values |
+| `title-md` | 18 / 24, 600, tight | Section headings in app pages, card titles in the right rail |
+| `--bt-chart-1` … `--bt-chart-5` | `chart-1` is the accent; 2–5 derived in OKLCH from the mint, apricot, lilac and rose families at the accent's lightness, each 3:1 on the surface in both themes (WCAG 1.4.11) | Chart series, in order |
+
+Chart gridlines use `border`, axis labels `caption` in `text-tertiary`, and a comparison series (the previous period) `text-tertiary`, dashed.
+
+### Shell: `AppShell layout="sidebar"`
+- Sidebar (240) | content column. The whole shell is `bg-surface`; the sidebar has a 1px `border` hairline on its inline-end edge and scrolls on its own (`.bt-scroll-fade`).
+- Sidebar, top to bottom, padding 12: the workspace switcher (the `AccountMenu` trigger: a 20px `InitialsTile`, the name in `title-sm`, truncating, and a 16px chevron; 36h, r10, hover `bg-item-hover`); the nav, 2 apart. A nav item is 28h (`h-sm`), r8, padding-x 8: a 16px icon in `text-secondary`, gap 6, the label in `menu` role, truncating. Hover `bg-item-hover`; the current page `bg-control` with `text-strong` and its icon in `text` (`aria-current="page"`). A section heading is 28h, padding-x 8, `caption` in `text-tertiary`, 12 above its first item. A collapsible group's header is an item with a 16px chevron at its end; its items sit under it without icons, their labels on the header label's left edge (padding-inline-start 30). A group holding the current page starts open; open groups are remembered (`storageKey`).
+- An automatic "Recent" section lists the last four pages visited that aren't top-level items, newest first, each with a clock icon, remembered with `storageKey`. A "More" group at the end holds the rest.
+- Top bar: 56h (`h-header`), padding-x as the page's side padding, no edge. A `SearchField` (`soft`, at most `--bt-w-search`) at its start; at its end, `IconButton`s 4 apart (one may carry a notification dot) and a round create button (`IconButton variant="primary"`, 28, r-full). The actions fold into "…" through `OverflowCluster`.
+- Page width: `AppPage width="contained"` (content at most 1280 wide, centered in the content column) or `"full"`. Side padding 32 / 24 / 16 by the content column's width (the page grid, LAYOUT_RULES §4).
+
+### Page header
+- `PageHeader`: the title (`h1`, `title-lg`), then an optional inline value in `title-lg` at weight 400, `text-secondary`, tabular, 8 after it, and an info `IconButton sm` whose tooltip explains the value. Actions at the end: `IconButton`s and buttons 8 apart, folding into "…"; the primary one can show its shortcut (`Button shortcut="n"`: a `Kbd` 8 after the label, drawn in the button's own color at 30% for its edge, so it reads on a dark pill).
+- `Tabs` (underline): items 36h, padding-x 4, 16 apart, `label` role in `text-secondary`, `text-strong` when chosen, over a 1px `border` line that spans the row. The chosen tab's 2px `primary` underline is one `SharedIndicator` that slides on `spring.snappy`. Tabs that don't fit fold into "…". Content tabs are Radix Tabs; route tabs are links with `aria-current`.
+- `QuickActions`: a row of `soft` `sm` buttons with icons, 8 apart, folding into "…".
+- `ViewToggle`: a `SegmentedControl` of icons (grid, list), each named by a tooltip.
+- 16 between the header, tabs and quick actions; 24 from the header block to the page's first section.
+
+### Data
+- `DataTable`: ARIA table roles (`table`, `row`, `columnheader`, `cell`) on CSS grid rows that share one column template, so columns get exact minimum widths and shares. Header and body rows `--bt-h-table-row`, 1px `border` dividers, cells padding-x 12. Header text `control` role in `text`; body text `body-sm` in `text`, secondary text `text-secondary`. Numbers are right-aligned and tabular, with their currency code after them in `text-tertiary` (`DataTable.Amount`). IDs are `--bt-font-mono` and truncate with their full text in a tooltip (`DataTable.Id`). A column's `minWidth` is a token step (`xs` 64, `sm` 96, `md` 144, `lg` 192, `xl` 256) and `grow` its share of the rest.
+  - Selection: a checkbox column with a header box that selects the page (mixed while some are); selected rows take `accent-subtle`.
+  - Sortable headers: the header is a button with a 14px sort arrow (`text-tertiary`, shown on hover while unsorted, `text` while sorted); `aria-sort` on the header; presses go ascending, descending, off.
+  - Row hover `bg-item-hover`, at once. Row actions: an `IconButton sm` ("…") in the last column opening a `Menu`, named "Actions for <row>".
+  - Sticky header and sticky first column (with the checkbox column), `bg-surface`; while scrolled sideways the first column shows a 1px `border` edge.
+  - Loading: skeleton rows shaped to each column (a checkbox square, text lines of the column's typical width, a badge pill), as many as the page holds.
+  - Pagination under it: "1–14 of 14" in `body-sm` `text-secondary`, tabular, at its start; Previous and Next (`soft sm`, with the back and forward arrows, disabled at the ends) at its end.
+  - No results: one row across every column, padded 16: "No results" (`label`), a line in `body-sm`, and a `soft sm` "Clear all" at its end. No data at all: an `EmptyState` with an icon tile in the table's place.
+  - `size="compact"` drops selection and pagination for short lists, such as recent activity in an overview.
+- `StatusBadge`: 20h (`h-badge`), r6, padding-x 6, `badge` role; tones `neutral` (`bg-control`, `text-secondary`), `success`, `warning`, `danger` (their `-subtle` backgrounds and text), `info` (`accent-subtle`, `accent-text`). An optional 12px icon. The label carries the meaning; the color only repeats it.
+- `SavedViews`: a `bg-control` track (34h, r-full, padding 2) of intrinsic-width items (30h, padding-x 12, `control` role); the chosen view is a raised pill (`bg-raised`, `shadow-selected`) that slides as one `SharedIndicator` on `spring.snappy`. Views that don't fit fold into a "…" menu at the track's end, which lists every view as a radio item (a check on the chosen one), then actions on the chosen view (rename, duplicate, delete) and "Save as a new view".
+- `SearchField`: a `TextField` with a 16px search icon at its start and, once it holds text, a clear `IconButton sm` at its end (Escape clears it too); while empty it can show a shortcut `Kbd` ("/" focuses it). `variant="soft"` (`bg-control`, no edge: the top bar) or `"outline"` (`control-border`: a table's toolbar).
+- `FilterBar`: filter pills 8 apart that wrap, a "Clear filters" ghost text button once any is applied, and actions (Export, Analyze) on the first line's end. A `FilterPill` is 28h (`h-sm`), r-full, padding-x 10: unapplied, a 1px dashed `border-strong` edge, a 16px plus icon and the field name in `text-secondary`; applied, a solid 1px `border` edge on `bg-surface`, a remove button (x icon, 24 target) and "Name | value" with the value in `text`. Pressing a pill opens a `Popover` with its editor. Under 640px of container width the pills fold into one "Filters · 2" button that opens them in a popover.
+- `ColumnSettings`: an `IconButton` ("Columns") opening a `Popover` 240 wide: a checkbox per column (the first one fixed on), each with a grip; drag by the grip or Alt+Up/Down to reorder (Motion's `Reorder`); "Reset" restores the defaults.
+- `StatTabs`: equal columns in a `bg-control` track (48h, r16, padding 4); each tab shows its label (`control`, `text-secondary`) and a count (`title-sm`, `text`, tabular) on one line; the chosen tab is a raised panel (r12, `shadow-selected`) that slides as one `SharedIndicator`. Under 640px of container width it becomes a `Select`.
+- `GroupedList`: section wells (`bg-section`, r16, padding 4) titled in `caption` with an optional "…" menu; inside, white card rows (r12, 48h at least, padding-x 16: media, title, secondary text, a value at the end); a dashed add row (1px dashed `ring-selected`, r12, 48h, a plus icon and a label, centered, hover `bg-item-hover`).
+
+### Overview
+- `MetricCard`: a `card` surface (r12, padding 16). Its header: the title (`label`, `text-secondary`) with an info tooltip, and an optional expand link (↗, `IconButton sm`) at the end when the card links to its details. Then the value (`title-lg`, tabular) with a delta `StatusBadge` (an arrow icon and the change, `success` or `danger`) and "vs previous period" in `caption`. Then a `LineChart` (`sm`) of the period against the previous one; then a footer: "Updated 4 min ago" in `caption` and a `Details` `ArrowLink`. Its skeleton has the same parts in the same places.
+- `DateRangeBar`: a range `Select` (presets: today, the last 7 days, 4 weeks, 3 months, 12 months, month to date, year to date; a custom range through two date fields in its footer), an interval `Select` (daily, weekly, monthly), "compared to" in `caption`, and a comparison `Select` (previous period, previous year, none). Selects in their outline look at `size="sm"` (28h), 8 apart.
+- Charts (`LineChart`, `AreaChart`, `BarChart`, `Sparkline`): SVG drawn in-house, filling their container's width at a height of `sm` 160, `md` 220 or `lg` 300 (component variables). Lines 2px, round joins; an area is the series color at 12%; bars r4 at the top, 4 apart. Horizontal gridlines at nice values, y labels at the end edge, x labels at the start and end (more at `lg`).
+  - Hover: a 1px `border-strong` crosshair at the nearest point, an 8px point with a 2px `bg-surface` ring per series, and a tooltip (`floating` surface, r12, padding 8×12, `shadow-floating`): the date in `caption`, then a row per series (an 8px swatch, the name in `body-sm`, the value in `label`, tabular) and a delta badge. It sits beside the crosshair and flips to its other side near the chart's edge, never leaving the chart's box. Bars highlight their column with `bg-item-hover` instead of a crosshair.
+  - Keyboard: the chart is one Tab stop; Left and Right move the crosshair point by point and show the tooltip; Home and End jump to the ends.
+  - Screen readers: `role="img"` named by its title and a one-line summary, with the data in a visually hidden table.
+  - No data: a dashed baseline and "No data for this period" in `caption`, centered. Loading: a `LoadingPill` centered over the chart's box.
+  - `Sparkline`: 24h, no axes, the last point marked.
+
+### Guidance
+- `Banner`: one line, r12, `bg-section`, padding 8×16, gap 12: a 16px icon in `text-secondary`, the message in `body-sm` `text`, an action link in `accent-text`, an optional time estimate (a 14px clock and "1 min" in `caption`) and a dismiss `IconButton sm`. Under 640px of container width the message wraps and the action moves under it. Dismissed for good with `storageKey`.
+- `RecommendationCard`: a `card` surface, padding 16, gap 8: a "Tip" `StatusBadge` (`info`, a lightbulb) and a dismiss `IconButton sm` on the first line; the title in `title-md`; the body in `body-sm` `text-secondary`; a footer with an `ArrowLink` and a time estimate at the end; optional media at the bottom, edge to edge.
+- `SetupGuide`: a floating checklist in the `bottom-end` lane, 288 wide (a component variable), a `floating` surface (r16, padding 12, `shadow-floating`). Folded: the title (`title-sm`), an expand `IconButton sm` and a dismiss one; a 4px progress bar (`bg-control` track, `accent` fill, r-full); "Next:" in `caption` with the next task as a link. Unfolded (Morph height): the tasks, each a check circle (`success` once done), its title (`label`) and an optional line, with the next task's action as a `soft sm` button. Folded or unfolded, done tasks and dismissal are remembered with `storageKey`.
+- `FeatureIntro`: copy at the start (a `title-lg` heading, a `body` line, two or three benefits with 16px icons, a primary button and a docs `ArrowLink`) and media at the end, in two columns from 720px of container width and stacked under it; an optional dismiss remembered with `storageKey`. The `buttery add page feature-intro` template is built from it.
+- `EmptyState` gains `icon`, a 48px tile (r12, `bg-section`, 1px `border`) holding a 20px icon in `text-secondary`, 16 above the title, and `docs`, an `ArrowLink` 16 under the text.
+- `LoadingPill`: 28h, r-full, `bg-control`, padding-x 12: a 14px spinner and its label in `control` role, `text-secondary`, `role="status"`. It shows after `--bt-delay-loading` (300ms), so quick loads never flash it.
+- `NotificationNudge`: `IconButton`'s `dot` draws an 8px `accent` dot with a 2px `bg-surface` ring at the icon's top end and adds ", new" to its name. The nudge is a `Popover` anchored to that button (padding 16, at most 280 wide): the title in `title-sm`, a line in `body-sm`, a `primary sm` action and a ghost "Later". It opens by itself once per `storageKey`, without taking focus, and is announced as a status; Tab from its button goes into it.
+
+### Menus and dialogs
+- `AccountMenu`: the workspace switcher's menu, 280 wide (a component variable). A header (a 32px `InitialsTile` over the workspace name in `title-sm` and an optional caption, centered, padding 12), items with 16px icons (settings, a "Switch workspace" submenu listing workspaces with 20px tiles and a check on the current one, then "New workspace" and "Manage workspaces"; a "Create" submenu), a separator, the user's row (a 20px `Avatar`, the name, an action icon at its end), and "Sign out". Submenus fly out to the side and keep open while the pointer heads for them (pointer grace, Radix).
+- `Avatar` and `InitialsTile`: sizes `xs` 20, `sm` 24, `md` 32, `lg` 40. An `InitialsTile` is a square, r6 (r8 from `md`), `bg-control`, with up to two initials in `badge` role, `text-secondary`. An `Avatar` is round and shows its picture, or the initials when there's none or it fails to load.
+- `ChoiceDialog`: a `Dialog` at `--bt-w-dialog-md`: the title and a line, then choice rows 8 apart. A row is a button or link, r12, a 1px `border` edge, padding 16: a 36px icon tile (r10, `bg-control`), the title (`label`) over a line (`body-sm`, `text-secondary`), and a 20px forward arrow at the end that draws its stem on hover (MOTION_SPEC §4.5). Hover `bg-item-hover`.
+- `AnnouncementDialog`: a `Dialog` at `--bt-w-dialog-lg`, padding 32: copy at the start (a `title-lg` heading, sections of a `title-sm` subheading over `body` text) and media at the end (r12, the app's own illustration), in two columns from 720px of container width and stacked, media first, under it. A primary button and an `ArrowLink` with an external icon at the bottom of the copy. Shown once per `storageKey`.
+- `SettingsIndex`: sections 32 apart, each a `title-md` heading over a grid of links: three columns from 1024px of container width, two from 640, one under it, 8 apart down and 16 across. A link is a block, r12, padding 12, hover `bg-item-hover`: a 32px icon tile (r8, `bg-section`, 1px `border`), the title (`label`, `text`), and a line (`body-sm`, `text-secondary`) that wraps.
