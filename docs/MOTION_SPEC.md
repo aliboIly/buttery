@@ -118,7 +118,7 @@ Measured from local 30fps strips of a product dashboard (`reference/inspiration-
 | Chrome menu or popover closes | Gone in the next frame | one frame |
 | Submenu opens | Opens once the pointer has rested on its item for `--bt-delay-submenu` (40ms), fading in over `dur-fast` with `ease-out`; moving toward it on a diagonal keeps it open (pointer grace) | 40ms + `dur-fast` (measured complete within one 30fps frame of the hover) |
 | Dialog opens | Scrim and panel fade in together; the panel grows from 0.97 | `dur-fast` (120ms), `ease-out` (measured ~100ms: about 35% at the first frame, 90% at the second, done by the third) |
-| Dialog closes | Panel and scrim fade out; the panel shrinks to 0.98 | `dur-fast`, `ease-in`. The recording fades out over ~200ms; buttery keeps rule 7, so the close is never slower than the open |
+| Dialog closes | Panel and scrim fade out, without shrinking, as every presence leaves | `dur-fast`, `ease-in`. The recording fades out over ~200ms; buttery keeps rule 7, so the close is never slower than the open |
 | Sidebar group expands | Its height opens through `Morph`; the items show as it opens; the chevron turns 180° | `spring.snappy` (95% at ~165ms; measured ~100–135ms, after ~100ms of the app's own input delay that buttery doesn't add) |
 | Sidebar group collapses | Height closes, chevron turns back | `dur-fast`, `ease-standard` |
 | Sidebar becomes a rail or a sheet | At 1100px the sidebar takes the rail's width at once as the window resizes (a resize is direct manipulation); under 640 it opens as a sheet that rises on the `rise` preset over a `dim` scrim | instant; sheet `spring.smooth` + `dur-base` scrim |

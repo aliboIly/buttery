@@ -166,6 +166,7 @@ The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px;
 | `--bt-w-shell-max` | 1380 (AppShell max width, centered — measured) |
 | `--bt-w-inspector` | 340 |
 | `--bt-w-dialog` | 400 |
+| `--bt-w-dialog-md` / `--bt-w-dialog-lg` | 560 / 880 (wider dialogs: a list of choices; copy beside an illustration) |
 | `--bt-w-menu-min` | 200 |
 | `--bt-w-row-control` | 160 (slider width in a row; measured 162–164, see DECISIONS) |
 | `--bt-w-page` | 1200 (page content max width) |
@@ -333,7 +334,7 @@ A column 20 apart, at most 400 wide (`w-dialog`): a `TextStack` heading (an `h1`
 `inverse-bg` pill, `inverse-text` 12/500, padding 4×8, r8, 500ms open delay, no arrow. Content-sized (not height-checked). Opens at once on keyboard focus, closes on Escape, renders in the tooltip band above dialogs. The root `ButteryProvider` hosts one provider for all tooltips, so moving between them skips the delay.
 
 ### Dialog
-400w, r18, padding 8 (media) / 24 (text), shadow-dialog, scrim `overlay`. Close: `IconButton sm` at the media's top-right, centered 24px from the top and right edges (designed overlap — marked `data-bt-allow-overlap`).
+`dialog` surface (r18, `shadow-dialog`) over a `dim` scrim in the modal layer, centered and kept 16px inside the window; `size` `sm` 400 (`--bt-w-dialog`, the default), `md` 560 (`--bt-w-dialog-md`) or `lg` 880 (`--bt-w-dialog-lg`). Its parts, stacked with their own padding: `Dialog.Media` 8px in at the top and sides, corners r10 (18 − 8); `Dialog.Text` (a `TextStack` at `size="dialog"`) padded 24, its title naming the dialog and its body describing it; `Dialog.Body` for fields or a list, 20 under the text and 24 at the sides; `Dialog.Actions`, equal columns 8 apart, 20 under what's above and padded 24 at the sides and bottom, holding 48px rounded buttons. The parts work inside a `<form>` that wraps them. Close: an `IconButton sm` centered 24px from the top and end edges, over the media when there is some (designed overlap, `data-bt-allow-overlap`); without media the text keeps 48px clear at its end. The body scrolls inside the dialog when it's taller than the window allows. Focus moves to the first control in the body, or to the dialog itself when there's none (so the close button's tooltip stays shut), stays inside, and goes back to what opened it; it's `aria-modal`, and a press on the scrim or the frame around it closes it. A dialog without a `Dialog.Text` title takes `label`, and warns with the fix when it has neither.
 
 ### Onboarding (StepDialog)
 - Media: 384×200, r10, per-step gradient background, holding a small scene whose elements morph between steps.
@@ -400,7 +401,6 @@ Measured from local frames of a product dashboard (`reference/inspiration-dashbo
 | `--bt-w-app-page` | 1280 | `AppPage width="contained"`: the content's max width, padding included |
 | `--bt-w-aside` | 320 | `AppPage`'s right rail |
 | `--bt-w-search` | 360 | The top bar's search field, at most |
-| `--bt-w-dialog-md` / `--bt-w-dialog-lg` | 560 / 880 | `ChoiceDialog` / `AnnouncementDialog` (`--bt-w-dialog`, 400, stays the default) |
 | `--bt-h-table-row` | 36 comfortable · 32 compact (35 + a 1px divider) | Table header and body rows |
 | `title-lg` | 24 / 30, 600, tight | Page titles, metric values |
 | `title-md` | 18 / 24, 600, tight | Section headings in app pages, card titles in the right rail |
