@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "A suggestion that stays until it's done: use Banner or RecommendationCard",
   ],
   related: ["IconButton", "Popover", "TopBar", "Banner"],
-  a11y: "It opens by itself once its button is in view, without moving focus, and its title is announced as a status. It's a non-modal dialog named by its title. Tab from its button goes into it, Shift+Tab from its first button goes back, and Tab from its last goes on to what follows the button. Escape, Later, the action or a press outside closes it, and it doesn't open by itself again for the same storageKey.",
+  a11y: "It opens by itself once its button is in view and no modal dialog is open, without moving focus, and its title is announced as a status. It's a non-modal dialog named by its title. Tab from its button goes into it, Shift+Tab from its first button goes back, and Tab from its last goes on to what follows the button. Escape, Later, the action or a press outside closes it, and it doesn't open by itself again for the same storageKey.",
   motion: "presence",
 };

@@ -53,9 +53,9 @@ function isFlag(value: unknown): value is boolean {
 /**
  * A small popover that points at a button with news, such as replies waiting behind the notifications bell:
  * its title, a line, an action and Later. It opens by itself once per `storageKey`, as soon as its button
- * is fully in view, without taking focus, and its title is announced as a status; Tab from its button goes
- * into it, and out of it to what follows the button. Any way it closes counts as seen. Controlled with
- * `open`, it opens only when you say.
+ * is fully in view and no modal dialog is open, without taking focus, and its title is announced as a
+ * status; Tab from its button goes into it, and out of it to what follows the button. Any way it closes
+ * counts as seen. Controlled with `open`, it opens only when you say.
  *
  * @example
  * <NotificationNudge
@@ -101,19 +101,35 @@ export function NotificationNudge({
   useEffect(() => {
     const button = trigger.current;
     if (seen || open !== undefined || button === null) return undefined;
+    let waiting: MutationObserver | null = null;
+    const behindModal = (): boolean =>
+      document.querySelector('[aria-modal="true"]') !== null;
+    const appear = (): void => {
+      byItself.current = true;
+      setOpen(true);
+      setAnnouncement(title);
+    };
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting !== true) return;
         observer.disconnect();
-        byItself.current = true;
-        setOpen(true);
-        setAnnouncement(title);
+        if (!behindModal()) {
+          appear();
+          return;
+        }
+        waiting = new MutationObserver(() => {
+          if (behindModal()) return;
+          waiting?.disconnect();
+          appear();
+        });
+        waiting.observe(document.body, { childList: true, subtree: true });
       },
       { threshold: 1 },
     );
     observer.observe(button);
     return () => {
       observer.disconnect();
+      waiting?.disconnect();
     };
   }, [seen, open, title, setOpen]);
 

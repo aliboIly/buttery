@@ -80,6 +80,34 @@ describe("NotificationNudge", () => {
     window.scrollTo(0, 0);
   });
 
+  it("waits for a modal dialog to close before it opens by itself", async () => {
+    function Page({ modal }: { readonly modal: boolean }): ReactElement {
+      return (
+        <>
+          {modal ? (
+            <div role="dialog" aria-modal="true" aria-label="Announcement">
+              A dialog
+            </div>
+          ) : null}
+          <Bar />
+        </>
+      );
+    }
+    const { rerender } = render(<Page modal />);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(
+      screen.queryByRole("dialog", {
+        name: "2 customers asked about delivery",
+      }),
+    ).toBeNull();
+    rerender(<Page modal={false} />);
+    expect(
+      await screen.findByRole("dialog", {
+        name: "2 customers asked about delivery",
+      }),
+    ).toBeTruthy();
+  });
+
   it("takes Tab from its button into it, back with Shift+Tab, and on to what follows the button", async () => {
     render(<Bar />);
     await screen.findByRole("dialog");
