@@ -52,7 +52,58 @@ function UploadDemo(): ReactElement {
   );
 }
 
+function TonesDemo(): ReactElement {
+  return (
+    <Inline gap={2} wrap>
+      <Button
+        variant="soft"
+        onClick={() => {
+          toast("Roast profile saved");
+        }}
+      >
+        Plain
+      </Button>
+      <Button
+        variant="soft"
+        onClick={() => {
+          toast.success("Order shipped");
+        }}
+      >
+        Success
+      </Button>
+      <Button
+        variant="soft"
+        onClick={() => {
+          toast.warning("Beans for 2 days left");
+        }}
+      >
+        Warning
+      </Button>
+      <Button
+        variant="soft"
+        onClick={() => {
+          toast.danger("Couldn't export the card", {
+            action: {
+              label: "Retry",
+              onAction: () => undefined,
+              altText: "Export again from the Export menu",
+            },
+          });
+        }}
+      >
+        Danger
+      </Button>
+    </Inline>
+  );
+}
+
 export const demos: readonly DemoSection[] = [
+  {
+    title: "Tones",
+    description:
+      "Plain toasts for news; success, warning and danger tint the pill toward their color and lead with an icon. Warnings and dangers stay 5s.",
+    render: () => <TonesDemo />,
+  },
   {
     title: "Three at most",
     description:

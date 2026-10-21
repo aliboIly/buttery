@@ -227,6 +227,76 @@ describe("Toaster", () => {
     ]);
   });
 
+  it("tints a toned toast and leads it with its icon, named by the tone", async () => {
+    renderApp();
+    act(() => {
+      toast.success("Order shipped");
+      toast.warning("Beans running low");
+      toast.danger("Couldn't export the card");
+    });
+    const tones = [
+      ["Order shipped", "success", "Success", "rgb(38, 52, 44)"],
+      ["Beans running low", "warning", "Warning", "rgb(59, 48, 36)"],
+      ["Couldn't export the card", "danger", "Error", "rgb(62, 43, 40)"],
+    ] as const;
+    for (const [message, tone, name, background] of tones) {
+      const pill = pillOf(await screen.findByText(message));
+      expect(pill.dataset["tone"]).toBe(tone);
+      await waitFor(() => {
+        expect(getComputedStyle(pill).backgroundColor).toBe(background);
+      });
+      const icon = pill.querySelector('[data-bt-part="icon"]');
+      expect(icon?.getAttribute("aria-label")).toBe(name);
+      expect(icon?.getBoundingClientRect().width).toBe(16);
+      expect(pill.getBoundingClientRect().height).toBe(36);
+    }
+  });
+
+  it("reads a toned toast's tone before its message, in the words given", async () => {
+    const { FloatingLanes } = await import("@buttery/core");
+    render(
+      <>
+        <FloatingLanes />
+        <Toaster toneLabels={{ danger: "Failed" }} />
+      </>,
+    );
+    act(() => {
+      toast.danger("Couldn't export the card");
+    });
+    await waitFor(() => {
+      expect(
+        document.querySelector('[role="status"][aria-live="assertive"]')
+          ?.textContent,
+      ).toBe("Notification Failed: Couldn't export the card");
+    });
+  });
+
+  it("keeps a plain toast free of an icon and its tone", async () => {
+    renderApp();
+    show("Card deleted");
+    const pill = pillOf(await screen.findByText("Card deleted"));
+    expect(pill.dataset["tone"]).toBe("neutral");
+    expect(pill.querySelector('[data-bt-part="icon"]')).toBeNull();
+  });
+
+  it("keeps a warning or a danger toast for 5s, as long as one with an action", () => {
+    renderApp();
+    act(() => {
+      toast.success("Order shipped");
+      toast.warning("Beans running low");
+      toast.danger("Couldn't export the card", { duration: 8000 });
+    });
+    show("Roast saved", { tone: "danger" });
+    expect(getToasts().map(({ duration }) => duration)).toEqual([
+      5000, 8000, 5000,
+    ]);
+    expect(getToasts().map(({ tone }) => tone)).toEqual([
+      "warning",
+      "danger",
+      "danger",
+    ]);
+  });
+
   it("leaves when its time is up, but not while the pointer is on it", async () => {
     renderApp();
     show("Saved", { duration: 1000 });

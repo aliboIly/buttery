@@ -54,6 +54,44 @@
     white-space: nowrap;
   }
 
+  /* A tone tints the pill and colors its icon; the icon sits closer to the edge than text would. */
+  .bt-toast > [data-bt-part="pill"]:not([data-tone="neutral"]) {
+    padding-inline-start: var(--bt-space-3);
+  }
+
+  .bt-toast > [data-bt-part="pill"][data-tone="success"] {
+    --bt-toast-tone: var(--bt-inverse-success);
+
+    background-color: var(--bt-inverse-success-bg);
+  }
+
+  .bt-toast > [data-bt-part="pill"][data-tone="warning"] {
+    --bt-toast-tone: var(--bt-inverse-warning);
+
+    background-color: var(--bt-inverse-warning-bg);
+  }
+
+  .bt-toast > [data-bt-part="pill"][data-tone="danger"] {
+    --bt-toast-tone: var(--bt-inverse-danger);
+
+    background-color: var(--bt-inverse-danger-bg);
+  }
+
+  .bt-toast > [data-bt-part="pill"] > [data-bt-part="lead"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+  }
+
+  .bt-toast
+    > [data-bt-part="pill"]
+    > [data-bt-part="lead"]
+    > [data-bt-part="icon"] {
+    flex: none;
+    color: var(--bt-toast-tone);
+  }
+
   .bt-toast:is([data-swipe="move"], [data-swipe="end"]) {
     translate: 0 var(--bt-toaster-swipe, 0);
   }
@@ -85,6 +123,22 @@
   @media (hover: hover) {
     .bt-toast > [data-bt-part="pill"] > [data-bt-part="action"]:hover {
       color: var(--bt-inverse-text);
+    }
+  }
+
+  /* The secondary gray is too faint on a tinted pill, so a toned toast's action takes the text's color and underlines on hover. */
+  .bt-toast
+    > [data-bt-part="pill"]:not([data-tone="neutral"])
+    > [data-bt-part="action"] {
+    color: var(--bt-inverse-text);
+    text-underline-offset: var(--bt-space-0_5);
+  }
+
+  @media (hover: hover) {
+    .bt-toast
+      > [data-bt-part="pill"]:not([data-tone="neutral"])
+      > [data-bt-part="action"]:hover {
+      text-decoration-line: underline;
     }
   }
 

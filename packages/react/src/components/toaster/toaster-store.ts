@@ -11,6 +11,12 @@ export interface ToastAction {
   readonly altText: string;
 }
 
+/**
+ * How a toast reads: `"neutral"` for news, or a tone with its own icon and tint for a result that went well
+ * (`"success"`), needs a look (`"warning"`) or failed (`"danger"`).
+ */
+export type ToastTone = "neutral" | "success" | "warning" | "danger";
+
 /** Options for `toast()`. */
 export interface ToastOptions {
   /**
@@ -20,9 +26,12 @@ export interface ToastOptions {
   readonly id?: string | undefined;
   /** A button after the message, such as Undo. */
   readonly action?: ToastAction | undefined;
+  /** How it reads: `"neutral"` (the default), `"success"`, `"warning"` or `"danger"`. `toast.success()` and the others set it. */
+  readonly tone?: ToastTone | undefined;
   /**
    * How long it stays in ms, not counting while the pointer or focus is on the toasts or the window is in
-   * the background. Defaults to 3000, or 5000 with an action; `Infinity` keeps it until it's dismissed.
+   * the background. Defaults to 3000, or 5000 with an action or as a warning or danger; `Infinity` keeps it
+   * until it's dismissed.
    */
   readonly duration?: number | undefined;
   /**
@@ -46,6 +55,8 @@ export interface ToastRecord {
   readonly message: string;
   /** The button after the message, if any. */
   readonly action: ToastAction | undefined;
+  /** How it reads. */
+  readonly tone: ToastTone;
   /** How long it stays, in ms. */
   readonly duration: number;
   /** Whether screen readers wait for a pause to read it. */

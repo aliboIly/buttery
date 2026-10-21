@@ -1,5 +1,6 @@
 import {
   FloatingLanes,
+  Icon,
   heights,
   presencePresets,
   reducedPresence,
@@ -12,6 +13,7 @@ import {
   useMotionPreference,
   warnOnce,
 } from "@buttery/core";
+import { CircleAlert, CircleCheck, TriangleAlert } from "lucide-react";
 import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
 import {
@@ -42,9 +44,14 @@ import {
   removeToast,
   subscribe,
 } from "./toaster-store.ts";
-import type { ToastOptions, ToastRecord } from "./toaster-store.ts";
+import type { ToastOptions, ToastRecord, ToastTone } from "./toaster-store.ts";
 
-export type { ToastAction, ToastOptions } from "./toaster-store.ts";
+export type { ToastAction, ToastOptions, ToastTone } from "./toaster-store.ts";
+
+/** The words read for each tone of toast, before its message. */
+export type ToastToneLabels = Readonly<
+  Record<Exclude<ToastTone, "neutral">, string>
+>;
 
 /** Props for `Toaster`. */
 export interface ToasterProps {
@@ -55,7 +62,21 @@ export interface ToasterProps {
    * to `"Notifications ({hotkey})"`.
    */
   readonly regionLabel?: string | undefined;
+  /** The words for each tone, read before its message and naming its icon. Defaults to Success, Warning and Error. */
+  readonly toneLabels?: Partial<ToastToneLabels> | undefined;
 }
+
+const TONE_LABELS: ToastToneLabels = {
+  success: "Success",
+  warning: "Warning",
+  danger: "Error",
+};
+
+const TONE_ICONS = {
+  success: CircleCheck,
+  warning: TriangleAlert,
+  danger: CircleAlert,
+} as const;
 
 /** How far down a toast has to be dragged, in px, to close when it's let go. */
 const SWIPE_TO_CLOSE = 50;
@@ -65,8 +86,15 @@ const HOTKEY = "F8";
 const SETTLED = { y: 0 } as const;
 
 /** A message and its action's alternative read as two sentences, so they don't run together. */
-function spoken(label: string, toast: ToastRecord): string {
-  const message = `${label} ${toast.message}`;
+function spoken(
+  label: string,
+  toneLabels: ToastToneLabels,
+  toast: ToastRecord,
+): string {
+  const message =
+    toast.tone === "neutral"
+      ? `${label} ${toast.message}`
+      : `${label} ${toneLabels[toast.tone]}: ${toast.message}`;
   const alternative = toast.action?.altText.trim() ?? "";
   if (alternative === "") return message;
   return /[.!?…]$/.test(message)
@@ -95,6 +123,8 @@ interface Swipe {
 
 interface ToastItemProps {
   readonly toast: ToastRecord;
+  /** The words naming each tone's icon. */
+  readonly toneLabels: ToastToneLabels;
   /** Whether the clock is stopped: the pointer or focus is on the toasts, or the window is away. */
   readonly paused: boolean;
   /** Moves focus somewhere sensible when this toast leaves while it has focus. */
@@ -103,6 +133,7 @@ interface ToastItemProps {
 
 function ToastItem({
   toast,
+  toneLabels,
   paused,
   onFocusLost,
 }: ToastItemProps): ReactElement {
@@ -241,17 +272,27 @@ function ToastItem({
       <motion.div
         {...pillTracking}
         data-bt-part="pill"
+        data-tone={toast.tone}
         initial={reduced ? false : { y: from }}
         animate={SETTLED}
         transition={rise}
       >
-        <span
-          className="bt-truncate"
-          data-bt-part="message"
-          data-bt-truncate=""
-          title={toast.message}
-        >
-          {toast.message}
+        <span data-bt-part="lead">
+          {toast.tone === "neutral" ? null : (
+            <Icon
+              icon={TONE_ICONS[toast.tone]}
+              label={toneLabels[toast.tone]}
+              data-bt-part="icon"
+            />
+          )}
+          <span
+            className="bt-truncate"
+            data-bt-part="message"
+            data-bt-truncate=""
+            title={toast.message}
+          >
+            {toast.message}
+          </span>
         </span>
         {action ? (
           <button
@@ -273,7 +314,13 @@ function ToastItem({
 }
 
 /** Live regions that read each new or updated toast out, one for news people caused and one for the rest. */
-function Announcer({ label }: { readonly label: string }): ReactElement {
+function Announcer({
+  label,
+  toneLabels,
+}: {
+  readonly label: string;
+  readonly toneLabels: ToastToneLabels;
+}): ReactElement {
   const announcement = useSyncExternalStore(
     subscribe,
     getAnnouncement,
@@ -294,7 +341,7 @@ function Announcer({ label }: { readonly label: string }): ReactElement {
   const current =
     announcement && announcement.version !== quiet ? announcement : null;
   const words = current ? (
-    <span key={current.version}>{spoken(label, current)}</span>
+    <span key={current.version}>{spoken(label, toneLabels, current)}</span>
   ) : null;
   return (
     <>
@@ -343,7 +390,9 @@ function useWindowAway(): boolean {
 export function Toaster({
   label = "Notification",
   regionLabel = "Notifications ({hotkey})",
+  toneLabels,
 }: ToasterProps): ReactElement {
+  const words = { ...TONE_LABELS, ...toneLabels };
   const toasts = useSyncExternalStore(subscribe, getToasts, getServerToasts);
   const region = useRef<HTMLDivElement>(null);
   const previous = useRef<HTMLElement | null>(null);
@@ -462,6 +511,7 @@ export function Toaster({
                 <ToastItem
                   key={toast.key}
                   toast={toast}
+                  toneLabels={words}
                   paused={paused}
                   onFocusLost={onFocusLost}
                 />
@@ -470,21 +520,36 @@ export function Toaster({
           </ol>
         </div>
       </FloatingLanes.Item>
-      <Announcer label={label} />
+      <Announcer label={label} toneLabels={words} />
     </>
   );
 }
 
-/** `toast()`, with `toast.dismiss()` to close toasts early. */
+/** Options for `toast.success()` and the other tones, which set the tone themselves. */
+export type ToneToastOptions = Omit<ToastOptions, "tone">;
+
+/** `toast()`, with a shorthand per tone and `toast.dismiss()` to close toasts early. */
 export interface ToastFunction {
   /** Shows `message` in a toast and returns the toast's id. */
   (message: string, options?: ToastOptions): string;
+  /** Shows a success toast: a check, tinted toward success. */
+  readonly success: (message: string, options?: ToneToastOptions) => string;
+  /** Shows a warning toast: a warning sign, tinted toward warning. It stays 5s. */
+  readonly warning: (message: string, options?: ToneToastOptions) => string;
+  /** Shows a danger toast, for something that failed: an alert, tinted toward danger. It stays 5s. */
+  readonly danger: (message: string, options?: ToneToastOptions) => string;
   /** Closes the toast with `id`, or every toast without one. */
   readonly dismiss: (id?: string) => void;
 }
 
 function showToast(message: string, options: ToastOptions = {}): string {
-  const { id, action, duration, background = false } = options;
+  const {
+    id,
+    action,
+    tone = "neutral",
+    duration,
+    background = false,
+  } = options;
   if (typeof window === "undefined") return id ?? "";
   if (action?.altText.trim() === "") {
     warnOnce(
@@ -505,8 +570,12 @@ function showToast(message: string, options: ToastOptions = {}): string {
     id,
     message,
     action,
+    tone,
     duration:
-      duration ?? (action ? timing["toast-life-action"] : timing["toast-life"]),
+      duration ??
+      (action || tone === "warning" || tone === "danger"
+        ? timing["toast-life-action"]
+        : timing["toast-life"]),
     background,
   });
 }
@@ -515,16 +584,24 @@ function showToast(message: string, options: ToastOptions = {}): string {
  * Shows a short message in a toast at the bottom of the window and returns its id. Three show at once at
  * most: a fourth lets the one shown longest ago go, and a toast with the same `id` updates the earlier one
  * in its place, with its time started over, instead of stacking a copy. It leaves after 3s, or 5s with an
- * action, counting only while the pointer and focus are elsewhere. Screen readers read it out, F8 moves
- * focus to the toasts, and Escape on a toast or a swipe down closes it. Needs a `Toaster`;
- * `ButteryProvider` mounts one.
+ * action or as a warning or danger, counting only while the pointer and focus are elsewhere. Screen readers
+ * read it out, its tone first, F8 moves focus to the toasts, and Escape on a toast or a swipe down closes
+ * it. `toast.success()`, `toast.warning()` and `toast.danger()` add a tone's icon and tint. Needs a
+ * `Toaster`; `ButteryProvider` mounts one.
  *
  * @example
  * toast("Card deleted", {
  *   action: { label: "Undo", onAction: restore, altText: "Undo with Command Z" },
  * });
- * toast("Link copied", { id: "copy-link" });
+ * toast.success("Order shipped");
+ * toast.danger("Couldn't export the card", { id: "export" });
  */
 export const toast: ToastFunction = Object.assign(showToast, {
+  success: (message: string, options: ToneToastOptions = {}): string =>
+    showToast(message, { ...options, tone: "success" }),
+  warning: (message: string, options: ToneToastOptions = {}): string =>
+    showToast(message, { ...options, tone: "warning" }),
+  danger: (message: string, options: ToneToastOptions = {}): string =>
+    showToast(message, { ...options, tone: "danger" }),
   dismiss: dismissToasts,
 });

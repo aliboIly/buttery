@@ -54,6 +54,9 @@ export type {
   ToastFunction,
   ToastOptions,
   ToasterProps,
+  ToastTone,
+  ToastToneLabels,
+  ToneToastOptions,
 } from "./components/toaster/Toaster.tsx";
 export { Field } from "./components/field/Field.tsx";
 export type {
