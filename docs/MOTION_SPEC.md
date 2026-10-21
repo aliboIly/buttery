@@ -1,9 +1,10 @@
 # buttery — Motion Spec
 
-Two sets of local captures (not in the repo), both measured frame by frame:
+Three sets of local captures (not in the repo), all measured frame by frame:
 
 - **App motion**: how controls, panels, dialogs and toasts move in a desktop editing app.
 - **Choreography**: how a marketing site morphs its menu, expands cards into modals, staggers entrances and dims context. We take the *principles*, not the look.
+- **App chrome**: how a product dashboard's menus, submenus, dialogs and sidebar move (§3, "App chrome").
 
 "Buttery" motion = **instant where the user is in control, short and settled where the system responds, choreographed where something new arrives.** Nothing bounces for no reason. Nothing makes the user wait.
 
@@ -51,8 +52,8 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-dur-instant` | 0ms |
 | `--bt-dur-press` | 80ms (pointer-down scale) |
 | `--bt-dur-reduced` | 100ms (the longest fade with reduced motion) |
-| `--bt-dur-fast` | 120ms (hover color and arrows, exits, text crossfade, the nav panel folding and its blur) |
-| `--bt-dur-base` | 200ms (enters: menu, toast, dialog opacity, the modal scrim) |
+| `--bt-dur-fast` | 120ms (hover color and arrows, exits, text crossfade, the nav panel folding and its blur, dialogs and their scrim both ways) |
+| `--bt-dur-base` | 200ms (enters: menu, toast, a sheet's scrim) |
 | `--bt-dur-slow` | 300ms (longer fades; nothing in Phase 5 uses it, and the crop-mode background fades over `dur-base`, as §3 measures) |
 | `--bt-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` (enters) |
 | `--bt-ease-in` | `cubic-bezier(0.4, 0, 1, 1)` (exits) |
@@ -64,6 +65,9 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-toast-life` / `--bt-toast-life-action` | 3000ms / 5000ms (how long a toast stays, longer with an action, while nothing pauses it) |
 | `--bt-delay-hover-open` / `--bt-delay-hover-close` | 150ms / 100ms (hover intent: a menu opens once the pointer has rested on its trigger for 150ms, at once when it moves between the triggers of an open menu, and closes 100ms after the pointer leaves) |
 | `--bt-delay-tooltip` | 500ms (tooltips open) |
+| `--bt-delay-submenu` | 40ms (a submenu opens once the pointer has rested on its item this long; Phase 6B) |
+| `--bt-delay-loading` | 300ms (a loading pill shows only if loading lasts this long, so quick loads never flash it; Phase 6B) |
+| `--bt-dur-shimmer` | 1600ms (one pass of a skeleton's shimmer; Phase 6B) |
 
 Never use `transition: all`. Transition only `opacity`, transforms (`transform`, `translate`, `scale`), `background-color`, `color`, `box-shadow`, `filter` and `backdrop-filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS. Two size animations are sanctioned: `Morph`'s height (§5) and the `MorphMenu` viewport's size and position (§4.1).
 
@@ -102,7 +106,33 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 | Last step | The forward button's label crossfades (e.g. "Continue" → "Finish") inside a fixed-width button (no layout shift) | 120ms |
 | Idle step | One scene element drifts and the rest follow, slow loop | ~3s loop, ease-in-out |
 | Finish | Confetti bursts from the finish button (24–40 small rounded rects in palette colors, ±60° upward cone, gravity, ~900ms life). Dialog stays open during the burst, then fades out. | close fade 120ms after ~900ms |
-| Dialog open (not in recording — _derived_) | Scrim fades; panel opacity 0→1, scale 0.97→1, y 6→0 | `spring.smooth` + 200ms scrim |
+| Dialog open and close | As every dialog does: scrim and panel fade together, the panel growing from 0.97 ("App chrome" below, measured on a dashboard's dialogs) | `dur-fast` each way |
+
+### App chrome (Phase 6B)
+
+Measured from local 30fps strips of a product dashboard (`reference/inspiration-dashboard/motion-*`, not in the repo). Chrome is the menus, popovers and panels that belong to the shell and its data views: the account menu, row actions, a saved view's menu, column settings, filter editors and nudges. Dense tools move less than editors: chrome appears at once and stays out of the way.
+
+| Interaction | What happens | Timing |
+|---|---|---|
+| Chrome menu or popover opens | Appears complete in the next frame: no grow, slide or fade (`entrance="instant"` on `Menu` and `Popover`; `AppShell layout="sidebar"` makes it the default inside it) | one frame (measured: absent in one 30fps frame, complete in the next) |
+| Chrome menu or popover closes | Gone in the next frame | one frame |
+| Submenu opens | Opens once the pointer has rested on its item for `--bt-delay-submenu` (40ms), fading in over `dur-fast` with `ease-out`; moving toward it on a diagonal keeps it open (pointer grace) | 40ms + `dur-fast` (measured complete within one 30fps frame of the hover) |
+| Dialog opens | Scrim and panel fade in together; the panel grows from 0.97 | `dur-fast` (120ms), `ease-out` (measured ~100ms: about 35% at the first frame, 90% at the second, done by the third) |
+| Dialog closes | Panel and scrim fade out; the panel shrinks to 0.98 | `dur-fast`, `ease-in`. The recording fades out over ~200ms; buttery keeps rule 7, so the close is never slower than the open |
+| Sidebar group expands | Its height opens through `Morph`; the items show as it opens; the chevron turns 180° | `spring.snappy` (95% at ~165ms; measured ~100–135ms, after ~100ms of the app's own input delay that buttery doesn't add) |
+| Sidebar group collapses | Height closes, chevron turns back | `dur-fast`, `ease-standard` |
+| Sidebar becomes a rail or a sheet | At 1100px the sidebar takes the rail's width at once as the window resizes (a resize is direct manipulation); under 640 it opens as a sheet that rises on the `rise` preset over a `dim` scrim | instant; sheet `spring.smooth` + `dur-base` scrim |
+| Tabs, saved views, stat tabs | The chosen item's indicator slides inside its own track | `spring.snappy` |
+| Row hover | The row's tint shows | instant |
+| Skeleton | Blocks shaped like the content shimmer: a light band crosses each block | `--bt-dur-shimmer` (1600ms) per pass, linear, looping; off with reduced motion |
+| Skeleton → content | Crossfade in place: the content fades in over the skeleton, which fades out; nothing moves | `dur-fast` |
+| Loading pill | Shows only if loading lasts `--bt-delay-loading` (300ms), fading in; leaves with a fade as the content crossfades in | `dur-fast` each way |
+| Chart hover | Crosshair, points and tooltip follow the pointer in the same frame (set from the pointer handler, no React state per move); the tooltip's text changes when the nearest point does, and it flips sides at the chart's edge without animating | instant |
+| Setup guide expands or folds | `Morph` height; the progress bar's fill grows by `scaleX` | `spring.smooth`; fill `spring.smooth` |
+| Banner or card dismissed | Fades where it is, then what's below closes the gap | `dur-fast` fade, then `spring.smooth` layout |
+| A toast or the setup guide arrives | Rises into its lane as toasts do (§3) | `spring.snappy` + `dur-base` fade |
+
+With reduced motion: chrome is unchanged (it doesn't move), dialogs fade over 100ms without scaling, group height and indicators land at once, skeletons don't shimmer, and the crossfades take 100ms.
 
 ---
 
@@ -150,7 +180,7 @@ Measured from the same local recording at 10fps. At rest the label is followed b
 Marketing numbers (not user values) count up once when revealed, 800ms ease-out, tabular-nums, width reserved for the final value. Screen readers get the final value immediately (`aria-label`); with reduced motion the final value renders directly.
 
 ### 4.8 Context blur (`Scrim`)
-Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). The blur scrim fades in and out over `--bt-dur-fast` (measured ~100–150ms each way behind the nav menu); the dim scrim comes in over `--bt-dur-base` (with the dialog, §3) and leaves over `--bt-dur-fast`. The blur scrim sits below the nav bar (`--bt-z-scrim-nav`, under the bar's `--bt-z-sticky`), so the bar and its open menu stay crisp.
+Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). The blur scrim fades in and out over `--bt-dur-fast` (measured ~100–150ms each way behind the nav menu); the dim scrim fades with its layer: in and out over `--bt-dur-fast` under a dialog (§3), in over `--bt-dur-base` and out over `--bt-dur-fast` under a sheet. The blur scrim sits below the nav bar (`--bt-z-scrim-nav`, under the bar's `--bt-z-sticky`), so the bar and its open menu stay crisp.
 
 ---
 
