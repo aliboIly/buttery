@@ -11,7 +11,9 @@
   container-type: inline-size;
 }
 
+/* The shell's bar stays over whatever a demo stacks, nav bars and their menus included. */
 .pg-top {
+  z-index: var(--bt-z-dropdown);
   min-inline-size: 0;
   padding-block: var(--bt-space-4);
   background-color: var(--bt-bg-app);
