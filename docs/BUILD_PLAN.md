@@ -107,8 +107,10 @@ Everything a dashboard-style app needs, so building one is composing parts. Spec
 Everything in `docs/DX_AND_AI.md`:
 - Generated `manifest.json`, `tokens.json`, `llms.txt`, `llms-full.txt`; docs and examples shipped inside the packages.
 - Dev warnings with fixes and docs links; `.vscode/buttery.code-snippets`.
-- `buttery` CLI: `create-buttery`, `init` (idempotent; appends a delimited section to an existing `AGENTS.md`), `add <pattern>`, `doctor`, `check [--json]`, `migrate` (skeleton).
-- `@buttery/mcp` (stdio) with the tools in DX_AND_AI §3, plus configs for the coding agents listed there, verified against each tool's current docs.
-- Agent eval (DX_AND_AI §6) with the agents listed there; results in `docs/AGENT_EVAL.md`; fix the top failure causes.
+- `buttery` CLI: `create-buttery` (with `--template blank|dashboard|editor|marketing`), `init` (idempotent; appends a delimited section to an existing `AGENTS.md`), `add <pattern>`, `add page table|detail|overview|settings|empty|feature-intro`, `create component <Name>`, `doctor`, `check [--json]`, `migrate` (skeleton).
+- Make any app: `LayoutGuard`, `buttery check` and `@buttery/lint` work on user code as they do on buttery's; every template and every `add page` output passes `buttery check` with zero edits.
+- Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a `Stepper`, built only from public parts: `Control`, `Pressable`, `SharedIndicator`, `variants()`, `useControllableState`).
+- `@buttery/mcp` (stdio) with the tools in DX_AND_AI §3, `scaffold_page` and `scaffold_component` among them, plus configs for the coding agents listed there, verified against each tool's current docs.
+- Agent eval (DX_AND_AI §6) with the agents listed there, including "build a filtered table page" and "create a custom component that matches buttery"; results in `docs/AGENT_EVAL.md`; fix the top failure causes.
 
-**Accept:** in a fresh folder, `npx create-buttery eval-app` (via local tarballs) → each agent completes the eval tasks; `buttery check --json` pass rate recorded; top issues fixed and re-run.
+**Accept:** in a fresh folder, `npx create-buttery eval-app` (via local tarballs) → each agent completes the eval tasks; `buttery check --json` pass rate recorded; top issues fixed and re-run. Each template (`blank`, `dashboard`, `editor`, `marketing`) and each `buttery add page` kind passes `buttery check` and the lint configs with zero edits; a component made with `buttery create component` passes the component contract and `expectButtery` untouched.

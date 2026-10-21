@@ -15,15 +15,26 @@ buttery should be **the easiest correct way to build UI** — for a developer in
 
 | Tool | What it does |
 |---|---|
-| `npx create-buttery my-app` | New Vite + React (+ optional Tauri) app, fully wired, with agent files. |
+| `npx create-buttery my-app --template blank\|dashboard\|editor\|marketing` | New Vite + React (+ optional Tauri) app, fully wired, with agent files. `dashboard` starts from the App kit (sidebar shell, overview, a table page, settings), `editor` from the inspector shell, `marketing` from the page patterns. Each passes `buttery check` with zero edits. |
 | `npx buttery init` | Adds buttery to an existing React app: packages, provider, styles, font, lint config, `AGENTS.md` section, `CLAUDE.md` import, skill. Idempotent. |
 | `buttery add <pattern>` | Scaffolds a screen from a pattern (`app-shell`, `settings`, `onboarding`, `marketing-page`, `article`). |
+| `buttery add page table\|detail\|overview\|settings\|empty\|feature-intro` | Adds an App kit page to a dashboard app: a filtered table, a detail page with a right rail, an overview of metric cards and charts, a settings index, an empty state, a feature intro. Each passes `buttery check` with zero edits. |
+| `buttery create component <Name>` | Scaffolds your own component the way `pnpm new-component` does in this repo: a folder with the component built on public parts only, its CSS on tokens, tests, a playground demo and examples, so it comes out buttery and passes the same checks. |
 | `buttery doctor` | Verifies setup (provider, styles, font, React version, lint, Tauri config) and prints exact fixes. |
 | `buttery check [url]` | Runs `expectButtery` against a running app across the matrix. `--json` for machines. |
 | `buttery migrate` | Codemods for breaking changes between versions. |
 | Playground = docs | Per component: live demo, props table generated from types, examples, do/don't, a11y and motion notes, search. |
 | JSDoc | Every component and prop: what, when, default, `@example`. Shows up in editor hovers. |
 | VS Code | Recommended extensions, `--bt-*` autocomplete, snippets (`btshell`, `btsection`, `btrow`, `btbento`…), tasks for dev/check. |
+
+## Make any app
+
+buttery has to hold for code it didn't write. Three things make that true:
+- The public kit is the whole kit. buttery's own components use only what a user can import: `Surface`, `Pressable`, `Control`, `Field`, `SharedIndicator`, `Presence`, `Morph`, the layer primitives (`Layer`, `Portal`, `Popover`, `Menu`, `Scrim`, `Sticky`, `FloatingLanes`), `useControllableState`, `useButteryTransition`, `useLayoutAnimation` and `variants()`. The contract test fails when a component imports a helper the packages don't export, so a custom component can always be built the way buttery builds its own.
+- `variants()` turns typed variant props into the `data-*` attributes and class a component's CSS reads, so a custom component styles its variants the way buttery's do.
+- The checks run on user code. `LayoutGuard` watches any app wrapped in `ButteryProvider`, `buttery check` runs `expectButtery` on any running app, and `@buttery/lint` applies the token, position and motion rules to the app's own CSS and TSX.
+
+Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from the template to a filtered table page) and "Build your own buttery component" (a `Stepper` built from `Control`, `Pressable`, `SharedIndicator`, `variants()` and `useControllableState`).
 
 ## For coding agents
 
@@ -52,6 +63,8 @@ Any MCP-capable agent can query buttery instead of guessing.
 | `get_pattern(name)` | Pattern template + when to use it |
 | `explain_rule(id)` | The layout or motion rule, with a do/don't example |
 | `check_layout(url, options?)` | Runs `expectButtery`, returns JSON violations with fixes |
+| `scaffold_page(kind, options?)` | Files for an App kit page (`table`, `detail`, `overview`, `settings`, `empty`, `feature-intro`), as `buttery add page` writes them |
+| `scaffold_component(name, purpose)` | Files for a custom component on public parts, as `buttery create component` writes them |
 
 Resources: every doc in `docs/`. Transport: stdio (`npx @buttery/mcp`). Phase 8 adds ready-made config for Claude Code (`.mcp.json`), Codex, Gemini CLI and Cursor — checked against each tool's current docs at that time.
 
@@ -70,4 +83,4 @@ Resources: every doc in `docs/`. Transport: stdio (`npx @buttery/mcp`). Phase 8 
 `.claude/skills/make-it-buttery/SKILL.md` is the step-by-step procedure for building or converting UI. Claude Code loads it as a skill; `AGENTS.md` points every other agent at the same file.
 
 ### 6. Agent eval (keeps us honest)
-Phase 8 includes a repeatable eval: in a fresh `create-buttery` app, give Claude Code, Codex and Gemini CLI the same tasks — "build a settings screen", "make this messy form buttery", "add a 3-step onboarding", "build a pricing page", "add a toolbar with 10 actions that must fit at 390px". Score each with `buttery check --json` (pass/fail per rule) plus a screenshot review. Record results in `docs/AGENT_EVAL.md`; anything that repeatedly trips agents becomes a better API, example, warning or doc.
+Phase 8 includes a repeatable eval: in a fresh `create-buttery` app, give Claude Code, Codex and Gemini CLI the same tasks — "build a settings screen", "make this messy form buttery", "add a 3-step onboarding", "build a pricing page", "add a toolbar with 10 actions that must fit at 390px", "build a filtered table page", "create a custom component that matches buttery". Score each with `buttery check --json` (pass/fail per rule) plus a screenshot review. Record results in `docs/AGENT_EVAL.md`; anything that repeatedly trips agents becomes a better API, example, warning or doc.

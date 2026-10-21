@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 5 (inspector and app patterns) is done. Next: Phase 6, overlays and choreography.
+**Now:** Phase 5 (inspector and app patterns) is done, and the App kit is in the plan (specs, Phase 6B, v0.7). Next: the public-kit refactor, then Phase 6 (overlays and choreography), then Phase 6B.
 
 ---
 
@@ -53,6 +53,17 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer
 - [ ] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
 
+## v0.7 — App kit (Phase 6B)
+- [ ] App kit tokens (widths, table row height, `title-lg`/`title-md`, chart colors, shimmer and delays)
+- [ ] Shell: `AppShell layout="sidebar"`, `Sidebar` (groups, Recent, More, rail, sheet), `TopBar`, `AppPage` (contained/full, right rail, fill)
+- [ ] Page header: `PageHeader`, `Button shortcut`, underline `Tabs`, `QuickActions`, `ViewToggle`
+- [ ] Data: `DataTable`, `StatusBadge`, `SavedViews`, `SearchField`, `FilterBar`, `ColumnSettings`, `StatTabs`, `GroupedList`
+- [ ] Overview: `MetricCard`, `DateRangeBar`, in-house `LineChart`, `AreaChart`, `BarChart`, `Sparkline`
+- [ ] Guidance: `Banner`, `RecommendationCard`, `SetupGuide`, `FeatureIntro`, `EmptyState` icon + docs, `LoadingPill`, `NotificationNudge`
+- [ ] Menus and dialogs: `Menu` submenus and instant entrance, `AccountMenu`, `Avatar`/`InitialsTile`, `ChoiceDialog`, `AnnouncementDialog`, `SettingsIndex`
+- [ ] Lanes shared by toasts and the setup guide, `--bt-lane-clearance`
+- [ ] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame
+
 ## v0.9 — Hardening & brand (Phase 7)
 - [ ] Accessibility audit, dark + compact passes, visual regression baselines
 - [ ] Docs pages in the playground (props, examples, do/don't)
@@ -63,14 +74,16 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 ## v1.0 — Developer & agent experience (Phase 8)
 - [ ] `manifest.json`, `tokens.json`, `llms.txt`, docs + examples shipped in packages
 - [ ] Dev warnings with fixes; VS Code snippets
-- [ ] CLI: `create-buttery`, `init`, `add`, `doctor`, `check`, `migrate`
-- [ ] `@buttery/mcp` + configs for the common coding agents (`docs/DX_AND_AI.md`)
-- [ ] Agent eval run + top issues fixed
+- [ ] Public kit: components use only what users can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition`, `variants()`), enforced by the contract test
+- [ ] CLI: `create-buttery` (`--template blank|dashboard|editor|marketing`), `init`, `add` (and `add page table|detail|overview|settings|empty|feature-intro`), `create component`, `doctor`, `check`, `migrate`
+- [ ] Make any app: `LayoutGuard`, `buttery check` and the lint configs on user code; every template and `add page` passes `buttery check` with zero edits
+- [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper)
+- [ ] `@buttery/mcp` (with `scaffold_page` and `scaffold_component`) + configs for the common coding agents (`docs/DX_AND_AI.md`)
+- [ ] Agent eval run (including a filtered table page and a custom component) + top issues fixed
 - [ ] npm org `buttery` claimed (or own scope chosen); first publish
 
 ## Later (ideas, not commitments)
 - [ ] Docs site deployed from the playground
-- [ ] More patterns: settings, data table, command palette (⌘K), file browser, chat
-- [ ] Charts that follow the motion rules
+- [ ] More patterns: command palette (⌘K), file browser, chat
 - [ ] Next.js / SSR support
 - [ ] Figma library generated from tokens
