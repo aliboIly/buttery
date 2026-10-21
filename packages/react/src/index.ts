@@ -588,3 +588,10 @@ export type {
   ConsequenceDialogProps,
   ConsequenceItem,
 } from "./patterns/consequence-dialog/ConsequenceDialog.tsx";
+export { OptionTiles } from "./components/option-tiles/OptionTiles.tsx";
+export type {
+  OptionTile,
+  OptionTilesProps,
+} from "./components/option-tiles/OptionTiles.tsx";
+export { FullscreenDialog } from "./patterns/fullscreen-dialog/FullscreenDialog.tsx";
+export type { FullscreenDialogProps } from "./patterns/fullscreen-dialog/FullscreenDialog.tsx";

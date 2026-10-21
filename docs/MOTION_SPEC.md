@@ -141,7 +141,7 @@ Measured from local 30fps strips of the same dashboard (`reference/inspiration-s
 | Interaction | What happens | Timing |
 |---|---|---|
 | Dialog opens and closes | Scrim and panel fade in together, the panel growing from 0.97 and rising 4px (`travel.nudge`); its first field takes focus once it has settled. Out, both fade without shrinking | `dur-fast` each way, `ease-out` in and `ease-in` out (measured open 100–133ms, close ~100–130ms; the close never above 120ms) |
-| Full-screen dialog closes | Fades out whole, without moving or shrinking | `dur-fast` (measured ~130ms) |
+| Full-screen dialog opens and closes | Fades in and out whole with its scrim, without growing, rising or shrinking (`Dialog size="full"`) | `dur-fast` each way (measured close ~130ms) |
 | Side panel opens or closes | Docks at once: the page takes its new width in the same frame, its text reflowing without animating; the panel's content fades in | one frame; content `dur-fast` |
 | Search field focused | Widens from `--bt-w-search` (360) to `--bt-w-search-open` (600) through Motion `layout`, its icon and text kept their size; the panel appears complete under it, at its width | `spring.smooth`; panel one frame |
 | Search results change | Local results swap in the frame the query changes, back to the suggestions in one frame when it's cleared; a remote group keeps its rows until new ones arrive and shows a spinner row only in itself | one frame |

@@ -33,8 +33,11 @@ import type {
 } from "react";
 import { IconButton } from "../icon-button/IconButton.tsx";
 
-/** How wide a dialog is: `"sm"` (400px), `"md"` (560px) or `"lg"` (880px), never wider than the window allows. */
-export type DialogSize = "sm" | "md" | "lg";
+/**
+ * How wide a dialog is: `"sm"` (400px), `"md"` (560px) or `"lg"` (880px), never wider than the window allows,
+ * or `"full"`, the whole window less 16px on every side.
+ */
+export type DialogSize = "sm" | "md" | "lg" | "full";
 
 const OpenContext = createContext(false);
 
@@ -122,7 +125,10 @@ export interface DialogContentProps extends Omit<
   ComponentPropsWithRef<typeof RadixDialog.Content>,
   "forceMount" | "asChild"
 > {
-  /** How wide it is: `"sm"` (400px, the default), `"md"` (560px) or `"lg"` (880px). */
+  /**
+   * How wide it is: `"sm"` (400px, the default), `"md"` (560px), `"lg"` (880px) or `"full"`, the whole window
+   * less 16px on every side, which fades in and out without growing.
+   */
   readonly size?: DialogSize | undefined;
   /** Names the dialog for screen readers when it has no `Dialog.Text` title to name it. */
   readonly label?: string | undefined;
@@ -188,7 +194,11 @@ export function DialogContent({
     }),
     [],
   );
-  const motionOf = reduced ? reducedPresence : presencePresets.dialog;
+  const motionOf = reduced
+    ? reducedPresence
+    : size === "full"
+      ? presencePresets.scrim
+      : presencePresets.dialog;
   const scrim = reduced ? reducedPresence : presencePresets.scrim;
 
   // Dialog.Text registers its title in a layout effect, which runs before this effect does.

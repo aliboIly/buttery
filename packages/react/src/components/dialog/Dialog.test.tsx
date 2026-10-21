@@ -271,6 +271,43 @@ describe("Dialog", () => {
     expect(window.innerWidth - box.right).toBe(16);
   });
 
+  it("fills the window less 16px at size full, and fades in without growing", async () => {
+    await page.viewport(1200, 800);
+    render(<Confirm size="full" />);
+    await userEvent.click(screen.getByRole("button", { name: "Delete card" }));
+    const dialog = await screen.findByRole("dialog");
+    const first = getComputedStyle(dialog);
+    expect(Number(first.opacity)).toBeLessThan(1);
+    expect(new DOMMatrixReadOnly(first.transform).isIdentity).toBe(true);
+    await settled();
+    const box = dialog.getBoundingClientRect();
+    expect(box.left).toBe(16);
+    expect(box.top).toBe(16);
+    expect(window.innerWidth - box.right).toBe(16);
+    expect(window.innerHeight - box.bottom).toBe(16);
+  });
+
+  it("sets a full-size dialog's close button 32px in from 640px of width, and 24px in under it", async () => {
+    await page.viewport(1200, 800);
+    render(<Confirm size="full" />);
+    const wide = await openConfirm();
+    const closeCenter = (dialog: HTMLElement): readonly [number, number] => {
+      const box = dialog.getBoundingClientRect();
+      const close = screen
+        .getByRole("button", { name: "Close" })
+        .getBoundingClientRect();
+      return [
+        close.top + close.height / 2 - box.top,
+        box.right - (close.left + close.width / 2),
+      ];
+    };
+    expect(closeCenter(wide)).toEqual([46, 46]);
+    cleanup();
+    await page.viewport(390, 800);
+    render(<Confirm size="full" />);
+    expect(closeCenter(await openConfirm())).toEqual([24, 24]);
+  });
+
   it("centers its close button 24px from the top and end edges, with the title clear of it", async () => {
     await page.viewport(1200, 800);
     render(<Confirm />);

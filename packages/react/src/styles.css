@@ -104,3 +104,5 @@
 @import "./patterns/form-dialog/form-dialog.css";
 @import "./components/radio-card-group/radio-card-group.css";
 @import "./patterns/consequence-dialog/consequence-dialog.css";
+@import "./components/option-tiles/option-tiles.css";
+@import "./patterns/fullscreen-dialog/fullscreen-dialog.css";

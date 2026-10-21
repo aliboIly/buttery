@@ -21,6 +21,23 @@
     --bt-dialog-width: var(--bt-w-dialog-lg);
   }
 
+  .bt-dialog[data-size="full"] {
+    container: bt-dialog-full / inline-size;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .bt-dialog[data-size="full"] > [data-bt-part="scroll"] {
+    flex: 1 1 auto;
+  }
+
+  /* A full-size dialog's close button sits 32px in from the top and end edges once there's room for it. */
+  @container bt-dialog-full (width >= 640px) {
+    .bt-dialog[data-size="full"] > [data-bt-part="close"] {
+      --bt-dialog-close-center: calc(var(--bt-space-8) + var(--bt-h-sm) / 2);
+    }
+  }
+
   /* The scrim and the frame render in the modal layer, away from the dialog, so they carry their own classes. */
   .bt-dialog-scrim[data-bt-part="scrim"] {
     position: absolute;

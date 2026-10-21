@@ -51,6 +51,20 @@ const escape: ButteryInteraction = {
   },
 };
 
+function opensDialog(trigger: string): ButteryInteraction {
+  return {
+    name: `open the dialog from ${trigger}`,
+    run: async (page: Page) => {
+      await page
+        .getByRole("button", { name: trigger, exact: true })
+        .first()
+        .click();
+      await page.getByRole("dialog").waitFor();
+    },
+    acrossMatrix: true,
+  };
+}
+
 const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   "data-table": [
     { name: "reload, showing skeleton rows", run: press("Reload") },
@@ -198,6 +212,9 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
   ],
+  "form-dialog": [opensDialog("Add a backup email")],
+  "consequence-dialog": [opensDialog("Try Roaster")],
+  "fullscreen-dialog": [opensDialog("Set up the roastery")],
   "expandable-card": [
     {
       name: "open the card",

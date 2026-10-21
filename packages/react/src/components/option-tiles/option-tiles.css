@@ -1,0 +1,90 @@
+@layer bt.components {
+  .bt-option-tiles {
+    --bt-option-tiles-box: 18px;
+    --bt-option-tiles-mark: 12px;
+    --bt-option-tiles-tile: 40px;
+    --bt-option-tiles-line: 1px;
+    --bt-option-tiles-ring: 2px;
+    --bt-option-tiles-stroke: 3;
+
+    container: bt-option-tiles / inline-size;
+    min-inline-size: 0;
+  }
+
+  .bt-option-tiles > [data-bt-part="grid"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-option-tiles [data-bt-part="tile"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+    min-block-size: var(--bt-option-tiles-tile);
+    padding: var(--bt-space-2) var(--bt-space-3);
+    border: 0;
+    border-radius: var(--bt-r-md);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text);
+    font: inherit;
+    text-align: start;
+    appearance: none;
+  }
+
+  .bt-option-tiles [data-bt-part="tile"][data-state="checked"] {
+    background-color: var(--bt-bg-surface);
+    box-shadow: inset 0 0 0 var(--bt-option-tiles-ring) var(--bt-accent);
+  }
+
+  .bt-option-tiles [data-bt-part="tile"]:disabled {
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-option-tiles [data-bt-part="box"] {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-option-tiles-box);
+    block-size: var(--bt-option-tiles-box);
+    border: var(--bt-option-tiles-line) solid var(--bt-control-border);
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-bg-surface);
+    color: var(--bt-on-primary);
+  }
+
+  .bt-option-tiles [data-state="checked"] > [data-bt-part="box"] {
+    border-color: var(--bt-primary);
+    background-color: var(--bt-primary);
+  }
+
+  .bt-option-tiles [data-bt-part="mark"] {
+    display: grid;
+    place-items: center;
+  }
+
+  .bt-option-tiles [data-bt-part="mark"] svg {
+    inline-size: var(--bt-option-tiles-mark);
+    block-size: var(--bt-option-tiles-mark);
+    stroke-width: var(--bt-option-tiles-stroke);
+  }
+
+  .bt-option-tiles [data-bt-part="text"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-option-tiles [data-bt-part="description"] {
+    color: var(--bt-text-secondary);
+  }
+
+  @container bt-option-tiles (width >= 480px) {
+    .bt-option-tiles > [data-bt-part="grid"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
