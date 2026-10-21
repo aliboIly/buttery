@@ -71,20 +71,24 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] `SetupGuide` expanded: groups that fold, done steps checked, a footer link
 - [ ] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame; settings (index, profile, team notifications, plans), search across the demo and a help panel
 
-## v0.9 — Hardening & brand (Phase 7)
-- [ ] Accessibility audit, dark + compact passes, visual regression baselines
-- [ ] Docs pages in the playground (props, examples, do/don't)
+## v0.9 — Hardening, brand & docs site (Phase 7)
 - [ ] 🧈 Original BrandMark (3 directions → pick one) + favicon + app icons + README hero
+- [ ] Docs site shell (`docs/DOCS_SITE.md`): `apps/docs` with `/lab`, the nav generated from frontmatter, the docs check in `pnpm check`
+- [ ] Existing pages moved in (Get started, Foundations, Layout, Motion first); component pages with the full anatomy, demos and code from `examples/`
+- [ ] Patterns, Templates, Guides, Tools and Resources pages
+- [ ] Docs landing page (What's new from Changesets), search across pages, components, props and tokens
+- [ ] `pnpm docs:build`: prerendered routes and a sitemap; deploy target recommended in NEEDS-YOU
+- [ ] Accessibility audit, dark + compact passes, visual regression baselines
 - [ ] `new-app` finished; Changesets
-- [ ] make-it-buttery skill tested on a messy page
+- [ ] make-it-buttery skill tested on a messy page; the site read cold by a reviewer
 
 ## v1.0 — Developer & agent experience (Phase 8)
-- [ ] `manifest.json`, `tokens.json`, `llms.txt`, docs + examples shipped in packages
+- [ ] `manifest.json`, `tokens.json`, `llms.txt`, docs + examples shipped in packages, generated with the MCP resources from the docs site's content
 - [ ] Dev warnings with fixes; VS Code snippets
 - [x] Public kit: components use only what users can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition`, `variants()`), enforced by the contract test
 - [ ] CLI: `create-buttery` (`--template blank|dashboard|editor|marketing`), `init`, `add` (and `add page table|detail|overview|settings|settings-index|catalog|plans|search-results|empty|feature-intro`, all of them in the dashboard template), `create component`, `doctor`, `check`, `migrate`
 - [ ] Make any app: `LayoutGuard`, `buttery check` and the lint configs on user code; every template and `add page` passes `buttery check` with zero edits
-- [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper)
+- [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper); Tools pages for the CLI and MCP with real output
 - [ ] `@buttery/mcp` (with `scaffold_page` and `scaffold_component`) + configs for the common coding agents (`docs/DX_AND_AI.md`)
 - [ ] Agent eval run (including a filtered table page and a custom component) + top issues fixed
 - [ ] npm org `buttery` claimed (or own scope chosen); first publish

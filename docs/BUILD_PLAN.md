@@ -104,23 +104,36 @@ Everything a dashboard-style app needs, so building one is composing parts. Spec
 - Side-by-side frames against `reference/inspiration-dashboard/` and `reference/inspiration-settings/` with the differences listed honestly, and a fresh reviewer's findings fixed.
 - A phase report in `notes/` sent to the maintainer.
 
-## Phase 7 — Hardening & brand
-- Accessibility audit (axe + manual keyboard pass), dark-mode tuning, compact density pass, visual-regression baselines.
-- Docs inside the playground: each component page shows a live demo, generated props table, examples, do/don't, a11y and motion notes; search.
-- Rewrite all public-facing prose (README, component docs, changelog and the planning docs in `docs/`) in plain voice per the authorship section of `AGENTS.md`, then extend the prose checks to `docs/`.
+## Phase 7 — Hardening, brand and the docs site
+The playground becomes buttery's docs website, built only from buttery components: `docs/DOCS_SITE.md` has the structure, the nav, the page anatomy, the landing page and the shell. Work in this order:
 - **Brand:** original `BrandMark` per `docs/BRAND.md` (SVG component + favicon + Tauri icons + README hero). Present 3 directions first and wait for a pick.
-- `new-app` script finished and tested; Changesets configured.
-- Test the `make-it-buttery` skill on a deliberately plain, messy page: before/after + `expectButtery` results.
+- **Docs shell and nav generation:** `apps/playground` renamed `apps/docs`, its internal pages moved under `/lab` (left out of production builds, still used by Playwright); content in `apps/docs/content/<section>/<page>.mdx` (or `.tsx`) with frontmatter; the nav generated from it; a docs check in `pnpm check` for missing metadata, an `order` shared within a section, broken internal links and exports with no home in `DOCS_SITE.md`.
+- **Existing pages moved** into the structure: Get started, Foundations, Layout and Motion first.
+- **Component pages** with the full anatomy, their demos and code blocks rendered from the packages' `examples/`, the props table generated from the types and JSDoc.
+- **Patterns, Templates and Guides**, then Tools and Resources.
+- **The landing page**, with What's new read from Changesets and `content/whats-new/`.
+- **Search:** `CommandSearch` across pages, components, props and tokens.
+- **Static build:** `pnpm docs:build` prerenders every public route and writes `sitemap.xml` (`@mdx-js/rollup` and `shiki` approved if needed; the prerenderer is the smallest maintained option, logged in DECISIONS); the deploy target goes in NEEDS-YOU with a recommendation.
+- Alongside: an accessibility audit (axe + a manual keyboard pass), dark-mode tuning, a compact density pass and visual-regression baselines, across the site's pages; all public-facing prose rewritten in plain voice per the authorship section of `AGENTS.md` as it moves into the site, then the prose checks extended to `docs/` and the site's content; `new-app` finished and tested; Changesets configured.
+- Last: test the `make-it-buttery` skill on a deliberately plain, messy page (before/after + `expectButtery` results), then the full matrix and a reviewer who reads the site cold as a new user.
 
-**Accept:** `pnpm new-app demo` is buttery out of the box and passes the matrix with zero changes.
+**Accept:**
+- `pnpm new-app demo` is buttery out of the box and passes the matrix with zero changes.
+- Every public docs route passes `expectButtery` across the full matrix in Chromium and WebKit.
+- The nav is generated: a new content file with frontmatter shows up in its section, in its order, with no other edit. The docs check fails, saying how to fix it, on a page missing metadata, two pages sharing an `order` in a section, a broken internal link and an export with no home, each shown by a fixture under `/lab`.
+- Every component page has the eleven parts of `DOCS_SITE.md` in order (a test walks every component page), and every demo and code block comes from an `examples/` file.
+- `pnpm docs:build` writes prerendered HTML for every public route and a `sitemap.xml`, with no `/lab` route in the output, while Playwright still reaches `/lab` in development.
+- The landing page, the shell and search behave as `DOCS_SITE.md` describes, measured against MOTION_SPEC where they move.
+- A fresh reviewer reading the site cold answers "could you build an app from this?" with yes, and their findings are fixed.
+- A phase report in `notes/` sent to the maintainer.
 
 ## Phase 8 — Developer & agent experience
 Everything in `docs/DX_AND_AI.md`:
-- Generated `manifest.json`, `tokens.json`, `llms.txt`, `llms-full.txt`; docs and examples shipped inside the packages.
+- Generated `manifest.json`, `tokens.json`, `llms.txt`, `llms-full.txt`; docs and examples shipped inside the packages. `llms.txt`, `llms-full.txt`, `manifest.json` and the MCP server's resources are generated from the docs site's content (`docs/DOCS_SITE.md`), so the site and agents share one source.
 - Dev warnings with fixes and docs links; `.vscode/buttery.code-snippets`.
 - `buttery` CLI: `create-buttery` (with `--template blank|dashboard|editor|marketing`), `init` (idempotent; appends a delimited section to an existing `AGENTS.md`), `add <pattern>`, `add page table|detail|overview|settings|settings-index|catalog|plans|search-results|empty|feature-intro` (every page kind follows the page grammar in LAYOUT_RULES §3, and the dashboard template includes them all), `create component <Name>`, `doctor`, `check [--json]`, `migrate` (skeleton).
 - Make any app: `LayoutGuard`, `buttery check` and `@buttery/lint` work on user code as they do on buttery's; every template and every `add page` output passes `buttery check` with zero edits.
-- Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a `Stepper`, built only from public parts: `Control`, `Pressable`, `SharedIndicator`, `variants()`, `useControllableState`).
+- Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a `Stepper`, built only from public parts: `Control`, `Pressable`, `SharedIndicator`, `variants()`, `useControllableState`), published as docs-site pages. The site's Tools pages document the CLI and the MCP server with real output.
 - `@buttery/mcp` (stdio) with the tools in DX_AND_AI §3, `scaffold_page` and `scaffold_component` among them, plus configs for the coding agents listed there, verified against each tool's current docs.
 - Agent eval (DX_AND_AI §6) with the agents listed there, including "build a filtered table page" and "create a custom component that matches buttery"; results in `docs/AGENT_EVAL.md`; fix the top failure causes.
 
