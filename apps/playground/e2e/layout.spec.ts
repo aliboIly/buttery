@@ -129,6 +129,56 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
     },
   ],
+  "color-dot": [
+    {
+      name: "open the first color's picker",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: /^First hue/ })
+          .first()
+          .click();
+        await page.getByRole("dialog", { name: "First hue" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
+  dialog: [
+    {
+      name: "open the confirm dialog",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Delete card", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog").waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "open the dialog with media",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Share", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog").waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "open the large dialog",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Large", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog").waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
   "number-field": [
     {
       name: "focus a field, which shows its stepper",
@@ -226,6 +276,16 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           exact: true,
         });
         for (let count = 0; count < 4; count += 1) await show.click();
+        await page.getByRole("region", { name: "Notifications (F8)" }).hover();
+      },
+    },
+    {
+      name: "show a success, a warning and a danger toast (the centered stack widens to the widest one)",
+      allowMove: ['[data-bt="Toaster"]'],
+      run: async (page: Page) => {
+        for (const tone of ["Success", "Warning", "Danger"]) {
+          await page.getByRole("button", { name: tone, exact: true }).click();
+        }
         await page.getByRole("region", { name: "Notifications (F8)" }).hover();
       },
     },

@@ -430,6 +430,68 @@ test.describe("full motion", () => {
     expectAtRest(exit);
   });
 
+  test("a dialog fades in over dur-fast growing from 97%, over a scrim that fades with it, and both leave over dur-fast", async ({
+    page,
+  }) => {
+    await page.goto("/?chrome=0&motion=full#/dialog");
+    const trigger = page
+      .getByRole("button", { name: "Delete card", exact: true })
+      .first();
+    await trigger.focus();
+    await startSampling(page, '[data-bt="Dialog"]');
+    await page.keyboard.press("Enter");
+    const enter = await finishSampling(page, 500);
+    const fading = expectTween(
+      "dialog fading in",
+      progress(trace(enter, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    const growing = expectTween(
+      "dialog growing",
+      progress(
+        trace(enter, (reading) => reading.scale),
+        ENTER_SCALE,
+        1,
+      ),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    expect(Math.abs(growing.start - fading.start)).toBeLessThanOrEqual(3);
+    expect(fading.start).toBeLessThanOrEqual(START_MAX);
+    await startSampling(page, '[data-bt="Dialog"]');
+    await page.keyboard.press("Escape");
+    const exit = await finishSampling(page, 400);
+    await expect(trigger).toBeFocused();
+    const leaving = expectTween(
+      "dialog fading out",
+      progress(trace(exit, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+    expectGoneSoonAfter(exit, leaving.start + DURATIONS.fast);
+
+    await startSampling(page, '[data-bt-part="scrim"]');
+    await page.keyboard.press("Enter");
+    const dim = await finishSampling(page, 500);
+    const dimming = expectTween(
+      "scrim fading in",
+      progress(trace(dim, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    expect(dimming.start).toBeLessThanOrEqual(START_MAX);
+    await startSampling(page, '[data-bt-part="scrim"]');
+    await page.keyboard.press("Escape");
+    const clear = await finishSampling(page, 400);
+    expectTween(
+      "scrim fading out",
+      progress(trace(clear, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+  });
+
   test("pressing scales to 97% over dur-press and lets go over dur-fast", async ({
     page,
   }) => {
