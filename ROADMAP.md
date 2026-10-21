@@ -74,9 +74,12 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 ## v0.9 — Hardening, brand & docs site (Phase 7)
 - [ ] 🧈 Original BrandMark (3 directions → pick one) + favicon + app icons + README hero
 - [ ] Docs site shell (`docs/DOCS_SITE.md`): `apps/docs` with `/lab`, the nav generated from frontmatter, the docs check in `pnpm check`
-- [ ] Existing pages moved in (Get started, Foundations, Layout, Motion first); component pages with the full anatomy, demos and code from `examples/`
+- [ ] Existing pages moved in (Get started, Foundations, Layout, Motion first); component pages with the full anatomy and working examples (each with a `play` script), and the example and coverage checks
 - [ ] Patterns, Templates, Guides, Tools and Resources pages
-- [ ] Docs landing page (What's new from Changesets), search across pages, components, props and tokens
+- [ ] Demos as their own sites in `apps/demos/<name>/`, served at `/demos/<name>/`, with a `/demos` page
+- [ ] Docs search: an offline index built from the content, synonyms, a preview pane, `/search`, and the golden-query gate
+- [ ] `docs/WRITING.md`, every page as Markdown (`.md`), the comprehension and agent tests
+- [ ] Docs landing page (What's new from Changesets)
 - [ ] `pnpm docs:build`: prerendered routes and a sitemap; deploy target recommended in NEEDS-YOU
 - [ ] Accessibility audit, dark + compact passes, visual regression baselines
 - [ ] `new-app` finished; Changesets
@@ -89,7 +92,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] CLI: `create-buttery` (`--template blank|dashboard|editor|marketing`), `init`, `add` (and `add page table|detail|overview|settings|settings-index|catalog|plans|search-results|empty|feature-intro`, all of them in the dashboard template), `create component`, `doctor`, `check`, `migrate`
 - [ ] Make any app: `LayoutGuard`, `buttery check` and the lint configs on user code; every template and `add page` passes `buttery check` with zero edits
 - [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper); Tools pages for the CLI and MCP with real output
-- [ ] `@buttery/mcp` (with `scaffold_page` and `scaffold_component`) + configs for the common coding agents (`docs/DX_AND_AI.md`)
+- [ ] `@buttery/mcp` (with `scaffold_page`, `scaffold_component` and `search_docs` on the docs search's index) + configs for the common coding agents (`docs/DX_AND_AI.md`)
 - [ ] Agent eval run (including a filtered table page and a custom component) + top issues fixed
 - [ ] npm org `buttery` claimed (or own scope chosen); first publish
 

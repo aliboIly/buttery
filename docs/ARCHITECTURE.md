@@ -27,7 +27,7 @@ Targets: web apps and desktop apps (Tauri v2 wraps the same web code).
 | Tooling | `@types/node` for configs and scripts |
 | Agent tooling | `@modelcontextprotocol/sdk` (for `@buttery/mcp`) |
 | Releases | Changesets |
-| Docs site (Phase 7, `apps/docs` only) | `@mdx-js/rollup` and `shiki` if they're needed, and the smallest maintained static prerenderer, logged in DECISIONS when chosen (`docs/DOCS_SITE.md`) |
+| Docs site (Phase 7, `apps/docs` only) | `@mdx-js/rollup`, `shiki` and `minisearch` if they're needed (or a small search index of buttery's own), and the smallest maintained static prerenderer, each logged in DECISIONS when chosen (`docs/DOCS_SITE.md`) |
 
 **TypeScript 7 and 6:** TS 7 is the native (Go) compiler and has no classic compiler API, so typescript-eslint (which accepts `typescript` < 6.1) runs on TS 6.0, installed as `typescript`. TS 7 is installed as `typescript-native` and `pnpm typecheck` runs it by path. tsdown emits `.d.ts` through oxc because packages use `isolatedDeclarations`, so it needs neither. Verified in Phase 0; see `docs/DECISIONS.md`.
 
