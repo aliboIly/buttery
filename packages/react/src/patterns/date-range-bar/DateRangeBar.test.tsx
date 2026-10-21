@@ -140,6 +140,27 @@ describe("DateRangeBar", () => {
     expect(top(/^Comparison/)).toBe(top(/^Date range/));
   });
 
+  it("keeps the range and the interval in equal halves under 640px, so a new choice doesn't shift its neighbor", async () => {
+    render(
+      <div style={{ inlineSize: "360px" }}>
+        <DateRangeBar />
+      </div>,
+    );
+    const edge = (): number =>
+      screen
+        .getByRole("button", { name: /^Date range/ })
+        .getBoundingClientRect().right;
+    const before = edge();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Interval, Daily" }),
+    );
+    await userEvent.click(screen.getByRole("option", { name: "Monthly" }));
+    expect(
+      screen.getByRole("button", { name: "Interval, Monthly" }),
+    ).toBeTruthy();
+    expect(edge()).toBe(before);
+  });
+
   it("starts a custom range on the last seven days when Custom is chosen with no dates", async () => {
     const onValueChange = vi.fn();
     render(<DateRangeBar onValueChange={onValueChange} />);
