@@ -29,6 +29,11 @@ export interface NumberFieldProps extends Omit<
   readonly defaultValue?: number | undefined;
   /** Called with each committed value: on Enter, on leaving the field, on a step and while scrubbing. */
   readonly onValueChange?: ((value: number) => void) | undefined;
+  /**
+   * Called once a change is final: on Enter, on leaving the field, on a step, and when a scrub ends, for
+   * an undo step per change rather than per scrubbed frame.
+   */
+  readonly onValueCommit?: ((value: number) => void) | undefined;
   /** The lowest value. */
   readonly min?: number | undefined;
   /** The highest value. */
@@ -63,6 +68,7 @@ export function NumberField({
   value,
   defaultValue,
   onValueChange,
+  onValueCommit,
   min,
   max,
   step = 1,
@@ -88,9 +94,11 @@ export function NumberField({
   const shown = current.toFixed(decimals);
   const [draft, setDraft] = useState<string | null>(null);
   const frame = useRef(0);
-  const scrub = useRef<{ readonly x: number; readonly from: number } | null>(
-    null,
-  );
+  const scrub = useRef<{
+    readonly x: number;
+    readonly from: number;
+    next: number | null;
+  } | null>(null);
   const locked = disabled === true || readOnly === true;
 
   useEffect(
@@ -104,9 +112,11 @@ export function NumberField({
     const rounded = Number((Math.round(next / step) * step).toFixed(decimals));
     return Math.min(max ?? rounded, Math.max(min ?? rounded, rounded));
   };
-  const commit = (next: number): void => {
+  const commit = (next: number, final = true): void => {
+    const settled = settle(next);
     setDraft(null);
-    setCurrent(settle(next));
+    setCurrent(settled);
+    if (final) onValueCommit?.(settled);
   };
   const commitDraft = (): void => {
     if (draft === null) return;
@@ -125,9 +135,13 @@ export function NumberField({
 
   const keyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     onKeyDown?.(event);
+    // A popover around the field prevents the first Escape so it can put the field back first.
+    if (event.key === "Escape" && draft !== null) {
+      setDraft(null);
+      return;
+    }
     if (event.defaultPrevented) return;
     if (event.key === "Enter") commitDraft();
-    else if (event.key === "Escape") setDraft(null);
     else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
       event.preventDefault();
       stepBy(event.key === "ArrowUp" ? 1 : -1, event.shiftKey);
@@ -137,20 +151,25 @@ export function NumberField({
   const startScrub = (event: PointerEvent<HTMLLabelElement>): void => {
     if (locked || event.button !== 0) return;
     event.currentTarget.setPointerCapture(event.pointerId);
-    scrub.current = { x: event.clientX, from: current };
+    scrub.current = { x: event.clientX, from: current, next: null };
   };
   const moveScrub = (event: PointerEvent<HTMLLabelElement>): void => {
     const start = scrub.current;
     if (!start) return;
     const steps = Math.round((event.clientX - start.x) / SCRUB_PIXELS_PER_STEP);
     const next = start.from + steps * step * (event.shiftKey ? 10 : 1);
+    start.next = next;
     cancelAnimationFrame(frame.current);
     frame.current = requestAnimationFrame(() => {
-      commit(next);
+      commit(next, false);
     });
   };
   const endScrub = (): void => {
+    const start = scrub.current;
     scrub.current = null;
+    if (start?.next == null) return;
+    cancelAnimationFrame(frame.current);
+    commit(start.next);
   };
 
   return (
@@ -186,6 +205,7 @@ export function NumberField({
           disabled={disabled}
           readOnly={readOnly}
           value={draft ?? shown}
+          data-bt-draft={draft === null ? undefined : ""}
           aria-valuenow={current}
           aria-valuemin={min}
           aria-valuemax={max}
