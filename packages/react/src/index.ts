@@ -561,3 +561,12 @@ export type {
 } from "./patterns/detail-page/DetailPage.tsx";
 export { TagChip } from "./components/tag-chip/TagChip.tsx";
 export type { TagChipProps } from "./components/tag-chip/TagChip.tsx";
+export { CatalogPage } from "./patterns/catalog-page/CatalogPage.tsx";
+export type {
+  CatalogCategory,
+  CatalogPageCategoriesProps,
+  CatalogPageGroupProps,
+  CatalogPageItemProps,
+  CatalogPageProps,
+  CatalogPageSectionProps,
+} from "./patterns/catalog-page/CatalogPage.tsx";
