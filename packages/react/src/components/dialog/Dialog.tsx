@@ -31,10 +31,12 @@ export type DialogSize = "sm" | "md" | "lg";
 
 const OpenContext = createContext(false);
 
-/** What `Dialog.Text` tells the content around it: that the dialog has a title, and whether it has a description. */
+/**
+ * How `Dialog.Text` tells the content around it that it has a title, and a description when it has a body.
+ * It counts, since text that crossfades (an onboarding's steps) is briefly there twice.
+ */
 interface ContentRegistry {
-  readonly markTitled: (titled: boolean) => void;
-  readonly setDescribed: (described: boolean) => void;
+  readonly register: (withBody: boolean) => () => void;
 }
 
 const TABBABLE =
@@ -99,6 +101,8 @@ export interface DialogContentProps extends Omit<
   readonly size?: DialogSize | undefined;
   /** Names the dialog for screen readers when it has no `Dialog.Text` title to name it. */
   readonly label?: string | undefined;
+  /** Describes the dialog for screen readers when it has no `Dialog.Text` body to describe it. */
+  readonly description?: ReactNode;
   /** Whether it shows a close button in its top corner. Defaults to `true`. */
   readonly showClose?: boolean | undefined;
   /** Names the close button. Defaults to `"Close"`. */
@@ -114,6 +118,7 @@ export interface DialogContentProps extends Omit<
 export function DialogContent({
   size = "sm",
   label,
+  description,
   showClose = true,
   closeLabel = "Close",
   className,
@@ -126,25 +131,32 @@ export function DialogContent({
   const reduced = useMotionPreference() === "reduced";
   const tracking = useAnimationTracking();
   const [described, setDescribed] = useState(false);
-  const titled = useRef(false);
+  const titles = useRef(0);
+  const descriptions = useRef(0);
   const element = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, element);
   const body = useRef<HTMLDivElement>(null);
   const registry = useMemo<ContentRegistry>(
     () => ({
-      markTitled: (next) => {
-        titled.current = next;
+      register: (withBody) => {
+        titles.current += 1;
+        if (withBody) descriptions.current += 1;
+        setDescribed(descriptions.current > 0);
+        return () => {
+          titles.current -= 1;
+          if (withBody) descriptions.current -= 1;
+          setDescribed(descriptions.current > 0);
+        };
       },
-      setDescribed,
     }),
     [],
   );
   const motionOf = reduced ? reducedPresence : presencePresets.dialog;
   const scrim = reduced ? reducedPresence : presencePresets.scrim;
 
-  // Dialog.Text marks the title in a layout effect, which runs before this effect does.
+  // Dialog.Text registers its title in a layout effect, which runs before this effect does.
   useEffect(() => {
-    if (!open || titled.current || label !== undefined) return;
+    if (!open || titles.current > 0 || label !== undefined) return;
     warnOnce(
       "Dialog",
       'A dialog has no name, so screen readers announce it as just "dialog". Fix: put a <Dialog.Text title="…" /> in it, or pass label="…" to Dialog.Content.',
@@ -169,7 +181,9 @@ export function DialogContent({
           <div className="bt-dialog-frame" data-bt-part="frame">
             <RadixDialog.Content
               {...rest}
-              {...(described ? {} : { "aria-describedby": undefined })}
+              {...(described || description !== undefined
+                ? {}
+                : { "aria-describedby": undefined })}
               ref={refs}
               aria-modal="true"
               forceMount
@@ -197,6 +211,13 @@ export function DialogContent({
                 {label === undefined ? null : (
                   <VisuallyHidden.Root asChild>
                     <RadixDialog.Title>{label}</RadixDialog.Title>
+                  </VisuallyHidden.Root>
+                )}
+                {description === undefined ? null : (
+                  <VisuallyHidden.Root asChild>
+                    <RadixDialog.Description>
+                      {description}
+                    </RadixDialog.Description>
                   </VisuallyHidden.Root>
                 )}
                 <ContentContext value={registry}>
@@ -279,15 +300,7 @@ export function DialogText({
   const content = use(ContentContext);
   const hasBody = body !== undefined && body !== null && body !== false;
 
-  useLayoutEffect(() => {
-    if (!content) return undefined;
-    content.markTitled(true);
-    content.setDescribed(hasBody);
-    return () => {
-      content.markTitled(false);
-      content.setDescribed(false);
-    };
-  }, [content, hasBody]);
+  useLayoutEffect(() => content?.register(hasBody), [content, hasBody]);
 
   return (
     <TextStack

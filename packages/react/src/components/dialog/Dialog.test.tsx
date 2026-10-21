@@ -173,6 +173,23 @@ describe("Dialog", () => {
     expect(warn).not.toHaveBeenCalled();
   });
 
+  it("is described by description when it has no Dialog.Text body", async () => {
+    render(
+      <Dialog defaultOpen>
+        <Dialog.Content
+          label="Share the card"
+          description="Anyone with the link can see it."
+        />
+      </Dialog>,
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Share the card",
+    });
+    expect(dialog).toHaveAccessibleDescription(
+      "Anyone with the link can see it.",
+    );
+  });
+
   it("warns, with the fix, when it has no name", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     vi.spyOn(console, "error").mockImplementation(() => undefined);
