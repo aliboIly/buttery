@@ -1,8 +1,28 @@
 @layer bt.primitives {
   .bt-grid {
+    --bt-grid-columns: var(--bt-grid-columns-base, 1);
+
     display: grid;
-    grid-template-columns: repeat(var(--bt-grid-columns, 1), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--bt-grid-columns), minmax(0, 1fr));
     min-inline-size: 0;
+  }
+
+  @container (width >= 640px) {
+    .bt-grid {
+      --bt-grid-columns: var(
+        --bt-grid-columns-md,
+        var(--bt-grid-columns-base, 1)
+      );
+    }
+  }
+
+  @container (width >= 1024px) {
+    .bt-grid {
+      --bt-grid-columns: var(
+        --bt-grid-columns-lg,
+        var(--bt-grid-columns-md, 1)
+      );
+    }
   }
 
   .bt-grid > * {

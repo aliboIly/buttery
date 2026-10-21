@@ -26,6 +26,44 @@ describe("Grid", () => {
     render(<Grid columns={2} style={{ opacity: 0.5 }} data-testid="grid" />);
     const grid = screen.getByTestId("grid");
     expect(grid.style.opacity).toBe("0.5");
-    expect(grid.style.getPropertyValue("--bt-grid-columns")).toBe("2");
+    expect(grid.style.getPropertyValue("--bt-grid-columns-base")).toBe("2");
+  });
+
+  it("changes its columns with its container's width, keeping a size's count for the sizes above", () => {
+    for (const [width, columns] of [
+      [400, 1],
+      [800, 2],
+      [1200, 4],
+    ] as const) {
+      render(
+        <div
+          style={{
+            inlineSize: `${String(width)}px`,
+            containerType: "inline-size",
+          }}
+        >
+          <Grid columns={{ base: 1, md: 2, lg: 4 }} data-testid="grid">
+            <span>A</span>
+          </Grid>
+        </div>,
+      );
+      const tracks = getComputedStyle(screen.getByTestId("grid"))
+        .gridTemplateColumns.split(" ")
+        .filter((track) => track !== "");
+      expect(tracks).toHaveLength(columns);
+      cleanup();
+    }
+    render(
+      <div style={{ inlineSize: "1200px", containerType: "inline-size" }}>
+        <Grid columns={{ base: 1, md: 3 }} data-testid="grid">
+          <span>A</span>
+        </Grid>
+      </div>,
+    );
+    expect(
+      getComputedStyle(screen.getByTestId("grid"))
+        .gridTemplateColumns.split(" ")
+        .filter((track) => track !== ""),
+    ).toHaveLength(3);
   });
 });

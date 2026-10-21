@@ -134,7 +134,11 @@ export { FitBox } from "./primitives/fit-box/FitBox.tsx";
 export type { FitBoxProps } from "./primitives/fit-box/FitBox.tsx";
 export type { FlowAlign, FlowJustify } from "./primitives/flow.ts";
 export { Grid } from "./primitives/grid/Grid.tsx";
-export type { GridColumns, GridProps } from "./primitives/grid/Grid.tsx";
+export type {
+  GridColumns,
+  GridProps,
+  ResponsiveGridColumns,
+} from "./primitives/grid/Grid.tsx";
 export { Icon } from "./primitives/icon/Icon.tsx";
 export type { IconComponentProps, IconProps } from "./primitives/icon/Icon.tsx";
 export { Inline } from "./primitives/inline/Inline.tsx";
