@@ -176,13 +176,13 @@ export function ColumnSettings({
           <button
             type="button"
             {...rest}
-            className={cx("bt-column-settings-button", className)}
+            className={cx("bt-column-settings", className)}
             data-bt="ColumnSettings"
           />
         </IconButton>
       </Popover.Trigger>
       <Popover.Content align="end" aria-label={words.button}>
-        <div className="bt-column-settings" data-bt-part="panel">
+        <div className="bt-column-settings-panel" data-bt-part="panel">
           <Reorder.Group
             axis="y"
             values={[...layout.order]}

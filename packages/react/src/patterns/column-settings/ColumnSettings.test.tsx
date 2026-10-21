@@ -59,11 +59,16 @@ describe("ColumnSettings", () => {
     const button = screen.getByTestId("columns");
     expect(ref.current).toBe(button);
     expect(button.dataset["bt"]).toBe("ColumnSettings");
-    expect(button.classList.contains("custom")).toBe(true);
+    expect(button.className).toContain("bt-column-settings custom");
     expect(button.style.opacity).toBe("0.5");
     expect(button.getAttribute("aria-label")).toBe("Columns");
     await open();
     expect(ref.current?.dataset["bt"]).toBe("ColumnSettings");
+    expect(
+      document
+        .querySelector('[data-bt-part="panel"]')
+        ?.classList.contains("bt-column-settings-panel"),
+    ).toBe(true);
   });
 
   it("starts on defaultLayout when uncontrolled, and Reset puts that back rather than every column", async () => {

@@ -1,5 +1,5 @@
 @layer bt.patterns {
-  .bt-column-settings {
+  .bt-column-settings-panel {
     --bt-column-settings-width: 240px;
 
     display: flex;
@@ -9,7 +9,7 @@
     max-inline-size: 100%;
   }
 
-  .bt-column-settings > [data-bt-part="columns"] {
+  .bt-column-settings-panel > [data-bt-part="columns"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-1);
@@ -18,7 +18,7 @@
     list-style: none;
   }
 
-  .bt-column-settings [data-bt-part="column"] {
+  .bt-column-settings-panel [data-bt-part="column"] {
     display: flex;
     align-items: center;
     gap: var(--bt-space-2);
@@ -28,7 +28,7 @@
     background-color: var(--bt-bg-floating);
   }
 
-  .bt-column-settings [data-bt-part="grip"] {
+  .bt-column-settings-panel [data-bt-part="grip"] {
     display: inline-grid;
     flex: none;
     place-items: center;
@@ -43,11 +43,11 @@
     touch-action: none;
   }
 
-  .bt-column-settings [data-bt-part="grip"]:active {
+  .bt-column-settings-panel [data-bt-part="grip"]:active {
     cursor: grabbing;
   }
 
-  .bt-column-settings > [data-bt-part="footer"] {
+  .bt-column-settings-panel > [data-bt-part="footer"] {
     display: flex;
     justify-content: flex-end;
   }
