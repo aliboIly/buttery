@@ -112,6 +112,7 @@ function OverflowClusterRoot({
       );
       flushSync(() => {
         setHidden((current) => (sameSet(current, next) ? current : next));
+        if (next.size === 0) setMenuOpen(false);
       });
     });
     observer.observe(element);

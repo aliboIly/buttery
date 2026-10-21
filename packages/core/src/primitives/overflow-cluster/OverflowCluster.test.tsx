@@ -204,4 +204,22 @@ describe("OverflowCluster", () => {
     });
     expect(screen.queryByRole("button", { name: "More actions" })).toBeNull();
   });
+
+  it("closes the More menu when everything fits, so it doesn't open by itself later", async () => {
+    const { rerender } = render(<Toolbar width={150} onSelect={vi.fn()} />);
+    await userEvent.click(
+      await screen.findByRole("button", { name: "More actions" }),
+    );
+    expect(await screen.findByRole("menu")).toBeTruthy();
+    rerender(<Toolbar width={400} onSelect={vi.fn()} />);
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: "More actions" })).toBeNull();
+    });
+    rerender(<Toolbar width={150} onSelect={vi.fn()} />);
+    expect(
+      await screen.findByRole("button", { name: "More actions" }),
+    ).toBeTruthy();
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
 });
