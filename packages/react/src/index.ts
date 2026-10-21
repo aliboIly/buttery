@@ -335,3 +335,5 @@ export type {
   StatusBadgeProps,
   StatusTone,
 } from "./components/status-badge/StatusBadge.tsx";
+export { SearchField } from "./components/search-field/SearchField.tsx";
+export type { SearchFieldProps } from "./components/search-field/SearchField.tsx";

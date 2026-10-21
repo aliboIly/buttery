@@ -1,0 +1,87 @@
+@layer bt.components {
+  .bt-search-field {
+    --bt-search-field-line: 1px;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--bt-h-control);
+    border: var(--bt-search-field-line) solid var(--bt-control-border);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+    color: var(--bt-text-tertiary);
+    font-size: var(--bt-text-body-size);
+    font-weight: var(--bt-text-body-weight);
+    letter-spacing: var(--bt-text-body-tracking);
+  }
+
+  .bt-search-field[data-variant="soft"] {
+    border-color: transparent;
+    background-color: var(--bt-bg-control);
+  }
+
+  .bt-search-field:focus-within {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-search-field[data-disabled] {
+    background-color: var(--bt-bg-control-subtle);
+  }
+
+  /* The icon sits over the input's padding and lets presses through, so the whole box is the input. */
+  .bt-search-field > [data-bt-part="icon"] {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--bt-space-3);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .bt-search-field > [data-bt-part="input"] {
+    flex: 1;
+    align-self: stretch;
+    min-inline-size: 0;
+    padding-block: 0;
+    padding-inline: calc(
+        var(--bt-space-3) + var(--bt-icon-sm) + var(--bt-space-2)
+      )
+      var(--bt-space-3);
+    border: 0;
+    border-radius: inherit;
+    background: none;
+    color: var(--bt-text);
+    font: inherit;
+    letter-spacing: inherit;
+    outline: none;
+    appearance: none;
+  }
+
+  .bt-search-field > [data-bt-part="input"]::placeholder {
+    color: var(--bt-text-tertiary);
+    opacity: 1;
+  }
+
+  .bt-search-field > [data-bt-part="input"]::-webkit-search-cancel-button,
+  .bt-search-field > [data-bt-part="input"]::-webkit-search-decoration {
+    appearance: none;
+  }
+
+  .bt-search-field > [data-bt-part="input"]:disabled {
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-search-field > :is([data-bt-part="end"], [data-bt-part="shortcut"]) {
+    display: flex;
+    flex: none;
+    padding-inline-end: var(--bt-space-1);
+  }
+
+  .bt-search-field > [data-bt-part="shortcut"] {
+    padding-inline-end: var(--bt-space-2);
+    pointer-events: none;
+  }
+}
