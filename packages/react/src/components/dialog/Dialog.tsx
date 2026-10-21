@@ -3,9 +3,9 @@ import {
   Scrim,
   TextStack,
   cx,
-  hasTabbable,
   presencePresets,
   reducedPresence,
+  tabbables,
   useAnimationTracking,
   useControllableState,
   useMergedRefs,
@@ -189,10 +189,9 @@ export function DialogContent({
               onOpenAutoFocus={(event) => {
                 onOpenAutoFocus?.(event);
                 if (event.defaultPrevented) return;
-                // With nothing to act on in the body, focus the dialog rather than the close button, whose tooltip would open.
-                if (hasTabbable(body.current)) return;
+                // Radix skips links and falls back to the close button, whose tooltip would open; links can be what a dialog offers.
                 event.preventDefault();
-                element.current?.focus();
+                (tabbables(body.current)[0] ?? element.current)?.focus();
               }}
             >
               <motion.div
@@ -281,6 +280,8 @@ export interface DialogTextProps extends Omit<
   readonly caption?: ReactNode;
   /** `"start"` (the default) or `"center"`. */
   readonly align?: "start" | "center" | undefined;
+  /** `"dialog"` (the default), a dialog title, or `"feature"`, a `title-lg` title as an announcement has. */
+  readonly size?: "dialog" | "feature" | undefined;
 }
 
 /**
@@ -292,6 +293,7 @@ export function DialogText({
   body,
   caption,
   align = "start",
+  size = "dialog",
   className,
   ...rest
 }: DialogTextProps): ReactElement {
@@ -304,7 +306,7 @@ export function DialogText({
     <TextStack
       {...rest}
       className={cx("bt-dialog-text", className)}
-      size="dialog"
+      size={size}
       align={align}
       data-bt-part="text"
       title={
