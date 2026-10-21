@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "Actions on one row of a table: use a row actions menu",
   ],
   related: ["PageHeader", "Button", "HeaderBar"],
-  a11y: "A group named Quick actions (or its label) of buttons; a disabled action stays focusable. Actions folded into the menu stay reachable from the More actions button.",
+  a11y: "A group named Quick actions (or its label) of buttons; a disabled action stays focusable. Actions folded into the menu stay reachable from the More quick actions button.",
   motion: "press",
 };

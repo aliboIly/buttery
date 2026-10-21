@@ -115,9 +115,42 @@ describe("TopBar", () => {
       </div>,
     );
     expect(
-      await screen.findByRole("button", { name: "More actions" }),
+      await screen.findByRole("button", { name: "More app actions" }),
     ).toBeTruthy();
     expect(screen.getByRole("button", { name: "New order" })).toBeTruthy();
+  });
+
+  it("keeps a folded action's dot in the menu, and its name saying so", async () => {
+    render(
+      <div style={{ inlineSize: "140px" }}>
+        <TopBar
+          actions={
+            <>
+              <TopBar.Action
+                icon={Bell}
+                label="Notifications"
+                dot
+                onSelect={() => undefined}
+              />
+              <TopBar.Action
+                icon={Settings}
+                label="Settings"
+                priority={1}
+                onSelect={() => undefined}
+              />
+            </>
+          }
+          create={{ label: "New order", onSelect: () => undefined }}
+        />
+      </div>,
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "More app actions" }),
+    );
+    const item = await screen.findByRole("menuitem", {
+      name: "Notifications, new",
+    });
+    expect(item.querySelector('[data-bt-part="dot"]')).not.toBeNull();
   });
 
   it("pads like the page under it in a shell, and opens the sidebar from a menu button on a phone", async () => {

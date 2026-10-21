@@ -10,13 +10,13 @@ export interface QuickActionsProps extends Omit<
 > {
   /** Names the group for screen readers. Defaults to `"Quick actions"`. */
   readonly label?: string | undefined;
-  /** Names the button that lists the actions that don't fit. Defaults to `"More actions"`. */
+  /** Names the button that lists the actions that don't fit. Defaults to `"More quick actions"`. */
   readonly moreLabel?: string | undefined;
 }
 
 function QuickActionsRoot({
   label = "Quick actions",
-  moreLabel = "More actions",
+  moreLabel = "More quick actions",
   className,
   children,
   ...rest

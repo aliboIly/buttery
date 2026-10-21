@@ -127,7 +127,7 @@ for (const [width, height] of [
     await page.goto("/#/roastery/orders");
     await page.locator("h1").first().waitFor();
     const more = page.getByRole("button", {
-      name: "More actions",
+      name: "More page actions",
       exact: true,
     });
     const exportButton = page.getByRole("button", {

@@ -1,4 +1,4 @@
-import { OverflowCluster, cx, hasContent } from "@buttery/core";
+import { OverflowCluster, cx, hasContent, useShortcut } from "@buttery/core";
 import type { IconComponentProps, Shortcut } from "@buttery/core";
 import type {
   ComponentPropsWithRef,
@@ -24,7 +24,7 @@ export interface PageHeaderProps extends Omit<
   readonly valueInfo?: string | undefined;
   /** The page's actions at the end of the row: `PageHeader.Action`s, which fold into "…" when they don't fit. */
   readonly actions?: ReactNode;
-  /** Names the button that lists the actions that don't fit. Defaults to `"More actions"`. */
+  /** Names the button that lists the actions that don't fit. Defaults to `"More page actions"`. */
   readonly moreLabel?: string | undefined;
   /** Rows under the header, 16px apart, such as `Tabs` or `QuickActions`. */
   readonly children?: ReactNode;
@@ -35,7 +35,7 @@ function PageHeaderRoot({
   value,
   valueInfo,
   actions,
-  moreLabel = "More actions",
+  moreLabel = "More page actions",
   className,
   children,
   ...rest
@@ -93,7 +93,7 @@ export interface PageHeaderActionProps {
   /** `"secondary"` (the default) or `"primary"` for the page's one main action. */
   readonly variant?:
     Extract<ButtonVariant, "primary" | "secondary"> | undefined;
-  /** A shortcut to show after the label, written as `useShortcut` takes it, such as `"n"`. Bind it with `useShortcut`. */
+  /** A shortcut for it, written as `useShortcut` takes it, such as `"n"`: shown after the label (and in the "…" menu) and bound while the action can run. */
   readonly shortcut?: Shortcut | undefined;
   /** Keeps it from being chosen; its button stays focusable (`aria-disabled`). */
   readonly disabled?: boolean | undefined;
@@ -112,10 +112,11 @@ export function PageHeaderAction({
   disabled = false,
   priority = 0,
 }: PageHeaderActionProps): ReactElement {
+  useShortcut(shortcut, onSelect, { enabled: !disabled });
   return (
     <OverflowCluster.Item
       priority={priority}
-      menuItem={{ label, icon, onSelect, disabled }}
+      menuItem={{ label, icon, onSelect, disabled, shortcut }}
     >
       {iconOnly && icon ? (
         <IconButton

@@ -30,7 +30,7 @@ export interface TopBarProps extends ComponentPropsWithRef<"div"> {
   readonly create?: TopBarCreate | undefined;
   /** Names the button that opens the sidebar on a phone. Defaults to `"Open navigation"`. */
   readonly menuLabel?: string | undefined;
-  /** Names the button that lists the actions that don't fit. Defaults to `"More actions"`. */
+  /** Names the button that lists the actions that don't fit. Defaults to `"More app actions"`. */
   readonly moreLabel?: string | undefined;
 }
 
@@ -39,7 +39,7 @@ function TopBarRoot({
   actions,
   create,
   menuLabel = "Open navigation",
-  moreLabel = "More actions",
+  moreLabel = "More app actions",
   className,
   ...rest
 }: TopBarProps): ReactElement {
@@ -85,7 +85,7 @@ export interface TopBarActionProps {
   readonly icon: ComponentType<IconComponentProps>;
   /** Runs it, from the bar or from the "…" menu. */
   readonly onSelect: () => void;
-  /** Draws a dot for something new behind it, which its name says too. */
+  /** Draws a dot for something new behind it, which its name says too, in the bar and in the "…" menu. */
   readonly dot?: boolean | undefined;
   /** Higher stays in the bar longer. Defaults to 0. */
   readonly priority?: number | undefined;
@@ -102,7 +102,7 @@ export function TopBarAction({
   return (
     <OverflowCluster.Item
       priority={priority}
-      menuItem={{ label, icon, onSelect }}
+      menuItem={{ label, icon, onSelect, dot }}
     >
       <IconButton icon={icon} label={label} dot={dot} onClick={onSelect} />
     </OverflowCluster.Item>

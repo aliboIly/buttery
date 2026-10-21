@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "The app's top bar with search: use TopBar",
   ],
   related: ["AppPage", "Tabs", "QuickActions", "Button", "InfoButton"],
-  a11y: "The title is the page's h1. The info button is named by the explanation, which its tooltip shows. Actions are buttons; a disabled one stays focusable, and those folded into the menu stay reachable from the More actions button. A primary action's shortcut is announced through aria-keyshortcuts.",
+  a11y: "The title is the page's h1. The info button is named by the explanation, which its tooltip shows and a press opens in a popover. Actions are buttons; a disabled one stays focusable, and those folded into the menu stay reachable from the More page actions button. An action's shortcut is bound, and announced through aria-keyshortcuts in the row and in the menu.",
   motion: "none",
 };

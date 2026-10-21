@@ -63,6 +63,41 @@ function trigger(): HTMLElement {
 }
 
 describe("Menu", () => {
+  it("shows an item's shortcut and dot at its end, its name and aria-keyshortcuts saying so", async () => {
+    render(
+      <Menu>
+        <Menu.Trigger>Actions</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Item shortcut="e">Export</Menu.Item>
+          <Menu.Item dot>Notifications</Menu.Item>
+        </Menu.Content>
+      </Menu>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Actions" }));
+    const exporting = await screen.findByRole("menuitem", { name: "Export" });
+    expect(exporting.getAttribute("aria-keyshortcuts")).toBe("E");
+    const keys = exporting.querySelector<HTMLElement>(
+      '[data-bt-part="shortcut"]',
+    );
+    expect(keys?.textContent).toBe("E");
+    const label = exporting.querySelector<HTMLElement>(
+      '[data-bt-part="label"]',
+    );
+    expect(keys?.offsetLeft).toBeGreaterThan(
+      (label?.offsetLeft ?? 0) + (label?.offsetWidth ?? 0),
+    );
+    const notifications = screen.getByRole("menuitem", {
+      name: "Notifications, new",
+    });
+    const dot = notifications.querySelector<HTMLElement>(
+      '[data-bt-part="dot"]',
+    );
+    expect(dot?.offsetWidth).toBe(8);
+    expect(getComputedStyle(dot ?? notifications).backgroundColor).not.toBe(
+      "rgba(0, 0, 0, 0)",
+    );
+  });
+
   it("opens as a menu in the dropdown layer, 8px from its trigger and lined up with its end", async () => {
     const ref = createRef<HTMLDivElement>();
     render(

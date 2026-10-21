@@ -142,14 +142,14 @@ export function matchesShortcut(
 /**
  * Runs `handler` when the shortcut is pressed anywhere in the window, and stops the browser's own action
  * for it, such as opening a file for ⌘O. It skips presses already handled and, unless `inFields`, presses
- * while typing in a field.
+ * while typing in a field. An `undefined` shortcut binds nothing, for a component whose shortcut is optional.
  *
  * @example
  * useShortcut("mod+z", undo);
  * useShortcut("mod+shift+z", redo);
  */
 export function useShortcut(
-  shortcut: Shortcut,
+  shortcut: Shortcut | undefined,
   handler: (event: KeyboardEvent) => void,
   options: ShortcutOptions = {},
 ): void {
@@ -161,7 +161,7 @@ export function useShortcut(
   });
 
   useEffect(() => {
-    if (!enabled) return undefined;
+    if (!enabled || shortcut === undefined) return undefined;
     const apple = isApplePlatform();
     const listen = (event: KeyboardEvent): void => {
       if (event.defaultPrevented || event.isComposing) return;

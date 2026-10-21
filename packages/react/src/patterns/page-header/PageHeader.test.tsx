@@ -124,7 +124,9 @@ describe("PageHeader", () => {
 
   it("folds its actions into a menu before the title truncates, keeping the primary longest", async () => {
     render(<Orders width={420} />);
-    const more = await screen.findByRole("button", { name: "More actions" });
+    const more = await screen.findByRole("button", {
+      name: "More page actions",
+    });
     expect(screen.getByRole("button", { name: "New order" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Import" })).toBeNull();
     const title = screen.getByRole("heading", { level: 1 });
@@ -133,6 +135,44 @@ describe("PageHeader", () => {
     expect(
       await screen.findByRole("menuitem", { name: "Import" }),
     ).toBeTruthy();
+  });
+
+  it("binds an action's shortcut, and shows it in the menu once the action folds", async () => {
+    const onExport = vi.fn();
+    render(
+      <div style={{ inlineSize: "260px" }}>
+        <PageHeader
+          title="Orders"
+          actions={
+            <>
+              <PageHeader.Action
+                icon={Download}
+                label="Export"
+                shortcut="e"
+                onSelect={onExport}
+              />
+              <PageHeader.Action
+                variant="primary"
+                icon={Plus}
+                label="New order"
+                priority={1}
+                onSelect={() => undefined}
+              />
+            </>
+          }
+        />
+      </div>,
+    );
+    await browser.keyboard("e");
+    expect(onExport).toHaveBeenCalledTimes(1);
+    await userEvent.click(
+      await screen.findByRole("button", { name: "More page actions" }),
+    );
+    const item = await screen.findByRole("menuitem", { name: "Export" });
+    expect(item.getAttribute("aria-keyshortcuts")).toBe("E");
+    expect(item.querySelector('[data-bt-part="shortcut"]')?.textContent).toBe(
+      "E",
+    );
   });
 
   it("puts the rows under it 16px down", () => {

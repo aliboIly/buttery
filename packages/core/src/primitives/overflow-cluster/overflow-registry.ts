@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { Shortcut } from "../../hooks/use-shortcut.ts";
 import type { IconComponentProps } from "../icon/Icon.tsx";
 
 /** How a cluster item appears in the "More" menu once it no longer fits. */
@@ -11,6 +12,12 @@ export interface OverflowMenuItem {
   readonly icon?: ComponentType<IconComponentProps> | undefined;
   /** Shows the menu item but stops it being chosen. Defaults to `false`. */
   readonly disabled?: boolean | undefined;
+  /** The item's keyboard shortcut, shown at the menu item's end, as the item shows it in the row. */
+  readonly shortcut?: Shortcut | undefined;
+  /** Draws the accent dot the item shows in the row for something new; the menu item's name says so too. */
+  readonly dot?: boolean | undefined;
+  /** What the dot adds to the menu item's name. Defaults to `"new"`. */
+  readonly dotLabel?: string | undefined;
   /**
    * For items that are choices among each other, such as tabs: whether this one is chosen. The menu lists
    * items that say either way as radio items, the chosen one checked.

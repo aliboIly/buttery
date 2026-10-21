@@ -213,6 +213,9 @@ function OverflowClusterRoot({
                         key={id}
                         icon={menuItem.icon}
                         disabled={menuItem.disabled}
+                        shortcut={menuItem.shortcut}
+                        dot={menuItem.dot}
+                        dotLabel={menuItem.dotLabel}
                         onSelect={menuItem.onSelect}
                       >
                         {menuItem.label}

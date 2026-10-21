@@ -67,7 +67,9 @@ describe("QuickActions", () => {
         </QuickActions>
       </div>,
     );
-    const more = await screen.findByRole("button", { name: "More actions" });
+    const more = await screen.findByRole("button", {
+      name: "More quick actions",
+    });
     expect(screen.getByRole("button", { name: "New order" })).toBeTruthy();
     await userEvent.click(more);
     await userEvent.click(

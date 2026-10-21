@@ -78,7 +78,7 @@ function DropZoneRoot({
     if (!disabled) input.current?.click();
   };
 
-  useShortcut(openShortcut === false ? "" : openShortcut, open, {
+  useShortcut(openShortcut === false ? undefined : openShortcut, open, {
     enabled: openShortcut !== false && !disabled,
   });
 

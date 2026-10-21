@@ -1,6 +1,7 @@
 @layer bt.primitives {
   .bt-menu {
     --bt-menu-line: 1px;
+    --bt-menu-dot: 8px;
 
     display: flex;
     flex-direction: column;
@@ -117,5 +118,25 @@
     > [data-bt-part="menu-item"]
     > [data-bt-part="chevron"] {
     color: var(--bt-text-tertiary);
+  }
+
+  .bt-menu > [data-bt-part="menu-item"] > [data-bt-part="shortcut"],
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"]
+    > [data-bt-part="shortcut"] {
+    flex: none;
+  }
+
+  .bt-menu > [data-bt-part="menu-item"] > [data-bt-part="dot"],
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"]
+    > [data-bt-part="dot"] {
+    flex: none;
+    inline-size: var(--bt-menu-dot);
+    block-size: var(--bt-menu-dot);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-accent);
   }
 }

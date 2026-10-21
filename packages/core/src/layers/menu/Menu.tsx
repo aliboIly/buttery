@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { DropdownMenu } from "radix-ui";
+import { DropdownMenu, VisuallyHidden } from "radix-ui";
 import {
   createContext,
   use,
@@ -17,12 +17,19 @@ import type {
   RefObject,
 } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state.ts";
+import type { Shortcut } from "../../hooks/use-shortcut.ts";
 import { useMotionPreference } from "../../motion/preference.ts";
 import { reducedPresence } from "../../motion/presets.ts";
 import { fadeOut } from "../../motion/transitions.ts";
 import { useAnimationTracking } from "../../motion/use-animation-tracking.ts";
 import { Icon } from "../../primitives/icon/Icon.tsx";
 import type { IconComponentProps } from "../../primitives/icon/Icon.tsx";
+import {
+  Kbd,
+  ariaKeyShortcuts,
+  shortcutKeys,
+  useApplePlatform,
+} from "../../primitives/kbd/Kbd.tsx";
 import { durations, easingCurves, timing } from "../../tokens/motion.ts";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
@@ -247,6 +254,15 @@ export interface MenuItemProps extends Omit<
   readonly icon?: ComponentType<IconComponentProps> | undefined;
   /** A small element before the label in place of an icon, such as a 20px `Avatar` or `InitialsTile`. */
   readonly media?: ReactNode;
+  /**
+   * Its keyboard shortcut, written as `useShortcut` takes it, such as `"n"`: shown at the item's end and
+   * announced through `aria-keyshortcuts`. Bind it with `useShortcut`.
+   */
+  readonly shortcut?: Shortcut | undefined;
+  /** Draws an accent dot at the item's end for something new behind it; its name says so too. */
+  readonly dot?: boolean | undefined;
+  /** What the dot adds to the item's name. Defaults to `"new"`. */
+  readonly dotLabel?: string | undefined;
   /** What the action is. Long labels truncate. */
   readonly children: ReactNode;
 }
@@ -255,12 +271,23 @@ export interface MenuItemProps extends Omit<
 export function MenuItem({
   icon,
   media,
+  shortcut,
+  dot = false,
+  dotLabel = "new",
   className,
   children,
   ...rest
 }: MenuItemProps): ReactElement {
+  const apple = useApplePlatform();
+  const text = typeof children === "string" ? children : undefined;
   return (
     <DropdownMenu.Item
+      aria-keyshortcuts={
+        shortcut === undefined ? undefined : ariaKeyShortcuts(shortcut, apple)
+      }
+      aria-label={
+        dot && text !== undefined ? `${text}, ${dotLabel}` : undefined
+      }
       {...rest}
       className={cx("bt-text", className)}
       data-role="menu"
@@ -272,10 +299,21 @@ export function MenuItem({
         className="bt-truncate"
         data-bt-truncate=""
         data-bt-part="label"
-        title={typeof children === "string" ? children : undefined}
+        title={text}
       >
         {children}
       </span>
+      {dot ? <span data-bt-part="dot" aria-hidden="true" /> : null}
+      {dot && text === undefined ? (
+        <VisuallyHidden.Root>{`, ${dotLabel}`}</VisuallyHidden.Root>
+      ) : null}
+      {shortcut === undefined ? null : (
+        <Kbd
+          keys={shortcutKeys(shortcut)}
+          aria-hidden="true"
+          data-bt-part="shortcut"
+        />
+      )}
     </DropdownMenu.Item>
   );
 }
