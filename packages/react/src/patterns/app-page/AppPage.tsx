@@ -60,9 +60,9 @@ function AppPageRoot({
 
   return (
     <main
+      data-bt="AppPage"
       {...rest}
       className={cx("bt-app-page", className)}
-      data-bt="AppPage"
       data-width={width}
       data-fill={fill ? "" : undefined}
     >

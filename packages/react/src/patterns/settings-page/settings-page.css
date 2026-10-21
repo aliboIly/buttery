@@ -1,0 +1,5 @@
+@layer bt.patterns {
+  .bt-settings-page {
+    min-inline-size: 0;
+  }
+}

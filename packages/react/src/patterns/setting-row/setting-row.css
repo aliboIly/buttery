@@ -1,0 +1,31 @@
+@layer bt.patterns {
+  .bt-setting-row {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-setting-row > [data-bt-part="text"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-setting-row [data-bt-part="title"],
+  .bt-setting-row [data-bt-part="state"] {
+    margin: 0;
+  }
+
+  .bt-setting-row [data-bt-part="state"] {
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-setting-row > [data-bt-part="action"] {
+    display: flex;
+    flex: none;
+    gap: var(--bt-space-2);
+  }
+}

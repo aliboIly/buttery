@@ -1,0 +1,35 @@
+@layer bt.patterns {
+  .bt-settings-section {
+    --bt-settings-section-line: 1px;
+    --bt-settings-section-loading: 64px;
+  }
+
+  .bt-settings-section[data-divider] > [data-bt-part="section-head"] {
+    padding-block-end: var(--bt-space-4);
+    border-block-end: var(--bt-settings-section-line) solid var(--bt-border);
+  }
+
+  .bt-settings-section > [data-bt-part="loading"] {
+    display: grid;
+    place-items: center;
+    min-block-size: var(--bt-settings-section-loading);
+  }
+
+  .bt-settings-section > [data-bt-part="form"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-settings-section [data-bt-part="form-buttons"] {
+    display: flex;
+    flex: none;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-settings-section > [data-bt-part="footer"] {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
