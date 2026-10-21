@@ -53,7 +53,7 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-dur-reduced` | 100ms (the longest fade with reduced motion) |
 | `--bt-dur-fast` | 120ms (hover color and arrows, exits, text crossfade, the nav panel folding and its blur) |
 | `--bt-dur-base` | 200ms (enters: menu, toast, dialog opacity, the modal scrim) |
-| `--bt-dur-slow` | 300ms (crop-mode bg fade) |
+| `--bt-dur-slow` | 300ms (longer fades; nothing in Phase 5 uses it, and the crop-mode background fades over `dur-base`, as §3 measures) |
 | `--bt-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` (enters) |
 | `--bt-ease-in` | `cubic-bezier(0.4, 0, 1, 1)` (exits) |
 | `--bt-ease-standard` | `cubic-bezier(0.2, 0, 0, 1)` (everything else) |

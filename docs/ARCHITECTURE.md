@@ -157,13 +157,18 @@ Same thing without React — recipes are plain classes/attributes:
 
 ### Level 2 — compose components
 ```tsx
-<Inspector>
-  <Inspector.Section title="Card" onReset={reset}>
-    <Inspector.Row label="Scale"><Slider value={scale} onValueChange={setScale} format="%" /></Inspector.Row>
-    <Inspector.Row label="Edge"><SegmentedControl items={["Plain", "Outline", "Glow"]} … /></Inspector.Row>
+<Inspector label="Card settings">
+  <Inspector.Section title="Card" resettable={changed} onReset={reset}>
+    <Inspector.Row>
+      <Slider label="Scale" value={scale} onValueChange={setScale} resetValue={100} format="%" />
+    </Inspector.Row>
+    <Inspector.Row label="Edge">
+      <SegmentedControl label="Edge" options={["Plain", "Outline", "Glow"]} value={edge} onValueChange={setEdge} />
+    </Inspector.Row>
   </Inspector.Section>
 </Inspector>
 ```
+A slider labels itself, with its value badge, so its row takes no `label`; a segmented control sits beside the row's label and still names itself for screen readers.
 
 ### Level 3 — patterns
 `<AppShell header={…} inspector={…}>{stage}</AppShell>`, `<Page><SplitHero …/><Bento>…</Bento></Page>` — whole screens that already obey the layout rules.

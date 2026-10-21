@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 4.5 (forms and text) is done. Next: Phase 5, inspector and app patterns.
+**Now:** Phase 5 (inspector and app patterns) is done. Next: Phase 6, overlays and choreography.
 
 ---
 
@@ -42,9 +42,9 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 ## v0.5 — App patterns (Phase 5)
 - [x] SwatchGrid, ColorDot, TiltPad, AnchorGrid
 - [x] Toast (`toast()` and `Toaster`, built early)
-- [ ] Menu, Select, FloatingToolbar
-- [ ] EmptyState/DropZone, Stage, Inspector, HeaderBar, AppShell
-- [ ] Card Studio demo (original), passes the full matrix at every size
+- [x] Menu, Select, FloatingToolbar
+- [x] EmptyState/DropZone, Stage, Inspector, HeaderBar, AppShell
+- [x] Card Studio demo (original), passes the full matrix at every size
 
 ## v0.6 — Choreography (Phase 6)
 - [ ] Dialog, Onboarding (StepDialog), PageDots
