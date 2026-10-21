@@ -15,6 +15,6 @@ export const meta: ComponentMeta = {
     "Introducing a whole feature on an empty page: use FeatureIntro",
   ],
   related: ["Banner", "SetupGuide", "FeatureIntro", "AppPage"],
-  a11y: "The title is an h3 by default. The action is a link, or a button without an href; the time estimate is read as Takes about and the time. The dismiss button is named Dismiss; once it's pressed the card fades and is gone.",
+  a11y: "The title is an h3 by default. The action is a link, or a button without an href; the time estimate is read as Takes about and the time. The dismiss button is named Dismiss; once it's pressed the card fades and is gone, and focus in it moves on to the next tab stop.",
   motion: "presence",
 };

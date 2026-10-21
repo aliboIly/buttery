@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "Steps that must happen in one sitting: use a Dialog with Onboarding",
   ],
   related: ["Banner", "RecommendationCard", "Toaster", "FloatingLanes"],
-  a11y: "A region named by its title. The progress bar is named by the title too and reads as how many are done. The unfold button says whether it's open and points at the task list; each task is read as Done or To do before its title, and the next one's action is a button or a link. The dismiss button is named Dismiss.",
+  a11y: "A region named by its title. The progress bar is named by the title too and reads as how many are done. The unfold button says whether it's open and points at the task list; each task is read as Done or To do before its title, and the next one's action is a button or a link. The dismiss button is named Dismiss; as the guide goes, focus in it moves on to the next tab stop.",
   motion: "morph",
 };

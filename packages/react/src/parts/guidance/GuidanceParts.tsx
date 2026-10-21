@@ -3,6 +3,7 @@ import {
   cx,
   fadeOut,
   reducedTransition,
+  tabbables,
   useAnimationTracking,
   useMotionPreference,
   useReflow,
@@ -87,6 +88,8 @@ export interface Dismissible {
     readonly onAnimationComplete: () => void;
     readonly onLayoutAnimationStart: () => void;
     readonly onLayoutAnimationComplete: () => void;
+    /** `"leaving"` while it fades, so focus in it can move on before it's gone. */
+    readonly "data-bt-dismissible": "" | "leaving";
   };
 }
 
@@ -94,10 +97,27 @@ function isFlag(value: unknown): value is boolean {
   return typeof value === "boolean";
 }
 
+/** Moves focus out of a part that's leaving, to the next tab stop after it or else the one before. */
+function moveFocusOff(): void {
+  const part = document.activeElement?.closest(
+    '[data-bt-dismissible="leaving"]',
+  );
+  if (!part) return;
+  const stops = tabbables(document.body).filter((stop) => !part.contains(stop));
+  const after = stops.find(
+    (stop) =>
+      (part.compareDocumentPosition(stop) &
+        Node.DOCUMENT_POSITION_FOLLOWING) !==
+      0,
+  );
+  (after ?? stops.at(-1))?.focus();
+}
+
 /**
  * The state behind a part people can dismiss for good, such as a banner: it fades where it is over
  * `dur-fast`, then it's gone, and in a `ReflowGroup` (an `AppPage`) what's below slides up into its place,
- * as it does itself when something above it leaves. With a `storageKey` it stays gone on later visits.
+ * as it does itself when something above it leaves. Focus in it moves on to the next tab stop as it goes.
+ * With a `storageKey` it stays gone on later visits.
  *
  * @example
  * const { dismissed, dismiss, motionProps } = useDismissible({ kind: "tip", storageKey });
@@ -135,10 +155,12 @@ export function useDismissible({
       layoutDependency: reflow.layoutDependency,
       onLayoutAnimationStart: tracking.onLayoutAnimationStart,
       onLayoutAnimationComplete: tracking.onLayoutAnimationComplete,
+      "data-bt-dismissible": leaving ? "leaving" : "",
       onAnimationStart: tracking.onAnimationStart,
       onAnimationComplete: () => {
         tracking.onAnimationComplete();
         if (!leaving) return;
+        moveFocusOff();
         setLeaving(false);
         setDismissed(true);
         depart();

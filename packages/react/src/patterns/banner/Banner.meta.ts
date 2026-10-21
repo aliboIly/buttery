@@ -15,6 +15,6 @@ export const meta: ComponentMeta = {
     "A longer tip with a title and media: use RecommendationCard",
   ],
   related: ["Callout", "RecommendationCard", "AppPage", "SetupGuide"],
-  a11y: "Its message and action read in the page's order. The action is a link, or a button without an href. The time estimate is read as Takes about and the time. The dismiss button is named Dismiss; once it's pressed the banner fades and is gone, so focus moves to the page.",
+  a11y: "Its message and action read in the page's order. The action is a link, or a button without an href. The time estimate is read as Takes about and the time. The dismiss button is named Dismiss; once it's pressed the banner fades and is gone, and focus in it moves on to the next tab stop.",
   motion: "presence",
 };

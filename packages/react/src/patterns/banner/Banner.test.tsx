@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { createRef } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { Banner } from "./Banner.tsx";
 
 const KEY = "buttery:banner:test-refunds";
@@ -88,6 +89,40 @@ describe("Banner", () => {
     cleanup();
     render(<Refunds storageKey="test-refunds" />);
     expect(document.querySelector(".bt-banner")).toBeNull();
+  });
+
+  it("moves keyboard focus on to the next tab stop as it goes, or back to the one before at the end", async () => {
+    render(
+      <>
+        <button type="button">Before</button>
+        <Refunds />
+        <button type="button">After</button>
+      </>,
+    );
+    await browser.keyboard("{Shift}");
+    screen.getByRole("button", { name: "Dismiss" }).focus();
+    await browser.keyboard("{Enter}");
+    await waitFor(() => {
+      expect(document.querySelector(".bt-banner")).toBeNull();
+    });
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "After" }),
+    );
+    cleanup();
+    render(
+      <>
+        <button type="button">Before</button>
+        <Refunds />
+      </>,
+    );
+    screen.getByRole("button", { name: "Dismiss" }).focus();
+    await browser.keyboard("{Enter}");
+    await waitFor(() => {
+      expect(document.querySelector(".bt-banner")).toBeNull();
+    });
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Before" }),
+    );
   });
 
   it("lets what's below slide up into its place in a reflow group", async () => {

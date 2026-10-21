@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "A tip about a feature already in use: use RecommendationCard",
   ],
   related: ["EmptyState", "RecommendationCard", "PageHeader", "AppPage"],
-  a11y: "A section named by its title, an h2 by default. The benefits are a list. The action is a link styled as the primary button, or a button without an href; the docs link follows it. A dismissible intro's button is named Dismiss.",
+  a11y: "A section named by its title, an h2 by default. The benefits are a list. The action is a link styled as the primary button, or a button without an href; the docs link follows it. A dismissible intro's button is named Dismiss; as the intro goes, focus in it moves on to the next tab stop.",
   motion: "presence",
 };
