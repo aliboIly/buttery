@@ -47,3 +47,5 @@
 @import "./patterns/container/container.css";
 @import "./patterns/split-hero/split-hero.css";
 @import "./patterns/centered-hero/centered-hero.css";
+@import "./patterns/stat-strip/stat-strip.css";
+@import "./patterns/logo-strip/logo-strip.css";

@@ -267,3 +267,14 @@ export { CenteredHero } from "./patterns/centered-hero/CenteredHero.tsx";
 export type { CenteredHeroProps } from "./patterns/centered-hero/CenteredHero.tsx";
 export { HeroText } from "./parts/hero/HeroText.tsx";
 export type { HeroTextProps } from "./parts/hero/HeroText.tsx";
+export { Stat, StatStrip } from "./patterns/stat-strip/StatStrip.tsx";
+export type {
+  StatProps,
+  StatStripProps,
+} from "./patterns/stat-strip/StatStrip.tsx";
+export { LogoStrip, LogoStripMark } from "./patterns/logo-strip/LogoStrip.tsx";
+export type {
+  LogoStripComponent,
+  LogoStripMarkProps,
+  LogoStripProps,
+} from "./patterns/logo-strip/LogoStrip.tsx";
