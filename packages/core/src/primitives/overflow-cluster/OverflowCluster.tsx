@@ -95,14 +95,15 @@ function OverflowClusterRoot({
   useLayoutEffect(() => {
     const element = root.current;
     if (!element) return undefined;
-    const observer = new ResizeObserver(() => {
+    let frame = 0;
+    const measure = (): ReadonlySet<string> => {
       const entries = latest.current;
       for (const entry of entries) {
         const width = entry.element.getBoundingClientRect().width;
         if (width > 0) widths.current.set(entry.id, width);
       }
       const style = getComputedStyle(element);
-      const next = entriesToHide(
+      return entriesToHide(
         entries,
         widths.current,
         element.clientWidth,
@@ -111,17 +112,35 @@ function OverflowClusterRoot({
           style.getPropertyValue("--bt-overflow-cluster-more-size"),
         ) || 0,
       );
-      // A commit here can resize what this observes, which the browser reports as a loop: commit only changes.
+    };
+    const commit = (next: ReadonlySet<string>): void => {
       if (sameSet(committed.current, next)) return;
       committed.current = next;
       flushSync(() => {
         setHidden(next);
         if (next.size === 0) setMenuOpen(false);
       });
+    };
+    const observer = new ResizeObserver((records) => {
+      // Committing inside the observer keeps a resized row from painting a frame that overflows, but it
+      // resizes the items this observes, which the browser reports as a loop when an item set it off; an
+      // item's own change waits for the next frame instead.
+      if (records.some((record) => record.target === element)) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        commit(measure());
+        return;
+      }
+      if (frame !== 0 || sameSet(committed.current, measure())) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        commit(measure());
+      });
     });
     observer.observe(element);
     for (const entry of latest.current) observer.observe(entry.element);
     return () => {
+      cancelAnimationFrame(frame);
       observer.disconnect();
     };
   }, [lineup]);
