@@ -389,4 +389,22 @@ describe("ChartFrame", () => {
     expect(part("y-axis").children.length).toBeGreaterThan(1);
     expect(part("y-axis").textContent).not.toContain("NaN");
   });
+
+  it("fades in where its loading pill was as the pill fades away", async () => {
+    const { rerender } = render(<Chart loading />);
+    await waitFor(() => {
+      expect(document.querySelector('[data-bt="LoadingPill"]')).not.toBeNull();
+    });
+    rerender(<Chart />);
+    const frame = document.querySelector<HTMLElement>(".bt-chart-frame");
+    expect(frame?.hasAttribute("data-arrived")).toBe(true);
+    expect(getComputedStyle(part("plot")).animationName).toBe(
+      "bt-chart-frame-arrive",
+    );
+    expect(document.querySelector('[data-bt="LoadingPill"]')).not.toBeNull();
+    await waitFor(() => {
+      expect(document.querySelector('[data-bt="LoadingPill"]')).toBeNull();
+      expect(frame?.hasAttribute("data-arrived")).toBe(false);
+    });
+  });
 });

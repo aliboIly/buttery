@@ -9,6 +9,7 @@ import {
   useId,
   useLayoutEffect,
   useRef,
+  useState,
 } from "react";
 import type {
   ComponentPropsWithRef,
@@ -231,9 +232,17 @@ function ChartFrameRoot({
   style,
   children,
   ref,
+  onAnimationEnd,
   ...rest
 }: ChartFrameProps): ReactElement {
   const root = useRef<HTMLDivElement>(null);
+  const [arrived, setArrived] = useState(false);
+  const [wasLoading, setWasLoading] = useState(loading);
+
+  if (loading !== wasLoading) {
+    setWasLoading(loading);
+    setArrived(!loading);
+  }
   const rootRefs = useMergedRefs(ref, root);
   const plot = useRef<HTMLDivElement>(null);
   const shown = useRef<number | null>(null);
@@ -433,8 +442,13 @@ function ChartFrameRoot({
       data-size={size}
       data-layout={layout}
       data-state={state}
+      data-arrived={arrived && state === "ready" ? "" : undefined}
       aria-busy={loading ? true : undefined}
       style={frameStyle}
+      onAnimationEnd={(event) => {
+        onAnimationEnd?.(event);
+        if (event.animationName === "bt-chart-frame-arrive") setArrived(false);
+      }}
     >
       {state === "ready" ? (
         <>
@@ -569,11 +583,9 @@ function ChartFrameRoot({
           <Text variant="caption">{emptyLabel}</Text>
         </div>
       ) : null}
-      {loading ? (
-        <div data-bt-part="loading">
-          <LoadingPill label={loadingLabel} />
-        </div>
-      ) : null}
+      <div data-bt-part="loading">
+        <LoadingPill label={loadingLabel} loading={loading} />
+      </div>
     </div>
   );
 }

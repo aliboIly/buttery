@@ -1,6 +1,12 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
@@ -181,5 +187,28 @@ describe("MetricCard", () => {
     expect(screen.queryByRole("slider")).toBeNull();
     expect(document.querySelector("[data-bt-part='delta']")).toBeNull();
     expect(document.querySelector("[data-bt-part='foot']")).toBeNull();
+  });
+
+  it("crossfades each skeleton into its content in place, and titles its name with its full text", async () => {
+    const { rerender } = render(<Card loading />);
+    expect(
+      screen
+        .getByRole("heading", { level: 3, name: "Total sales" })
+        .getAttribute("title"),
+    ).toBe("Total sales");
+    rerender(<Card />);
+    const views = (): number =>
+      document.querySelectorAll(
+        '.bt-metric-card [data-bt="Morph"] [data-bt-part="view"]',
+      ).length;
+    const morphs = document.querySelectorAll(
+      '.bt-metric-card [data-bt="Morph"]',
+    ).length;
+    expect(morphs).toBeGreaterThan(0);
+    expect(views()).toBeGreaterThan(morphs);
+    await waitFor(() => {
+      expect(views()).toBe(morphs);
+    });
+    expect(document.querySelector(".bt-metric-card .bt-skeleton")).toBeNull();
   });
 });

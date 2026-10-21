@@ -269,5 +269,27 @@
     display: grid;
     grid-area: 1 / 1 / -1 / -1;
     place-items: center;
+    pointer-events: none;
+  }
+
+  /* The chart fades in where its loading pill was, as the pill fades away. */
+  .bt-chart-frame[data-arrived]
+    > :is(
+      [data-bt-part="y-axis"],
+      [data-bt-part="plot"],
+      [data-bt-part="x-axis"]
+    ) {
+    animation: bt-chart-frame-arrive
+      calc(
+        var(--bt-dur-fast) * var(--bt-motion) + var(--bt-dur-reduced) *
+          (1 - var(--bt-motion))
+      )
+      var(--bt-ease-out);
+  }
+
+  @keyframes bt-chart-frame-arrive {
+    from {
+      opacity: 0;
+    }
   }
 }

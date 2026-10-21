@@ -8,6 +8,7 @@ import {
 } from "@buttery/core";
 import type { MotionElementProps } from "@buttery/core";
 import { AnimatePresence, motion } from "motion/react";
+import { VisuallyHidden } from "radix-ui";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { Spinner } from "../../parts/spinner/Spinner.tsx";
@@ -58,24 +59,31 @@ export function LoadingPill({
     };
   }, [loading]);
 
+  const showing = loading && waited;
   return (
-    <AnimatePresence>
-      {loading && waited ? (
-        <motion.div
-          key="loading"
-          role="status"
-          {...rest}
-          {...tracking}
-          className={cx("bt-loading-pill", className)}
-          data-bt="LoadingPill"
-          initial={fade.initial}
-          animate={fade.animate}
-          exit={fade.exit}
-        >
-          <Spinner />
-          <span data-bt-part="label">{label}</span>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
+    <>
+      {/* Mounted while the pill isn't, so its words are announced as they arrive rather than with it. */}
+      <VisuallyHidden.Root role="status">
+        {showing ? label : ""}
+      </VisuallyHidden.Root>
+      <AnimatePresence>
+        {showing ? (
+          <motion.div
+            key="loading"
+            aria-hidden="true"
+            {...rest}
+            {...tracking}
+            className={cx("bt-loading-pill", className)}
+            data-bt="LoadingPill"
+            initial={fade.initial}
+            animate={fade.animate}
+            exit={fade.exit}
+          >
+            <Spinner />
+            <span data-bt-part="label">{label}</span>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </>
   );
 }

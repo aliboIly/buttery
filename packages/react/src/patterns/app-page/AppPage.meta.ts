@@ -16,5 +16,5 @@ export const meta: ComponentMeta = {
   ],
   related: ["AppShell", "PageHeader", "DataTable"],
   a11y: "The page's main landmark. Each titled section is a region named by its h2; the right rail is a complementary landmark named by asideLabel.",
-  motion: "none",
+  motion: "morph",
 };

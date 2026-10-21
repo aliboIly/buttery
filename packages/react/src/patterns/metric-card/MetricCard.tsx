@@ -1,4 +1,4 @@
-import { Skeleton, Text, cx } from "@buttery/core";
+import { Morph, Skeleton, Text, cx } from "@buttery/core";
 import type { TextStackTitleElement } from "@buttery/core";
 import { ArrowDown, ArrowUp, ArrowUpRight, Info } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
@@ -111,6 +111,8 @@ export function MetricCard({
     delta === undefined
       ? undefined
       : `${signedPercent.format(delta)} ${deltaLabel}`;
+  // Each skeleton crossfades into its content in place: Morph swaps them by key while the height holds.
+  const phase = loading ? "loading" : "ready";
   return (
     <div
       role="group"
@@ -124,7 +126,7 @@ export function MetricCard({
         <div data-bt-part="title-row">
           <div data-bt-part="title">
             <Text id={titleId} tone="secondary" truncate asChild>
-              <Title>{title}</Title>
+              <Title title={title}>{title}</Title>
             </Text>
             {info === undefined ? null : (
               <IconButton icon={Info} label={info} size="sm" />
@@ -147,19 +149,21 @@ export function MetricCard({
             </IconButton>
           )}
         </div>
-        {loading ? (
-          <Skeleton variant="title-lg" text={value ?? "$00,000.00"} />
-        ) : (
-          <Text variant="title-lg" tabular>
-            {value ?? "—"}
-          </Text>
-        )}
+        <Morph contentKey={phase}>
+          {loading ? (
+            <Skeleton variant="title-lg" text={value ?? "$00,000.00"} />
+          ) : (
+            <Text variant="title-lg" tabular>
+              {value ?? "—"}
+            </Text>
+          )}
+        </Morph>
         {trend === undefined && !loading ? null : (
-          <div data-bt-part="delta">
+          <Morph contentKey={phase}>
             {loading ? (
               <Skeleton data-bt-part="delta-skeleton" />
             ) : (
-              <>
+              <div data-bt-part="delta">
                 <StatusBadge
                   tone={
                     trend === "flat" ? "neutral" : good ? "success" : "danger"
@@ -175,9 +179,9 @@ export function MetricCard({
                   {delta === undefined ? "" : signedPercent.format(delta)}
                 </StatusBadge>
                 <Text variant="caption">{deltaLabel}</Text>
-              </>
+              </div>
             )}
-          </div>
+          </Morph>
         )}
       </div>
       {labels === undefined || series === undefined ? null : (
@@ -195,10 +199,14 @@ export function MetricCard({
       )}
       {updated === undefined && href === undefined ? null : (
         <div data-bt-part="foot">
-          {updated === undefined ? null : loading ? (
-            <Skeleton variant="caption" text={updated} />
-          ) : (
-            <Text variant="caption">{updated}</Text>
+          {updated === undefined ? null : (
+            <Morph contentKey={phase}>
+              {loading ? (
+                <Skeleton variant="caption" text={updated} />
+              ) : (
+                <Text variant="caption">{updated}</Text>
+              )}
+            </Morph>
           )}
           {href === undefined ? null : (
             <ArrowLink href={href} onClick={follow}>
