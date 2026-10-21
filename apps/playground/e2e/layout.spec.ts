@@ -28,7 +28,7 @@ function pressIfShown(
   };
 }
 
-/** Presses a header action, from the More menu when it has folded away. */
+/** Presses a header action, from the More menu when it has folded away: a page header's or a header bar's. */
 function headerAction(name: string): ButteryInteraction["run"] {
   return async (page: Page) => {
     const direct = page.getByRole("button", { name, exact: true }).first();
@@ -37,7 +37,7 @@ function headerAction(name: string): ButteryInteraction["run"] {
       return;
     }
     await page
-      .getByRole("button", { name: /^More page actions/ })
+      .getByRole("button", { name: /^More (page )?actions/ })
       .first()
       .click();
     await page.getByRole("menuitem", { name, exact: true }).click();
