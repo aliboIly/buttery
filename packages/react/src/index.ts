@@ -358,3 +358,9 @@ export type {
   ViewMode,
   ViewToggleProps,
 } from "./components/view-toggle/ViewToggle.tsx";
+export { QuickActions } from "./patterns/quick-actions/QuickActions.tsx";
+export type {
+  QuickActionProps,
+  QuickActionsComponent,
+  QuickActionsProps,
+} from "./patterns/quick-actions/QuickActions.tsx";

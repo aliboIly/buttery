@@ -1,0 +1,6 @@
+@layer bt.patterns {
+  .bt-quick-actions {
+    display: flex;
+    min-inline-size: 0;
+  }
+}
