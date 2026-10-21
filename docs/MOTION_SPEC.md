@@ -175,7 +175,7 @@ Measured from the same local recording at 10fps. At rest the label is followed b
 - `arrow="back"` mirrors it: ‹ becomes ← and nudges left.
 - Colors are buttery's hover colors (primary goes to `primary-hover`), and the press scale stays.
 - Touch, with no hover: the chevron only. Reduced motion: the chevron becomes the arrow at once, without the nudge. `loading`: the arrow hides and the width stays.
-- Use it on every forward or back navigation action: onboarding Next and Back, `StepDialog`, `ExpandableCard` and hero calls to action, "See all" links in the nav menu, pagination. Not on Done, Save, Submit or destructive actions.
+- Use it on every forward or back navigation action: onboarding Next and Back, `ExpandableCard` and hero calls to action, "See all" links in the nav menu, pagination. Not on Done, Save, Submit or destructive actions.
 
 ### 4.6 Card hover lift
 `translateY(-2px)`, shadow steps from `card` to `raised`, corner affordance icon fills with `--bt-primary`. `dur-fast`. Disabled on touch devices and in reduced motion.

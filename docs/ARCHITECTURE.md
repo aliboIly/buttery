@@ -83,7 +83,7 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti, BrandMark,
                Field, TextField, PasswordField, TextArea, Checkbox, Switch, Callout
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,
-               EmptyState/DropZone, FloatingToolbar, Onboarding (StepDialog),
+               EmptyState/DropZone, FloatingToolbar, Onboarding,
                NavBar + MorphMenu, SubNav, Page/Section/Container, SplitHero, CenteredHero,
                Bento + ExpandableCard, StatStrip, LogoStrip, ArticleLayout, Footer,
                SignInForm, SignUpForm

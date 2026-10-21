@@ -47,7 +47,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Card Studio demo (original), passes the full matrix at every size
 
 ## v0.6 — Choreography (Phase 6)
-- [ ] Dialog, Onboarding (StepDialog), PageDots
+- [x] Dialog, Onboarding (a step dialog), PageDots
 - [x] NavBar (static, sticky, auto-hide) + MorphMenu, SubNav
 - [x] Bento + ExpandableCard
 - [x] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer

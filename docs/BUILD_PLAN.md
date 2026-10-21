@@ -68,7 +68,7 @@ Definition of done for every phase:
 **Accept:** Card Studio matches the measured motion table (MOTION_SPEC §3) and passes the full matrix; resizing 1728 → 960 → 390 never overlaps or overflows (header actions collapse into "…", inspector becomes a sheet).
 
 ## Phase 6 — Overlays & choreography
-- `Dialog`, `Onboarding` (StepDialog: morphing media scene, page dots, back and forward buttons with a last-step label, confetti, first-run persistence), `PageDots`.
+- `Dialog`, `Onboarding` (a step dialog: morphing media scene, page dots, back and forward buttons with a last-step label, confetti, first-run persistence), `PageDots`.
 - `NavBar` + `MorphMenu` (Radix NavigationMenu; `behavior` static, sticky or auto-hide; a sheet below 640), `SubNav`, `ExpandableCard`, `Bento`, `Page`/`Section`/`Container`/`Grid`, `SplitHero` and `CenteredHero` (with the hero assembly, MOTION_SPEC §4.3), `StatStrip`, `Stat`, `LogoStrip`, `ArticleLayout`, `Footer`.
 - Demo: an original marketing page for Card Studio using the page patterns and `NavBar`; Card Studio gets a 4-step onboarding; the playground's docs shell moves onto `NavBar`.
 
