@@ -26,6 +26,11 @@
     min-inline-size: 0;
   }
 
+  /* The actions keep room for their "…" button, so the title truncates before anything overlaps. */
+  .bt-page-header > [data-bt-part="bar"] > [data-bt-part="actions"] {
+    min-inline-size: var(--bt-overflow-cluster-more-size);
+  }
+
   .bt-page-header [data-bt-part="value"] {
     flex: none;
     color: var(--bt-text-secondary);
