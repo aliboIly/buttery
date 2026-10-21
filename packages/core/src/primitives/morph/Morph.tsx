@@ -13,7 +13,7 @@ import { durations, easingCurves } from "../../tokens/motion.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 
-const crossfade: Transition = {
+const quick: Transition = {
   duration: durations.fast / 1000,
   ease: easingCurves.standard,
 };
@@ -39,7 +39,7 @@ function MorphView({
   readonly children: ReactNode;
 }): ReactElement {
   const tracking = useAnimationTracking();
-  const transition = reduced ? reducedTransition : crossfade;
+  const transition = reduced ? reducedTransition : quick;
   return (
     <motion.div
       {...tracking}
@@ -60,6 +60,11 @@ export interface MorphProps extends MotionElementProps<"div"> {
    * new content in while the height follows.
    */
   readonly contentKey?: string | number | undefined;
+  /**
+   * Opens on `spring.snappy` and closes over `dur-fast`, as a disclosure such as a sidebar group does,
+   * instead of following the content on `spring.smooth` both ways. Defaults to `false`.
+   */
+  readonly disclosure?: boolean | undefined;
 }
 
 /**
@@ -75,6 +80,7 @@ export interface MorphProps extends MotionElementProps<"div"> {
  */
 export function Morph({
   contentKey,
+  disclosure = false,
   className,
   style,
   ref,
@@ -82,7 +88,10 @@ export function Morph({
   ...rest
 }: MorphProps): ReactElement {
   const reduced = useMotionPreference() === "reduced";
-  const transition = useButteryTransition("smooth");
+  const smooth = useButteryTransition("smooth");
+  const snappy = useButteryTransition("snappy");
+  const grow = disclosure ? snappy : smooth;
+  const shrink = disclosure && !reduced ? quick : smooth;
   const tracking = useAnimationTracking();
   const height = useMotionValue<number | string>("auto");
   const outer = useRef<HTMLDivElement>(null);
@@ -131,7 +140,7 @@ export function Morph({
       busy.current.growing = true;
       syncClip(box, busy.current);
       tracking.onAnimationStart();
-      const controls = animate(height, to, transition);
+      const controls = animate(height, to, to > from ? grow : shrink);
       running = controls;
       void controls.finished.then(() => {
         if (running === controls) settle();
@@ -145,7 +154,7 @@ export function Morph({
         settle();
       }
     };
-  }, [reduced, transition, height, tracking]);
+  }, [reduced, grow, shrink, height, tracking]);
 
   return (
     <motion.div
