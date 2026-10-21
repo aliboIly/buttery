@@ -165,10 +165,17 @@
     }
   }
 
-  /* 1280px of shell beside a full sidebar, less a docked side panel's width when there is one. */
-  @container bt-column (width >= 1040px) {
-    .bt-app-page > [data-bt-part="frame"] > [data-bt-part="body"][data-aside] {
-      grid-template-columns: minmax(0, 1fr) var(--bt-w-aside);
+  /*
+   * 1280px of shell beside a full sidebar, less a docked side panel's width when there is one. Under 1100px
+   * of shell the sidebar is an icon rail, whose wider column would put the rail beside and take it away again.
+   */
+  @container bt-shell (width >= 1100px) {
+    @container bt-column (width >= 1040px) {
+      .bt-app-page
+        > [data-bt-part="frame"]
+        > [data-bt-part="body"][data-aside] {
+        grid-template-columns: minmax(0, 1fr) var(--bt-w-aside);
+      }
     }
   }
 }

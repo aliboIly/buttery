@@ -164,18 +164,21 @@ describe("AppPage", () => {
     ).toBe(32);
   });
 
-  it("sets its right rail beside the page from 1040px of column, and under it below that", () => {
+  it("sets its right rail beside the page from 1040px of column beside a full sidebar, and under it otherwise", () => {
     inShell(1280, <Orders aside={<p>Details</p>} />);
     const rail = screen.getByRole("complementary", { name: "Order details" });
     expect(rail.getBoundingClientRect().width).toBe(320);
     expect(rail.getBoundingClientRect().left - box("main").right).toBe(32);
-    cleanup();
-    inShell(1100, <Orders aside={<p>Details</p>} />);
-    expect(
-      screen
-        .getByRole("complementary", { name: "Order details" })
-        .getBoundingClientRect().top,
-    ).toBeGreaterThanOrEqual(box("main").bottom);
+    for (const width of [1100, 1099]) {
+      cleanup();
+      inShell(width, <Orders aside={<p>Details</p>} />);
+      expect(column().width).toBeGreaterThan(width === 1099 ? 1040 : 0);
+      expect(
+        screen
+          .getByRole("complementary", { name: "Order details" })
+          .getBoundingClientRect().top,
+      ).toBeGreaterThanOrEqual(box("main").bottom);
+    }
   });
 
   it("gives its last block the rest of the height when filled", () => {

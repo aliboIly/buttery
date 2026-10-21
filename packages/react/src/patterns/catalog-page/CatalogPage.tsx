@@ -291,8 +291,8 @@ export interface CatalogPageComponent {
 /**
  * A page of things to browse, such as add-ons, in the page grammar: an `AppPage` with its title and one
  * line under it, then a filter column 220 wide (a search, `CatalogPage.Categories`, `CatalogPage.Group`s
- * of checkboxes and an action) beside the catalog, 32 apart, from 900px of column, and above it below
- * that. The catalog is a `CatalogPage.Featured` block on a tinted surface, then `CatalogPage.Section`s,
+ * of checkboxes and an action) beside the catalog, 32 apart, from 900px of column in a shell at least
+ * 1100 wide, and above it otherwise. The catalog is a `CatalogPage.Featured` block on a tinted surface, then `CatalogPage.Section`s,
  * each a grid of `CatalogPage.Item`s, two columns from 560px of room.
  *
  * @example

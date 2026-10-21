@@ -112,6 +112,20 @@ describe("CatalogPage", () => {
     );
   });
 
+  it("keeps its filters above the catalog beside a narrow shell's icon rail, however wide the column", () => {
+    inShell(1099, <AddOns />);
+    expect(
+      box(screen.getByRole("region", { name: "Featured" })).top,
+    ).toBeGreaterThan(
+      box(screen.getByRole("complementary", { name: "Filters" })).bottom,
+    );
+    cleanup();
+    inShell(1140, <AddOns />);
+    expect(box(screen.getByRole("region", { name: "Featured" })).left).toBe(
+      box(screen.getByRole("complementary", { name: "Filters" })).right + 32,
+    );
+  });
+
   it("folds its header's actions on a phone without running them over its title, and shows only the crumb one level up", async () => {
     inShell(
       390,

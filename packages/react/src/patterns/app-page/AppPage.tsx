@@ -23,8 +23,8 @@ export interface AppPageProps extends ComponentPropsWithRef<"main"> {
   /** The page's header, a `PageHeader`, with its tabs and quick actions inside it. */
   readonly header?: ReactNode;
   /**
-   * A right rail beside the page, 320px wide from 1040px of the shell's column (1280 of shell beside a full
-   * sidebar, with no side panel docked), under the page below that.
+   * A right rail beside the page, 320px wide from 1040px of the shell's column beside a full sidebar (1280 of
+   * shell, with no side panel docked), under the page otherwise, including beside a narrow shell's icon rail.
    */
   readonly aside?: ReactNode;
   /** Names the right rail's landmark, such as "Customer details". Defaults to `"Details"`. */
@@ -184,10 +184,10 @@ export interface AppPageComponent {
 /**
  * A dashboard page in an `AppShell layout="sidebar"`: its `main` landmark, centered in the column at most
  * 1280px wide with its padding (`contained`), 960 (`medium`) or 820 (`narrow`), or `full`, padded 16, 24 or
- * 32 by the column's width. The
- * header comes first and the page's sections 24px under it, 32px apart; a right rail sits beside them,
- * 320px wide and 32px away, from 1040px of column, and under them below that. With `fill`, the last block
- * takes the rest of the height so a table scrolls inside it. Its end padding leaves room for floating lanes.
+ * 32 by the column's width. The header comes first and the page's sections 24px under it, 32px apart; a
+ * right rail sits beside them, 320px wide and 32px away, from 1040px of column beside a full sidebar, and
+ * under them otherwise. With `fill`, the last block takes the rest of the height so a table scrolls inside
+ * it. Its end padding leaves room for floating lanes.
  * Each page starts at the top: mounting one scrolls the shell's page region back up, so key a page by what
  * it shows (`<CustomerPage key={id} />`) when one route renders it for different records.
  *
