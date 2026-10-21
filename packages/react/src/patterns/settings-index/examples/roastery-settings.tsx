@@ -1,8 +1,9 @@
-import type { ReactElement } from "react";
+import type { ExamplePlay } from "@buttery/core";
 import { SettingsIndex } from "@buttery/react";
 import { Building2, Landmark, Truck } from "lucide-react";
+import type { ReactElement } from "react";
 
-/** A small settings page with two groups. */
+/** A small settings page with two groups, the last ending with a dashed link to more. */
 export function RoasterySettings(): ReactElement {
   return (
     <SettingsIndex>
@@ -27,7 +28,16 @@ export function RoasterySettings(): ReactElement {
           description="Your bank and when sales arrive."
           href="#settings-payouts"
         />
+        <SettingsIndex.More
+          title="Find more settings"
+          description="Add-ons for tax, labels and accounting."
+          href="#settings-more"
+        />
       </SettingsIndex.Section>
     </SettingsIndex>
   );
 }
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Find more settings");
+};

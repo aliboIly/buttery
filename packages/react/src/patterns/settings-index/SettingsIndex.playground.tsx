@@ -87,6 +87,11 @@ export const demos: readonly DemoSection[] = [
             description="When an order waits for a look."
             href="#settings-fraud"
           />
+          <SettingsIndex.More
+            title="Find more settings"
+            description="Add-ons for tax, labels and accounting."
+            href="#settings-more"
+          />
         </SettingsIndex.Section>
       </SettingsIndex>
     ),

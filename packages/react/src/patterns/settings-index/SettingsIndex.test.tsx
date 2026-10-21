@@ -74,6 +74,24 @@ describe("SettingsIndex", () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
+  it("ends a section with a dashed link to more, its tile a plus", () => {
+    render(
+      <SettingsIndex>
+        <SettingsIndex.Section title="Your shop">
+          <SettingsIndex.More
+            title="Find more settings"
+            description="Add-ons and integrations."
+            href="#more"
+          />
+        </SettingsIndex.Section>
+      </SettingsIndex>,
+    );
+    const more = screen.getByRole("link", { name: /Find more settings/ });
+    expect(getComputedStyle(more).borderTopStyle).toBe("dashed");
+    expect(more.getAttribute("href")).toBe("#more");
+    expect(more.querySelector('[data-bt-part="tile"] svg')).not.toBeNull();
+  });
+
   it("lays links in three columns with room, two from 640px and one under that", () => {
     const columns = (): number => {
       const tops = screen

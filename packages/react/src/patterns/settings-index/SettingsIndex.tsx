@@ -1,4 +1,5 @@
 import { Icon, Text, cx } from "@buttery/core";
+import { Plus } from "lucide-react";
 import type { IconComponentProps, TextStackTitleElement } from "@buttery/core";
 import { useId } from "react";
 import type {
@@ -101,6 +102,51 @@ export function SettingsIndexLink({
   );
 }
 
+/** Props for `SettingsIndex.More`. */
+export interface SettingsIndexMoreProps {
+  /** Where it leads, such as "Find more settings". */
+  readonly title: string;
+  /** A line on what's there. */
+  readonly description?: string | undefined;
+  /** The page it opens. */
+  readonly href: string;
+  /** Runs as the link is followed, where a router can take over. */
+  readonly onClick?:
+    ((event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
+}
+
+/** The last link of a section, to more of them: a block with a 1px dashed `border`, a plus in its tile. */
+export function SettingsIndexMore({
+  title,
+  description,
+  href,
+  onClick,
+}: SettingsIndexMoreProps): ReactElement {
+  return (
+    <li>
+      <a
+        href={href}
+        onClick={onClick}
+        className="bt-focus"
+        data-bt-part="link"
+        data-more=""
+      >
+        <span data-bt-part="tile">
+          <Icon icon={Plus} />
+        </span>
+        <span data-bt-part="text">
+          <Text>{title}</Text>
+          {description === undefined ? null : (
+            <Text variant="body-sm" asChild>
+              <span>{description}</span>
+            </Text>
+          )}
+        </span>
+      </a>
+    </li>
+  );
+}
+
 /** `SettingsIndex` with its parts. */
 export interface SettingsIndexComponent {
   (props: SettingsIndexProps): ReactElement;
@@ -108,12 +154,15 @@ export interface SettingsIndexComponent {
   readonly Section: typeof SettingsIndexSection;
   /** One settings page. */
   readonly Link: typeof SettingsIndexLink;
+  /** The last link of a section, to more settings, drawn dashed. */
+  readonly More: typeof SettingsIndexMore;
 }
 
 /**
  * A settings home page: sections 32 apart, each a `title-md` heading over a grid of links, three columns
  * from 1024px of its own width, two from 640 and one under that. Each link is a block with an icon tile,
- * the page's name and a line on what's inside, tinted on hover.
+ * the page's name and a line on what's inside, tinted on hover; `SettingsIndex.More` ends a section with
+ * a dashed link to more.
  *
  * @example
  * <SettingsIndex>
@@ -127,5 +176,6 @@ export const SettingsIndex: SettingsIndexComponent = Object.assign(
   {
     Section: SettingsIndexSection,
     Link: SettingsIndexLink,
+    More: SettingsIndexMore,
   },
 );

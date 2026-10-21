@@ -57,6 +57,10 @@
     }
   }
 
+  .bt-settings-index-section [data-bt-part="link"][data-more] {
+    border: var(--bt-settings-index-line) dashed var(--bt-border-strong);
+  }
+
   .bt-settings-index-section [data-bt-part="tile"] {
     display: grid;
     place-items: center;
