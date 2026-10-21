@@ -219,3 +219,25 @@ export type {
   ColorPickerLabels,
   ColorPickerProps,
 } from "./components/color-picker/ColorPicker.tsx";
+export {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogClose,
+  DialogContent,
+  DialogMedia,
+  DialogText,
+  DialogTrigger,
+} from "./components/dialog/Dialog.tsx";
+export type {
+  DialogActionsProps,
+  DialogBodyProps,
+  DialogCloseProps,
+  DialogComponent,
+  DialogContentProps,
+  DialogMediaProps,
+  DialogProps,
+  DialogSize,
+  DialogTextProps,
+  DialogTriggerProps,
+} from "./components/dialog/Dialog.tsx";

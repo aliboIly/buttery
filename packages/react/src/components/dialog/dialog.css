@@ -1,0 +1,95 @@
+@layer bt.components {
+  .bt-dialog {
+    --bt-dialog-width: var(--bt-w-dialog);
+    --bt-dialog-close-center: var(--bt-space-6);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    inline-size: min(var(--bt-dialog-width), 100%);
+    max-block-size: 100%;
+    min-inline-size: 0;
+    padding: 0;
+    outline: none;
+  }
+
+  .bt-dialog[data-size="md"] {
+    --bt-dialog-width: var(--bt-w-dialog-md);
+  }
+
+  .bt-dialog[data-size="lg"] {
+    --bt-dialog-width: var(--bt-w-dialog-lg);
+  }
+
+  /* The scrim and the frame render in the modal layer, away from the dialog, so they carry their own classes. */
+  .bt-dialog-scrim[data-bt-part="scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Fills the layer and centers the dialog, 16px inside the window; a press on it is a press outside. */
+  .bt-dialog-frame[data-bt-part="frame"] {
+    display: grid;
+    place-items: center;
+    block-size: 100%;
+    padding: var(--bt-space-4);
+    overflow: hidden;
+  }
+
+  .bt-dialog > [data-bt-part="scroll"] {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Centered 24px from the top and end edges, over the media when there is some. */
+  .bt-dialog > [data-bt-part="close"] {
+    position: absolute;
+    inset-block-start: calc(var(--bt-dialog-close-center) - var(--bt-h-sm) / 2);
+    inset-inline-end: calc(var(--bt-dialog-close-center) - var(--bt-h-sm) / 2);
+  }
+
+  /* The parts work directly in the dialog or inside a form that wraps them. */
+  .bt-dialog-media {
+    flex: none;
+    padding: var(--bt-space-2) var(--bt-space-2) 0;
+  }
+
+  .bt-dialog-media > [data-bt-part="picture"] {
+    overflow: clip;
+    border-radius: var(--bt-r-md);
+  }
+
+  .bt-dialog-text {
+    padding: var(--bt-space-6) var(--bt-space-6) 0;
+  }
+
+  /* Without media the title starts in the close button's row, so it keeps clear of the button (38px in from the edge). */
+  .bt-dialog[data-closable] .bt-dialog-text:first-child {
+    padding-inline-end: var(--bt-space-12);
+  }
+
+  .bt-dialog-text:last-child,
+  .bt-dialog-body:last-child {
+    padding-block-end: var(--bt-space-6);
+  }
+
+  .bt-dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+    padding: var(--bt-space-5) var(--bt-space-6) 0;
+  }
+
+  .bt-dialog-actions {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    flex: none;
+    gap: var(--bt-space-2);
+    padding: var(--bt-space-5) var(--bt-space-6) var(--bt-space-6);
+  }
+}
