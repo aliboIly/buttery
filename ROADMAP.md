@@ -49,7 +49,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 ## v0.6 — Choreography (Phase 6)
 - [ ] Dialog, Onboarding (StepDialog), PageDots
 - [ ] NavBar (static, sticky, auto-hide) + MorphMenu, SubNav
-- [ ] Bento + ExpandableCard
+- [x] Bento + ExpandableCard
 - [ ] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer
 - [ ] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
 

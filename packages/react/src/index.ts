@@ -286,3 +286,5 @@ export type {
   BentoSpan,
   BentoState,
 } from "./patterns/bento/Bento.tsx";
+export { ExpandableCard } from "./patterns/expandable-card/ExpandableCard.tsx";
+export type { ExpandableCardProps } from "./patterns/expandable-card/ExpandableCard.tsx";

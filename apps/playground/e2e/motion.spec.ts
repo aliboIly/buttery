@@ -522,6 +522,43 @@ test.describe("full motion", () => {
     );
   });
 
+  test("an expandable card grows into its dialog on spring.morph and goes back into the card on spring.smooth", async ({
+    page,
+  }) => {
+    await page.goto("/?chrome=0&motion=full#/expandable-card");
+    const card = '[data-bt="ExpandableCard"]';
+    const expand = page
+      .getByRole("button", { name: "Open Lean it in 3D", exact: true })
+      .first();
+    const resting = await peek(page, card);
+    if (!resting) throw new Error("There's no card to open.");
+    await expand.focus();
+    await startSampling(page, '[data-bt-part="panel"]');
+    await page.keyboard.press("Enter");
+    const opening = await finishSampling(page, 800);
+    const growing = trace(opening, (reading) => reading.width);
+    const open = growing.at(-1)?.value ?? resting.width;
+    expect(open - resting.width).toBeGreaterThan(40);
+    expectSpring(
+      "card growing into its dialog",
+      progress(growing, resting.width, open),
+      "morph",
+    );
+    await startSampling(page, card);
+    await page.keyboard.press("Escape");
+    const closing = await finishSampling(page, 600);
+    expectSpring(
+      "dialog going back into the card",
+      progress(
+        trace(closing, (reading) => reading.width),
+        open,
+        resting.width,
+      ),
+      "smooth",
+    );
+    await expect(expand).toBeFocused();
+  });
+
   test("pressing scales to 97% over dur-press and lets go over dur-fast", async ({
     page,
   }) => {
@@ -855,6 +892,32 @@ test.describe("reduced motion", () => {
       LINEAR,
       DURATIONS.reduced,
     );
+  });
+
+  test("an expandable card's dialog fades in place in 100ms", async ({
+    page,
+  }) => {
+    await page.goto("/?chrome=0&motion=reduced#/expandable-card");
+    await page
+      .getByRole("button", { name: "Open Lean it in 3D", exact: true })
+      .first()
+      .focus();
+    await startSampling(page, '[data-bt-part="panel"]');
+    await page.keyboard.press("Enter");
+    const run = await finishSampling(page, 300);
+    expectTween(
+      "expanded card fading in",
+      progress(trace(run, opacity), 0, 1),
+      LINEAR,
+      DURATIONS.reduced,
+    );
+    expectAtRest(run);
+    const widths = new Set(
+      run.frames.flatMap(({ elements }) =>
+        elements.map((reading) => Math.round(reading.width)),
+      ),
+    );
+    expect(widths.size).toBe(1);
   });
 
   test("Stagger and Reveal simply show", async ({ page }) => {

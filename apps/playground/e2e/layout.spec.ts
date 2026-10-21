@@ -190,6 +190,19 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
   ],
+  "expandable-card": [
+    {
+      name: "open the card",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Open Lean it in 3D", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog").waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
   onboarding: [
     {
       name: "open the tour",

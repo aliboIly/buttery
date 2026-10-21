@@ -1,0 +1,63 @@
+@layer bt.patterns {
+  .bt-expandable-card {
+    cursor: pointer;
+  }
+
+  /* Going back into its place, the card passes over its neighbours as they return. */
+  .bt-expandable-card[data-travelling] {
+    z-index: var(--bt-z-raised);
+  }
+
+  /* The scrim and the frame render in the modal layer, away from the card, so they carry their own classes. */
+  .bt-expandable-card-scrim[data-bt-part="scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The frame is a size container, so the title steps up with the room the way it does in the bento. */
+  .bt-expandable-card-frame[data-bt-part="frame"] {
+    container-type: inline-size;
+    display: grid;
+    place-items: center;
+    block-size: 100%;
+    padding: var(--bt-space-4);
+    overflow: hidden;
+  }
+
+  .bt-expandable-card-panel[data-bt-part="panel"] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    inline-size: min(var(--bt-w-dialog-lg), 100%);
+    max-block-size: 100%;
+    min-inline-size: 0;
+    padding: 0;
+    border-radius: var(--bt-r-3xl);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    outline: none;
+  }
+
+  .bt-expandable-card-panel > [data-bt-part="head"] {
+    display: flex;
+    flex: none;
+    padding: var(--bt-space-6) var(--bt-space-12) 0 var(--bt-space-6);
+  }
+
+  /* The same box as the card's title, so the title travels without stretching. */
+  .bt-expandable-card-panel > [data-bt-part="head"] > [data-bt-part="title"] {
+    min-inline-size: 0;
+    max-inline-size: 22ch;
+  }
+
+  .bt-expandable-card-panel > [data-bt-part="detail"] {
+    min-inline-size: 0;
+    padding: var(--bt-space-4) var(--bt-space-6) var(--bt-space-6);
+  }
+
+  .bt-expandable-card-panel > [data-bt-part="close"] {
+    position: absolute;
+    inset-block-start: calc(var(--bt-space-6) - var(--bt-h-sm) / 2);
+    inset-inline-end: calc(var(--bt-space-6) - var(--bt-h-sm) / 2);
+  }
+}

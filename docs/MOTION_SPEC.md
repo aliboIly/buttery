@@ -152,8 +152,11 @@ Measured from a local 30fps recording of a marketing site's top bar (`reference/
 
 ### 4.2 Card → modal (`ExpandableCard`)
 Clicking a bento card turns *that card* into the modal (shared layout). Grid behind fades to 0 opacity and the scrim washes in; card content crossfades to detail content mid-flight.
-- Open: `spring.morph` (~350–400ms measured). Close: reverse into the same card, 250ms.
+- Open: `spring.morph` (~350–400ms measured). Close: reverse into the same card, 250ms (`spring.smooth`).
 - The card's title is a shared element — it travels, it doesn't re-render somewhere else.
+- The other cards step back to opacity 0 over `dur-base` with `ease-standard` and come back the same way as it closes; the scrim washes in with the `fade` preset.
+- The detail and the close button keep their shape as the dialog grows around them (Motion's scale correction) and fade in over `dur-fast` after `--bt-delay-follow`. Closing, they go at once and the empty surface folds back into the card, crossfading to it in the second half: Motion corrects only the parts of the surface that's arriving, and leaves a leaving surface's parts where they were, so they can't travel back. The card passes over its neighbours on the way back.
+- Reduced motion: the dialog fades in and out in place in 100ms, and nothing grows.
 
 ### 4.3 Staggered entrance (`Reveal`, `Stagger`)
 - On first entering the viewport (IntersectionObserver, 15% visible, `once`): opacity 0→1, y 16→0, `spring.gentle`, children staggered `--bt-stagger`.
