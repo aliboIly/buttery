@@ -80,6 +80,36 @@ describe("useShortcut", () => {
     expect(handler).toHaveBeenCalledTimes(1);
   });
 
+  it("leaves a plain key to a menu that types ahead or an open modal, but not a shortcut with ⌘ or Ctrl", async () => {
+    const plain = vi.fn();
+    const modified = vi.fn();
+    function Page({ over }: { readonly over: "menu" | "modal" }): ReactElement {
+      useShortcut("n", plain);
+      useShortcut("mod+n", modified);
+      return over === "menu" ? (
+        <div role="menu" aria-label="Actions">
+          <button type="button" role="menuitem">
+            New
+          </button>
+        </div>
+      ) : (
+        <div role="dialog" aria-modal="true" aria-label="Rename">
+          <button type="button">Save</button>
+        </div>
+      );
+    }
+    const { rerender } = render(<Page over="menu" />);
+    document.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+    await userEvent.keyboard("n");
+    expect(plain).not.toHaveBeenCalled();
+    rerender(<Page over="modal" />);
+    document.querySelector<HTMLElement>("button")?.focus();
+    await userEvent.keyboard("n");
+    expect(plain).not.toHaveBeenCalled();
+    await userEvent.keyboard(`{${mod}>}n{/${mod}}`);
+    expect(modified).toHaveBeenCalledTimes(1);
+  });
+
   it("stops listening when disabled", async () => {
     const handler = vi.fn();
     const { rerender } = render(

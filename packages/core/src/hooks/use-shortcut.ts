@@ -120,6 +120,20 @@ export function isTypingField(target: EventTarget | null): boolean {
   );
 }
 
+const TYPEAHEAD =
+  '[role="menu"], [role="menubar"], [role="listbox"], [role="combobox"], [role="tree"], [role="grid"]';
+
+/**
+ * Whether a plain key press, one without ⌘, Ctrl or Alt, belongs to something over the page: a menu or
+ * list that jumps to what's typed, or an open modal dialog. Page shortcuts leave those keys alone.
+ */
+function heldOverPage(event: KeyboardEvent): boolean {
+  const { target } = event;
+  if (target instanceof Element && target.closest(TYPEAHEAD) !== null)
+    return true;
+  return document.querySelector('[aria-modal="true"]') !== null;
+}
+
 /** Whether a key press is the shortcut, with `mod` as ⌘ when `apple` and Ctrl otherwise. */
 export function matchesShortcut(
   event: KeyboardEvent,
@@ -142,7 +156,9 @@ export function matchesShortcut(
 /**
  * Runs `handler` when the shortcut is pressed anywhere in the window, and stops the browser's own action
  * for it, such as opening a file for ⌘O. It skips presses already handled and, unless `inFields`, presses
- * while typing in a field. An `undefined` shortcut binds nothing, for a component whose shortcut is optional.
+ * while typing in a field. A plain key, such as `"n"`, also waits while focus is in a menu or list that
+ * jumps to what's typed, or while a modal dialog is open. An `undefined` shortcut binds nothing, for a
+ * component whose shortcut is optional.
  *
  * @example
  * useShortcut("mod+z", undo);
@@ -167,6 +183,13 @@ export function useShortcut(
       if (event.defaultPrevented || event.isComposing) return;
       if (!inFields && isTypingField(event.target)) return;
       if (!matchesShortcut(event, shortcut, apple)) return;
+      if (
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        heldOverPage(event)
+      )
+        return;
       event.preventDefault();
       latest.current(event);
     };
