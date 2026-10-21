@@ -130,16 +130,19 @@ export function TabsTab({
   ...rest
 }: TabsTabProps): ReactElement {
   const tabs = useTabs("Tab");
+  const chosen = tabs.value === value;
   return (
     <OverflowCluster.Item
+      priority={chosen ? 1 : 0}
       menuItem={{
         label: children,
+        selected: chosen,
         onSelect: () => {
           tabs.choose(value);
         },
       }}
     >
-      <SharedIndicator active={tabs.value === value} asChild>
+      <SharedIndicator active={chosen} asChild>
         <RadixTabs.Trigger
           {...rest}
           value={value}

@@ -103,9 +103,26 @@ describe("Tabs", () => {
     expect(screen.queryByRole("tab", { name: "Activity" })).toBeNull();
     await userEvent.click(more);
     await userEvent.click(
-      await screen.findByRole("menuitem", { name: "Activity" }),
+      await screen.findByRole("menuitemradio", { name: "Activity" }),
     );
     expect(screen.getByRole("tabpanel").textContent).toBe("Activity panel");
+  });
+
+  it("keeps the chosen tab in the row once it's chosen from the menu, so Tab never changes the choice", async () => {
+    render(<Customer width={300} />);
+    await userEvent.click(
+      await screen.findByRole("button", { name: "More tabs" }),
+    );
+    await userEvent.click(
+      await screen.findByRole("menuitemradio", { name: "Activity" }),
+    );
+    await waitFor(() => {
+      expect(
+        screen
+          .getByRole("tab", { name: "Activity" })
+          .getAttribute("aria-selected"),
+      ).toBe("true");
+    });
   });
 
   it("can be controlled", async () => {

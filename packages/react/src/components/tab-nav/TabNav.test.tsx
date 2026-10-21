@@ -122,4 +122,14 @@ describe("TabNav", () => {
     expect(link.className).toContain("bt-tab");
     expect(link.getAttribute("aria-current")).toBe("page");
   });
+
+  it("keeps the current page's link in a narrow row", async () => {
+    render(<Views width={300} current="Archived" />);
+    await screen.findByRole("button", { name: "More pages" });
+    expect(
+      screen
+        .getByRole("link", { name: "Archived" })
+        .getAttribute("aria-current"),
+    ).toBe("page");
+  });
 });

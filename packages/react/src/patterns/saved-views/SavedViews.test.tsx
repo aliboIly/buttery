@@ -124,4 +124,20 @@ describe("SavedViews", () => {
     );
     expect(onValueChange).toHaveBeenCalledWith("refunds");
   });
+
+  it("keeps the chosen view in a narrow row", async () => {
+    render(
+      <div style={{ inlineSize: "300px" }}>
+        <SavedViews label="Order views" views={VIEWS} defaultValue="refunds" />
+      </div>,
+    );
+    await waitFor(() => {
+      expect(screen.queryByRole("radio", { name: "Wholesale" })).toBeNull();
+    });
+    expect(
+      screen
+        .getByRole("radio", { name: "Refunds this month" })
+        .getAttribute("aria-checked"),
+    ).toBe("true");
+  });
 });

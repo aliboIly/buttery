@@ -93,6 +93,7 @@ export function TabNavLink(props: TabNavLinkProps): ReactElement {
   };
   return (
     <OverflowCluster.Item
+      priority={current ? 1 : 0}
       menuItem={{
         label: text,
         onSelect: () => {

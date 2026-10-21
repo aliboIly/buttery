@@ -183,15 +183,41 @@ function OverflowClusterRoot({
               </Menu.Trigger>
               <Menu.Content>
                 {menu ??
-                  overflowed.map(({ id, menuItem }) => (
-                    <Menu.Item
-                      key={id}
-                      icon={menuItem.icon}
-                      disabled={menuItem.disabled}
-                      onSelect={menuItem.onSelect}
+                  (overflowed.some(
+                    ({ menuItem }) => menuItem.selected !== undefined,
+                  ) ? (
+                    <Menu.RadioGroup
+                      value={
+                        overflowed.find(({ menuItem }) => menuItem.selected)
+                          ?.id ?? ""
+                      }
+                      onValueChange={(chosen) => {
+                        overflowed
+                          .find(({ id }) => id === chosen)
+                          ?.menuItem.onSelect();
+                      }}
                     >
-                      {menuItem.label}
-                    </Menu.Item>
+                      {overflowed.map(({ id, menuItem }) => (
+                        <Menu.RadioItem
+                          key={id}
+                          value={id}
+                          disabled={menuItem.disabled}
+                        >
+                          {menuItem.label}
+                        </Menu.RadioItem>
+                      ))}
+                    </Menu.RadioGroup>
+                  ) : (
+                    overflowed.map(({ id, menuItem }) => (
+                      <Menu.Item
+                        key={id}
+                        icon={menuItem.icon}
+                        disabled={menuItem.disabled}
+                        onSelect={menuItem.onSelect}
+                      >
+                        {menuItem.label}
+                      </Menu.Item>
+                    ))
                   ))}
               </Menu.Content>
             </Menu>

@@ -11,6 +11,11 @@ export interface OverflowMenuItem {
   readonly icon?: ComponentType<IconComponentProps> | undefined;
   /** Shows the menu item but stops it being chosen. Defaults to `false`. */
   readonly disabled?: boolean | undefined;
+  /**
+   * For items that are choices among each other, such as tabs: whether this one is chosen. The menu lists
+   * items that say either way as radio items, the chosen one checked.
+   */
+  readonly selected?: boolean | undefined;
 }
 
 /** One registered cluster item. */

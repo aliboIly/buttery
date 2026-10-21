@@ -125,6 +125,7 @@ export function SavedViews({
             {views.map((view) => (
               <OverflowCluster.Item
                 key={view.id}
+                priority={view.id === chosen ? 1 : 0}
                 menuItem={{
                   label: view.label,
                   onSelect: () => {
