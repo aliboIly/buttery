@@ -1,12 +1,8 @@
 import type { ReactElement } from "react";
-import { Button, Dialog } from "@buttery/react";
+import { Button, Dialog, toast } from "@buttery/react";
 
 /** A confirmation before something can't be undone, with the safe choice first, where focus lands. */
-export function DeleteConfirm({
-  onDelete,
-}: {
-  readonly onDelete: () => void;
-}): ReactElement {
+export function DeleteConfirm(): ReactElement {
   return (
     <Dialog>
       <Dialog.Trigger asChild>
@@ -28,7 +24,9 @@ export function DeleteConfirm({
               variant="primary"
               size="cta"
               shape="rounded"
-              onClick={onDelete}
+              onClick={() => {
+                toast("Card deleted");
+              }}
             >
               Delete
             </Button>
