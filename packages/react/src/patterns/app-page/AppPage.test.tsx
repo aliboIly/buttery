@@ -85,6 +85,19 @@ describe("AppPage", () => {
     expect(box("header").left - frame.left).toBe(32);
   });
 
+  it("keeps a settings page at most 960px and a dense form at most 820px, centered", () => {
+    inShell(1728, <AppPage width="medium" header={<h1>Pickup</h1>} />);
+    expect(box("frame").width).toBe(960);
+    cleanup();
+    inShell(1728, <AppPage width="narrow" header={<h1>Notifications</h1>} />);
+    const frame = box("frame");
+    const area = column();
+    expect(frame.width).toBe(820);
+    expect(
+      Math.abs(frame.left - area.left - (area.right - frame.right)),
+    ).toBeLessThan(1);
+  });
+
   it("fills the column when full, padded 24 in a narrower column and 16 on a phone", () => {
     inShell(1100, <AppPage width="full" header={<h1>Orders</h1>} />);
     expect(box("frame").width).toBe(column().width);

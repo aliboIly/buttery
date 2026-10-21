@@ -123,8 +123,11 @@
     --bt-w-sidebar: 240px;
     --bt-w-sidebar-rail: 56px;
     --bt-w-app-page: 1280px;
+    --bt-w-app-page-md: 960px;
+    --bt-w-app-page-sm: 820px;
     --bt-w-aside: 320px;
     --bt-w-search: 360px;
+    --bt-w-search-open: 600px;
     --bt-w-dialog: 400px;
     --bt-w-dialog-md: 560px;
     --bt-w-dialog-lg: 880px;

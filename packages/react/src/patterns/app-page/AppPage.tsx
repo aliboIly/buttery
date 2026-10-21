@@ -14,8 +14,12 @@ import { AppPageContext } from "./app-page-context.ts";
 
 /** Props for `AppPage`. */
 export interface AppPageProps extends ComponentPropsWithRef<"main"> {
-  /** `"contained"` (the default), at most 1280px wide with its padding and centered, or `"full"`, the column's width. */
-  readonly width?: "contained" | "full" | undefined;
+  /**
+   * How wide the page gets, its padding included, centered in the column: `"contained"` (the default),
+   * 1280px, for index and table pages; `"medium"`, 960px, for a settings detail page; `"narrow"`, 820px, for
+   * a dense form or a preferences matrix; or `"full"`, the column's width.
+   */
+  readonly width?: "contained" | "medium" | "narrow" | "full" | undefined;
   /** The page's header, a `PageHeader`, with its tabs and quick actions inside it. */
   readonly header?: ReactNode;
   /** A right rail beside the page, 320px wide from 1280px of shell, under the page below that. */
@@ -145,8 +149,9 @@ export interface AppPageComponent {
 }
 
 /**
- * A dashboard page in an `AppShell layout="sidebar"`: its `main` landmark, `contained` (at most 1280px wide
- * with its padding, centered in the column) or `full`, padded 16, 24 or 32 by the column's width. The
+ * A dashboard page in an `AppShell layout="sidebar"`: its `main` landmark, centered in the column at most
+ * 1280px wide with its padding (`contained`), 960 (`medium`) or 820 (`narrow`), or `full`, padded 16, 24 or
+ * 32 by the column's width. The
  * header comes first and the page's sections 24px under it, 32px apart; a right rail sits beside them,
  * 320px wide and 32px away, from 1280px of shell, and under them below that. With `fill`, the last block
  * takes the rest of the height so a table scrolls inside it. Its end padding leaves room for floating lanes.

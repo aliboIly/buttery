@@ -19,6 +19,14 @@
     padding-inline: var(--bt-space-4);
   }
 
+  .bt-app-page[data-width="medium"] > [data-bt-part="frame"] {
+    max-inline-size: var(--bt-w-app-page-md);
+  }
+
+  .bt-app-page[data-width="narrow"] > [data-bt-part="frame"] {
+    max-inline-size: var(--bt-w-app-page-sm);
+  }
+
   .bt-app-page[data-width="full"] > [data-bt-part="frame"] {
     max-inline-size: none;
   }

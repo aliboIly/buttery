@@ -56,8 +56,9 @@ export const spring = {
 /** The name of a spring token. */
 export type SpringToken = keyof typeof spring;
 
-/** How far things travel as they arrive, in px: a toast or a popover rises 8, a revealed section 16. */
+/** How far things travel as they arrive, in px: a dialog rises 4, a toast or a popover 8, a revealed section 16. */
 export const travel = {
+  nudge: 4,
   rise: 8,
   reveal: 16,
 } as const;

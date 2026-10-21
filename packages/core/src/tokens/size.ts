@@ -116,6 +116,17 @@ export const widths = {
     description:
       "A contained app page's content, padding included, centered in the content column.",
   },
+  "app-page-md": {
+    cssVar: "--bt-w-app-page-md",
+    value: 960,
+    description: "A settings detail page's content, padding included.",
+  },
+  "app-page-sm": {
+    cssVar: "--bt-w-app-page-sm",
+    value: 820,
+    description:
+      "A dense form's or a preferences matrix's content, padding included.",
+  },
   aside: {
     cssVar: "--bt-w-aside",
     value: 320,
@@ -125,6 +136,12 @@ export const widths = {
     cssVar: "--bt-w-search",
     value: 360,
     description: "The top bar's search field, at most.",
+  },
+  "search-open": {
+    cssVar: "--bt-w-search-open",
+    value: 600,
+    description:
+      "The top bar's search field while it has focus, and its panel, at most.",
   },
   dialog: { cssVar: "--bt-w-dialog", value: 400, description: "Dialog width." },
   "dialog-md": {
