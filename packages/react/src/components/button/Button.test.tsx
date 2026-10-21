@@ -248,4 +248,31 @@ describe("Button", () => {
     await afterTransitions();
     expect(arrowState(button)).toEqual([0, -3]);
   });
+
+  it("shows its shortcut 8px after the label, out of its name and in aria-keyshortcuts", () => {
+    render(
+      <>
+        <Button variant="primary" shortcut="n">
+          New order
+        </Button>
+        <Button shortcut="mod+n">Duplicate</Button>
+      </>,
+    );
+    const button = screen.getByRole("button", { name: "New order" });
+    expect(button.getAttribute("aria-keyshortcuts")).toBe("N");
+    const shortcut = button.querySelector('[data-bt-part="shortcut"]');
+    const label = button.querySelector('[data-bt-part="label"]');
+    if (!shortcut || !label) throw new Error("No shortcut or label.");
+    expect(shortcut.getAttribute("aria-hidden")).toBe("true");
+    expect(shortcut.textContent).toBe("N");
+    expect(
+      shortcut.querySelector('[data-bt-part="key"]')?.getBoundingClientRect()
+        .left,
+    ).toBe(label.getBoundingClientRect().right + 8);
+    expect(
+      screen
+        .getByRole("button", { name: "Duplicate" })
+        .getAttribute("aria-keyshortcuts"),
+    ).toMatch(/^(?:Meta|Control)\+N$/);
+  });
 });

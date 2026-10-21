@@ -159,4 +159,15 @@
     color: transparent;
     cursor: default;
   }
+
+  /* A shortcut sits 8px after the label and takes the button's own color, so its caps read on a dark pill. */
+  .bt-button > [data-bt-part="shortcut"] {
+    padding-inline-start: var(--bt-space-0_5);
+  }
+
+  .bt-button > [data-bt-part="shortcut"] > [data-bt-part="key"] {
+    border-color: color-mix(in srgb, currentcolor 30%, transparent);
+    background-color: transparent;
+    color: inherit;
+  }
 }

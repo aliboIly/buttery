@@ -1,5 +1,13 @@
-import { Icon, Slot, cx } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import {
+  Icon,
+  Kbd,
+  Slot,
+  ariaKeyShortcuts,
+  cx,
+  shortcutKeys,
+  useApplePlatform,
+} from "@buttery/core";
+import type { IconComponentProps, Shortcut } from "@buttery/core";
 import { Slot as RadixSlot } from "radix-ui";
 import type {
   ComponentPropsWithRef,
@@ -40,6 +48,11 @@ export interface ButtonProps extends ComponentPropsWithRef<"button"> {
    */
   readonly arrow?: ArrowDirection | undefined;
   /**
+   * A keyboard shortcut to show after the label, written as `useShortcut` takes it, such as `"n"` or
+   * `"mod+n"`. It's announced through `aria-keyshortcuts`; bind it with `useShortcut`.
+   */
+  readonly shortcut?: Shortcut | undefined;
+  /**
    * Render the single child element (such as a link) as the button, with the button's look and parts
    * merged in. The child's own content is the label.
    */
@@ -64,6 +77,7 @@ export function Button({
   iconStart,
   iconEnd,
   arrow,
+  shortcut,
   asChild = false,
   className,
   type,
@@ -72,9 +86,12 @@ export function Button({
   children,
   ...rest
 }: ButtonProps): ReactElement {
+  const apple = useApplePlatform();
   const unavailable =
     rest["aria-disabled"] === true || rest["aria-disabled"] === "true";
   const blocked = loading || unavailable || (asChild && disabled === true);
+  const keyshortcuts =
+    shortcut === undefined ? undefined : ariaKeyShortcuts(shortcut, apple);
   const press = (event: MouseEvent<HTMLButtonElement>): void => {
     if (blocked) {
       event.preventDefault();
@@ -91,6 +108,13 @@ export function Button({
   );
   const after = (
     <>
+      {shortcut === undefined ? null : (
+        <Kbd
+          keys={shortcutKeys(shortcut)}
+          aria-hidden="true"
+          data-bt-part="shortcut"
+        />
+      )}
       {iconEnd ? <Icon icon={iconEnd} /> : null}
       {arrow === "forward" ? <Arrow direction="forward" /> : null}
       {loading ? <Spinner /> : null}
@@ -101,6 +125,7 @@ export function Button({
     return (
       <Slot
         {...rest}
+        aria-keyshortcuts={keyshortcuts}
         aria-busy={loading || undefined}
         aria-disabled={blocked || rest["aria-disabled"]}
         onClick={press}
@@ -125,6 +150,7 @@ export function Button({
       {...rest}
       type={type ?? "button"}
       disabled={disabled}
+      aria-keyshortcuts={keyshortcuts}
       aria-busy={loading || undefined}
       aria-disabled={loading || rest["aria-disabled"]}
       onClick={press}

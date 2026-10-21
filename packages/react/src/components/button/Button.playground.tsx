@@ -99,6 +99,19 @@ export const demos: readonly DemoSection[] = [
     ),
   },
   {
+    title: "With a shortcut",
+    description:
+      "The key that does the same thing, after the label in the button's own color. Bind it with useShortcut.",
+    render: () => (
+      <Inline gap={2} align="center">
+        <Button variant="primary" iconStart={Plus} shortcut="n">
+          New order
+        </Button>
+        <Button shortcut="mod+e">Export</Button>
+      </Inline>
+    ),
+  },
+  {
     title: "Loading",
     description:
       "A spinner over the label; the button keeps its size and ignores presses.",
