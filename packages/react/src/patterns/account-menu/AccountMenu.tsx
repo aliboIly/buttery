@@ -2,14 +2,22 @@ import { Icon, Menu, cx, hasContent } from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
 import { ArrowLeftRight, ChevronDown, Plus, Settings2 } from "lucide-react";
 import { DropdownMenu, VisuallyHidden } from "radix-ui";
-import type { ComponentType, ReactElement, ReactNode } from "react";
+import type {
+  ComponentPropsWithRef,
+  ComponentType,
+  ReactElement,
+  ReactNode,
+} from "react";
 import { Avatar } from "../../components/avatar/Avatar.tsx";
 import { InitialsTile } from "../../components/initials-tile/InitialsTile.tsx";
 import { Tooltip } from "../../components/tooltip/Tooltip.tsx";
 import { useSidebarMode } from "../sidebar/Sidebar.tsx";
 
-/** Props for `AccountMenu`. */
-export interface AccountMenuProps {
+/** Props for `AccountMenu`. `ref`, `className`, `style` and the rest go on its trigger. */
+export interface AccountMenuProps extends Omit<
+  ComponentPropsWithRef<"button">,
+  "children"
+> {
   /** The workspace's name, on the trigger and at the top of the menu. */
   readonly workspace: string;
   /** A line under the name at the top of the menu, such as the plan or how many people are in it. */
@@ -18,6 +26,8 @@ export interface AccountMenuProps {
   readonly label?: string | undefined;
   /** Whether the menu is open. Pair with `onOpenChange` to control it. */
   readonly open?: boolean | undefined;
+  /** Whether it starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
   /** Called when the menu opens or closes. */
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
   /** The menu's items: `Menu.Item`s, `AccountMenu.Workspaces`, `AccountMenu.User`, separators and submenus. */
@@ -29,15 +39,19 @@ function AccountMenuRoot({
   caption,
   label = "Workspace",
   open,
+  defaultOpen,
   onOpenChange,
+  className,
   children,
+  ...rest
 }: AccountMenuProps): ReactElement {
   const rail = useSidebarMode() === "rail";
   const trigger = (
     <Menu.Trigger asChild>
       <button
         type="button"
-        className="bt-account-menu-trigger bt-focus"
+        {...rest}
+        className={cx("bt-account-menu-trigger bt-focus", className)}
         data-bt="AccountMenu"
       >
         <InitialsTile name={workspace} size="xs" />
@@ -56,7 +70,7 @@ function AccountMenuRoot({
     </Menu.Trigger>
   );
   return (
-    <Menu open={open} onOpenChange={onOpenChange}>
+    <Menu open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       {rail ? (
         <Tooltip label={workspace} side="right">
           {trigger}

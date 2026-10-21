@@ -4,6 +4,7 @@ import { Menu, publishSettled } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { LogOut, Settings } from "lucide-react";
+import { createRef } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent as browser } from "vitest/browser";
@@ -67,6 +68,37 @@ function RailFrame({ width }: { readonly width: number }): ReactElement {
 }
 
 describe("AccountMenu", () => {
+  it("puts its ref, class, style and other props on its trigger", () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(
+      <AccountMenu
+        ref={ref}
+        workspace="Northside Roasters"
+        className="custom"
+        style={{ inlineSize: "200px" }}
+        data-testid="switcher"
+      />,
+    );
+    const trigger = screen.getByTestId("switcher");
+    expect(ref.current).toBe(trigger);
+    expect(trigger.dataset["bt"]).toBe("AccountMenu");
+    expect(trigger.className).toBe("bt-account-menu-trigger bt-focus custom");
+    expect(trigger.getBoundingClientRect().width).toBe(200);
+  });
+
+  it("starts open with defaultOpen and closes on Escape", async () => {
+    render(
+      <AccountMenu workspace="Northside Roasters" defaultOpen>
+        <Menu.Item>Settings</Menu.Item>
+      </AccountMenu>,
+    );
+    expect(await screen.findByRole("menu")).toBeTruthy();
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+  });
+
   it("is a 36px trigger named for its workspace, with a 20px tile, the name and a chevron", () => {
     render(<Account />);
     const trigger = screen.getByRole("button", {
