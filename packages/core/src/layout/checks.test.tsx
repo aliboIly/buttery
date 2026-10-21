@@ -113,6 +113,7 @@ describe("runLayoutChecks", () => {
       `<div data-testid="frame" style="position: relative; inline-size: 120px; block-size: 80px">
          <div data-bt-allow-overlap style="position: absolute; inset: 0">
            <span style="position: absolute; inset-inline-start: 100%; inline-size: 12px; block-size: 12px; translate: -50% 0"></span>
+           <span style="position: absolute; inset-inline-start: 90%; white-space: nowrap">A title running past the edge</span>
          </div>
        </div>
        <div data-testid="plain" style="position: relative; inline-size: 120px; block-size: 80px">

@@ -551,7 +551,8 @@ export function createLayoutToolkit(): LayoutToolkit {
             style.overflowX !== "visible" ||
             style.overflowY !== "visible" ||
             style.position === "fixed" ||
-            current.hasAttribute("data-bt-hit")
+            current.hasAttribute("data-bt-hit") ||
+            current.hasAttribute("data-bt-allow-overlap")
           ) {
             return true;
           }
