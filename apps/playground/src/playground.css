@@ -11,36 +11,28 @@
   container-type: inline-size;
 }
 
-/* The shell's bar stays over whatever a demo stacks, nav bars and their menus included. */
+/*
+ * The shell's nav bar stays over whatever a demo stacks, nav bars and their menus included. Pinned and
+ * scrolled it takes the panel surface; inside the shell's side padding it reads as a card, so it keeps a
+ * card's corners and inset.
+ */
 .pg-top {
   z-index: var(--bt-z-dropdown);
-  min-inline-size: 0;
-  padding-block: var(--bt-space-4);
-  background-color: var(--bt-bg-app);
+  padding-inline: var(--bt-space-3);
 }
 
-.pg-header {
-  display: flex;
-  align-items: center;
-  gap: var(--bt-space-3);
-  min-inline-size: 0;
-  block-size: var(--bt-h-header);
+.pg-top[data-scrolled] {
+  border-radius: var(--bt-r-3xl);
 }
 
-.pg-brand {
-  flex: 1 1 auto;
+/* In the bar the display settings button shows only its icon; in the phone sheet it says what it is. */
+.pg-top .pg-display {
+  inline-size: var(--bt-h-button);
+  padding-inline: 0;
 }
 
-.pg-narrow,
-.pg-wide {
-  display: flex;
-  flex: none;
-  align-items: center;
-  min-inline-size: 0;
-}
-
-.pg-narrow:has(.pg-menu-button) {
-  flex: 0 1 auto;
+.pg-top .pg-display-text {
+  display: none;
 }
 
 .pg-body {
@@ -78,37 +70,6 @@
 .pg-menu {
   min-inline-size: var(--bt-w-menu-min);
   padding: var(--bt-space-3);
-}
-
-.pg-menu-button,
-.pg-icon-button {
-  --bt-transition-hover: background-color var(--bt-dur-fast)
-    var(--bt-ease-standard);
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--bt-space-1_5);
-  min-inline-size: 0;
-  block-size: var(--bt-h-button);
-  border-radius: var(--bt-r-full);
-  color: var(--bt-text-secondary);
-}
-
-.pg-menu-button {
-  padding-inline: var(--bt-space-3);
-}
-
-.pg-icon-button {
-  inline-size: var(--bt-h-button);
-}
-
-.pg-menu-button:hover,
-.pg-icon-button:hover,
-.pg-menu-button[data-state="open"],
-.pg-icon-button[data-state="open"] {
-  background-color: var(--bt-bg-control);
-  color: var(--bt-text);
 }
 
 .pg-toggle {
@@ -178,19 +139,12 @@
 }
 
 @container (width < 1024px) {
-  .pg-wide,
   .pg-sidebar {
     display: none;
   }
 
   .pg-body {
     grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@container (width >= 1024px) {
-  .pg-narrow {
-    display: none;
   }
 }
 

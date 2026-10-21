@@ -1,22 +1,20 @@
 import { useEffect, useRef } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { Menu, Settings2 } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import { RadioGroup } from "radix-ui";
 import {
-  Icon,
-  Inline,
   Popover,
   Pressable,
   SharedIndicator,
   Stack,
   Sticky,
-  Surface,
   Text,
   useFloatingObstacle,
 } from "@buttery/core";
+import { Button, MorphMenu, NavBar } from "@buttery/react";
 import { setSetting } from "./location.ts";
 import type { Settings } from "./location.ts";
-import { pageGroups, pages } from "./pages.tsx";
+import { pageGroups } from "./pages.tsx";
 
 interface ToggleProps {
   readonly label: string;
@@ -52,13 +50,11 @@ function Toggle({
 
 function SettingsControls({
   settings,
-  stacked,
 }: {
   readonly settings: Settings;
-  readonly stacked: boolean;
 }): ReactElement {
-  const controls = (
-    <>
+  return (
+    <Stack gap={3} align="start">
       <Toggle
         label="Color scheme"
         options={["system", "light", "dark"]}
@@ -83,14 +79,7 @@ function SettingsControls({
           setSetting("motion", value);
         }}
       />
-    </>
-  );
-  return stacked ? (
-    <Stack gap={3} align="start">
-      {controls}
     </Stack>
-  ) : (
-    <Inline gap={2}>{controls}</Inline>
   );
 }
 
@@ -129,19 +118,55 @@ function PageLinks({ current }: { readonly current: string }): ReactElement {
   );
 }
 
+/** Splits `items` into columns of at most `size`, so a long group reads as a grid in its menu. */
+function columns<T>(items: readonly T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    result.push(items.slice(index, index + size));
+  }
+  return result;
+}
+
+function DisplaySettings({
+  settings,
+}: {
+  readonly settings: Settings;
+}): ReactElement {
+  return (
+    <Popover>
+      <Popover.Trigger asChild>
+        <Button
+          variant="ghost"
+          iconStart={Settings2}
+          aria-label="Display settings"
+          className="pg-display"
+        >
+          <span className="pg-display-text">Display settings</span>
+        </Button>
+      </Popover.Trigger>
+      <Popover.Content
+        align="end"
+        aria-label="Display settings"
+        className="pg-menu"
+      >
+        <SettingsControls settings={settings} />
+      </Popover.Content>
+    </Popover>
+  );
+}
+
 interface ChromeProps {
   readonly current: string;
   readonly settings: Settings;
   readonly children: ReactNode;
 }
 
-/** The playground's shell: a header with the display settings, a page list, and the page. */
+/** The playground's shell: a nav bar with every page and the display settings, a page list, and the page. */
 export function Chrome({
   current,
   settings,
   children,
 }: ChromeProps): ReactElement {
-  const title = pages.find((page) => page.route === current)?.title ?? "Pages";
   const obstacle = useFloatingObstacle();
   const nav = useRef<HTMLElement>(null);
 
@@ -153,56 +178,32 @@ export function Chrome({
 
   return (
     <div className="pg-shell">
-      <Sticky className="pg-top">
-        <Surface level="card" padX={3} asChild>
-          <header ref={obstacle} className="pg-header">
-            <Text variant="title-sm" truncate className="pg-brand">
-              🧈 buttery playground
-            </Text>
-            <span className="pg-narrow">
-              <Popover>
-                <Popover.Trigger asChild>
-                  <Pressable className="pg-menu-button">
-                    <Icon icon={Menu} />
-                    <Text variant="control" truncate>
-                      {title}
-                    </Text>
-                  </Pressable>
-                </Popover.Trigger>
-                <Popover.Content
-                  align="start"
-                  aria-label="Pages"
-                  className="pg-menu"
-                >
-                  <PageLinks current={current} />
-                </Popover.Content>
-              </Popover>
-            </span>
-            <span className="pg-wide">
-              <SettingsControls settings={settings} stacked={false} />
-            </span>
-            <span className="pg-narrow">
-              <Popover>
-                <Popover.Trigger asChild>
-                  <Pressable
-                    className="pg-icon-button"
-                    aria-label="Display settings"
-                  >
-                    <Icon icon={Settings2} />
-                  </Pressable>
-                </Popover.Trigger>
-                <Popover.Content
-                  align="end"
-                  aria-label="Display settings"
-                  className="pg-menu"
-                >
-                  <SettingsControls settings={settings} stacked />
-                </Popover.Content>
-              </Popover>
-            </span>
-          </header>
-        </Surface>
-      </Sticky>
+      <NavBar
+        ref={obstacle}
+        behavior="sticky"
+        contained={false}
+        label="Playground"
+        className="pg-top"
+        brand={<a href="#/tokens">🧈 buttery playground</a>}
+        actions={<DisplaySettings settings={settings} />}
+      >
+        {pageGroups.map((group) => (
+          <MorphMenu.Item key={group.title} label={group.title}>
+            {columns(group.pages, 8).map((column) => (
+              <MorphMenu.Column key={column[0]?.route}>
+                {column.map((page) => (
+                  <MorphMenu.Entry
+                    key={page.route}
+                    href={`#/${page.route}`}
+                    title={page.title}
+                    aria-current={page.route === current ? "page" : undefined}
+                  />
+                ))}
+              </MorphMenu.Column>
+            ))}
+          </MorphMenu.Item>
+        ))}
+      </NavBar>
       <div className="pg-body">
         <Sticky variant="aside" className="pg-sidebar bt-scroll-fade">
           <nav ref={nav} aria-label="Pages">

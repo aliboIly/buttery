@@ -51,7 +51,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] NavBar (static, sticky, auto-hide) + MorphMenu, SubNav
 - [x] Bento + ExpandableCard
 - [x] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer
-- [ ] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
+- [x] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
 
 ## v0.7 — App kit (Phase 6B)
 - [ ] App kit tokens (widths, table row height, `title-lg`/`title-md`, chart colors, shimmer and delays)

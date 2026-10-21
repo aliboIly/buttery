@@ -207,10 +207,14 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     {
       name: "open the Product menu",
       run: async (page: Page) => {
-        await page
+        const product = page
           .getByRole("button", { name: "Product", exact: true })
-          .first()
-          .click();
+          .first();
+        // A menu row lives near the top of its page, with room below; the demo sits low on its docs page.
+        await product.evaluate((element) => {
+          element.scrollIntoView({ block: "center" });
+        });
+        await product.click();
         await page.locator('[data-bt-part="panel"]').first().waitFor();
       },
       acrossMatrix: true,
@@ -406,7 +410,24 @@ test("the playground chrome is buttery with its menus open", async ({
     ...matrix,
     name: "chrome",
     interactions: [
-      { name: "open the page list", run: pressIfShown("button", "Tokens") },
+      {
+        name: "open a page menu, or the sheet when the bar is folded",
+        run: async (page: Page) => {
+          const sheet = page
+            .getByRole("button", { name: "Menu", exact: true })
+            .first();
+          if (await sheet.isVisible()) {
+            await sheet.click();
+            await page.getByRole("dialog").waitFor();
+            return;
+          }
+          await page
+            .getByRole("button", { name: "Components", exact: true })
+            .first()
+            .click();
+          await page.locator('[data-bt-part="panel"]').first().waitFor();
+        },
+      },
       escape,
       {
         name: "open the display settings",
