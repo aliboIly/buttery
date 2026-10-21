@@ -6,9 +6,11 @@ import {
   displayBreakpoints,
   hasContent,
   heights,
+  opensElsewhere,
   presencePresets,
   reducedPresence,
   scrollRootOf,
+  space,
   tabbables,
   useButteryTransition,
   useMergedRefs,
@@ -21,8 +23,10 @@ import {
   useMotionValue,
   useMotionValueEvent,
 } from "motion/react";
+import type { MotionStyle } from "motion/react";
 import { Dialog as RadixDialog, VisuallyHidden } from "radix-ui";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import type {
   ComponentPropsWithRef,
   ReactElement,
@@ -64,9 +68,12 @@ export interface NavBarProps extends Omit<
   readonly closeLabel?: string | undefined;
   /** The menus and links: `MorphMenu.Item`s and `MorphMenu.Link`s. */
   readonly children?: ReactNode;
+  /** Inline styles, which can include motion values. */
+  readonly style?: MotionStyle | undefined;
 }
 
-const GAP = 24;
+/** How far the page has to scroll against its direction before an auto-hiding bar turns with it. */
+const TURN = space["1"];
 
 function widthOf(element: Element | null | undefined): number {
   return element ? element.getBoundingClientRect().width : 0;
@@ -94,10 +101,11 @@ function useFolded(bar: RefObject<HTMLElement | null>): boolean {
           row.querySelector(':scope > [data-bt-part="brand"]'),
           row.querySelector(':scope > [data-bt-part="actions"]'),
         ].filter((group) => group !== null);
+        const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
         needed.current =
           items +
           groups.reduce((sum, group) => sum + widthOf(group), 0) +
-          GAP * groups.length;
+          gap * groups.length;
       }
       setFolded(
         row.clientWidth < displayBreakpoints.md ||
@@ -126,25 +134,28 @@ function useScrollState(
     const root = scrollRootOf(element);
     const scroller: HTMLElement | Window =
       root === document.documentElement ? window : root;
-    let last = root.scrollTop;
+    // The furthest the page has gone in the direction it's going, so a slow scroll still adds up to a turn.
+    let extreme = root.scrollTop;
+    let down = false;
     let frame = 0;
     const read = (): void => {
       frame = 0;
       const top = root.scrollTop;
-      const scrolled = top > 0;
-      const down =
-        top > last + 4 && top > element.offsetHeight
-          ? true
-          : top < last - 4
-            ? false
-            : null;
-      last = top;
-      setState((current) => {
-        const next = { scrolled, down: down ?? current.down };
-        return next.scrolled === current.scrolled && next.down === current.down
+      if (down ? top > extreme : top < extreme) {
+        extreme = top;
+      } else if (down && top < extreme - TURN) {
+        down = false;
+        extreme = top;
+      } else if (!down && top > extreme + TURN && top > element.offsetHeight) {
+        down = true;
+        extreme = top;
+      }
+      const next = { scrolled: top > 0, down };
+      setState((current) =>
+        next.scrolled === current.scrolled && next.down === current.down
           ? current
-          : next;
-      });
+          : next,
+      );
     };
     const schedule = (): void => {
       if (frame === 0) frame = requestAnimationFrame(read);
@@ -165,6 +176,8 @@ function PhoneMenu({
   closeLabel,
   brand,
   actions,
+  available,
+  row,
   children,
 }: {
   readonly label: string;
@@ -172,16 +185,29 @@ function PhoneMenu({
   readonly closeLabel: string;
   readonly brand: ReactNode;
   readonly actions: ReactNode;
+  /** Whether the bar is folded, so its menu button shows. */
+  readonly available: boolean;
+  readonly row: RefObject<HTMLElement | null>;
   readonly children: ReactNode;
 }): ReactElement {
   const [open, setOpen] = useState(false);
+  const [wasAvailable, setWasAvailable] = useState(available);
+  const panel = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
   const reduced = useMotionPreference() === "reduced";
   const sheet = reduced ? reducedPresence : presencePresets.rise;
+  const scrim = reduced ? reducedPresence : presencePresets.scrim;
+  // A bar that widens past its fold puts its menus back in the row, so the sheet closes with it.
+  if (available !== wasAvailable) {
+    setWasAvailable(available);
+    if (!available) setOpen(false);
+  }
   return (
     <RadixDialog.Root open={open} onOpenChange={setOpen}>
       <RadixDialog.Trigger asChild>
         <IconButton
+          ref={button}
           icon={MenuIcon}
           label={menuLabel}
           data-bt-part="menu-button"
@@ -190,6 +216,17 @@ function PhoneMenu({
       <AnimatePresence>
         {open ? (
           <Layer band="modal" key="sheet">
+            <RadixDialog.Overlay forceMount asChild>
+              <motion.div
+                initial={scrim.initial}
+                animate={scrim.animate}
+                exit={scrim.exit}
+                className="bt-nav-bar-scrim"
+                data-bt-part="scrim"
+              >
+                <Scrim />
+              </motion.div>
+            </RadixDialog.Overlay>
             <RadixDialog.Content
               forceMount
               asChild
@@ -201,8 +238,27 @@ function PhoneMenu({
                 event.preventDefault();
                 first.focus();
               }}
+              onCloseAutoFocus={(event) => {
+                const active = document.activeElement;
+                // A link chosen in the sheet can move focus on, such as to the section it jumps to.
+                if (
+                  active instanceof HTMLElement &&
+                  active !== document.body &&
+                  panel.current?.contains(active) !== true
+                ) {
+                  event.preventDefault();
+                  return;
+                }
+                // Closed by the bar unfolding, the menu button is gone; focus goes to the row's first link.
+                if ((button.current?.getClientRects().length ?? 0) > 0) return;
+                const [first] = tabbables(row.current);
+                if (!first) return;
+                event.preventDefault();
+                first.focus();
+              }}
             >
               <motion.div
+                ref={panel}
                 initial={sheet.initial}
                 animate={sheet.animate}
                 exit={sheet.exit}
@@ -210,6 +266,15 @@ function PhoneMenu({
                 className="bt-nav-bar-sheet bt-surface"
                 data-level="floating"
                 data-bt-part="sheet"
+                onClickCapture={(event) => {
+                  if (opensElsewhere(event)) return;
+                  if (!(event.target instanceof Element)) return;
+                  if (!event.target.closest("a[href]")) return;
+                  // The sheet lets go of focus before the link acts, so a link that moves focus keeps it there.
+                  flushSync(() => {
+                    setOpen(false);
+                  });
+                }}
               >
                 <VisuallyHidden.Root asChild>
                   <RadixDialog.Title>{label}</RadixDialog.Title>
@@ -268,6 +333,9 @@ export function NavBar({
   contained = true,
   ref,
   className,
+  style,
+  onFocus,
+  onBlur,
   children,
   ...rest
 }: NavBarProps): ReactElement {
@@ -277,10 +345,12 @@ export function NavBar({
   const folded = useFolded(row);
   const [menu, setMenu] = useState("");
   const [raised, setRaised] = useState(false);
+  const [focused, setFocused] = useState(false);
   const reduced = useMotionPreference() === "reduced";
   const slide = useButteryTransition("smooth");
   const scroll = useScrollState(header, behavior !== "static");
-  const hidden = behavior === "auto-hide" && scroll.down && menu === "";
+  const hidden =
+    behavior === "auto-hide" && scroll.down && menu === "" && !focused;
   const shift = useMotionValue(0);
   const scrim = reduced ? reducedPresence : presencePresets.scrim;
 
@@ -323,6 +393,8 @@ export function NavBar({
         closeLabel={closeLabel}
         brand={brand}
         actions={actions}
+        available={folded}
+        row={row}
       >
         {children}
       </PhoneMenu>
@@ -338,7 +410,19 @@ export function NavBar({
       data-behavior={behavior}
       data-scrolled={scroll.scrolled ? "" : undefined}
       data-raised={raised ? "" : undefined}
-      style={{ y: shift }}
+      style={{ ...style, y: shift }}
+      onFocus={(event) => {
+        onFocus?.(event);
+        // Keyboard focus holds an auto-hiding bar in place; a click that happens to focus a link doesn't.
+        setFocused(event.target.matches(":focus-visible"));
+      }}
+      onBlur={(event) => {
+        onBlur?.(event);
+        // Focus moving within the bar keeps it out; leaving it lets an auto-hiding bar slide away again.
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setFocused(false);
+        }
+      }}
       animate={{ y: hidden ? -heights["nav-bar"].comfortable : 0 }}
       transition={slide}
     >

@@ -1,8 +1,9 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { Sticky, publishSettled, scrollToSection } from "@buttery/core";
 import {
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -11,6 +12,7 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { Button } from "../../components/button/Button.tsx";
 import { MorphMenu } from "../morph-menu/MorphMenu.tsx";
 import { NavBar } from "./NavBar.tsx";
@@ -160,6 +162,202 @@ describe("NavBar", () => {
     await userEvent.keyboard("{Escape}");
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
+    });
+  });
+
+  it("closes its sheet once a link in it is chosen", async () => {
+    page("static", 600);
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    let sheet = await screen.findByRole("dialog", { name: "Main" });
+    await userEvent.click(
+      within(sheet).getByRole("button", { name: "Product" }),
+    );
+    await userEvent.click(within(sheet).getByRole("link", { name: /Cards/ }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    sheet = await screen.findByRole("dialog", { name: "Main" });
+    await userEvent.click(within(sheet).getByRole("link", { name: "Pricing" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+  });
+
+  it("closes its sheet for any link in it, but not for one opening in a new tab", async () => {
+    render(
+      <div style={{ inlineSize: "600px" }}>
+        <NavBar
+          brand={<a href="#top">Card Studio</a>}
+          actions={<a href="#start">Start free</a>}
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+        </NavBar>
+      </div>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    let sheet = await screen.findByRole("dialog", { name: "Main" });
+    const pricing = within(sheet).getByRole("link", { name: "Pricing" });
+    pricing.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    fireEvent.click(pricing, { metaKey: true });
+    expect(screen.getByRole("dialog", { name: "Main" })).toBe(sheet);
+    await userEvent.click(
+      within(sheet).getByRole("link", { name: "Start free" }),
+    );
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    sheet = await screen.findByRole("dialog", { name: "Main" });
+    await userEvent.click(
+      within(sheet).getByRole("link", { name: "Card Studio" }),
+    );
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+  });
+
+  it("leaves focus where a link chosen in its sheet moves it", async () => {
+    render(
+      <div style={{ inlineSize: "600px" }}>
+        <NavBar brand={<a href="#top">Card Studio</a>}>
+          <MorphMenu.Link
+            href="#features"
+            onClick={(event) => {
+              if (scrollToSection("features")) event.preventDefault();
+            }}
+          >
+            Features
+          </MorphMenu.Link>
+        </NavBar>
+        <section id="features">
+          <h2>Features</h2>
+        </section>
+      </div>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    const sheet = await screen.findByRole("dialog", { name: "Main" });
+    await userEvent.click(
+      within(sheet).getByRole("link", { name: "Features" }),
+    );
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(document.activeElement).toBe(document.getElementById("features"));
+  });
+
+  it("takes Tab past its last menu to what follows the bar, not to its hidden menu button", async () => {
+    render(
+      <div style={{ inlineSize: "1100px" }}>
+        <NavBar brand={<a href="#top">Card Studio</a>}>
+          <MorphMenu.Item label="Guides">
+            <MorphMenu.Column>
+              <MorphMenu.Entry href="#first" title="Your first card" />
+            </MorphMenu.Column>
+          </MorphMenu.Item>
+        </NavBar>
+        <button type="button">After the bar</button>
+      </div>,
+    );
+    const guides = screen.getByRole("button", { name: "Guides" });
+    await userEvent.click(guides);
+    await screen.findByRole("link", { name: /Your first card/ });
+    guides.focus();
+    await browser.keyboard("{Tab}");
+    expect(document.activeElement).toBe(
+      screen.getByRole("link", { name: /Your first card/ }),
+    );
+    await browser.keyboard("{Tab}");
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "After the bar" }),
+    );
+  });
+
+  it("closes its sheet when the bar widens past its fold, with focus back in the row", async () => {
+    const scroller = page("static", 600);
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    await screen.findByRole("dialog", { name: "Main" });
+    scroller.style.inlineSize = "1100px";
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("link", { name: "Card Studio" }),
+      );
+    });
+  });
+
+  it("stays out while keyboard focus is in an auto-hiding bar, and slides away once it leaves", async () => {
+    const scroller = page("auto-hide");
+    const brand = screen.getByRole("link", { name: "Card Studio" });
+    // A key press first makes the focus that follows keyboard focus; WebKit's Tab skips links, as Safari's does.
+    await browser.keyboard("{Shift}");
+    brand.focus();
+    expect(brand.matches(":focus-visible")).toBe(true);
+    scroller.scrollTop = 300;
+    await waitFor(() => {
+      expect(bar().hasAttribute("data-scrolled")).toBe(true);
+    });
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(bar().getBoundingClientRect().top).toBe(
+      scroller.getBoundingClientRect().top,
+    );
+    brand.blur();
+    await waitFor(() => {
+      expect(scroller.style.getPropertyValue("--bt-sticky-shift")).toBe("64px");
+    });
+  });
+
+  it("slides away after a click in it, which isn't keyboard focus", async () => {
+    const scroller = page("auto-hide");
+    await browser.click(screen.getByRole("button", { name: "Sign in" }));
+    scroller.scrollTop = 300;
+    await waitFor(() => {
+      expect(scroller.style.getPropertyValue("--bt-sticky-shift")).toBe("64px");
+    });
+  });
+
+  it("takes a sticky that has stuck under it along as it slides away", async () => {
+    render(
+      <div
+        data-testid="scroller"
+        style={{ inlineSize: "1100px", blockSize: "400px", overflowY: "auto" }}
+      >
+        <NavBar behavior="auto-hide" brand={<a href="#top">Card Studio</a>}>
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+        </NavBar>
+        <Sticky data-testid="follower">
+          <div style={{ blockSize: "48px" }}>Sections</div>
+        </Sticky>
+        <div style={{ blockSize: "2000px" }}>Page</div>
+      </div>,
+    );
+    const scroller = screen.getByTestId("scroller");
+    scroller.scrollTop = 300;
+    await waitFor(() => {
+      expect(screen.getByTestId("follower").getBoundingClientRect().top).toBe(
+        scroller.getBoundingClientRect().top,
+      );
+    });
+  });
+
+  it("comes back on a slow scroll up, a few pixels a frame", async () => {
+    const scroller = page("auto-hide");
+    scroller.scrollTop = 400;
+    await waitFor(() => {
+      expect(scroller.style.getPropertyValue("--bt-sticky-shift")).toBe("64px");
+    });
+    for (const top of [398, 396, 394, 392]) {
+      scroller.scrollTop = top;
+      await new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+      });
+    }
+    await waitFor(() => {
+      expect(scroller.style.getPropertyValue("--bt-sticky-shift")).toBe("0px");
     });
   });
 
