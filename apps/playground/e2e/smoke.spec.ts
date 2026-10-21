@@ -10,9 +10,19 @@ const foundations = [
   { route: "text-stacks", landmark: "Make it yours" },
 ] as const;
 
-/** Collects console errors, page errors and buttery's development warnings. */
-function watchConsole(page: Page): string[] {
+/**
+ * Collects console errors, page errors, buttery's development warnings and ResizeObserver loops, which
+ * browsers report as an error event rather than an exception.
+ */
+async function watchConsole(page: Page): Promise<string[]> {
   const problems: string[] = [];
+  await page.addInitScript(() => {
+    window.addEventListener("error", (event) => {
+      if (event.message.includes("ResizeObserver loop")) {
+        console.error(event.message);
+      }
+    });
+  });
   page.on("console", (message) => {
     const text = message.text();
     if (message.type() === "error" || text.startsWith("[buttery:"))
@@ -33,7 +43,7 @@ for (const { route, landmark } of foundations) {
   test(`renders the ${route} page with the bundled font and no console problems`, async ({
     page,
   }) => {
-    const problems = watchConsole(page);
+    const problems = await watchConsole(page);
     await page.goto(`/?theme=light#/${route}`);
     await expect(
       page.getByText(landmark).or(page.getByLabel(landmark)).first(),
@@ -52,7 +62,7 @@ for (const { route, name } of componentRoutes) {
   test(`renders the ${name} page with no console problems`, async ({
     page,
   }) => {
-    const problems = watchConsole(page);
+    const problems = await watchConsole(page);
     await page.goto(`/#/${route}`);
     await expect(
       page.getByRole("heading", { level: 1, name, exact: true }),

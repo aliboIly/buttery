@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { expectButtery, fullMatrix, quickMatrix } from "@buttery/test";
+import {
+  expectButtery,
+  fullMatrix,
+  quickMatrix,
+  watchResizeLoops,
+} from "@buttery/test";
 import type { ButteryInteraction, ButteryViewport } from "@buttery/test";
 import { routes } from "./routes.ts";
 
@@ -390,6 +395,13 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
 };
 
 test.describe.configure({ timeout: 300_000 });
+
+// Pages load at the matrix's first size, as on a phone, with ResizeObserver loops counted from the start.
+test.beforeEach(async ({ page }) => {
+  await watchResizeLoops(page);
+  const [first] = matrix.viewports;
+  if (first) await page.setViewportSize(first);
+});
 
 for (const route of routes) {
   test(`${route} is buttery`, async ({ page }) => {

@@ -231,6 +231,39 @@ function label(viewport: ButteryViewport): string {
   return `${String(viewport.width)}x${String(viewport.height)}`;
 }
 
+function listenForResizeLoops(): void {
+  const scope = window as Window & { __btResizeLoops?: number };
+  if (scope.__btResizeLoops !== undefined) return;
+  scope.__btResizeLoops = 0;
+  window.addEventListener("error", (event) => {
+    if (event.message.includes("ResizeObserver loop")) {
+      scope.__btResizeLoops = (scope.__btResizeLoops ?? 0) + 1;
+    }
+  });
+}
+
+/**
+ * Starts counting the page's ResizeObserver loops before it loads, so `expectButtery` reports the ones
+ * that happen while it first lays out, not only those during its checks. Call it before `page.goto`.
+ */
+export async function watchResizeLoops(page: Page): Promise<void> {
+  await page.addInitScript(listenForResizeLoops);
+}
+
+/**
+ * How many ResizeObserver loops the page has reported since the last call, starting to listen on the first.
+ * Browsers report a loop as an error event, not an exception, so nothing else catches it.
+ */
+async function takeResizeLoops(page: Page): Promise<number> {
+  await page.evaluate(listenForResizeLoops);
+  return page.evaluate(() => {
+    const scope = window as Window & { __btResizeLoops?: number };
+    const loops = scope.__btResizeLoops ?? 0;
+    scope.__btResizeLoops = 0;
+    return loops;
+  });
+}
+
 /**
  * Checks a page against buttery's layout rules (LAYOUT_RULES §5) in every requested viewport, theme and
  * density, and fails with a report of every problem and how to fix it. Static checks emulate reduced
@@ -291,6 +324,17 @@ export async function expectButtery(
         ? await check(page, { tokens, rules: layoutRules })
         : [];
     if (rules.has("accessibility")) found.push(...(await accessibility(page)));
+    if (rules.has("stability")) {
+      const loops = await takeResizeLoops(page);
+      if (loops > 0) {
+        found.push({
+          rule: "stability",
+          a: "ResizeObserver",
+          message: `a ResizeObserver callback resized what it observes while the browser was delivering its notifications, ${String(loops)} time(s) ("ResizeObserver loop completed with undelivered notifications")`,
+          fix: "Commit layout from a ResizeObserver only when it changes, and leave a change that an observed child sets off for the next frame (requestAnimationFrame), as OverflowCluster does.",
+        });
+      }
+    }
     return found;
   };
 
