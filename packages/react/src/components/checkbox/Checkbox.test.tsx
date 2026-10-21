@@ -88,4 +88,13 @@ describe("Checkbox", () => {
       "Agree to the terms to make an account.",
     ]);
   });
+
+  it("keeps a hidden label for screen readers without showing it", () => {
+    render(<Checkbox label="Select order 1042" hideLabel />);
+    expect(
+      screen.getByRole("checkbox", { name: "Select order 1042" }),
+    ).toBeTruthy();
+    const label = document.querySelector("label");
+    expect(label?.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+  });
 });

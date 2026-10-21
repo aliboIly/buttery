@@ -1,6 +1,6 @@
 import { Icon, cx, hasContent, useControllableState } from "@buttery/core";
 import { Check, Minus } from "lucide-react";
-import { Checkbox as RadixCheckbox } from "radix-ui";
+import { Checkbox as RadixCheckbox, VisuallyHidden } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import {
   FormFieldError,
@@ -17,6 +17,8 @@ export interface CheckboxProps extends Omit<
 > {
   /** What ticking it means, beside the box. Pressing it ticks the box too. */
   readonly label: ReactNode;
+  /** Keeps the label for screen readers without showing it, as for a table row's checkbox. Defaults to `false`. */
+  readonly hideLabel?: boolean | undefined;
   /** A hint under the label. */
   readonly hint?: ReactNode;
   /** What's wrong, under the label and read with it, such as a box that has to be ticked. */
@@ -45,6 +47,7 @@ export interface CheckboxProps extends Omit<
  */
 export function Checkbox({
   label,
+  hideLabel = false,
   hint,
   error,
   checked,
@@ -95,14 +98,20 @@ export function Checkbox({
           </RadixCheckbox.Indicator>
           <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />
         </RadixCheckbox.Root>
-        <label
-          htmlFor={ids.control}
-          className="bt-text"
-          data-role="label"
-          data-bt-part="label"
-        >
-          {label}
-        </label>
+        {hideLabel ? (
+          <VisuallyHidden.Root asChild>
+            <label htmlFor={ids.control}>{label}</label>
+          </VisuallyHidden.Root>
+        ) : (
+          <label
+            htmlFor={ids.control}
+            className="bt-text"
+            data-role="label"
+            data-bt-part="label"
+          >
+            {label}
+          </label>
+        )}
       </div>
       {hasContent(hint) ? (
         <p
