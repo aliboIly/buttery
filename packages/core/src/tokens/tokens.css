@@ -45,6 +45,7 @@
     --bt-chart-3: #a65400;
     --bt-chart-4: #7b57b2;
     --bt-chart-5: #ae445b;
+    --bt-chart-muted: #8b8b8b;
     --bt-danger: #c72a1c;
     --bt-danger-subtle: #fdeceb;
     --bt-success: #177245;
@@ -348,6 +349,7 @@
     --bt-chart-3: #cf752d;
     --bt-chart-4: #9d7ad7;
     --bt-chart-5: #d6677c;
+    --bt-chart-muted: #6e6e74;
     --bt-danger: #ff7a6e;
     --bt-danger-subtle: #3a1916;
     --bt-success: #4cc38a;
@@ -432,6 +434,7 @@
       --bt-chart-3: #cf752d;
       --bt-chart-4: #9d7ad7;
       --bt-chart-5: #d6677c;
+      --bt-chart-muted: #6e6e74;
       --bt-danger: #ff7a6e;
       --bt-danger-subtle: #3a1916;
       --bt-success: #4cc38a;

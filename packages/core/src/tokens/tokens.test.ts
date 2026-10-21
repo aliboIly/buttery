@@ -77,13 +77,20 @@ describe("contrast", () => {
 });
 
 describe("charts", () => {
-  it("start from the accent and keep every series 3:1 on the surfaces they sit on", () => {
+  it("start from the accent, add a muted comparison, and keep every series 3:1 on the surfaces they sit on", () => {
     expect(colors["chart-1"].light).toBe(colors.accent.light);
     expect(colors["chart-1"].dark).toBe(colors.accent.dark);
     const series = Object.keys(colors).filter((name) =>
       name.startsWith("chart-"),
     );
-    expect(series).toHaveLength(5);
+    expect(series).toEqual([
+      "chart-1",
+      "chart-2",
+      "chart-3",
+      "chart-4",
+      "chart-5",
+      "chart-muted",
+    ]);
     for (const name of series) {
       expect(
         contrastPairs.filter((pair) => pair.text === name).length,

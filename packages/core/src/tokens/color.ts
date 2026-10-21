@@ -234,6 +234,12 @@ export const colors = {
     description:
       "A chart's fifth series: the rose family at the accent's OKLCH lightness, chroma 0.14.",
   },
+  "chart-muted": {
+    light: "#8b8b8b",
+    dark: "#6e6e74",
+    description:
+      "A comparison series, such as the previous period: the lightest gray still 3:1 on every chart background.",
+  },
   danger: {
     light: "#c72a1c",
     dark: "#ff7a6e",
@@ -455,11 +461,19 @@ export const contrastPairs: readonly ContrastPair[] = [
   })),
   { text: "accent", on: "bg-surface", minimum: 3 },
   { text: "accent", on: "bg-app", minimum: 3 },
-  ...(["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] as const).flatMap(
-    (series) =>
-      (["bg-surface", "bg-section", "bg-app", "bg-floating"] as const).map(
-        (on): ContrastPair => ({ text: series, on, minimum: 3 }),
-      ),
+  ...(
+    [
+      "chart-1",
+      "chart-2",
+      "chart-3",
+      "chart-4",
+      "chart-5",
+      "chart-muted",
+    ] as const
+  ).flatMap((series) =>
+    (["bg-surface", "bg-section", "bg-app", "bg-floating"] as const).map(
+      (on): ContrastPair => ({ text: series, on, minimum: 3 }),
+    ),
   ),
   { text: "dot-active", on: "bg-surface", minimum: 3 },
 ];

@@ -422,6 +422,7 @@ Measured from local frames of a product dashboard (`reference/inspiration-dashbo
 | `title-lg` | 24 / 30, 600, tight | Page titles, metric values |
 | `title-md` | 18 / 24, 600, tight | Section headings in app pages, card titles in the right rail |
 | `--bt-chart-1` … `--bt-chart-5` | `chart-1` is the accent; 2–5 derived in OKLCH from the mint, apricot, lilac and rose families at the accent's lightness, chroma 0.14 (or the most sRGB allows), each 3:1 on the surface in both themes (WCAG 1.4.11). Light: `#2862e0` `#008254` `#a65400` `#7b57b2` `#ae445b`; dark: `#4f89ff` `#1ea971` `#cf752d` `#9d7ad7` `#d6677c`, each at least 4.3:1 on the surface, section, app and floating backgrounds | Chart series, in order |
+| `--bt-chart-muted` | The lightest gray still 3:1 on every chart background: light `#8b8b8b`, dark `#6e6e74` | A comparison series, such as the previous period |
 
 Chart gridlines use `border`, axis labels `caption` in `text-tertiary`, and a comparison series (the previous period) `text-tertiary`, dashed.
 
