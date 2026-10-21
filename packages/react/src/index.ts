@@ -183,3 +183,5 @@ export type {
 } from "./patterns/stage/Stage.tsx";
 export { AppShell } from "./patterns/app-shell/AppShell.tsx";
 export type { AppShellProps } from "./patterns/app-shell/AppShell.tsx";
+export { ColorPicker } from "./components/color-picker/ColorPicker.tsx";
+export type { ColorPickerProps } from "./components/color-picker/ColorPicker.tsx";

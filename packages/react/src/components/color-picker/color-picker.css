@@ -1,0 +1,156 @@
+@layer bt.components {
+  .bt-color-picker {
+    --bt-color-picker-width: 216px;
+    --bt-color-picker-area-thumb: 18px;
+    --bt-color-picker-track: 14px;
+    --bt-color-picker-hue-thumb: 20px;
+    --bt-color-picker-hit: 28px;
+    --bt-color-picker-ring: 2px;
+    --bt-color-picker-line: 1px;
+    --bt-color-picker-swatch: 24px;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+    inline-size: var(--bt-color-picker-width);
+    max-inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .bt-color-picker > [data-bt-part="area"] {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    border-radius: var(--bt-r-md);
+    box-shadow: var(--bt-shadow-inset);
+    cursor: crosshair;
+    touch-action: none;
+    user-select: none;
+  }
+
+  /* The thumb's center marks the color, so at the edges it rides past the area, like a crop handle on its frame. */
+  .bt-color-picker [data-bt-part="area-thumb"] {
+    position: absolute;
+    top: calc((1 - var(--bt-color-picker-y)) * 100%);
+    left: calc(var(--bt-color-picker-x) * 100%);
+    inline-size: var(--bt-color-picker-area-thumb);
+    block-size: var(--bt-color-picker-area-thumb);
+    border: var(--bt-color-picker-ring) solid var(--bt-knob-ring);
+    border-radius: var(--bt-r-full);
+    box-shadow: var(--bt-shadow-knob);
+    translate: -50% -50%;
+    pointer-events: none;
+  }
+
+  /* As tall as its thumb, which stays inside it end to end, as a slider's does. */
+  .bt-color-picker > [data-bt-part="hue"] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    block-size: var(--bt-color-picker-hue-thumb);
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .bt-color-picker [data-bt-part="hue"] > [data-bt-part="track"] {
+    flex: 1;
+    block-size: var(--bt-color-picker-track);
+    border-radius: var(--bt-r-thumb);
+    box-shadow: var(--bt-shadow-inset);
+  }
+
+  .bt-color-picker [data-bt-part="hue-thumb"] {
+    position: absolute;
+    top: 0;
+    left: calc(
+      var(--bt-color-picker-hue) / 360 *
+        (100% - var(--bt-color-picker-hue-thumb))
+    );
+    inline-size: var(--bt-color-picker-hue-thumb);
+    block-size: var(--bt-color-picker-hue-thumb);
+    border: var(--bt-color-picker-ring) solid var(--bt-knob-ring);
+    border-radius: var(--bt-r-full);
+    box-shadow: var(--bt-shadow-knob);
+    pointer-events: none;
+  }
+
+  .bt-color-picker [data-bt-part="hue"] > [data-bt-part="hit"] {
+    position: absolute;
+    inset-inline: 0;
+    inset-block: calc(
+      (var(--bt-color-picker-hue-thumb) - var(--bt-color-picker-hit)) / 2
+    );
+  }
+
+  .bt-color-picker
+    :is([data-bt-part="area"], [data-bt-part="hue"]):has(input:focus-visible) {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-color-picker > [data-bt-part="code"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-color-picker [data-bt-part="swatch"] {
+    flex: none;
+    inline-size: var(--bt-color-picker-swatch);
+    block-size: var(--bt-color-picker-swatch);
+    border-radius: var(--bt-r-full);
+    box-shadow: var(--bt-shadow-inset);
+  }
+
+  .bt-color-picker [data-bt-part="field"] {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--bt-space-0_5);
+    min-inline-size: 0;
+    block-size: var(--bt-h-control);
+    padding-inline: var(--bt-space-3);
+    border: var(--bt-color-picker-line) solid var(--bt-control-border);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+    font-size: var(--bt-text-body-size);
+    font-weight: var(--bt-text-body-weight);
+    letter-spacing: var(--bt-text-body-tracking);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bt-color-picker [data-bt-part="field"]:focus-within {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-color-picker [data-bt-part="hash"] {
+    color: var(--bt-text-tertiary);
+  }
+
+  .bt-color-picker [data-bt-part="field"] > input {
+    flex: 1;
+    min-inline-size: 0;
+    block-size: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bt-text);
+    text-transform: uppercase;
+    appearance: none;
+  }
+
+  .bt-color-picker [data-bt-part="field"] > input:focus {
+    outline: none;
+  }
+
+  .bt-color-picker[data-disabled] {
+    opacity: 0.5;
+  }
+
+  .bt-color-picker[data-disabled]
+    > :is([data-bt-part="area"], [data-bt-part="hue"]) {
+    cursor: default;
+  }
+}
