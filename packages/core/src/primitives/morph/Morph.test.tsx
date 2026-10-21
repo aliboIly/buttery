@@ -1,6 +1,6 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { createRef } from "react";
+import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MotionPreferenceContext } from "../../motion/preference.ts";
@@ -115,17 +115,67 @@ describe("Morph", () => {
     );
   });
 
-  it("follows a size change it didn't render, such as a web font swapping in, at once", async () => {
+  it("follows a size change from outside its content, such as a web font swapping in, at once", async () => {
     render(
-      <Morph data-testid="morph">
-        <div data-testid="box" style={{ blockSize: "40px" }} />
+      <div data-testid="page" style={{ fontSize: "16px" }}>
+        <Morph data-testid="morph">
+          <p style={{ margin: 0, fontSize: "1em", lineHeight: "1.25" }}>
+            Bags roasted
+          </p>
+        </Morph>
+      </div>,
+    );
+    await measured(20);
+    await nextFrames(3);
+    screen.getByTestId("page").style.fontSize = "32px";
+    await nextFrames(1);
+    expect(height()).toBe(40);
+    expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
+      false,
+    );
+  });
+
+  it("follows growth inside a child that renders on its own, its own JSX unchanged", async () => {
+    function Details(): ReactElement {
+      const [open, setOpen] = useState(false);
+      return (
+        <div>
+          <button
+            type="button"
+            style={{ display: "block", blockSize: "40px" }}
+            onClick={() => {
+              setOpen((current) => !current);
+            }}
+          >
+            More
+          </button>
+          {open ? <div style={{ blockSize: "120px" }} /> : null}
+        </div>
+      );
+    }
+    const details = <Details />;
+    render(<Morph data-testid="morph">{details}</Morph>);
+    await measured(40);
+    await nextFrames(3);
+    screen.getByRole("button", { name: "More" }).click();
+    await nextFrames(2);
+    expect(height()).toBeGreaterThan(40);
+    expect(height()).toBeLessThan(160);
+    await measured(160);
+  });
+
+  it("doesn't clip content of the same height while it crossfades", async () => {
+    const { rerender } = render(
+      <Morph contentKey="a" data-testid="morph">
+        <div style={{ blockSize: "40px" }}>Before</div>
       </Morph>,
     );
     await measured(40);
-    await nextFrames(3);
-    screen.getByTestId("box").style.blockSize = "120px";
-    await nextFrames(1);
-    expect(height()).toBe(120);
+    rerender(
+      <Morph contentKey="b" data-testid="morph">
+        <div style={{ blockSize: "40px" }}>After</div>
+      </Morph>,
+    );
     expect(screen.getByTestId("morph").hasAttribute("data-animating")).toBe(
       false,
     );

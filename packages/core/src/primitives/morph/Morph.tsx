@@ -23,12 +23,15 @@ interface Busy {
   leaving: boolean;
 }
 
-// The content stays clipped while the height moves and until swapped-out content has faded away.
+// The content stays clipped while the height moves, and while swapped-out content that's taller than the box
+// fades away. Content of the same height isn't clipped, so trimmed text keeps its glyphs' tops and tails.
 function syncClip(
   element: HTMLElement | null,
   { growing, leaving }: Busy,
 ): void {
-  element?.toggleAttribute("data-animating", growing || leaving);
+  if (element === null) return;
+  const spills = element.scrollHeight > element.clientHeight + 0.5;
+  element.toggleAttribute("data-animating", growing || (leaving && spills));
 }
 
 function MorphView({
@@ -70,8 +73,9 @@ export interface MorphProps extends MotionElementProps<"div"> {
 /**
  * One container whose content can swap or grow: its height follows the content with `spring.smooth` and
  * swapped content crossfades in place. Between changes it sits at its natural height, so text that
- * rewraps when the window resizes never spills out, and a size change it didn't render, such as a web font
- * swapping in, takes effect at once. With reduced motion the height jumps and the crossfade takes 100ms.
+ * rewraps when the window resizes never spills out, and a size change that comes without a change to the
+ * content, such as a web font swapping in, takes effect at once. With reduced motion the height jumps and
+ * the crossfade takes 100ms.
  *
  * @example
  * <Morph contentKey={fill}>
@@ -100,29 +104,44 @@ export function Morph({
   const busy = useRef<Busy>({ growing: false, leaving: false });
   const shownKey = useRef(contentKey);
   const rendered = useRef(false);
-  const shownChildren = useRef<ReactNode>(children);
+  const markRendered = useRef<() => void>(() => undefined);
 
-  // New content marks the next layouts as its own for two frames. A size change no new content made, such
-  // as a web font swapping in just after the page loads, is followed at once rather than animated.
+  // A change to the content's DOM marks the next layouts as its own for two frames. A size change with no
+  // DOM change, such as a web font swapping in just after the page loads, is followed at once.
   useLayoutEffect(() => {
-    if (shownChildren.current === children) return undefined;
-    shownChildren.current = children;
-    rendered.current = true;
+    const node = content.current;
+    if (!node) return undefined;
+    let next = 0;
     let later = 0;
-    const next = requestAnimationFrame(() => {
-      later = requestAnimationFrame(() => {
-        rendered.current = false;
+    const mark = (): void => {
+      rendered.current = true;
+      cancelAnimationFrame(next);
+      cancelAnimationFrame(later);
+      next = requestAnimationFrame(() => {
+        later = requestAnimationFrame(() => {
+          rendered.current = false;
+        });
       });
+    };
+    markRendered.current = mark;
+    const observer = new MutationObserver(mark);
+    observer.observe(node, {
+      childList: true,
+      characterData: true,
+      attributes: true,
+      subtree: true,
     });
     return () => {
+      observer.disconnect();
       cancelAnimationFrame(next);
       cancelAnimationFrame(later);
     };
-  }, [children]);
+  }, []);
 
   useLayoutEffect(() => {
     if (shownKey.current === contentKey) return;
     shownKey.current = contentKey;
+    markRendered.current();
     busy.current.leaving = true;
     syncClip(outer.current, busy.current);
   });
