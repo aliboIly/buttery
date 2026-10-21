@@ -19,6 +19,7 @@ import {
   getServerLanes,
   getServerObstacles,
   laneNames,
+  onObstacleMoved,
   setLane,
   subscribe,
 } from "./lanes-store.ts";
@@ -89,9 +90,11 @@ function useLaneClearance(): void {
     for (const element of [...elements, ...blockers]) observer.observe(element);
     window.addEventListener("resize", schedule);
     window.addEventListener("scroll", schedule, true);
+    const stopFollowing = onObstacleMoved(schedule);
     apply();
     return () => {
       cancelAnimationFrame(frame);
+      stopFollowing();
       observer.disconnect();
       window.removeEventListener("resize", schedule);
       window.removeEventListener("scroll", schedule, true);
@@ -163,7 +166,8 @@ const registerObstacle: RefCallback<HTMLElement> = (element) =>
 /**
  * Registers an element that floating lanes must stay clear of, such as a toolbar anchored under a crop
  * box. Lane items move above or below it instead of covering it. Returns a callback ref for the element,
- * which `useMergedRefs` combines with another ref.
+ * which `useMergedRefs` combines with another ref. The lanes measure it again when it changes size; call
+ * `notifyObstacleMoved()` when it moves without changing size.
  *
  * @example
  * const obstacle = useFloatingObstacle();

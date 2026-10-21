@@ -6,6 +6,7 @@ import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Popover } from "../popover/Popover.tsx";
 import { FloatingLanes, useFloatingObstacle } from "./FloatingLanes.tsx";
+import { notifyObstacleMoved } from "./lanes-store.ts";
 
 afterEach(() => {
   cleanup();
@@ -77,6 +78,29 @@ describe("FloatingLanes", () => {
     await waitFor(() => {
       const toast = screen.getByText("Card deleted").getBoundingClientRect();
       expect(toolbar.top - toast.bottom).toBe(8);
+    });
+  });
+
+  it("follows an obstacle that moves without changing size once told", async () => {
+    render(
+      <>
+        <FloatingLanes />
+        <Toolbar />
+        <FloatingLanes.Item>
+          <Toast>Card deleted</Toast>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const toolbar = screen.getByTestId("toolbar");
+    await waitFor(() => {
+      const toast = screen.getByText("Card deleted").getBoundingClientRect();
+      expect(toolbar.getBoundingClientRect().top - toast.bottom).toBe(8);
+    });
+    toolbar.style.insetBlockEnd = "96px";
+    notifyObstacleMoved();
+    await waitFor(() => {
+      const toast = screen.getByText("Card deleted").getBoundingClientRect();
+      expect(toolbar.getBoundingClientRect().top - toast.bottom).toBe(8);
     });
   });
 

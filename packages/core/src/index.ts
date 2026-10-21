@@ -36,7 +36,10 @@ export type {
   FloatingLaneItemProps,
   FloatingLanesComponent,
 } from "./layers/floating-lanes/FloatingLanes.tsx";
-export { laneNames } from "./layers/floating-lanes/lanes-store.ts";
+export {
+  laneNames,
+  notifyObstacleMoved,
+} from "./layers/floating-lanes/lanes-store.ts";
 export type { LaneName } from "./layers/floating-lanes/lanes-store.ts";
 export { Layer, Portal } from "./layers/layer/Layer.tsx";
 export type { LayerProps, PortalProps } from "./layers/layer/Layer.tsx";

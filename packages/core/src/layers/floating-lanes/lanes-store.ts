@@ -64,6 +64,23 @@ export function setLane(name: LaneName, lane: Lane | null): void {
   notify();
 }
 
+const moveListeners = new Set<() => void>();
+
+/**
+ * Tells the floating lanes that an obstacle moved without changing size, such as a toolbar following its
+ * anchor, so they keep clear of where it is now.
+ */
+export function notifyObstacleMoved(): void {
+  for (const listener of moveListeners) listener();
+}
+
+export function onObstacleMoved(listener: () => void): () => void {
+  moveListeners.add(listener);
+  return () => {
+    moveListeners.delete(listener);
+  };
+}
+
 /** Registers an element floating UI has to stay clear of. Returns the function that removes it. */
 export function addObstacle(element: HTMLElement): () => void {
   obstacles = [...obstacles, element];
