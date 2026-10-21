@@ -141,7 +141,7 @@ grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
 - **StatStrip**: 2 or 4 equal columns; each stat has a 1px left hairline, number (tabular: `display` in two columns, `heading-1` in four, so a long number fits) and label. Four columns fall into two rows of two under 640px of strip.
 - **LogoStrip**: N equal cells (`LogoStrip.Mark`), logos optically normalized into a 120×24 box, monochrome, wrapping onto more rows as the page narrows.
 - **ArticleLayout**: main 8 cols + aside 3 cols (1 col gap). The aside is a `<Sticky variant="aside">`, so it sticks right under the bars and fits between them, with its 24px gap as padding inside it; it stops at the end of the article and never overlaps the footer. Under 1024px of room the aside follows the article as a plain block, never moved ahead of it. The layout is its own size container.
-- **Footer**: multi-column link grid on the same 12-col grid.
+- **Footer**: multi-column link grid on the same 12-col grid: the brand takes 4 columns and each link column 2; on 8 columns the brand takes a row and the link columns go four to a row, on 4 columns two. Small print sits under a 1px `border` divider, 48 below the grid. Links are `body-sm` in `text-secondary`, 24px targets. The footer is its own size container.
 
 ### Display type (pages only)
 | Role | lg | md | sm |

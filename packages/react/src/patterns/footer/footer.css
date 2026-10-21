@@ -1,0 +1,87 @@
+@layer bt.patterns {
+  /* The footer is its own size container, so its columns follow its width, page or not. */
+  .bt-footer {
+    --bt-footer-line: 1px;
+    --bt-footer-hit: 24px;
+
+    min-inline-size: 0;
+    container: bt-footer / inline-size;
+    padding-block: var(--bt-space-16) var(--bt-space-8);
+    border-block-start: var(--bt-footer-line) solid var(--bt-border);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-footer [data-bt-part="body"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-12);
+    min-inline-size: 0;
+  }
+
+  .bt-footer [data-bt-part="grid"] {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--bt-space-10) var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-footer [data-bt-part="brand"] {
+    grid-column: 1 / -1;
+    min-inline-size: 0;
+  }
+
+  .bt-footer-column {
+    display: flex;
+    flex-direction: column;
+    grid-column: span 2;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
+  .bt-footer-column [data-bt-part="links"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    padding: 0;
+    list-style: none;
+  }
+
+  .bt-footer-link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--bt-footer-hit);
+    min-inline-size: 0;
+    color: var(--bt-text-secondary);
+    text-decoration: none;
+    transition: color var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  @media (hover: hover) {
+    .bt-footer-link:hover {
+      color: var(--bt-text-strong);
+    }
+  }
+
+  .bt-footer [data-bt-part="legal"] {
+    min-inline-size: 0;
+    padding-block-start: var(--bt-space-6);
+    border-block-start: var(--bt-footer-line) solid var(--bt-border);
+  }
+
+  @container bt-footer (width >= 640px) {
+    .bt-footer [data-bt-part="grid"] {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      column-gap: var(--bt-space-6);
+    }
+  }
+
+  @container bt-footer (width >= 1024px) {
+    .bt-footer [data-bt-part="grid"] {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .bt-footer [data-bt-part="brand"] {
+      grid-column: 1 / span 4;
+    }
+  }
+}

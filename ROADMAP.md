@@ -50,7 +50,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] Dialog, Onboarding (StepDialog), PageDots
 - [ ] NavBar (static, sticky, auto-hide) + MorphMenu, SubNav
 - [x] Bento + ExpandableCard
-- [ ] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer
+- [x] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer
 - [ ] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
 
 ## v0.7 — App kit (Phase 6B)

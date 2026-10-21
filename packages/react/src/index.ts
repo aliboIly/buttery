@@ -290,3 +290,10 @@ export { ExpandableCard } from "./patterns/expandable-card/ExpandableCard.tsx";
 export type { ExpandableCardProps } from "./patterns/expandable-card/ExpandableCard.tsx";
 export { ArticleLayout } from "./patterns/article-layout/ArticleLayout.tsx";
 export type { ArticleLayoutProps } from "./patterns/article-layout/ArticleLayout.tsx";
+export { Footer, FooterColumn, FooterLink } from "./patterns/footer/Footer.tsx";
+export type {
+  FooterColumnProps,
+  FooterComponent,
+  FooterLinkProps,
+  FooterProps,
+} from "./patterns/footer/Footer.tsx";
