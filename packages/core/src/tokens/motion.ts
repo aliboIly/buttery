@@ -33,11 +33,13 @@ export const easings: Readonly<Record<EasingToken, string>> = {
 };
 
 /**
- * Motion transitions by name (MOTION_SPEC §2): `instant` for direct manipulation and reduced motion,
- * `snappy` for selection indicators, `smooth` (the default) for discrete changes, `morph` for big surfaces
- * changing shape and `gentle` for choreographed entrances. `visualDuration` is in seconds; with
- * `bounce: 0` a spring never overshoots. `instant` lands on the next frame; it lasts 1ms rather than 0
- * because WebKit can drop the last frame of a zero-length layout animation (DECISIONS, Phase 3).
+ * Motion transitions by name (MOTION_SPEC §2): `instant` for reduced motion and snaps the user isn't
+ * driving (a value the user drags is set directly, with `MotionValue.jump()` or a style, since even
+ * `instant` lands a frame later), `snappy` for selection indicators, `smooth` (the default) for discrete
+ * changes, `morph` for big surfaces changing shape and `gentle` for choreographed entrances.
+ * `visualDuration` is in seconds; with `bounce: 0` a spring never overshoots. `instant` lands on the next
+ * frame; it lasts 1ms rather than 0 because WebKit can drop the last frame of a zero-length layout
+ * animation (DECISIONS, Phase 3).
  */
 export const spring = {
   instant: { type: "tween", duration: 0.001 },
