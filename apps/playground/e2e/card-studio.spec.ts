@@ -385,3 +385,28 @@ test("deleting the card from the keyboard takes focus to New card, and the toast
   await page.keyboard.press(apple ? "Meta+Shift+z" : "Control+Shift+z");
   await expect(page.getByTestId("title-card")).toBeHidden();
 });
+
+test("the tour opens by itself on the first visit, and not again once it's finished", async ({
+  page,
+}) => {
+  await page.goto("/?chrome=0&motion=reduced#/card-studio");
+  await page.evaluate(() => {
+    window.localStorage.removeItem("buttery:onboarding:card-studio");
+  });
+  await page.reload();
+  const tour = page.getByRole("dialog", { name: "Name your card" });
+  await expect(tour).toBeVisible();
+  for (let step = 0; step < 3; step += 1) {
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+  }
+  await expect(
+    page.getByRole("dialog", { name: "Take it with you" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Start", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: /^Canvas shape/ }),
+  ).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});

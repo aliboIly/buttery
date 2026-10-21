@@ -97,3 +97,31 @@
 .cs-export {
   flex: 1;
 }
+
+/* The tour's card: a small card in the inverse colors, like a new Ink card. */
+.cs-tour-card {
+  padding: var(--bt-space-4) var(--bt-space-6);
+  border-radius: var(--bt-r-lg);
+  background-color: var(--bt-inverse-bg);
+  box-shadow: var(--bt-shadow-floating);
+  color: var(--bt-inverse-text);
+}
+
+.cs-tour-card .bt-text {
+  color: inherit;
+}
+
+/* The lean pad's knob, drawn without the pad's controls, since the tour's scenes are pictures. */
+.cs-tour-knob {
+  display: block;
+  inline-size: var(--bt-space-5);
+  block-size: var(--bt-space-5);
+  border: 1px solid var(--bt-knob-border);
+  border-radius: var(--bt-r-full);
+  background: radial-gradient(
+    circle farthest-side at 50% 30%,
+    var(--bt-knob-center),
+    var(--bt-knob-edge)
+  );
+  box-shadow: var(--bt-shadow-knob);
+}

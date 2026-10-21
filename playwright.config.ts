@@ -59,6 +59,18 @@ export default defineConfig({
         use: {
           ...browser.device,
           baseURL: `http://localhost:${String(testPort(app))}`,
+          // Tests open the apps as a returning visitor; the first-run tour has its own test that clears this.
+          storageState: {
+            cookies: [],
+            origins: [
+              {
+                origin: `http://localhost:${String(testPort(app))}`,
+                localStorage: [
+                  { name: "buttery:onboarding:card-studio", value: "done" },
+                ],
+              },
+            ],
+          },
         },
       })),
     ),

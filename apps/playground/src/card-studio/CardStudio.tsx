@@ -18,6 +18,7 @@ import {
 } from "@buttery/react";
 import { cardBlob, fileName } from "./export.ts";
 import { StudioHeader } from "./StudioHeader.tsx";
+import { StudioTour, tourIsNew } from "./StudioTour.tsx";
 import { EmptyStudioInspector, StudioInspector } from "./StudioInspector.tsx";
 import type { ChangeCard } from "./StudioInspector.tsx";
 import { TitleCard } from "./TitleCard.tsx";
@@ -64,6 +65,7 @@ interface ResizeStart {
 /** Card Studio: style a title card, then export it as an image. */
 export function CardStudio(): ReactElement {
   const [studio, dispatch] = useReducer(studioReducer, STUDIO_START);
+  const [tourOpen, setTourOpen] = useState(tourIsNew);
   const [live, setLive] = useState(false);
   const liveRef = useRef(false);
   const [resize, setResize] = useState<ResizeStart | null>(null);
@@ -238,10 +240,7 @@ export function CardStudio(): ReactElement {
             onUndo={undo}
             onRedo={redo}
             onHelp={() => {
-              toast(
-                "Pick a backdrop, lean the card for depth, then export it.",
-                { id: "help" },
-              );
+              setTourOpen(true);
             }}
           />
         }
@@ -303,6 +302,7 @@ export function CardStudio(): ReactElement {
             />
           )}
         </DropZone>
+        <StudioTour open={tourOpen} onOpenChange={setTourOpen} />
       </AppShell>
       {card ? (
         <FloatingToolbar
