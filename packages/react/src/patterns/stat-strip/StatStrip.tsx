@@ -113,9 +113,14 @@ export function Stat({
 
   useEffect(() => {
     const node = counter.current;
-    if (!node || reduced || counted.current) return undefined;
+    if (!node) return undefined;
+    if (reduced || counted.current) {
+      node.textContent = final;
+      return undefined;
+    }
     const writing: StatWriting = { prefix, suffix, decimals, format };
     node.textContent = writeStat(0, writing);
+    let live = true;
     let stop: (() => void) | null = null;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -127,15 +132,15 @@ export function Stat({
           duration: timing["count-up"] / 1000,
           ease: [...easingCurves.out],
           onUpdate: (amount) => {
-            node.textContent = writeStat(amount, writing);
+            if (live) node.textContent = writeStat(amount, writing);
           },
         });
         void controls.finished.then(() => {
-          node.textContent = final;
+          if (live) node.textContent = final;
           release?.();
         });
         stop = () => {
-          controls.complete();
+          controls.stop();
           release?.();
         };
       },
@@ -143,9 +148,9 @@ export function Stat({
     );
     observer.observe(node);
     return () => {
+      live = false;
       observer.disconnect();
       stop?.();
-      node.textContent = final;
     };
   }, [value, prefix, suffix, decimals, format, reduced, tracked, final]);
 

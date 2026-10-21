@@ -8,6 +8,7 @@ import {
   within,
 } from "@testing-library/react";
 import { createRef } from "react";
+import type { ReactElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ButteryProvider } from "../../provider/ButteryProvider.tsx";
 import { Stat, StatStrip } from "./StatStrip.tsx";
@@ -67,6 +68,51 @@ describe("StatStrip", () => {
       },
       { timeout: 2000 },
     );
+  });
+
+  it("shows a new number straight away after it has counted", async () => {
+    const strip = (value: number): ReactElement => (
+      <ButteryProvider reducedMotion="never" layoutGuard={false}>
+        <StatStrip columns={2}>
+          <Stat value={value} label="cards" />
+        </StatStrip>
+      </ButteryProvider>
+    );
+    const { rerender } = render(strip(1200));
+    const count = document.querySelector<HTMLElement>('[data-bt-part="count"]');
+    await waitFor(
+      () => {
+        expect(count?.textContent).toBe("1,200");
+      },
+      { timeout: 2000 },
+    );
+    rerender(strip(1300));
+    await waitFor(() => {
+      expect(count?.textContent).toBe("1,300");
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(count?.textContent).toBe("1,300");
+  });
+
+  it("lands on the new number when it changes while counting", async () => {
+    const strip = (value: number): ReactElement => (
+      <ButteryProvider reducedMotion="never" layoutGuard={false}>
+        <StatStrip columns={2}>
+          <Stat value={value} label="cards" />
+        </StatStrip>
+      </ButteryProvider>
+    );
+    const { rerender } = render(strip(1200));
+    const count = document.querySelector<HTMLElement>('[data-bt-part="count"]');
+    await waitFor(() => {
+      const shown = Number((count?.textContent ?? "").replaceAll(",", ""));
+      expect(shown).toBeGreaterThan(0);
+      expect(shown).toBeLessThan(1200);
+    });
+    rerender(strip(1300));
+    expect(count?.textContent).toBe("1,300");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    expect(count?.textContent).toBe("1,300");
   });
 
   it("puts four stats in two rows of two on a phone", () => {
