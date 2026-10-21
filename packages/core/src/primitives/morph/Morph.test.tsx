@@ -269,4 +269,77 @@ describe("Morph", () => {
     });
     expect(performance.now() - start).toBeLessThan(150);
   });
+
+  it("changes height without a ResizeObserver loop for anything observing the page around it", async () => {
+    const loops: string[] = [];
+    const listen = (event: ErrorEvent): void => {
+      if (event.message.includes("ResizeObserver loop"))
+        loops.push(event.message);
+    };
+    window.addEventListener("error", listen);
+    const observer = new ResizeObserver(() => undefined);
+    const { rerender } = render(
+      <div data-testid="page">
+        <Panel tall={false} />
+      </div>,
+    );
+    observer.observe(screen.getByTestId("page"));
+    await measured(40);
+    await nextFrames(3);
+    rerender(
+      <div data-testid="page">
+        <Panel tall />
+      </div>,
+    );
+    await nextFrames(1);
+    expect(height()).toBeLessThan(120);
+    await measured(120);
+    await nextFrames(2);
+    observer.disconnect();
+    window.removeEventListener("error", listen);
+    expect(loops).toEqual([]);
+  });
+
+  it("follows a Morph inside it frame by frame while that one moves, without moving on its own", async () => {
+    function Nested({ open }: { readonly open: boolean }): ReactElement {
+      return (
+        <Morph data-testid="outer">
+          <p style={{ margin: 0, blockSize: "20px" }}>Roast plan</p>
+          <Morph disclosure data-testid="inner">
+            {open ? <div style={{ blockSize: "120px" }} /> : null}
+          </Morph>
+        </Morph>
+      );
+    }
+    const loops: string[] = [];
+    const listen = (event: ErrorEvent): void => {
+      if (event.message.includes("ResizeObserver loop"))
+        loops.push(event.message);
+    };
+    window.addEventListener("error", listen);
+    const { rerender } = render(<Nested open={false} />);
+    const outer = screen.getByTestId("outer");
+    const inner = screen.getByTestId("inner");
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(20);
+    });
+    await nextFrames(3);
+    rerender(<Nested open />);
+    const gaps: number[] = [];
+    let innerMoved = false;
+    for (let frame = 0; frame < 30; frame += 1) {
+      await nextFrames(1);
+      const innerHeight = inner.getBoundingClientRect().height;
+      if (innerHeight > 0 && innerHeight < 120) innerMoved = true;
+      gaps.push(
+        Math.abs(outer.getBoundingClientRect().height - (20 + innerHeight)),
+      );
+      expect(outer.hasAttribute("data-animating")).toBe(false);
+    }
+    window.removeEventListener("error", listen);
+    expect(innerMoved).toBe(true);
+    expect(Math.max(...gaps)).toBeLessThan(0.5);
+    expect(outer.getBoundingClientRect().height).toBe(140);
+    expect(loops).toEqual([]);
+  });
 });

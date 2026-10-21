@@ -1,6 +1,6 @@
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react";
 import type { AnimationPlaybackControls, Transition } from "motion/react";
-import { useLayoutEffect, useRef } from "react";
+import { createContext, use, useLayoutEffect, useMemo, useRef } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { useMotionPreference } from "../../motion/preference.ts";
 import type { MotionElementProps } from "../../motion/props.ts";
@@ -21,6 +21,23 @@ const quick: Transition = {
 interface Busy {
   growing: boolean;
   leaving: boolean;
+}
+
+/** How a `Morph` inside another one tells it that its height is moving, so the outer one follows at once. */
+interface MorphParent {
+  readonly follow: () => void;
+  readonly unfollow: () => void;
+}
+
+const MorphParentContext = createContext<MorphParent | null>(null);
+
+// A change inside a nested Morph, its own box's height included, is that Morph's to animate.
+function ownChange(record: MutationRecord, box: Element): boolean {
+  const target =
+    record.target instanceof Element
+      ? record.target
+      : record.target.parentElement;
+  return target?.closest('[data-bt="Morph"]') === box;
 }
 
 // The content stays clipped while the height moves, and while swapped-out content that's taller than the box
@@ -74,8 +91,8 @@ export interface MorphProps extends MotionElementProps<"div"> {
  * One container whose content can swap or grow: its height follows the content with `spring.smooth` and
  * swapped content crossfades in place. Between changes it sits at its natural height, so text that
  * rewraps when the window resizes never spills out, and a size change that comes without a change to the
- * content, such as a web font swapping in, takes effect at once. With reduced motion the height jumps and
- * the crossfade takes 100ms.
+ * content, such as a web font swapping in, takes effect at once. A `Morph` inside another one moves on its own
+ * while the outer one follows it. With reduced motion the height jumps and the crossfade takes 100ms.
  *
  * @example
  * <Morph contentKey={fill}>
@@ -105,26 +122,49 @@ export function Morph({
   const shownKey = useRef(contentKey);
   const rendered = useRef(false);
   const markRendered = useRef<() => void>(() => undefined);
+  const hold = useRef<() => void>(() => undefined);
+  const release = useRef<() => void>(() => undefined);
+  const followers = useRef(0);
+  const follow = useRef<() => void>(() => undefined);
+  const parent = use(MorphParentContext);
+  const asParent = useMemo<MorphParent>(
+    () => ({
+      follow: () => {
+        followers.current += 1;
+        follow.current();
+      },
+      unfollow: () => {
+        followers.current = Math.max(0, followers.current - 1);
+      },
+    }),
+    [],
+  );
 
-  // A change to the content's DOM marks the next layouts as its own for two frames. A size change with no
-  // DOM change, such as a web font swapping in just after the page loads, is followed at once.
+  // A change to the content's DOM marks the next layouts as its own for two frames, and holds the box at its
+  // last height until the next layout has been measured. A size change with no DOM change, such as a web font
+  // swapping in just after the page loads, is followed at once.
   useLayoutEffect(() => {
     const node = content.current;
-    if (!node) return undefined;
+    const box = outer.current;
+    if (!node || !box) return undefined;
     let next = 0;
     let later = 0;
     const mark = (): void => {
       rendered.current = true;
+      hold.current();
       cancelAnimationFrame(next);
       cancelAnimationFrame(later);
       next = requestAnimationFrame(() => {
         later = requestAnimationFrame(() => {
           rendered.current = false;
+          release.current();
         });
       });
     };
     markRendered.current = mark;
-    const observer = new MutationObserver(mark);
+    const observer = new MutationObserver((records) => {
+      if (records.some((record) => ownChange(record, box))) mark();
+    });
     observer.observe(node, {
       childList: true,
       characterData: true,
@@ -152,15 +192,44 @@ export function Morph({
     if (!node || !box) return undefined;
     let { width, height: last } = node.getBoundingClientRect();
     let running: AnimationPlaybackControls | null = null;
+    let held = false;
+    let leading = false;
+    const toAuto = (): void => {
+      box.style.height = "auto";
+      height.jump("auto");
+    };
     const settle = (): void => {
       running = null;
-      height.set("auto");
+      held = false;
+      toAuto();
       busy.current.growing = false;
       syncClip(box, busy.current);
       tracking.onAnimationComplete();
+      if (leading) {
+        leading = false;
+        parent?.unfollow();
+      }
     };
-    // ResizeObserver runs after layout and before paint, so the old height goes back on before anyone sees
-    // the new one.
+    // Holding the old height before layout, rather than putting it back from inside the ResizeObserver, keeps
+    // everything around the box still while the browser delivers its notifications; resizing it there makes
+    // the browser report a ResizeObserver loop to any observer of an ancestor.
+    hold.current = () => {
+      if (reduced || running !== null || held || followers.current > 0) return;
+      held = true;
+      box.style.height = `${String(last)}px`;
+      height.jump(last);
+    };
+    release.current = () => {
+      if (!held || running !== null) return;
+      held = false;
+      toAuto();
+    };
+    // A nested Morph starts moving while its own box still holds its old height, so letting go here changes
+    // nothing on screen.
+    follow.current = () => {
+      if (running !== null) settle();
+      else if (held) release.current();
+    };
     const observer = new ResizeObserver(([entry]) => {
       const size = entry?.borderBoxSize[0];
       if (!size) return;
@@ -174,17 +243,25 @@ export function Morph({
       if (
         resized ||
         reduced ||
+        followers.current > 0 ||
         Math.abs(to - from) < 0.5 ||
         (!rendered.current && !animating)
       ) {
-        if (animating) settle();
+        if (animating || held) settle();
         return;
       }
-      box.style.height = `${String(from)}px`;
-      height.jump(from);
+      if (!held) {
+        box.style.height = `${String(from)}px`;
+        height.jump(from);
+      }
+      held = false;
       busy.current.growing = true;
       syncClip(box, busy.current);
       tracking.onAnimationStart();
+      if (!leading && parent) {
+        leading = true;
+        parent.follow();
+      }
       const controls = animate(height, to, to > from ? grow : shrink);
       running = controls;
       void controls.finished.then(() => {
@@ -194,12 +271,18 @@ export function Morph({
     observer.observe(node);
     return () => {
       observer.disconnect();
+      hold.current = () => undefined;
+      release.current = () => undefined;
+      follow.current = () => undefined;
       if (running) {
         running.stop();
         settle();
+      } else if (leading) {
+        leading = false;
+        parent?.unfollow();
       }
     };
-  }, [reduced, grow, shrink, height, tracking]);
+  }, [reduced, grow, shrink, height, tracking, parent]);
 
   return (
     <motion.div
@@ -210,18 +293,20 @@ export function Morph({
       style={{ ...style, height }}
     >
       <div ref={content} data-bt-part="content">
-        <AnimatePresence
-          initial={false}
-          mode="popLayout"
-          onExitComplete={() => {
-            busy.current.leaving = false;
-            syncClip(outer.current, busy.current);
-          }}
-        >
-          <MorphView key={contentKey ?? "content"} reduced={reduced}>
-            {children}
-          </MorphView>
-        </AnimatePresence>
+        <MorphParentContext value={asParent}>
+          <AnimatePresence
+            initial={false}
+            mode="popLayout"
+            onExitComplete={() => {
+              busy.current.leaving = false;
+              syncClip(outer.current, busy.current);
+            }}
+          >
+            <MorphView key={contentKey ?? "content"} reduced={reduced}>
+              {children}
+            </MorphView>
+          </AnimatePresence>
+        </MorphParentContext>
       </div>
     </motion.div>
   );
