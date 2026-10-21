@@ -10,10 +10,10 @@ export const meta: ComponentMeta = {
     "A short measurement next to a control: 12px, 45°, 80%",
   ],
   avoidWhen: [
-    "Status or counts on navigation: buttery has no status badge yet",
+    "A record's state or a count: use StatusBadge",
     "An editable number: use NumberField",
   ],
-  related: ["Slider", "NumberField"],
+  related: ["Slider", "NumberField", "StatusBadge"],
   a11y: "Plain text: give its control an aria-valuetext with the same value, as Slider does. The reserved widths are hidden from assistive technology.",
   motion: "none",
 };

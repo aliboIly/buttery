@@ -1,0 +1,47 @@
+@layer bt.components {
+  .bt-status-badge {
+    --bt-status-badge-icon: 12px;
+    --bt-status-badge-bg: var(--bt-bg-control);
+    --bt-status-badge-fg: var(--bt-text-secondary);
+
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1);
+    block-size: var(--bt-h-badge);
+    padding-inline: var(--bt-space-1_5);
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-status-badge-bg);
+    color: var(--bt-status-badge-fg);
+    font-size: var(--bt-text-badge-size);
+    font-weight: var(--bt-text-badge-weight);
+    line-height: var(--bt-text-badge-line);
+    letter-spacing: var(--bt-text-badge-tracking);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .bt-status-badge > .bt-icon {
+    --bt-icon-size: var(--bt-status-badge-icon);
+  }
+
+  .bt-status-badge[data-tone="info"] {
+    --bt-status-badge-bg: var(--bt-accent-subtle);
+    --bt-status-badge-fg: var(--bt-accent-text);
+  }
+
+  .bt-status-badge[data-tone="success"] {
+    --bt-status-badge-bg: var(--bt-success-subtle);
+    --bt-status-badge-fg: var(--bt-success);
+  }
+
+  .bt-status-badge[data-tone="warning"] {
+    --bt-status-badge-bg: var(--bt-warning-subtle);
+    --bt-status-badge-fg: var(--bt-warning);
+  }
+
+  .bt-status-badge[data-tone="danger"] {
+    --bt-status-badge-bg: var(--bt-danger-subtle);
+    --bt-status-badge-fg: var(--bt-danger);
+  }
+}

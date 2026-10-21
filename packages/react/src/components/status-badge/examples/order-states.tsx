@@ -1,0 +1,16 @@
+import type { ReactElement } from "react";
+import { Inline } from "@buttery/core";
+import { StatusBadge } from "@buttery/react";
+
+/** An order's state in a table cell: the word says it, the tone repeats it. */
+export function OrderStates(): ReactElement {
+  return (
+    <Inline gap={2} align="center" wrap>
+      <StatusBadge tone="success">Paid</StatusBadge>
+      <StatusBadge tone="info">Roasting</StatusBadge>
+      <StatusBadge tone="warning">Awaiting beans</StatusBadge>
+      <StatusBadge tone="danger">Payment failed</StatusBadge>
+      <StatusBadge>Draft</StatusBadge>
+    </Inline>
+  );
+}

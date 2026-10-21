@@ -330,3 +330,8 @@ export type {
 } from "./components/initials-tile/InitialsTile.tsx";
 export { Avatar } from "./components/avatar/Avatar.tsx";
 export type { AvatarProps } from "./components/avatar/Avatar.tsx";
+export { StatusBadge } from "./components/status-badge/StatusBadge.tsx";
+export type {
+  StatusBadgeProps,
+  StatusTone,
+} from "./components/status-badge/StatusBadge.tsx";
