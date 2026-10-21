@@ -296,6 +296,7 @@ export interface MenuLinkProps extends Omit<
  * so a router's handler works), and the menu closes.
  */
 export function MenuLink({
+  href,
   icon,
   className,
   children,
@@ -307,6 +308,7 @@ export function MenuLink({
     <DropdownMenu.Item asChild>
       <a
         {...rest}
+        href={href}
         onClick={(event) => {
           onClick?.(event);
           // A router's link takes over the click with preventDefault, which also stops Radix closing the menu.
