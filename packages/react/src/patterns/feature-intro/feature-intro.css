@@ -1,0 +1,99 @@
+@layer bt.patterns {
+  .bt-feature-intro {
+    container: bt-feature-intro / inline-size;
+    min-inline-size: 0;
+  }
+
+  .bt-feature-intro > [data-bt-part="layout"] {
+    display: grid;
+    grid-template-areas: "copy";
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-8);
+  }
+
+  .bt-feature-intro > [data-bt-part="layout"][data-media] {
+    grid-template-areas:
+      "copy"
+      "media";
+  }
+
+  .bt-feature-intro > [data-bt-part="layout"][data-dismissible] {
+    grid-template-areas: "copy dismiss";
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .bt-feature-intro > [data-bt-part="layout"][data-dismissible][data-media] {
+    grid-template-areas:
+      "copy dismiss"
+      "media media";
+  }
+
+  .bt-feature-intro [data-bt-part="copy"] {
+    display: flex;
+    flex-direction: column;
+    grid-area: copy;
+    gap: var(--bt-space-6);
+    min-inline-size: 0;
+  }
+
+  .bt-feature-intro [data-bt-part="lead"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+  }
+
+  .bt-feature-intro [data-bt-part="benefits"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bt-feature-intro [data-bt-part="benefits"] > li {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-feature-intro [data-bt-part="actions"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--bt-space-4);
+  }
+
+  .bt-feature-intro [data-bt-part="media"] {
+    grid-area: media;
+    min-inline-size: 0;
+  }
+
+  .bt-feature-intro [data-bt-part="media"] > :is(img, svg, picture) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: var(--bt-r-lg);
+  }
+
+  .bt-feature-intro [data-bt-part="dismiss"] {
+    grid-area: dismiss;
+    align-self: start;
+  }
+
+  /* From 720px the copy and the media sit side by side, the dismiss button at the far end. */
+  @container bt-feature-intro (width >= 720px) {
+    .bt-feature-intro > [data-bt-part="layout"][data-media] {
+      grid-template-areas: "copy media";
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+    }
+
+    .bt-feature-intro > [data-bt-part="layout"][data-media][data-dismissible] {
+      grid-template-areas: "copy media dismiss";
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    }
+  }
+}
