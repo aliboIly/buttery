@@ -39,6 +39,31 @@ describe("Text", () => {
     expect(ref.current).toBe(heading);
   });
 
+  it("draws a plain link in its words in the accent, underlined, and leaves a styled link alone", () => {
+    render(
+      <>
+        <Text variant="body-sm">
+          Agree to the <a href="#terms">plan terms</a> first.
+        </Text>
+        <Text variant="body-sm">
+          <a href="#more" className="custom-link">
+            More
+          </a>
+        </Text>
+        <span data-testid="accent" style={{ color: "var(--bt-accent-text)" }} />
+      </>,
+    );
+    const accent = getComputedStyle(screen.getByTestId("accent")).color;
+    const plain = getComputedStyle(
+      screen.getByRole("link", { name: "plan terms" }),
+    );
+    expect(plain.color).toBe(accent);
+    expect(plain.textDecorationLine).toBe("underline");
+    expect(
+      getComputedStyle(screen.getByRole("link", { name: "More" })).color,
+    ).not.toBe(accent);
+  });
+
   it("declares truncation and keeps the full text in the title", () => {
     render(
       <div style={{ inlineSize: "60px" }}>

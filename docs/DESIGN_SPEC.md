@@ -138,6 +138,8 @@ Every **active** text/background pair passes WCAG AA in both themes. Disabled st
 
 Page display roles (`display`, `heading-1`, `heading-2`, `body-lg`) are tokens too — values in `LAYOUT_RULES.md` §4.
 
+A plain link written into text, one without a class of its own such as a link in a dialog's small print, takes `accent-text` and keeps its underline (offset 2), so color isn't the only sign that it's a link. Links that are components (`ArrowLink`, a page footer's links) style themselves.
+
 Text stacks (a title, body and caption under each other in dialogs, empty states and page sections) trim their line boxes with `text-box: trim-both cap alphabetic` where the engine supports it (WebKit 18.2+, Chromium 133+, so the macOS desktop app has it). The spacing token between two text blocks is then the gap you see. Gaps stay on the 4px scale; engines without support show them a few px larger, which is fine. Control text (buttons, segments, rows) is centered by its control and isn't trimmed, and trimmed text never sits in a box that clips overflow, because its descenders would be cut. The text-stack gaps in §5 were re-derived this way in Phase 1, and the trimmed onboarding block lands within 1px of the capture. Without `text-box` support the same tokens make that block about 28px taller, because every line box keeps its half-leading.
 
 ---

@@ -15,6 +15,13 @@
     max-inline-size: 22ch;
   }
 
+  /* A plain link written into text reads as a link: the accent, underlined, so color isn't the only sign. */
+  .bt-text :where(a[href]:not([class])) {
+    color: var(--bt-accent-text);
+    text-decoration-line: underline;
+    text-underline-offset: var(--bt-space-0_5);
+  }
+
   .bt-text[data-tone="strong"] {
     color: var(--bt-text-strong);
   }
