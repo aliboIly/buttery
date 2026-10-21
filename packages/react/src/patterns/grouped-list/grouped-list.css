@@ -1,0 +1,111 @@
+@layer bt.patterns {
+  .bt-grouped-list {
+    --bt-grouped-list-row: 48px;
+    --bt-grouped-list-dash: 1px;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+    padding: var(--bt-space-1);
+    border-radius: var(--bt-r-2xl);
+    background-color: var(--bt-bg-section);
+  }
+
+  .bt-grouped-list-group,
+  .bt-grouped-list-group > [data-bt-part="rows"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-grouped-list-group > [data-bt-part="rows"] {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The title lines up with the rows' media; the "…" button's icon with their values. */
+  .bt-grouped-list-group > [data-bt-part="group-head"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--bt-space-2);
+    min-block-size: var(--bt-h-sm);
+    padding-block-start: var(--bt-space-2);
+    padding-inline: var(--bt-space-4) var(--bt-space-2);
+  }
+
+  .bt-grouped-list-group
+    > [data-bt-part="group-head"]
+    > [data-bt-part="group-actions"] {
+    grid-column: 2;
+  }
+
+  .bt-grouped-list-row {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-3);
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--bt-grouped-list-row);
+    padding-block: var(--bt-space-2);
+    padding-inline: var(--bt-space-4);
+    border: 0;
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+    color: var(--bt-text);
+    font-family: inherit;
+    text-align: start;
+    text-decoration: none;
+    transition: box-shadow var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  @media (hover: hover) {
+    :is(a, button).bt-grouped-list-row:hover {
+      box-shadow: var(--bt-shadow-raised);
+    }
+  }
+
+  .bt-grouped-list-row > [data-bt-part="media"] {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .bt-grouped-list-row > [data-bt-part="text"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-0_5);
+    min-inline-size: 0;
+  }
+
+  .bt-grouped-list-row > [data-bt-part="value"] {
+    flex: none;
+  }
+
+  /* bg-item-hover is the well's own color in light, so the add row darkens to bg-control instead. */
+  .bt-grouped-list-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bt-space-2);
+    inline-size: 100%;
+    min-block-size: var(--bt-grouped-list-row);
+    padding-inline: var(--bt-space-4);
+    border: var(--bt-grouped-list-dash) dashed var(--bt-ring-selected);
+    border-radius: var(--bt-r-lg);
+    background-color: transparent;
+    color: var(--bt-text-secondary);
+    font-family: inherit;
+    transition: background-color var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  @media (hover: hover) {
+    .bt-grouped-list-add:hover {
+      background-color: var(--bt-bg-control);
+    }
+  }
+}

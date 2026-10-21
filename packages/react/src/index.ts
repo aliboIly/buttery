@@ -444,3 +444,11 @@ export type {
 } from "./patterns/column-settings/ColumnSettings.tsx";
 export { StatTabs } from "./patterns/stat-tabs/StatTabs.tsx";
 export type { StatTab, StatTabsProps } from "./patterns/stat-tabs/StatTabs.tsx";
+export { GroupedList } from "./patterns/grouped-list/GroupedList.tsx";
+export type {
+  GroupedListAddProps,
+  GroupedListComponent,
+  GroupedListGroupProps,
+  GroupedListItemProps,
+  GroupedListProps,
+} from "./patterns/grouped-list/GroupedList.tsx";
