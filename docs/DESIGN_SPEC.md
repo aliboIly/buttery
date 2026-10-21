@@ -42,6 +42,8 @@ Never copy either product's branding, names, icons, illustrations, copy or gradi
 | `--bt-on-primary` | `#ffffff` | Text on primary |
 | `--bt-divider-on-primary` | `rgba(255,255,255,.18)` | Hairline between a split button's halves |
 | `--bt-inverse-bg` / `--bt-inverse-text` / `--bt-inverse-text-secondary` | `#1a1a1a` / `#ffffff` / `#a3a3a3` | Tooltip, toast |
+| `--bt-inverse-success` / `-warning` / `-danger` | `#4cc38a` / `#f2a33a` / `#ff7a6e` (dark: `#177245` / `#9a4d00` / `#c72a1c`) | A toned toast's icon |
+| `--bt-inverse-success-bg` / `-warning-bg` / `-danger-bg` | `#26342c` / `#3b3024` / `#3e2b28` (dark: `#d5e0d9` / `#e7dad3` / `#f0d9d5`) | A toned toast's pill |
 | `--bt-accent` | `#2862e0` | Focus ring, tilt-direction arc, selection highlights |
 | `--bt-selection` | `rgba(40,98,224,0.2)` | Text selection (_derived_: the accent at 20%) |
 | `--bt-overlay` | `rgba(0,0,0,0.32)` | Dialog scrim (no blur) |
@@ -342,6 +344,7 @@ A column 20 apart, at most 400 wide (`w-dialog`): a `TextStack` heading (an `h1`
 ### Toast
 `inverse-bg` pill, 36h (measured 38, snapped to `--bt-h-button`), padding-x 16, `body`-size text in `inverse-text`, action 14/500 in `inverse-text-secondary` (hover `inverse-text`), gap 20, shadow-floating. One line: a long message truncates at the lane's width (the viewport minus 24 a side). The action's target is 24 tall (2px block padding).
 - Shown with `toast(message, options)` from `@buttery/react`; the `Toaster` that `ButteryProvider` mounts stacks them in the `bottom-center` floating lane, 8 apart, newest at the bottom.
+- Tones (`tone`, or `toast.success()`, `toast.warning()`, `toast.danger()`): the pill takes `inverse-success-bg`, `inverse-warning-bg` or `inverse-danger-bg`, the inverse surface mixed toward the tone in OKLab (18%, 14% in dark), and leads with a 16px icon in `inverse-success`, `inverse-warning` or `inverse-danger` (a circled check, a warning triangle, a circled exclamation), 6 before the message, with the pill's start padding at 12. Each inverse tone is the other theme's tone, so it reads on the inverse surface. The action takes `inverse-text`, underlined on hover, since the secondary gray is too faint on a tint. A warning or danger toast stays 5s, as one with an action does. Screen readers hear the tone before the message ("Notification Error: Couldn't export the card"); `Toaster toneLabels` changes the words.
 - **Three at most.** A fourth lets the one shown or updated longest ago go. A toast with the `id` of one showing updates it in its place, with its time started over and read out again, so repeating an action never stacks copies and nothing moves.
 - Stays 3s (`--bt-toast-life`), or 5s with an action (`--bt-toast-life-action`); `duration: Infinity` keeps it until dismissed. The clock stops while the pointer or focus is on the toasts or the window is in the background.
 - Closes on Escape while it has focus (with the region focused, Escape closes the newest), a swipe down past 50px, its action, or `toast.dismiss(id)`. Escape anywhere else is left to the page, so menus, dialogs and the app's own shortcuts keep it. F8 moves focus to the region ("Notifications (F8)"); Tab goes through the toasts newest first, each followed by its action. When the last toast leaves, focus goes back to where it was before F8 or the click.

@@ -91,7 +91,7 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
 
 Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, Select, Tooltip, Dialog, Toaster, FloatingToolbar) are built on the layer primitives.
 
-Hosts that the root `ButteryProvider` mounts once take calls from anywhere through a module store: `toast(message, options)` shows a toast in the `Toaster` (in the `bottom-center` lane, three at most, `toast.dismiss(id?)` to close), and `celebrate(element?)` bursts confetti from the `Confetti` host. Without a host, `celebrate()` does nothing and `toast()` keeps its toast until one mounts; both log a development warning with the fix.
+Hosts that the root `ButteryProvider` mounts once take calls from anywhere through a module store: `toast(message, options)` shows a toast in the `Toaster` (in the `bottom-center` lane, three at most, `toast.success()`, `toast.warning()` and `toast.danger()` for a tone, `toast.dismiss(id?)` to close), and `celebrate(element?)` bursts confetti from the `Confetti` host. Without a host, `celebrate()` does nothing and `toast()` keeps its toast until one mounts; both log a development warning with the fix.
 
 Every open layer renders into its own container, `[data-bt-layer="<band>"]`, fixed over the viewport with clicks passing through, at its band's z token. A layer opened inside another layer of the same or a higher band (a Select inside a Dialog) mounts inside that layer's container, so it stacks above it by order; a layer in a higher band (a Tooltip inside a Dialog) mounts at the root. Every z-index in the page stays a token. Scrims render first in their layer's container, under its content.
 
