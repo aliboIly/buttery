@@ -67,6 +67,7 @@ Use these names everywhere (`@buttery/core` exports them as `spring` for Motion;
 | `--bt-delay-tooltip` | 500ms (tooltips open) |
 | `--bt-delay-submenu` | 40ms (a submenu opens once the pointer has rested on its item this long; Phase 6B) |
 | `--bt-delay-loading` | 300ms (a loading pill shows only if loading lasts this long, so quick loads never flash it; Phase 6B) |
+| `--bt-delay-search` | 120ms (a search asks a remote source this long after the last keystroke, so typing a word sends one request; Phase 6B) |
 | `--bt-dur-shimmer` | 1600ms (one pass of a skeleton's shimmer; Phase 6B) |
 
 Never use `transition: all`. Transition only `opacity`, transforms (`transform`, `translate`, `scale`), `background-color`, `color`, `box-shadow`, `filter` and `backdrop-filter`. Layout changes go through Motion's `layout` (FLIP), never animating `width/height/top/left` in CSS. Two size animations are sanctioned: `Morph`'s height (§5) and the `MorphMenu` viewport's size and position (§4.1). One offset follows a motion value: under an auto-hiding nav bar, a sticky follower's `top` takes off the bar's slide while it slides (§4.1), because a transform can't tell a stuck follower from one still in the page's flow.

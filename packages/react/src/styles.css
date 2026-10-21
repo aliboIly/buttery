@@ -107,3 +107,5 @@
 @import "./components/option-tiles/option-tiles.css";
 @import "./patterns/fullscreen-dialog/fullscreen-dialog.css";
 @import "./patterns/side-panel/side-panel.css";
+@import "./patterns/command-search/command-search.css";
+@import "./patterns/search-results/search-results.css";

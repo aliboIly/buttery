@@ -215,6 +215,47 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   "form-dialog": [opensDialog("Add a backup email")],
   "consequence-dialog": [opensDialog("Try Roaster")],
   "fullscreen-dialog": [opensDialog("Set up the roastery")],
+  "command-search": [
+    {
+      name: "open the search's suggestions",
+      run: async (page: Page) => {
+        await page
+          .getByRole("combobox", { name: "Search", exact: true })
+          .first()
+          .click();
+        await page.getByRole("listbox").first().waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "search for a customer",
+      run: async (page: Page) => {
+        await page.keyboard.type("ines");
+        await page
+          .getByRole("option", { name: /Ines Vale/ })
+          .first()
+          .waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "search for something nothing matches",
+      run: async (page: Page) => {
+        await page.keyboard.type("zzz");
+        await page.getByText('No results for "ineszzz"').waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "finish a filter into a chip",
+      run: async (page: Page) => {
+        await page.keyboard.press("Escape");
+        await page.keyboard.type("status:shipped ");
+        await page.locator('[data-bt-part="chip"]').first().waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
   "side-panel": [
     {
       name: "open the panel's overflow menu",

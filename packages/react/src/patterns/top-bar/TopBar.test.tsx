@@ -8,6 +8,8 @@ import { createRef } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SearchField } from "../../components/search-field/SearchField.tsx";
+import { CommandSearch } from "../command-search/CommandSearch.tsx";
+import { pageSource } from "../command-search/search.ts";
 import { AppShell } from "../app-shell/AppShell.tsx";
 import { TopBar } from "./TopBar.tsx";
 
@@ -106,6 +108,38 @@ describe("TopBar", () => {
     );
     await userEvent.click(create);
     expect(onCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets a CommandSearch widen from 360 to 600 as it takes focus, keeping its actions in view", async () => {
+    render(
+      <div style={{ inlineSize: "1000px" }}>
+        <TopBar
+          search={
+            <CommandSearch
+              sources={[
+                pageSource({ pages: [{ label: "Orders", href: "#orders" }] }),
+              ]}
+            />
+          }
+          actions={
+            <TopBar.Action
+              icon={CircleHelp}
+              label="Help"
+              onSelect={() => undefined}
+            />
+          }
+        />
+      </div>,
+    );
+    const search = screen.getByRole("combobox", { name: "Search" });
+    const field = search.closest('[data-bt="CommandSearch"]');
+    if (!field) throw new Error("No field.");
+    expect(field.getBoundingClientRect().width).toBe(360);
+    await userEvent.click(search);
+    await waitFor(() => {
+      expect(field.getBoundingClientRect().width).toBe(600);
+    });
+    expect(screen.getByRole("button", { name: "Help" })).toBeTruthy();
   });
 
   it("folds its actions into a menu when they don't fit", async () => {

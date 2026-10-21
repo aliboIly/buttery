@@ -1,0 +1,252 @@
+import { Icon, cx, hasContent } from "@buttery/core";
+import { ChevronRight, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import type { ReactElement, ReactNode } from "react";
+import { LoadingPill } from "../../components/loading-pill/LoadingPill.tsx";
+import { AppPage } from "../app-page/AppPage.tsx";
+import type { AppPageProps } from "../app-page/AppPage.tsx";
+import { SearchHighlight } from "../command-search/CommandSearch.tsx";
+import { formatSearch } from "../command-search/search.ts";
+import type {
+  LocalSearchSource,
+  RemoteSearchSource,
+  SearchItem,
+  SearchQuery,
+  SearchSource,
+} from "../command-search/search.ts";
+import { EmptyState } from "../empty-state/EmptyState.tsx";
+import { PageHeader } from "../page-header/PageHeader.tsx";
+
+/** The words a `SearchResults` page shows. */
+export interface SearchResultsLabels {
+  /** The page's title, such as `Results for "decaf"`. */
+  readonly title: (search: string) => string;
+  /** How many results there are, such as "12 results". */
+  readonly count: (count: number) => string;
+  /** What a section waiting on a server says. */
+  readonly loading: string;
+  /** Says nothing matched. */
+  readonly noResults: (search: string) => string;
+}
+
+/** Props for `SearchResults`. */
+export interface SearchResultsProps extends Omit<
+  AppPageProps,
+  "header" | "children" | "fill"
+> {
+  /** What was searched for, as `CommandSearch` hands it to `resultsHref` or `onSearch`. */
+  readonly query: SearchQuery;
+  /** Where to look: one section each, in this order, with every result rather than the panel's five. */
+  readonly sources: readonly SearchSource[];
+  /** A line under "No results", such as a link to the help site. */
+  readonly emptyHint?: ReactNode;
+  /** Its words, for another language or your own. */
+  readonly labels?: Partial<SearchResultsLabels>;
+}
+
+const LABELS: SearchResultsLabels = {
+  title: (search) => `Results for "${search}"`,
+  count: (count) => `${String(count)} ${count === 1 ? "result" : "results"}`,
+  loading: "Searching",
+  noResults: (search) => `No results for "${search}"`,
+};
+
+interface Answer {
+  readonly key: string;
+  readonly items: readonly SearchItem[];
+}
+
+function isLocal(source: SearchSource): source is LocalSearchSource {
+  return source.remote !== true;
+}
+
+function isRemote(source: SearchSource): source is RemoteSearchSource {
+  return source.remote === true;
+}
+
+function ResultRow({
+  item,
+  source,
+  query,
+}: {
+  readonly item: SearchItem;
+  readonly source: SearchSource;
+  readonly query: SearchQuery;
+}): ReactElement {
+  const content =
+    source.renderItem === undefined ? (
+      <>
+        {hasContent(item.media) ? (
+          <span data-bt-part="media">{item.media}</span>
+        ) : item.icon ? (
+          <Icon icon={item.icon} data-bt-part="result-icon" />
+        ) : null}
+        <span
+          className="bt-truncate"
+          data-bt-truncate=""
+          title={[...(item.path ?? []), item.label].join(" › ")}
+          data-bt-part="label"
+        >
+          {item.path?.map((part) => (
+            <span key={part} data-bt-part="path">
+              <SearchHighlight text={part} query={query.text} />
+              <Icon icon={ChevronRight} data-bt-part="path-chevron" />
+            </span>
+          ))}
+          <SearchHighlight text={item.label} query={query.text} />
+        </span>
+        {item.detail === undefined ? null : (
+          <span
+            className="bt-truncate"
+            data-bt-truncate=""
+            title={item.detail}
+            data-bt-part="detail"
+          >
+            {item.detail}
+          </span>
+        )}
+      </>
+    ) : (
+      source.renderItem(item, query)
+    );
+  if (item.href !== undefined)
+    return (
+      <a
+        href={item.href}
+        onClick={item.onSelect}
+        className="bt-focus"
+        data-bt-part="result"
+      >
+        {content}
+      </a>
+    );
+  if (item.onSelect !== undefined)
+    return (
+      <button
+        type="button"
+        onClick={item.onSelect}
+        className="bt-focus"
+        data-bt-part="result"
+      >
+        {content}
+      </button>
+    );
+  return <div data-bt-part="result">{content}</div>;
+}
+
+/**
+ * A page of every result for a search, in an `AppPage`: its title says what was searched for and its
+ * description how many results there are; then a section for each source that found something, with every
+ * result as a row (its path, the label with the matching characters highlighted, a detail), each row a link.
+ * A remote source's section shows a loading pill until it answers. With nothing found, an empty state says
+ * so, with `emptyHint` under it. It's where `CommandSearch`'s "View all results" leads.
+ *
+ * @example
+ * <SearchResults query={parseSearch(params.get("q") ?? "", filters)} sources={[pages, orders, help]} />
+ */
+export function SearchResults({
+  query,
+  sources,
+  emptyHint,
+  labels,
+  className,
+  ...rest
+}: SearchResultsProps): ReactElement {
+  const words = { ...LABELS, ...labels };
+  const key = formatSearch(query);
+  const search = key.trim();
+  const local = useMemo(
+    () =>
+      new Map(
+        sources
+          .filter(isLocal)
+          .map((source) => [source.id, source.search(query)] as const),
+      ),
+    [sources, query],
+  );
+  const [remote, setRemote] = useState<Readonly<Record<string, Answer>>>({});
+
+  useEffect(() => {
+    const controller = new AbortController();
+    for (const source of sources.filter(isRemote)) {
+      void source.search(query, controller.signal).then(
+        (items) => {
+          if (controller.signal.aborted) return;
+          setRemote((all) => ({ ...all, [source.id]: { key, items } }));
+        },
+        (error: unknown) => {
+          if (controller.signal.aborted) return;
+          reportError(error);
+          setRemote((all) => ({ ...all, [source.id]: { key, items: [] } }));
+        },
+      );
+    }
+    return () => {
+      controller.abort();
+    };
+  }, [sources, query, key]);
+
+  const sections = sources
+    .map((source) => {
+      const answer = isRemote(source)
+        ? remote[source.id]
+        : { key, items: local.get(source.id) ?? [] };
+      return answer?.key === key
+        ? { source, loading: false, items: answer.items }
+        : { source, loading: true, items: [] };
+    })
+    .filter((section) => section.loading || section.items.length > 0);
+  const total = sections.reduce(
+    (count, section) => count + section.items.length,
+    0,
+  );
+  const waiting = sections.some((section) => section.loading);
+
+  return (
+    <AppPage
+      data-bt="SearchResults"
+      {...rest}
+      className={cx("bt-search-results", className)}
+      header={
+        <PageHeader
+          title={words.title(search)}
+          description={
+            waiting && total === 0 ? words.loading : words.count(total)
+          }
+        />
+      }
+    >
+      {sections.length === 0 ? (
+        <AppPage.Section>
+          <EmptyState
+            icon={Search}
+            title={words.noResults(search)}
+            description={emptyHint}
+          />
+        </AppPage.Section>
+      ) : (
+        sections.map(({ source, loading, items }) => (
+          <AppPage.Section
+            key={source.id}
+            title={source.label}
+            description={loading ? undefined : words.count(items.length)}
+          >
+            {loading ? (
+              <div data-bt-part="loading">
+                <LoadingPill label={words.loading} />
+              </div>
+            ) : (
+              <ul data-bt-part="results">
+                {items.map((item) => (
+                  <li key={item.id}>
+                    <ResultRow item={item} source={source} query={query} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </AppPage.Section>
+        ))
+      )}
+    </AppPage>
+  );
+}

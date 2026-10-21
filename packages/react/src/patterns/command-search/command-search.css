@@ -1,0 +1,299 @@
+@layer bt.patterns {
+  /* The panel renders in a layer away from the field, so it carries the variables too. */
+  .bt-command-search,
+  .bt-command-search-panel {
+    --bt-command-search-chip: 16px;
+    --bt-command-search-input: 64px;
+    --bt-command-search-hit: 24px;
+    --bt-command-search-row: 32px;
+    --bt-command-search-min: 160px;
+    --bt-command-search-max: 480px;
+    --bt-command-search-line: 1px;
+  }
+
+  .bt-command-search {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    inline-size: var(--bt-w-search);
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--bt-h-control);
+    padding-inline: var(--bt-space-3) var(--bt-space-1);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text-tertiary);
+    font-size: var(--bt-text-body-size);
+    font-weight: var(--bt-text-body-weight);
+    letter-spacing: var(--bt-text-body-tracking);
+  }
+
+  .bt-command-search[data-focused] {
+    inline-size: var(--bt-w-search-open);
+  }
+
+  .bt-command-search:focus-within {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: var(--bt-focus-offset);
+  }
+
+  .bt-command-search[data-disabled] {
+    background-color: var(--bt-bg-control-subtle);
+  }
+
+  .bt-command-search > [data-bt-part="icon"],
+  .bt-command-search > [data-bt-part="end"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+  }
+
+  .bt-command-search > [data-bt-part="end"] {
+    min-inline-size: var(--bt-h-sm);
+    justify-content: center;
+  }
+
+  .bt-command-search > [data-bt-part="chips"] {
+    display: flex;
+    flex: 0 1 auto;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-command-search [data-bt-part="chip"] {
+    display: inline-flex;
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    align-items: center;
+    gap: var(--bt-space-0_5);
+    block-size: var(--bt-h-badge);
+    padding-inline: var(--bt-space-1_5) var(--bt-space-0_5);
+    border: var(--bt-command-search-line) solid var(--bt-border-strong);
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-bg-surface);
+    color: var(--bt-text);
+  }
+
+  .bt-command-search [data-bt-part="chip-remove"] {
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-command-search-chip);
+    block-size: var(--bt-command-search-chip);
+    padding: 0;
+    border: 0;
+    border-radius: var(--bt-r-xs);
+    background: none;
+    color: var(--bt-text-tertiary);
+  }
+
+  .bt-command-search [data-bt-part="chip-remove"] > [data-bt-part="hit"] {
+    position: absolute;
+    inset: calc(
+      (var(--bt-command-search-chip) - var(--bt-command-search-hit)) / 2
+    );
+  }
+
+  /* The input keeps room to type in; chips truncate before it gets narrower. */
+  .bt-command-search > [data-bt-part="input-frame"] {
+    display: flex;
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-inline-size: var(--bt-command-search-input);
+  }
+
+  .bt-command-search [data-bt-part="input"] {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bt-text);
+    font: inherit;
+    letter-spacing: inherit;
+    text-overflow: ellipsis;
+    outline: none;
+    appearance: none;
+  }
+
+  .bt-command-search [data-bt-part="input"]::placeholder {
+    color: var(--bt-text-tertiary);
+    opacity: 1;
+  }
+
+  .bt-command-search [data-bt-part="input"]::-webkit-search-cancel-button,
+  .bt-command-search [data-bt-part="input"]::-webkit-search-decoration {
+    appearance: none;
+  }
+
+  /* The panel takes the field's width from the component and scrolls inside, never shorter than a steady minimum. */
+  .bt-command-search-panel.bt-popover {
+    display: flex;
+    flex-direction: column;
+    max-block-size: var(--bt-command-search-max);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .bt-command-search-panel > [data-bt-part="scroll"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: var(--bt-command-search-min);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bt-command-search-panel [data-bt-part="group"] {
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--bt-space-2);
+  }
+
+  .bt-command-search-panel [data-bt-part="group"] + [data-bt-part="group"] {
+    border-block-start: var(--bt-command-search-line) solid var(--bt-border);
+  }
+
+  .bt-command-search-panel [data-bt-part="group-heading"] {
+    padding: var(--bt-space-1) var(--bt-space-4);
+    color: var(--bt-text-strong);
+  }
+
+  .bt-command-search-panel [data-bt-part="option"],
+  .bt-command-search-panel [data-bt-part="searching"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    min-block-size: var(--bt-command-search-row);
+    padding-inline: var(--bt-space-4);
+    color: var(--bt-text);
+    text-decoration: none;
+    cursor: default;
+  }
+
+  .bt-command-search-panel [data-bt-part="option"][data-active] {
+    background-color: var(--bt-bg-item-hover);
+  }
+
+  .bt-command-search-panel [data-bt-part="option-icon"] {
+    flex: none;
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-command-search-panel [data-bt-part="media"] {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .bt-command-search-panel [data-bt-part="label"] {
+    min-inline-size: 0;
+  }
+
+  .bt-command-search-panel [data-bt-part="path"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-1);
+    padding-inline-end: var(--bt-space-1);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-command-search-panel [data-bt-part="path-chevron"] {
+    color: var(--bt-text-tertiary);
+  }
+
+  .bt-command-search-panel [data-bt-part="match"] {
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-accent-subtle);
+    color: inherit;
+  }
+
+  .bt-command-search-panel [data-bt-part="detail"] {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-command-search-panel [data-bt-part="key"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    block-size: var(--bt-h-badge);
+    padding-inline: var(--bt-space-1_5);
+    border: var(--bt-command-search-line) solid var(--bt-border-strong);
+    border-radius: var(--bt-r-xs);
+    color: var(--bt-text);
+  }
+
+  .bt-command-search-panel [data-bt-part="example"] {
+    flex: none;
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-command-search-panel [data-bt-part="description"] {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    color: var(--bt-text-secondary);
+    text-align: end;
+  }
+
+  .bt-command-search-panel [data-bt-part="searching"] {
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-command-search-panel [data-bt-part="spinner-slot"] {
+    position: relative;
+    flex: none;
+    inline-size: var(--bt-icon-sm);
+    block-size: var(--bt-icon-sm);
+  }
+
+  .bt-command-search-panel [data-bt-part="empty"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bt-space-2);
+    padding: var(--bt-space-8) var(--bt-space-4);
+    text-align: center;
+  }
+
+  .bt-command-search-panel [data-bt-part="empty-icon"] {
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-command-search-panel [data-bt-part="empty-title"],
+  .bt-command-search-panel [data-bt-part="empty-hint"] {
+    margin: 0;
+  }
+
+  .bt-command-search-panel [data-bt-part="empty-hint"] {
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-command-search-panel [data-bt-part="footer"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    min-block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-4);
+    border-block-start: var(--bt-command-search-line) solid var(--bt-border);
+    background-color: var(--bt-bg-section);
+  }
+
+  .bt-command-search-panel [data-bt-part="footer-link"] {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--bt-command-search-hit);
+    color: var(--bt-accent-text);
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .bt-command-search-panel [data-bt-part="footer-link"]:hover {
+      text-decoration: underline;
+    }
+  }
+}

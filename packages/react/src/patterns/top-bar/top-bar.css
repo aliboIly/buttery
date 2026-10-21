@@ -14,6 +14,11 @@
     min-inline-size: 0;
   }
 
+  /* A CommandSearch sets its own width, 360 at rest and 600 while it has focus, and shrinks from there. */
+  .bt-top-bar > [data-bt-part="search"]:has(> .bt-command-search) {
+    flex-basis: auto;
+  }
+
   /* The actions keep room for their "…" button, so the search narrows before anything overlaps. */
   .bt-top-bar > [data-bt-part="actions"] {
     min-inline-size: var(--bt-overflow-cluster-more-size);

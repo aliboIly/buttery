@@ -78,7 +78,8 @@ export const assembleScale = 0.96;
  * reading the page later doesn't hear it again, how long letters typed in a list build up one search
  * before it starts over, how long chrome that follows a change waits before it arrives, as crop mode's
  * handles and toolbar do, how long a stat takes to count up to its number, how long the pointer rests on a
- * menu item before its submenu opens, and how long loading has to last before a loading pill shows.
+ * menu item before its submenu opens, how long loading has to last before a loading pill shows, and how long
+ * a search waits after the last keystroke before it asks a server.
  */
 export const timing = {
   stagger: 50,
@@ -97,6 +98,7 @@ export const timing = {
   "count-up": 800,
   "delay-submenu": 40,
   "delay-loading": 300,
+  "delay-search": 120,
 } as const;
 
 /** Scale applied while a pressable element is held down. */

@@ -22,7 +22,10 @@ export interface TopBarCreate {
 
 /** Props for `TopBar`. */
 export interface TopBarProps extends ComponentPropsWithRef<"div"> {
-  /** The search at the bar's start, usually a soft `SearchField` with a shortcut; it takes at most 360px. */
+  /**
+   * The search at the bar's start: a `CommandSearch`, 360px at rest and 600 while it has focus, or a soft
+   * `SearchField` with a shortcut, at most 360px.
+   */
   readonly search?: ReactNode;
   /** Icon actions at the end, `TopBar.Action`s, which fold into "…" when they don't fit. */
   readonly actions?: ReactNode;

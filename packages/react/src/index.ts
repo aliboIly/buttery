@@ -598,3 +598,35 @@ export { FullscreenDialog } from "./patterns/fullscreen-dialog/FullscreenDialog.
 export type { FullscreenDialogProps } from "./patterns/fullscreen-dialog/FullscreenDialog.tsx";
 export { SidePanel } from "./patterns/side-panel/SidePanel.tsx";
 export type { SidePanelProps } from "./patterns/side-panel/SidePanel.tsx";
+export {
+  CommandSearch,
+  SearchHighlight,
+} from "./patterns/command-search/CommandSearch.tsx";
+export type {
+  CommandSearchLabels,
+  CommandSearchProps,
+  SearchHighlightProps,
+} from "./patterns/command-search/CommandSearch.tsx";
+export {
+  formatSearch,
+  matchRanges,
+  matchesSearch,
+  pageSource,
+  parseSearch,
+} from "./patterns/command-search/search.ts";
+export type {
+  LocalSearchSource,
+  PageSourceOptions,
+  RemoteSearchSource,
+  SearchFilter,
+  SearchItem,
+  SearchPage,
+  SearchQuery,
+  SearchSource,
+  SearchToken,
+} from "./patterns/command-search/search.ts";
+export { SearchResults } from "./patterns/search-results/SearchResults.tsx";
+export type {
+  SearchResultsLabels,
+  SearchResultsProps,
+} from "./patterns/search-results/SearchResults.tsx";
