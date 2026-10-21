@@ -290,15 +290,79 @@ describe("Sidebar", () => {
     shell(900, <Nav current="/reports/beans" />);
     const nav = screen.getByRole("navigation", { name: "Main" });
     const reports = within(nav).getByRole("button", { name: "Reports" });
-    expect(reports.hasAttribute("data-current")).toBe(true);
+    expect(reports.getAttribute("aria-current")).toBe("true");
     expect(getComputedStyle(reports).backgroundColor).toBe(
       background("var(--bt-bg-control)"),
     );
     expect(
       within(nav)
         .getByRole("link", { name: "Home" })
-        .hasAttribute("data-current"),
+        .hasAttribute("aria-current"),
     ).toBe(false);
+  });
+
+  it("records an item wrapped in a component of the app's own once it's shown", () => {
+    function NavItem({
+      page,
+      at,
+    }: {
+      readonly page: string;
+      readonly at: string;
+    }): ReactElement {
+      return (
+        <Sidebar.Item
+          label={page}
+          href={`/reports/${page.toLowerCase()}`}
+          current={at === page}
+        />
+      );
+    }
+    const Wrapped = ({ at }: { readonly at: string }): ReactElement => (
+      <Sidebar label="Main">
+        <Sidebar.Recent />
+        <Sidebar.Group label="Reports" defaultOpen>
+          <NavItem page="Revenue" at={at} />
+          <NavItem page="Beans" at={at} />
+        </Sidebar.Group>
+      </Sidebar>
+    );
+    const { rerender } = render(<Wrapped at="Revenue" />);
+    rerender(<Wrapped at="Beans" />);
+    expect(recentPages()).toEqual(["Beans", "Revenue"]);
+  });
+
+  it("draws nothing out of sight under 640px, so a menu open in the rail closes as the shell narrows", async () => {
+    render(
+      <div
+        data-testid="frame"
+        style={{ inlineSize: "900px", blockSize: "600px" }}
+      >
+        <AppShell
+          layout="sidebar"
+          topBar={<TopBar />}
+          sidebar={
+            <Sidebar
+              label="Main"
+              switcher={<AccountMenu workspace="Northside Roasters" />}
+            >
+              <Sidebar.Item icon={House} label="Home" href="/" current />
+            </Sidebar>
+          }
+        >
+          <p>Page</p>
+        </AppShell>
+      </div>,
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Workspace: Northside Roasters" }),
+    );
+    expect(await screen.findByRole("menu")).toBeTruthy();
+    screen.getByTestId("frame").style.inlineSize = "500px";
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+    expect(document.querySelector('[data-bt="Sidebar"]')).toBeNull();
+    expect(document.querySelector('[data-bt="AccountMenu"]')).toBeNull();
   });
 
   it("lines a group's items up with its header's label, with an icon or without", () => {

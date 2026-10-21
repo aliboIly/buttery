@@ -92,12 +92,12 @@
     }
   }
 
-  .bt-sidebar-item:is([aria-current="page"], [data-current]) {
+  .bt-sidebar-item[aria-current] {
     background-color: var(--bt-bg-control);
     color: var(--bt-text-strong);
   }
 
-  .bt-sidebar-item:is([aria-current="page"], [data-current]) > .bt-icon {
+  .bt-sidebar-item[aria-current] > .bt-icon {
     color: var(--bt-text);
   }
 

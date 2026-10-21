@@ -148,7 +148,7 @@ function SidebarRoot({
   className,
   children,
   ...rest
-}: SidebarProps): ReactElement {
+}: SidebarProps): ReactElement | null {
   const shell = useAppShell();
   const mode = shell.sidebar === "rail" ? "rail" : "full";
   const [stored, setStored] = useStoredState(
@@ -208,6 +208,20 @@ function SidebarRoot({
     },
   };
 
+  const hidden = shell.sidebar === "sheet";
+  const unseen = hidden ? groupPageIn(children) : undefined;
+  const unseenLabel = unseen?.label;
+  const unseenHref = unseen?.href;
+
+  useEffect(() => {
+    if (unseenLabel === undefined || unseenHref === undefined) return;
+    visit({ label: unseenLabel, href: unseenHref });
+  }, [unseenLabel, unseenHref, visit]);
+
+  // Under 640px the shell keeps this copy mounted out of sight only so Recent sees the page change; drawn,
+  // its menus and shortcuts would go on working behind the sheet.
+  if (hidden) return null;
+
   return (
     <SidebarContext value={state}>
       <nav
@@ -259,6 +273,11 @@ export function SidebarItem({
 }: SidebarItemProps): ReactElement {
   const sidebar = useSidebar("Item");
   const placement = use(PlacementContext);
+  const visit = sidebar.visit;
+
+  useEffect(() => {
+    if (current && placement !== "top") visit({ label, href });
+  }, [current, placement, label, href, visit]);
 
   const choose = (event: MouseEvent<HTMLAnchorElement>): void => {
     onClick?.(event);
@@ -370,7 +389,11 @@ export interface SidebarGroupProps {
   readonly icon?: ComponentType<IconComponentProps> | undefined;
   /** Whether it starts open. Defaults to whether it holds the page shown; once someone opens or closes it, the sidebar remembers. */
   readonly defaultOpen?: boolean | undefined;
-  /** Its items, `Sidebar.Item`s. */
+  /**
+   * Its items, `Sidebar.Item`s. Written straight in the group (or in fragments), they count for Recent, the
+   * rail's current mark and opening by default even while the group is closed; an item wrapped in a
+   * component of your own counts once it's shown.
+   */
   readonly children?: ReactNode;
 }
 
@@ -396,6 +419,21 @@ function shownPage(children: ReactNode): RecentPage | undefined {
     ) {
       return { label, href };
     }
+  }
+  return undefined;
+}
+
+/** The page shown inside one of the nav's groups, read from props, for a sidebar the shell isn't drawing. */
+function groupPageIn(children: ReactNode): RecentPage | undefined {
+  for (const child of Children.toArray(children)) {
+    if (!isValidElement<ItemLikeProps>(child)) continue;
+    const page =
+      child.type === SidebarGroup
+        ? shownPage(child.props.children)
+        : child.type === Fragment || child.type === SidebarSection
+          ? groupPageIn(child.props.children)
+          : undefined;
+    if (page) return page;
   }
   return undefined;
 }
@@ -442,7 +480,7 @@ export function SidebarGroup({
               aria-label={label}
               className="bt-sidebar-item bt-focus"
               data-bt-part="item"
-              data-current={shown === undefined ? undefined : ""}
+              aria-current={shown === undefined ? undefined : "true"}
             >
               {icon ? <Icon icon={icon} /> : <Glyph label={label} />}
             </button>
@@ -536,7 +574,7 @@ export function SidebarRecent({
 
 /** `Sidebar` with its parts. */
 export interface SidebarComponent {
-  (props: SidebarProps): ReactElement;
+  (props: SidebarProps): ReactElement | null;
   /** One page. */
   readonly Item: typeof SidebarItem;
   /** A titled run of items. */
