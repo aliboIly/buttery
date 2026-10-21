@@ -200,6 +200,49 @@ describe("MetricCard", () => {
     ).toBeLessThanOrEqual(1);
   });
 
+  it("keeps the change line's place through loading only when it compares, with — when there's no change to show", () => {
+    const now = {
+      key: "now",
+      label: "This week",
+      values: [1, 2, 3, 4, 5, 6, 7],
+    };
+    const before = {
+      ...now,
+      key: "before",
+      label: "Last week",
+      comparison: true,
+    };
+    const height = (): number => rectOf(screen.getByRole("group")).height;
+    const { rerender } = render(
+      <Card loading value={undefined} delta={undefined} series={[now]} />,
+    );
+    expect(
+      document.querySelector("[data-bt-part='delta-skeleton']"),
+    ).toBeNull();
+    const plain = height();
+    rerender(<Card delta={undefined} series={[now]} />);
+    expect(document.querySelector("[data-bt-part='delta']")).toBeNull();
+    expect(Math.abs(height() - plain)).toBeLessThanOrEqual(1);
+    cleanup();
+    const second = render(
+      <Card
+        loading
+        value={undefined}
+        delta={undefined}
+        series={[now, before]}
+      />,
+    );
+    expect(
+      document.querySelector("[data-bt-part='delta-skeleton']"),
+    ).not.toBeNull();
+    const comparing = height();
+    second.rerender(<Card delta={undefined} series={[now, before]} />);
+    const line = document.querySelector("[data-bt-part='delta']");
+    expect(line?.textContent).toContain("—");
+    expect(line?.textContent).toContain("No change to show");
+    expect(Math.abs(height() - comparing)).toBeLessThanOrEqual(1);
+  });
+
   it("leaves out the chart and the change when it has neither", () => {
     render(<MetricCard title="Wholesale accounts" value="38" />);
     expect(screen.queryByRole("slider")).toBeNull();

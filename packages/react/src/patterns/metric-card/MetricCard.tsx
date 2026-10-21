@@ -28,6 +28,11 @@ export interface MetricCardProps extends Omit<
   readonly delta?: number | undefined;
   /** What the change is measured against. Defaults to `"vs previous period"`. */
   readonly deltaLabel?: string | undefined;
+  /**
+   * Whether the card compares with an earlier period, so its change line keeps its place while loading
+   * and shows "—" when there's no change to work out. Defaults to whether `series` has a comparison series.
+   */
+  readonly compared?: boolean | undefined;
   /** Shows a fall as good news (`success`) and a rise as bad. Defaults to `false`. */
   readonly lowerIsBetter?: boolean | undefined;
   /** The chart's labels, such as the period's days. With `series`, the card shows a small `LineChart`. */
@@ -82,6 +87,7 @@ export function MetricCard({
   value,
   delta,
   deltaLabel = "vs previous period",
+  compared,
   lowerIsBetter = false,
   labels,
   series,
@@ -112,8 +118,10 @@ export function MetricCard({
     delta === undefined
       ? undefined
       : `${signedPercent.format(delta)} ${deltaLabel}`;
-  // Each skeleton crossfades into its content in place: Morph swaps them by key while the height holds.
   const phase = loading ? "loading" : "ready";
+  const showsChange =
+    delta !== undefined ||
+    (compared ?? series?.some((entry) => entry.comparison === true) ?? false);
   return (
     <div
       role="group"
@@ -157,7 +165,7 @@ export function MetricCard({
             </Text>
           )}
         </Morph>
-        {trend === undefined && !loading ? null : (
+        {showsChange ? (
           <Morph contentKey={phase}>
             {loading ? (
               <Skeleton data-bt-part="delta-skeleton" />
@@ -165,7 +173,11 @@ export function MetricCard({
               <div data-bt-part="delta">
                 <StatusBadge
                   tone={
-                    trend === "flat" ? "neutral" : good ? "success" : "danger"
+                    trend === undefined || trend === "flat"
+                      ? "neutral"
+                      : good
+                        ? "success"
+                        : "danger"
                   }
                   icon={
                     trend === "rise"
@@ -175,13 +187,22 @@ export function MetricCard({
                         : undefined
                   }
                 >
-                  {delta === undefined ? "" : signedPercent.format(delta)}
+                  {delta === undefined ? (
+                    <>
+                      <span aria-hidden="true">—</span>
+                      <VisuallyHidden.Root>
+                        No change to show
+                      </VisuallyHidden.Root>
+                    </>
+                  ) : (
+                    signedPercent.format(delta)
+                  )}
                 </StatusBadge>
                 <Text variant="caption">{deltaLabel}</Text>
               </div>
             )}
           </Morph>
-        )}
+        ) : null}
       </div>
       {labels === undefined || series === undefined ? null : (
         <LineChart
