@@ -1,6 +1,11 @@
-import { Text, cx, hasContent } from "@buttery/core";
+import { Text, cx, hasContent, opensElsewhere } from "@buttery/core";
 import { useId } from "react";
-import type { MouseEvent, ReactElement, ReactNode } from "react";
+import type {
+  ComponentPropsWithRef,
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+} from "react";
 import { AppPage } from "../app-page/AppPage.tsx";
 import type { AppPageProps } from "../app-page/AppPage.tsx";
 import { PageHeader } from "../page-header/PageHeader.tsx";
@@ -74,14 +79,17 @@ export interface CatalogCategory {
 }
 
 /** Props for `CatalogPage.Categories`. */
-export interface CatalogPageCategoriesProps {
+export interface CatalogPageCategoriesProps extends Omit<
+  ComponentPropsWithRef<"nav">,
+  "title" | "children"
+> {
   /** The list's heading, an `h2` in `title-sm`, which names its navigation. Defaults to `"Categories"`. */
   readonly title?: string | undefined;
   /** The categories, in order. */
   readonly categories: readonly CatalogCategory[];
   /** The `href` of the category shown, marked current and drawn in `primary`. */
   readonly current?: string | undefined;
-  /** Runs as a link is followed, where a router can take over. */
+  /** Runs as a link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
   readonly onNavigate?: Navigate | undefined;
 }
 
@@ -91,10 +99,11 @@ export function CatalogPageCategories({
   categories,
   current,
   onNavigate,
+  ...rest
 }: CatalogPageCategoriesProps): ReactElement {
   const titleId = useId();
   return (
-    <nav aria-labelledby={titleId} data-bt-part="categories">
+    <nav aria-labelledby={titleId} {...rest} data-bt-part="categories">
       <Text id={titleId} variant="title-sm" asChild>
         <h2>{title}</h2>
       </Text>
@@ -108,7 +117,7 @@ export function CatalogPageCategories({
               data-role="body-sm"
               data-bt-part="category"
               onClick={(event) => {
-                onNavigate?.(category.href, event);
+                if (!opensElsewhere(event)) onNavigate?.(category.href, event);
               }}
             >
               {category.label}
@@ -121,7 +130,10 @@ export function CatalogPageCategories({
 }
 
 /** Props for `CatalogPage.Group`. */
-export interface CatalogPageGroupProps {
+export interface CatalogPageGroupProps extends Omit<
+  ComponentPropsWithRef<"section">,
+  "title"
+> {
   /** The group's heading, an `h2` in `title-sm`, which names it. */
   readonly title: string;
   /** What's in it, 8 apart, such as `Checkbox`es. */
@@ -132,10 +144,15 @@ export interface CatalogPageGroupProps {
 export function CatalogPageGroup({
   title,
   children,
+  ...rest
 }: CatalogPageGroupProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} data-bt-part="catalog-page-group">
+    <section
+      aria-labelledby={titleId}
+      {...rest}
+      data-bt-part="catalog-page-group"
+    >
       <Text id={titleId} variant="title-sm" asChild>
         <h2>{title}</h2>
       </Text>
@@ -145,7 +162,10 @@ export function CatalogPageGroup({
 }
 
 /** Props for `CatalogPage.Featured` and `CatalogPage.Section`. */
-export interface CatalogPageSectionProps {
+export interface CatalogPageSectionProps extends Omit<
+  ComponentPropsWithRef<"section">,
+  "title"
+> {
   /** The block's heading, an `h2` in `title-md`, which names it. */
   readonly title: string;
   /** Its `CatalogPage.Item`s, two columns from 560px of room. */
@@ -156,10 +176,15 @@ export interface CatalogPageSectionProps {
 export function CatalogPageFeatured({
   title,
   children,
+  ...rest
 }: CatalogPageSectionProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} data-bt-part="catalog-page-featured">
+    <section
+      aria-labelledby={titleId}
+      {...rest}
+      data-bt-part="catalog-page-featured"
+    >
       <Text id={titleId} variant="title-md" asChild>
         <h2>{title}</h2>
       </Text>
@@ -172,10 +197,11 @@ export function CatalogPageFeatured({
 export function CatalogPageSection({
   title,
   children,
+  ...rest
 }: CatalogPageSectionProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} data-bt-part="section">
+    <section aria-labelledby={titleId} {...rest} data-bt-part="section">
       <Text id={titleId} variant="title-md" asChild>
         <h2>{title}</h2>
       </Text>
@@ -185,7 +211,10 @@ export function CatalogPageSection({
 }
 
 /** Props for `CatalogPage.Item`. */
-export interface CatalogPageItemProps {
+export interface CatalogPageItemProps extends Omit<
+  ComponentPropsWithRef<"article">,
+  "title" | "children"
+> {
   /** The item's name, a link in `primary` to its page. */
   readonly title: string;
   /** The item's page, such as a `DetailPage`. */
@@ -198,7 +227,7 @@ export interface CatalogPageItemProps {
   readonly media?: ReactNode;
   /** Its `TagChip`s, under the rest. */
   readonly tags?: ReactNode;
-  /** Runs as its link is followed, where a router can take over. */
+  /** Runs as its link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
   readonly onNavigate?: Navigate | undefined;
 }
 
@@ -211,9 +240,10 @@ export function CatalogPageItem({
   media,
   tags,
   onNavigate,
+  ...rest
 }: CatalogPageItemProps): ReactElement {
   return (
-    <article data-bt-part="catalog-page-item">
+    <article {...rest} data-bt-part="catalog-page-item">
       {hasContent(media) ? (
         <div data-bt-part="catalog-page-media">{media}</div>
       ) : null}
@@ -224,7 +254,7 @@ export function CatalogPageItem({
           data-role="label"
           data-bt-part="item-title"
           onClick={(event) => {
-            onNavigate?.(href, event);
+            if (!opensElsewhere(event)) onNavigate?.(href, event);
           }}
         >
           {title}

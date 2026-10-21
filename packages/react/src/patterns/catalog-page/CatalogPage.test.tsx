@@ -1,12 +1,15 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen, within } from "@testing-library/react";
+import { Download, Plus, Upload } from "lucide-react";
 import { createRef } from "react";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
+import { Breadcrumbs } from "../../components/breadcrumbs/Breadcrumbs.tsx";
 import { TagChip } from "../../components/tag-chip/TagChip.tsx";
 import { AppShell } from "../app-shell/AppShell.tsx";
+import { PageHeader } from "../page-header/PageHeader.tsx";
 import { CatalogPage } from "./CatalogPage.tsx";
 
 afterEach(cleanup);
@@ -56,6 +59,7 @@ function AddOns({
           description="Print shipping labels at the counter."
           note="First month free"
           tags={<TagChip tone="info">New</TagChip>}
+          onNavigate={onNavigate}
         />
         <CatalogPage.Item
           title="Bookkeeping"
@@ -108,6 +112,56 @@ describe("CatalogPage", () => {
     );
   });
 
+  it("folds its header's actions on a phone without running them over its title, and shows only the crumb one level up", async () => {
+    inShell(
+      390,
+      <CatalogPage
+        title="Add-ons"
+        breadcrumbs={
+          <Breadcrumbs
+            items={[
+              { label: "Settings", href: "#settings" },
+              { label: "Roastery", href: "#roastery" },
+            ]}
+          />
+        }
+        actions={
+          <>
+            <PageHeader.Action
+              icon={Upload}
+              label="Import"
+              onSelect={() => undefined}
+            />
+            <PageHeader.Action
+              icon={Download}
+              label="Export"
+              onSelect={() => undefined}
+            />
+            <PageHeader.Action
+              variant="primary"
+              icon={Plus}
+              label="Request an add-on"
+              priority={1}
+              onSelect={() => undefined}
+            />
+          </>
+        }
+      />,
+    );
+    await screen.findByRole("button", { name: "More page actions" });
+    const title = box(screen.getByRole("heading", { level: 1 }));
+    for (const name of ["Import", "Export"])
+      expect(screen.queryByRole("button", { name })).toBeNull();
+    for (const button of screen.getAllByRole("button")) {
+      const shown = button.getBoundingClientRect();
+      if (shown.width === 0 || shown.top >= title.bottom) continue;
+      expect(shown.left).toBeGreaterThanOrEqual(title.right);
+    }
+    const [settings, roastery] = screen.getAllByRole("link", { hidden: true });
+    expect(settings?.getClientRects()).toHaveLength(0);
+    expect(roastery?.getClientRects().length).toBeGreaterThan(0);
+  });
+
   it("marks the category shown as the current page", () => {
     inShell(1440, <AddOns />);
     const nav = screen.getByRole("navigation", { name: "Categories" });
@@ -156,5 +210,71 @@ describe("CatalogPage", () => {
     );
     await userEvent.click(screen.getByRole("link", { name: "Shipping" }));
     expect(onNavigate).toHaveBeenCalledWith("#shipping", expect.anything());
+    await userEvent.click(screen.getByRole("link", { name: "Label printing" }));
+    expect(onNavigate).toHaveBeenLastCalledWith("#labels", expect.anything());
+  });
+
+  it("leaves a click for a new tab to the browser", async () => {
+    const onNavigate = vi.fn();
+    inShell(1440, <AddOns onNavigate={onNavigate} />);
+    for (const name of ["Shipping", "Label printing"]) {
+      const link = screen.getByRole("link", { name });
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+      });
+      await userEvent.keyboard("{Meta>}");
+      await userEvent.click(link);
+      await userEvent.keyboard("{/Meta}");
+    }
+    expect(onNavigate).not.toHaveBeenCalled();
+  });
+
+  it("passes each part its ref, class and other props", () => {
+    const refs = {
+      categories: createRef<HTMLElement>(),
+      group: createRef<HTMLElement>(),
+      featured: createRef<HTMLElement>(),
+      section: createRef<HTMLElement>(),
+      item: createRef<HTMLElement>(),
+    };
+    render(
+      <>
+        <CatalogPage.Categories
+          ref={refs.categories}
+          categories={[]}
+          className="custom"
+          data-testid="categories"
+        />
+        <CatalogPage.Group
+          ref={refs.group}
+          title="Filter"
+          className="custom"
+          data-testid="group"
+        />
+        <CatalogPage.Featured
+          ref={refs.featured}
+          title="Featured"
+          className="custom"
+          data-testid="featured"
+        />
+        <CatalogPage.Section
+          ref={refs.section}
+          title="Shipping"
+          className="custom"
+          data-testid="section"
+        />
+        <CatalogPage.Item
+          ref={refs.item}
+          title="Rates by region"
+          href="#rates"
+          className="custom"
+          data-testid="item"
+        />
+      </>,
+    );
+    for (const [name, ref] of Object.entries(refs)) {
+      expect(ref.current).toBe(screen.getByTestId(name));
+      expect(ref.current?.className).toBe("custom");
+    }
   });
 });
