@@ -13,7 +13,9 @@ import { ChartLine, House, Receipt, Settings } from "lucide-react";
 import { createRef } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AccountMenu } from "../account-menu/AccountMenu.tsx";
 import { AppShell } from "../app-shell/AppShell.tsx";
+import { TopBar } from "../top-bar/TopBar.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 
 beforeEach(() => {
@@ -99,11 +101,51 @@ function Nav({
 function shell(width: number, children: ReactElement): void {
   render(
     <div style={{ inlineSize: `${String(width)}px`, blockSize: "600px" }}>
-      <AppShell layout="sidebar" sidebar={children}>
+      <AppShell layout="sidebar" sidebar={children} topBar={<TopBar />}>
         <p>Page</p>
       </AppShell>
     </div>,
   );
+}
+
+function Shop({
+  width,
+  current,
+}: {
+  readonly width: number;
+  readonly current: string;
+}): ReactElement {
+  return (
+    <div
+      data-testid="frame"
+      style={{ inlineSize: `${String(width)}px`, blockSize: "600px" }}
+    >
+      <AppShell
+        layout="sidebar"
+        sidebar={<Nav current={current} />}
+        topBar={<TopBar />}
+      >
+        <p>Page</p>
+      </AppShell>
+    </div>
+  );
+}
+
+function recentPages(): string[] {
+  const recent = screen.queryByRole("group", { name: "Recent" });
+  if (!recent) return [];
+  return within(recent)
+    .getAllByRole("link")
+    .map((link) => link.textContent ?? "");
+}
+
+function background(color: string): string {
+  const probe = document.createElement("div");
+  probe.style.backgroundColor = color;
+  document.body.append(probe);
+  const computed = getComputedStyle(probe).backgroundColor;
+  probe.remove();
+  return computed;
 }
 
 describe("Sidebar", () => {
@@ -182,6 +224,156 @@ describe("Sidebar", () => {
         "link",
       ),
     ).toHaveLength(4);
+  });
+
+  it("records the page shown inside a group someone closed", async () => {
+    const { rerender } = render(<Nav current="/reports/revenue" />);
+    await userEvent.click(screen.getByRole("button", { name: "Reports" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("group", { name: "Reports" })).toBeNull();
+    });
+    rerender(<Nav current="/reports/beans" />);
+    rerender(<Nav current="/orders" />);
+    expect(recentPages()).toEqual(["Beans", "Revenue"]);
+  });
+
+  it("records pages opened from a rail's flyouts, and leaves Recent out of the rail", async () => {
+    const { rerender } = render(
+      <Shop width={1280} current="/reports/payouts" />,
+    );
+    expect(recentPages()).toEqual(["Payouts"]);
+    expect(document.querySelector(".lucide-clock")).not.toBeNull();
+    rerender(<Shop width={900} current="/reports/payouts" />);
+    const frame = screen.getByTestId("frame");
+    frame.style.inlineSize = "900px";
+    const nav = screen.getByRole("navigation", { name: "Main" });
+    await waitFor(() => {
+      expect(nav.dataset["mode"]).toBe("rail");
+    });
+    expect(recentPages()).toEqual([]);
+    expect(nav.querySelector(".lucide-clock")).toBeNull();
+    rerender(<Shop width={900} current="/reports/revenue" />);
+    rerender(<Shop width={900} current="/reports/beans" />);
+    frame.style.inlineSize = "1280px";
+    await waitFor(() => {
+      expect(nav.dataset["mode"]).toBe("full");
+    });
+    expect(recentPages()).toEqual(["Beans", "Revenue", "Payouts"]);
+  });
+
+  it("records pages on a phone while its sheet is closed, and keeps its groups across the sheet without a storageKey", async () => {
+    const { rerender } = render(<Shop width={500} current="/" />);
+    rerender(<Shop width={500} current="/reports/revenue" />);
+    rerender(<Shop width={500} current="/reports/beans" />);
+    const open = screen.getByRole("button", { name: "Open navigation" });
+    await userEvent.click(open);
+    const sheet = await screen.findByRole("dialog", { name: "Navigation" });
+    expect(recentPages()).toEqual(["Beans", "Revenue"]);
+    const reports = within(sheet).getByRole("button", { name: "Reports" });
+    expect(reports.getAttribute("aria-expanded")).toBe("true");
+    await userEvent.click(reports);
+    expect(reports.getAttribute("aria-expanded")).toBe("false");
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await userEvent.click(open);
+    const again = await screen.findByRole("dialog", { name: "Navigation" });
+    expect(
+      within(again)
+        .getByRole("button", { name: "Reports" })
+        .getAttribute("aria-expanded"),
+    ).toBe("false");
+  });
+
+  it("marks a rail's group with the current state while it holds the page shown", () => {
+    shell(900, <Nav current="/reports/beans" />);
+    const nav = screen.getByRole("navigation", { name: "Main" });
+    const reports = within(nav).getByRole("button", { name: "Reports" });
+    expect(reports.hasAttribute("data-current")).toBe(true);
+    expect(getComputedStyle(reports).backgroundColor).toBe(
+      background("var(--bt-bg-control)"),
+    );
+    expect(
+      within(nav)
+        .getByRole("link", { name: "Home" })
+        .hasAttribute("data-current"),
+    ).toBe(false);
+  });
+
+  it("lines a group's items up with its header's label, with an icon or without", () => {
+    render(
+      <Sidebar label="Main">
+        <Sidebar.Group icon={ChartLine} label="Reports" defaultOpen>
+          <Sidebar.Item label="Revenue" href="/reports/revenue" />
+        </Sidebar.Group>
+        <Sidebar.Group label="More" defaultOpen>
+          <Sidebar.Item label="Payouts" href="/payouts" />
+        </Sidebar.Group>
+      </Sidebar>,
+    );
+    for (const [group, item] of [
+      ["Reports", "Revenue"],
+      ["More", "Payouts"],
+    ] as const) {
+      const header = screen
+        .getByRole("button", { name: group })
+        .querySelector('[data-bt-part="label"]');
+      const label = screen
+        .getByRole("link", { name: item })
+        .querySelector('[data-bt-part="label"]');
+      expect(label?.getBoundingClientRect().left).toBe(
+        header?.getBoundingClientRect().left,
+      );
+    }
+  });
+
+  it("lines its switcher up with the top bar's row and scrolls its nav under it", () => {
+    render(
+      <div style={{ inlineSize: "1280px", blockSize: "320px" }}>
+        <AppShell
+          layout="sidebar"
+          topBar={<TopBar />}
+          sidebar={
+            <Sidebar
+              label="Main"
+              switcher={<AccountMenu workspace="Northside Roasters" />}
+            >
+              {Array.from({ length: 20 }, (_, index) => (
+                <Sidebar.Item
+                  key={index}
+                  icon={House}
+                  label={`Page ${String(index + 1)}`}
+                  href={`/page-${String(index + 1)}`}
+                />
+              ))}
+            </Sidebar>
+          }
+        >
+          <p>Page</p>
+        </AppShell>
+      </div>,
+    );
+    const trigger = screen.getByRole("button", {
+      name: "Workspace: Northside Roasters",
+    });
+    const before = trigger.getBoundingClientRect();
+    const bar = document
+      .querySelector('[data-bt="TopBar"]')
+      ?.getBoundingClientRect();
+    expect(before.top + before.height / 2).toBe(
+      (bar?.top ?? 0) + (bar?.height ?? 0) / 2,
+    );
+    const first = screen.getByRole("link", { name: "Page 1" });
+    expect(first.getBoundingClientRect().top - before.bottom).toBe(12);
+    const nav = first.closest<HTMLElement>('[data-bt-part="nav"]');
+    if (!nav) throw new Error("No nav.");
+    expect(getComputedStyle(nav).getPropertyValue("scrollbar-gutter")).toBe(
+      "stable",
+    );
+    nav.scrollTop = 200;
+    expect(nav.scrollTop).toBe(200);
+    expect(trigger.getBoundingClientRect().top).toBe(before.top);
   });
 
   it("hands a chosen item's href to onNavigate, and leaves a click for a new tab alone", async () => {

@@ -13,11 +13,20 @@ import {
   useControllableState,
   useMergedRefs,
   useMotionPreference,
+  warnOnce,
 } from "@buttery/core";
 import type { CloseFocusFallback } from "@buttery/core";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog, VisuallyHidden } from "radix-ui";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type {
   ComponentPropsWithRef,
   ReactElement,
@@ -26,7 +35,11 @@ import type {
 } from "react";
 import { Button } from "../../components/button/Button.tsx";
 import { AppShellContext } from "./app-shell-context.ts";
-import type { AppShellState, SidebarMode } from "./app-shell-context.ts";
+import type {
+  AppShellState,
+  SidebarMemory,
+  SidebarMode,
+} from "./app-shell-context.ts";
 
 /** Props for `AppShell` in its editor layout: a work area with an inspector beside it. */
 export interface AppShellInspectorProps extends Omit<
@@ -325,15 +338,24 @@ function SidebarShell({
   const page = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, root);
   const [mode, setMode] = useState<SidebarMode>("full");
+  const shownMode = useRef(mode);
   const [sheetOpen, setSheetOpen] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
   const closeSheet = useRef(setSheetOpen);
+  const [remembered, setRemembered] = useState<unknown>(undefined);
+  const sidebarMemory = useMemo<SidebarMemory>(
+    () => ({ value: remembered, update: setRemembered }),
+    [remembered],
+  );
+  const hasTopBar = hasContent(topBar);
+  const controlled = open !== undefined;
 
   useLayoutEffect(() => {
     closeSheet.current = setSheetOpen;
+    shownMode.current = mode;
   });
 
   useLayoutEffect(() => {
@@ -345,12 +367,24 @@ function SidebarShell({
       setMode(next);
     };
     measure();
-    const observer = new ResizeObserver(measure);
+    const observer = new ResizeObserver(() => {
+      // A new mode paints in the frame the shell resized in, not a frame later.
+      if (modeAt(element.clientWidth) === shownMode.current) measure();
+      else flushSync(measure);
+    });
     observer.observe(element);
     return () => {
       observer.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (hasTopBar || controlled) return;
+    warnOnce(
+      "AppShell",
+      "A sidebar shell has no topBar, so under 640px nothing opens its sidebar. Fix: pass topBar={<TopBar … />}, or open the sheet yourself with open and onOpenChange.",
+    );
+  }, [hasTopBar, controlled]);
 
   const scrollPageToTop = useCallback(() => {
     page.current?.scrollTo({ top: 0, behavior: "instant" });
@@ -363,6 +397,7 @@ function SidebarShell({
     },
     sidebarOpen: mode === "sheet" && sheetOpen,
     scrollPageToTop,
+    sidebarMemory,
   };
   const inlineSidebar = (): HTMLElement | undefined => {
     const sidebar = root.current?.querySelector(
@@ -386,13 +421,12 @@ function SidebarShell({
           data-layout={layout}
           data-sidebar={mode}
         >
-          {mode === "sheet" ? null : (
-            <div data-bt-part="sidebar" className="bt-scroll-fade">
-              {sidebar}
-            </div>
-          )}
+          {/* Hidden under 640 rather than unmounted, so it still sees the page shown change for Recent. */}
+          <div data-bt-part="sidebar" hidden={mode === "sheet"}>
+            {sidebar}
+          </div>
           <div data-bt-part="column">
-            {hasContent(topBar) ? <div data-bt-part="top">{topBar}</div> : null}
+            {hasTopBar ? <div data-bt-part="top">{topBar}</div> : null}
             <div ref={page} data-bt-part="page" className="bt-scroll-fade">
               {children}
             </div>

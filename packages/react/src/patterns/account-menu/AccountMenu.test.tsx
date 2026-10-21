@@ -6,6 +6,7 @@ import { userEvent } from "@testing-library/user-event";
 import { LogOut, Settings } from "lucide-react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { AppShell } from "../app-shell/AppShell.tsx";
 import { Sidebar } from "../sidebar/Sidebar.tsx";
 import { AccountMenu } from "./AccountMenu.tsx";
@@ -44,6 +45,23 @@ function Account({
           Sign out
         </Menu.Item>
       </AccountMenu>
+    </div>
+  );
+}
+
+function RailFrame({ width }: { readonly width: number }): ReactElement {
+  return (
+    <div style={{ inlineSize: `${String(width)}px`, blockSize: "600px" }}>
+      <AppShell
+        layout="sidebar"
+        sidebar={
+          <Sidebar switcher={<AccountMenu workspace="Northside Roasters" />}>
+            <Sidebar.Item label="Orders" href="#orders" />
+          </Sidebar>
+        }
+      >
+        Page
+      </AppShell>
     </div>
   );
 }
@@ -87,6 +105,33 @@ describe("AccountMenu", () => {
     expect(
       Math.abs(tileBox.left + tileBox.width / 2 - (box.left + box.width / 2)),
     ).toBeLessThanOrEqual(0.5);
+  });
+
+  it("names its workspace in a tooltip in a sidebar's rail, and only there", async () => {
+    const { rerender } = render(<RailFrame width={900} />);
+    const trigger = screen.getByRole("button", {
+      name: "Workspace: Northside Roasters",
+    });
+    await browser.keyboard("{Shift}");
+    trigger.focus();
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toBe("Northside Roasters");
+    trigger.blur();
+    await waitFor(() => {
+      expect(screen.queryByRole("tooltip")).toBeNull();
+    });
+    rerender(<RailFrame width={1280} />);
+    await waitFor(() => {
+      expect(
+        screen.getByRole("navigation", { name: "Main" }).dataset["mode"],
+      ).toBe("full");
+    });
+    await browser.keyboard("{Shift}");
+    screen
+      .getByRole("button", { name: "Workspace: Northside Roasters" })
+      .focus();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
   it("opens a 280px menu with the workspace at the top and its items under it", async () => {

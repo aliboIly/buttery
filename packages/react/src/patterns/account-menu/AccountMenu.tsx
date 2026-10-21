@@ -5,6 +5,8 @@ import { DropdownMenu, VisuallyHidden } from "radix-ui";
 import type { ComponentType, ReactElement, ReactNode } from "react";
 import { Avatar } from "../../components/avatar/Avatar.tsx";
 import { InitialsTile } from "../../components/initials-tile/InitialsTile.tsx";
+import { Tooltip } from "../../components/tooltip/Tooltip.tsx";
+import { useSidebarMode } from "../sidebar/Sidebar.tsx";
 
 /** Props for `AccountMenu`. */
 export interface AccountMenuProps {
@@ -30,28 +32,38 @@ function AccountMenuRoot({
   onOpenChange,
   children,
 }: AccountMenuProps): ReactElement {
+  const rail = useSidebarMode() === "rail";
+  const trigger = (
+    <Menu.Trigger asChild>
+      <button
+        type="button"
+        className="bt-account-menu-trigger bt-focus"
+        data-bt="AccountMenu"
+      >
+        <InitialsTile name={workspace} size="xs" />
+        <VisuallyHidden.Root>{`${label}: `}</VisuallyHidden.Root>
+        <span
+          className="bt-text bt-truncate"
+          data-role="title-sm"
+          data-bt-truncate=""
+          title={rail ? undefined : workspace}
+          data-bt-part="name"
+        >
+          {workspace}
+        </span>
+        <Icon icon={ChevronDown} />
+      </button>
+    </Menu.Trigger>
+  );
   return (
     <Menu open={open} onOpenChange={onOpenChange}>
-      <Menu.Trigger asChild>
-        <button
-          type="button"
-          className="bt-account-menu-trigger bt-focus"
-          data-bt="AccountMenu"
-        >
-          <InitialsTile name={workspace} size="xs" />
-          <VisuallyHidden.Root>{`${label}: `}</VisuallyHidden.Root>
-          <span
-            className="bt-text bt-truncate"
-            data-role="title-sm"
-            data-bt-truncate=""
-            title={workspace}
-            data-bt-part="name"
-          >
-            {workspace}
-          </span>
-          <Icon icon={ChevronDown} />
-        </button>
-      </Menu.Trigger>
+      {rail ? (
+        <Tooltip label={workspace} side="right">
+          {trigger}
+        </Tooltip>
+      ) : (
+        trigger
+      )}
       <Menu.Content align="start" className="bt-account-menu">
         <DropdownMenu.Label data-bt-part="account-header">
           <InitialsTile name={workspace} size="md" />
@@ -201,7 +213,8 @@ export interface AccountMenuComponent {
  * 20px tile, its name in `title-sm` (truncating) and a chevron. The menu, 280px wide, opens with the
  * workspace at the top (a 32px tile over its name and a caption), then the items you give it: settings,
  * `AccountMenu.Workspaces` to switch, submenus such as Create, a separator, `AccountMenu.User` and Sign out.
- * In an `AppShell layout="sidebar"` it appears at once, as app chrome does.
+ * In an `AppShell layout="sidebar"` it appears at once, as app chrome does. In a sidebar's rail the trigger
+ * is the tile alone, with the workspace's name in a tooltip.
  *
  * @example
  * <AccountMenu workspace="Northside Roasters" caption="Roastery · 6 people">

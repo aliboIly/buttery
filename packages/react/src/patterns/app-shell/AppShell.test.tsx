@@ -12,7 +12,15 @@ import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
 import { Menu } from "@buttery/core";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from "vitest";
 import { userEvent as browser } from "vitest/browser";
 import { HeaderBar } from "../header-bar/HeaderBar.tsx";
 import { Inspector } from "../inspector/Inspector.tsx";
@@ -326,6 +334,66 @@ describe("AppShell layout=sidebar", () => {
         screen.getByRole("link", { name: "Orders" }),
       );
     });
+  });
+
+  it("paints a new sidebar mode in the frame the shell resized in", async () => {
+    render(<Dashboard width={1200} />);
+    const shell = screen.getByTestId("shell");
+    const seen: (string | undefined)[] = [];
+    const observer = new ResizeObserver(() => {
+      seen.push(shell.dataset["sidebar"]);
+    });
+    observer.observe(shell);
+    onTestFinished(() => {
+      observer.disconnect();
+    });
+    await waitFor(() => {
+      expect(seen).toHaveLength(1);
+    });
+    screen.getByTestId("frame").style.inlineSize = "1000px";
+    await waitFor(() => {
+      expect(seen).toHaveLength(2);
+    });
+    expect(seen[1]).toBe("rail");
+  });
+
+  it("keeps the page's scrollbar gutter, and a rail's nav without a scrollbar", async () => {
+    render(<Shop width={1280} />);
+    expect(
+      getComputedStyle(part("page")).getPropertyValue("scrollbar-gutter"),
+    ).toBe("stable");
+    const nav = screen
+      .getByRole("navigation", { name: "Main" })
+      .querySelector<HTMLElement>('[data-bt-part="nav"]');
+    if (!nav) throw new Error("No nav.");
+    expect(getComputedStyle(nav).getPropertyValue("scrollbar-width")).toBe(
+      "thin",
+    );
+    screen.getByTestId("frame").style.inlineSize = "900px";
+    await waitFor(() => {
+      expect(getComputedStyle(nav).getPropertyValue("scrollbar-width")).toBe(
+        "none",
+      );
+    });
+  });
+
+  it("warns, with the fix, when nothing can open its sidebar on a phone", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    onTestFinished(() => {
+      warn.mockRestore();
+    });
+    render(<Shop width={1280} />);
+    expect(warn).not.toHaveBeenCalled();
+    cleanup();
+    render(
+      <AppShell layout="sidebar" sidebar={<Sidebar label="Main" />}>
+        Page
+      </AppShell>,
+    );
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0]?.[0])).toMatch(
+      /^\[buttery:AppShell\] .*topBar.*Fix: /,
+    );
   });
 
   it("makes the menus inside it arrive at once, as app chrome does", async () => {

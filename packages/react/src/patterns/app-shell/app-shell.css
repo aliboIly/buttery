@@ -83,7 +83,6 @@
     min-block-size: 0;
   }
 
-  /* The dashboard layout: the sidebar beside a column of the top bar over the page, each scrolling on its own. */
   .bt-app-shell[data-layout="sidebar"] {
     container: bt-shell / inline-size;
     grid-template-areas: "sidebar column";
@@ -105,6 +104,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* A Sidebar fills the column and scrolls its own nav; anything else scrolls in the column. */
   .bt-app-shell[data-layout="sidebar"] > [data-bt-part="sidebar"] {
     grid-area: sidebar;
     min-block-size: 0;
@@ -132,9 +132,9 @@
     min-block-size: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
 
-  /* On a phone the sidebar opens as a sheet from the start edge, 8px inside the window. */
   .bt-app-shell-sidebar-sheet[data-bt-part="sidebar-sheet"] {
     position: absolute;
     inset-block: var(--bt-space-2);

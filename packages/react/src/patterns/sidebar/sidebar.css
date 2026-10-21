@@ -4,16 +4,34 @@
 
     display: flex;
     flex-direction: column;
-    gap: var(--bt-space-3);
     min-inline-size: 0;
-    padding: var(--bt-space-3);
+    block-size: 100%;
+  }
+
+  /* Centered on the top bar's row beside it. */
+  .bt-sidebar > [data-bt-part="switcher"] {
+    flex: none;
+    padding-block-start: calc((var(--bt-h-header) - var(--bt-h-button)) / 2);
+    padding-inline: var(--bt-space-3);
   }
 
   .bt-sidebar > [data-bt-part="nav"] {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--bt-space-0_5);
+    align-content: start;
     min-inline-size: 0;
+    min-block-size: 0;
+    padding-inline: var(--bt-space-3);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  /* A 56px rail has no room for a scrollbar beside its icons; it still scrolls by wheel, touch and keys. */
+  .bt-sidebar[data-mode="rail"] > [data-bt-part="nav"] {
+    scrollbar-width: none;
   }
 
   .bt-sidebar-item {
@@ -74,12 +92,12 @@
     }
   }
 
-  .bt-sidebar-item[aria-current="page"] {
+  .bt-sidebar-item:is([aria-current="page"], [data-current]) {
     background-color: var(--bt-bg-control);
     color: var(--bt-text-strong);
   }
 
-  .bt-sidebar-item[aria-current="page"] > .bt-icon {
+  .bt-sidebar-item:is([aria-current="page"], [data-current]) > .bt-icon {
     color: var(--bt-text);
   }
 
@@ -118,13 +136,12 @@
   }
 
   /* A group's items line their labels up with the header's label, past its icon. */
-  .bt-sidebar [data-bt-part="group-items"] > .bt-sidebar-item {
+  .bt-sidebar-group[data-icon] [data-bt-part="group-items"] > .bt-sidebar-item {
     padding-inline-start: calc(
       var(--bt-space-2) + var(--bt-icon-sm) + var(--bt-space-1_5)
     );
   }
 
-  /* As a rail each item is its icon, centered in the 56px column. */
   .bt-sidebar[data-mode="rail"] .bt-sidebar-item {
     justify-content: center;
     padding-inline: 0;

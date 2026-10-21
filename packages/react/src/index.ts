@@ -234,6 +234,7 @@ export {
 } from "./patterns/app-shell/app-shell-context.ts";
 export type {
   AppShellState,
+  SidebarMemory,
   SidebarMode,
 } from "./patterns/app-shell/app-shell-context.ts";
 export { ColorPicker } from "./components/color-picker/ColorPicker.tsx";
@@ -392,7 +393,7 @@ export type {
   PageHeaderComponent,
   PageHeaderProps,
 } from "./patterns/page-header/PageHeader.tsx";
-export { Sidebar } from "./patterns/sidebar/Sidebar.tsx";
+export { Sidebar, useSidebarMode } from "./patterns/sidebar/Sidebar.tsx";
 export type {
   SidebarComponent,
   SidebarGroupProps,

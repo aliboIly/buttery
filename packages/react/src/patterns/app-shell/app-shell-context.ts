@@ -4,6 +4,17 @@ import type { Context } from "react";
 /** How an `AppShell`'s sidebar shows: full width, as an icon rail, or as a sheet opened from the top bar. */
 export type SidebarMode = "full" | "rail" | "sheet";
 
+/**
+ * What a `Sidebar` without a `storageKey` remembers (its open groups and Recent), kept by the shell so it
+ * lasts while the sidebar moves between the shell and its sheet.
+ */
+export interface SidebarMemory {
+  /** What's remembered, as the sidebar last wrote it. */
+  readonly value: unknown;
+  /** Writes it, from what's remembered now. */
+  readonly update: (next: (current: unknown) => unknown) => void;
+}
+
 /** What an `AppShell layout="sidebar"` tells the sidebar and top bar inside it. */
 export interface AppShellState {
   /** How the sidebar shows at the shell's width. */
@@ -14,6 +25,8 @@ export interface AppShellState {
   readonly sidebarOpen: boolean;
   /** Scrolls the page region back to its top, as `AppPage` does when a new page mounts. */
   readonly scrollPageToTop: () => void;
+  /** Keeps a `Sidebar`'s memory when it has no `storageKey`. Outside a shell there's none. */
+  readonly sidebarMemory: SidebarMemory | undefined;
 }
 
 const OUTSIDE_A_SHELL: AppShellState = {
@@ -21,6 +34,7 @@ const OUTSIDE_A_SHELL: AppShellState = {
   openSidebar: () => undefined,
   sidebarOpen: false,
   scrollPageToTop: () => undefined,
+  sidebarMemory: undefined,
 };
 
 /** The state an `AppShell layout="sidebar"` shares. Outside one, the sidebar is full and nothing opens it. */

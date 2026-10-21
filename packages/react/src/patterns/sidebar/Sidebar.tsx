@@ -17,6 +17,7 @@ import { motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
 import {
   Children,
+  Fragment,
   createContext,
   isValidElement,
   use,
@@ -104,6 +105,14 @@ function useSidebar(part: string): SidebarState {
   return sidebar;
 }
 
+/**
+ * How the `Sidebar` around a component shows: `"full"`, or `"rail"` while the shell has made it an icon
+ * rail; `undefined` outside a sidebar. A workspace switcher reads it to show its tile alone in a rail.
+ */
+export function useSidebarMode(): SidebarState["mode"] | undefined {
+  return use(SidebarContext)?.mode;
+}
+
 function Glyph({ label }: { readonly label: string }): ReactElement {
   return (
     <span data-bt-part="glyph" aria-hidden="true">
@@ -142,10 +151,28 @@ function SidebarRoot({
 }: SidebarProps): ReactElement {
   const shell = useAppShell();
   const mode = shell.sidebar === "rail" ? "rail" : "full";
-  const [memory, setMemory] = useStoredState(
+  const [stored, setStored] = useStoredState(
     storageKey === undefined ? undefined : `${STORAGE_PREFIX}${storageKey}`,
     FORGOTTEN,
     isRemembered,
+  );
+  const kept = storageKey === undefined ? shell.sidebarMemory : undefined;
+  const memory =
+    kept === undefined
+      ? stored
+      : isRemembered(kept.value)
+        ? kept.value
+        : FORGOTTEN;
+  const keep = kept?.update;
+  const setMemory = useCallback(
+    (next: (current: Remembered) => Remembered) => {
+      if (keep === undefined) {
+        setStored(next);
+        return;
+      }
+      keep((current) => next(isRemembered(current) ? current : FORGOTTEN));
+    },
+    [keep, setStored],
   );
 
   const visit = useCallback(
@@ -193,7 +220,9 @@ function SidebarRoot({
         {hasContent(switcher) ? (
           <div data-bt-part="switcher">{switcher}</div>
         ) : null}
-        <div data-bt-part="nav">{children}</div>
+        <div data-bt-part="nav" className="bt-scroll-fade">
+          {children}
+        </div>
       </nav>
     </SidebarContext>
   );
@@ -230,11 +259,6 @@ export function SidebarItem({
 }: SidebarItemProps): ReactElement {
   const sidebar = useSidebar("Item");
   const placement = use(PlacementContext);
-  const visit = sidebar.visit;
-
-  useEffect(() => {
-    if (current && placement !== "top") visit({ label, href });
-  }, [current, placement, label, href, visit]);
 
   const choose = (event: MouseEvent<HTMLAnchorElement>): void => {
     onClick?.(event);
@@ -350,6 +374,32 @@ export interface SidebarGroupProps {
   readonly children?: ReactNode;
 }
 
+interface ItemLikeProps {
+  readonly current?: unknown;
+  readonly label?: unknown;
+  readonly href?: unknown;
+  readonly children?: ReactNode;
+}
+
+/** The page shown among a group's items, read from their props, so it's known while the group is closed. */
+function shownPage(children: ReactNode): RecentPage | undefined {
+  for (const child of Children.toArray(children)) {
+    if (!isValidElement<ItemLikeProps>(child)) continue;
+    const { current, label, href } = child.props;
+    if (child.type === Fragment) {
+      const page = shownPage(child.props.children);
+      if (page) return page;
+    } else if (
+      current === true &&
+      typeof label === "string" &&
+      typeof href === "string"
+    ) {
+      return { label, href };
+    }
+  }
+  return undefined;
+}
+
 const closeChevron = {
   duration: durations.fast / 1000,
   ease: easingCurves.standard,
@@ -358,7 +408,8 @@ const closeChevron = {
 /**
  * A group of items under a header that folds and unfolds: its height opens on `spring.snappy` and closes
  * over `dur-fast` while its chevron turns. Its items sit under the header's label, without icons. In a rail,
- * the header opens its items in a flyout menu beside it.
+ * the header opens its items in a flyout menu beside it, and shows the current state while one of them is
+ * the page shown.
  */
 export function SidebarGroup({
   label,
@@ -370,12 +421,16 @@ export function SidebarGroup({
   const reduced = useMotionPreference() === "reduced";
   const openTurn = useButteryTransition("snappy");
   const id = useId();
-  const holdsCurrent = Children.toArray(children).some(
-    (child) =>
-      isValidElement<{ readonly current?: boolean }>(child) &&
-      child.props.current === true,
-  );
-  const open = sidebar.isOpen(label) ?? defaultOpen ?? holdsCurrent;
+  const shown = shownPage(children);
+  const open = sidebar.isOpen(label) ?? defaultOpen ?? shown !== undefined;
+  const shownLabel = shown?.label;
+  const shownHref = shown?.href;
+  const visit = sidebar.visit;
+
+  useEffect(() => {
+    if (shownLabel === undefined || shownHref === undefined) return;
+    visit({ label: shownLabel, href: shownHref });
+  }, [shownLabel, shownHref, visit]);
 
   if (sidebar.mode === "rail") {
     return (
@@ -387,6 +442,7 @@ export function SidebarGroup({
               aria-label={label}
               className="bt-sidebar-item bt-focus"
               data-bt-part="item"
+              data-current={shown === undefined ? undefined : ""}
             >
               {icon ? <Icon icon={icon} /> : <Glyph label={label} />}
             </button>
@@ -400,7 +456,11 @@ export function SidebarGroup({
   }
 
   return (
-    <div className="bt-sidebar-group" data-bt-part="group">
+    <div
+      className="bt-sidebar-group"
+      data-bt-part="group"
+      data-icon={icon ? "" : undefined}
+    >
       <button
         type="button"
         aria-expanded={open}
@@ -451,14 +511,15 @@ export interface SidebarRecentProps {
 
 /**
  * The pages visited lately that live inside groups, newest first, the last four, each with a clock icon.
- * It fills itself as people move around and stays empty until then; with the sidebar's `storageKey` it
- * remembers them.
+ * It fills itself as people move around, from closed groups and a rail's flyouts too, and stays empty
+ * until then; with the sidebar's `storageKey` it remembers them across visits. A rail leaves it out,
+ * since its clock icons would all look alike.
  */
 export function SidebarRecent({
   title = "Recent",
 }: SidebarRecentProps): ReactElement | null {
   const sidebar = useSidebar("Recent");
-  if (sidebar.recent.length === 0) return null;
+  if (sidebar.recent.length === 0 || sidebar.mode === "rail") return null;
   return (
     <SidebarSection title={title}>
       {sidebar.recent.map((page) => (
@@ -489,9 +550,10 @@ export interface SidebarComponent {
 /**
  * An app's navigation down the side, 240px wide in an `AppShell layout="sidebar"`, padding 12: a workspace
  * switcher at the top, then items 2px apart, titled sections, groups that fold (open ones remembered with
- * `storageKey`), an automatic Recent section and, by convention, a More group at the end. Under 1100px of
- * shell it becomes a 56px icon rail with tooltips, its section headings dividers and its groups flyout
- * menus; under 640 the shell opens it as a sheet. `onNavigate` lets a router take over every item.
+ * `storageKey`), an automatic Recent section and, by convention, a More group at the end. The switcher
+ * stays put, lined up with the top bar, while the nav scrolls under it. Under 1100px of shell it becomes a
+ * 56px icon rail with tooltips, its section headings dividers and its groups flyout menus; under 640 the
+ * shell opens it as a sheet. `onNavigate` lets a router take over every item.
  *
  * @example
  * <Sidebar label="Main" switcher={<AccountMenu workspace="Northside Roasters">…</AccountMenu>} storageKey="dashboard">
