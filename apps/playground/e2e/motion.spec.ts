@@ -1966,16 +1966,21 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
       EASE_STANDARD,
       DURATIONS.fast,
     );
-    const shut =
-      traceOf(closing, box, (reading) => reading.height).find(
-        (point) => point.value <= 0.5,
-      )?.t ?? Number.POSITIVE_INFINITY;
+    // A frame is read before the ResizeObserver puts the old height back, so the first frame after the press
+    // can read 0 though it paints the old height. The height is gone from the frame after its last open one.
+    const closingHeights = traceOf(closing, box, (reading) => reading.height);
+    const lastOpen = closingHeights.findLastIndex((point) => point.value > 0.5);
+    const shut = closingHeights[lastOpen + 1]?.t ?? Number.POSITIVE_INFINITY;
     report(
       `sidebar group closing: all of its height gone ${ms(shut - fading.start)} after it starts (dur-fast is ${String(DURATIONS.fast)}ms)`,
     );
-    // The height moves on the main thread and can trail the fade by a frame or two, never more.
+    // The height moves on the main thread and can trail the fade by a frame or two, never more, and it
+    // takes about as long as the fade: a collapse that's over at once fails.
     expect(shut - fading.start).toBeLessThanOrEqual(
       DURATIONS.fast + TWO_FRAMES,
+    );
+    expect(shut - fading.start).toBeGreaterThanOrEqual(
+      DURATIONS.fast - TWO_FRAMES,
     );
   });
 
@@ -2072,17 +2077,23 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     expect(Math.abs(last.tipRight - (last.center - 8))).toBeLessThanOrEqual(1);
   });
 
-  /** Every sampled element's edges, each held within 1px through the run. */
-  function expectStill(run: Run): void {
+  /**
+   * Every sampled element's edges, each held within 1px through the run. By `"slot"`, the nth element
+   * matched is compared with the nth in every frame, so a skeleton and what replaces it count as one.
+   */
+  function expectStill(run: Run, by: "element" | "slot" = "element"): void {
     const edges = new Map<number, number[][]>();
+    const counts = new Set(run.frames.map(({ elements }) => elements.length));
+    if (by === "slot") expect([...counts]).toHaveLength(1);
     for (const { elements } of run.frames) {
-      for (const reading of elements) {
-        const seen = edges.get(reading.id) ?? [[], [], [], []];
+      for (const [slot, reading] of elements.entries()) {
+        const key = by === "slot" ? slot : reading.id;
+        const seen = edges.get(key) ?? [[], [], [], []];
         seen[0]?.push(reading.top);
         seen[1]?.push(reading.top + reading.height);
         seen[2]?.push(reading.left);
         seen[3]?.push(reading.left + reading.width);
-        edges.set(reading.id, seen);
+        edges.set(key, seen);
       }
     }
     expect(edges.size).toBeGreaterThan(0);
@@ -2092,24 +2103,33 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     }
   }
 
-  test("the overview's cards turn from skeletons into their numbers in place, nothing moving more than 1px", async ({
-    page,
-  }) => {
-    await openDemo(page, "");
-    const cards = '[data-bt="AppPage"] [data-bt="MetricCard"]';
-    await page.getByRole("button", { name: /^Date range/ }).click();
-    await page
-      .getByRole("option", { name: "Last 4 weeks", exact: true })
-      .click();
-    await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(4);
-    await startSampling(
+  for (const comparison of ["Previous period", "No comparison"] as const) {
+    test(`the overview's cards turn from skeletons into their numbers in place, nothing moving more than 1px, ${comparison === "No comparison" ? "with no comparison" : "compared with the previous period"}`, async ({
       page,
-      `${cards}, ${cards} > [data-bt-part="head"] > [data-bt="Morph"], ${cards} .bt-chart-frame, ${cards} > [data-bt-part="foot"]`,
-    );
-    const run = await finishSampling(page, 1600);
-    await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(0);
-    expectStill(run);
-  });
+    }) => {
+      await openDemo(page, "");
+      const cards = '[data-bt="AppPage"] [data-bt="MetricCard"]';
+      if (comparison === "No comparison") {
+        await page.getByRole("button", { name: /^Comparison/ }).click();
+        await page
+          .getByRole("option", { name: "No comparison", exact: true })
+          .click();
+        await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(0);
+      }
+      await page.getByRole("button", { name: /^Date range/ }).click();
+      await page
+        .getByRole("option", { name: "Last 4 weeks", exact: true })
+        .click();
+      await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(4);
+      await startSampling(
+        page,
+        `${cards}, ${cards} > [data-bt-part="head"] > [data-bt="Morph"], ${cards} .bt-chart-frame, ${cards} > [data-bt-part="foot"]`,
+      );
+      const run = await finishSampling(page, 1600);
+      await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(0);
+      expectStill(run);
+    });
+  }
 
   test("the orders table turns its skeleton rows into orders in place, nothing moving more than 1px", async ({
     page,
@@ -2120,11 +2140,11 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     await expect(page.locator(`${table} [aria-busy="true"]`)).toHaveCount(1);
     await startSampling(
       page,
-      `${table}, ${table} [role="columnheader"], ${table} [data-bt-part="body"] > [data-bt-part="row"]:nth-child(2), ${table} > [data-bt-part="pagination"]`,
+      `${table}, ${table} [role="columnheader"], ${table} [data-bt-part="body"] > :nth-child(2 of [data-bt-part="row"]), ${table} > [data-bt-part="pagination"]`,
     );
     const run = await finishSampling(page, 1300);
     await expect(page.locator(`${table} [aria-busy="true"]`)).toHaveCount(0);
-    expectStill(run);
+    expectStill(run, "slot");
   });
 
   test("a metric's skeleton turns into its numbers in place, nothing moving more than 1px", async ({

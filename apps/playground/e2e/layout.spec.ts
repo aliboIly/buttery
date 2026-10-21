@@ -37,7 +37,7 @@ function headerAction(name: string): ButteryInteraction["run"] {
       return;
     }
     await page
-      .getByRole("button", { name: "More actions", exact: true })
+      .getByRole("button", { name: /^More page actions/ })
       .first()
       .click();
     await page.getByRole("menuitem", { name, exact: true }).click();
@@ -643,6 +643,27 @@ test("a roastery customer's page is buttery", async ({ page }) => {
         },
       },
     ],
+  });
+});
+
+test("the roastery's delivery nudge is buttery open beside its bell", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "buttery:announcement:roastery-roast-planning",
+      "true",
+    );
+  });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/#/roastery");
+  await page
+    .getByRole("dialog", { name: "2 customers asked about delivery" })
+    .waitFor();
+  await expectButtery(page, {
+    name: "roastery with its nudge open",
+    viewports: [{ width: 1280, height: 800 }],
+    themes: ["light", "dark"],
   });
 });
 

@@ -8,6 +8,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { userEvent as browser } from "vitest/browser";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -523,6 +524,66 @@ describe("Menu", () => {
       vi.advanceTimersByTime(40);
     });
     expect(item.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("keeps a submenu open while the pointer crosses the next submenu's item on its way in", async () => {
+    render(
+      <Menu>
+        <Menu.Trigger>Workspace</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Sub>
+            <Menu.SubTrigger>Switch workspace</Menu.SubTrigger>
+            <Menu.SubContent>
+              <Menu.Item>Harbor Beans</Menu.Item>
+              <Menu.Item>Northside Roasters</Menu.Item>
+              <Menu.Item>Southport Coffee</Menu.Item>
+            </Menu.SubContent>
+          </Menu.Sub>
+          <Menu.Sub>
+            <Menu.SubTrigger>Move to</Menu.SubTrigger>
+            <Menu.SubContent>
+              <Menu.Item>Archive</Menu.Item>
+            </Menu.SubContent>
+          </Menu.Sub>
+        </Menu.Content>
+      </Menu>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+    const workspaces = screen.getByRole("menuitem", {
+      name: "Switch workspace",
+    });
+    const move = screen.getByRole("menuitem", { name: "Move to" });
+    await browser.hover(workspaces);
+    await waitFor(() => {
+      expect(workspaces.getAttribute("aria-expanded")).toBe("true");
+    });
+    await settled();
+    const from = workspaces.getBoundingClientRect();
+    const target = screen
+      .getByRole("menuitem", { name: "Southport Coffee" })
+      .getBoundingClientRect();
+    const crossing = move.getBoundingClientRect();
+    const start = { x: from.right - 24, y: from.top + from.height / 2 };
+    const end = { x: target.left + 24, y: target.top + target.height / 2 };
+    const steps = 8;
+    let crossed = false;
+    for (let step = 1; step <= steps; step += 1) {
+      const x = start.x + ((end.x - start.x) * step) / steps;
+      const y = start.y + ((end.y - start.y) * step) / steps;
+      crossed ||=
+        x > crossing.left &&
+        x < crossing.right &&
+        y > crossing.top &&
+        y < crossing.bottom;
+      const page = document.documentElement.getBoundingClientRect();
+      await browser.hover(document.documentElement, {
+        position: { x: Math.round(x - page.left), y: Math.round(y - page.top) },
+      });
+    }
+    expect(crossed).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 80));
+    expect(move.getAttribute("aria-expanded")).toBe("false");
+    expect(workspaces.getAttribute("aria-expanded")).toBe("true");
   });
 
   it("never opens a disabled submenu on hover", async () => {
