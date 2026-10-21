@@ -9,6 +9,7 @@ import {
   opensElsewhere,
   useButteryTransition,
   useMotionPreference,
+  useStoredState,
 } from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
 import { ChevronDown, Clock } from "lucide-react";
@@ -22,7 +23,6 @@ import {
   useCallback,
   useEffect,
   useId,
-  useState,
 } from "react";
 import type {
   ComponentPropsWithRef,
@@ -72,30 +72,6 @@ function isRemembered(value: unknown): value is Remembered {
     Array.isArray(recent) &&
     recent.every(isRecentPage)
   );
-}
-
-function recall(key: string | undefined): Remembered {
-  if (key === undefined || typeof window === "undefined") return FORGOTTEN;
-  try {
-    const stored = window.localStorage.getItem(`${STORAGE_PREFIX}${key}`);
-    if (stored === null) return FORGOTTEN;
-    const parsed: unknown = JSON.parse(stored);
-    return isRemembered(parsed) ? parsed : FORGOTTEN;
-  } catch {
-    return FORGOTTEN;
-  }
-}
-
-function remember(key: string | undefined, memory: Remembered): void {
-  if (key === undefined) return;
-  try {
-    window.localStorage.setItem(
-      `${STORAGE_PREFIX}${key}`,
-      JSON.stringify(memory),
-    );
-  } catch {
-    // Storage can be off (a private window); the sidebar then forgets when the page closes.
-  }
 }
 
 interface SidebarState {
@@ -166,25 +142,28 @@ function SidebarRoot({
 }: SidebarProps): ReactElement {
   const shell = useAppShell();
   const mode = shell.sidebar === "rail" ? "rail" : "full";
-  const [memory, setMemory] = useState(() => recall(storageKey));
+  const [memory, setMemory] = useStoredState(
+    storageKey === undefined ? undefined : `${STORAGE_PREFIX}${storageKey}`,
+    FORGOTTEN,
+    isRemembered,
+  );
 
-  useEffect(() => {
-    remember(storageKey, memory);
-  }, [storageKey, memory]);
-
-  const visit = useCallback((page: RecentPage) => {
-    setMemory((current) =>
-      current.recent[0]?.href === page.href
-        ? current
-        : {
-            ...current,
-            recent: [
-              page,
-              ...current.recent.filter((seen) => seen.href !== page.href),
-            ].slice(0, RECENT_LIMIT),
-          },
-    );
-  }, []);
+  const visit = useCallback(
+    (page: RecentPage) => {
+      setMemory((current) =>
+        current.recent[0]?.href === page.href
+          ? current
+          : {
+              ...current,
+              recent: [
+                page,
+                ...current.recent.filter((seen) => seen.href !== page.href),
+              ].slice(0, RECENT_LIMIT),
+            },
+      );
+    },
+    [setMemory],
+  );
 
   const state: SidebarState = {
     mode,
