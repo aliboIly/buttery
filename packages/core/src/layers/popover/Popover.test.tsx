@@ -88,6 +88,19 @@ describe("Popover", () => {
     expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
   });
 
+  it("still hands focus back to its trigger after focus has been on the trigger while it was open", async () => {
+    render(<Sizes />);
+    const trigger = screen.getByRole("button", { name: "Canvas size" });
+    await userEvent.click(trigger);
+    await settled();
+    trigger.focus();
+    screen.getByRole("button", { name: "Square" }).focus();
+    await userEvent.keyboard("{Escape}");
+    expect(document.activeElement).toBe(trigger);
+    await gone("dialog");
+    expect(document.activeElement).toBe(trigger);
+  });
+
   it("grows in from its trigger's side", async () => {
     render(<Sizes />);
     await userEvent.click(screen.getByRole("button", { name: "Canvas size" }));

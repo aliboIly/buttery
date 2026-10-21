@@ -207,6 +207,12 @@ export function PopoverContent({
             avoidCollisions
             onInteractOutside={(event) => {
               onInteractOutside?.(event);
+              const { target } = event;
+              if (
+                target instanceof Node &&
+                popover.trigger.current?.contains(target)
+              )
+                return;
               popover.pressedOutside();
             }}
             onEscapeKeyDown={(event) => {
