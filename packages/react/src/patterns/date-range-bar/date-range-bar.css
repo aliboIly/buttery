@@ -1,0 +1,57 @@
+@layer bt.patterns {
+  .bt-date-range-bar {
+    container: bt-date-range-bar / inline-size;
+    min-inline-size: 0;
+  }
+
+  .bt-date-range-bar > [data-bt-part="controls"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-date-range-bar [data-bt-part="compare"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-date-range-bar
+    :is(
+      [data-bt-part="range"],
+      [data-bt-part="interval"],
+      [data-bt-part="comparison"]
+    ) {
+    flex: none;
+    min-inline-size: 0;
+  }
+
+  /* Under 640px the range and interval share a row over the comparison, each select filling its cell. */
+  @container bt-date-range-bar (width < 640px) {
+    .bt-date-range-bar > [data-bt-part="controls"] {
+      display: grid;
+      grid-template-areas:
+        "range interval"
+        "compare compare";
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .bt-date-range-bar [data-bt-part="range"] {
+      grid-area: range;
+    }
+
+    .bt-date-range-bar [data-bt-part="interval"] {
+      grid-area: interval;
+    }
+
+    .bt-date-range-bar [data-bt-part="compare"] {
+      grid-area: compare;
+    }
+
+    .bt-date-range-bar [data-bt-part="comparison"] {
+      flex: 1 1 auto;
+    }
+  }
+}

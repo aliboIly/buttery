@@ -475,3 +475,13 @@ export { Sparkline } from "./components/sparkline/Sparkline.tsx";
 export type { SparklineProps } from "./components/sparkline/Sparkline.tsx";
 export { MetricCard } from "./patterns/metric-card/MetricCard.tsx";
 export type { MetricCardProps } from "./patterns/metric-card/MetricCard.tsx";
+export { DateRangeBar } from "./patterns/date-range-bar/DateRangeBar.tsx";
+export type {
+  CustomDateRange,
+  DateComparison,
+  DateInterval,
+  DateRangeBarLabels,
+  DateRangeBarProps,
+  DateRangePreset,
+  DateRangeValue,
+} from "./patterns/date-range-bar/DateRangeBar.tsx";
