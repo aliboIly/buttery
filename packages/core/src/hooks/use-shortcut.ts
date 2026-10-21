@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { warnOnce } from "../utils/dev.ts";
+import { isApplePlatform } from "../utils/platform.ts";
 
 /**
  * A key combination: modifiers joined with `+` before one key, such as `"mod+o"`, `"mod+shift+z"` or
@@ -93,10 +94,6 @@ export function parseShortcut(shortcut: Shortcut): ParsedShortcut {
   };
 }
 
-function onApplePlatform(): boolean {
-  return /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
-}
-
 /**
  * Whether a key or paste event's target is a field someone types in: a text input, a text area, a select
  * or editable content. Checkboxes, radios, sliders, color and file inputs and buttons don't count.
@@ -165,7 +162,7 @@ export function useShortcut(
 
   useEffect(() => {
     if (!enabled) return undefined;
-    const apple = onApplePlatform();
+    const apple = isApplePlatform();
     const listen = (event: KeyboardEvent): void => {
       if (event.defaultPrevented || event.isComposing) return;
       if (!inFields && isTypingField(event.target)) return;

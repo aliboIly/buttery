@@ -2,7 +2,7 @@ import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { Kbd } from "./Kbd.tsx";
+import { Kbd, ariaKeyShortcuts, shortcutKeys } from "./Kbd.tsx";
 
 const browserAgent = navigator.userAgent;
 
@@ -57,5 +57,27 @@ describe("Kbd", () => {
       .getByTestId("shortcut")
       .querySelectorAll('kbd[data-bt-part="key"]');
     expect([...caps].map((cap) => cap.textContent)).toEqual(["Ctrl", "Z"]);
+  });
+});
+
+describe("shortcutKeys", () => {
+  it("turns a useShortcut combination into caps, modifiers first", () => {
+    expect(shortcutKeys("n")).toEqual(["N"]);
+    expect(shortcutKeys("mod+shift+z")).toEqual(["mod", "shift", "Z"]);
+    expect(shortcutKeys("cmd+enter")).toEqual(["mod", "enter"]);
+    expect(shortcutKeys("alt+up")).toEqual(["alt", "up"]);
+    expect(shortcutKeys("space")).toEqual(["space"]);
+    expect(shortcutKeys("/")).toEqual(["/"]);
+  });
+});
+
+describe("ariaKeyShortcuts", () => {
+  it("writes a shortcut the way aria-keyshortcuts names keys, per platform", () => {
+    expect(ariaKeyShortcuts("n", true)).toBe("N");
+    expect(ariaKeyShortcuts("mod+n", true)).toBe("Meta+N");
+    expect(ariaKeyShortcuts("mod+n", false)).toBe("Control+N");
+    expect(ariaKeyShortcuts("mod+ctrl+k", false)).toBe("Control+K");
+    expect(ariaKeyShortcuts("shift+alt+escape", true)).toBe("Alt+Shift+Escape");
+    expect(ariaKeyShortcuts("space", false)).toBe("Space");
   });
 });

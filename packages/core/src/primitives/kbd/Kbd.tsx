@@ -1,7 +1,10 @@
 import { VisuallyHidden } from "radix-ui";
 import { useSyncExternalStore } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import { parseShortcut } from "../../hooks/use-shortcut.ts";
+import type { Shortcut } from "../../hooks/use-shortcut.ts";
 import { cx } from "../../utils/cx.ts";
+import { isApplePlatform } from "../../utils/platform.ts";
 
 /** A key buttery knows by name, or any other key as it's written, such as `"K"` or `"/"`. */
 export type KbdKey =
@@ -47,12 +50,59 @@ const NAMED: Readonly<Partial<Record<string, NamedKey>>> = {
 
 const unchanging = (): (() => void) => () => undefined;
 
-function onApplePlatform(): boolean {
-  return /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
-}
-
 function serverPlatform(): boolean {
   return false;
+}
+
+/** Whether this runs on an Apple platform, where `mod` is ⌘ rather than Ctrl. False while rendering on a server. */
+export function useApplePlatform(): boolean {
+  return useSyncExternalStore(unchanging, isApplePlatform, serverPlatform);
+}
+
+const SHORTCUT_CAPS: Readonly<Partial<Record<string, KbdKey>>> = {
+  " ": "space",
+  arrowup: "up",
+  arrowdown: "down",
+  arrowleft: "left",
+  arrowright: "right",
+};
+
+/** A shortcut's keys as caps for `Kbd`: `"mod+shift+z"` becomes `["mod", "shift", "Z"]`. */
+export function shortcutKeys(shortcut: Shortcut): KbdKey[] {
+  const { key, mod, ctrl, alt, shift } = parseShortcut(shortcut);
+  const modifiers: KbdKey[] = [];
+  if (mod) modifiers.push("mod");
+  if (ctrl) modifiers.push("ctrl");
+  if (alt) modifiers.push("alt");
+  if (shift) modifiers.push("shift");
+  const cap =
+    SHORTCUT_CAPS[key] ?? (key.length === 1 ? key.toUpperCase() : key);
+  return [...modifiers, cap];
+}
+
+const ARIA_KEYS: Readonly<Partial<Record<string, string>>> = {
+  " ": "Space",
+  escape: "Escape",
+  enter: "Enter",
+  backspace: "Backspace",
+  delete: "Delete",
+  tab: "Tab",
+  arrowup: "ArrowUp",
+  arrowdown: "ArrowDown",
+  arrowleft: "ArrowLeft",
+  arrowright: "ArrowRight",
+};
+
+/** A shortcut as `aria-keyshortcuts` writes it: `"mod+n"` is `"Meta+N"` on Apple platforms and `"Control+N"` elsewhere. */
+export function ariaKeyShortcuts(shortcut: Shortcut, apple: boolean): string {
+  const { key, mod, ctrl, alt, shift } = parseShortcut(shortcut);
+  const modifiers = new Set<string>();
+  if (mod) modifiers.add(apple ? "Meta" : "Control");
+  if (ctrl) modifiers.add("Control");
+  if (alt) modifiers.add("Alt");
+  if (shift) modifiers.add("Shift");
+  const name = ARIA_KEYS[key] ?? (key.length === 1 ? key.toUpperCase() : key);
+  return [...modifiers, name].join("+");
 }
 
 function capFor(key: KbdKey, apple: boolean): ReactNode {
@@ -91,11 +141,7 @@ export function Kbd({
   children,
   ...rest
 }: KbdProps): ReactElement {
-  const apple = useSyncExternalStore(
-    unchanging,
-    onApplePlatform,
-    serverPlatform,
-  );
+  const apple = useApplePlatform();
   return (
     <kbd {...rest} className={cx("bt-kbd", className)} data-bt="Kbd">
       {keys ? (

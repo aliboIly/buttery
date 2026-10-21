@@ -264,6 +264,7 @@ export { isDevelopment, warnOnce } from "./utils/dev.ts";
 export { hasContent } from "./utils/has-content.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement, opensElsewhere } from "./utils/pressable.ts";
+export { isApplePlatform } from "./utils/platform.ts";
 export type { ClickModifiers } from "./utils/pressable.ts";
 export { hasTabbable, tabbables } from "./utils/tabbable.ts";
 export { scrollRootOf } from "./utils/scroll-root.ts";
@@ -277,7 +278,12 @@ export type {
   VariantValues,
   Variants,
 } from "./utils/variants.ts";
-export { Kbd } from "./primitives/kbd/Kbd.tsx";
+export {
+  Kbd,
+  ariaKeyShortcuts,
+  shortcutKeys,
+  useApplePlatform,
+} from "./primitives/kbd/Kbd.tsx";
 export type { KbdKey, KbdProps } from "./primitives/kbd/Kbd.tsx";
 export { TextStack } from "./primitives/text-stack/TextStack.tsx";
 export type {
