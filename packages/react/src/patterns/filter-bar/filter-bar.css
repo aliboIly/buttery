@@ -93,7 +93,7 @@
     color: var(--bt-text-tertiary);
   }
 
-  /* The 16px remove button takes presses from the 24px around it. */
+  /* Hit areas are at least 24px, so the 16px remove button takes presses from around it. */
   .bt-filter-pill > [data-bt-part="remove"] > [data-bt-part="hit"] {
     position: absolute;
     inset: calc((var(--bt-filter-bar-remove) - var(--bt-filter-bar-hit)) / 2);

@@ -83,7 +83,6 @@
     align-self: start;
   }
 
-  /* From 720px the copy and the media sit side by side, the dismiss button at the far end. */
   @container bt-feature-intro (width >= 720px) {
     .bt-feature-intro > [data-bt-part="layout"][data-media] {
       grid-template-areas: "copy media";

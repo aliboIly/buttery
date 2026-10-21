@@ -84,19 +84,17 @@
     flex-direction: column;
   }
 
-  /* The pointer's way from a trigger down to the card: the row's height and the gap under it, drawn as nothing. */
+  /* Drawn as nothing from the row's top; the row covers all but the 8px gap, which carries the pointer down to the card. */
   .bt-morph-menu-panel > [data-bt-part="reach"] {
     flex: none;
     block-size: calc(var(--bt-morph-menu-reach) + var(--bt-morph-menu-gap));
   }
 
-  /* The card: the floating surface, holding the open menu and clipping it to its corners. */
   .bt-morph-menu-panel > [data-bt-part="body"] {
     padding: 0;
     overflow: hidden;
   }
 
-  /* A menu taller than the room left in the window scrolls inside the panel. */
   .bt-morph-menu-panel > [data-bt-part="body"][data-capped] {
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -240,7 +238,6 @@
     color: var(--bt-text);
   }
 
-  /* A menu with little room stacks its columns, and its featured column under them, rather than squeezing. */
   @container (width < 640px) {
     .bt-morph-menu-content,
     .bt-morph-menu-content [data-bt-part="columns"] {
@@ -252,7 +249,6 @@
     }
   }
 
-  /* Stacked, each menu is a section that opens in place under its trigger. */
   .bt-morph-menu[data-layout="stack"] > [data-bt-part="list"] {
     display: flex;
     flex-direction: column;

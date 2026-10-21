@@ -69,7 +69,6 @@
     gap: var(--bt-space-2);
   }
 
-  /* Filled, the page fits its scroll area and its last block takes what's left. */
   .bt-app-page[data-fill] {
     block-size: 100%;
     min-block-size: 0;

@@ -63,7 +63,6 @@
     }
   }
 
-  /* Under 640px the message takes the row and the action goes under it, lined up with the message. */
   @container bt-banner (width < 640px) {
     .bt-banner > [data-bt-part="row"] {
       grid-template-areas:

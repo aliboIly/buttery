@@ -59,7 +59,6 @@
     block-size: auto;
   }
 
-  /* From 720px the copy and the media sit side by side; stacked, the media comes first. */
   @container bt-announcement-dialog (width >= 720px) {
     .bt-announcement-dialog > [data-bt-part="layout"][data-media] {
       grid-template-areas: "copy media";

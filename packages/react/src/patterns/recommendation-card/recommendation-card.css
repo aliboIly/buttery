@@ -25,7 +25,6 @@
     min-block-size: var(--bt-h-sm);
   }
 
-  /* The footer sits a step further from the body than the lines above it sit from each other. */
   .bt-recommendation-card [data-bt-part="foot"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

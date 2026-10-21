@@ -19,7 +19,7 @@
     min-inline-size: var(--bt-overflow-cluster-more-size);
   }
 
-  /* Padded like the page under it: 24 from 640px of column, 32 from 1024. */
+  /* The page grid's side padding, so the bar lines up with the page under it. */
   @container bt-column (width >= 640px) {
     .bt-top-bar {
       padding-inline: var(--bt-space-6);

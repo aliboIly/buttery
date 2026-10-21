@@ -32,7 +32,6 @@
     min-inline-size: 0;
   }
 
-  /* Under 640px the range and interval share a row over the comparison, each select filling its cell. */
   @container bt-date-range-bar (width < 640px) {
     .bt-date-range-bar > [data-bt-part="controls"] {
       display: grid;
