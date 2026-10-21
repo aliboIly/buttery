@@ -3,6 +3,7 @@ import {
   Scrim,
   TextStack,
   cx,
+  hasTabbable,
   presencePresets,
   reducedPresence,
   useAnimationTracking,
@@ -38,9 +39,6 @@ const OpenContext = createContext(false);
 interface ContentRegistry {
   readonly register: (withBody: boolean) => () => void;
 }
-
-const TABBABLE =
-  'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
 const ContentContext = createContext<ContentRegistry | null>(null);
 
@@ -192,7 +190,7 @@ export function DialogContent({
                 onOpenAutoFocus?.(event);
                 if (event.defaultPrevented) return;
                 // With nothing to act on in the body, focus the dialog rather than the close button, whose tooltip would open.
-                if (body.current?.querySelector(TABBABLE)) return;
+                if (hasTabbable(body.current)) return;
                 event.preventDefault();
                 element.current?.focus();
               }}
