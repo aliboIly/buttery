@@ -31,7 +31,7 @@ export function GreenCoffeeLot(): ReactElement {
         />
       }
     >
-      <Stack gap={1}>
+      <Stack gap={2}>
         <Text variant="title-lg">{`${String(kilos)} kg on hand`}</Text>
         <Text variant="body-sm">
           About nine days of roasting at this week's pace.
