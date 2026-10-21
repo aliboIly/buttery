@@ -127,7 +127,9 @@ grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
 | 640–1023 | 8 | 24 | 24 |
 | ≥ 1024 | 12 | 24 | 32 |
 
-- Content max-width: `--bt-w-page: 1200px`, centered. Everything snaps to columns. Visuals may bleed past the container to the viewport edge (`bleed="right"`), text never does.
+- Content max-width: `--bt-w-page: 1200px`, centered (`Container`, which centers with padding rather than margins). Everything snaps to columns. Visuals may bleed past the container to the viewport edge (`bleed="right"`), text never does.
+- `Page` is the size container the page grid, side padding and display type follow. `Grid columns={{ base, md, lg }}` changes its columns at 640 and 1024px of the nearest size container. Patterns that change their own layout (`SplitHero`, `CenteredHero`, `StatStrip`, `Bento`) are size containers themselves, so they lay out by the room they're given, inside a `Page` or not.
+- A `Section`'s room steps down one size on a phone (under 640px of page: `md` 64, `lg` 96), so its padding never outweighs its content.
 - Dev overlay: `⌥⇧G` toggles a column overlay (dev only — not a visual feature).
 
 ### Patterns
@@ -136,8 +138,8 @@ grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
 - **SplitHero**: text 6–7 cols / visual 5–6 cols, vertically centered; headline is two-tone (strong + secondary continuation) ≤ 22ch; actions 24 below body.
 - **CenteredHero**: centered text (≤ 8 cols) above a full-width visual stage.
 - **Bento**: 12-col grid, cards span 4/6/8/12 cols and 1–2 row units (`--bt-bento-row: 320px`), gap 16. Card anatomy: title top-left, affordance top-right, visual anchored to the bottom and allowed to bleed to the card edges. Cards can expand to a modal (`ExpandableCard`).
-- **StatStrip**: 2 or 4 equal columns; each stat has a 1px left hairline, number (display, tabular) and label.
-- **LogoStrip**: N equal cells, logos optically normalized into a 120×24 box, monochrome.
+- **StatStrip**: 2 or 4 equal columns; each stat has a 1px left hairline, number (tabular: `display` in two columns, `heading-1` in four, so a long number fits) and label. Four columns fall into two rows of two under 640px of strip.
+- **LogoStrip**: N equal cells (`LogoStrip.Mark`), logos optically normalized into a 120×24 box, monochrome, wrapping onto more rows as the page narrows.
 - **ArticleLayout**: main 8 cols + aside 3 cols (1 col gap). The aside is a `<Sticky variant="aside">`, so it sticks right under the bars and fits between them, with its 24px gap as padding inside it; it stops at the end of the article and never overlaps the footer.
 - **Footer**: multi-column link grid on the same 12-col grid.
 
