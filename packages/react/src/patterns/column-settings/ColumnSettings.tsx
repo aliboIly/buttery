@@ -1,7 +1,13 @@
-import { Icon, Popover, cx, useLayoutAnimation } from "@buttery/core";
+import {
+  Icon,
+  Popover,
+  cx,
+  useControllableState,
+  useLayoutAnimation,
+} from "@buttery/core";
 import { Columns3, GripVertical } from "lucide-react";
 import { Reorder, useDragControls } from "motion/react";
-import type { KeyboardEvent, ReactElement } from "react";
+import type { ComponentPropsWithRef, KeyboardEvent, ReactElement } from "react";
 import { Button } from "../../components/button/Button.tsx";
 import { Checkbox } from "../../components/checkbox/Checkbox.tsx";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
@@ -32,18 +38,27 @@ export interface ColumnSettingsLabels {
   readonly move: (column: string) => string;
 }
 
-/** Props for `ColumnSettings`. */
-export interface ColumnSettingsProps {
+/** Props for `ColumnSettings`. `ref`, `className`, `style` and the rest go on its button. */
+export interface ColumnSettingsProps extends Omit<
+  ComponentPropsWithRef<"button">,
+  "children"
+> {
   /** Every column, in its default order. The first always shows. */
   readonly columns: readonly ColumnSetting[];
-  /** Which columns show, and in what order. */
-  readonly layout: ColumnLayout;
+  /** Which columns show, and in what order. Pair with `onLayoutChange` to control it. */
+  readonly layout?: ColumnLayout | undefined;
+  /** The layout it starts with when uncontrolled, and the one Reset puts back. Defaults to every column, in order. */
+  readonly defaultLayout?: ColumnLayout | undefined;
   /** Called with the new layout. */
-  readonly onLayoutChange: (layout: ColumnLayout) => void;
+  readonly onLayoutChange?: ((layout: ColumnLayout) => void) | undefined;
+  /** Whether the popover is open. Pair with `onOpenChange` to control it. */
+  readonly open?: boolean | undefined;
+  /** Whether the popover starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
+  /** Called when the popover opens or closes. */
+  readonly onOpenChange?: ((open: boolean) => void) | undefined;
   /** Words to use instead of the English ones. */
   readonly labels?: Partial<ColumnSettingsLabels> | undefined;
-  /** Extra classes for the popover's list. */
-  readonly className?: string | undefined;
 }
 
 const LABELS: ColumnSettingsLabels = {
@@ -113,19 +128,33 @@ function Row({
 /**
  * A "Columns" icon button that opens a list of a table's columns in a 240px popover: a checkbox to show or
  * hide each (the first always shows) and a grip to drag it into another place, or Alt and Up or Down to
- * move it; Reset puts the defaults back. The layout is yours to keep and pass to the table.
+ * move it; Reset puts `defaultLayout` back. Keep the layout and pass it to the table.
  *
  * @example
- * <ColumnSettings columns={columns} layout={layout} onLayoutChange={setLayout} />
+ * <ColumnSettings columns={columns} defaultLayout={defaults} layout={layout} onLayoutChange={setLayout} />
  */
 export function ColumnSettings({
   columns,
-  layout,
+  layout: layoutProp,
+  defaultLayout,
   onLayoutChange,
+  open,
+  defaultOpen = false,
+  onOpenChange,
   labels,
   className,
+  ...rest
 }: ColumnSettingsProps): ReactElement {
   const words = { ...LABELS, ...labels };
+  const defaults = defaultLayout ?? {
+    order: columns.map((column) => column.id),
+    visible: new Set(columns.map((column) => column.id)),
+  };
+  const [layout, setLayout] = useControllableState({
+    value: layoutProp,
+    defaultValue: defaults,
+    onChange: onLayoutChange,
+  });
   const byId = new Map(columns.map((column) => [column.id, column]));
   const first = columns[0]?.id;
   const ordered = layout.order
@@ -138,23 +167,27 @@ export function ColumnSettings({
     if (from < 0 || to < 0 || to >= order.length) return;
     order.splice(from, 1);
     order.splice(to, 0, id);
-    onLayoutChange({ ...layout, order });
+    setLayout({ ...layout, order });
   };
   return (
-    <Popover>
+    <Popover open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <Popover.Trigger asChild>
-        <IconButton icon={Columns3} label={words.button} />
+        <IconButton asChild icon={Columns3} label={words.button}>
+          <button
+            type="button"
+            {...rest}
+            className={cx("bt-column-settings-button", className)}
+            data-bt="ColumnSettings"
+          />
+        </IconButton>
       </Popover.Trigger>
       <Popover.Content align="end" aria-label={words.button}>
-        <div
-          className={cx("bt-column-settings", className)}
-          data-bt="ColumnSettings"
-        >
+        <div className="bt-column-settings" data-bt-part="panel">
           <Reorder.Group
             axis="y"
             values={[...layout.order]}
             onReorder={(order) => {
-              onLayoutChange({ ...layout, order });
+              setLayout({ ...layout, order });
             }}
             data-bt-part="columns"
           >
@@ -169,7 +202,7 @@ export function ColumnSettings({
                   const visible = new Set(layout.visible);
                   if (shown) visible.add(column.id);
                   else visible.delete(column.id);
-                  onLayoutChange({ ...layout, visible });
+                  setLayout({ ...layout, visible });
                 }}
                 onMove={(by) => {
                   move(column.id, by);
@@ -182,10 +215,7 @@ export function ColumnSettings({
               variant="ghost"
               size="sm"
               onClick={() => {
-                onLayoutChange({
-                  order: columns.map((column) => column.id),
-                  visible: new Set(columns.map((column) => column.id)),
-                });
+                setLayout(defaults);
               }}
             >
               {words.reset}

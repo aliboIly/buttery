@@ -11,15 +11,18 @@ const COLUMNS = [
   { id: "total", label: "Total" },
 ];
 
-/** Columns for an orders table: hide some, drag the rest into the order you like. */
+const DEFAULTS: ColumnLayout = {
+  order: COLUMNS.map((column) => column.id),
+  visible: new Set(["order", "customer", "status", "total"]),
+};
+
+/** Columns for an orders table, Placed hidden at first: hide some, drag the rest, and Reset hides Placed again. */
 export function OrdersColumns(): ReactElement {
-  const [layout, setLayout] = useState<ColumnLayout>({
-    order: COLUMNS.map((column) => column.id),
-    visible: new Set(["order", "customer", "status", "total"]),
-  });
+  const [layout, setLayout] = useState(DEFAULTS);
   return (
     <ColumnSettings
       columns={COLUMNS}
+      defaultLayout={DEFAULTS}
       layout={layout}
       onLayoutChange={setLayout}
     />

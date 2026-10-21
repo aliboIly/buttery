@@ -50,6 +50,7 @@ export function TimeEstimate({
       {...rest}
       className={cx("bt-time-estimate bt-text", className)}
       data-role="caption"
+      data-bt="TimeEstimate"
     >
       <Icon icon={Clock} />
       <VisuallyHidden.Root>{`${label} `}</VisuallyHidden.Root>
