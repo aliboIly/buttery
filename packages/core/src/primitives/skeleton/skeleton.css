@@ -1,0 +1,42 @@
+@layer bt.primitives {
+  .bt-skeleton {
+    display: block;
+    min-inline-size: 0;
+    border-radius: var(--bt-r-xs);
+    background:
+      linear-gradient(
+          90deg,
+          transparent,
+          var(--bt-skeleton-strong),
+          transparent
+        )
+        0 0 / 200% 100% no-repeat,
+      var(--bt-skeleton);
+    color: transparent;
+    user-select: none;
+    animation: bt-skeleton-shimmer var(--bt-dur-shimmer) linear infinite;
+  }
+
+  .bt-skeleton[data-fit] {
+    inline-size: fit-content;
+    max-inline-size: 100%;
+  }
+
+  [data-bt-motion="reduced"] .bt-skeleton {
+    animation: none;
+  }
+
+  @keyframes bt-skeleton-shimmer {
+    from {
+      background-position:
+        200% 0,
+        0 0;
+    }
+
+    to {
+      background-position:
+        -100% 0,
+        0 0;
+    }
+  }
+}

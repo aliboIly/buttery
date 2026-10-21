@@ -312,3 +312,5 @@ export type {
   ControlProps,
   ControlSize,
 } from "./primitives/control/Control.tsx";
+export { Skeleton } from "./primitives/skeleton/Skeleton.tsx";
+export type { SkeletonProps } from "./primitives/skeleton/Skeleton.tsx";

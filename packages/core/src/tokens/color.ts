@@ -377,12 +377,13 @@ export const colors = {
   skeleton: {
     light: "#f2f2f4",
     dark: "#232326",
-    description: "Skeleton blocks in illustrations.",
+    description: "A Skeleton's fill, and skeleton blocks in illustrations.",
   },
   "skeleton-strong": {
     light: "#ececee",
     dark: "#2a2a2d",
-    description: "Skeleton lines in illustrations.",
+    description:
+      "The band that sweeps across a Skeleton, and skeleton lines in illustrations.",
   },
 } as const;
 

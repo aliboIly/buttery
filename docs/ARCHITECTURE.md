@@ -74,7 +74,7 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                .bt-control[data-size], .bt-text[data-role], .bt-truncate, .bt-hover-lift,
                .bt-hover-tint, .bt-scroll-fade
 3. Primitives  Surface, Pressable, Control, Stack, Inline, Grid, Center, Divider, Text, TextStack, Icon,
-               Kbd, FitBox, OverflowCluster, Morph (auto-height + crossfade), Presence (enter/exit presets),
+               Kbd, Skeleton, FitBox, OverflowCluster, Morph (auto-height + crossfade), Presence (enter/exit presets),
                SharedIndicator, Reveal, Stagger, Loop; variants() for typed variant attributes
    Layers      (packages/core/src/layers/) Layer/Portal + layer manager, Scrim, Sticky, Popover,
                Menu, FloatingLanes
