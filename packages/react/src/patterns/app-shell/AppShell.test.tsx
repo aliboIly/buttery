@@ -228,6 +228,22 @@ describe("AppShell layout=sidebar", () => {
     expect(shell.scrollHeight).toBe(shell.clientHeight);
   });
 
+  it("keeps the top bar and the page to the shell's width when the top bar's content is wider", () => {
+    render(
+      <div style={{ inlineSize: "390px", blockSize: "600px" }}>
+        <AppShell
+          layout="sidebar"
+          sidebar={<nav aria-label="Main">Nav</nav>}
+          topBar={<input aria-label="Search" size={80} />}
+        >
+          Page
+        </AppShell>
+      </div>,
+    );
+    expect(part("top").getBoundingClientRect().width).toBe(390);
+    expect(part("page").getBoundingClientRect().width).toBe(390);
+  });
+
   it("turns the sidebar into a 56px rail under 1100px of shell", () => {
     render(<Dashboard width={900} />);
     expect(screen.getByTestId("shell").dataset["sidebar"]).toBe("rail");
