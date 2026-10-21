@@ -35,7 +35,8 @@ export function ComponentPage({
 }: {
   readonly entry: ComponentEntry;
 }): ReactElement {
-  const { meta, demos, examples } = entry;
+  const { meta, demos, frame, examples } = entry;
+  const stage = frame === "page" ? "card" : "section";
   return (
     <Stack gap={12} asChild>
       <article>
@@ -66,7 +67,7 @@ export function ComponentPage({
                   <Text variant="body">{demo.description}</Text>
                 )}
               </Stack>
-              <Surface level="section" pad={6} radius="lg">
+              <Surface level={stage} pad={6} radius="lg">
                 {demo.render()}
               </Surface>
             </section>
@@ -83,7 +84,7 @@ export function ComponentPage({
                   <Text variant="label" asChild>
                     <h3>{title}</h3>
                   </Text>
-                  <Surface level="section" pad={6} radius="lg">
+                  <Surface level={stage} pad={6} radius="lg">
                     <Component />
                   </Surface>
                 </Stack>

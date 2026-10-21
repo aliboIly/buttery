@@ -1,5 +1,5 @@
 import { Menu } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoFrame, DemoSection } from "@buttery/core";
 import { Avatar, GroupedList, InitialsTile } from "@buttery/react";
 
 const warehouseActions = (
@@ -8,6 +8,8 @@ const warehouseActions = (
     <Menu.Item>Move stock</Menu.Item>
   </>
 );
+
+export const frame: DemoFrame = "page";
 
 export const demos: readonly DemoSection[] = [
   {

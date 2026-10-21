@@ -118,6 +118,7 @@ export type { LayoutGuardProps } from "./layout/LayoutGuard.tsx";
 export type {
   ComponentKind,
   ComponentMeta,
+  DemoFrame,
   DemoSection,
   MotionClass,
 } from "./meta.ts";

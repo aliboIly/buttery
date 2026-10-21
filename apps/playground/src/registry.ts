@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { ComponentMeta, DemoSection } from "@buttery/core";
+import type { ComponentMeta, DemoFrame, DemoSection } from "@buttery/core";
 import { componentRoute } from "./routes.ts";
 
 interface MetaModule {
@@ -8,6 +8,7 @@ interface MetaModule {
 
 interface DemoModule {
   readonly demos: readonly DemoSection[];
+  readonly frame?: DemoFrame;
 }
 
 const metaModules = import.meta.glob<MetaModule>(
@@ -32,6 +33,7 @@ export interface ComponentEntry {
   readonly route: string;
   readonly meta: ComponentMeta;
   readonly demos: readonly DemoSection[];
+  readonly frame: DemoFrame;
   readonly examples: readonly Example[];
 }
 
@@ -62,14 +64,14 @@ function examplesIn(folder: string): Example[] {
 export const components: readonly ComponentEntry[] = Object.entries(metaModules)
   .map(([path, { meta }]) => {
     const folder = folderOf(path);
-    const demos =
-      Object.entries(demoModules).find(
-        ([demoPath]) => folderOf(demoPath) === folder,
-      )?.[1].demos ?? [];
+    const page = Object.entries(demoModules).find(
+      ([demoPath]) => folderOf(demoPath) === folder,
+    )?.[1];
     return {
       route: componentRoute(meta.name),
       meta,
-      demos,
+      demos: page?.demos ?? [],
+      frame: page?.frame ?? "section",
       examples: examplesIn(folder),
     };
   })

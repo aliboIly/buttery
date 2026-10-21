@@ -40,6 +40,12 @@ export interface ComponentMeta {
   readonly motion: MotionClass;
 }
 
+/**
+ * What a playground page's demos and examples sit on: a section well (`"section"`, the default) or the page's
+ * own surface (`"page"`), for parts drawn in `bg-section` that would vanish into a well.
+ */
+export type DemoFrame = "section" | "page";
+
 /** One titled demo on a component's playground page. */
 export interface DemoSection {
   /** The demo's heading on the page. */
