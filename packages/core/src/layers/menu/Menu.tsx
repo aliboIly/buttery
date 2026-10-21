@@ -245,6 +245,8 @@ export interface MenuItemProps extends Omit<
 > {
   /** An icon before the label, such as `Copy` from lucide-react. */
   readonly icon?: ComponentType<IconComponentProps> | undefined;
+  /** A small element before the label in place of an icon, such as a 20px `Avatar` or `InitialsTile`. */
+  readonly media?: ReactNode;
   /** What the action is. Long labels truncate. */
   readonly children: ReactNode;
 }
@@ -252,6 +254,7 @@ export interface MenuItemProps extends Omit<
 /** One action. `onSelect` runs it and the menu closes; arrow keys and typing its first letters reach it. */
 export function MenuItem({
   icon,
+  media,
   className,
   children,
   ...rest
@@ -263,6 +266,7 @@ export function MenuItem({
       data-role="menu"
       data-bt-part="menu-item"
     >
+      {media === undefined ? null : <span data-bt-part="media">{media}</span>}
       {icon ? <Icon icon={icon} /> : null}
       <span
         className="bt-truncate"
@@ -434,6 +438,8 @@ export interface MenuRadioItemProps extends Omit<
 > {
   /** An icon before the label. */
   readonly icon?: ComponentType<IconComponentProps> | undefined;
+  /** A small element before the label in place of an icon, such as a 20px `InitialsTile`. */
+  readonly media?: ReactNode;
   /** What the choice is. Long labels truncate. */
   readonly children: ReactNode;
 }
@@ -441,6 +447,7 @@ export interface MenuRadioItemProps extends Omit<
 /** One choice in a `Menu.RadioGroup`; the chosen one shows a 16px check at its end. */
 export function MenuRadioItem({
   icon,
+  media,
   className,
   children,
   ...rest
@@ -452,6 +459,7 @@ export function MenuRadioItem({
       data-role="menu"
       data-bt-part="menu-item"
     >
+      {media === undefined ? null : <span data-bt-part="media">{media}</span>}
       {icon ? <Icon icon={icon} /> : null}
       <span
         className="bt-truncate"

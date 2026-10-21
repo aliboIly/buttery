@@ -86,6 +86,15 @@
     block-size: var(--bt-icon-sm);
   }
 
+  .bt-menu > [data-bt-part="menu-item"] > [data-bt-part="media"],
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"]
+    > [data-bt-part="media"] {
+    display: inline-flex;
+    flex: none;
+  }
+
   .bt-menu > [data-bt-part="menu-group"] > [data-bt-part="menu-group-label"] {
     display: flex;
     align-items: center;
