@@ -60,7 +60,7 @@ export const demos: readonly DemoSection[] = [
               <MorphMenu.Entry
                 href="#copy"
                 title="Copy"
-                caption="Straight into a post"
+                caption="On the clipboard, ready to paste"
               />
             </MorphMenu.Column>
           </MorphMenu.Item>

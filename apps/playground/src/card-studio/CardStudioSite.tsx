@@ -172,7 +172,7 @@ function Menus(): ReactElement[] {
         <MorphMenu.Entry
           href={STUDIO}
           title="Copy"
-          caption="Straight into a post"
+          caption="On the clipboard, ready to paste"
         />
       </MorphMenu.Column>
     </MorphMenu.Item>,
@@ -300,7 +300,7 @@ export function CardStudioSite(): ReactElement {
             span={8}
             detail={
               <Text variant="body-lg">
-                Drag the lean pad and the card turns toward you, up to 20
+                Steer the lean pad and the card tips toward you, up to 20
                 degrees each way. The export draws the same turn.
               </Text>
             }

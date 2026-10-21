@@ -7,7 +7,7 @@ const SECTIONS = [
   {
     id: "start",
     title: "Start with a title",
-    body: "Type the title in the inspector. The card fits it as you go, and a long title wraps onto a second line rather than shrinking.",
+    body: "Type the title in the inspector and it lands on the card with every key. A long title wraps onto a second line rather than shrinking.",
   },
   {
     id: "finish",
@@ -17,12 +17,12 @@ const SECTIONS = [
   {
     id: "lean",
     title: "Lean it in",
-    body: "Drag the lean pad and the card turns toward you, up to 20 degrees each way. Flat lays it back down.",
+    body: "Steer the lean pad and the card tips toward you, up to 20 degrees each way. Flat lays it back down.",
   },
   {
     id: "export",
     title: "Take it with you",
-    body: "Copy the card into a post, or export a PNG or a JPG at the canvas's size. The export draws the lean and the shadow as you see them.",
+    body: "Save a PNG or a JPG at the canvas's size, or press Copy and paste it wherever it's going. The export draws the lean and the shadow just as the studio shows them.",
   },
 ] as const;
 

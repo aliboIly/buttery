@@ -55,7 +55,7 @@ function Chip({
 export const STUDIO_TOUR: readonly OnboardingStep[] = [
   {
     title: "Name your card",
-    body: "Type a title in the inspector and the card fits it as you go.",
+    body: "The title you type in the inspector lands on the card with every key.",
     caption: "Long titles wrap onto a second line.",
     background: backdrop("cream"),
     media: (
@@ -87,7 +87,7 @@ export const STUDIO_TOUR: readonly OnboardingStep[] = [
   },
   {
     title: "Lean in for depth",
-    body: "Drag the lean pad to turn the card, or anchor it to an edge of the canvas.",
+    body: "Steer the lean pad and the card tips toward you, up to 20 degrees each way.",
     caption: "Flat lays it back down.",
     background: backdrop("sky"),
     media: (
@@ -101,7 +101,7 @@ export const STUDIO_TOUR: readonly OnboardingStep[] = [
   },
   {
     title: "Take it with you",
-    body: "Copy it into a post, or export it as a PNG or a JPG at the canvas's size.",
+    body: "Save a PNG or a JPG at the canvas's size, or press Copy and paste it wherever it's going.",
     caption: "Undo and Redo keep every change.",
     background: backdrop("mint"),
     media: (

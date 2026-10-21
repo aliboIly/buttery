@@ -21,7 +21,7 @@ function cards(): void {
         <ExpandableCard
           title="Lean it in 3D"
           span={8}
-          detail={<p>Drag the lean pad.</p>}
+          detail={<p>Steer the lean pad.</p>}
         >
           <div>Picture</div>
         </ExpandableCard>
@@ -62,7 +62,7 @@ describe("ExpandableCard", () => {
       screen.getByRole("button", { name: "Open Lean it in 3D" }),
     );
     const dialog = await screen.findByRole("dialog", { name: "Lean it in 3D" });
-    expect(dialog.textContent).toContain("Drag the lean pad.");
+    expect(dialog.textContent).toContain("Steer the lean pad.");
     expect(document.activeElement).toBe(dialog);
     expect(
       document

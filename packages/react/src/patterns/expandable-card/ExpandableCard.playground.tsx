@@ -74,7 +74,7 @@ export const demos: readonly DemoSection[] = [
                     </Center>
                   </Surface>
                   <Text variant="body-lg">
-                    Drag the lean pad and the card turns toward you, up to 20
+                    Steer the lean pad and the card tips toward you, up to 20
                     degrees each way.
                   </Text>
                   <Text variant="body">

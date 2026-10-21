@@ -45,7 +45,7 @@ export function Guide(): ReactElement {
             Start with a title
           </h2>
           <Text variant="body-lg">
-            Type the title in the inspector and the card fits it as you go.
+            Type the title in the inspector and it lands on the card.
           </Text>
           <h2 id="finish" className="bt-text" data-role="heading-2">
             Pick a finish

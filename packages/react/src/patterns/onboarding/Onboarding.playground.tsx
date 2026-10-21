@@ -22,7 +22,7 @@ function Card({ title }: { readonly title: string }): ReactElement {
 const STEPS: readonly OnboardingStep[] = [
   {
     title: "Start with a title",
-    body: "Type it right on the card; it fits itself as you go.",
+    body: "Type right on the card. A long title wraps onto a second line.",
     caption: "You can change it any time.",
     background: background("cream"),
     media: (
@@ -48,7 +48,7 @@ const STEPS: readonly OnboardingStep[] = [
   },
   {
     title: "Send it out",
-    body: "Copy it straight into a post, or save it as a picture.",
+    body: "Save it as a picture, or keep it on the clipboard for wherever it's headed.",
     caption: "Pictures come out at the canvas's size.",
     background: background("sky"),
     media: (

@@ -25,7 +25,7 @@ const STEPS: readonly OnboardingStep[] = [
   },
   {
     title: "Lean one for depth",
-    body: "Drag the lean pad and the card turns in 3D.",
+    body: "Steer the lean pad and the card tips toward you.",
     media: (
       <Onboarding.Shared id="card" rotate={-6} scale={1.1}>
         <Card title="Spring launch" />
