@@ -158,6 +158,13 @@ function OverflowClusterRoot({
   }, [lineup]);
 
   const overflowed = entries.filter((entry) => hidden.has(entry.id));
+  const choices = overflowed.filter(
+    ({ menuItem }) => menuItem.selected !== undefined,
+  );
+  const actions = overflowed.filter(
+    ({ menuItem }) => menuItem.selected === undefined,
+  );
+  const dotted = overflowed.find(({ menuItem }) => menuItem.dot === true);
 
   return (
     <RegistryContext value={registry}>
@@ -175,40 +182,54 @@ function OverflowClusterRoot({
           {menu !== undefined || overflowed.length > 0 ? (
             <Menu open={menuOpen} onOpenChange={setMenuOpen}>
               <Menu.Trigger
-                aria-label={moreLabel}
+                aria-label={
+                  dotted === undefined
+                    ? moreLabel
+                    : `${moreLabel}, ${dotted.menuItem.dotLabel ?? "new"}`
+                }
                 className="bt-press bt-focus"
                 data-bt-part="more"
               >
                 <Icon icon={MoreDots} />
+                {dotted === undefined ? null : (
+                  <span
+                    data-bt-part="dot"
+                    data-bt-allow-overlap=""
+                    aria-hidden="true"
+                  />
+                )}
               </Menu.Trigger>
               <Menu.Content>
-                {menu ??
-                  (overflowed.some(
-                    ({ menuItem }) => menuItem.selected !== undefined,
-                  ) ? (
-                    <Menu.RadioGroup
-                      value={
-                        overflowed.find(({ menuItem }) => menuItem.selected)
-                          ?.id ?? ""
-                      }
-                      onValueChange={(chosen) => {
-                        overflowed
-                          .find(({ id }) => id === chosen)
-                          ?.menuItem.onSelect();
-                      }}
-                    >
-                      {overflowed.map(({ id, menuItem }) => (
-                        <Menu.RadioItem
-                          key={id}
-                          value={id}
-                          disabled={menuItem.disabled}
-                        >
-                          {menuItem.label}
-                        </Menu.RadioItem>
-                      ))}
-                    </Menu.RadioGroup>
-                  ) : (
-                    overflowed.map(({ id, menuItem }) => (
+                {menu ?? (
+                  <>
+                    {choices.length > 0 ? (
+                      <Menu.RadioGroup
+                        value={
+                          choices.find(({ menuItem }) => menuItem.selected)
+                            ?.id ?? ""
+                        }
+                        onValueChange={(chosen) => {
+                          choices
+                            .find(({ id }) => id === chosen)
+                            ?.menuItem.onSelect();
+                        }}
+                      >
+                        {choices.map(({ id, menuItem }) => (
+                          <Menu.RadioItem
+                            key={id}
+                            value={id}
+                            icon={menuItem.icon}
+                            disabled={menuItem.disabled}
+                          >
+                            {menuItem.label}
+                          </Menu.RadioItem>
+                        ))}
+                      </Menu.RadioGroup>
+                    ) : null}
+                    {choices.length > 0 && actions.length > 0 ? (
+                      <Menu.Separator />
+                    ) : null}
+                    {actions.map(({ id, menuItem }) => (
                       <Menu.Item
                         key={id}
                         icon={menuItem.icon}
@@ -220,8 +241,9 @@ function OverflowClusterRoot({
                       >
                         {menuItem.label}
                       </Menu.Item>
-                    ))
-                  ))}
+                    ))}
+                  </>
+                )}
               </Menu.Content>
             </Menu>
           ) : null}

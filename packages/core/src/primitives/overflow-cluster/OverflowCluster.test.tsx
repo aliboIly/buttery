@@ -3,6 +3,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
+import { Inbox } from "lucide-react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OverflowCluster } from "./OverflowCluster.tsx";
 
@@ -203,6 +204,44 @@ describe("OverflowCluster", () => {
       expect(screen.getByRole("button", { name: "Redo" })).toBeTruthy();
     });
     expect(screen.queryByRole("button", { name: "More actions" })).toBeNull();
+  });
+
+  it("lists only the items that say they're chosen as radio items, the rest keeping their icons, shortcuts and dots", async () => {
+    render(
+      <div style={{ display: "flex", inlineSize: "60px" }}>
+        <OverflowCluster gap={1} moreLabel="More views">
+          <OverflowCluster.Item
+            priority={1}
+            menuItem={{ label: "Unpaid", selected: true, onSelect: vi.fn() }}
+          >
+            <button type="button" style={{ inlineSize: "80px" }}>
+              Unpaid
+            </button>
+          </OverflowCluster.Item>
+          <OverflowCluster.Item
+            menuItem={{
+              label: "Inbox",
+              icon: Inbox,
+              shortcut: "i",
+              dot: true,
+              onSelect: vi.fn(),
+            }}
+          >
+            <button type="button" style={{ inlineSize: "80px" }}>
+              Inbox
+            </button>
+          </OverflowCluster.Item>
+        </OverflowCluster>
+      </div>,
+    );
+    const more = await screen.findByRole("button", { name: "More views, new" });
+    expect(more.querySelector('[data-bt-part="dot"]')).not.toBeNull();
+    await userEvent.click(more);
+    const chosen = await screen.findByRole("menuitemradio", { name: "Unpaid" });
+    expect(chosen.getAttribute("aria-checked")).toBe("true");
+    const inbox = screen.getByRole("menuitem", { name: "Inbox, new" });
+    expect(inbox.getAttribute("aria-keyshortcuts")).toBe("I");
+    expect(inbox.querySelector("svg")).not.toBeNull();
   });
 
   it("closes the More menu when everything fits, so it doesn't open by itself later", async () => {

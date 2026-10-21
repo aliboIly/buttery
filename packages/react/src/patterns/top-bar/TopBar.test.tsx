@@ -115,7 +115,7 @@ describe("TopBar", () => {
       </div>,
     );
     expect(
-      await screen.findByRole("button", { name: "More app actions" }),
+      await screen.findByRole("button", { name: /^More app actions/ }),
     ).toBeTruthy();
     expect(screen.getByRole("button", { name: "New order" })).toBeTruthy();
   });
@@ -144,9 +144,11 @@ describe("TopBar", () => {
         />
       </div>,
     );
-    await userEvent.click(
-      await screen.findByRole("button", { name: "More app actions" }),
-    );
+    const more = await screen.findByRole("button", {
+      name: "More app actions, new",
+    });
+    expect(more.querySelector('[data-bt-part="dot"]')).not.toBeNull();
+    await userEvent.click(more);
     const item = await screen.findByRole("menuitem", {
       name: "Notifications, new",
     });

@@ -13,6 +13,6 @@ export const meta: ComponentMeta = {
     "Content that should scroll horizontally: use a scroll container",
   ],
   related: ["Inline", "Popover", "Divider"],
-  a11y: "Hidden items leave the tab order and the accessibility tree; their actions stay reachable through the More button, a menu button with arrow-key navigation, Enter to choose and Escape to close.",
+  a11y: "Hidden items leave the tab order and the accessibility tree; their actions stay reachable through the More button, a menu button with arrow-key navigation, Enter to choose and Escape to close. Items that say whether they're chosen are listed as radio items, the others as menu items with their icons, shortcuts and dots; the More button shows a dot, and says so in its name, while a folded item has one.",
   motion: "none",
 };
