@@ -423,4 +423,30 @@ describe("Menu", () => {
     });
     expect(item.getAttribute("aria-expanded")).toBe("true");
   });
+
+  it("follows a link item with Enter, running its click handler, and closes", async () => {
+    const onClick = vi.fn((event: { preventDefault: () => void }) => {
+      event.preventDefault();
+    });
+    render(
+      <Menu>
+        <Menu.Trigger>Help</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Link href="#guides" onClick={onClick}>
+            Guides
+          </Menu.Link>
+        </Menu.Content>
+      </Menu>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Help" }));
+    const link = screen.getByRole("menuitem", { name: "Guides" });
+    expect(link.tagName).toBe("A");
+    expect(link.getAttribute("href")).toBe("#guides");
+    link.focus();
+    await userEvent.keyboard("{Enter}");
+    expect(onClick).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+  });
 });

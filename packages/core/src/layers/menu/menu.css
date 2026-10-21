@@ -35,6 +35,8 @@
     block-size: var(--bt-h-button);
     padding-inline: var(--bt-space-3);
     border-radius: var(--bt-r-md);
+    color: inherit;
+    text-decoration: none;
     cursor: default;
     outline: none;
   }

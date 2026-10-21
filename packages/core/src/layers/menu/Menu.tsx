@@ -42,6 +42,8 @@ interface MenuState {
   readonly content: RefObject<HTMLDivElement | null>;
   /** Records that a press or focus outside the menu is what's closing it. */
   readonly pressedOutside: () => void;
+  /** Closes the menu. */
+  readonly close: () => void;
 }
 
 const MenuContext: Context<MenuState | null> = createContext<MenuState | null>(
@@ -142,6 +144,9 @@ function MenuRoot({
         content,
         pressedOutside: () => {
           outside.current = true;
+        },
+        close: () => {
+          setOpen(false);
         },
       }}
     >
@@ -267,6 +272,56 @@ export function MenuItem({
       >
         {children}
       </span>
+    </DropdownMenu.Item>
+  );
+}
+
+/** Props for `Menu.Link`. */
+export interface MenuLinkProps extends Omit<
+  ComponentPropsWithRef<"a">,
+  "children" | "onSelect"
+> {
+  /** An icon before the label. */
+  readonly icon?: ComponentType<IconComponentProps> | undefined;
+  /** Where it goes. Long labels truncate. */
+  readonly children: ReactNode;
+}
+
+/**
+ * A menu item that's a link: choosing it with a press, Enter or Space follows `href` (and runs an `onClick`,
+ * so a router's handler works), and the menu closes.
+ */
+export function MenuLink({
+  icon,
+  className,
+  children,
+  onClick,
+  ...rest
+}: MenuLinkProps): ReactElement {
+  const menu = useMenu("Link");
+  return (
+    <DropdownMenu.Item asChild>
+      <a
+        {...rest}
+        onClick={(event) => {
+          onClick?.(event);
+          // A router's link takes over the click with preventDefault, which also stops Radix closing the menu.
+          if (event.defaultPrevented) menu.close();
+        }}
+        className={cx("bt-text", className)}
+        data-role="menu"
+        data-bt-part="menu-item"
+      >
+        {icon ? <Icon icon={icon} /> : null}
+        <span
+          className="bt-truncate"
+          data-bt-truncate=""
+          data-bt-part="label"
+          title={typeof children === "string" ? children : undefined}
+        >
+          {children}
+        </span>
+      </a>
     </DropdownMenu.Item>
   );
 }
@@ -607,6 +662,8 @@ export interface MenuComponent {
   readonly Content: typeof MenuContent;
   /** One action. */
   readonly Item: typeof MenuItem;
+  /** An item that's a link. */
+  readonly Link: typeof MenuLink;
   /** A line between groups. */
   readonly Separator: typeof MenuSeparator;
   /** A group with an optional heading. */
@@ -644,6 +701,7 @@ export const Menu: MenuComponent = Object.assign(MenuRoot, {
   Trigger: MenuTrigger,
   Content: MenuContent,
   Item: MenuItem,
+  Link: MenuLink,
   Separator: MenuSeparator,
   Group: MenuGroup,
   RadioGroup: MenuRadioGroup,
