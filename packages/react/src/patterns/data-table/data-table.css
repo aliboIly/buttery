@@ -185,6 +185,21 @@
     font-family: var(--bt-font-mono);
   }
 
+  .bt-data-table [data-bt-part="link"] {
+    display: block;
+    min-inline-size: 0;
+    border-radius: var(--bt-r-xs);
+    color: inherit;
+    line-height: var(--bt-h-sm);
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .bt-data-table [data-bt-part="link"]:hover {
+      text-decoration: underline;
+    }
+  }
+
   .bt-data-table [data-bt-part="row"][data-no-results] {
     display: flex;
     block-size: auto;

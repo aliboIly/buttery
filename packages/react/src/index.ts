@@ -435,6 +435,7 @@ export type {
   DataTableComponent,
   DataTableIdProps,
   DataTableLabels,
+  DataTableLinkProps,
   DataTablePagination,
   DataTableProps,
   DataTableSort,

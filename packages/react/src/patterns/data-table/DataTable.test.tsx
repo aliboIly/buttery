@@ -244,6 +244,33 @@ describe("DataTable", () => {
     expect(onRefund).toHaveBeenCalledWith("ORD-1042");
   });
 
+  it("links a row to its own page from a cell, in the row's text color, tall enough to hit", () => {
+    render(
+      <Orders
+        columns={[
+          {
+            id: "customer",
+            header: "Customer",
+            minWidth: "md",
+            cell: (order) => (
+              <DataTable.Link href={`#customers/${order.id}`}>
+                {order.customer}
+              </DataTable.Link>
+            ),
+          },
+        ]}
+      />,
+    );
+    const link = screen.getByRole("link", { name: "Mira Okafor" });
+    expect(link.getAttribute("href")).toBe("#customers/ORD-1042");
+    expect(link.dataset["btPart"]).toBe("link");
+    expect(link.getBoundingClientRect().height).toBe(28);
+    const cell = link.closest<HTMLElement>("[role='cell']");
+    if (!cell) throw new Error("No cell.");
+    expect(getComputedStyle(link).color).toBe(getComputedStyle(cell).color);
+    expect(getComputedStyle(link).textDecorationLine).toBe("none");
+  });
+
   it("shows skeleton rows shaped like its columns while it loads, as many as a page holds", () => {
     render(
       <Orders

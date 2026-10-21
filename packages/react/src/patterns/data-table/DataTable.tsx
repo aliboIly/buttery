@@ -2,6 +2,7 @@ import {
   Icon,
   Menu,
   Skeleton,
+  Slot,
   cx,
   hasContent,
   useControllableState,
@@ -647,6 +648,48 @@ export function DataTableId({ value }: DataTableIdProps): ReactElement {
   );
 }
 
+/** Props for `DataTable.Link`. */
+export interface DataTableLinkProps extends ComponentPropsWithRef<"a"> {
+  /** Render the single child element (such as a router's link) as the link, with these styles merged in. */
+  readonly asChild?: boolean | undefined;
+}
+
+/**
+ * A cell's text as a link to the row's own page, such as a customer's name in a list of customers: `text`
+ * that underlines on hover, truncating like the rest of the row, on a 28px line so it's easy to hit.
+ */
+export function DataTableLink({
+  asChild = false,
+  className,
+  children,
+  ...rest
+}: DataTableLinkProps): ReactElement {
+  const classes = cx("bt-truncate bt-focus", className);
+  if (asChild) {
+    return (
+      <Slot
+        {...rest}
+        className={classes}
+        data-bt-truncate=""
+        data-bt-part="link"
+      >
+        {children}
+      </Slot>
+    );
+  }
+  return (
+    <a
+      title={typeof children === "string" ? children : undefined}
+      {...rest}
+      className={classes}
+      data-bt-truncate=""
+      data-bt-part="link"
+    >
+      {children}
+    </a>
+  );
+}
+
 /** `DataTable` with its cell parts. */
 export interface DataTableComponent {
   <Row>(props: DataTableProps<Row>): ReactElement;
@@ -654,6 +697,8 @@ export interface DataTableComponent {
   readonly Amount: typeof DataTableAmount;
   /** An identifier. */
   readonly Id: typeof DataTableId;
+  /** A link to the row's own page. */
+  readonly Link: typeof DataTableLink;
 }
 
 /**
@@ -662,13 +707,15 @@ export interface DataTableComponent {
  * the page never does. Rows are `--bt-h-table-row` tall with 1px dividers and never wrap. It offers a
  * checkbox column, sortable headers (`aria-sort`), a "…" menu of actions per row, a header and first column
  * that stick, skeleton rows while it loads, pagination, a row with "Clear all" when filters leave nothing,
- * and an empty state when there's no data. `DataTable.Amount` and `DataTable.Id` format money and ids.
+ * and an empty state when there's no data. `DataTable.Amount` and `DataTable.Id` format money and ids, and
+ * `DataTable.Link` links a row to its own page.
  *
  * @example
  * <DataTable
  *   label="Orders"
  *   columns={[
  *     { id: "id", header: "Order", cell: (order) => <DataTable.Id value={order.id} />, minWidth: "sm" },
+ *     { id: "customer", header: "Customer", cell: (order) => <DataTable.Link href={`/customers/${order.customerId}`}>{order.customer}</DataTable.Link>, minWidth: "md", grow: 2 },
  *     { id: "total", header: "Total", align: "end", sortable: true, cell: (order) => <DataTable.Amount value={order.total} currency="USD" /> },
  *   ]}
  *   rows={orders}
@@ -679,4 +726,5 @@ export interface DataTableComponent {
 export const DataTable: DataTableComponent = Object.assign(DataTableRoot, {
   Amount: DataTableAmount,
   Id: DataTableId,
+  Link: DataTableLink,
 });
