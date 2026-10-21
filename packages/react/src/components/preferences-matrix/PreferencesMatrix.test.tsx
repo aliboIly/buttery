@@ -63,6 +63,7 @@ function Matrix(props: {
     value: Readonly<Record<string, readonly string[]>>,
   ) => void;
   readonly tabs?: readonly PreferenceTab[];
+  readonly defaultValue?: Readonly<Record<string, readonly string[]>>;
 }): ReactElement {
   return (
     <div style={{ inlineSize: "720px" }}>
@@ -70,7 +71,7 @@ function Matrix(props: {
         label="Notifications"
         channels={CHANNELS}
         tabs={props.tabs ?? TABS}
-        defaultValue={{ payouts: ["email"] }}
+        defaultValue={props.defaultValue ?? { payouts: ["email"] }}
         onValueChange={props.onValueChange}
       />
     </div>
@@ -124,9 +125,29 @@ describe("PreferencesMatrix", () => {
     );
     expect(onValueChange).toHaveBeenLastCalledWith({
       payouts: ["email", "push"],
+      disputes: ["email"],
     });
     await userEvent.click(email);
-    expect(onValueChange).toHaveBeenLastCalledWith({ payouts: ["push"] });
+    expect(onValueChange).toHaveBeenLastCalledWith({
+      payouts: ["push"],
+      disputes: ["email"],
+    });
+  });
+
+  it("reports a locked channel as it's held, whatever the value said", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <Matrix
+        onValueChange={onValueChange}
+        defaultValue={{ disputes: ["text"] }}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole("checkbox", { name: "Push for Disputes" }),
+    );
+    expect(onValueChange).toHaveBeenLastCalledWith({
+      disputes: ["push", "email"],
+    });
   });
 
   it("holds a locked cell at its value, greyed and disabled", () => {
@@ -154,6 +175,43 @@ describe("PreferencesMatrix", () => {
     render(<Matrix tabs={TABS.slice(0, 1)} />);
     expect(screen.queryByRole("tablist")).toBeNull();
     expect(screen.getByRole("table", { name: "Money" })).toBeTruthy();
+  });
+
+  it("puts its first group the tabs' gap under the tab row, and at its top with no tab row", () => {
+    render(<Matrix />);
+    const row = screen
+      .getByRole("tablist")
+      .closest(".bt-tabs-row")
+      ?.getBoundingClientRect();
+    if (!row) throw new Error("No tab row.");
+    expect(
+      screen.getByRole("table", { name: "Money" }).getBoundingClientRect().top -
+        row.bottom,
+    ).toBe(24);
+    cleanup();
+    render(<Matrix tabs={TABS.slice(0, 1)} />);
+    expect(
+      screen.getByRole("table", { name: "Money" }).getBoundingClientRect().top,
+    ).toBe(
+      screen
+        .getByRole("group", { name: "Notifications" })
+        .getBoundingClientRect().top,
+    );
+  });
+
+  it("draws its row lines between its own rows, not inside the checkboxes", () => {
+    render(<Matrix />);
+    const row = screen
+      .getByRole("rowheader", { name: /Payouts/ })
+      .closest("tr");
+    if (!row) throw new Error("No row.");
+    expect(getComputedStyle(row).borderTopWidth).toBe("1px");
+    const inside = screen
+      .getByRole("checkbox", { name: "Email for Payouts" })
+      .closest('[data-bt="Checkbox"]')
+      ?.querySelector('[data-bt-part="row"]');
+    if (!inside) throw new Error("No checkbox row.");
+    expect(getComputedStyle(inside).borderTopWidth).toBe("0px");
   });
 
   it("centers each box in a channel column 64 wide", () => {

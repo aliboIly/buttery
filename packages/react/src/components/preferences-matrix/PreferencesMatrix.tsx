@@ -19,7 +19,7 @@ export interface PreferenceRow {
   readonly label: string;
   /** A line under the label. */
   readonly description?: string | undefined;
-  /** Channels this row can't change, each held on (`true`) or off (`false`) and drawn greyed. */
+  /** Channels this row can't change, each held on (`true`) or off (`false`) and drawn greyed. The value reports them as held. */
   readonly locked?: Readonly<Partial<Record<string, boolean>>> | undefined;
 }
 
@@ -61,7 +61,7 @@ export interface PreferencesMatrixProps extends Omit<
   readonly value?: PreferenceValue | undefined;
   /** The value it starts with when uncontrolled. Defaults to every channel off. */
   readonly defaultValue?: PreferenceValue | undefined;
-  /** Called with the whole value whenever a box is ticked or cleared. */
+  /** Called with the whole value whenever a box is ticked or cleared, locked channels included as they're held. */
   readonly onValueChange?: ((value: PreferenceValue) => void) | undefined;
   /** The tab shown. Pair with `onTabChange` to control it. */
   readonly tab?: string | undefined;
@@ -112,9 +112,30 @@ export function PreferencesMatrix({
     onChange: onTabChange,
   });
 
+  const lockedRows = tabs.flatMap((entry) =>
+    entry.groups.flatMap((group) =>
+      group.rows.filter((row) => row.locked !== undefined),
+    ),
+  );
+
+  const withLocks = (next: PreferenceValue): PreferenceValue => {
+    const held: Record<string, readonly string[]> = { ...next };
+    for (const row of lockedRows) {
+      const locked = row.locked ?? {};
+      const free = (next[row.id] ?? []).filter(
+        (id) => locked[id] === undefined,
+      );
+      const on = Object.keys(locked).filter((id) => locked[id] === true);
+      held[row.id] = [...free, ...on];
+    }
+    return held;
+  };
+
   const toggle = (row: string, channel: string, on: boolean): void => {
     const others = (current[row] ?? []).filter((id) => id !== channel);
-    setCurrent({ ...current, [row]: on ? [...others, channel] : others });
+    setCurrent(
+      withLocks({ ...current, [row]: on ? [...others, channel] : others }),
+    );
   };
 
   const groupsOf = (groups: readonly PreferenceGroup[]): ReactElement => (
