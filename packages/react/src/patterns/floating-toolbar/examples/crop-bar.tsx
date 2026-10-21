@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
 import { Button, FloatingToolbar } from "@buttery/react";
 
-/** Crop mode's bar under the frame: the size, then Reset, Cancel and Apply. */
+/** Resize mode's bar under the frame: the size, then Revert, Discard and Keep size. */
 export function CropBar(): ReactElement {
   const frame = useRef<HTMLDivElement>(null);
   const [cropping, setCropping] = useState(false);
@@ -14,27 +14,27 @@ export function CropBar(): ReactElement {
           setCropping(true);
         }}
       >
-        Crop
+        Resize
       </Button>
       <Surface ref={frame} level="card" padX={8} padY={6}>
         <Text variant="label">Launch card</Text>
       </Surface>
       <FloatingToolbar
         anchor={frame}
-        label="Crop"
-        meta="1600 × 900"
+        label="Canvas size"
+        meta="1920 × 1080"
         open={cropping}
         delayed
       >
         <FloatingToolbar.Button variant="ghost" aria-disabled>
-          Reset
+          Revert
         </FloatingToolbar.Button>
         <FloatingToolbar.Button
           onClick={() => {
             setCropping(false);
           }}
         >
-          Cancel
+          Discard
         </FloatingToolbar.Button>
         <FloatingToolbar.Button
           variant="primary"
@@ -42,7 +42,7 @@ export function CropBar(): ReactElement {
             setCropping(false);
           }}
         >
-          Apply crop
+          Keep size
         </FloatingToolbar.Button>
       </FloatingToolbar>
     </Stack>

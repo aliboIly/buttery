@@ -33,14 +33,14 @@ function Crop({
       <div ref={anchor} data-testid="frame" style={frame} />
       <FloatingToolbar
         anchor={anchor}
-        label="Crop"
-        meta="1600 × 900"
+        label="Canvas size"
+        meta="1920 × 1080"
         open={open}
       >
-        <FloatingToolbar.Button variant="ghost">Reset</FloatingToolbar.Button>
-        <FloatingToolbar.Button>Cancel</FloatingToolbar.Button>
+        <FloatingToolbar.Button variant="ghost">Revert</FloatingToolbar.Button>
+        <FloatingToolbar.Button>Discard</FloatingToolbar.Button>
         <FloatingToolbar.Button variant="primary">
-          Apply crop
+          Keep size
         </FloatingToolbar.Button>
       </FloatingToolbar>
     </>
@@ -64,11 +64,11 @@ describe("FloatingToolbar", () => {
           <FloatingToolbar
             ref={ref}
             anchor={anchor}
-            label="Crop"
+            label="Canvas size"
             className="custom"
             data-testid="bar"
           >
-            <FloatingToolbar.Button>Cancel</FloatingToolbar.Button>
+            <FloatingToolbar.Button>Discard</FloatingToolbar.Button>
           </FloatingToolbar>
         </>
       );
@@ -82,7 +82,7 @@ describe("FloatingToolbar", () => {
 
   it("is a named toolbar in the floating layer, 12px under its anchor and centered on it", async () => {
     render(<Crop frame={CENTERED} />);
-    const toolbar = screen.getByRole("toolbar", { name: "Crop" });
+    const toolbar = screen.getByRole("toolbar", { name: "Canvas size" });
     expect(
       toolbar.closest("[data-bt-layer]")?.getAttribute("data-bt-layer"),
     ).toBe("floating");
@@ -94,7 +94,7 @@ describe("FloatingToolbar", () => {
       Math.abs(box.left + box.width / 2 - (frame.left + frame.width / 2)),
     ).toBeLessThanOrEqual(1);
     expect(box.height).toBe(48);
-    expect(screen.getByText("1600 × 900")).toBeTruthy();
+    expect(screen.getByText("1920 × 1080")).toBeTruthy();
   });
 
   it("stays 8px inside the viewport, and goes above its anchor when there's no room below", async () => {
@@ -113,6 +113,68 @@ describe("FloatingToolbar", () => {
     const box = screen.getByRole("toolbar").getBoundingClientRect();
     expect(Math.round(window.innerWidth - box.right)).toBe(8);
     expect(Math.round(frame.top - box.bottom)).toBe(12);
+  });
+
+  it("stays 8px inside the viewport when its anchor scrolls away above it", async () => {
+    render(
+      <Crop
+        frame={{
+          marginBlockStart: "-300px",
+          inlineSize: "200px",
+          blockSize: "120px",
+        }}
+      />,
+    );
+    await settled();
+    expect(
+      Math.round(screen.getByRole("toolbar").getBoundingClientRect().top),
+    ).toBe(8);
+  });
+
+  it("takes focus as it opens with focusOnOpen, and gives it back where it came from as it closes", async () => {
+    function Editor(): ReactElement {
+      const anchor = useRef<HTMLDivElement>(null);
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Resize
+          </button>
+          <div ref={anchor} style={CENTERED} />
+          <FloatingToolbar
+            anchor={anchor}
+            label="Canvas size"
+            open={open}
+            focusOnOpen
+          >
+            <FloatingToolbar.Button aria-disabled>
+              Revert
+            </FloatingToolbar.Button>
+            <FloatingToolbar.Button
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              Discard
+            </FloatingToolbar.Button>
+          </FloatingToolbar>
+        </>
+      );
+    }
+    render(<Editor />);
+    const resize = screen.getByRole("button", { name: "Resize" });
+    resize.focus();
+    await userEvent.keyboard("{Enter}");
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Discard" }),
+    );
+    await userEvent.keyboard("{Enter}");
+    expect(document.activeElement).toBe(resize);
   });
 
   it("follows its anchor as it moves", async () => {
@@ -152,11 +214,11 @@ describe("FloatingToolbar", () => {
     await settled();
     await userEvent.tab();
     expect(document.activeElement).toBe(
-      screen.getByRole("button", { name: "Reset" }),
+      screen.getByRole("button", { name: "Revert" }),
     );
     await userEvent.keyboard("{ArrowRight}{ArrowRight}");
     expect(document.activeElement).toBe(
-      screen.getByRole("button", { name: "Apply crop" }),
+      screen.getByRole("button", { name: "Keep size" }),
     );
     await userEvent.tab({ shift: true });
     expect(document.activeElement).toBe(document.body);

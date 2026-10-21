@@ -15,7 +15,7 @@ function CropDemo(): ReactElement {
             setCropping((on) => !on);
           }}
         >
-          {cropping ? "Leave crop mode" : "Crop"}
+          {cropping ? "Stop resizing" : "Resize"}
         </Button>
       </Inline>
       <Center>
@@ -25,20 +25,20 @@ function CropDemo(): ReactElement {
       </Center>
       <FloatingToolbar
         anchor={frame}
-        label="Crop"
-        meta="1600 × 900"
+        label="Canvas size"
+        meta="1920 × 1080"
         open={cropping}
         delayed
       >
         <FloatingToolbar.Button variant="ghost" aria-disabled>
-          Reset
+          Revert
         </FloatingToolbar.Button>
         <FloatingToolbar.Button
           onClick={() => {
             setCropping(false);
           }}
         >
-          Cancel
+          Discard
         </FloatingToolbar.Button>
         <FloatingToolbar.Button
           variant="primary"
@@ -46,7 +46,7 @@ function CropDemo(): ReactElement {
             setCropping(false);
           }}
         >
-          Apply crop
+          Keep size
         </FloatingToolbar.Button>
       </FloatingToolbar>
     </Stack>
@@ -55,9 +55,9 @@ function CropDemo(): ReactElement {
 
 export const demos: readonly DemoSection[] = [
   {
-    title: "Crop mode",
+    title: "Resize mode",
     description:
-      "12px under the card, centered and kept inside the viewport; it rises in a beat after crop mode starts and follows the card as the page scrolls.",
+      "12px under the card, centered and kept inside the viewport; it rises in a beat after resize mode starts and follows the card as the page scrolls.",
     render: () => <CropDemo />,
   },
 ];
