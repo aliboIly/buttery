@@ -90,6 +90,24 @@ describe("HoverActions", () => {
     await shown("bar", true);
   });
 
+  it("puts them away once the pointer leaves, even with a clicked action still focused", async () => {
+    render(<Rows />);
+    await userEvent.click(
+      screen.getByRole("button", { name: "Settings for payouts" }),
+    );
+    await userEvent.hover(
+      screen.getByRole("button", { name: "Notifications" }),
+    );
+    await shown("actions", false);
+    await shown("bar", false);
+  });
+
+  it("shows its bar at once, fading only its actions", () => {
+    render(<Rows />);
+    expect(getComputedStyle(part("bar")).transitionDuration).toBe("0s");
+    expect(getComputedStyle(part("actions")).transitionDuration).not.toBe("0s");
+  });
+
   it("fades its actions in over dur-fast, and 100ms with reduced motion", () => {
     render(
       <>

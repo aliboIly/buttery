@@ -22,7 +22,6 @@
     inline-size: var(--bt-hover-actions-bar);
     background-color: var(--bt-accent);
     opacity: 0;
-    transition: opacity var(--bt-hover-actions-fade) var(--bt-ease-out);
   }
 
   .bt-hover-actions > [data-bt-part="content"] {
@@ -38,11 +37,12 @@
     transition: opacity var(--bt-hover-actions-fade) var(--bt-ease-out);
   }
 
-  .bt-hover-actions:focus-within {
+  /* Keyboard focus only: a clicked action keeps focus in Chromium, which would leave the row lit once the pointer leaves. */
+  .bt-hover-actions:has(:focus-visible) {
     background-color: var(--bt-bg-item-hover);
   }
 
-  .bt-hover-actions:focus-within
+  .bt-hover-actions:has(:focus-visible)
     > :is([data-bt-part="bar"], [data-bt-part="actions"]) {
     opacity: 1;
   }
