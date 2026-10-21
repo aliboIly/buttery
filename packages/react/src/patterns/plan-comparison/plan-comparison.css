@@ -172,10 +172,12 @@
       grid-template-rows: auto auto auto auto 1fr;
     }
 
+    /* No gap between the ribbon's row and the card, so the tab sits on the card's top edge. */
     .bt-plan-comparison [data-bt-part="plan"] {
       display: grid;
       grid-row: span 5;
       grid-template-rows: subgrid;
+      row-gap: 0;
     }
 
     .bt-plan-comparison [data-bt-part="plan-comparison-card"] {

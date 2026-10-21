@@ -74,6 +74,8 @@ export interface PlanComparisonProps extends Omit<
   readonly more?: ReactNode;
   /** The heading over `more`. Defaults to `"Other plans"`. */
   readonly moreTitle?: string | undefined;
+  /** Names the control group holding the period and volume. Defaults to `"Plan options"`. */
+  readonly optionsLabel?: string | undefined;
 }
 
 function PlanComparisonRoot({
@@ -90,6 +92,7 @@ function PlanComparisonRoot({
   volumeLabel = "Volume",
   more,
   moreTitle = "Other plans",
+  optionsLabel = "Plan options",
   className,
   style,
   ...rest
@@ -119,7 +122,7 @@ function PlanComparisonRoot({
       style={columns}
     >
       {withPeriods || withVolumes ? (
-        <div role="group" aria-label="Plan options" data-bt-part="controls">
+        <div role="group" aria-label={optionsLabel} data-bt-part="controls">
           {withPeriods ? (
             <SegmentedControl
               label={periodLabel}
@@ -161,7 +164,7 @@ function PlanComparisonRoot({
 function Plan({ plan }: { readonly plan: PlanComparisonPlan }): ReactElement {
   const nameId = useId();
   return (
-    <div data-bt-part="plan">
+    <section aria-labelledby={nameId} data-bt-part="plan" data-bt-region="">
       <div data-bt-part="ribbon-slot">
         {plan.ribbon === undefined ? null : (
           <span className="bt-text" data-role="label" data-bt-part="ribbon">
@@ -170,12 +173,10 @@ function Plan({ plan }: { readonly plan: PlanComparisonPlan }): ReactElement {
           </span>
         )}
       </div>
-      <section
-        aria-labelledby={nameId}
+      <div
         className="bt-surface"
         data-level="card"
         data-bt-part="plan-comparison-card"
-        data-bt-region=""
       >
         <div data-bt-part="plan-comparison-intro">
           <Text id={nameId} variant="title-md" asChild>
@@ -218,13 +219,16 @@ function Plan({ plan }: { readonly plan: PlanComparisonPlan }): ReactElement {
             ))}
           </ul>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
 
 /** Props for `PlanComparison.Option`. */
-export interface PlanComparisonOptionProps {
+export interface PlanComparisonOptionProps extends Omit<
+  ComponentPropsWithRef<"section">,
+  "children"
+> {
   /** The plan's name, an `h3` in `title-md`. */
   readonly name: string;
   /** What it is, in `body-sm`. */
@@ -238,12 +242,15 @@ export function PlanComparisonOption({
   name,
   description,
   action,
+  className,
+  ...rest
 }: PlanComparisonOptionProps): ReactElement {
   const nameId = useId();
   return (
     <section
       aria-labelledby={nameId}
-      className="bt-surface"
+      {...rest}
+      className={cx("bt-surface", className)}
       data-level="card"
       data-bt-part="plan-comparison-option"
       data-bt-region=""
@@ -272,7 +279,7 @@ export interface PlanComparisonComponent {
  * line up: an optional ribbon tab above each card, its name and what it's for, its price, a full-width
  * action, then a checklist under a heading such as "Everything in Standard, and". The cards sit side by
  * side from 900px of room and stack below that; other plans follow in a row of `PlanComparison.Option`s.
- * Each card is its own region, so each may hold one primary action.
+ * Each plan, its ribbon and card, is its own region named by the plan, so each may hold one primary action.
  *
  * @example
  * <PlanComparison

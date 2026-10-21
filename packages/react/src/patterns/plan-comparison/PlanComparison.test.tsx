@@ -73,8 +73,16 @@ function Plans({
   );
 }
 
-function card(name: string): HTMLElement {
+function plan(name: string): HTMLElement {
   return screen.getByRole("region", { name });
+}
+
+function card(name: string): HTMLElement {
+  const surface = plan(name).querySelector<HTMLElement>(
+    '[data-bt-part="plan-comparison-card"]',
+  );
+  if (!surface) throw new Error(`No card for ${name}.`);
+  return surface;
 }
 
 function box(element: Element | null): DOMRect {
@@ -131,11 +139,14 @@ describe("PlanComparison", () => {
     );
   });
 
-  it("puts a plan's ribbon on a tab above its card and its checklist under a heading", () => {
+  it("puts a plan's ribbon on a tab on its card's top edge, read with its plan, and its checklist under a heading", () => {
     render(<Plans />);
-    const ribbon = screen.getByText("30 days free");
-    expect(box(ribbon).bottom).toBeLessThanOrEqual(
-      box(card("Roaster")).top + 1,
+    const ribbon = within(plan("Roaster")).getByText("30 days free");
+    expect(box(ribbon).bottom).toBe(box(card("Roaster")).top);
+    cleanup();
+    render(<Plans width={600} />);
+    expect(box(screen.getByText("30 days free")).bottom).toBe(
+      box(card("Roaster")).top,
     );
     expect(
       within(card("Roaster")).getByRole("heading", {
@@ -153,7 +164,7 @@ describe("PlanComparison", () => {
   it("lists other plans under a heading after the cards", () => {
     render(<Plans />);
     const more = screen.getByRole("region", { name: "Other plans" });
-    expect(box(more).top).toBeGreaterThan(box(card("Starter")).bottom);
+    expect(box(more).top).toBeGreaterThan(box(plan("Starter")).bottom);
     expect(
       within(more).getByRole("region", { name: "Enterprise" }),
     ).toBeTruthy();
@@ -166,9 +177,38 @@ describe("PlanComparison", () => {
     );
   });
 
-  it("makes each card its own region, so each may hold one primary action", () => {
+  it("makes each plan its own region, so each may hold one primary action", () => {
     render(<Plans />);
-    expect(card("Starter").hasAttribute("data-bt-region")).toBe(true);
-    expect(card("Roaster").hasAttribute("data-bt-region")).toBe(true);
+    expect(plan("Starter").hasAttribute("data-bt-region")).toBe(true);
+    expect(plan("Roaster").hasAttribute("data-bt-region")).toBe(true);
+  });
+
+  it("names its control group as asked", () => {
+    render(
+      <PlanComparison
+        plans={PLANS}
+        periods={[{ value: "monthly", label: "Monthly" }]}
+        optionsLabel="Billing"
+      />,
+    );
+    expect(screen.getByRole("group", { name: "Billing" })).toBeTruthy();
+  });
+
+  it("passes another plan's card its ref, class and other props", () => {
+    const ref = createRef<HTMLElement>();
+    render(
+      <PlanComparison.Option
+        ref={ref}
+        name="Enterprise"
+        description="Prices for large roasteries."
+        className="custom"
+        data-testid="option"
+      />,
+    );
+    expect(ref.current).toBe(
+      screen.getByRole("region", { name: "Enterprise" }),
+    );
+    expect(ref.current?.className).toBe("bt-surface custom");
+    expect(ref.current?.dataset["testid"]).toBe("option");
   });
 });
