@@ -1,0 +1,8 @@
+@layer bt.primitives {
+  /* A control keeps its height and inline padding when a surface's look is composed onto it through asChild. */
+  .bt-control[data-bt-control] {
+    block-size: var(--bt-control-height, var(--bt-h-control));
+    padding-block: 0;
+    padding-inline: var(--bt-control-padding, var(--bt-space-3));
+  }
+}

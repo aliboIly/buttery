@@ -1,0 +1,41 @@
+import type { DemoSection } from "../../meta.ts";
+import { Inline } from "../inline/Inline.tsx";
+import { Pressable } from "../pressable/Pressable.tsx";
+import { Surface } from "../surface/Surface.tsx";
+import { Control } from "./Control.tsx";
+import type { ControlSize } from "./Control.tsx";
+
+const SIZES: readonly ControlSize[] = [
+  "badge",
+  "sm",
+  "control",
+  "button",
+  "cta",
+];
+
+export const demos: readonly DemoSection[] = [
+  {
+    title: "Every height",
+    description:
+      "Each size is a height token with padding to match, so a control you build lines up with buttery's own.",
+    render: () => (
+      <Inline gap={2} align="center" wrap>
+        {SIZES.map((size) => (
+          <Surface key={size} level="section" radius="full" asChild>
+            <Control size={size}>{size}</Control>
+          </Surface>
+        ))}
+      </Inline>
+    ),
+  },
+  {
+    title: "A pressable control",
+    render: () => (
+      <Surface level="raised" radius="full" asChild>
+        <Control size="button" asChild>
+          <Pressable>Add a roast</Pressable>
+        </Control>
+      </Surface>
+    ),
+  },
+];

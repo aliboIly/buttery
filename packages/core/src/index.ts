@@ -254,6 +254,14 @@ export { hasContent } from "./utils/has-content.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement } from "./utils/pressable.ts";
 export { Slot } from "./utils/slot.tsx";
+export { variants } from "./utils/variants.ts";
+export type {
+  VariantAttributes,
+  VariantProps,
+  VariantSchema,
+  VariantValues,
+  Variants,
+} from "./utils/variants.ts";
 export { Kbd } from "./primitives/kbd/Kbd.tsx";
 export type { KbdKey, KbdProps } from "./primitives/kbd/Kbd.tsx";
 export { TextStack } from "./primitives/text-stack/TextStack.tsx";
@@ -262,3 +270,8 @@ export type {
   TextStackSize,
   TextStackTitleElement,
 } from "./primitives/text-stack/TextStack.tsx";
+export { Control } from "./primitives/control/Control.tsx";
+export type {
+  ControlProps,
+  ControlSize,
+} from "./primitives/control/Control.tsx";
