@@ -69,7 +69,7 @@ describe("AnnouncementDialog", () => {
     const link = within(dialog).getByRole("link", {
       name: "How roast planning works",
     });
-    expect(link.querySelector('[data-bt-part="external"]')).not.toBeNull();
+    expect(link.dataset["arrow"]).toBe("forward");
     await userEvent.click(done);
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
@@ -132,6 +132,35 @@ describe("AnnouncementDialog", () => {
       expect(media().bottom).toBeLessThanOrEqual(title().top);
     });
     await page.viewport(1200, 800);
+  });
+
+  it("follows a link in the app with a forward arrow and closes, and marks one to another site as external", async () => {
+    render(<News defaultOpen />);
+    const inApp = await screen.findByRole("link", {
+      name: /How roast planning works/,
+    });
+    expect(inApp.dataset["arrow"]).toBe("forward");
+    inApp.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    await userEvent.click(inApp);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    cleanup();
+    render(
+      <News
+        defaultOpen
+        learnMore={{
+          label: "Roast planning, explained",
+          href: "https://example.com/roast-planning",
+        }}
+      />,
+    );
+    const away = await screen.findByRole("link", {
+      name: /Roast planning, explained/,
+    });
+    expect(away.dataset["arrow"]).toBe("external");
   });
 
   it("starts open with defaultOpen, its style on its content", async () => {

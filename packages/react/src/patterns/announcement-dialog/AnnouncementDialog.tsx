@@ -1,6 +1,18 @@
-import { Text, cx, useControllableState, useStoredState } from "@buttery/core";
+import {
+  Text,
+  cx,
+  opensElsewhere,
+  useControllableState,
+  useStoredState,
+} from "@buttery/core";
 import { useRef, useState } from "react";
-import type { CSSProperties, ReactElement, ReactNode, Ref } from "react";
+import type {
+  CSSProperties,
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+  Ref,
+} from "react";
 import { ArrowLink } from "../../components/arrow-link/ArrowLink.tsx";
 import { Button } from "../../components/button/Button.tsx";
 import { Dialog } from "../../components/dialog/Dialog.tsx";
@@ -28,7 +40,10 @@ export interface AnnouncementDialogProps {
   readonly media?: ReactNode;
   /** The primary button, which closes it. Defaults to `"Got it"`. */
   readonly doneLabel?: string | undefined;
-  /** Where to read more, as a link with an external icon beside the button. */
+  /**
+   * Where to read more, beside the button. A link to another site (`https://…`) shows the external icon;
+   * a page in the app or an action shows the forward arrow and closes the dialog as it goes.
+   */
   readonly learnMore?: GuidanceAction | undefined;
   /** Shows it by itself once per key, the first time the page opens, and never again once closed. */
   readonly storageKey?: string | undefined;
@@ -48,6 +63,11 @@ export interface AnnouncementDialogProps {
 
 function isFlag(value: unknown): value is boolean {
   return typeof value === "boolean";
+}
+
+/** Whether `href` leaves the app: a full URL such as `https://…` or `mailto:`, rather than a path or a hash. */
+function leavesApp(href: string): boolean {
+  return /^[a-z][a-z\d+.-]*:/i.test(href);
 }
 
 /**
@@ -101,6 +121,12 @@ export function AnnouncementDialog({
     setOpen(next);
   };
 
+  const readMore = (event: MouseEvent<HTMLElement>): void => {
+    learnMore?.onClick?.(event);
+    if (opensElsewhere(event)) return;
+    change(false);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={change}>
       {trigger === undefined ? null : (
@@ -143,16 +169,24 @@ export function AnnouncementDialog({
                 </Dialog.Close>
                 {learnMore === undefined ? null : learnMore.href ===
                   undefined ? (
-                  <ArrowLink arrow="external" asChild>
-                    <button type="button" onClick={learnMore.onClick}>
+                  <ArrowLink arrow="forward" asChild>
+                    <button type="button" onClick={readMore}>
                       {learnMore.label}
                     </button>
                   </ArrowLink>
-                ) : (
+                ) : leavesApp(learnMore.href) ? (
                   <ArrowLink
                     arrow="external"
                     href={learnMore.href}
                     onClick={learnMore.onClick}
+                  >
+                    {learnMore.label}
+                  </ArrowLink>
+                ) : (
+                  <ArrowLink
+                    arrow="forward"
+                    href={learnMore.href}
+                    onClick={readMore}
                   >
                     {learnMore.label}
                   </ArrowLink>
