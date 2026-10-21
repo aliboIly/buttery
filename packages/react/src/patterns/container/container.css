@@ -1,0 +1,24 @@
+@layer bt.patterns {
+  .bt-container {
+    --bt-container-side: var(--bt-space-4);
+
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding-inline: max(
+      var(--bt-container-side),
+      calc((100% - var(--bt-w-page)) / 2)
+    );
+  }
+
+  @container bt-page (width >= 640px) {
+    .bt-container {
+      --bt-container-side: var(--bt-space-6);
+    }
+  }
+
+  @container bt-page (width >= 1024px) {
+    .bt-container {
+      --bt-container-side: var(--bt-space-8);
+    }
+  }
+}

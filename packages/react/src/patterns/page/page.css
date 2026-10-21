@@ -1,0 +1,9 @@
+@layer bt.patterns {
+  .bt-page {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    container: bt-page / inline-size;
+    background-color: var(--bt-bg-surface);
+  }
+}

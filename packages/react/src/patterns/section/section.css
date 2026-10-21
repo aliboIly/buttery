@@ -1,0 +1,40 @@
+@layer bt.patterns {
+  .bt-section {
+    min-inline-size: 0;
+    padding-block: var(--bt-space-24);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-section[data-size="sm"] {
+    padding-block: var(--bt-space-16);
+  }
+
+  .bt-section[data-size="lg"] {
+    padding-block: var(--bt-space-32);
+  }
+
+  /* A phone gets a step less room, so a section's padding never outweighs its content. */
+  @container bt-page (width < 640px) {
+    .bt-section {
+      padding-block: var(--bt-space-16);
+    }
+
+    .bt-section[data-size="lg"] {
+      padding-block: var(--bt-space-24);
+    }
+  }
+
+  .bt-section[data-tone="muted"] {
+    background-color: var(--bt-bg-app);
+  }
+
+  .bt-section [data-bt-part="intro"] {
+    padding-block-end: var(--bt-space-12);
+  }
+
+  @container bt-page (width >= 1024px) {
+    .bt-section [data-bt-part="intro"] {
+      padding-block-end: var(--bt-space-16);
+    }
+  }
+}

@@ -41,3 +41,6 @@
 @import "./components/dialog/dialog.css";
 @import "./components/page-dots/page-dots.css";
 @import "./patterns/onboarding/onboarding.css";
+@import "./patterns/page/page.css";
+@import "./patterns/section/section.css";
+@import "./patterns/container/container.css";

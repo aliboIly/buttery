@@ -255,3 +255,9 @@ export type {
   OnboardingSharedProps,
   OnboardingStep,
 } from "./patterns/onboarding/Onboarding.tsx";
+export { Page } from "./patterns/page/Page.tsx";
+export type { PageProps } from "./patterns/page/Page.tsx";
+export { Section } from "./patterns/section/Section.tsx";
+export type { SectionProps } from "./patterns/section/Section.tsx";
+export { Container } from "./patterns/container/Container.tsx";
+export type { ContainerProps } from "./patterns/container/Container.tsx";
