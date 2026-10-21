@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Inline, Surface, Text } from "@buttery/core";
 import { AnchorGrid, buttery } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
 
@@ -19,13 +20,30 @@ const PLACE: Readonly<Record<Anchor, string>> = {
 export function CardPlacement(): ReactElement {
   const [anchor, setAnchor] = useState<Anchor>("center");
   return (
-    <>
+    <Inline gap={8} align="center">
       <AnchorGrid label="Anchor" value={anchor} onValueChange={setAnchor} />
-      <output style={{ display: "grid", placeItems: PLACE[anchor] }}>
-        <buttery.span layout layoutDependency={anchor}>
-          Launch card
-        </buttery.span>
-      </output>
-    </>
+      <Surface
+        level="card"
+        pad={3}
+        asChild
+        style={{
+          display: "grid",
+          placeItems: PLACE[anchor],
+          inlineSize: "var(--bt-w-row-control)",
+          aspectRatio: "16 / 9",
+        }}
+      >
+        <output aria-label="Card placement">
+          <buttery.span
+            surface="section"
+            pad={2}
+            layout
+            layoutDependency={anchor}
+          >
+            <Text variant="badge">Launch card</Text>
+          </buttery.span>
+        </output>
+      </Surface>
+    </Inline>
   );
 }
