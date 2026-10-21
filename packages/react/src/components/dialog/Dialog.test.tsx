@@ -356,4 +356,89 @@ describe("Dialog", () => {
       );
     });
   });
+
+  it("hands focus back where it last was without scrolling to it", async () => {
+    onTestFinished(watchFocusHistory());
+    function Opener(): ReactElement {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <Button>Orders</Button>
+          <div style={{ blockSize: "3000px" }} />
+          {open ? null : (
+            <Button
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              What's new
+            </Button>
+          )}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog.Content label="Roasts plan themselves now">
+              <Dialog.Body>
+                <Button>Got it</Button>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog>
+        </>
+      );
+    }
+    render(<Opener />);
+    screen.getByRole("button", { name: "Orders" }).focus();
+    const opener = screen.getByRole("button", { name: "What's new" });
+    opener.scrollIntoView();
+    opener.focus();
+    expect(window.scrollY).toBeGreaterThan(1000);
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog", { name: "Roasts plan themselves now" });
+    await browser.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Orders" }),
+      );
+    });
+    expect(window.scrollY).toBeGreaterThan(1000);
+  });
+
+  it("leaves focus on the page when a press opened it while nothing had focus", async () => {
+    onTestFinished(watchFocusHistory());
+    function Opener(): ReactElement {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <input aria-label="Search orders" />
+          <p>Halfmoon Roastery</p>
+          <Button
+            onMouseDown={(event) => {
+              event.preventDefault();
+            }}
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            What's new
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog.Content label="Roasts plan themselves now">
+              <Dialog.Body>
+                <Button>Got it</Button>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog>
+        </>
+      );
+    }
+    render(<Opener />);
+    await browser.click(screen.getByRole("textbox", { name: "Search orders" }));
+    await browser.click(screen.getByText("Halfmoon Roastery"));
+    expect(document.activeElement).toBe(document.body);
+    await browser.click(screen.getByRole("button", { name: "What's new" }));
+    await screen.findByRole("dialog", { name: "Roasts plan themselves now" });
+    await browser.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(document.activeElement).toBe(document.body);
+  });
 });
