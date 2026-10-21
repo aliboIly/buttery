@@ -1,6 +1,8 @@
-import { SharedIndicator, cx, useControllableState } from "@buttery/core";
+import { Icon, SharedIndicator, cx, useControllableState } from "@buttery/core";
+import type { IconComponentProps } from "@buttery/core";
 import { RadioGroup } from "radix-ui";
-import type { ComponentPropsWithRef, ReactElement } from "react";
+import type { ComponentPropsWithRef, ComponentType, ReactElement } from "react";
+import { Tooltip } from "../tooltip/Tooltip.tsx";
 
 /** One option of a `SegmentedControl`. */
 export interface SegmentedControlOption<Value extends string> {
@@ -10,6 +12,8 @@ export interface SegmentedControlOption<Value extends string> {
   readonly label: string;
   /** Keeps the segment from being chosen. */
   readonly disabled?: boolean | undefined;
+  /** An icon before the label, or in its place with `iconOnly`. */
+  readonly icon?: ComponentType<IconComponentProps> | undefined;
 }
 
 /** Props for `SegmentedControl`. */
@@ -31,6 +35,8 @@ export interface SegmentedControlProps<
   readonly label: string;
   /** Keeps every segment from being chosen. */
   readonly disabled?: boolean | undefined;
+  /** Shows each option's icon in place of its label, which becomes its tooltip and name. Give every option an icon. */
+  readonly iconOnly?: boolean | undefined;
 }
 
 function optionOf<Value extends string>(
@@ -53,6 +59,7 @@ export function SegmentedControl<Value extends string = string>({
   onValueChange,
   label,
   disabled,
+  iconOnly = false,
   className,
   ...rest
 }: SegmentedControlProps<Value>): ReactElement {
@@ -67,6 +74,7 @@ export function SegmentedControl<Value extends string = string>({
   });
   return (
     <RadioGroup.Root
+      data-bt="SegmentedControl"
       {...rest}
       value={chosen ?? ""}
       onValueChange={(next) => {
@@ -77,35 +85,48 @@ export function SegmentedControl<Value extends string = string>({
       aria-label={label}
       disabled={disabled}
       className={cx("bt-segmented-control", className)}
-      data-bt="SegmentedControl"
       data-bt-control=""
+      data-icon-only={iconOnly ? "" : undefined}
     >
       <SharedIndicator.Group>
-        {items.map((item) => (
-          <RadioGroup.Item
-            key={item.value}
-            value={item.value}
-            disabled={item.disabled}
-            asChild
-          >
-            <SharedIndicator active={item.value === chosen} asChild>
-              <button
-                type="button"
-                className="bt-press bt-focus"
-                data-bt-part="segment"
-              >
-                <span
-                  className="bt-truncate"
-                  data-bt-part="label"
-                  data-bt-truncate=""
-                  title={item.label}
+        {items.map((item) => {
+          const segment = (
+            <RadioGroup.Item
+              key={item.value}
+              value={item.value}
+              disabled={item.disabled}
+              asChild
+            >
+              <SharedIndicator active={item.value === chosen} asChild>
+                <button
+                  type="button"
+                  className="bt-press bt-focus"
+                  aria-label={iconOnly && item.icon ? item.label : undefined}
+                  data-bt-part="segment"
                 >
-                  {item.label}
-                </span>
-              </button>
-            </SharedIndicator>
-          </RadioGroup.Item>
-        ))}
+                  {item.icon ? <Icon icon={item.icon} /> : null}
+                  {iconOnly && item.icon ? null : (
+                    <span
+                      className="bt-truncate"
+                      data-bt-part="label"
+                      data-bt-truncate=""
+                      title={item.label}
+                    >
+                      {item.label}
+                    </span>
+                  )}
+                </button>
+              </SharedIndicator>
+            </RadioGroup.Item>
+          );
+          return iconOnly && item.icon ? (
+            <Tooltip key={item.value} label={item.label}>
+              {segment}
+            </Tooltip>
+          ) : (
+            segment
+          );
+        })}
       </SharedIndicator.Group>
     </RadioGroup.Root>
   );

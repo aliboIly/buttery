@@ -15,7 +15,10 @@
     --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
 
     display: grid;
+    grid-auto-flow: column;
+    place-content: center;
     place-items: center;
+    gap: var(--bt-space-1_5);
     min-inline-size: 0;
     padding-block: 0;
     padding-inline: var(--bt-space-3);
@@ -46,5 +49,9 @@
   .bt-segmented-control > [data-bt-part="segment"]:disabled {
     color: var(--bt-text-disabled);
     cursor: default;
+  }
+
+  .bt-segmented-control[data-icon-only] > [data-bt-part="segment"] {
+    padding-inline: var(--bt-space-2);
   }
 }

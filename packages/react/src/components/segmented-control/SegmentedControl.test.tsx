@@ -5,6 +5,7 @@ import { userEvent } from "@testing-library/user-event";
 import { userEvent as keyboard } from "vitest/browser";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LayoutGrid, List } from "lucide-react";
 import { SegmentedControl } from "./SegmentedControl.tsx";
 
 afterEach(cleanup);
@@ -118,5 +119,28 @@ describe("SegmentedControl", () => {
     expect(indicator?.closest('[data-bt-part="segment"]')).toBe(
       screen.getByRole("radio", { name: "Blend" }),
     );
+  });
+
+  it("shows icons in place of labels with iconOnly, each segment named by its label and showing it as a tooltip", async () => {
+    render(
+      <SegmentedControl
+        label="View"
+        iconOnly
+        options={[
+          { value: "grid", label: "Grid", icon: LayoutGrid },
+          { value: "list", label: "List", icon: List },
+        ]}
+      />,
+    );
+    const grid = screen.getByRole("radio", { name: "Grid" });
+    expect(grid.querySelector("svg")).not.toBeNull();
+    expect(grid.textContent).toBe("");
+    await keyboard.keyboard("{Tab}");
+    grid.focus();
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Grid");
+    await userEvent.click(screen.getByRole("radio", { name: "List" }));
+    expect(
+      screen.getByRole("radio", { name: "List" }).getAttribute("aria-checked"),
+    ).toBe("true");
   });
 });
