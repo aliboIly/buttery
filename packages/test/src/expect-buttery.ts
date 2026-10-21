@@ -15,6 +15,7 @@ import type { ReportedViolation } from "./format.ts";
 import type { ButteryMatrix, ButteryViewport } from "./matrix.ts";
 
 const TOOLKIT = "__butteryLayoutToolkit";
+const CHECK_ATTEMPTS = 3;
 
 const LAYOUT_RULES: readonly LayoutRule[] = [
   "overlap",
@@ -231,6 +232,34 @@ function label(viewport: ButteryViewport): string {
   return `${String(viewport.width)}x${String(viewport.height)}`;
 }
 
+// Inline styles don't count: a tracked animation writes them every frame but also drops data-bt-settled,
+// which does count, and an ambient loop writes them forever.
+function watchPageChanges(): void {
+  const scope = window as Window & { __btPageChanged?: () => boolean };
+  const counts = (records: readonly MutationRecord[]): boolean =>
+    records.some((record) => record.attributeName !== "style");
+  let changed = !document.documentElement.hasAttribute("data-bt-settled");
+  const observer = new MutationObserver((records) => {
+    if (counts(records)) changed = true;
+  });
+  observer.observe(document.documentElement, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+    attributes: true,
+  });
+  scope.__btPageChanged = () => {
+    const result = changed || counts(observer.takeRecords());
+    observer.disconnect();
+    return result;
+  };
+}
+
+function pageChanged(): boolean {
+  const scope = window as Window & { __btPageChanged?: () => boolean };
+  return scope.__btPageChanged?.() ?? false;
+}
+
 function listenForResizeLoops(): void {
   const scope = window as Window & { __btResizeLoops?: number };
   if (scope.__btResizeLoops !== undefined) return;
@@ -318,12 +347,25 @@ export async function expectButtery(
     }
   };
 
-  const checkState = async (): Promise<LayoutViolation[]> => {
+  const checkOnce = async (): Promise<LayoutViolation[]> => {
     const found =
       layoutRules.length > 0
         ? await check(page, { tokens, rules: layoutRules })
         : [];
     if (rules.has("accessibility")) found.push(...(await accessibility(page)));
+    return found;
+  };
+
+  // A page that changes while it's checked, such as a timer swapping a skeleton for data, is checked again
+  // once it settles, so a frame caught halfway through the swap isn't reported.
+  const checkState = async (): Promise<LayoutViolation[]> => {
+    let found: LayoutViolation[] = [];
+    for (let attempt = 1; attempt <= CHECK_ATTEMPTS; attempt += 1) {
+      if (attempt > 1) await waitForSettled(page, timeout);
+      await page.evaluate(watchPageChanges);
+      found = await checkOnce();
+      if (!(await page.evaluate(pageChanged))) break;
+    }
     if (rules.has("stability")) {
       const loops = await takeResizeLoops(page);
       if (loops > 0) {

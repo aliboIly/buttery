@@ -204,6 +204,38 @@ test("checks the state an interaction leaves the page in", async ({ page }) => {
   ]);
 });
 
+test("checks a page again once it settles when it changed during a check", async ({
+  page,
+}) => {
+  await page.setContent(
+    fixture(`
+      <div data-bt="Card" id="card" style="inline-size: 100px"><div style="inline-size: 300px; block-size: 10px"></div></div>
+      <script>
+        let toolkit;
+        let loaded = false;
+        Object.defineProperty(window, "__butteryLayoutToolkit", {
+          get: () => toolkit,
+          set: (installed) => {
+            toolkit = {
+              ...installed,
+              check: (options) => {
+                const found = installed.check(options);
+                if (!loaded) {
+                  loaded = true;
+                  setTimeout(() => {
+                    document.getElementById("card").replaceChildren("Loaded");
+                  });
+                }
+                return found;
+              },
+            };
+          },
+        });
+      </script>`),
+  );
+  await expectButtery(page, { name: "loads", rules: ["overflow"] });
+});
+
 test("says how to fix a page that undoes the density it's checked in", async ({
   page,
 }) => {
