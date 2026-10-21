@@ -583,3 +583,8 @@ export type {
   RadioCardGroupProps,
   RadioCardOption,
 } from "./components/radio-card-group/RadioCardGroup.tsx";
+export { ConsequenceDialog } from "./patterns/consequence-dialog/ConsequenceDialog.tsx";
+export type {
+  ConsequenceDialogProps,
+  ConsequenceItem,
+} from "./patterns/consequence-dialog/ConsequenceDialog.tsx";

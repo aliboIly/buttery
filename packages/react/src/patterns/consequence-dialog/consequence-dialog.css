@@ -1,0 +1,56 @@
+@layer bt.patterns {
+  .bt-consequence-dialog {
+    --bt-consequence-dialog-tile: 32px;
+    --bt-consequence-dialog-line: 1px;
+
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .bt-consequence-dialog [data-bt-part="items"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bt-consequence-dialog [data-bt-part="item"] {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-consequence-dialog [data-bt-part="tile"] {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-consequence-dialog-tile);
+    block-size: var(--bt-consequence-dialog-tile);
+    border: var(--bt-consequence-dialog-line) solid var(--bt-border);
+    border-radius: var(--bt-r-sm);
+    background-color: var(--bt-bg-section);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-consequence-dialog [data-bt-part="item-text"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+    padding-block-start: var(--bt-space-1);
+  }
+
+  .bt-consequence-dialog [data-bt-part="terms"] {
+    padding-block-start: var(--bt-space-5);
+    border-block-start: var(--bt-consequence-dialog-line) solid var(--bt-border);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-consequence-dialog [data-bt-part="confirm"] {
+    display: grid;
+  }
+}
