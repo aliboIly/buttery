@@ -12,27 +12,23 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { customerCell } from "./customer-cell.tsx";
-import { SUBSCRIPTIONS, coffeeOf } from "./data.ts";
+import { SUBSCRIPTIONS, coffeeOf, monthly, salesTotal } from "./data.ts";
 import type { Subscription, SubscriptionStatus } from "./data.ts";
-import { number, roundMoney, shortDate, shortMoney } from "./format.ts";
+import {
+  change,
+  number,
+  percent,
+  roundMoney,
+  shortDate,
+  shortMoney,
+} from "./format.ts";
 
-const MONTHS = [
-  "Nov",
-  "Dec",
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-];
-const REVENUE = [
-  6100, 6380, 6900, 6850, 7240, 7610, 8020, 7950, 8460, 8890, 9310, 9780,
-];
+const REVENUE = monthly(
+  (orders) =>
+    salesTotal(orders.filter((order) => order.channel === "subscription")),
+  12,
+);
+const GROWTH = change(REVENUE.values.at(-1) ?? 0, REVENUE.values[0] ?? 0);
 
 const STATES: Readonly<
   Record<
@@ -122,10 +118,16 @@ export function SubscriptionsPage(): ReactElement {
       <AppPage.Section title="Revenue">
         <AreaChart
           label="Subscription revenue by month"
-          summary="Up 60% over the year."
-          labels={MONTHS}
+          summary={
+            GROWTH === undefined
+              ? "Revenue from subscriptions over the last 12 months."
+              : `${GROWTH < 0 ? "Down" : "Up"} ${percent(Math.abs(GROWTH))} over the last 12 months.`
+          }
+          labels={REVENUE.labels}
           labelsHeading="Month"
-          series={[{ key: "revenue", label: "Revenue", values: REVENUE }]}
+          series={[
+            { key: "revenue", label: "Revenue", values: REVENUE.values },
+          ]}
           formatValue={roundMoney}
           formatTick={shortMoney}
         />

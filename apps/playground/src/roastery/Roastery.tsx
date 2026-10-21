@@ -75,17 +75,18 @@ function placeOf(route: string): Place {
 const SETUP_TASKS = [
   { id: "coffee", title: "Add your first coffee", done: true },
   { id: "shipping", title: "Set shipping rates", done: true },
+  { id: "bank", title: "Connect your bank", done: true },
   {
-    id: "bank",
-    title: "Connect your bank",
-    description: "Payouts arrive every Friday.",
-    action: { label: "Connect", href: "#/roastery/payouts" },
+    id: "pickup",
+    title: "Offer local pickup",
+    description: "Customers nearby collect their bags at the roastery.",
+    action: { label: "Turn on pickup", href: "#/roastery/settings/pickup" },
   },
   {
-    id: "wholesale",
-    title: "Open wholesale",
-    description: "Sell cases to cafés on terms.",
-    action: { label: "Set it up", href: "#/roastery/wholesale" },
+    id: "team",
+    title: "Invite your team",
+    description: "Give the roasters and packers their own sign-in.",
+    action: { label: "Invite", href: "#/roastery/settings/team" },
   },
 ] as const;
 

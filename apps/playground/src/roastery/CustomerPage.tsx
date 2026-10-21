@@ -1,4 +1,5 @@
 import { Grid, Stack } from "@buttery/core";
+import { useState } from "react";
 import {
   AppPage,
   ArrowLink,
@@ -17,10 +18,12 @@ import type { DataTableColumn } from "@buttery/react";
 import { Mail, Repeat, UserX } from "lucide-react";
 import type { ReactElement } from "react";
 import { CUSTOMER_ROWS } from "./customers.ts";
-import { SUBSCRIPTIONS, coffeeOf } from "./data.ts";
+import { SUBSCRIPTIONS, TODAY, coffeeOf, dayNumber } from "./data.ts";
 import type { Order } from "./data.ts";
 import { dateTime, money, number, shortDate, since } from "./format.ts";
 import { go } from "./navigation.ts";
+
+const ORDERS_PAGE = 25;
 
 const ORDER_COLUMNS: readonly DataTableColumn<Order>[] = [
   {
@@ -60,6 +63,7 @@ const ORDER_COLUMNS: readonly DataTableColumn<Order>[] = [
 
 /** One customer: what they've bought, their subscriptions, and their details in the rail. */
 export function CustomerPage({ id }: { readonly id: string }): ReactElement {
+  const [page, setPage] = useState(1);
   const customer = CUSTOMER_ROWS.find((row) => row.id === id);
   if (customer === undefined)
     return (
@@ -77,6 +81,9 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
   const subscriptions = SUBSCRIPTIONS.filter(
     (subscription) => subscription.customerId === customer.id,
   );
+  const lately = customer.orders.filter(
+    (order) => dayNumber(TODAY) - dayNumber(order.placed) < 56,
+  ).length;
   const average =
     customer.orders.length === 0 ? 0 : customer.spent / customer.orders.length;
   return (
@@ -144,7 +151,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
                     onClick: () => toast(`Offer sent to ${customer.name}`),
                   }}
                 >
-                  {`${customer.name.split(" ")[0] ?? customer.name} has ordered ${number(customer.orders.length)} times in eight weeks.`}
+                  {`${customer.name.split(" ")[0] ?? customer.name} has ordered ${lately === 1 ? "once" : `${number(lately)} times`} in the last eight weeks.`}
                 </RecommendationCard>
               </AppPage.Section>
             ) : null}
@@ -186,8 +193,17 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
               label="Orders"
               size="compact"
               columns={ORDER_COLUMNS}
-              rows={customer.orders}
+              rows={customer.orders.slice(
+                (page - 1) * ORDERS_PAGE,
+                page * ORDERS_PAGE,
+              )}
               rowKey={(order) => order.id}
+              pagination={{
+                page,
+                pageSize: ORDERS_PAGE,
+                total: customer.orders.length,
+                onPageChange: setPage,
+              }}
               empty={
                 <EmptyState
                   title="No orders yet"

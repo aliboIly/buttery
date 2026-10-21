@@ -12,7 +12,7 @@ import {
 import type { DataTableColumn, StatusTone } from "@buttery/react";
 import { CalendarClock, Download, Send } from "lucide-react";
 import type { ReactElement } from "react";
-import { ORDERS, PAYOUTS, salesTotal } from "./data.ts";
+import { NEXT_PAYOUT, ORDERS, PAYOUTS, salesTotal } from "./data.ts";
 import type { Payout } from "./data.ts";
 import { money, shortDate, shortMoney } from "./format.ts";
 
@@ -62,8 +62,10 @@ export function PayoutsPage(): ReactElement {
       (order) => order.status === "paid" || order.status === "roasting",
     ),
   );
-  const next = PAYOUTS[0];
-  const weeks = [...PAYOUTS].reverse();
+  const next = NEXT_PAYOUT;
+  const weeks = PAYOUTS.filter((payout) => payout.status !== "scheduled")
+    .slice()
+    .reverse();
   return (
     <AppPage
       header={
