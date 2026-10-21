@@ -3,11 +3,13 @@ import {
   Scrim,
   Sticky,
   cx,
+  displayBreakpoints,
   hasContent,
   heights,
   presencePresets,
   reducedPresence,
   scrollRootOf,
+  tabbables,
   useButteryTransition,
   useMergedRefs,
   useMotionPreference,
@@ -51,6 +53,11 @@ export interface NavBarProps extends Omit<
   readonly behavior?: NavBarBehavior | undefined;
   /** Names the navigation for screen readers. Defaults to `"Main"`. */
   readonly label?: string | undefined;
+  /**
+   * Whether the bar sits on the page container (1200px at most, centered). Defaults to `true`; turn it off
+   * for an app's own chrome, which spans its window.
+   */
+  readonly contained?: boolean | undefined;
   /** Names the button that opens the menu on narrow pages. Defaults to `"Menu"`. */
   readonly menuLabel?: string | undefined;
   /** Names the button that closes it. Defaults to `"Close menu"`. */
@@ -66,8 +73,9 @@ function widthOf(element: Element | null | undefined): number {
 }
 
 /**
- * Whether the bar's menus and actions no longer fit beside the brand, so they fold into the menu button. It
- * remembers the width they needed, since folded they can't be measured, and unfolds once there's room.
+ * Whether the bar's menus and actions fold into the menu button: under 640px of bar, or once they no longer
+ * fit beside the brand. It remembers the width they needed, since folded they can't be measured, and
+ * unfolds once there's room.
  */
 function useFolded(bar: RefObject<HTMLElement | null>): boolean {
   const [folded, setFolded] = useState(false);
@@ -91,7 +99,10 @@ function useFolded(bar: RefObject<HTMLElement | null>): boolean {
           groups.reduce((sum, group) => sum + widthOf(group), 0) +
           GAP * groups.length;
       }
-      setFolded(needed.current > row.clientWidth);
+      setFolded(
+        row.clientWidth < displayBreakpoints.md ||
+          needed.current > row.clientWidth,
+      );
     };
     const observer = new ResizeObserver(measure);
     observer.observe(row);
@@ -164,6 +175,7 @@ function PhoneMenu({
   readonly children: ReactNode;
 }): ReactElement {
   const [open, setOpen] = useState(false);
+  const body = useRef<HTMLDivElement>(null);
   const reduced = useMotionPreference() === "reduced";
   const sheet = reduced ? reducedPresence : presencePresets.rise;
   return (
@@ -182,6 +194,13 @@ function PhoneMenu({
               forceMount
               asChild
               aria-describedby={undefined}
+              onOpenAutoFocus={(event) => {
+                // Start on the first menu rather than the close button, whose tooltip would open.
+                const [first] = tabbables(body.current);
+                if (!first) return;
+                event.preventDefault();
+                first.focus();
+              }}
             >
               <motion.div
                 initial={sheet.initial}
@@ -203,7 +222,7 @@ function PhoneMenu({
                     <IconButton icon={X} label={closeLabel} />
                   </RadixDialog.Close>
                 </div>
-                <div data-bt-part="sheet-body">
+                <div ref={body} data-bt-part="sheet-body">
                   <MorphMenu label={label} layout="stack">
                     {children}
                   </MorphMenu>
@@ -246,6 +265,7 @@ export function NavBar({
   label = "Main",
   menuLabel = "Menu",
   closeLabel = "Close menu",
+  contained = true,
   ref,
   className,
   children,
@@ -282,6 +302,33 @@ export function NavBar({
     };
   }, [behavior]);
 
+  const barRow = (
+    <div ref={row} data-bt-part="bar" data-folded={folded ? "" : undefined}>
+      {hasContent(brand) ? <div data-bt-part="brand">{brand}</div> : null}
+      <MorphMenu
+        label={label}
+        value={menu}
+        onValueChange={(next) => {
+          setMenu(next);
+          if (next !== "") setRaised(true);
+        }}
+        data-bt-part="menu"
+      >
+        {children}
+      </MorphMenu>
+      {hasContent(actions) ? <div data-bt-part="actions">{actions}</div> : null}
+      <PhoneMenu
+        label={label}
+        menuLabel={menuLabel}
+        closeLabel={closeLabel}
+        brand={brand}
+        actions={actions}
+      >
+        {children}
+      </PhoneMenu>
+    </div>
+  );
+
   const bar = (
     <motion.header
       {...rest}
@@ -295,34 +342,7 @@ export function NavBar({
       animate={{ y: hidden ? -heights["nav-bar"].comfortable : 0 }}
       transition={slide}
     >
-      <Container>
-        <div ref={row} data-bt-part="bar" data-folded={folded ? "" : undefined}>
-          {hasContent(brand) ? <div data-bt-part="brand">{brand}</div> : null}
-          <MorphMenu
-            label={label}
-            value={menu}
-            onValueChange={(next) => {
-              setMenu(next);
-              if (next !== "") setRaised(true);
-            }}
-            data-bt-part="menu"
-          >
-            {children}
-          </MorphMenu>
-          {hasContent(actions) ? (
-            <div data-bt-part="actions">{actions}</div>
-          ) : null}
-          <PhoneMenu
-            label={label}
-            menuLabel={menuLabel}
-            closeLabel={closeLabel}
-            brand={brand}
-            actions={actions}
-          >
-            {children}
-          </PhoneMenu>
-        </div>
-      </Container>
+      {contained ? <Container>{barRow}</Container> : barRow}
       <AnimatePresence
         onExitComplete={() => {
           setRaised(false);

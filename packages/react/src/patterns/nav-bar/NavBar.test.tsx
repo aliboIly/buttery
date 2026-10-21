@@ -83,6 +83,27 @@ describe("NavBar", () => {
     }
   });
 
+  it("sits on the page container unless told not to", () => {
+    const { rerender } = render(
+      <div style={{ inlineSize: "1600px" }}>
+        <NavBar brand={<a href="#top">Card Studio</a>} data-testid="bar" />
+      </div>,
+    );
+    const row = (): Element | null =>
+      bar().querySelector('[data-bt-part="bar"]');
+    expect(row()?.getBoundingClientRect().width).toBe(1200);
+    rerender(
+      <div style={{ inlineSize: "1600px" }}>
+        <NavBar
+          brand={<a href="#top">Card Studio</a>}
+          contained={false}
+          data-testid="bar"
+        />
+      </div>,
+    );
+    expect(row()?.getBoundingClientRect().width).toBe(1600);
+  });
+
   it("stacks at the sticky band whatever its behavior", () => {
     page("static");
     expect(getComputedStyle(bar()).zIndex).toBe("20");

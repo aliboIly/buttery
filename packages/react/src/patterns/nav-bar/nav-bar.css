@@ -99,11 +99,8 @@
     display: inline-flex;
   }
 
+  /* Before the bar has measured itself, a narrow one already hides what it will fold. */
   @container bt-nav (width < 640px) {
-    .bt-nav-bar [data-bt-part="bar"] {
-      justify-content: space-between;
-    }
-
     .bt-nav-bar .bt-morph-menu,
     .bt-nav-bar [data-bt-part="actions"] {
       display: none;
