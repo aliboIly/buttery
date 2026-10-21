@@ -128,6 +128,28 @@ describe("ChoiceDialog", () => {
     });
   });
 
+  it("runs a button choice and closes whatever key is held, since only a link can open elsewhere", async () => {
+    const onSelect = vi.fn();
+    render(
+      <ChoiceDialog
+        defaultOpen
+        title="What kind of order?"
+        choices={choices(onSelect)}
+      />,
+    );
+    await screen.findByRole("dialog");
+    await browser.click(
+      screen.getByRole("button", { name: /Wholesale order/ }),
+      {
+        modifiers: ["Shift"],
+      },
+    );
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+  });
+
   it("closes after a choice whose handler stops the link, as a router's does, with its style on its content", async () => {
     const onSelect = vi.fn((event: { preventDefault: () => void }) => {
       event.preventDefault();

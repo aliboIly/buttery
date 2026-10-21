@@ -11,7 +11,7 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent as browser } from "vitest/browser";
 import { Button } from "../../components/button/Button.tsx";
 import { AnnouncementDialog } from "./AnnouncementDialog.tsx";
@@ -145,6 +145,26 @@ describe("AnnouncementDialog", () => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
     expect(document.activeElement).toBe(opener);
+  });
+
+  it("closes from a read-more button whatever key is held", async () => {
+    const onClick = vi.fn();
+    render(
+      <News
+        open={undefined}
+        defaultOpen
+        learnMore={{ label: "How roast planning works", onClick }}
+      />,
+    );
+    await screen.findByRole("dialog");
+    await browser.click(
+      screen.getByRole("button", { name: "How roast planning works" }),
+      { modifiers: ["Alt"] },
+    );
+    expect(onClick).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
   });
 
   it("puts the media beside the copy when wide, and above it in a narrow window", async () => {

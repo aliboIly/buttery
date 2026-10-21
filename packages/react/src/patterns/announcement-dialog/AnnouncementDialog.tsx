@@ -123,7 +123,7 @@ export function AnnouncementDialog({
 
   const readMore = (event: MouseEvent<HTMLElement>): void => {
     learnMore?.onClick?.(event);
-    if (opensElsewhere(event)) return;
+    if (learnMore?.href !== undefined && opensElsewhere(event)) return;
     change(false);
   };
 

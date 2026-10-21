@@ -116,11 +116,12 @@ export function ChoiceDialog({
     onChange: onOpenChange,
   });
   // Choosing closes the dialog even when the choice's handler prevents the default, as a router's link does.
+  // Only a link opened elsewhere, in a new tab or window, leaves it open.
   const choose =
     (choice: DialogChoice) =>
     (event: MouseEvent<HTMLElement>): void => {
       choice.onSelect?.(event);
-      if (!opensElsewhere(event)) setOpen(false);
+      if (choice.href === undefined || !opensElsewhere(event)) setOpen(false);
     };
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
