@@ -11,8 +11,9 @@ import {
 import type { CssVariables } from "@buttery/core";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
-import { useCallback, useState } from "react";
+import { isValidElement, useCallback, useState } from "react";
 import type {
+  AnimationEvent,
   CSSProperties,
   ComponentPropsWithRef,
   ReactElement,
@@ -104,7 +105,9 @@ const LABELS: DataTableLabels = {
   previous: "Previous",
   next: "Next",
   range: (first, last, total) =>
-    `${first.toLocaleString()}–${last.toLocaleString()} of ${total.toLocaleString()}`,
+    total === 0
+      ? "0 results"
+      : `${first.toLocaleString()}–${last.toLocaleString()} of ${total.toLocaleString()}`,
   noResults: "No results",
   noResultsBody: "Try other filters or a different search.",
   clearAll: "Clear all",
@@ -248,15 +251,24 @@ function DataTableRoot<Row>({
     setArrived(!loading);
   }
 
+  const settleArrival = (event: AnimationEvent<HTMLDivElement>): void => {
+    if (event.animationName === "bt-data-table-arrive") setArrived(false);
+  };
+
   const watchScroll = useCallback((element: HTMLDivElement | null) => {
     if (!element) return undefined;
     const scrolled = (): void => {
-      setScrolledAside(element.scrollLeft > 0);
+      setScrolledAside(Math.abs(element.scrollLeft) > 0);
     };
     const measure = (): void => {
       setOverflows(
         element.scrollWidth > element.clientWidth ||
           element.scrollHeight > element.clientHeight,
+      );
+      // The no-results row spans what shows of a table wider than its box, so Clear all stays in view.
+      element.style.setProperty(
+        "--bt-data-table-shown",
+        `${String(element.clientWidth)}px`,
       );
     };
     measure();
@@ -310,6 +322,7 @@ function DataTableRoot<Row>({
     return (
       <div
         {...rest}
+        style={style}
         className={cx("bt-data-table", className)}
         data-bt="DataTable"
         data-empty=""
@@ -347,7 +360,6 @@ function DataTableRoot<Row>({
         role="region"
         aria-label={label}
         tabIndex={overflows ? 0 : undefined}
-        className="bt-focus"
         data-bt-part="scroll"
         data-scrolled-aside={scrolledAside ? "" : undefined}
       >
@@ -445,10 +457,15 @@ function DataTableRoot<Row>({
             role="rowgroup"
             data-bt-part="body"
             data-arrived={arrived && !loading ? "" : undefined}
+            onAnimationEnd={settleArrival}
           >
             {loading ? (
               <>
-                <VisuallyHidden.Root>{words.loading}</VisuallyHidden.Root>
+                <VisuallyHidden.Root asChild>
+                  <div role="row">
+                    <div role="cell">{words.loading}</div>
+                  </div>
+                </VisuallyHidden.Root>
                 {skeletonRows.map((index) => (
                   <div
                     key={index}
@@ -614,7 +631,10 @@ function DataTableRoot<Row>({
 }
 
 /** Props for `DataTable.Amount`. */
-export interface DataTableAmountProps {
+export interface DataTableAmountProps extends Omit<
+  ComponentPropsWithRef<"span">,
+  "children"
+> {
   /** The amount. */
   readonly value: number;
   /** Its ISO 4217 currency, such as `"USD"`, written after the number in `text-tertiary`. */
@@ -625,6 +645,8 @@ export interface DataTableAmountProps {
 export function DataTableAmount({
   value,
   currency,
+  className,
+  ...rest
 }: DataTableAmountProps): ReactElement {
   const formatted = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -632,7 +654,7 @@ export function DataTableAmount({
     currencyDisplay: "narrowSymbol",
   }).format(value);
   return (
-    <span data-bt-part="amount">
+    <span {...rest} className={className} data-bt-part="amount">
       <span
         className="bt-truncate"
         data-bt-truncate=""
@@ -646,20 +668,40 @@ export function DataTableAmount({
 }
 
 /** Props for `DataTable.Id`. */
-export interface DataTableIdProps {
+export interface DataTableIdProps extends Omit<
+  ComponentPropsWithRef<"span">,
+  "children"
+> {
   /** The identifier, such as an order's. */
   readonly value: string;
 }
 
 /** An identifier in the mono font that truncates, with its full text in a tooltip. */
-export function DataTableId({ value }: DataTableIdProps): ReactElement {
+export function DataTableId({
+  value,
+  className,
+  ...rest
+}: DataTableIdProps): ReactElement {
   return (
     <Tooltip label={value}>
-      <span className="bt-truncate" data-bt-truncate="" data-bt-part="id">
+      <span
+        {...rest}
+        className={cx("bt-truncate", className)}
+        data-bt-truncate=""
+        data-bt-part="id"
+      >
         {value}
       </span>
     </Tooltip>
   );
+}
+
+/** The text of a router link's children, for the title a truncated link shows in full. */
+function textOf(children: ReactNode): string | undefined {
+  if (!isValidElement<{ readonly children?: unknown }>(children))
+    return undefined;
+  const inner = children.props.children;
+  return typeof inner === "string" ? inner : undefined;
 }
 
 /** Props for `DataTable.Link`. */
@@ -682,6 +724,7 @@ export function DataTableLink({
   if (asChild) {
     return (
       <Slot
+        title={textOf(children)}
         {...rest}
         className={classes}
         data-bt-truncate=""

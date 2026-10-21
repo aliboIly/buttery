@@ -11,6 +11,7 @@
     --bt-data-table-badge: 44px;
     --bt-data-table-number: 56px;
     --bt-data-table-box: 16px;
+    --bt-data-table-sort: 14px;
 
     display: flex;
     flex: 1 1 auto;
@@ -28,6 +29,11 @@
     overflow: auto;
     overscroll-behavior: contain;
     isolation: isolate;
+  }
+
+  .bt-data-table > [data-bt-part="scroll"]:focus-visible {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: calc(var(--bt-focus-width) * -1);
   }
 
   /*
@@ -49,7 +55,7 @@
   .bt-data-table [data-bt-part="head"] {
     position: sticky;
     inset-block-start: 0;
-    z-index: var(--bt-z-raised);
+    z-index: var(--bt-z-sticky);
   }
 
   .bt-data-table [data-bt-part="row"] {
@@ -64,7 +70,7 @@
     align-items: center;
     min-inline-size: 0;
     padding-inline: var(--bt-space-3);
-    overflow: hidden;
+    overflow-x: clip;
     background: var(--bt-bg-surface);
     color: var(--bt-text);
     font-size: var(--bt-text-body-sm-size);
@@ -89,7 +95,6 @@
     padding-inline: 0;
   }
 
-  /* The first column, with the checkbox column, stays at the start while the table scrolls sideways. */
   .bt-data-table [data-bt-part="cell"]:is([data-first], [data-after-check]) {
     position: sticky;
     inset-inline-start: 0;
@@ -123,7 +128,7 @@
   @media (hover: hover) {
     .bt-data-table
       [data-bt-part="body"]
-      > [data-bt-part="row"]:hover
+      > [data-bt-part="row"]:not([data-selected]):hover
       > [data-bt-part="cell"] {
       background:
         linear-gradient(var(--bt-bg-item-hover), var(--bt-bg-item-hover)),
@@ -150,6 +155,11 @@
     cursor: default;
   }
 
+  /* The arrow takes room even while hidden, so it goes before an end-aligned label to keep it over the numbers. */
+  .bt-data-table [data-align="end"] > [data-bt-part="sort-button"] {
+    flex-direction: row-reverse;
+  }
+
   .bt-data-table [data-bt-part="sort"] {
     display: inline-grid;
     flex: none;
@@ -157,6 +167,11 @@
     color: var(--bt-text-tertiary);
     opacity: 0;
     transition: opacity var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  .bt-data-table [data-bt-part="sort"] > .bt-icon {
+    inline-size: var(--bt-data-table-sort);
+    block-size: var(--bt-data-table-sort);
   }
 
   .bt-data-table [data-bt-part="sort"][data-sorted] {
@@ -212,8 +227,11 @@
   }
 
   .bt-data-table [data-bt-part="no-results"] {
+    position: sticky;
+    inset-inline-start: 0;
     display: grid;
-    flex: 1;
+    flex: none;
+    inline-size: var(--bt-data-table-shown, 100%);
     grid-template-areas:
       "title action"
       "body action";
@@ -257,7 +275,6 @@
     inline-size: var(--bt-data-table-number);
   }
 
-  /* Rows that replace skeleton rows fade in where the skeletons were; nothing moves. */
   .bt-data-table [data-bt-part="body"][data-arrived] > [data-bt-part="row"] {
     animation: bt-data-table-arrive var(--bt-dur-fast) var(--bt-ease-out);
   }

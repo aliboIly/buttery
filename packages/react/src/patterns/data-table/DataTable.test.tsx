@@ -9,6 +9,7 @@ import {
   within,
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { userEvent as browser } from "vitest/browser";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import {
@@ -468,6 +469,218 @@ describe("DataTable", () => {
     );
     expect(reach).toBeGreaterThan(scroll.clientHeight);
     expect(scroll.scrollHeight).toBeGreaterThan(reach);
+  });
+
+  it("keeps its header over the sticky first column while it scrolls down", () => {
+    render(
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          inlineSize: "900px",
+          blockSize: "160px",
+        }}
+      >
+        <DataTable<Order>
+          label="Orders"
+          columns={COLUMNS}
+          rows={ORDERS}
+          rowKey={(order) => order.id}
+          selectable
+        />
+      </div>,
+    );
+    const scroll = document.querySelector<HTMLElement>(
+      '[data-bt-part="scroll"]',
+    );
+    if (!scroll) throw new Error("No scroll area.");
+    expect(scroll.scrollHeight).toBeGreaterThan(scroll.clientHeight);
+    scroll.scrollTop = 60;
+    const selectAll = screen.getByRole("checkbox", {
+      name: "Select all rows on this page",
+    });
+    const box = selectAll.getBoundingClientRect();
+    const hit = document.elementFromPoint(
+      box.left + box.width / 2,
+      box.top + box.height / 2,
+    );
+    expect(selectAll.closest('[role="columnheader"]')?.contains(hit)).toBe(
+      true,
+    );
+  });
+
+  it("keeps only rows in its body while it loads, the loading words in a row of their own", () => {
+    render(<Orders loading />);
+    const table = screen.getByRole("table", { name: "Orders" });
+    const body = table.querySelector('[data-bt-part="body"]');
+    if (!body) throw new Error("No body.");
+    for (const child of body.children)
+      expect(child.getAttribute("role")).toBe("row");
+    expect(
+      within(table).getByRole("cell", { name: "Loading rows" }),
+    ).toBeTruthy();
+  });
+
+  it("lets focus rings show above and below what's in a cell, and rings only what has focus", async () => {
+    render(<Orders selectable />);
+    const cell = screen
+      .getByRole("checkbox", { name: "Select ORD-1040" })
+      .closest<HTMLElement>('[role="cell"]');
+    if (!cell) throw new Error("No cell.");
+    expect(getComputedStyle(cell).overflowY).toBe("visible");
+    screen.getByRole("checkbox", { name: "Select ORD-1040" }).focus();
+    await browser.keyboard("{Shift>}{Tab}{/Shift}");
+    await browser.keyboard("{Tab}");
+    const scroll = document.querySelector<HTMLElement>(
+      '[data-bt-part="scroll"]',
+    );
+    if (!scroll) throw new Error("No scroll area.");
+    expect(getComputedStyle(scroll).outlineStyle).toBe("none");
+  });
+
+  it("shows a selected row's tint while hovered", async () => {
+    render(<Orders selectable defaultSelected={new Set(["ORD-1041"])} />);
+    const [, second] = rows();
+    if (!second) throw new Error("No second row.");
+    const cell = second.querySelector<HTMLElement>(
+      '[role="cell"]:not([data-check])',
+    );
+    if (!cell) throw new Error("No cell.");
+    const resting = getComputedStyle(cell).backgroundColor;
+    await browser.hover(cell);
+    expect(getComputedStyle(cell).backgroundColor).toBe(resting);
+  });
+
+  it("keeps Clear all in view when filters leave nothing in a table wider than its box", () => {
+    render(<Orders width={320} rows={[]} onClearAll={() => undefined} />);
+    const scroll = document.querySelector<HTMLElement>(
+      '[data-bt-part="scroll"]',
+    );
+    const clear = screen.getByRole("button", { name: "Clear all" });
+    if (!scroll) throw new Error("No scroll area.");
+    expect(clear.getBoundingClientRect().right).toBeLessThanOrEqual(
+      scroll.getBoundingClientRect().right + 0.5,
+    );
+  });
+
+  it("draws the first column's edge once scrolled sideways right to left", () => {
+    render(
+      <div dir="rtl">
+        <Orders width={320} />
+      </div>,
+    );
+    const scroll = document.querySelector<HTMLElement>(
+      '[data-bt-part="scroll"]',
+    );
+    if (!scroll) throw new Error("No scroll area.");
+    scroll.scrollLeft = -80;
+    scroll.dispatchEvent(new Event("scroll"));
+    return waitFor(() => {
+      expect(scroll.hasAttribute("data-scrolled-aside")).toBe(true);
+    });
+  });
+
+  it("keeps its style when it shows the empty state", () => {
+    render(
+      <DataTable<Order>
+        label="Orders"
+        columns={COLUMNS}
+        rows={[]}
+        rowKey={(order) => order.id}
+        empty={<p>No orders yet</p>}
+        style={{ minBlockSize: "120px" }}
+      />,
+    );
+    expect(
+      document.querySelector<HTMLElement>(".bt-data-table")?.style.minBlockSize,
+    ).toBe("120px");
+  });
+
+  it("fades rows in only as they replace skeleton rows, not when they re-sort", async () => {
+    const { rerender } = render(<Orders loading />);
+    rerender(<Orders />);
+    const body = () =>
+      document.querySelector<HTMLElement>('[data-bt-part="body"]');
+    expect(body()?.hasAttribute("data-arrived")).toBe(true);
+    await waitFor(() => {
+      expect(body()?.hasAttribute("data-arrived")).toBe(false);
+    });
+    rerender(<Orders rows={[...ORDERS].reverse()} />);
+    expect(body()?.hasAttribute("data-arrived")).toBe(false);
+  });
+
+  it("titles a router link with its text when it renders as the child", () => {
+    render(
+      <Orders
+        columns={[
+          {
+            id: "customer",
+            header: "Customer",
+            minWidth: "md",
+            cell: (order) => (
+              <DataTable.Link asChild>
+                <a href={`#${order.id}`}>{order.customer}</a>
+              </DataTable.Link>
+            ),
+          },
+        ]}
+      />,
+    );
+    expect(
+      screen.getByRole("link", { name: "Mira Okafor" }).getAttribute("title"),
+    ).toBe("Mira Okafor");
+  });
+
+  it("lines an end-aligned sortable header up with its numbers, its arrow 14px", () => {
+    render(<Orders />);
+    const header = screen.getByRole("columnheader", { name: /Total/ });
+    const label = header.querySelector<HTMLElement>(".bt-truncate");
+    const amount = document.querySelector<HTMLElement>(
+      '[data-bt-part="body"] [data-bt-part="amount"]',
+    );
+    if (!label || !amount) throw new Error("No label or amount.");
+    expect(
+      Math.abs(
+        label.getBoundingClientRect().right -
+          amount.getBoundingClientRect().right,
+      ),
+    ).toBeLessThanOrEqual(1);
+    const arrow = header.querySelector('[data-bt-part="sort"] svg');
+    expect(arrow?.getBoundingClientRect().width).toBe(14);
+  });
+
+  it("says 0 results when there's nothing to page through", () => {
+    render(
+      <Orders
+        rows={[]}
+        onClearAll={() => undefined}
+        pagination={{
+          page: 1,
+          pageSize: 6,
+          total: 0,
+          onPageChange: () => undefined,
+        }}
+      />,
+    );
+    expect(screen.getByText("0 results")).toBeTruthy();
+  });
+
+  it("forwards refs and classes on its amount and id parts", () => {
+    const amount = createRef<HTMLSpanElement>();
+    const id = createRef<HTMLSpanElement>();
+    render(
+      <>
+        <DataTable.Amount
+          ref={amount}
+          className="price"
+          value={12}
+          currency="USD"
+        />
+        <DataTable.Id ref={id} className="code" value="ORD-1" />
+      </>,
+    );
+    expect(amount.current?.classList.contains("price")).toBe(true);
+    expect(id.current?.classList.contains("code")).toBe(true);
   });
 
   it("isn't pinned outside a filled page", () => {
