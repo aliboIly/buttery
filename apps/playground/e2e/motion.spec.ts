@@ -492,6 +492,36 @@ test.describe("full motion", () => {
     );
   });
 
+  test("an onboarding's shared card travels to its next place on spring.smooth", async ({
+    page,
+  }) => {
+    await page.goto("/?chrome=0&motion=full#/onboarding");
+    await page
+      .getByRole("button", { name: "Take the tour", exact: true })
+      .click();
+    await page.getByRole("dialog").waitFor();
+    await page.waitForTimeout(400);
+    const next = page.getByRole("button", { name: "Next", exact: true });
+    const before = await next.evaluate(() => {
+      const card = document.querySelector('[data-bt-part="shared"]');
+      if (!card) return 0;
+      const box = card.getBoundingClientRect();
+      return box.left + box.width / 2;
+    });
+    await next.focus();
+    await startSampling(page, '[data-bt-part="shared"]');
+    await page.keyboard.press("Enter");
+    const run = await finishSampling(page, 700);
+    const centers = trace(run, (reading) => reading.left + reading.width / 2);
+    const after = centers.at(-1)?.value ?? before;
+    expect(Math.abs(after - before)).toBeGreaterThan(8);
+    expectSpring(
+      "shared card travelling",
+      progress(centers, before, after),
+      "smooth",
+    );
+  });
+
   test("pressing scales to 97% over dur-press and lets go over dur-fast", async ({
     page,
   }) => {

@@ -116,6 +116,17 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "open the inspector sheet when it's narrow",
       run: pressIfShown("button", "Edit card"),
     },
+    escape,
+    {
+      name: "open the tour from Help",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Help", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog", { name: "Name your card" }).waitFor();
+      },
+    },
   ],
   "app-shell": [
     {
@@ -179,6 +190,27 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
   ],
+  onboarding: [
+    {
+      name: "open the tour",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Take the tour", exact: true })
+          .click();
+        await page.getByRole("dialog").waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "go to the last step",
+      run: async (page: Page) => {
+        await page.keyboard.press("ArrowRight");
+        await page.keyboard.press("ArrowRight");
+      },
+      acrossMatrix: true,
+    },
+  ],
+  "page-dots": [{ name: "move on a step", run: press("Next") }],
   "number-field": [
     {
       name: "focus a field, which shows its stepper",
