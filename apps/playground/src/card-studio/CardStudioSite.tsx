@@ -419,6 +419,7 @@ export function CardStudioSite(): ReactElement {
         </Grid>
       </Section>
       <CenteredHero
+        titleAs="h2"
         title="Make your first card."
         titleMore="It takes a minute."
         actions={

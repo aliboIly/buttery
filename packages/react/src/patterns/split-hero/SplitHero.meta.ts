@@ -13,6 +13,6 @@ export const meta: ComponentMeta = {
     "Bands further down a page: use Section",
   ],
   related: ["CenteredHero", "HeroText", "Section", "Stagger"],
-  a11y: "A region named by its headline, the page's h1. The visual's pieces arrive with a rise and a fade; with reduced motion they simply show.",
+  a11y: "A region named by its headline, the page's h1, or an h2 with titleAs=\"h2\" for a band further down. The visual's pieces arrive with a rise and a fade; with reduced motion they simply show.",
   motion: "presence",
 };

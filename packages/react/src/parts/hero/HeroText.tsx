@@ -1,4 +1,5 @@
 import { Text, cx, hasContent } from "@buttery/core";
+import type { TextStackTitleElement } from "@buttery/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 
 /** Props for `HeroText`. */
@@ -20,6 +21,8 @@ export interface HeroTextProps extends Omit<
   readonly align?: "start" | "center" | undefined;
   /** The headline's id, for the band it opens to be named by it. */
   readonly titleId?: string | undefined;
+  /** What the headline renders as. Defaults to `"h1"`; use `"h2"` for a band further down the page. */
+  readonly titleAs?: TextStackTitleElement | undefined;
 }
 
 /**
@@ -35,6 +38,7 @@ export function HeroText({
   actions,
   align = "start",
   titleId,
+  titleAs: Title = "h1",
   className,
   ...rest
 }: HeroTextProps): ReactElement {
@@ -46,7 +50,7 @@ export function HeroText({
         </Text>
       ) : null}
       <Text variant="display" asChild>
-        <h1 id={titleId} data-bt-part="title">
+        <Title id={titleId} data-bt-part="title">
           {title}
           {hasContent(titleMore) ? (
             <>
@@ -54,7 +58,7 @@ export function HeroText({
               <span data-bt-part="more">{titleMore}</span>
             </>
           ) : null}
-        </h1>
+        </Title>
       </Text>
       {hasContent(body) ? (
         <Text variant="body-lg" data-bt-part="body">

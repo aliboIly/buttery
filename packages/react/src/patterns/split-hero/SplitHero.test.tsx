@@ -54,6 +54,13 @@ describe("SplitHero", () => {
     expect(region.querySelector("h1")).not.toBeNull();
   });
 
+  it("renders its headline as the heading titleAs names", () => {
+    render(<SplitHero title="Launch" titleAs="h2" visual={null} />);
+    expect(screen.getByRole("heading", { level: 2 }).textContent).toBe(
+      "Launch",
+    );
+  });
+
   it("puts the words on 7 columns and the visual on 5, side by side past 1024px", () => {
     hero(1200);
     const words = box("words");

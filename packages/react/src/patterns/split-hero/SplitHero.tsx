@@ -1,4 +1,5 @@
 import { Stagger, cx } from "@buttery/core";
+import type { TextStackTitleElement } from "@buttery/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { useId } from "react";
 import { HeroText } from "../../parts/hero/HeroText.tsx";
@@ -13,6 +14,8 @@ export interface SplitHeroProps extends Omit<
   readonly eyebrow?: ReactNode;
   /** The headline's first clause, in the strong color. */
   readonly title: ReactNode;
+  /** What the headline renders as. Defaults to `"h1"`; use `"h2"` for a band further down the page. */
+  readonly titleAs?: TextStackTitleElement | undefined;
   /** The headline's continuation, in the secondary color. */
   readonly titleMore?: ReactNode;
   /** A line or two under the headline. */
@@ -29,7 +32,7 @@ export interface SplitHeroProps extends Omit<
  * A page's opening band: the words on 7 of the page's 12 columns and a visual on the other 5, centered on
  * each other, the words first and the visual under them below 1024px of page. The visual assembles as the
  * page opens: its pieces rise from 96% into place, one after another, within 900ms. The band is a region
- * named by its headline, an `h1`.
+ * named by its headline, an `h1` unless `titleAs` says otherwise.
  *
  * @example
  * <SplitHero
@@ -43,6 +46,7 @@ export function SplitHero({
   eyebrow,
   title,
   titleMore,
+  titleAs,
   body,
   actions,
   visual,
@@ -65,6 +69,7 @@ export function SplitHero({
             titleId={titleId}
             eyebrow={eyebrow}
             title={title}
+            titleAs={titleAs}
             titleMore={titleMore}
             body={body}
             actions={actions}

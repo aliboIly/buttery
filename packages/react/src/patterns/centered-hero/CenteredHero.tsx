@@ -1,4 +1,5 @@
 import { Stagger, cx } from "@buttery/core";
+import type { TextStackTitleElement } from "@buttery/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { useId } from "react";
 import { HeroText } from "../../parts/hero/HeroText.tsx";
@@ -13,6 +14,8 @@ export interface CenteredHeroProps extends Omit<
   readonly eyebrow?: ReactNode;
   /** The headline's first clause, in the strong color. */
   readonly title: ReactNode;
+  /** What the headline renders as. Defaults to `"h1"`; use `"h2"` for a band further down the page. */
+  readonly titleAs?: TextStackTitleElement | undefined;
   /** The headline's continuation, in the secondary color. */
   readonly titleMore?: ReactNode;
   /** A line or two under the headline. */
@@ -26,7 +29,7 @@ export interface CenteredHeroProps extends Omit<
 /**
  * A page's opening band with everything on one axis: the words centered, at most 8 of the page's 12 columns
  * wide, and a visual as wide as the column under them, 48px down (64 past 1024px). The visual assembles as
- * the page opens. The band is a region named by its headline, an `h1`.
+ * the page opens. The band is a region named by its headline, an `h1` unless `titleAs` says otherwise.
  *
  * @example
  * <CenteredHero
@@ -39,6 +42,7 @@ export function CenteredHero({
   eyebrow,
   title,
   titleMore,
+  titleAs,
   body,
   actions,
   visual,
@@ -60,6 +64,7 @@ export function CenteredHero({
             align="center"
             eyebrow={eyebrow}
             title={title}
+            titleAs={titleAs}
             titleMore={titleMore}
             body={body}
             actions={actions}

@@ -57,4 +57,19 @@ describe("CenteredHero", () => {
     ).toBeLessThan(1);
     expect(visual.top - words.bottom).toBe(64);
   });
+
+  it("opens with an h1 and takes an h2 for a closing band", () => {
+    render(
+      <>
+        <CenteredHero title="One card." />
+        <CenteredHero title="Make yours." titleAs="h2" />
+      </>,
+    );
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+      "One card.",
+    );
+    expect(
+      screen.getByRole("region", { name: "Make yours." }).querySelector("h2"),
+    ).not.toBeNull();
+  });
 });
