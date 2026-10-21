@@ -1,6 +1,6 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { publishSettled, watchFocusHistory } from "@buttery/core";
 import {
   act,
   cleanup,
@@ -11,7 +11,15 @@ import {
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from "vitest";
 import { userEvent as browser } from "vitest/browser";
 import { MorphMenu } from "./MorphMenu.tsx";
 import type { MorphMenuLayout } from "./MorphMenu.tsx";
@@ -31,6 +39,11 @@ function pointTo(target: Element, from?: Element): void {
   if (from) fireEvent.pointerOut(from, { ...mouse, relatedTarget: target });
   fireEvent.pointerOver(target, { ...mouse, relatedTarget: from ?? null });
   fireEvent.pointerMove(target, mouse);
+}
+
+/** Fakes the timers MorphMenu times the pointer with, `performance.now()` included. */
+function fakeTime(): void {
+  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "performance"] });
 }
 
 /** Moves fake time on, flushing what the timers set off. */
@@ -137,7 +150,7 @@ describe("MorphMenu", () => {
 
   it("opens once the pointer has rested on a trigger for 150ms", () => {
     menu();
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fakeTime();
     pointTo(trigger("Product"));
     advance(149);
     expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
@@ -155,9 +168,9 @@ describe("MorphMenu", () => {
     expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("closes 100ms after the pointer leaves, before Radix's own 150ms", () => {
+  it("closes 100ms after the pointer leaves", () => {
     menu();
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fakeTime();
     const pricing = screen.getByRole("link", { name: "Pricing" });
     pointTo(trigger("Product"));
     advance(150);
@@ -171,7 +184,7 @@ describe("MorphMenu", () => {
 
   it("stays closed after a click or Escape closes it while a hover was still timing, until the pointer leaves", () => {
     menu();
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fakeTime();
     const product = trigger("Product");
     const pricing = screen.getByRole("link", { name: "Pricing" });
     pointTo(product);
@@ -191,7 +204,9 @@ describe("MorphMenu", () => {
     expect(product.getAttribute("aria-expanded")).toBe("false");
     pointTo(pricing, product);
     pointTo(product, pricing);
-    advance(150);
+    advance(149);
+    expect(product.getAttribute("aria-expanded")).toBe("false");
+    advance(1);
     expect(product.getAttribute("aria-expanded")).toBe("true");
     act(() => {
       fireEvent.click(product);
@@ -200,9 +215,93 @@ describe("MorphMenu", () => {
     expect(product.getAttribute("aria-expanded")).toBe("false");
   });
 
+  it("reopens at once within 300ms of a close by the pointer leaving, and only then", () => {
+    menu();
+    fakeTime();
+    const pricing = screen.getByRole("link", { name: "Pricing" });
+    pointTo(trigger("Product"));
+    advance(150);
+    pointTo(pricing, trigger("Product"));
+    advance(100);
+    expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
+    advance(199);
+    pointTo(trigger("Guides"), pricing);
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("true");
+    pointTo(pricing, trigger("Guides"));
+    advance(100);
+    advance(300);
+    pointTo(trigger("Guides"), pricing);
+    advance(149);
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("false");
+    advance(1);
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("waits for the hover intent again after a click or Escape closes a menu", () => {
+    menu();
+    fakeTime();
+    const product = trigger("Product");
+    act(() => {
+      fireEvent.click(product);
+    });
+    expect(product.getAttribute("aria-expanded")).toBe("true");
+    act(() => {
+      fireEvent.keyDown(document.body, { key: "Escape" });
+    });
+    expect(product.getAttribute("aria-expanded")).toBe("false");
+    advance(50);
+    pointTo(trigger("Guides"));
+    advance(149);
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("false");
+    advance(1);
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("true");
+    act(() => {
+      fireEvent.click(trigger("Guides"));
+    });
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("false");
+    pointTo(product, trigger("Guides"));
+    advance(149);
+    expect(product.getAttribute("aria-expanded")).toBe("false");
+    advance(1);
+    expect(product.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("leaves a menu open while keyboard focus is in it, whatever the pointer does", async () => {
+    menu();
+    await userEvent.click(trigger("Product"));
+    const cards = await screen.findByRole("link", { name: /Cards/ });
+    await browser.keyboard("{Shift}");
+    cards.focus();
+    const pricing = screen.getByRole("link", { name: "Pricing" });
+    pointTo(trigger("Product"));
+    pointTo(pricing, trigger("Product"));
+    await wait(200);
+    pointTo(trigger("Guides"), pricing);
+    await wait(200);
+    expect(trigger("Product").getAttribute("aria-expanded")).toBe("true");
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("false");
+    expect(document.activeElement).toBe(cards);
+  });
+
+  it("hands focus a click left in the menu back to its trigger when the pointer closes it", async () => {
+    onTestFinished(watchFocusHistory());
+    menu();
+    await userEvent.click(trigger("Product"));
+    const all = await screen.findByRole("link", { name: "See all" });
+    fireEvent.pointerDown(all);
+    all.focus();
+    const pricing = screen.getByRole("link", { name: "Pricing" });
+    pointTo(trigger("Product"));
+    pointTo(pricing, trigger("Product"));
+    await waitFor(() => {
+      expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
+    });
+    expect(document.activeElement).toBe(trigger("Product"));
+  });
+
   it("stays open while the pointer crosses from its trigger into the panel, however slowly", () => {
     menu();
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fakeTime();
     pointTo(trigger("Product"));
     advance(150);
     expect(trigger("Product").getAttribute("aria-expanded")).toBe("true");

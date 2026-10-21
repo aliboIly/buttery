@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "Actions on a thing: use Menu",
   ],
   related: ["NavBar", "Menu", "SubNav"],
-  a11y: 'A navigation landmark ("Main" by default). Triggers are buttons with `aria-expanded`; the arrow keys move between them, Enter, Space or ArrowDown opens a menu, and Escape closes it with focus back on its trigger. Each column is a list named by its heading. In a stack, each menu is an accordion section.',
+  a11y: 'A navigation landmark ("Main" by default). Triggers are buttons with `aria-expanded`; the arrow keys move between them, Enter, Space or ArrowDown opens a menu, and Escape closes it with focus back on its trigger. The pointer never closes or switches a menu that keyboard focus is in. Each column is a list named by its heading. In a stack, each menu is an accordion section.',
   motion: "morph",
 };

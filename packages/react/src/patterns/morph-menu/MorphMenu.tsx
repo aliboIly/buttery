@@ -5,6 +5,7 @@ import {
   durations,
   easingCurves,
   hasContent,
+  lastInput,
   reducedTransition,
   space,
   spring,
@@ -112,20 +113,22 @@ function sameGeometry(a: Geometry | null, b: Geometry): boolean {
 
 /**
  * The one floating card every menu opens in, 8px under the row of triggers: the open menu's size, centered
- * under its trigger and kept inside the row. Above the card a strip that draws nothing runs from the row's
- * top, behind the triggers, so the pointer never leaves the menu on its way from a trigger to the card.
+ * under its trigger and kept inside the row. A strip that draws nothing runs from the row's top, under the
+ * row, down to the card; it fills the 8px gap, so the pointer going down from a trigger's full-height target
+ * reaches the card without leaving the menu.
  */
 function MorphPanel({
   value,
   triggers,
+  panel,
 }: {
   readonly value: string;
   readonly triggers: RefObject<Map<string, HTMLElement>>;
+  readonly panel: RefObject<HTMLDivElement | null>;
 }): ReactElement {
   const menu = useMenu("MorphMenu");
   const reduced = useMotionPreference() === "reduced";
   const tracking = useAnimationTracking();
-  const panel = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const [geometry, setGeometry] = useState<Geometry | null>(null);
   const placed = useRef(false);
@@ -206,7 +209,7 @@ function MorphPanel({
       resized.disconnect();
       arrived.disconnect();
     };
-  }, [open, value, triggers]);
+  }, [open, value, triggers, panel]);
 
   const first = geometry?.first ?? true;
   const move: Transition = reduced
@@ -369,6 +372,7 @@ function MorphMenuRoot({
     onChange: onValueChange,
   });
   const triggers = useRef(new Map<string, HTMLElement>());
+  const panel = useRef<HTMLDivElement>(null);
   const current = useRef(open);
   const openTimer = useRef(0);
   const closeTimer = useRef(0);
@@ -395,15 +399,25 @@ function MorphMenuRoot({
     (next: string) => {
       window.clearTimeout(openTimer.current);
       window.clearTimeout(closeTimer.current);
-      if (next === "" && current.current !== "") {
-        closedAt.current = performance.now();
-        if (visiting.current === current.current)
-          blocked.current = visiting.current;
-      }
+      if (
+        next === "" &&
+        current.current !== "" &&
+        visiting.current === current.current
+      )
+        blocked.current = visiting.current;
       setOpen(next);
     },
     [setOpen],
   );
+
+  // The pointer leaves an open menu alone while keyboard focus is in it. Focus that a click left there goes
+  // back to the menu's trigger before the pointer closes or switches it, so it never drops to the page.
+  const pointerMayChange = useCallback((): boolean => {
+    if (panel.current?.contains(document.activeElement) !== true) return true;
+    if (lastInput() === "keyboard") return false;
+    triggers.current.get(current.current)?.focus();
+    return true;
+  }, []);
 
   const register = useCallback((item: string, element: HTMLElement | null) => {
     if (element) triggers.current.set(item, element);
@@ -418,10 +432,12 @@ function MorphMenuRoot({
       window.clearTimeout(closeTimer.current);
       if (current.current === "") return;
       closeTimer.current = window.setTimeout(() => {
+        if (!pointerMayChange()) return;
         change("");
+        closedAt.current = performance.now();
       }, timing["delay-hover-close"]);
     },
-    [change],
+    [change, pointerMayChange],
   );
   const enter = useCallback((item: string, event: PointerEvent) => {
     if (event.pointerType !== "mouse") return;
@@ -435,12 +451,16 @@ function MorphMenuRoot({
       // MorphMenu times the pointer itself; Radix's own open timer outlives a click or Escape before it.
       event.preventDefault();
       if (asked.current || blocked.current === item) return;
-      asked.current = true;
       window.clearTimeout(closeTimer.current);
+      if (current.current !== "" && current.current !== item) {
+        if (!pointerMayChange()) return;
+        asked.current = true;
+        change(item);
+        return;
+      }
+      asked.current = true;
       if (current.current === item) return;
-      const recent =
-        performance.now() - closedAt.current < timing["delay-hover-skip"];
-      if (current.current !== "" || recent) {
+      if (performance.now() - closedAt.current < timing["delay-hover-skip"]) {
         change(item);
         return;
       }
@@ -449,7 +469,7 @@ function MorphMenuRoot({
         change(item);
       }, timing["delay-hover-open"]);
     },
-    [change],
+    [change, pointerMayChange],
   );
   const leave = useCallback(
     (item: string, event: PointerEvent) => {
@@ -513,7 +533,7 @@ function MorphMenuRoot({
         <RadixNav.List className="bt-morph-menu-list" data-bt-part="list">
           {children}
         </RadixNav.List>
-        <MorphPanel value={open} triggers={triggers} />
+        <MorphPanel value={open} triggers={triggers} panel={panel} />
       </RadixNav.Root>
     </MenuContext>
   );
@@ -799,9 +819,9 @@ export interface MorphMenuComponent {
  * `--bt-delay-hover-open` (150ms), unfolding from the row in `dur-fast`; moving to another trigger switches
  * at once, the panel's width, height and place following on `spring.snappy` while the columns crossfade,
  * the new ones sliding in from the side the pointer came from; leaving closes it after
- * `--bt-delay-hover-close` (100ms), folding up in `dur-fast`. Built on Radix NavigationMenu, so the arrow
- * keys move between triggers, Enter, Space or ArrowDown opens and Escape closes. With reduced motion the
- * panel fades in and out in 100ms and takes each menu's size at once.
+ * `--bt-delay-hover-close` (100ms), folding up in `dur-fast`, unless keyboard focus is in it. Built on Radix
+ * NavigationMenu, so the arrow keys move between triggers, Enter, Space or ArrowDown opens and Escape closes.
+ * With reduced motion the panel fades in and out in 100ms and takes each menu's size at once.
  *
  * @example
  * <MorphMenu>

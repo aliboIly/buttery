@@ -194,6 +194,36 @@ describe("NavBar", () => {
     }
   });
 
+  it("keeps the pointer inside the menu all the way from a trigger down past the bar to its card", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1200, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    page("static", 1100);
+    const product = screen.getByRole("button", { name: "Product" });
+    await userEvent.click(product);
+    const card = await waitFor(() => {
+      const element = document.querySelector<HTMLElement>(
+        '[data-bt-part="panel"] > [data-bt-part="body"]',
+      );
+      if (!element || element.getBoundingClientRect().height < 40)
+        throw new Error("The card hasn't unfolded yet.");
+      return element;
+    });
+    const menu = card.closest('[data-bt-part="panel"]');
+    const target = product.getBoundingClientRect();
+    const x = target.left + target.width / 2;
+    const top = card.getBoundingClientRect().top;
+    for (let y = target.top + 1; y < top + 4; y += 2) {
+      const hit = document.elementFromPoint(x, y);
+      expect(
+        product.contains(hit) || (menu?.contains(hit) ?? false),
+        `at ${String(y)}`,
+      ).toBe(true);
+    }
+  });
+
   it("folds the menus and actions into a menu button under 640px, which opens them in a sheet", async () => {
     page("static", 600);
     expect(screen.queryByRole("button", { name: "Product" })).toBeNull();
