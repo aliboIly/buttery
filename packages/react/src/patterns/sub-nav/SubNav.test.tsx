@@ -60,6 +60,23 @@ describe("SubNav", () => {
     expect(link("Features").getAttribute("href")).toBe("#features");
   });
 
+  it("ends a long title with an ellipsis and keeps its full text", () => {
+    render(
+      <div style={{ inlineSize: "390px" }}>
+        <SubNav
+          title="Card Studio for teams who ship a fresh launch card every single week of the year"
+          items={ITEMS}
+        />
+      </div>,
+    );
+    const title = screen.getByText(/Card Studio for teams/);
+    expect(title.hasAttribute("data-bt-truncate")).toBe(true);
+    expect(title.getAttribute("title")).toBe(
+      "Card Studio for teams who ship a fresh launch card every single week of the year",
+    );
+    expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
+  });
+
   it("marks the section under the bar as the reader scrolls", async () => {
     const scroller = page();
     await waitFor(() => {

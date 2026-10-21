@@ -2,6 +2,7 @@ import {
   OverflowCluster,
   SharedIndicator,
   Sticky,
+  Text,
   cx,
   hasContent,
   opensElsewhere,
@@ -78,13 +79,9 @@ export function SubNav({
         <Container>
           <div data-bt-part="bar">
             {hasContent(title) ? (
-              <div
-                className="bt-text bt-truncate"
-                data-role="label"
-                data-bt-part="title"
-              >
+              <Text variant="label" truncate data-bt-part="title">
                 {title}
-              </div>
+              </Text>
             ) : null}
             <SharedIndicator.Group>
               <OverflowCluster
