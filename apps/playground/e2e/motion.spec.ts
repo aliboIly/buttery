@@ -1792,3 +1792,250 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     expect(Math.abs(rising.start - fading.start)).toBeLessThanOrEqual(FRAME);
   });
 });
+
+test.describe("App chrome (MOTION_SPEC §3)", () => {
+  test.beforeEach(async ({ page }) => {
+    await installSampler(page);
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "buttery:announcement:roastery-roast-planning",
+        "true",
+      );
+      localStorage.setItem("buttery:nudge:roastery-delivery-questions", "true");
+    });
+    await page.setViewportSize({ width: 1440, height: 900 });
+  });
+
+  async function openDemo(page: Page, path: string): Promise<void> {
+    await page.goto(`/?motion=full#/roastery${path}`);
+    await page.locator("h1").first().waitFor();
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
+    await page.waitForTimeout(300);
+  }
+
+  /** The frames from the one starting at or after `mark`, the moment the input arrived. */
+  function framesFrom(run: Run, mark: string): Run["frames"] {
+    const at = run.marks[mark];
+    if (at === undefined) throw new Error(`No ${mark} was marked.`);
+    return run.frames.filter(({ t }) => t >= at);
+  }
+
+  test("a chrome menu is complete in the first frame it shows in, the frame after the key, and gone the frame after Escape", async ({
+    page,
+  }) => {
+    await openDemo(page, "/orders");
+    const menu = '[data-bt="Menu"]';
+    const trigger = page
+      .getByRole("button", { name: /^Actions for ord_/ })
+      .first();
+    await trigger.focus();
+    await startSampling(page, menu, ["keydown"]);
+    await page.keyboard.press("Enter");
+    const opening = framesFrom(await finishSampling(page, 300), "keydown");
+    const shown = opening.findIndex(({ elements }) => elements.length > 0);
+    report(`chrome menu: shows ${String(shown)} frames after the key`);
+    expect(shown).toBeGreaterThanOrEqual(0);
+    expect(shown).toBeLessThanOrEqual(1);
+    for (const { elements } of opening.slice(shown)) {
+      for (const reading of elements) {
+        expect(reading.opacity).toBe(1);
+        expect(reading.scale).toBe(1);
+      }
+    }
+    await startSampling(page, menu, ["keydown"]);
+    await page.keyboard.press("Escape");
+    const closing = framesFrom(await finishSampling(page, 300), "keydown");
+    // Transparent is gone: the menu's last frame in the page draws nothing, and it unmounts the next.
+    const gone = closing.findIndex(({ elements }) =>
+      elements.every((reading) => reading.opacity === 0),
+    );
+    report(`chrome menu: gone ${String(gone)} frames after Escape`);
+    expect(gone).toBeGreaterThanOrEqual(0);
+    expect(gone).toBeLessThanOrEqual(1);
+    for (const { elements } of closing.slice(0, gone)) {
+      for (const reading of elements) expect(reading.opacity).toBe(1);
+    }
+    await expect(trigger).toBeFocused();
+  });
+
+  test("a submenu opens 40ms after the pointer rests on its item, fading in over dur-fast", async ({
+    page,
+  }) => {
+    await openDemo(page, "");
+    await page
+      .getByRole("button", { name: "Workspace: Halfmoon Roastery" })
+      .focus();
+    await page.keyboard.press("Enter");
+    const item = page.getByRole("menuitem", { name: "Switch workspace" });
+    await item.waitFor();
+    await startSampling(page, '[data-bt="Menu"]', ["pointermove"]);
+    await item.hover();
+    const run = await finishSampling(page, 500);
+    const [, submenu] = elementIds(run);
+    if (submenu === undefined) throw new Error("The submenu never opened.");
+    const fading = expectTween(
+      "submenu fading in",
+      progress(traceOf(run, submenu, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    const arrived = run.marks["pointermove"] ?? 0;
+    report(
+      `submenu: starts ${ms(fading.start - arrived)} after the pointer arrives (40ms wanted)`,
+    );
+    expect(fading.start - arrived).toBeGreaterThanOrEqual(40 - FRAME);
+    expect(fading.start - arrived).toBeLessThanOrEqual(40 + TWO_FRAMES * 2);
+  });
+
+  test("a dialog in the app fades in over dur-fast growing from 97%, and fades out over dur-fast", async ({
+    page,
+  }) => {
+    await openDemo(page, "/orders");
+    const trigger = page
+      .getByRole("button", { name: "New order", exact: true })
+      .first();
+    await trigger.focus();
+    await startSampling(page, '[data-bt="Dialog"]');
+    await page.keyboard.press("Enter");
+    const enter = await finishSampling(page, 500);
+    const fading = expectTween(
+      "dialog fading in",
+      progress(trace(enter, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    const growing = expectTween(
+      "dialog growing",
+      progress(
+        trace(enter, (reading) => reading.scale),
+        ENTER_SCALE,
+        1,
+      ),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    expect(Math.abs(growing.start - fading.start)).toBeLessThanOrEqual(3);
+    await startSampling(page, '[data-bt="Dialog"]');
+    await page.keyboard.press("Escape");
+    const exit = await finishSampling(page, 400);
+    const leaving = expectTween(
+      "dialog fading out",
+      progress(trace(exit, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+    expectGoneSoonAfter(exit, leaving.start + DURATIONS.fast);
+    expectAtRest(exit);
+  });
+
+  test("a sidebar group opens on spring.snappy and closes over dur-fast with ease-standard", async ({
+    page,
+  }) => {
+    await openDemo(page, "/orders");
+    const header = page.getByRole("button", { name: "Roastery", exact: true });
+    const morph = '[data-bt="Sidebar"] .bt-sidebar-group [data-bt="Morph"]';
+    await header.focus();
+    await startSampling(page, morph);
+    await page.keyboard.press("Enter");
+    const opening = await finishSampling(page, 600);
+    const heights = trace(opening, (reading) => reading.height);
+    const open = heights.at(-1)?.value ?? 0;
+    expect(open).toBeGreaterThan(40);
+    expectSpring("sidebar group opening", progress(heights, 0, open), "snappy");
+    await startSampling(page, morph);
+    await page.keyboard.press("Enter");
+    const closing = await finishSampling(page, 400);
+    expectTween(
+      "sidebar group closing",
+      progress(
+        trace(closing, (reading) => reading.height),
+        open,
+        0,
+      ),
+      EASE_STANDARD,
+      DURATIONS.fast,
+    );
+  });
+
+  test("a chart's crosshair and tooltip follow the pointer in the frame it moves in", async ({
+    page,
+  }) => {
+    await openDemo(page, "");
+    const plot = page.getByRole("slider", { name: "Total sales" });
+    await plot.scrollIntoViewIfNeeded();
+    const box = await plot.boundingBox();
+    if (!box) throw new Error("No chart.");
+    const readings = await plot.evaluate(async (element, area) => {
+      const frame = element.closest(".bt-chart-frame");
+      const crosshair = frame?.querySelector<HTMLElement>(
+        '[data-bt-part="crosshair"]',
+      );
+      const tooltip = frame?.querySelector<HTMLElement>(
+        '[data-bt-part="tooltip"]',
+      );
+      if (!crosshair || !tooltip) throw new Error("No crosshair.");
+      const seen: {
+        readonly now: number;
+        readonly next: number;
+        readonly shown: boolean;
+      }[] = [];
+      for (const share of [0.1, 0.35, 0.6, 0.9]) {
+        element.dispatchEvent(
+          new PointerEvent("pointermove", {
+            bubbles: true,
+            pointerType: "mouse",
+            clientX: area.x + area.width * share,
+            clientY: area.y + area.height / 2,
+          }),
+        );
+        const now = crosshair.getBoundingClientRect().left;
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        seen.push({
+          now,
+          next: crosshair.getBoundingClientRect().left,
+          shown: !tooltip.hidden && !crosshair.hidden,
+        });
+      }
+      return seen;
+    }, box);
+    for (const { now, next, shown } of readings) {
+      expect(shown).toBe(true);
+      expect(next).toBe(now);
+    }
+    const lefts = readings.map(({ now }) => now);
+    expect(new Set(lefts).size).toBe(lefts.length);
+  });
+
+  test("a metric's skeleton turns into its numbers in place, nothing moving more than 1px", async ({
+    page,
+  }) => {
+    await page.goto("/?chrome=0&motion=full#/metric-card");
+    const cards = ".bt-metric-card";
+    await page.locator(cards).first().waitFor();
+    await startSampling(
+      page,
+      `${cards}, ${cards} .bt-chart-frame, ${cards} [data-bt-part="foot"]`,
+    );
+    const run = await finishSampling(page, 2200);
+    const loaded = run.frames.at(-1)?.elements.length ?? 0;
+    expect(loaded).toBeGreaterThan(0);
+    const tops = new Map<number, number[]>();
+    for (const { elements } of run.frames) {
+      for (const reading of elements) {
+        const seen = tops.get(reading.id) ?? [];
+        seen.push(reading.top, reading.top + reading.height);
+        tops.set(reading.id, seen);
+      }
+    }
+    for (const edges of tops.values()) {
+      const tops0 = edges.filter((_, index) => index % 2 === 0);
+      const bottoms = edges.filter((_, index) => index % 2 === 1);
+      expect(Math.max(...tops0) - Math.min(...tops0)).toBeLessThanOrEqual(1);
+      expect(Math.max(...bottoms) - Math.min(...bottoms)).toBeLessThanOrEqual(
+        1,
+      );
+    }
+  });
+});
