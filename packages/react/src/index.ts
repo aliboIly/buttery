@@ -404,3 +404,11 @@ export type {
   AppPageProps,
   AppPageSectionProps,
 } from "./patterns/app-page/AppPage.tsx";
+export { AccountMenu } from "./patterns/account-menu/AccountMenu.tsx";
+export type {
+  AccountMenuComponent,
+  AccountMenuProps,
+  AccountMenuUserProps,
+  AccountMenuWorkspacesProps,
+  AccountWorkspace,
+} from "./patterns/account-menu/AccountMenu.tsx";
