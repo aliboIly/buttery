@@ -90,7 +90,7 @@ describe("DateRangeBar", () => {
     ).toBeTruthy();
   });
 
-  it("puts dates typed end first in order when Custom is chosen", async () => {
+  it("applies dates typed end first in order, leaving the fields as typed", async () => {
     const onValueChange = vi.fn();
     render(<DateRangeBar onValueChange={onValueChange} />);
     await userEvent.click(
@@ -102,17 +102,63 @@ describe("DateRangeBar", () => {
     fireEvent.change(screen.getByLabelText("End"), {
       target: { value: "2026-10-01" },
     });
-    expect(onValueChange).not.toHaveBeenCalled();
-    await userEvent.click(screen.getByRole("option", { name: "Custom" }));
     expect(onValueChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         range: "custom",
         custom: { start: "2026-10-01", end: "2026-10-20" },
       }),
     );
+    expect(screen.getByLabelText<HTMLInputElement>("Start").value).toBe(
+      "2026-10-20",
+    );
     expect(
       screen.getByRole("button", { name: /^Date range, Oct 1\s–\s20$/ }),
     ).toBeTruthy();
+  });
+
+  it("applies a date typed before the start while Custom is already chosen", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <DateRangeBar
+        defaultValue={{
+          range: "custom",
+          custom: { start: "2026-10-01", end: "2026-10-14" },
+          interval: "daily",
+          comparison: "none",
+        }}
+        onValueChange={onValueChange}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /^Date range, Oct 1\s–\s14$/ }),
+    );
+    fireEvent.change(screen.getByLabelText("End"), {
+      target: { value: "2026-09-20" },
+    });
+    expect(onValueChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        range: "custom",
+        custom: { start: "2026-09-20", end: "2026-10-01" },
+      }),
+    );
+  });
+
+  it("stays inside a column that sizes it to its content", () => {
+    render(
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          inlineSize: "360px",
+        }}
+      >
+        <DateRangeBar data-testid="bar" />
+      </div>,
+    );
+    expect(
+      screen.getByTestId("bar").getBoundingClientRect().width,
+    ).toBeLessThanOrEqual(360);
   });
 
   it("asks for its one-row width beside a heading in a row, leaving the heading whole", () => {

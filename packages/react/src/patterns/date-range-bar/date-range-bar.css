@@ -6,6 +6,7 @@
     container: bt-date-range-bar / inline-size;
     contain-intrinsic-inline-size: var(--bt-date-range-bar-one-row);
     min-inline-size: 0;
+    max-inline-size: 100%;
   }
 
   .bt-date-range-bar > [data-bt-part="controls"] {

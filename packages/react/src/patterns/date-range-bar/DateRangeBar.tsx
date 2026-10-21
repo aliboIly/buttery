@@ -211,15 +211,16 @@ export function DateRangeBar({
   const [draft, setDraft] = useState<CustomDateRange>(applied ?? NO_DATES);
   const [synced, setSynced] = useState(applied);
 
+  // Dates typed end first are applied in order but stay in the fields as typed, until the range changes.
   if (!sameDates(applied, synced)) {
     setSynced(applied);
-    setDraft(applied ?? NO_DATES);
+    if (!sameDates(applied, ordered(draft))) setDraft(applied ?? NO_DATES);
   }
 
   const editDates = (next: CustomDateRange): void => {
     setDraft(next);
-    if (next.start !== "" && next.end !== "" && next.start <= next.end)
-      setCurrent({ ...current, range: "custom", custom: next });
+    if (next.start !== "" && next.end !== "")
+      setCurrent({ ...current, range: "custom", custom: ordered(next) });
   };
 
   const chooseRange = (range: DateRangePreset): void => {
