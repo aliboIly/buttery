@@ -353,3 +353,8 @@ export type {
   TabNavLinkProps,
   TabNavProps,
 } from "./components/tab-nav/TabNav.tsx";
+export { ViewToggle } from "./components/view-toggle/ViewToggle.tsx";
+export type {
+  ViewMode,
+  ViewToggleProps,
+} from "./components/view-toggle/ViewToggle.tsx";

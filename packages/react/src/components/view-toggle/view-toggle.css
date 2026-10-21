@@ -1,0 +1,5 @@
+@layer bt.components {
+  .bt-view-toggle {
+    flex: none;
+  }
+}
