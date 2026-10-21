@@ -1,6 +1,6 @@
 import { Text, cx, useControllableState, useStoredState } from "@buttery/core";
 import { useRef, useState } from "react";
-import type { ReactElement, ReactNode, Ref } from "react";
+import type { CSSProperties, ReactElement, ReactNode, Ref } from "react";
 import { ArrowLink } from "../../components/arrow-link/ArrowLink.tsx";
 import { Button } from "../../components/button/Button.tsx";
 import { Dialog } from "../../components/dialog/Dialog.tsx";
@@ -34,12 +34,16 @@ export interface AnnouncementDialogProps {
   readonly storageKey?: string | undefined;
   /** Whether it's open, when you control it. */
   readonly open?: boolean | undefined;
+  /** Whether it starts open when uncontrolled. Defaults to opening on a first visit with `storageKey`, else `false`. */
+  readonly defaultOpen?: boolean | undefined;
   /** Called when it opens or closes. */
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
   /** Names the close button. Defaults to `"Close"`. */
   readonly closeLabel?: string | undefined;
-  /** Classes for the content inside the dialog. */
+  /** Classes for the content inside the dialog, the element that carries `data-bt="AnnouncementDialog"`. */
   readonly className?: string | undefined;
+  /** Inline styles for the same element. */
+  readonly style?: CSSProperties | undefined;
 }
 
 function isFlag(value: unknown): value is boolean {
@@ -71,16 +75,20 @@ export function AnnouncementDialog({
   learnMore,
   storageKey,
   open,
+  defaultOpen,
   onOpenChange,
   closeLabel,
   className,
+  style,
 }: AnnouncementDialogProps): ReactElement {
   const [seen, setSeen] = useStoredState(
     storageKey === undefined ? undefined : `buttery:announcement:${storageKey}`,
     false,
     isFlag,
   );
-  const [firstTime] = useState(storageKey !== undefined && !seen);
+  const [firstTime] = useState(
+    defaultOpen ?? (storageKey !== undefined && !seen),
+  );
   const openedByItself = useRef(firstTime);
   const [isOpen, setOpen] = useControllableState({
     value: open,
@@ -110,6 +118,7 @@ export function AnnouncementDialog({
       >
         <div
           className={cx("bt-announcement-dialog", className)}
+          style={style}
           data-bt="AnnouncementDialog"
         >
           <div

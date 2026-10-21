@@ -127,4 +127,36 @@ describe("ChoiceDialog", () => {
       expect(scale()).toBeGreaterThan(0.5);
     });
   });
+
+  it("closes after a choice whose handler stops the link, as a router's does, with its style on its content", async () => {
+    const onSelect = vi.fn((event: { preventDefault: () => void }) => {
+      event.preventDefault();
+    });
+    render(
+      <ChoiceDialog
+        defaultOpen
+        title="What kind of order?"
+        style={{ minBlockSize: "120px" }}
+        choices={[
+          {
+            id: "retail",
+            icon: ShoppingBag,
+            title: "Retail order",
+            href: "#retail",
+            onSelect,
+          },
+        ]}
+      />,
+    );
+    const dialog = await screen.findByRole("dialog");
+    expect(
+      dialog.querySelector<HTMLElement>('[data-bt="ChoiceDialog"]')?.style
+        .minBlockSize,
+    ).toBe("120px");
+    await userEvent.click(screen.getByRole("link", { name: /Retail order/ }));
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+  });
 });

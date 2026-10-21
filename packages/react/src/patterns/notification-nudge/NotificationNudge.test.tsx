@@ -169,4 +169,19 @@ describe("NotificationNudge", () => {
     });
     expect(document.activeElement).toBe(bell());
   });
+
+  it("starts open with defaultOpen, its classes and style on its body", async () => {
+    render(
+      <Bar defaultOpen className="nudge" style={{ maxInlineSize: "240px" }} />,
+    );
+    const body = await waitFor(() => {
+      const element = document.querySelector<HTMLElement>(
+        '[data-bt="NotificationNudge"]',
+      );
+      if (!element) throw new Error("Not open yet.");
+      return element;
+    });
+    expect(body.classList.contains("nudge")).toBe(true);
+    expect(body.style.maxInlineSize).toBe("240px");
+  });
 });

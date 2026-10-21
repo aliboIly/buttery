@@ -1,6 +1,13 @@
-import { Icon, Text, cx } from "@buttery/core";
+import {
+  Icon,
+  Text,
+  cx,
+  opensElsewhere,
+  useControllableState,
+} from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
 import type {
+  CSSProperties,
   ComponentType,
   MouseEvent,
   ReactElement,
@@ -46,8 +53,10 @@ export interface ChoiceDialogProps {
   readonly choices: readonly DialogChoice[];
   /** Names the close button. Defaults to `"Close"`. */
   readonly closeLabel?: string | undefined;
-  /** Classes for the content inside the dialog. */
+  /** Classes for the content inside the dialog, the element that carries `data-bt="ChoiceDialog"`. */
   readonly className?: string | undefined;
+  /** Inline styles for the same element. */
+  readonly style?: CSSProperties | undefined;
 }
 
 function ChoiceBody({
@@ -99,15 +108,29 @@ export function ChoiceDialog({
   choices,
   closeLabel,
   className,
+  style,
 }: ChoiceDialogProps): ReactElement {
+  const [isOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen ?? false,
+    onChange: onOpenChange,
+  });
+  // Choosing closes the dialog even when the choice's handler prevents the default, as a router's link does.
+  const choose =
+    (choice: DialogChoice) =>
+    (event: MouseEvent<HTMLElement>): void => {
+      choice.onSelect?.(event);
+      if (!opensElsewhere(event)) setOpen(false);
+    };
   return (
-    <Dialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setOpen}>
       {trigger === undefined ? null : (
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       )}
       <Dialog.Content size="md" ref={ref} closeLabel={closeLabel}>
         <div
           className={cx("bt-choice-dialog", className)}
+          style={style}
           data-bt="ChoiceDialog"
         >
           <Dialog.Text title={title} body={description} />
@@ -115,29 +138,27 @@ export function ChoiceDialog({
             <ul data-bt-part="choices">
               {choices.map((choice) => (
                 <li key={choice.id}>
-                  <Dialog.Close asChild>
-                    {choice.href === undefined ? (
-                      <button
-                        type="button"
-                        onClick={choice.onSelect}
-                        className="bt-focus"
-                        data-bt-part="choice"
-                        data-arrow="forward"
-                      >
-                        <ChoiceBody choice={choice} />
-                      </button>
-                    ) : (
-                      <a
-                        href={choice.href}
-                        onClick={choice.onSelect}
-                        className="bt-focus"
-                        data-bt-part="choice"
-                        data-arrow="forward"
-                      >
-                        <ChoiceBody choice={choice} />
-                      </a>
-                    )}
-                  </Dialog.Close>
+                  {choice.href === undefined ? (
+                    <button
+                      type="button"
+                      onClick={choose(choice)}
+                      className="bt-focus"
+                      data-bt-part="choice"
+                      data-arrow="forward"
+                    >
+                      <ChoiceBody choice={choice} />
+                    </button>
+                  ) : (
+                    <a
+                      href={choice.href}
+                      onClick={choose(choice)}
+                      className="bt-focus"
+                      data-bt-part="choice"
+                      data-arrow="forward"
+                    >
+                      <ChoiceBody choice={choice} />
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

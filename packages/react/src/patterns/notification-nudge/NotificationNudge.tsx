@@ -9,6 +9,7 @@ import {
 import { VisuallyHidden } from "radix-ui";
 import { useEffect, useId, useRef, useState } from "react";
 import type {
+  CSSProperties,
   KeyboardEvent,
   MouseEvent,
   ReactElement,
@@ -38,8 +39,14 @@ export interface NotificationNudgeProps {
   readonly storageKey?: string | undefined;
   /** Whether it's open, when you control it. */
   readonly open?: boolean | undefined;
+  /** Whether it starts open when uncontrolled. Defaults to `false`; with `storageKey` it opens by itself once in view. */
+  readonly defaultOpen?: boolean | undefined;
   /** Called when it opens or closes. */
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
+  /** Classes for the nudge's body, the element that carries `data-bt="NotificationNudge"`. */
+  readonly className?: string | undefined;
+  /** Inline styles for the same element. */
+  readonly style?: CSSProperties | undefined;
   /** The side of the button it opens on. Defaults to `"bottom"`. */
   readonly side?: "top" | "right" | "bottom" | "left" | undefined;
   /** Which edge of the button it lines up with. Defaults to `"end"`. */
@@ -77,7 +84,10 @@ export function NotificationNudge({
   onLater,
   storageKey,
   open,
+  defaultOpen = false,
   onOpenChange,
+  className,
+  style,
   side = "bottom",
   align = "end",
 }: NotificationNudgeProps): ReactElement {
@@ -89,7 +99,7 @@ export function NotificationNudge({
   );
   const [isOpen, setOpen] = useControllableState({
     value: open,
-    defaultValue: false,
+    defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
   const byItself = useRef(false);
@@ -187,7 +197,13 @@ export function NotificationNudge({
           }}
           onKeyDown={leave}
         >
-          <div ref={panelRefs} data-bt="NotificationNudge" data-bt-part="body">
+          <div
+            ref={panelRefs}
+            className={className}
+            style={style}
+            data-bt="NotificationNudge"
+            data-bt-part="body"
+          >
             <Text id={titleId} variant="title-sm">
               {title}
             </Text>

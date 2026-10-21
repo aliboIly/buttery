@@ -133,4 +133,13 @@ describe("AnnouncementDialog", () => {
     });
     await page.viewport(1200, 800);
   });
+
+  it("starts open with defaultOpen, its style on its content", async () => {
+    render(<News defaultOpen style={{ minBlockSize: "300px" }} />);
+    const dialog = await screen.findByRole("dialog");
+    expect(
+      dialog.querySelector<HTMLElement>('[data-bt="AnnouncementDialog"]')?.style
+        .minBlockSize,
+    ).toBe("300px");
+  });
 });
