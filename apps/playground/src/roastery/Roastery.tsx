@@ -3,6 +3,7 @@ import {
   AccountMenu,
   AnnouncementDialog,
   AppShell,
+  ArrowLink,
   ChoiceDialog,
   CommandSearch,
   IconButton,
@@ -111,21 +112,38 @@ function useSetupTasks(): readonly SetupTask[] {
   const [pickup] = usePickup();
   const [invites] = useInvites();
   return [
-    { id: "coffee", title: "Add your first coffee", done: true },
-    { id: "shipping", title: "Set shipping rates", done: true },
-    { id: "bank", title: "Connect your bank", done: true },
+    {
+      id: "coffee",
+      title: "Add your first coffee",
+      group: "Stock the shop",
+      done: true,
+    },
+    {
+      id: "shipping",
+      title: "Set shipping rates",
+      group: "Take orders",
+      done: true,
+    },
     {
       id: "pickup",
       title: "Offer local pickup",
       description: "Customers nearby collect their bags at the roastery.",
       action: { label: "Turn on pickup", href: "#/roastery/settings/pickup" },
+      group: "Take orders",
       done: pickup,
+    },
+    {
+      id: "bank",
+      title: "Connect your bank",
+      group: "Get paid",
+      done: true,
     },
     {
       id: "team",
       title: "Invite your team",
       description: "Give the roasters and packers their own sign-in.",
       action: { label: "Invite", href: "#/roastery/settings/team" },
+      group: "Bring in the team",
       done: invites.length > 0,
     },
   ];
@@ -439,6 +457,17 @@ export function Roastery(): ReactElement {
         title="Get your shop ready"
         storageKey="roastery-setup"
         tasks={tasks}
+        footer={
+          <ArrowLink
+            href="#help"
+            onClick={(event) => {
+              event.preventDefault();
+              setHelping(true);
+            }}
+          >
+            Ask the roasting team
+          </ArrowLink>
+        }
       />
     </div>
   );
