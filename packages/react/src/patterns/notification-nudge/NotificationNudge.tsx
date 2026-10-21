@@ -61,8 +61,9 @@ function isFlag(value: unknown): value is boolean {
  * A small popover that points at a button with news, such as replies waiting behind the notifications bell:
  * its title, a line, an action and Later. It opens by itself once per `storageKey`, as soon as its button
  * is fully in view and no modal dialog is open, without taking focus, and its title is announced as a
- * status; Tab from its button goes into it, and out of it to what follows the button. Any way it closes
- * counts as seen. Controlled with `open`, it opens only when you say.
+ * status; if the button leaves the view, folding into a menu or scrolling away, the nudge goes too and comes
+ * back with it. Tab from its button goes into it, and out of it to what follows the button. Any way someone
+ * closes it counts as seen. Controlled with `open`, it opens only when you say.
  *
  * @example
  * <NotificationNudge
@@ -121,8 +122,14 @@ export function NotificationNudge({
     };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting !== true) return;
-        observer.disconnect();
+        waiting?.disconnect();
+        waiting = null;
+        if (entry?.isIntersecting !== true) {
+          // Its button left the view, folded into a menu or scrolled away: the nudge goes with it, not
+          // yet seen, and comes back with it.
+          if (byItself.current) setOpen(false);
+          return;
+        }
         if (!behindModal()) {
           appear();
           return;

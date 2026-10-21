@@ -5,7 +5,6 @@ import { useMotionPreference } from "../motion/preference.ts";
 import type { MotionElementProps } from "../motion/props.ts";
 import { presencePresets, reducedPresence } from "../motion/presets.ts";
 import { useAnimationTracking } from "../motion/use-animation-tracking.ts";
-import { spring } from "../tokens/motion.ts";
 
 /**
  * How a menu or popover arrives: `"grow"` from 97% on the side of its trigger with a fade, or `"instant"`,
@@ -39,7 +38,8 @@ export interface FloatingMotionProps extends MotionElementProps<"div"> {
 /**
  * The element a menu or popover renders as inside `AnimatePresence`: it grows from 97% on the side of its
  * trigger on `spring.snappy` with a `dur-base` fade, and leaves with a `dur-fast` fade. With reduced motion
- * it fades in and out in 100ms. With `entrance="instant"` it shows complete and goes at once.
+ * it fades in and out in 100ms. With `entrance="instant"` it shows complete and unmounts as it closes, so
+ * a second Escape right after closing it reaches the dialog or sheet beneath.
  */
 export function FloatingMotion({
   origin,
@@ -57,7 +57,7 @@ export function FloatingMotion({
       {...tracking}
       initial={instant ? false : preset.initial}
       animate={preset.animate}
-      exit={instant ? { opacity: 0, transition: spring.instant } : preset.exit}
+      {...(instant ? {} : { exit: preset.exit })}
       style={{ ...style, transformOrigin: `var(${origin})` }}
     />
   );

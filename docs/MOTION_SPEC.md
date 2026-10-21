@@ -115,7 +115,7 @@ Measured from local 30fps strips of a product dashboard (`reference/inspiration-
 | Interaction | What happens | Timing |
 |---|---|---|
 | Chrome menu or popover opens | Appears complete in the next frame: no grow, slide or fade (`entrance="instant"` on `Menu` and `Popover`; `AppShell layout="sidebar"` makes it the default inside it) | one frame (measured: absent in one 30fps frame, complete in the next) |
-| Chrome menu or popover closes | Gone in the next frame | one frame |
+| Chrome menu or popover closes | Gone at once: it unmounts as it closes, with no exit to wait for, so a second Escape right after reaches the sheet or dialog beneath | one frame |
 | Submenu opens | Opens once the pointer has rested on its item for `--bt-delay-submenu` (40ms), fading in over `dur-fast` with `ease-out`; moving toward it on a diagonal keeps it open (pointer grace) | 40ms + `dur-fast` (measured complete within one 30fps frame of the hover) |
 | Dialog opens | Scrim and panel fade in together; the panel grows from 0.97 | `dur-fast` (120ms), `ease-out` (measured ~100ms: about 35% at the first frame, 90% at the second, done by the third) |
 | Dialog closes | Panel and scrim fade out, without shrinking, as every presence leaves | `dur-fast`, `ease-in`. The recording fades out over ~200ms; buttery keeps rule 7, so the close is never slower than the open |

@@ -13,6 +13,7 @@ import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { publishSettled } from "../../motion/settle.ts";
 import { FloatingEntranceContext } from "../floating-motion.tsx";
+import { Popover } from "../popover/Popover.tsx";
 import { Menu } from "./Menu.tsx";
 
 beforeEach(() => {
@@ -354,6 +355,36 @@ describe("Menu", () => {
       requestAnimationFrame(() => requestAnimationFrame(resolve)),
     );
     expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("lets an Escape right after the one that closed it reach the layer beneath, with entrance instant", async () => {
+    render(
+      <Popover entrance="instant">
+        <Popover.Trigger>Settings</Popover.Trigger>
+        <Popover.Content aria-label="Settings">
+          <Menu entrance="instant">
+            <Menu.Trigger>Card actions</Menu.Trigger>
+            <Menu.Content>
+              <Menu.Item>Duplicate</Menu.Item>
+            </Menu.Content>
+          </Menu>
+        </Popover.Content>
+      </Popover>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Settings" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Card actions" }),
+    );
+    expect(screen.getByRole("menu")).toBeTruthy();
+    fireEvent.keyDown(document.activeElement ?? document.body, {
+      key: "Escape",
+    });
+    fireEvent.keyDown(document.activeElement ?? document.body, {
+      key: "Escape",
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
   });
 
   it("takes its entrance from around it unless it sets its own", async () => {

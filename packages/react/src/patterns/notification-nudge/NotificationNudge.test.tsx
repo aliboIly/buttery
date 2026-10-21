@@ -80,6 +80,22 @@ describe("NotificationNudge", () => {
     window.scrollTo(0, 0);
   });
 
+  it("goes when its button leaves the view, still unseen, and comes back with it", async () => {
+    render(
+      <div data-testid="frame">
+        <Bar storageKey="test-delivery" />
+      </div>,
+    );
+    expect(await screen.findByRole("dialog")).toBeTruthy();
+    screen.getByTestId("frame").style.display = "none";
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(window.localStorage.getItem(KEY)).toBeNull();
+    screen.getByTestId("frame").style.display = "";
+    expect(await screen.findByRole("dialog")).toBeTruthy();
+  });
+
   it("waits for a modal dialog to close before it opens by itself", async () => {
     function Page({ modal }: { readonly modal: boolean }): ReactElement {
       return (
