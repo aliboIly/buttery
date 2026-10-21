@@ -243,3 +243,15 @@ export type {
 } from "./components/dialog/Dialog.tsx";
 export { PageDots } from "./components/page-dots/PageDots.tsx";
 export type { PageDotsProps } from "./components/page-dots/PageDots.tsx";
+export {
+  Onboarding,
+  OnboardingShared,
+  hasSeenOnboarding,
+} from "./patterns/onboarding/Onboarding.tsx";
+export type {
+  OnboardingComponent,
+  OnboardingLabels,
+  OnboardingProps,
+  OnboardingSharedProps,
+  OnboardingStep,
+} from "./patterns/onboarding/Onboarding.tsx";

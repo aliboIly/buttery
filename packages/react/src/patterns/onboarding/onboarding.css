@@ -1,0 +1,50 @@
+@layer bt.patterns {
+  .bt-onboarding [data-bt-part="scene"] {
+    position: relative;
+    aspect-ratio: 384 / 200;
+    overflow: clip;
+  }
+
+  /* Each step's background and scene sit on top of each other while they crossfade. */
+  .bt-onboarding
+    [data-bt-part="scene"]
+    > :is([data-bt-part="backdrop"], [data-bt-part="stage"]) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bt-onboarding [data-bt-part="stage"] {
+    display: grid;
+    place-items: center;
+  }
+
+  /* Room for the caption's descenders, which the text's trimmed box leaves out while Morph clips. */
+  .bt-onboarding .bt-dialog-text {
+    padding-block-end: var(--bt-space-1);
+  }
+
+  .bt-onboarding [data-bt-part="dots"] {
+    display: flex;
+    justify-content: center;
+    padding-block-start: var(--bt-space-4);
+  }
+
+  .bt-onboarding .bt-dialog-actions {
+    padding-block-start: var(--bt-space-4);
+  }
+
+  /* The forward button holds both labels in one cell, so swapping them never changes its width. */
+  .bt-onboarding [data-bt-part="labels"] {
+    display: grid;
+  }
+
+  .bt-onboarding [data-bt-part="labels"] > span {
+    grid-area: 1 / 1;
+    transition: opacity calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-standard);
+  }
+
+  .bt-onboarding [data-bt-part="labels"] > span:not([data-active]) {
+    opacity: 0;
+  }
+}
