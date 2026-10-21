@@ -37,6 +37,26 @@ describe("Callout", () => {
     ).toBe("rgb(231, 245, 237)");
   });
 
+  it("centers its icon on the first line, with a title or without", () => {
+    render(
+      <>
+        <Callout title="Saved to your library">Find it under Recent.</Callout>
+        <Callout>Find it under Recent.</Callout>
+      </>,
+    );
+    for (const callout of document.querySelectorAll(".bt-callout")) {
+      const icon = callout
+        .querySelector(":scope > svg")
+        ?.getBoundingClientRect();
+      const first = callout.querySelector('[data-bt-part="content"] > *');
+      if (!icon || !first) throw new Error("no icon or content");
+      const line = Number.parseFloat(getComputedStyle(first).lineHeight);
+      const lineCenter = first.getBoundingClientRect().top + line / 2;
+      expect(icon.top + icon.height / 2).toBeCloseTo(lineCenter, 0);
+      expect(icon.width).toBe(16);
+    }
+  });
+
   it("is a plain box without a role unless it's given one", () => {
     render(<Callout title="Shared cards stay in sync" data-testid="note" />);
     expect(screen.getByTestId("note").hasAttribute("role")).toBe(false);

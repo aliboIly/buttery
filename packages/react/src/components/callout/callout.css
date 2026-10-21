@@ -28,8 +28,10 @@
     --bt-callout-ink: var(--bt-danger);
   }
 
+  /* As tall as the first line, which centers the icon on it; the icon itself keeps its 16px. */
   .bt-callout > svg {
     flex: none;
+    block-size: var(--bt-text-label-line);
     color: var(--bt-callout-ink);
   }
 
