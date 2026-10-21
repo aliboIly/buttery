@@ -348,7 +348,7 @@ export function createLayoutToolkit(): LayoutToolkit {
   }
 
   function layerOf(element: Element): Element | null {
-    return element.closest("[data-bt-layer], .bt-sticky");
+    return element.closest("[data-bt-layer], .bt-sticky, [data-bt-float]");
   }
 
   /** The component owning the part `element` sits in, or `null` when its nearest marker is a component. */
@@ -582,7 +582,8 @@ export function createLayoutToolkit(): LayoutToolkit {
           for (const child of node.children) {
             if (
               child.hasAttribute("data-bt-hit") ||
-              child.hasAttribute("data-bt-allow-overlap")
+              child.hasAttribute("data-bt-allow-overlap") ||
+              child.hasAttribute("data-bt-float")
             ) {
               continue;
             }
@@ -1023,7 +1024,7 @@ export function createLayoutToolkit(): LayoutToolkit {
 
     if (enabled.has("viewport-fit")) {
       const surfaces = [
-        ...document.querySelectorAll("[data-bt-layer] *"),
+        ...document.querySelectorAll("[data-bt-layer] *, [data-bt-float]"),
       ].filter(
         (element) =>
           !element.matches(LAYER_FURNITURE) &&
