@@ -96,6 +96,56 @@ describe("FloatingLanes", () => {
     });
   });
 
+  it("keeps guidance under dialogs and notices above them", async () => {
+    render(
+      <>
+        <FloatingLanes />
+        <FloatingLanes.Item>
+          <Toast>Saved</Toast>
+        </FloatingLanes.Item>
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "288px", blockSize: "100px" }}>Guide</div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const band = (text: string): string | null | undefined =>
+      screen
+        .getByText(text)
+        .closest("[data-bt-layer]")
+        ?.getAttribute("data-bt-layer");
+    expect(await screen.findByText("Guide")).toBeTruthy();
+    expect(band("Guide")).toBe("floating");
+    expect(band("Saved")).toBe("toast");
+  });
+
+  it("clears a centered obstacle as soon as the lanes stop stacking", async () => {
+    await page.viewport(520, 800);
+    render(
+      <>
+        <FloatingLanes />
+        <Toolbar />
+        <FloatingLanes.Item>
+          <Toast>Saved</Toast>
+        </FloatingLanes.Item>
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "288px", blockSize: "100px" }}>Guide</div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await waitFor(() => {
+      const toast = screen.getByText("Saved").getBoundingClientRect();
+      const guide = screen.getByText("Guide").getBoundingClientRect();
+      expect(toast.right).toBeCloseTo(guide.right, 0);
+    });
+    await page.viewport(1200, 800);
+    await new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(resolve));
+    });
+    const toolbar = screen.getByTestId("toolbar").getBoundingClientRect();
+    const toast = screen.getByText("Saved").getBoundingClientRect();
+    expect(toast.bottom).toBeLessThanOrEqual(toolbar.top - 8 + 0.5);
+  });
+
   it("publishes how far the bottom lanes reach, plus 8px, on <html>, and 0 while they're empty", async () => {
     const clearance = (): string =>
       getComputedStyle(document.documentElement).getPropertyValue(

@@ -114,7 +114,7 @@ grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
 - Cells never wrap: text truncates with an ellipsis and its full text in a tooltip (`data-bt-truncate`). Numbers are right-aligned and tabular. Row height is `--bt-h-table-row`; skeleton rows use the same height, so swapping them for rows moves nothing.
 
 ### Floating guidance
-- `SetupGuide` lives in the `bottom-end` lane and toasts in `bottom-center`. When the two lanes would touch (a narrow window), they stack as one column at the bottom end: toasts above the guide, 8 apart, so neither covers the other.
+- `SetupGuide` lives in the `bottom-end` lane and toasts in `bottom-center`. The `bottom-end` lane sits in the floating band, so a dialog or sheet dims it with the rest of the page; toasts and top-end notices sit in the toast band, above dialogs. When the two lanes would touch (a narrow window), they stack as one column at the bottom end: toasts above the guide, 8 apart, so neither covers the other.
 - `FloatingLanes` publishes the height its bottom lanes take, plus the gap, as `--bt-lane-clearance` on `<html>` (0 while they're empty). The page adds it to its end padding, and a table in a filled page ends its rows with that much room to scroll (content inside its scroll area, not padding on it, so the area keeps its size and its pagination never moves), so the last row and the pagination can always clear a toast or the guide. A bar pinned to the bottom of the viewport, such as a filled page's pagination, registers as a lane obstacle, so lane items rise above it.
 
 ---

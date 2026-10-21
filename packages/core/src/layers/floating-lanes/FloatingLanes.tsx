@@ -103,24 +103,26 @@ function useLanePlacement(): void {
     const elements = laneNames.flatMap((name) => lanes[name]?.element ?? []);
     const root = document.documentElement;
     const apply = (): void => {
+      const center = lanes["bottom-center"]?.element;
+      const end = lanes["bottom-end"]?.element;
+      // Stacking moves the center lane, so it's settled before any lane measures what it has to clear.
+      const stacked =
+        center !== undefined &&
+        end !== undefined &&
+        lanesWouldTouch(center, end);
+      center?.toggleAttribute("data-stacked", stacked);
       for (const lane of elements)
         lane.style.setProperty(
           "--bt-lane-lift",
           px(clearanceFor(lane, blockers)),
         );
-      const center = lanes["bottom-center"]?.element;
-      const end = lanes["bottom-end"]?.element;
-      if (center !== undefined && end !== undefined) {
-        const stacked = lanesWouldTouch(center, end);
-        center.toggleAttribute("data-stacked", stacked);
-        if (stacked) {
-          const above =
-            window.innerHeight - end.getBoundingClientRect().top + space["2"];
-          center.style.setProperty(
-            "--bt-lane-lift",
-            px(Math.max(clearanceFor(center, blockers), above)),
-          );
-        }
+      if (stacked) {
+        const above =
+          window.innerHeight - end.getBoundingClientRect().top + space["2"];
+        center.style.setProperty(
+          "--bt-lane-lift",
+          px(Math.max(clearanceFor(center, blockers), above)),
+        );
       }
       root.style.setProperty("--bt-lane-clearance", px(bottomClearance(lanes)));
     };
@@ -146,34 +148,49 @@ function useLanePlacement(): void {
   }, [lanes, blockers]);
 }
 
-function Lanes(): ReactElement {
+/** Lanes for notices, which stay above dialogs: toasts at the bottom center, notices at the top end. */
+const NOTICE_LANES: readonly LaneName[] = ["bottom-center", "top-end"];
+
+/** The lane for guidance someone works through, such as a setup guide, which steps back under dialogs. */
+const GUIDANCE_LANES: readonly LaneName[] = ["bottom-end"];
+
+function LaneSlots({
+  names,
+}: {
+  readonly names: readonly LaneName[];
+}): ReactElement[] {
   const layer = useCurrentLayer();
   const refs = useMemo(
     () =>
       layer &&
-      new Map(laneNames.map((name) => [name, laneRef(name, layer)] as const)),
-    [layer],
+      new Map(names.map((name) => [name, laneRef(name, layer)] as const)),
+    [layer, names],
   );
-  return (
-    <div className="bt-floating-lanes" data-bt="FloatingLanes">
-      {laneNames.map((name) => (
-        <div
-          key={name}
-          ref={refs?.get(name)}
-          data-bt-part="lane"
-          data-lane={name}
-        />
-      ))}
-    </div>
-  );
+  return names.map((name) => (
+    <div
+      key={name}
+      ref={refs?.get(name)}
+      data-bt-part="lane"
+      data-lane={name}
+    />
+  ));
 }
 
 function FloatingLanesHost(): ReactElement {
   useLanePlacement();
   return (
-    <Layer band="toast">
-      <Lanes />
-    </Layer>
+    <>
+      <Layer band="toast">
+        <div className="bt-floating-lanes" data-bt="FloatingLanes">
+          <LaneSlots names={NOTICE_LANES} />
+        </div>
+      </Layer>
+      <Layer band="floating">
+        <div className="bt-floating-lanes" data-bt-part="guidance-lanes">
+          <LaneSlots names={GUIDANCE_LANES} />
+        </div>
+      </Layer>
+    </>
   );
 }
 
@@ -229,7 +246,9 @@ export interface FloatingLanesComponent {
 }
 
 /**
- * The host for free-floating UI: toasts in the bottom-center lane, notices in bottom-end and top-end.
+ * The host for free-floating UI: toasts in the bottom-center lane and notices at the top end, which stay
+ * above dialogs, and guidance someone works through, such as a setup guide, in bottom-end, which steps
+ * back under dialogs with the rest of the page.
  * Items stack with an 8px gap, never grow wider than their lane, keep clear of sticky headers and footers,
  * and move out of the way of registered obstacles. When the bottom lanes would touch, in a narrow window,
  * the center lane moves above the end lane as one column. It publishes how far the bottom lanes reach,
