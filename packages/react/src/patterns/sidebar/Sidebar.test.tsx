@@ -136,7 +136,7 @@ function recentPages(): string[] {
   if (!recent) return [];
   return within(recent)
     .getAllByRole("link")
-    .map((link) => link.textContent ?? "");
+    .map((link) => link.textContent);
 }
 
 function background(color: string): string {
