@@ -382,3 +382,12 @@ export type {
   PageHeaderComponent,
   PageHeaderProps,
 } from "./patterns/page-header/PageHeader.tsx";
+export { Sidebar } from "./patterns/sidebar/Sidebar.tsx";
+export type {
+  SidebarComponent,
+  SidebarGroupProps,
+  SidebarItemProps,
+  SidebarProps,
+  SidebarRecentProps,
+  SidebarSectionProps,
+} from "./patterns/sidebar/Sidebar.tsx";
