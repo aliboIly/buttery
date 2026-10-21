@@ -337,6 +337,13 @@ test("the exported PNG carries the title, the blend and the shadow as the stage 
 test("discarding a resize puts the canvas back where resize mode found it, even after a revert and other changes", async ({
   page,
 }) => {
+  await page.addInitScript(() => {
+    window.addEventListener("error", (event) => {
+      if (event.message.includes("ResizeObserver loop")) {
+        document.documentElement.dataset["resizeLoop"] = "";
+      }
+    });
+  });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?chrome=0#/card-studio");
   await page.getByTestId("title-card").waitFor();
@@ -364,6 +371,8 @@ test("discarding a resize puts the canvas back where resize mode found it, even 
       .getByRole("radiogroup", { name: "Finish" })
       .getByRole("radio", { name: "Paper" }),
   ).toBeChecked();
+  // The header's size label changes width on every frame of the drag; its OverflowCluster mustn't loop.
+  await expect(page.locator("html")).not.toHaveAttribute("data-resize-loop");
 });
 
 test("deleting the card from the keyboard takes focus to New card, and the toast's Undo brings the card back", async ({

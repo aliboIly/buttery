@@ -81,6 +81,7 @@ function OverflowClusterRoot({
   const [menuOpen, setMenuOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const widths = useRef(new Map<string, number>());
+  const committed = useRef<ReadonlySet<string>>(hidden);
   const latest = useRef(entries);
   const merged = useMergedRefs(ref, root);
   const lineup = entries
@@ -110,8 +111,11 @@ function OverflowClusterRoot({
           style.getPropertyValue("--bt-overflow-cluster-more-size"),
         ) || 0,
       );
+      // A commit here can resize what this observes, which the browser reports as a loop: commit only changes.
+      if (sameSet(committed.current, next)) return;
+      committed.current = next;
       flushSync(() => {
-        setHidden((current) => (sameSet(current, next) ? current : next));
+        setHidden(next);
         if (next.size === 0) setMenuOpen(false);
       });
     });
