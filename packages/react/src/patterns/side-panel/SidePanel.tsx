@@ -83,7 +83,7 @@ function PanelParts({
     <>
       <div data-bt-part="header">
         {title}
-        <div data-bt-part="actions">
+        <div data-bt-part="side-panel-actions">
           {hasContent(menu) ? (
             <Menu>
               <Menu.Trigger asChild>
@@ -97,8 +97,10 @@ function PanelParts({
         </div>
       </div>
       <div data-bt-part="content">
-        <div data-bt-part="body">{children}</div>
-        {hasContent(footer) ? <div data-bt-part="footer">{footer}</div> : null}
+        <div data-bt-part="side-panel-body">{children}</div>
+        {hasContent(footer) ? (
+          <div data-bt-part="side-panel-footer">{footer}</div>
+        ) : null}
       </div>
     </>
   );
@@ -231,7 +233,7 @@ export function SidePanel({
               data-role="title-sm"
               data-bt-truncate=""
               title={title}
-              data-bt-part="title"
+              data-bt-part="side-panel-title"
             >
               {title}
             </h2>
@@ -306,7 +308,7 @@ export function SidePanel({
                         data-role="title-sm"
                         data-bt-truncate=""
                         title={title}
-                        data-bt-part="title"
+                        data-bt-part="side-panel-title"
                       >
                         {title}
                       </h2>

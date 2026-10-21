@@ -56,7 +56,7 @@ export function EmptyState({
     >
       <div data-bt-part="content">
         {icon === undefined ? null : (
-          <span data-bt-part="icon">
+          <span data-bt-part="empty-state-icon">
             <Icon icon={icon} size="md" />
           </span>
         )}

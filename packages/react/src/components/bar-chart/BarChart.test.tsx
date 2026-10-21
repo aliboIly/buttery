@@ -46,7 +46,9 @@ describe("BarChart", () => {
       </div>,
     );
     const bars = [
-      ...document.querySelectorAll<HTMLElement>('[data-bt-part="bar"]'),
+      ...document.querySelectorAll<HTMLElement>(
+        '[data-bt-part="chart-frame-bar"]',
+      ),
     ];
     expect(bars).toHaveLength(10);
     const [mondayNow, mondayBefore, tuesdayNow] = bars.map((bar) =>
@@ -74,7 +76,9 @@ describe("BarChart", () => {
       </div>,
     );
     const [gain, loss] = [
-      ...document.querySelectorAll<HTMLElement>('[data-bt-part="bar"]'),
+      ...document.querySelectorAll<HTMLElement>(
+        '[data-bt-part="chart-frame-bar"]',
+      ),
     ];
     expect(loss?.hasAttribute("data-negative")).toBe(true);
     const corners = (bar: HTMLElement | undefined): string[] => {
@@ -112,7 +116,7 @@ describe("BarChart", () => {
     await userEvent.keyboard("{Home}");
     expect(plot.getAttribute("aria-valuetext")).toBe("Mon: Bags 48");
     const column = document.querySelector<HTMLElement>(
-      '[data-bt-part="column"]',
+      '[data-bt-part="chart-frame-column"]',
     );
     expect(column?.hidden).toBe(false);
   });

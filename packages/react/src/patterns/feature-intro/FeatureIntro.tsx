@@ -101,8 +101,8 @@ export function FeatureIntro({
         data-dismissible={dismissible ? "" : undefined}
         data-media={media === undefined ? undefined : ""}
       >
-        <div data-bt-part="copy">
-          <div data-bt-part="lead">
+        <div data-bt-part="feature-intro-copy">
+          <div data-bt-part="feature-intro-lead">
             <Text id={titleId} variant="title-lg" asChild>
               <Title>{title}</Title>
             </Text>
@@ -119,7 +119,7 @@ export function FeatureIntro({
             </ul>
           )}
           {action === undefined && docs === undefined ? null : (
-            <div data-bt-part="actions">
+            <div data-bt-part="feature-intro-actions">
               {action === undefined ? null : action.href === undefined ? (
                 <Button variant="primary" onClick={action.onClick}>
                   {action.label}
@@ -145,14 +145,16 @@ export function FeatureIntro({
             </div>
           )}
         </div>
-        {media === undefined ? null : <div data-bt-part="media">{media}</div>}
+        {media === undefined ? null : (
+          <div data-bt-part="feature-intro-media">{media}</div>
+        )}
         {dismissible ? (
           <IconButton
             icon={X}
             label={dismissLabel}
             size="sm"
             onClick={dismiss}
-            data-bt-part="dismiss"
+            data-bt-part="feature-intro-dismiss"
           />
         ) : null}
       </div>

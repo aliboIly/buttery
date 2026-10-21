@@ -45,8 +45,8 @@ describe("CenteredHero", () => {
     expect(
       screen.getByRole("region", { name: "One card. Every size." }),
     ).toBeTruthy();
-    const words = box("words");
-    const visual = box("visual");
+    const words = box("centered-hero-words");
+    const visual = box("centered-hero-visual");
     const column = document.querySelector('[data-bt="Container"]');
     const columnBox = column?.getBoundingClientRect();
     if (!columnBox) throw new Error("no column");

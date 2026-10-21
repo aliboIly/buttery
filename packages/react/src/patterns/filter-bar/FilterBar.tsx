@@ -102,10 +102,10 @@ export function FilterPill({
               {label}
               {applied ? (
                 <>
-                  <span data-bt-part="divider" aria-hidden="true">
+                  <span data-bt-part="filter-bar-divider" aria-hidden="true">
                     {" | "}
                   </span>
-                  <span data-bt-part="value">{value}</span>
+                  <span data-bt-part="filter-bar-value">{value}</span>
                 </>
               ) : null}
             </span>

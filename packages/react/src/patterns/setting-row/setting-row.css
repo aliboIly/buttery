@@ -14,7 +14,7 @@
     min-inline-size: 0;
   }
 
-  .bt-setting-row [data-bt-part="title"],
+  .bt-setting-row [data-bt-part="setting-row-title"],
   .bt-setting-row [data-bt-part="state"] {
     margin: 0;
   }

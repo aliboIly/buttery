@@ -469,7 +469,9 @@ describe("Sidebar", () => {
     expect(
       Math.abs((icon?.left ?? 0) + 8 - (box.left + box.width / 2)),
     ).toBeLessThan(1);
-    expect(nav.querySelector('[data-bt-part="divider"]')).not.toBeNull();
+    expect(
+      nav.querySelector('[data-bt-part="sidebar-divider"]'),
+    ).not.toBeNull();
     await userEvent.click(within(nav).getByRole("button", { name: "Reports" }));
     const flyout = await screen.findByRole("menu", { name: "Reports" });
     expect(

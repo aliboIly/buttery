@@ -273,7 +273,7 @@ describe("DataTable", () => {
     );
     const link = screen.getByRole("link", { name: "Mira Okafor" });
     expect(link.getAttribute("href")).toBe("#customers/ORD-1042");
-    expect(link.dataset["btPart"]).toBe("link");
+    expect(link.dataset["btPart"]).toBe("data-table-link");
     expect(link.getBoundingClientRect().height).toBe(28);
     const cell = link.closest<HTMLElement>("[role='cell']");
     if (!cell) throw new Error("No cell.");
@@ -308,7 +308,7 @@ describe("DataTable", () => {
     );
     expect(screen.getByRole("table").getAttribute("aria-busy")).toBe("true");
     const skeletonRows = document.querySelectorAll(
-      '[data-bt-part="body"] > [data-bt-part="row"]',
+      '[data-bt-part="data-table-body"] > [data-bt-part="data-table-row"]',
     );
     expect(skeletonRows).toHaveLength(5);
     expect(skeletonRows[0]?.getBoundingClientRect().height).toBe(36);
@@ -512,7 +512,7 @@ describe("DataTable", () => {
   it("keeps only rows in its body while it loads, the loading words in a row of their own", () => {
     render(<Orders loading />);
     const table = screen.getByRole("table", { name: "Orders" });
-    const body = table.querySelector('[data-bt-part="body"]');
+    const body = table.querySelector('[data-bt-part="data-table-body"]');
     if (!body) throw new Error("No body.");
     for (const child of body.children)
       expect(child.getAttribute("role")).toBe("row");
@@ -642,7 +642,7 @@ describe("DataTable", () => {
     const { rerender } = render(<Orders loading />);
     rerender(<Orders />);
     const body = () =>
-      document.querySelector<HTMLElement>('[data-bt-part="body"]');
+      document.querySelector<HTMLElement>('[data-bt-part="data-table-body"]');
     expect(body()?.hasAttribute("data-arrived")).toBe(true);
     await waitFor(() => {
       expect(body()?.hasAttribute("data-arrived")).toBe(false);
@@ -678,7 +678,7 @@ describe("DataTable", () => {
     const header = screen.getByRole("columnheader", { name: /Total/ });
     const label = header.querySelector<HTMLElement>(".bt-truncate");
     const amount = document.querySelector<HTMLElement>(
-      '[data-bt-part="body"] [data-bt-part="amount"]',
+      '[data-bt-part="data-table-body"] [data-bt-part="data-table-amount"]',
     );
     if (!label || !amount) throw new Error("No label or amount.");
     expect(

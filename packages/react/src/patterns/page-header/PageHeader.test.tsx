@@ -71,7 +71,7 @@ describe("PageHeader", () => {
     );
     const crumbs = screen.getByTestId("crumbs").getBoundingClientRect();
     const bar = document
-      .querySelector('[data-bt-part="bar"]')
+      .querySelector('[data-bt-part="page-header-bar"]')
       ?.getBoundingClientRect();
     const title = screen
       .getByRole("heading", { level: 1, name: "Pickup" })
@@ -146,7 +146,7 @@ describe("PageHeader", () => {
         exporting.getBoundingClientRect().right,
     ).toBe(8);
     expect(create.getAttribute("aria-keyshortcuts")).toBe("N");
-    const bar = document.querySelector('[data-bt-part="bar"]');
+    const bar = document.querySelector('[data-bt-part="page-header-bar"]');
     expect(Math.round(create.getBoundingClientRect().right)).toBe(
       Math.round(bar?.getBoundingClientRect().right ?? 0),
     );
@@ -209,7 +209,7 @@ describe("PageHeader", () => {
 
   it("puts the rows under it 16px down", () => {
     render(<Orders />);
-    const bar = document.querySelector('[data-bt-part="bar"]');
+    const bar = document.querySelector('[data-bt-part="page-header-bar"]');
     const row = screen.getByTestId("row");
     expect(
       row.getBoundingClientRect().top -

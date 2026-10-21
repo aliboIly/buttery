@@ -12,8 +12,8 @@
     min-inline-size: 0;
   }
 
-  .bt-article-layout [data-bt-part="main"],
-  .bt-article-layout [data-bt-part="aside"] {
+  .bt-article-layout [data-bt-part="article-layout-main"],
+  .bt-article-layout [data-bt-part="article-layout-aside"] {
     min-inline-size: 0;
   }
 
@@ -32,11 +32,11 @@
       gap: var(--bt-space-6);
     }
 
-    .bt-article-layout [data-bt-part="main"] {
+    .bt-article-layout [data-bt-part="article-layout-main"] {
       grid-column: 1 / span 8;
     }
 
-    .bt-article-layout [data-bt-part="aside"] {
+    .bt-article-layout [data-bt-part="article-layout-aside"] {
       grid-column: 10 / span 3;
     }
 

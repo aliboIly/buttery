@@ -44,14 +44,18 @@ describe("LineChart", () => {
       />,
     );
     const marks = [
-      ...document.querySelectorAll<HTMLElement>('[data-bt-part="mark"]'),
+      ...document.querySelectorAll<HTMLElement>(
+        '[data-bt-part="chart-frame-mark"]',
+      ),
     ];
     expect(
       marks.map((mark) =>
         mark.style.getPropertyValue("--bt-chart-frame-series"),
       ),
     ).toEqual(["var(--bt-chart-muted)", "var(--bt-chart-1)"]);
-    expect(document.querySelectorAll('[data-bt-part="area"]')).toHaveLength(0);
+    expect(
+      document.querySelectorAll('[data-bt-part="chart-frame-area"]'),
+    ).toHaveLength(0);
     expect(screen.getByRole("slider", { name: "Orders" })).toBeTruthy();
   });
 });

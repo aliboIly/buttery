@@ -6,7 +6,7 @@
     background-color: var(--bt-bg-surface);
   }
 
-  .bt-split-hero [data-bt-part="layout"] {
+  .bt-split-hero [data-bt-part="split-hero-layout"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--bt-space-12);
@@ -15,40 +15,41 @@
   }
 
   /* The visual's pieces stack 12px apart, so a fragment of Stagger.Items is spaced like a Stack. */
-  .bt-split-hero [data-bt-part="visual"] {
+  .bt-split-hero [data-bt-part="split-hero-visual"] {
     display: grid;
     gap: var(--bt-space-3);
     min-inline-size: 0;
   }
 
   @container bt-hero (width < 640px) {
-    .bt-split-hero [data-bt-part="layout"] {
+    .bt-split-hero [data-bt-part="split-hero-layout"] {
       padding-block: var(--bt-space-16);
     }
   }
 
   @container bt-hero (width >= 1024px) {
-    .bt-split-hero [data-bt-part="layout"] {
+    .bt-split-hero [data-bt-part="split-hero-layout"] {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       gap: var(--bt-space-6);
       padding-block: var(--bt-space-32);
     }
 
-    .bt-split-hero [data-bt-part="words"] {
+    .bt-split-hero [data-bt-part="split-hero-words"] {
       grid-column: 1 / span 7;
       grid-row: 1;
     }
 
-    .bt-split-hero [data-bt-part="visual"] {
+    .bt-split-hero [data-bt-part="split-hero-visual"] {
       grid-column: 8 / span 5;
       grid-row: 1;
     }
 
-    .bt-split-hero[data-visual-side="start"] [data-bt-part="words"] {
+    .bt-split-hero[data-visual-side="start"] [data-bt-part="split-hero-words"] {
       grid-column: 6 / span 7;
     }
 
-    .bt-split-hero[data-visual-side="start"] [data-bt-part="visual"] {
+    .bt-split-hero[data-visual-side="start"]
+      [data-bt-part="split-hero-visual"] {
       grid-column: 1 / span 5;
     }
   }

@@ -257,12 +257,12 @@ export function SetupGuide({
       {list.map((task) => (
         <li
           key={task.id}
-          data-bt-part="step"
+          data-bt-part="setup-guide-step"
           data-done={task.done === true ? "" : undefined}
         >
           <Icon
             icon={task.done === true ? CircleCheck : Circle}
-            data-bt-part="check"
+            data-bt-part="setup-guide-check"
           />
           <div data-bt-part="step-text">
             <Text>
@@ -308,7 +308,7 @@ export function SetupGuide({
     return (
       <div
         key={`group-${group}`}
-        data-bt-part="group"
+        data-bt-part="setup-guide-group"
         data-open={groupOpen ? "" : undefined}
       >
         <button
@@ -316,7 +316,7 @@ export function SetupGuide({
           aria-expanded={groupOpen}
           aria-controls={listId}
           className="bt-focus"
-          data-bt-part="group-head"
+          data-bt-part="setup-guide-group-head"
           onClick={() => {
             setGroupChoices((choices) => ({ ...choices, [group]: !groupOpen }));
           }}
@@ -368,11 +368,11 @@ export function SetupGuide({
           className={cx("bt-setup-guide", className)}
           data-bt="SetupGuide"
         >
-          <div data-bt-part="head">
+          <div data-bt-part="setup-guide-head">
             <Text id={titleId} variant="title-sm">
               {title}
             </Text>
-            <div data-bt-part="controls">
+            <div data-bt-part="setup-guide-controls">
               <IconButton
                 icon={unfolded ? ChevronDown : ChevronUp}
                 label={unfolded ? words.collapse : words.expand}
@@ -419,7 +419,7 @@ export function SetupGuide({
                   data-bt-part="steps-scroll"
                 >
                   {tasks.some((task) => task.group !== undefined) ? (
-                    <div data-bt-part="groups">
+                    <div data-bt-part="setup-guide-groups">
                       {sectionsOf(tasks).map(section)}
                     </div>
                   ) : (
@@ -427,7 +427,7 @@ export function SetupGuide({
                   )}
                 </div>
                 {hasContent(footer) ? (
-                  <div data-bt-part="footer">{footer}</div>
+                  <div data-bt-part="setup-guide-footer">{footer}</div>
                 ) : null}
               </div>
             ) : (

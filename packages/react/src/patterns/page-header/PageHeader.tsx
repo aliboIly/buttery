@@ -56,16 +56,16 @@ function PageHeaderRoot({
       data-bt="PageHeader"
       data-bt-region=""
     >
-      <div data-bt-part="head">
+      <div data-bt-part="page-header-head">
         {hasContent(breadcrumbs) ? breadcrumbs : null}
-        <div data-bt-part="bar">
-          <div data-bt-part="heading">
+        <div data-bt-part="page-header-bar">
+          <div data-bt-part="page-header-heading">
             <h1
               className="bt-text bt-truncate"
               data-role="title-lg"
               data-bt-truncate=""
               title={title}
-              data-bt-part="title"
+              data-bt-part="page-header-title"
             >
               {title}
             </h1>
@@ -73,7 +73,7 @@ function PageHeaderRoot({
               <span
                 className="bt-text"
                 data-role="title-lg"
-                data-bt-part="value"
+                data-bt-part="page-header-value"
               >
                 {value}
               </span>
@@ -93,7 +93,11 @@ function PageHeaderRoot({
           ) : null}
         </div>
         {hasContent(description) ? (
-          <p className="bt-text" data-role="body" data-bt-part="description">
+          <p
+            className="bt-text"
+            data-role="body"
+            data-bt-part="page-header-description"
+          >
             {description}
           </p>
         ) : null}

@@ -88,8 +88,8 @@ function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
       0,
     );
     const groups = [
-      row.querySelector(':scope > [data-bt-part="brand"]'),
-      row.querySelector(':scope > [data-bt-part="actions"]'),
+      row.querySelector(':scope > [data-bt-part="nav-bar-brand"]'),
+      row.querySelector(':scope > [data-bt-part="nav-bar-actions"]'),
     ].filter((group) => group !== null);
     const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
     needed.current =
@@ -222,7 +222,7 @@ function PhoneMenu({
           ref={button}
           icon={MenuIcon}
           label={menuLabel}
-          data-bt-part="menu-button"
+          data-bt-part="nav-bar-menu-button"
         />
       </RadixDialog.Trigger>
       <AnimatePresence>
@@ -293,7 +293,7 @@ function PhoneMenu({
                 </VisuallyHidden.Root>
                 <div data-bt-part="sheet-bar">
                   {hasContent(brand) ? (
-                    <div data-bt-part="brand">{brand}</div>
+                    <div data-bt-part="nav-bar-brand">{brand}</div>
                   ) : null}
                   <RadixDialog.Close asChild>
                     <IconButton icon={X} label={closeLabel} />
@@ -385,8 +385,14 @@ export function NavBar({
   }, [behavior]);
 
   const barRow = (
-    <div ref={row} data-bt-part="bar" data-folded={folded ? "" : undefined}>
-      {hasContent(brand) ? <div data-bt-part="brand">{brand}</div> : null}
+    <div
+      ref={row}
+      data-bt-part="nav-bar-bar"
+      data-folded={folded ? "" : undefined}
+    >
+      {hasContent(brand) ? (
+        <div data-bt-part="nav-bar-brand">{brand}</div>
+      ) : null}
       <MorphMenu
         label={label}
         value={menu}
@@ -398,7 +404,9 @@ export function NavBar({
       >
         {children}
       </MorphMenu>
-      {hasContent(actions) ? <div data-bt-part="actions">{actions}</div> : null}
+      {hasContent(actions) ? (
+        <div data-bt-part="nav-bar-actions">{actions}</div>
+      ) : null}
       <PhoneMenu
         label={label}
         menuLabel={menuLabel}

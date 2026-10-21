@@ -360,10 +360,10 @@ export function SidebarSection({
       {...(rail ? { "aria-label": title } : { "aria-labelledby": id })}
       {...rest}
       className={cx("bt-sidebar-section", className)}
-      data-bt-part="section"
+      data-bt-part="sidebar-section"
     >
       {rail ? (
-        <span data-bt-part="divider" aria-hidden="true" />
+        <span data-bt-part="sidebar-divider" aria-hidden="true" />
       ) : (
         <div
           id={id}
@@ -371,7 +371,7 @@ export function SidebarSection({
           data-role="caption"
           data-bt-truncate=""
           title={title}
-          data-bt-part="section-title"
+          data-bt-part="sidebar-section-title"
         >
           {title}
         </div>

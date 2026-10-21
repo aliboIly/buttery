@@ -71,18 +71,18 @@ export function Banner({
       data-bt="Banner"
     >
       <div data-bt-part="row">
-        <Icon icon={icon} data-bt-part="icon" />
-        <Text variant="body-sm" tone="default" data-bt-part="message">
+        <Icon icon={icon} data-bt-part="banner-icon" />
+        <Text variant="body-sm" tone="default" data-bt-part="banner-message">
           {children}
         </Text>
         {action === undefined && estimate === undefined ? null : (
-          <span data-bt-part="actions">
+          <span data-bt-part="banner-actions">
             {action === undefined ? null : action.href === undefined ? (
               <button
                 type="button"
                 onClick={action.onClick}
                 className="bt-focus"
-                data-bt-part="action"
+                data-bt-part="banner-action"
               >
                 {action.label}
               </button>
@@ -91,7 +91,7 @@ export function Banner({
                 href={action.href}
                 onClick={action.onClick}
                 className="bt-focus"
-                data-bt-part="action"
+                data-bt-part="banner-action"
               >
                 {action.label}
               </a>
@@ -106,7 +106,7 @@ export function Banner({
           label={dismissLabel}
           size="sm"
           onClick={dismiss}
-          data-bt-part="dismiss"
+          data-bt-part="banner-dismiss"
         />
       </div>
     </motion.div>

@@ -26,7 +26,7 @@
     padding: var(--bt-fullscreen-dialog-inset);
   }
 
-  .bt-fullscreen-dialog [data-bt-part="column"] {
+  .bt-fullscreen-dialog [data-bt-part="fullscreen-dialog-column"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-6);
@@ -34,11 +34,13 @@
     min-inline-size: 0;
   }
 
-  .bt-fullscreen-dialog [data-bt-part="column"] > .bt-dialog-text {
+  .bt-fullscreen-dialog
+    [data-bt-part="fullscreen-dialog-column"]
+    > .bt-dialog-text {
     padding: 0;
   }
 
-  .bt-fullscreen-dialog [data-bt-part="note"] {
+  .bt-fullscreen-dialog [data-bt-part="fullscreen-dialog-note"] {
     color: var(--bt-text-secondary);
     font-weight: var(--bt-text-body-weight);
   }

@@ -151,7 +151,7 @@ function PlanComparisonRoot({
           <Text id={moreId} variant="title-md" asChild>
             <h2>{moreTitle}</h2>
           </Text>
-          <div data-bt-part="options">{more}</div>
+          <div data-bt-part="plan-comparison-options">{more}</div>
         </section>
       ) : null}
     </div>
@@ -174,14 +174,14 @@ function Plan({ plan }: { readonly plan: PlanComparisonPlan }): ReactElement {
         aria-labelledby={nameId}
         className="bt-surface"
         data-level="card"
-        data-bt-part="card"
+        data-bt-part="plan-comparison-card"
         data-bt-region=""
       >
-        <div data-bt-part="intro">
+        <div data-bt-part="plan-comparison-intro">
           <Text id={nameId} variant="title-md" asChild>
             <h3>{plan.name}</h3>
           </Text>
-          <Text variant="body-sm" data-bt-part="description">
+          <Text variant="body-sm" data-bt-part="plan-comparison-description">
             {plan.description}
           </Text>
         </div>
@@ -204,7 +204,7 @@ function Plan({ plan }: { readonly plan: PlanComparisonPlan }): ReactElement {
             </div>
           ) : null}
         </div>
-        <div data-bt-part="action">{plan.action}</div>
+        <div data-bt-part="plan-comparison-action">{plan.action}</div>
         <div data-bt-part="features">
           <Text variant="title-sm" asChild>
             <h4>{plan.featuresTitle}</h4>
@@ -245,7 +245,7 @@ export function PlanComparisonOption({
       aria-labelledby={nameId}
       className="bt-surface"
       data-level="card"
-      data-bt-part="option"
+      data-bt-part="plan-comparison-option"
       data-bt-region=""
     >
       <Text id={nameId} variant="title-md" asChild>

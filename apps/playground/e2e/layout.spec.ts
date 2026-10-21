@@ -752,7 +752,7 @@ test("a roastery customer's page is buttery", async ({ page }) => {
   await returningVisitor(page);
   await page.goto("/#/roastery/customers");
   await page
-    .locator('[data-bt="DataTable"] [data-bt-part="link"]')
+    .locator('[data-bt="DataTable"] [data-bt-part="data-table-link"]')
     .first()
     .click();
   await page.getByRole("tablist", { name: "Customer" }).waitFor();

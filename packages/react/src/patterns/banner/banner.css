@@ -17,17 +17,17 @@
     min-block-size: var(--bt-h-sm);
   }
 
-  .bt-banner [data-bt-part="icon"] {
+  .bt-banner [data-bt-part="banner-icon"] {
     grid-area: icon;
     color: var(--bt-text-secondary);
   }
 
-  .bt-banner [data-bt-part="message"] {
+  .bt-banner [data-bt-part="banner-message"] {
     grid-area: message;
     min-inline-size: 0;
   }
 
-  .bt-banner [data-bt-part="actions"] {
+  .bt-banner [data-bt-part="banner-actions"] {
     display: flex;
     flex-wrap: wrap;
     grid-area: actions;
@@ -36,11 +36,11 @@
     min-inline-size: 0;
   }
 
-  .bt-banner [data-bt-part="dismiss"] {
+  .bt-banner [data-bt-part="banner-dismiss"] {
     grid-area: dismiss;
   }
 
-  .bt-banner [data-bt-part="action"] {
+  .bt-banner [data-bt-part="banner-action"] {
     display: inline-flex;
     align-items: center;
     min-block-size: var(--bt-h-sm);
@@ -58,7 +58,7 @@
   }
 
   @media (hover: hover) {
-    .bt-banner [data-bt-part="action"]:hover {
+    .bt-banner [data-bt-part="banner-action"]:hover {
       text-decoration: underline;
     }
   }

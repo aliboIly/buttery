@@ -23,7 +23,7 @@
   }
 
   /* The bar row is the panel's frame: the menu's card opens under it and stays inside its width. */
-  .bt-nav-bar [data-bt-part="bar"] {
+  .bt-nav-bar [data-bt-part="nav-bar-bar"] {
     position: relative;
     container: bt-nav / inline-size;
     display: flex;
@@ -33,8 +33,8 @@
     min-inline-size: 0;
   }
 
-  .bt-nav-bar [data-bt-part="brand"],
-  .bt-nav-bar-sheet [data-bt-part="brand"] {
+  .bt-nav-bar [data-bt-part="nav-bar-brand"],
+  .bt-nav-bar-sheet [data-bt-part="nav-bar-brand"] {
     display: flex;
     flex: none;
     align-items: center;
@@ -47,7 +47,7 @@
   }
 
   /* A brand is usually a link home: it keeps the brand's color rather than a link's, and a target's height. */
-  :is(.bt-nav-bar, .bt-nav-bar-sheet) [data-bt-part="brand"] :where(a) {
+  :is(.bt-nav-bar, .bt-nav-bar-sheet) [data-bt-part="nav-bar-brand"] :where(a) {
     display: inline-flex;
     align-items: center;
     gap: var(--bt-space-2);
@@ -74,38 +74,38 @@
     overflow: visible;
   }
 
-  .bt-nav-bar [data-bt-part="actions"] {
+  .bt-nav-bar [data-bt-part="nav-bar-actions"] {
     display: flex;
     flex: none;
     align-items: center;
     gap: var(--bt-space-2);
   }
 
-  .bt-nav-bar [data-bt-part="menu-button"] {
+  .bt-nav-bar [data-bt-part="nav-bar-menu-button"] {
     display: none;
   }
 
-  .bt-nav-bar [data-bt-part="bar"][data-folded] {
+  .bt-nav-bar [data-bt-part="nav-bar-bar"][data-folded] {
     justify-content: space-between;
   }
 
   .bt-nav-bar [data-folded] > .bt-morph-menu,
-  .bt-nav-bar [data-folded] > [data-bt-part="actions"] {
+  .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-actions"] {
     display: none;
   }
 
-  .bt-nav-bar [data-folded] > [data-bt-part="menu-button"] {
+  .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-menu-button"] {
     display: inline-flex;
   }
 
   /* Before the bar has measured itself, a narrow one already hides what it will fold. */
   @container bt-nav (width < 640px) {
     .bt-nav-bar .bt-morph-menu,
-    .bt-nav-bar [data-bt-part="actions"] {
+    .bt-nav-bar [data-bt-part="nav-bar-actions"] {
       display: none;
     }
 
-    .bt-nav-bar [data-bt-part="menu-button"] {
+    .bt-nav-bar [data-bt-part="nav-bar-menu-button"] {
       display: inline-flex;
     }
   }

@@ -2140,7 +2140,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     await expect(page.locator(`${table} [aria-busy="true"]`)).toHaveCount(1);
     await startSampling(
       page,
-      `${table}, ${table} [role="columnheader"], ${table} [data-bt-part="body"] > :nth-child(2 of [data-bt-part="row"]), ${table} > [data-bt-part="pagination"]`,
+      `${table}, ${table} [role="columnheader"], ${table} [data-bt-part="data-table-body"] > :nth-child(2 of [data-bt-part="data-table-row"]), ${table} > [data-bt-part="pagination"]`,
     );
     const run = await finishSampling(page, 1300);
     await expect(page.locator(`${table} [aria-busy="true"]`)).toHaveCount(0);

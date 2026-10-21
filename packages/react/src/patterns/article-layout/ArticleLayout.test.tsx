@@ -29,8 +29,8 @@ function box(element: Element): DOMRect {
 
 function parts(): { main: Element; aside: Element; sticky: Element } {
   const root = screen.getByTestId("layout");
-  const main = root.querySelector('[data-bt-part="main"]');
-  const aside = root.querySelector('[data-bt-part="aside"]');
+  const main = root.querySelector('[data-bt-part="article-layout-main"]');
+  const aside = root.querySelector('[data-bt-part="article-layout-aside"]');
   const sticky = root.querySelector('[data-bt-part="sticky"]');
   if (!main || !aside || !sticky) throw new Error("A part is missing.");
   return { main, aside, sticky };

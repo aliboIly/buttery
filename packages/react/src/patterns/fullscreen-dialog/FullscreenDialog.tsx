@@ -79,7 +79,7 @@ export function FullscreenDialog({
         >
           <div data-bt-part="top">{hasContent(logo) ? logo : null}</div>
           <div data-bt-part="question">
-            <div data-bt-part="column">
+            <div data-bt-part="fullscreen-dialog-column">
               <Dialog.Text
                 size="feature"
                 title={
@@ -88,7 +88,9 @@ export function FullscreenDialog({
                     {note === undefined ? null : (
                       <>
                         {" "}
-                        <span data-bt-part="note">{note}</span>
+                        <span data-bt-part="fullscreen-dialog-note">
+                          {note}
+                        </span>
                       </>
                     )}
                   </>

@@ -17,7 +17,7 @@
     box-shadow: var(--bt-shadow-floating);
   }
 
-  .bt-setup-guide [data-bt-part="head"] {
+  .bt-setup-guide [data-bt-part="setup-guide-head"] {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -25,7 +25,7 @@
     min-block-size: var(--bt-h-sm);
   }
 
-  .bt-setup-guide [data-bt-part="controls"] {
+  .bt-setup-guide [data-bt-part="setup-guide-controls"] {
     display: flex;
     flex: none;
     gap: var(--bt-space-0_5);
@@ -117,30 +117,35 @@
     list-style: none;
   }
 
-  .bt-setup-guide [data-bt-part="step"] {
+  .bt-setup-guide [data-bt-part="setup-guide-step"] {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: start;
     column-gap: var(--bt-space-2);
   }
 
-  .bt-setup-guide [data-bt-part="check"] {
+  .bt-setup-guide [data-bt-part="setup-guide-check"] {
     color: var(--bt-text-tertiary);
   }
 
-  .bt-setup-guide [data-bt-part="step"][data-done] [data-bt-part="check"] {
+  .bt-setup-guide
+    [data-bt-part="setup-guide-step"][data-done]
+    [data-bt-part="setup-guide-check"] {
     color: var(--bt-success);
   }
 
   /* A done step's circle fills, its check knocked out of it. */
   .bt-setup-guide
-    [data-bt-part="step"][data-done]
-    [data-bt-part="check"]
+    [data-bt-part="setup-guide-step"][data-done]
+    [data-bt-part="setup-guide-check"]
     circle {
     fill: currentcolor;
   }
 
-  .bt-setup-guide [data-bt-part="step"][data-done] [data-bt-part="check"] path {
+  .bt-setup-guide
+    [data-bt-part="setup-guide-step"][data-done]
+    [data-bt-part="setup-guide-check"]
+    path {
     stroke: var(--bt-bg-floating);
   }
 
@@ -163,21 +168,21 @@
     min-inline-size: 0;
   }
 
-  .bt-setup-guide [data-bt-part="groups"] {
+  .bt-setup-guide [data-bt-part="setup-guide-groups"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-1);
   }
 
-  .bt-setup-guide [data-bt-part="group"] {
+  .bt-setup-guide [data-bt-part="setup-guide-group"] {
     border-radius: var(--bt-r-md);
   }
 
-  .bt-setup-guide [data-bt-part="group"][data-open] {
+  .bt-setup-guide [data-bt-part="setup-guide-group"][data-open] {
     background-color: var(--bt-bg-section);
   }
 
-  .bt-setup-guide [data-bt-part="group-head"] {
+  .bt-setup-guide [data-bt-part="setup-guide-group-head"] {
     display: flex;
     align-items: center;
     gap: var(--bt-space-2);
@@ -195,8 +200,8 @@
 
   @media (hover: hover) {
     .bt-setup-guide
-      [data-bt-part="group"]:not([data-open])
-      > [data-bt-part="group-head"]:hover {
+      [data-bt-part="setup-guide-group"]:not([data-open])
+      > [data-bt-part="setup-guide-group-head"]:hover {
       background-color: var(--bt-bg-item-hover);
     }
   }
@@ -213,11 +218,11 @@
     color: var(--bt-text-tertiary);
   }
 
-  .bt-setup-guide [data-bt-part="group"] [data-bt-part="steps"] {
+  .bt-setup-guide [data-bt-part="setup-guide-group"] [data-bt-part="steps"] {
     padding: var(--bt-space-1) var(--bt-space-2) var(--bt-space-3);
   }
 
-  .bt-setup-guide [data-bt-part="footer"] {
+  .bt-setup-guide [data-bt-part="setup-guide-footer"] {
     display: flex;
     align-items: center;
     gap: var(--bt-space-2);

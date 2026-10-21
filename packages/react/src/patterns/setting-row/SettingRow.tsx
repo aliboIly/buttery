@@ -41,7 +41,11 @@ export function SettingRow({
       data-bt="SettingRow"
     >
       <div data-bt-part="text">
-        <h3 className="bt-text" data-role="title-sm" data-bt-part="title">
+        <h3
+          className="bt-text"
+          data-role="title-sm"
+          data-bt-part="setting-row-title"
+        >
           {title}
         </h3>
         {hasContent(state) ? (

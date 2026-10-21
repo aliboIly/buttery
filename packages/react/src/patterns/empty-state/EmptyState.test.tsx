@@ -71,7 +71,9 @@ describe("EmptyState", () => {
         docs={<a href="#guide">How orders work</a>}
       />,
     );
-    const tile = document.querySelector<HTMLElement>('[data-bt-part="icon"]');
+    const tile = document.querySelector<HTMLElement>(
+      '[data-bt-part="empty-state-icon"]',
+    );
     const stack = document.querySelector<HTMLElement>('[data-bt="TextStack"]');
     const docs = document.querySelector<HTMLElement>('[data-bt-part="docs"]');
     if (!tile || !stack || !docs) throw new Error("A part is missing.");

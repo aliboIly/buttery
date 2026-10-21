@@ -316,7 +316,7 @@ function ChartFrameRoot({
     const bounds = frame.getBoundingClientRect();
     const x = xOf(chart, index) * box.width;
     const marker = frame.querySelector<HTMLElement>(
-      '[data-bt-part="crosshair"], [data-bt-part="column"]',
+      '[data-bt-part="crosshair"], [data-bt-part="chart-frame-column"]',
     );
     if (marker !== null) {
       marker.hidden = false;
@@ -376,7 +376,7 @@ function ChartFrameRoot({
     if (frame === null) return;
     shown.current = null;
     for (const part of frame.querySelectorAll<HTMLElement>(
-      '[data-bt-part="crosshair"], [data-bt-part="column"], [data-bt-part="point"], [data-bt-part="tooltip"]',
+      '[data-bt-part="crosshair"], [data-bt-part="chart-frame-column"], [data-bt-part="point"], [data-bt-part="tooltip"]',
     ))
       part.hidden = true;
   };
@@ -487,13 +487,13 @@ function ChartFrameRoot({
             }}
             onBlur={hide}
           >
-            <div data-bt-part="grid">
+            <div data-bt-part="chart-frame-grid">
               {ticks.map((tick) => (
                 <span key={tick} />
               ))}
             </div>
             {layout === "band" ? (
-              <span data-bt-part="column" hidden />
+              <span data-bt-part="chart-frame-column" hidden />
             ) : (
               <span data-bt-part="crosshair" hidden />
             )}
@@ -535,7 +535,10 @@ function ChartFrameRoot({
             </div>
             {resolved.map((entry) => (
               <div key={entry.key} data-bt-part="tooltip-row">
-                <span data-bt-part="swatch" style={seriesColor(entry.color)} />
+                <span
+                  data-bt-part="chart-frame-swatch"
+                  style={seriesColor(entry.color)}
+                />
                 <Text variant="body-sm" asChild>
                   <span>{entry.label}</span>
                 </Text>
@@ -625,7 +628,7 @@ export function ChartLine({ series }: ChartMarkProps): ReactElement | null {
       preserveAspectRatio="none"
       aria-hidden="true"
       focusable="false"
-      data-bt-part="mark"
+      data-bt-part="chart-frame-mark"
       style={seriesColor(entry.color)}
     >
       <path
@@ -662,10 +665,10 @@ export function ChartArea({ series }: ChartMarkProps): ReactElement | null {
       preserveAspectRatio="none"
       aria-hidden="true"
       focusable="false"
-      data-bt-part="mark"
+      data-bt-part="chart-frame-mark"
       style={seriesColor(entry.color)}
     >
-      <path d={shapes.join("")} data-bt-part="area" />
+      <path d={shapes.join("")} data-bt-part="chart-frame-area" />
     </svg>
   );
 }
@@ -697,7 +700,7 @@ export function ChartBars({ series }: ChartBarsProps): ReactElement {
               <span key={entry.key} data-bt-part="bar-slot">
                 {value === null ? null : (
                   <span
-                    data-bt-part="bar"
+                    data-bt-part="chart-frame-bar"
                     data-negative={value < 0 ? "" : undefined}
                     style={{
                       ...seriesColor(entry.color),

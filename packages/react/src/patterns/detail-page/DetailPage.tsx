@@ -57,8 +57,11 @@ function DetailPageRoot({
         />
       }
     >
-      <div data-bt-part="layout" data-aside={withAside ? "" : undefined}>
-        <div data-bt-part="detail">{children}</div>
+      <div
+        data-bt-part="detail-page-layout"
+        data-aside={withAside ? "" : undefined}
+      >
+        <div data-bt-part="detail-page-detail">{children}</div>
         {withAside ? (
           <aside aria-label={asideLabel} data-bt-part="detail-aside">
             {hasContent(action) ? (
@@ -99,7 +102,7 @@ export function DetailPageLinks({
 }: DetailPageLinksProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} data-bt-part="links">
+    <section aria-labelledby={titleId} data-bt-part="detail-page-links">
       <Text id={titleId} variant="title-sm" asChild>
         <h2>{title}</h2>
       </Text>
@@ -110,7 +113,7 @@ export function DetailPageLinks({
               href={link.href}
               className="bt-text bt-focus"
               data-role="body-sm"
-              data-bt-part="link"
+              data-bt-part="detail-page-link"
               onClick={(event) => {
                 onNavigate?.(link.href, event);
               }}

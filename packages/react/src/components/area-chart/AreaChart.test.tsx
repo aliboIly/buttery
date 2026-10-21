@@ -42,7 +42,7 @@ describe("AreaChart", () => {
       />,
     );
     const areas = document.querySelectorAll<SVGPathElement>(
-      '[data-bt-part="area"]',
+      '[data-bt-part="chart-frame-area"]',
     );
     expect(areas).toHaveLength(1);
     expect(areas[0]?.getAttribute("d")).toMatch(/L100 100L0 100Z$/);

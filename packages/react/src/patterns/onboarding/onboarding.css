@@ -8,12 +8,12 @@
   /* Each step's background and scene sit on top of each other while they crossfade. */
   .bt-onboarding
     [data-bt-part="scene"]
-    > :is([data-bt-part="backdrop"], [data-bt-part="stage"]) {
+    > :is([data-bt-part="backdrop"], [data-bt-part="onboarding-stage"]) {
     position: absolute;
     inset: 0;
   }
 
-  .bt-onboarding [data-bt-part="stage"] {
+  .bt-onboarding [data-bt-part="onboarding-stage"] {
     display: grid;
     place-items: center;
   }

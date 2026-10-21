@@ -93,7 +93,7 @@ export function RadioCardGroup<Value extends string = string>({
             data-bt-part="option"
             data-chosen={isChosen ? "" : undefined}
           >
-            <div data-bt-part="row">
+            <div data-bt-part="radio-card-group-row">
               <RadixRadioGroup.Item
                 id={itemId}
                 value={option.value}
@@ -104,14 +104,18 @@ export function RadioCardGroup<Value extends string = string>({
                 className="bt-focus"
                 data-bt-part="radio"
               >
-                <RadixRadioGroup.Indicator data-bt-part="dot" />
-                <span data-bt-part="hit" data-bt-hit="" aria-hidden="true" />
+                <RadixRadioGroup.Indicator data-bt-part="radio-card-group-dot" />
+                <span
+                  data-bt-part="radio-card-group-hit"
+                  data-bt-hit=""
+                  aria-hidden="true"
+                />
               </RadixRadioGroup.Item>
               <label
                 htmlFor={itemId}
                 className="bt-text"
                 data-role="label"
-                data-bt-part="label"
+                data-bt-part="radio-card-group-label"
               >
                 {option.label}
               </label>
@@ -121,7 +125,7 @@ export function RadioCardGroup<Value extends string = string>({
                 id={descriptionId}
                 className="bt-text"
                 data-role="body-sm"
-                data-bt-part="description"
+                data-bt-part="radio-card-group-description"
               >
                 {option.description}
               </p>
@@ -129,7 +133,9 @@ export function RadioCardGroup<Value extends string = string>({
             {option.detail === undefined ? null : (
               <Morph disclosure data-bt-part="detail-frame">
                 {isChosen ? (
-                  <div data-bt-part="detail">{option.detail}</div>
+                  <div data-bt-part="radio-card-group-detail">
+                    {option.detail}
+                  </div>
                 ) : null}
               </Morph>
             )}

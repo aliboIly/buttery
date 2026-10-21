@@ -230,7 +230,7 @@ export function SearchHighlight({
   for (const [start, end] of matchRanges(text, query)) {
     if (start > at) parts.push(text.slice(at, start));
     parts.push(
-      <mark key={start} data-bt-part="match">
+      <mark key={start} className="bt-search-match">
         {text.slice(start, end)}
       </mark>,
     );
@@ -618,7 +618,7 @@ export function CommandSearch({
       "aria-selected": selected,
       "data-active": selected ? "" : undefined,
       "data-kind": option.kind,
-      "data-bt-part": "option",
+      "data-bt-part": "command-search-option",
       onPointerMove: () => {
         if (!selected) setActive({ value: current, id });
       },
@@ -630,7 +630,11 @@ export function CommandSearch({
       case "filter":
         return (
           <div key={id} {...common}>
-            <span className="bt-text" data-role="caption" data-bt-part="key">
+            <span
+              className="bt-text"
+              data-role="caption"
+              data-bt-part="command-search-key"
+            >
               {`${option.filter.key}:`}
             </span>
             <span data-bt-part="example">{`${option.filter.key}:${option.filter.example}`}</span>
@@ -638,7 +642,7 @@ export function CommandSearch({
               className="bt-truncate"
               data-bt-truncate=""
               title={option.filter.description}
-              data-bt-part="description"
+              data-bt-part="command-search-description"
             >
               {option.filter.description}
             </span>
@@ -647,7 +651,11 @@ export function CommandSearch({
       case "value":
         return (
           <div key={id} {...common}>
-            <span className="bt-text" data-role="caption" data-bt-part="key">
+            <span
+              className="bt-text"
+              data-role="caption"
+              data-bt-part="command-search-key"
+            >
               {`${option.filter.key}:${option.value}`}
             </span>
           </div>
@@ -660,7 +668,7 @@ export function CommandSearch({
               className="bt-truncate"
               data-bt-truncate=""
               title={option.search}
-              data-bt-part="label"
+              data-bt-part="command-search-label"
             >
               {option.search}
             </span>
@@ -672,7 +680,7 @@ export function CommandSearch({
           source.renderItem === undefined ? (
             <>
               {hasContent(item.media) ? (
-                <span data-bt-part="media">{item.media}</span>
+                <span data-bt-part="command-search-media">{item.media}</span>
               ) : item.icon ? (
                 <Icon icon={item.icon} data-bt-part="option-icon" />
               ) : null}
@@ -680,12 +688,15 @@ export function CommandSearch({
                 className="bt-truncate"
                 data-bt-truncate=""
                 title={[...(item.path ?? []), item.label].join(" › ")}
-                data-bt-part="label"
+                data-bt-part="command-search-label"
               >
                 {item.path?.map((part) => (
-                  <span key={part} data-bt-part="path">
+                  <span key={part} data-bt-part="command-search-path">
                     <SearchHighlight text={part} query={query.text} />
-                    <Icon icon={ChevronRight} data-bt-part="path-chevron" />
+                    <Icon
+                      icon={ChevronRight}
+                      data-bt-part="command-search-path-chevron"
+                    />
                   </span>
                 ))}
                 <SearchHighlight text={item.label} query={query.text} />
@@ -695,7 +706,7 @@ export function CommandSearch({
                   className="bt-truncate"
                   data-bt-truncate=""
                   title={item.detail}
-                  data-bt-part="detail"
+                  data-bt-part="command-search-detail"
                 >
                   {item.detail}
                 </span>
@@ -831,7 +842,7 @@ export function CommandSearch({
                 onBlur?.(event);
                 setFocused(false);
               }}
-              data-bt-part="input"
+              data-bt-part="command-search-input"
             />
           </motion.span>
           <motion.span {...keepSize} data-bt-part="end">
@@ -899,7 +910,7 @@ export function CommandSearch({
                 key={group.id}
                 role="group"
                 aria-label={group.label}
-                data-bt-part="group"
+                data-bt-part="command-search-group"
               >
                 <div
                   aria-hidden="true"
@@ -929,7 +940,7 @@ export function CommandSearch({
             ))}
           </div>
           {noResults ? (
-            <div data-bt-part="empty">
+            <div data-bt-part="command-search-empty">
               <Icon icon={Search} data-bt-part="empty-icon" />
               <p
                 className="bt-text"
@@ -956,7 +967,7 @@ export function CommandSearch({
         </div>
         {empty ? (
           filtersHref === undefined ? null : (
-            <div data-bt-part="footer">
+            <div data-bt-part="command-search-footer">
               <a
                 href={filtersHref}
                 tabIndex={-1}
@@ -969,7 +980,7 @@ export function CommandSearch({
             </div>
           )
         ) : resultsHref === undefined && onSearch === undefined ? null : (
-          <div data-bt-part="footer">
+          <div data-bt-part="command-search-footer">
             <a
               ref={allResults}
               href={resultsHref?.(query) ?? "#"}

@@ -63,8 +63,8 @@ describe("SplitHero", () => {
 
   it("puts the words on 7 columns and the visual on 5, side by side past 1024px", () => {
     hero(1200);
-    const words = box("words");
-    const visual = box("visual");
+    const words = box("split-hero-words");
+    const visual = box("split-hero-visual");
     expect(
       Math.abs(words.top + words.height / 2 - (visual.top + visual.height / 2)),
     ).toBeLessThan(1);
@@ -77,7 +77,9 @@ describe("SplitHero", () => {
 
   it("swaps the sides with visualSide", () => {
     hero(1200, "start");
-    expect(box("visual").right).toBeLessThan(box("words").left);
+    expect(box("split-hero-visual").right).toBeLessThan(
+      box("split-hero-words").left,
+    );
   });
 
   it("spaces the visual's pieces 12px apart when they come as a fragment", () => {
@@ -99,6 +101,8 @@ describe("SplitHero", () => {
 
   it("stacks the words over the visual below 1024px", () => {
     hero(700);
-    expect(box("visual").top).toBeGreaterThan(box("words").bottom);
+    expect(box("split-hero-visual").top).toBeGreaterThan(
+      box("split-hero-words").bottom,
+    );
   });
 });

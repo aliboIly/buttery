@@ -40,9 +40,9 @@ export function ArticleLayout({
       data-bt="ArticleLayout"
     >
       <div data-bt-part="grid">
-        <div data-bt-part="main">{children}</div>
+        <div data-bt-part="article-layout-main">{children}</div>
         {hasContent(aside) ? (
-          <aside aria-label={asideLabel} data-bt-part="aside">
+          <aside aria-label={asideLabel} data-bt-part="article-layout-aside">
             <Sticky variant="aside" data-bt-part="sticky">
               {aside}
             </Sticky>

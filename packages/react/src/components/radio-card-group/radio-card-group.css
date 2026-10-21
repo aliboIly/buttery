@@ -21,7 +21,7 @@
     min-inline-size: 0;
   }
 
-  .bt-radio-card-group [data-bt-part="row"] {
+  .bt-radio-card-group [data-bt-part="radio-card-group-row"] {
     display: flex;
     align-items: center;
     gap: var(--bt-space-2);
@@ -51,7 +51,7 @@
     background-color: var(--bt-bg-control-subtle);
   }
 
-  .bt-radio-card-group [data-bt-part="dot"] {
+  .bt-radio-card-group [data-bt-part="radio-card-group-dot"] {
     inline-size: var(--bt-radio-card-group-dot);
     block-size: var(--bt-radio-card-group-dot);
     border-radius: var(--bt-r-full);
@@ -59,7 +59,7 @@
   }
 
   /* Measured from inside the radio's border, so the target comes out 24px. */
-  .bt-radio-card-group [data-bt-part="hit"] {
+  .bt-radio-card-group [data-bt-part="radio-card-group-hit"] {
     position: absolute;
     inset: calc(
       (
@@ -70,18 +70,18 @@
     );
   }
 
-  .bt-radio-card-group [data-bt-part="label"] {
+  .bt-radio-card-group [data-bt-part="radio-card-group-label"] {
     min-inline-size: 0;
     color: var(--bt-text);
   }
 
-  .bt-radio-card-group [data-bt-part="description"] {
+  .bt-radio-card-group [data-bt-part="radio-card-group-description"] {
     margin: 0;
     padding-inline-start: var(--bt-radio-card-group-indent);
     color: var(--bt-text-secondary);
   }
 
-  .bt-radio-card-group [data-bt-part="detail"] {
+  .bt-radio-card-group [data-bt-part="radio-card-group-detail"] {
     padding-block-start: var(--bt-space-2);
     padding-inline-start: var(--bt-radio-card-group-indent);
   }

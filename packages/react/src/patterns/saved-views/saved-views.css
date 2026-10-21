@@ -5,7 +5,7 @@
   }
 
   /* The cluster fills the row so it knows the room it has; the pill hugs the views and the "…" button. */
-  .bt-saved-views > [data-bt-part="track"] {
+  .bt-saved-views > [data-bt-part="saved-views-track"] {
     flex: 1 1 auto;
     block-size: var(--bt-h-control);
   }
@@ -21,7 +21,7 @@
     background-color: var(--bt-bg-control);
   }
 
-  .bt-saved-views [data-bt-part="track"] > [data-bt-part="more"] {
+  .bt-saved-views [data-bt-part="saved-views-track"] > [data-bt-part="more"] {
     border-radius: 0;
     border-start-end-radius: var(--bt-r-full);
     border-end-end-radius: var(--bt-r-full);
@@ -37,7 +37,7 @@
     display: none;
   }
 
-  .bt-saved-views [data-bt-part="view"] {
+  .bt-saved-views [data-bt-part="saved-views-view"] {
     --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
 
     display: inline-flex;
@@ -57,12 +57,13 @@
     white-space: nowrap;
   }
 
-  .bt-saved-views [data-bt-part="view"][data-state="checked"] {
+  .bt-saved-views [data-bt-part="saved-views-view"][data-state="checked"] {
     color: var(--bt-text);
   }
 
   @media (hover: hover) {
-    .bt-saved-views [data-bt-part="view"]:not([data-state="checked"]):hover {
+    .bt-saved-views
+      [data-bt-part="saved-views-view"]:not([data-state="checked"]):hover {
       color: var(--bt-text);
     }
   }

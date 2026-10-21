@@ -369,12 +369,12 @@ function DataTableRoot<Row>({
           aria-busy={loading || undefined}
           data-bt-part="table"
         >
-          <div role="rowgroup" data-bt-part="head">
-            <div role="row" data-bt-part="row">
+          <div role="rowgroup" data-bt-part="data-table-head">
+            <div role="row" data-bt-part="data-table-row">
               {withSelection ? (
                 <div
                   role="columnheader"
-                  data-bt-part="cell"
+                  data-bt-part="data-table-cell"
                   data-check=""
                   data-first=""
                 >
@@ -404,7 +404,7 @@ function DataTableRoot<Row>({
                     aria-sort={
                       column.sortable ? (direction ?? "none") : undefined
                     }
-                    data-bt-part="cell"
+                    data-bt-part="data-table-cell"
                     data-align={column.align ?? "start"}
                     data-first={index === 0 && !withSelection ? "" : undefined}
                     data-after-check={
@@ -447,7 +447,11 @@ function DataTableRoot<Row>({
                 );
               })}
               {withActions ? (
-                <div role="columnheader" data-bt-part="cell" data-check="">
+                <div
+                  role="columnheader"
+                  data-bt-part="data-table-cell"
+                  data-check=""
+                >
                   <VisuallyHidden.Root>{words.actions}</VisuallyHidden.Root>
                 </div>
               ) : null}
@@ -455,7 +459,7 @@ function DataTableRoot<Row>({
           </div>
           <div
             role="rowgroup"
-            data-bt-part="body"
+            data-bt-part="data-table-body"
             data-arrived={arrived && !loading ? "" : undefined}
             onAnimationEnd={settleArrival}
           >
@@ -470,13 +474,13 @@ function DataTableRoot<Row>({
                   <div
                     key={index}
                     role="row"
-                    data-bt-part="row"
+                    data-bt-part="data-table-row"
                     aria-hidden="true"
                   >
                     {withSelection ? (
                       <div
                         role="cell"
-                        data-bt-part="cell"
+                        data-bt-part="data-table-cell"
                         data-check=""
                         data-first=""
                       >
@@ -487,7 +491,7 @@ function DataTableRoot<Row>({
                       <div
                         key={column.id}
                         role="cell"
-                        data-bt-part="cell"
+                        data-bt-part="data-table-cell"
                         data-align={column.align ?? "start"}
                         data-first={at === 0 && !withSelection ? "" : undefined}
                         data-after-check={
@@ -504,13 +508,17 @@ function DataTableRoot<Row>({
                       </div>
                     ))}
                     {withActions ? (
-                      <div role="cell" data-bt-part="cell" data-check="" />
+                      <div
+                        role="cell"
+                        data-bt-part="data-table-cell"
+                        data-check=""
+                      />
                     ) : null}
                   </div>
                 ))}
               </>
             ) : rows.length === 0 ? (
-              <div role="row" data-bt-part="row" data-no-results="">
+              <div role="row" data-bt-part="data-table-row" data-no-results="">
                 <div role="cell" data-bt-part="no-results">
                   <span className="bt-text" data-role="label">
                     {words.noResults}
@@ -533,13 +541,13 @@ function DataTableRoot<Row>({
                   <div
                     key={key}
                     role="row"
-                    data-bt-part="row"
+                    data-bt-part="data-table-row"
                     data-selected={isChosen ? "" : undefined}
                   >
                     {withSelection ? (
                       <div
                         role="cell"
-                        data-bt-part="cell"
+                        data-bt-part="data-table-cell"
                         data-check=""
                         data-first=""
                       >
@@ -560,7 +568,7 @@ function DataTableRoot<Row>({
                       <div
                         key={column.id}
                         role="cell"
-                        data-bt-part="cell"
+                        data-bt-part="data-table-cell"
                         data-align={column.align ?? "start"}
                         data-first={at === 0 && !withSelection ? "" : undefined}
                         data-after-check={
@@ -571,7 +579,11 @@ function DataTableRoot<Row>({
                       </div>
                     ))}
                     {withActions ? (
-                      <div role="cell" data-bt-part="cell" data-check="">
+                      <div
+                        role="cell"
+                        data-bt-part="data-table-cell"
+                        data-check=""
+                      >
                         <Menu>
                           <Menu.Trigger asChild>
                             <IconButton
@@ -593,7 +605,11 @@ function DataTableRoot<Row>({
       </div>
       {pagination && !compact ? (
         <div ref={pinned ? obstacle : undefined} data-bt-part="pagination">
-          <span className="bt-text" data-role="body-sm" data-bt-part="range">
+          <span
+            className="bt-text"
+            data-role="body-sm"
+            data-bt-part="data-table-range"
+          >
             {rows.length === 0
               ? words.range(0, 0, pagination.total)
               : words.range(first, last, pagination.total)}
@@ -654,7 +670,7 @@ export function DataTableAmount({
     currencyDisplay: "narrowSymbol",
   }).format(value);
   return (
-    <span {...rest} className={className} data-bt-part="amount">
+    <span {...rest} className={className} data-bt-part="data-table-amount">
       <span
         className="bt-truncate"
         data-bt-truncate=""
@@ -728,7 +744,7 @@ export function DataTableLink({
         {...rest}
         className={classes}
         data-bt-truncate=""
-        data-bt-part="link"
+        data-bt-part="data-table-link"
       >
         {children}
       </Slot>
@@ -740,7 +756,7 @@ export function DataTableLink({
       {...rest}
       className={classes}
       data-bt-truncate=""
-      data-bt-part="link"
+      data-bt-part="data-table-link"
     >
       {children}
     </a>

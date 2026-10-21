@@ -35,7 +35,9 @@ function width(id: string): number {
 }
 
 function brandBox(): Element {
-  const cell = screen.getByTestId("brand").closest('[data-bt-part="brand"]');
+  const cell = screen
+    .getByTestId("brand")
+    .closest('[data-bt-part="footer-brand"]');
   if (!cell) throw new Error("No brand cell.");
   return cell;
 }

@@ -15,7 +15,7 @@
     gap: var(--bt-space-2);
   }
 
-  .bt-notification-nudge [data-bt-part="actions"] {
+  .bt-notification-nudge [data-bt-part="notification-nudge-actions"] {
     display: flex;
     flex-wrap: wrap;
     gap: var(--bt-space-2);

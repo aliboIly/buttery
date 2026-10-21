@@ -326,8 +326,10 @@ function MenuBody({
   return (
     <>
       <div data-bt-part="main">
-        <div data-bt-part="columns">{children}</div>
-        {hasContent(footer) ? <div data-bt-part="footer">{footer}</div> : null}
+        <div data-bt-part="morph-menu-columns">{children}</div>
+        {hasContent(footer) ? (
+          <div data-bt-part="morph-menu-footer">{footer}</div>
+        ) : null}
       </div>
       {hasContent(featured) ? (
         <div data-bt-part="featured">{featured}</div>

@@ -91,7 +91,7 @@ describe("ChartFrame", () => {
         .getAllByText(/\d/)
         .map((tick) => tick.textContent),
     ).toEqual(["80", "60", "40", "20", "0"]);
-    expect(part("grid").children).toHaveLength(5);
+    expect(part("chart-frame-grid").children).toHaveLength(5);
     expect(part("x-axis").textContent).toBe("Oct 8Oct 14");
     const frame = document
       .querySelector(".bt-chart-frame")
@@ -258,11 +258,13 @@ describe("ChartFrame", () => {
     await userEvent.hover(plot, {
       position: { x: box.width * (3.5 / 7), y: 10 },
     });
-    const column = part("column").getBoundingClientRect();
+    const column = part("chart-frame-column").getBoundingClientRect();
     expect(column.left).toBeCloseTo(box.left + (3 / 7) * box.width, 0);
     expect(column.width).toBeCloseTo(box.width / 7, 0);
     expect(document.querySelectorAll('[data-bt-part="point"]')).toHaveLength(0);
-    expect(document.querySelectorAll('[data-bt-part="bar"]')).toHaveLength(7);
+    expect(
+      document.querySelectorAll('[data-bt-part="chart-frame-bar"]'),
+    ).toHaveLength(7);
   });
 
   it("says when there's nothing to draw, with no plot to step through", () => {
@@ -349,7 +351,7 @@ describe("ChartFrame", () => {
       </Chart>,
     );
     const plot = screen.getByRole("slider").getBoundingClientRect();
-    const [line] = part("grid").children;
+    const [line] = part("chart-frame-grid").children;
     const [label] = part("y-axis").children;
     if (!line || !label) throw new Error("No tick.");
     expect(

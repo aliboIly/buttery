@@ -276,7 +276,7 @@ function OnboardingRoot({
                   <AnimatePresence initial={false}>
                     <motion.div
                       key={step}
-                      data-bt-part="stage"
+                      data-bt-part="onboarding-stage"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1, transition: fade }}
                       exit={{ opacity: 0, transition: fade }}

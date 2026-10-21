@@ -125,7 +125,7 @@ test("a customer's name in the list opens their page, and each page starts at th
   await page.getByRole("link", { name: "Customers", exact: true }).click();
   await atTop(/^Customers/);
   const first = page
-    .locator('[data-bt="DataTable"] [data-bt-part="link"]')
+    .locator('[data-bt="DataTable"] [data-bt-part="data-table-link"]')
     .first();
   const name = (await first.textContent()) ?? "";
   await first.click();

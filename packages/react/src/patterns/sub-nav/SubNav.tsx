@@ -77,9 +77,9 @@ export function SubNav({
         data-bt="SubNav"
       >
         <Container>
-          <div data-bt-part="bar">
+          <div data-bt-part="sub-nav-bar">
             {hasContent(title) ? (
-              <Text variant="label" truncate data-bt-part="title">
+              <Text variant="label" truncate data-bt-part="sub-nav-title">
                 {title}
               </Text>
             ) : null}
@@ -87,7 +87,7 @@ export function SubNav({
               <OverflowCluster
                 justify={hasContent(title) ? "end" : "start"}
                 moreLabel={moreLabel}
-                data-bt-part="links"
+                data-bt-part="sub-nav-links"
               >
                 {items.map((item) => (
                   <OverflowCluster.Item
@@ -121,7 +121,7 @@ export function SubNav({
               </OverflowCluster>
             </SharedIndicator.Group>
             {hasContent(action) ? (
-              <div data-bt-part="action">{action}</div>
+              <div data-bt-part="sub-nav-action">{action}</div>
             ) : null}
           </div>
         </Container>

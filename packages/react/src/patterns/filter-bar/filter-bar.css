@@ -98,11 +98,11 @@
     inset: calc((var(--bt-filter-bar-remove) - var(--bt-filter-bar-hit)) / 2);
   }
 
-  .bt-filter-pill [data-bt-part="value"] {
+  .bt-filter-pill [data-bt-part="filter-bar-value"] {
     color: var(--bt-text);
   }
 
-  .bt-filter-pill [data-bt-part="divider"] {
+  .bt-filter-pill [data-bt-part="filter-bar-divider"] {
     color: var(--bt-text-tertiary);
   }
 }

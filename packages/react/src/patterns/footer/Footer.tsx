@@ -23,9 +23,11 @@ function FooterRoot({
   return (
     <footer {...rest} className={cx("bt-footer", className)} data-bt="Footer">
       <Container>
-        <div data-bt-part="body">
-          <div data-bt-part="grid">
-            {hasContent(brand) ? <div data-bt-part="brand">{brand}</div> : null}
+        <div data-bt-part="footer-body">
+          <div data-bt-part="footer-grid">
+            {hasContent(brand) ? (
+              <div data-bt-part="footer-brand">{brand}</div>
+            ) : null}
             {children}
           </div>
           {hasContent(legal) ? <div data-bt-part="legal">{legal}</div> : null}
@@ -66,7 +68,7 @@ export function FooterColumn({
       >
         {title}
       </h2>
-      <ul aria-labelledby={headingId} data-bt-part="links">
+      <ul aria-labelledby={headingId} data-bt-part="footer-links">
         <InColumn value>{children}</InColumn>
       </ul>
     </div>

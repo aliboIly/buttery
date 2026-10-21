@@ -102,12 +102,16 @@
 
   .bt-chart-frame
     [data-bt-part="plot"]
-    > :is([data-bt-part="grid"], [data-bt-part="mark"], [data-bt-part="bars"]) {
+    > :is(
+      [data-bt-part="chart-frame-grid"],
+      [data-bt-part="chart-frame-mark"],
+      [data-bt-part="bars"]
+    ) {
     grid-area: 1 / 1;
     min-inline-size: 0;
   }
 
-  .bt-chart-frame [data-bt-part="grid"] {
+  .bt-chart-frame [data-bt-part="chart-frame-grid"] {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -115,16 +119,16 @@
 
   /* A lone tick is zero, which sits on the plot's bottom edge. */
   .bt-chart-frame > [data-bt-part="y-axis"]:has(> :only-child),
-  .bt-chart-frame [data-bt-part="grid"]:has(> :only-child) {
+  .bt-chart-frame [data-bt-part="chart-frame-grid"]:has(> :only-child) {
     justify-content: flex-end;
   }
 
-  .bt-chart-frame [data-bt-part="grid"] > span {
+  .bt-chart-frame [data-bt-part="chart-frame-grid"] > span {
     block-size: var(--bt-chart-frame-hairline);
     background-color: var(--bt-border);
   }
 
-  .bt-chart-frame [data-bt-part="mark"] {
+  .bt-chart-frame [data-bt-part="chart-frame-mark"] {
     inline-size: 100%;
     block-size: 100%;
     overflow: visible;
@@ -139,7 +143,7 @@
     vector-effect: non-scaling-stroke;
   }
 
-  .bt-chart-frame [data-bt-part="area"] {
+  .bt-chart-frame [data-bt-part="chart-frame-area"] {
     fill: var(--bt-chart-frame-series);
     fill-opacity: var(--bt-chart-frame-area);
   }
@@ -165,7 +169,7 @@
     min-inline-size: 0;
   }
 
-  .bt-chart-frame [data-bt-part="bar"] {
+  .bt-chart-frame [data-bt-part="chart-frame-bar"] {
     position: absolute;
     right: 0;
     left: 0;
@@ -174,7 +178,7 @@
     background-color: var(--bt-chart-frame-series);
   }
 
-  .bt-chart-frame [data-bt-part="bar"][data-negative] {
+  .bt-chart-frame [data-bt-part="chart-frame-bar"][data-negative] {
     border-radius: 0 0 var(--bt-chart-frame-bar-radius)
       var(--bt-chart-frame-bar-radius);
   }
@@ -189,7 +193,7 @@
     pointer-events: none;
   }
 
-  .bt-chart-frame [data-bt-part="column"] {
+  .bt-chart-frame [data-bt-part="chart-frame-column"] {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -244,7 +248,7 @@
     column-gap: var(--bt-space-2);
   }
 
-  .bt-chart-frame [data-bt-part="swatch"] {
+  .bt-chart-frame [data-bt-part="chart-frame-swatch"] {
     inline-size: var(--bt-chart-frame-swatch);
     block-size: var(--bt-chart-frame-swatch);
     border-radius: var(--bt-chart-frame-swatch-radius);

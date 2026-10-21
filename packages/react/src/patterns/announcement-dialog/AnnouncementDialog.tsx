@@ -151,10 +151,13 @@ export function AnnouncementDialog({
             data-bt-part="layout"
             data-media={media === undefined ? undefined : ""}
           >
-            <div data-bt-part="copy">
+            <div data-bt-part="announcement-dialog-copy">
               <Dialog.Text size="feature" title={title} />
               {sections.map((section, index) => (
-                <section key={section.title ?? index} data-bt-part="section">
+                <section
+                  key={section.title ?? index}
+                  data-bt-part="announcement-dialog-section"
+                >
                   {section.title === undefined ? null : (
                     <Text variant="title-sm" asChild>
                       <h3>{section.title}</h3>
@@ -163,7 +166,7 @@ export function AnnouncementDialog({
                   <Text variant="body">{section.body}</Text>
                 </section>
               ))}
-              <div data-bt-part="actions">
+              <div data-bt-part="announcement-dialog-actions">
                 <Dialog.Close asChild>
                   <Button variant="primary">{doneLabel}</Button>
                 </Dialog.Close>
@@ -194,7 +197,7 @@ export function AnnouncementDialog({
               </div>
             </div>
             {media === undefined ? null : (
-              <div data-bt-part="media" data-bt-clip="">
+              <div data-bt-part="announcement-dialog-media" data-bt-clip="">
                 {media}
               </div>
             )}

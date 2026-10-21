@@ -104,7 +104,7 @@ describe("RadioCardGroup", () => {
     render(<RadioCardGroup label="Renewal screening" options={OPTIONS} />);
     const hit = screen
       .getByRole("radio", { name: "Screen every renewal" })
-      .querySelector('[data-bt-part="hit"]');
+      .querySelector('[data-bt-part="radio-card-group-hit"]');
     expect(hit?.getBoundingClientRect().width).toBe(24);
   });
 });

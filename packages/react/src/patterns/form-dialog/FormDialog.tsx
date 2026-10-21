@@ -128,7 +128,7 @@ export function FormDialog({
               )}
               {children}
             </Dialog.Body>
-            <div data-bt-part="footer">
+            <div data-bt-part="form-dialog-footer">
               <Dialog.Close asChild>
                 <Button variant="soft">{cancelLabel}</Button>
               </Dialog.Close>

@@ -137,13 +137,16 @@ export function ConsequenceDialog({
         >
           <Dialog.Text title={title} size="feature" />
           <Dialog.Body>
-            <ul data-bt-part="items">
+            <ul data-bt-part="consequence-dialog-items">
               {items.map((item) => (
-                <li key={item.title} data-bt-part="item">
-                  <span data-bt-part="tile" aria-hidden="true">
+                <li key={item.title} data-bt-part="consequence-dialog-item">
+                  <span
+                    data-bt-part="consequence-dialog-tile"
+                    aria-hidden="true"
+                  >
                     <Icon icon={item.icon} />
                   </span>
-                  <span data-bt-part="item-text">
+                  <span data-bt-part="consequence-dialog-item-text">
                     <Text variant="title-sm">{item.title}</Text>
                     <Text variant="body-sm">{item.body}</Text>
                   </span>

@@ -74,7 +74,7 @@ describe("SavedViews", () => {
     ).toBeTruthy();
     const all = screen.getByRole("radio", { name: "All orders" });
     expect(all.getAttribute("aria-checked")).toBe("true");
-    const track = document.querySelector('[data-bt-part="track"]');
+    const track = document.querySelector('[data-bt-part="saved-views-track"]');
     expect(track?.getBoundingClientRect().height).toBe(34);
     await settled();
     expect(all.querySelector('[data-bt-part="indicator"]')).not.toBeNull();

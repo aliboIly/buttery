@@ -58,7 +58,7 @@ export function CenteredHero({
       data-bt="CenteredHero"
     >
       <Container>
-        <div data-bt-part="layout">
+        <div data-bt-part="centered-hero-layout">
           <HeroText
             titleId={titleId}
             align="center"
@@ -68,10 +68,10 @@ export function CenteredHero({
             titleMore={titleMore}
             body={body}
             actions={actions}
-            data-bt-part="words"
+            data-bt-part="centered-hero-words"
           />
           {visual === undefined ? null : (
-            <Stagger arrival="assemble" data-bt-part="visual">
+            <Stagger arrival="assemble" data-bt-part="centered-hero-visual">
               {visual}
             </Stagger>
           )}

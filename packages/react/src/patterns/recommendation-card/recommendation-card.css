@@ -17,7 +17,7 @@
     padding: var(--bt-space-4);
   }
 
-  .bt-recommendation-card [data-bt-part="top"] {
+  .bt-recommendation-card [data-bt-part="recommendation-card-top"] {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -25,7 +25,7 @@
     min-block-size: var(--bt-h-sm);
   }
 
-  .bt-recommendation-card [data-bt-part="foot"] {
+  .bt-recommendation-card [data-bt-part="recommendation-card-foot"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -33,7 +33,9 @@
     padding-block-start: var(--bt-space-2);
   }
 
-  .bt-recommendation-card [data-bt-part="foot"] > .bt-time-estimate {
+  .bt-recommendation-card
+    [data-bt-part="recommendation-card-foot"]
+    > .bt-time-estimate {
     grid-column: 2;
   }
 

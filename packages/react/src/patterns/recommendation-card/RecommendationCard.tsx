@@ -82,7 +82,7 @@ export function RecommendationCard({
       data-bt="RecommendationCard"
     >
       <div data-bt-part="content">
-        <div data-bt-part="top">
+        <div data-bt-part="recommendation-card-top">
           <StatusBadge tone="info" icon={Lightbulb}>
             {badge}
           </StatusBadge>
@@ -98,7 +98,7 @@ export function RecommendationCard({
         </Text>
         <Text variant="body-sm">{children}</Text>
         {action === undefined && estimate === undefined ? null : (
-          <div data-bt-part="foot">
+          <div data-bt-part="recommendation-card-foot">
             {action === undefined ? null : action.href === undefined ? (
               <ArrowLink asChild>
                 <button type="button" onClick={action.onClick}>

@@ -135,7 +135,7 @@ export function CatalogPageGroup({
 }: CatalogPageGroupProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} data-bt-part="group">
+    <section aria-labelledby={titleId} data-bt-part="catalog-page-group">
       <Text id={titleId} variant="title-sm" asChild>
         <h2>{title}</h2>
       </Text>
@@ -159,11 +159,11 @@ export function CatalogPageFeatured({
 }: CatalogPageSectionProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} data-bt-part="featured">
+    <section aria-labelledby={titleId} data-bt-part="catalog-page-featured">
       <Text id={titleId} variant="title-md" asChild>
         <h2>{title}</h2>
       </Text>
-      <div data-bt-part="items">{children}</div>
+      <div data-bt-part="catalog-page-items">{children}</div>
     </section>
   );
 }
@@ -179,7 +179,7 @@ export function CatalogPageSection({
       <Text id={titleId} variant="title-md" asChild>
         <h2>{title}</h2>
       </Text>
-      <div data-bt-part="items">{children}</div>
+      <div data-bt-part="catalog-page-items">{children}</div>
     </section>
   );
 }
@@ -213,9 +213,11 @@ export function CatalogPageItem({
   onNavigate,
 }: CatalogPageItemProps): ReactElement {
   return (
-    <article data-bt-part="item">
-      {hasContent(media) ? <div data-bt-part="media">{media}</div> : null}
-      <div data-bt-part="item-text">
+    <article data-bt-part="catalog-page-item">
+      {hasContent(media) ? (
+        <div data-bt-part="catalog-page-media">{media}</div>
+      ) : null}
+      <div data-bt-part="catalog-page-item-text">
         <a
           href={href}
           className="bt-text bt-focus"
@@ -231,7 +233,7 @@ export function CatalogPageItem({
           <Text variant="body-sm">{description}</Text>
         )}
         {note === undefined ? null : (
-          <Text variant="body-sm" data-bt-part="note">
+          <Text variant="body-sm" data-bt-part="catalog-page-note">
             {note}
           </Text>
         )}

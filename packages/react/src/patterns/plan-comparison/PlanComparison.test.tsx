@@ -121,11 +121,14 @@ describe("PlanComparison", () => {
     expect(box(starter).height).toBe(box(roaster).height);
     const top = (scope: HTMLElement, part: string): number =>
       box(scope.querySelector(`[data-bt-part="${part}"]`)).top;
-    for (const part of ["price", "action", "features"])
+    for (const part of ["price", "plan-comparison-action", "features"])
       expect(top(starter, part)).toBe(top(roaster, part));
     expect(
       box(within(roaster).getByRole("button", { name: "Try Roaster" })).width,
-    ).toBe(box(roaster.querySelector('[data-bt-part="action"]')).width);
+    ).toBe(
+      box(roaster.querySelector('[data-bt-part="plan-comparison-action"]'))
+        .width,
+    );
   });
 
   it("puts a plan's ribbon on a tab above its card and its checklist under a heading", () => {

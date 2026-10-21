@@ -19,7 +19,7 @@
       "copy";
   }
 
-  .bt-announcement-dialog [data-bt-part="copy"] {
+  .bt-announcement-dialog [data-bt-part="announcement-dialog-copy"] {
     display: flex;
     flex-direction: column;
     grid-area: copy;
@@ -32,13 +32,13 @@
     padding: 0;
   }
 
-  .bt-announcement-dialog [data-bt-part="section"] {
+  .bt-announcement-dialog [data-bt-part="announcement-dialog-section"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-2);
   }
 
-  .bt-announcement-dialog [data-bt-part="actions"] {
+  .bt-announcement-dialog [data-bt-part="announcement-dialog-actions"] {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -46,14 +46,16 @@
     padding-block-start: var(--bt-space-2);
   }
 
-  .bt-announcement-dialog [data-bt-part="media"] {
+  .bt-announcement-dialog [data-bt-part="announcement-dialog-media"] {
     grid-area: media;
     min-inline-size: 0;
     overflow: clip;
     border-radius: var(--bt-r-lg);
   }
 
-  .bt-announcement-dialog [data-bt-part="media"] > :is(img, svg, picture) {
+  .bt-announcement-dialog
+    [data-bt-part="announcement-dialog-media"]
+    > :is(img, svg, picture) {
     display: block;
     inline-size: 100%;
     block-size: auto;

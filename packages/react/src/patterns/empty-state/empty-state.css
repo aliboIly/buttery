@@ -20,7 +20,7 @@
     min-inline-size: 0;
   }
 
-  .bt-empty-state [data-bt-part="icon"] {
+  .bt-empty-state [data-bt-part="empty-state-icon"] {
     display: grid;
     flex: none;
     place-items: center;

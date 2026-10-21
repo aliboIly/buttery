@@ -25,7 +25,7 @@
   }
 
   .bt-catalog-page [data-bt-part="categories"],
-  .bt-catalog-page [data-bt-part="group"] {
+  .bt-catalog-page [data-bt-part="catalog-page-group"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-2);
@@ -59,7 +59,8 @@
     color: var(--bt-primary);
   }
 
-  .bt-catalog-page :is([data-bt-part="featured"], [data-bt-part="section"]) {
+  .bt-catalog-page
+    :is([data-bt-part="catalog-page-featured"], [data-bt-part="section"]) {
     container: bt-catalog-items / inline-size;
     display: flex;
     flex-direction: column;
@@ -67,13 +68,13 @@
     min-inline-size: 0;
   }
 
-  .bt-catalog-page [data-bt-part="featured"] {
+  .bt-catalog-page [data-bt-part="catalog-page-featured"] {
     padding: var(--bt-space-6);
     border-radius: var(--bt-r-lg);
     background-color: var(--bt-bg-section);
   }
 
-  .bt-catalog-page [data-bt-part="items"] {
+  .bt-catalog-page [data-bt-part="catalog-page-items"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--bt-space-6) var(--bt-space-8);
@@ -81,18 +82,18 @@
   }
 
   @container bt-catalog-items (width >= 560px) {
-    .bt-catalog-page [data-bt-part="items"] {
+    .bt-catalog-page [data-bt-part="catalog-page-items"] {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  .bt-catalog-page [data-bt-part="item"] {
+  .bt-catalog-page [data-bt-part="catalog-page-item"] {
     display: flex;
     gap: var(--bt-space-4);
     min-inline-size: 0;
   }
 
-  .bt-catalog-page [data-bt-part="media"] {
+  .bt-catalog-page [data-bt-part="catalog-page-media"] {
     display: grid;
     flex: none;
     place-items: center;
@@ -100,7 +101,7 @@
     block-size: var(--bt-catalog-page-media);
   }
 
-  .bt-catalog-page [data-bt-part="item-text"] {
+  .bt-catalog-page [data-bt-part="catalog-page-item-text"] {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -124,7 +125,7 @@
     }
   }
 
-  .bt-catalog-page [data-bt-part="note"] {
+  .bt-catalog-page [data-bt-part="catalog-page-note"] {
     color: var(--bt-text-secondary);
     font-style: italic;
   }

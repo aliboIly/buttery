@@ -64,7 +64,7 @@ export function SplitHero({
       data-visual-side={visualSide}
     >
       <Container>
-        <div data-bt-part="layout">
+        <div data-bt-part="split-hero-layout">
           <HeroText
             titleId={titleId}
             eyebrow={eyebrow}
@@ -73,9 +73,9 @@ export function SplitHero({
             titleMore={titleMore}
             body={body}
             actions={actions}
-            data-bt-part="words"
+            data-bt-part="split-hero-words"
           />
-          <Stagger arrival="assemble" data-bt-part="visual">
+          <Stagger arrival="assemble" data-bt-part="split-hero-visual">
             {visual}
           </Stagger>
         </div>

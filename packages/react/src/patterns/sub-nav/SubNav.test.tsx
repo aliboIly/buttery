@@ -55,7 +55,8 @@ describe("SubNav", () => {
     page();
     const nav = screen.getByRole("navigation", { name: "Sections" });
     expect(
-      nav.querySelector('[data-bt-part="bar"]')?.getBoundingClientRect().height,
+      nav.querySelector('[data-bt-part="sub-nav-bar"]')?.getBoundingClientRect()
+        .height,
     ).toBe(48);
     expect(link("Features").getAttribute("href")).toBe("#features");
   });

@@ -8,7 +8,7 @@
     background-color: var(--bt-bg-surface);
   }
 
-  .bt-sub-nav [data-bt-part="bar"] {
+  .bt-sub-nav [data-bt-part="sub-nav-bar"] {
     display: flex;
     align-items: center;
     gap: var(--bt-space-6);
@@ -16,23 +16,23 @@
     min-inline-size: 0;
   }
 
-  .bt-sub-nav [data-bt-part="title"] {
+  .bt-sub-nav [data-bt-part="sub-nav-title"] {
     flex: 0 1 auto;
     min-inline-size: 0;
     color: var(--bt-text-strong);
   }
 
   /* The links fill the bar's height, so their underline sits on its bottom edge. */
-  .bt-sub-nav [data-bt-part="links"] {
+  .bt-sub-nav [data-bt-part="sub-nav-links"] {
     align-self: stretch;
     align-items: stretch;
   }
 
-  .bt-sub-nav [data-bt-part="links"] > [data-bt-part="more"] {
+  .bt-sub-nav [data-bt-part="sub-nav-links"] > [data-bt-part="more"] {
     align-self: center;
   }
 
-  .bt-sub-nav [data-bt-part="action"] {
+  .bt-sub-nav [data-bt-part="sub-nav-action"] {
     flex: none;
   }
 

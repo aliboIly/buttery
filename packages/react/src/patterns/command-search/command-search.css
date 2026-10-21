@@ -103,7 +103,7 @@
     min-inline-size: var(--bt-command-search-input);
   }
 
-  .bt-command-search [data-bt-part="input"] {
+  .bt-command-search [data-bt-part="command-search-input"] {
     flex: 1 1 auto;
     min-inline-size: 0;
     padding: 0;
@@ -117,13 +117,15 @@
     appearance: none;
   }
 
-  .bt-command-search [data-bt-part="input"]::placeholder {
+  .bt-command-search [data-bt-part="command-search-input"]::placeholder {
     color: var(--bt-text-tertiary);
     opacity: 1;
   }
 
-  .bt-command-search [data-bt-part="input"]::-webkit-search-cancel-button,
-  .bt-command-search [data-bt-part="input"]::-webkit-search-decoration {
+  .bt-command-search
+    [data-bt-part="command-search-input"]::-webkit-search-cancel-button,
+  .bt-command-search
+    [data-bt-part="command-search-input"]::-webkit-search-decoration {
     appearance: none;
   }
 
@@ -145,13 +147,15 @@
     overscroll-behavior: contain;
   }
 
-  .bt-command-search-panel [data-bt-part="group"] {
+  .bt-command-search-panel [data-bt-part="command-search-group"] {
     display: flex;
     flex-direction: column;
     padding-block: var(--bt-space-2);
   }
 
-  .bt-command-search-panel [data-bt-part="group"] + [data-bt-part="group"] {
+  .bt-command-search-panel
+    [data-bt-part="command-search-group"]
+    + [data-bt-part="command-search-group"] {
     border-block-start: var(--bt-command-search-line) solid var(--bt-border);
   }
 
@@ -160,7 +164,7 @@
     color: var(--bt-text-strong);
   }
 
-  .bt-command-search-panel [data-bt-part="option"],
+  .bt-command-search-panel [data-bt-part="command-search-option"],
   .bt-command-search-panel [data-bt-part="searching"] {
     display: flex;
     align-items: center;
@@ -173,7 +177,7 @@
     cursor: default;
   }
 
-  .bt-command-search-panel [data-bt-part="option"][data-active] {
+  .bt-command-search-panel [data-bt-part="command-search-option"][data-active] {
     background-color: var(--bt-bg-item-hover);
   }
 
@@ -182,16 +186,16 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-command-search-panel [data-bt-part="media"] {
+  .bt-command-search-panel [data-bt-part="command-search-media"] {
     display: inline-flex;
     flex: none;
   }
 
-  .bt-command-search-panel [data-bt-part="label"] {
+  .bt-command-search-panel [data-bt-part="command-search-label"] {
     min-inline-size: 0;
   }
 
-  .bt-command-search-panel [data-bt-part="path"] {
+  .bt-command-search-panel [data-bt-part="command-search-path"] {
     display: inline-flex;
     align-items: center;
     gap: var(--bt-space-1);
@@ -199,23 +203,24 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-command-search-panel [data-bt-part="path-chevron"] {
+  .bt-command-search-panel [data-bt-part="command-search-path-chevron"] {
     color: var(--bt-text-tertiary);
   }
 
-  .bt-command-search-panel [data-bt-part="match"] {
+  /* SearchHighlight's marks, wherever it's drawn. */
+  .bt-search-match {
     border-radius: var(--bt-r-xs);
     background-color: var(--bt-accent-subtle);
     color: inherit;
   }
 
-  .bt-command-search-panel [data-bt-part="detail"] {
+  .bt-command-search-panel [data-bt-part="command-search-detail"] {
     flex: 0 1 auto;
     min-inline-size: 0;
     color: var(--bt-text-secondary);
   }
 
-  .bt-command-search-panel [data-bt-part="key"] {
+  .bt-command-search-panel [data-bt-part="command-search-key"] {
     display: inline-flex;
     flex: none;
     align-items: center;
@@ -231,7 +236,7 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-command-search-panel [data-bt-part="description"] {
+  .bt-command-search-panel [data-bt-part="command-search-description"] {
     flex: 1 1 auto;
     min-inline-size: 0;
     color: var(--bt-text-secondary);
@@ -249,7 +254,7 @@
     block-size: var(--bt-icon-sm);
   }
 
-  .bt-command-search-panel [data-bt-part="empty"] {
+  .bt-command-search-panel [data-bt-part="command-search-empty"] {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -273,7 +278,7 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-command-search-panel [data-bt-part="footer"] {
+  .bt-command-search-panel [data-bt-part="command-search-footer"] {
     display: flex;
     flex: none;
     align-items: center;

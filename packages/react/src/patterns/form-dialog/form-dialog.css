@@ -18,7 +18,7 @@
     min-inline-size: 0;
   }
 
-  .bt-form-dialog [data-bt-part="footer"] {
+  .bt-form-dialog [data-bt-part="form-dialog-footer"] {
     display: flex;
     justify-content: flex-end;
     gap: var(--bt-space-2);

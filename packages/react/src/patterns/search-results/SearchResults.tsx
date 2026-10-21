@@ -77,7 +77,7 @@ function ResultRow({
     source.renderItem === undefined ? (
       <>
         {hasContent(item.media) ? (
-          <span data-bt-part="media">{item.media}</span>
+          <span data-bt-part="search-results-media">{item.media}</span>
         ) : item.icon ? (
           <Icon icon={item.icon} data-bt-part="result-icon" />
         ) : null}
@@ -85,12 +85,15 @@ function ResultRow({
           className="bt-truncate"
           data-bt-truncate=""
           title={[...(item.path ?? []), item.label].join(" › ")}
-          data-bt-part="label"
+          data-bt-part="search-results-label"
         >
           {item.path?.map((part) => (
-            <span key={part} data-bt-part="path">
+            <span key={part} data-bt-part="search-results-path">
               <SearchHighlight text={part} query={query.text} />
-              <Icon icon={ChevronRight} data-bt-part="path-chevron" />
+              <Icon
+                icon={ChevronRight}
+                data-bt-part="search-results-path-chevron"
+              />
             </span>
           ))}
           <SearchHighlight text={item.label} query={query.text} />
@@ -100,7 +103,7 @@ function ResultRow({
             className="bt-truncate"
             data-bt-truncate=""
             title={item.detail}
-            data-bt-part="detail"
+            data-bt-part="search-results-detail"
           >
             {item.detail}
           </span>
@@ -242,7 +245,7 @@ export function SearchResults({
             description={loading ? undefined : words.count(items.length)}
           >
             {loading ? (
-              <div data-bt-part="loading">
+              <div data-bt-part="search-results-loading">
                 <LoadingPill label={words.loading} />
               </div>
             ) : (

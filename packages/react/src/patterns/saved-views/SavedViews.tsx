@@ -112,7 +112,7 @@ export function SavedViews({
         size="control"
         moreLabel={moreLabel}
         menu={menu}
-        data-bt-part="track"
+        data-bt-part="saved-views-track"
       >
         <SharedIndicator.Group>
           <RadioGroup.Root
@@ -138,7 +138,7 @@ export function SavedViews({
                     <button
                       type="button"
                       className="bt-press bt-focus"
-                      data-bt-part="view"
+                      data-bt-part="saved-views-view"
                     >
                       <span
                         className="bt-truncate"

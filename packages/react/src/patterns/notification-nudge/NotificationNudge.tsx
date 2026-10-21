@@ -219,7 +219,7 @@ export function NotificationNudge({
             {description === undefined ? null : (
               <Text variant="body-sm">{description}</Text>
             )}
-            <div data-bt-part="actions">
+            <div data-bt-part="notification-nudge-actions">
               {action.href === undefined ? (
                 <Button variant="primary" size="sm" onClick={act}>
                   {action.label}

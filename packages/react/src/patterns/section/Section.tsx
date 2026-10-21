@@ -55,7 +55,7 @@ export function Section({
           align={align}
           title={<span id={titleId}>{title}</span>}
           body={body}
-          data-bt-part="intro"
+          data-bt-part="section-intro"
         />
       ) : null}
       {children}

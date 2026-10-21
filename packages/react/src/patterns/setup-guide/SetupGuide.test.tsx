@@ -294,8 +294,10 @@ describe("SetupGuide", () => {
     const circle = (title: string): SVGCircleElement => {
       const element = within(guide())
         .getByText(title)
-        .closest('[data-bt-part="step"]')
-        ?.querySelector<SVGCircleElement>('[data-bt-part="check"] circle');
+        .closest('[data-bt-part="setup-guide-step"]')
+        ?.querySelector<SVGCircleElement>(
+          '[data-bt-part="setup-guide-check"] circle',
+        );
       if (!element) throw new Error(`No check for ${title}.`);
       return element;
     };
@@ -319,7 +321,7 @@ describe("SetupGuide", () => {
     const link = await within(guide()).findByRole("link", {
       name: "Talk to the roasting team",
     });
-    const footer = link.closest('[data-bt-part="footer"]');
+    const footer = link.closest('[data-bt-part="setup-guide-footer"]');
     if (!(footer instanceof HTMLElement)) throw new Error("No footer.");
     expect(getComputedStyle(footer).borderTopWidth).toBe("1px");
   });

@@ -83,7 +83,7 @@ describe("NavBar", () => {
     expect(
       within(banner).getByRole("navigation", { name: "Main" }),
     ).toBeTruthy();
-    const row = bar().querySelector('[data-bt-part="bar"]');
+    const row = bar().querySelector('[data-bt-part="nav-bar-bar"]');
     expect(row?.getBoundingClientRect().height).toBe(64);
     const top = row?.getBoundingClientRect().top ?? 0;
     for (const name of ["Product", "Sign in"]) {
@@ -99,7 +99,7 @@ describe("NavBar", () => {
       </div>,
     );
     const row = (): Element | null =>
-      bar().querySelector('[data-bt-part="bar"]');
+      bar().querySelector('[data-bt-part="nav-bar-bar"]');
     expect(row()?.getBoundingClientRect().width).toBe(1200);
     rerender(
       <div style={{ inlineSize: "1600px" }}>
@@ -173,7 +173,7 @@ describe("NavBar", () => {
         throw new Error("The card hasn't unfolded yet.");
       return element;
     });
-    const row = bar().querySelector('[data-bt-part="bar"]');
+    const row = bar().querySelector('[data-bt-part="nav-bar-bar"]');
     if (!row) throw new Error("No bar row.");
     expect(card.getBoundingClientRect().top).toBe(
       row.getBoundingClientRect().bottom + 8,

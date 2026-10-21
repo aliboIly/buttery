@@ -6,7 +6,7 @@
     background-color: var(--bt-bg-surface);
   }
 
-  .bt-centered-hero [data-bt-part="layout"] {
+  .bt-centered-hero [data-bt-part="centered-hero-layout"] {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -14,12 +14,12 @@
     padding-block: var(--bt-space-24);
   }
 
-  .bt-centered-hero [data-bt-part="words"] {
+  .bt-centered-hero [data-bt-part="centered-hero-words"] {
     max-inline-size: calc(100% * 8 / 12);
   }
 
   /* The visual's pieces stack 12px apart, so a fragment of Stagger.Items is spaced like a Stack. */
-  .bt-centered-hero [data-bt-part="visual"] {
+  .bt-centered-hero [data-bt-part="centered-hero-visual"] {
     display: grid;
     gap: var(--bt-space-3);
     inline-size: 100%;
@@ -27,17 +27,17 @@
   }
 
   @container bt-hero (width < 640px) {
-    .bt-centered-hero [data-bt-part="layout"] {
+    .bt-centered-hero [data-bt-part="centered-hero-layout"] {
       padding-block: var(--bt-space-16);
     }
 
-    .bt-centered-hero [data-bt-part="words"] {
+    .bt-centered-hero [data-bt-part="centered-hero-words"] {
       max-inline-size: 100%;
     }
   }
 
   @container bt-hero (width >= 1024px) {
-    .bt-centered-hero [data-bt-part="layout"] {
+    .bt-centered-hero [data-bt-part="centered-hero-layout"] {
       gap: var(--bt-space-16);
       padding-block: var(--bt-space-32);
     }
