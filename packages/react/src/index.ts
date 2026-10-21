@@ -509,3 +509,5 @@ export type {
   SetupGuideProps,
   SetupTask,
 } from "./patterns/setup-guide/SetupGuide.tsx";
+export { ChoiceDialog } from "./patterns/choice-dialog/ChoiceDialog.tsx";
+export type { ChoiceDialogProps } from "./patterns/choice-dialog/ChoiceDialog.tsx";

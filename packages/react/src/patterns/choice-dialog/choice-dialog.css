@@ -1,0 +1,71 @@
+@layer bt.patterns {
+  .bt-choice-dialog {
+    --bt-choice-dialog-tile: 36px;
+    --bt-choice-dialog-arrow: 20px;
+    --bt-choice-dialog-line: 1px;
+
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .bt-choice-dialog [data-bt-part="choices"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bt-choice-dialog [data-bt-part="choice"] {
+    --bt-transition-hover: background-color var(--bt-dur-fast)
+      var(--bt-ease-standard);
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--bt-space-3);
+    inline-size: 100%;
+    padding: var(--bt-space-4);
+    border: var(--bt-choice-dialog-line) solid var(--bt-border);
+    border-radius: var(--bt-r-lg);
+    background: none;
+    color: var(--bt-text);
+    font-family: inherit;
+    text-align: start;
+    text-decoration: none;
+    transition: var(--bt-transition-hover);
+  }
+
+  @media (hover: hover) {
+    .bt-choice-dialog [data-bt-part="choice"]:hover {
+      background-color: var(--bt-bg-item-hover);
+    }
+  }
+
+  .bt-choice-dialog [data-bt-part="tile"] {
+    display: grid;
+    place-items: center;
+    inline-size: var(--bt-choice-dialog-tile);
+    block-size: var(--bt-choice-dialog-tile);
+    border-radius: var(--bt-r-md);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-choice-dialog [data-bt-part="text"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  /* The 16px arrow drawn at 20px, its head's nudge scaled with it; the head nudges into the row's padding. */
+  .bt-choice-dialog [data-bt-part="choice"] > .bt-arrow {
+    --bt-arrow-nudge: calc(var(--bt-choice-dialog-arrow) * 3 / 16);
+
+    inline-size: calc(var(--bt-choice-dialog-arrow) * 6 / 16);
+    block-size: var(--bt-choice-dialog-arrow);
+  }
+}
