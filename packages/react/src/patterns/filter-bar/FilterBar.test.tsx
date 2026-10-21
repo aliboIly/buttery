@@ -6,6 +6,7 @@ import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { SearchField } from "../../components/search-field/SearchField.tsx";
 import { FilterBar, FilterPill } from "./FilterBar.tsx";
 
 beforeEach(() => {
@@ -118,6 +119,31 @@ describe("FilterBar", () => {
       await screen.findByRole("button", { name: "Status: Paid" }),
     ).toBeTruthy();
     expect(screen.getByRole("button", { name: "Export" })).toBeTruthy();
+  });
+
+  it("narrows a search in its actions before the folded Filters button gives up any of its label", () => {
+    render(
+      <div style={{ inlineSize: "280px" }}>
+        <FilterBar
+          actions={
+            <SearchField
+              label="Search orders"
+              placeholder="Order or customer"
+              variant="outline"
+            />
+          }
+        >
+          <FilterPill label="Status">Paid</FilterPill>
+        </FilterBar>
+      </div>,
+    );
+    const folded = screen.getByRole("button", { name: "Filters" });
+    const label = folded.querySelector<HTMLElement>(".bt-truncate");
+    if (!label) throw new Error("No label.");
+    expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth);
+    const bar = document.querySelector<HTMLElement>(".bt-filter-bar");
+    if (!bar) throw new Error("No bar.");
+    expect(bar.scrollWidth).toBeLessThanOrEqual(bar.clientWidth);
   });
 
   it("keeps a remove button's press area 24px square", () => {
