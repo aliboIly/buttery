@@ -1,6 +1,6 @@
 # 🧈 buttery — Build Plan
 
-Nine phases (0–8). Each ends with a **hard stop**: the agent shows screenshots + a short summary and waits for the go-ahead. Guardrails (Phase 2) come *before* components, so every component after is checked automatically. `ROADMAP.md` mirrors these phases as checkboxes — tick them as items land.
+Phases 0–8, with 4.5 (forms and text) and 6B (the App kit) between them. Each ends with a **hard stop**: the agent shows screenshots + a short summary and waits for the go-ahead. Guardrails (Phase 2) come *before* components, so every component after is checked automatically. `ROADMAP.md` mirrors these phases as checkboxes — tick them as items land.
 
 Definition of done for every phase:
 - `pnpm check` passes (authorship and private-path checks, typecheck, lint, stylelint, format, unit and smoke tests; from Phase 2 on, also `expectButtery` on every playground page and the starter at 390 and 1280, light and dark, comfortable, in Chromium + WebKit).
@@ -73,6 +73,25 @@ Definition of done for every phase:
 - Demo: an original marketing page for Card Studio using the page patterns and `NavBar`; Card Studio gets a 4-step onboarding; the playground's docs shell moves onto `NavBar`.
 
 **Accept:** onboarding compared frame-by-frame with `reference/motion/`; menu morph and card → modal compared with the local choreography strips (behavior, not look); matrix green. `NavBar`: Playwright samples the panel per frame and reports open, switch and close times against MOTION_SPEC §4.1, and the panel never paints over the bar's items or overflows the viewport at 390, 960 and 1440; side-by-side frames against `reference/inspiration-nav/` with the differences listed.
+
+## Phase 6B — App kit
+Everything a dashboard-style app needs, so building one is composing parts. Specs: DESIGN_SPEC §6, MOTION_SPEC §3 "App chrome", LAYOUT_RULES §3. Structure, density and timing come from `reference/inspiration-dashboard/` (local only); the look is buttery's, and the demo's domain, names, copy and data are original.
+- Tokens first: the widths, `--bt-h-table-row`, `title-lg` and `title-md`, `chart-1`…`chart-5`, `--bt-dur-shimmer`, `--bt-delay-submenu` and `--bt-delay-loading`, with their contrast pairs.
+- **Shell:** `AppShell layout="sidebar"`; `Sidebar` (workspace switcher, `Sidebar.Item`, `Sidebar.Section`, `Sidebar.Group` that collapses, the automatic Recent section, a More group; a rail under 1100, a sheet under 640); `TopBar` (search, actions with a notification dot, a round create button); `AppPage` (`width` contained or full, `aside`, `fill`, `AppPage.Section`).
+- **Page header:** `PageHeader` (title, inline value, info tooltip, actions), `Button shortcut` with a `Kbd` inside, underline `Tabs` on a `SharedIndicator`, `QuickActions`, `ViewToggle`.
+- **Data:** `DataTable` (selection, sortable headers, `DataTable.Amount` with a secondary currency, `DataTable.Id` in mono with a tooltip, row hover, row actions, sticky header and first column, skeleton rows, pagination, no-results row with Clear all, `size="compact"`), `StatusBadge`, `SavedViews`, `SearchField`, `FilterBar` and `FilterPill`, `ColumnSettings`, `StatTabs`, `GroupedList`.
+- **Overview:** `MetricCard`, `DateRangeBar`; `LineChart`, `AreaChart`, `BarChart` and `Sparkline` drawn in SVG in-house, with a crosshair, points and a tooltip that follows the pointer and flips at the edges. No chart library unless one is truly needed, and then logged in DECISIONS first.
+- **Guidance:** `Banner` (time estimate, dismiss), `RecommendationCard`, `SetupGuide` (bottom-end lane, progress, Next, expand, dismiss, remembered), `FeatureIntro`, `EmptyState` with `icon` and `docs`, `LoadingPill`, `NotificationNudge` and `IconButton dot`.
+- **Menus and dialogs:** `Menu` submenus (`Menu.Sub`, pointer grace, `--bt-delay-submenu`) and `entrance="instant"` on `Menu` and `Popover`; `AccountMenu`; `Avatar` and `InitialsTile`; `ChoiceDialog` and `AnnouncementDialog` on Phase 6's `Dialog`; `SettingsIndex`.
+- **Lanes:** the bottom lanes stack into one column when they'd touch, `--bt-lane-clearance`, and bottom-pinned bars as obstacles.
+- **Demo:** an original dashboard in the playground for a fictional coffee roaster (orders, subscriptions, customers, payouts, settings) on deterministic fake data from a seeded generator, using every App kit part: an overview with metric cards and charts, an orders table with saved views, filters and column settings, a customer detail page with a right rail, a settings index, the setup guide, an announcement and a nudge.
+
+**Accept:**
+- Every part follows the component contract (folder, tests in Chromium and WebKit, playground page, 2–4 examples, manifest entry) and the demo is built only from what `@buttery/core` and `@buttery/react` export.
+- `pnpm check` and the full matrix (`pnpm test:layout --reporter=json`) are green on every new page and on the demo, including the demo at 390, 768, 960, 1280, 1440 and 1728 with the sidebar as a sheet, a rail and full, the table scrolled sideways, and a toast and the setup guide showing together.
+- Per-frame timing (Playwright sampling, as in Phase 3) against MOTION_SPEC §3 "App chrome": chrome menus complete within one frame of the press; a submenu opens 40ms (±1 frame) after the hover and is fully in by 40ms + `dur-fast`; a dialog opens in `dur-fast` (±4ms) with its scale from 0.97, and closes no slower; a sidebar group opens on `spring.snappy` (95% within 3%) and closes in `dur-fast`; skeleton → content moves no element more than 1px; the chart crosshair sits on the pointer's nearest point in the same frame as the pointer move.
+- Side-by-side frames against `reference/inspiration-dashboard/` with the differences listed honestly, and a fresh reviewer's findings fixed.
+- A phase report in `notes/` sent to the maintainer.
 
 ## Phase 7 — Hardening & brand
 - Accessibility audit (axe + manual keyboard pass), dark-mode tuning, compact density pass, visual-regression baselines.
