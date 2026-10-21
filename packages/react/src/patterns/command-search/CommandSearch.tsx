@@ -20,6 +20,7 @@ import { motion } from "motion/react";
 import type { MotionStyle } from "motion/react";
 import {
   useEffect,
+  useEffectEvent,
   useId,
   useLayoutEffect,
   useMemo,
@@ -323,7 +324,10 @@ export function CommandSearch({
   const widen = useLayoutAnimation("smooth");
   const tracking = useAnimationTracking();
   const keepSize = useLayoutAnimation("smooth", "position");
-  const remoteSources = useMemo(() => sources.filter(isRemote), [sources]);
+  const remoteIds = sources
+    .filter(isRemote)
+    .map((source) => source.id)
+    .join("\n");
 
   const focusField = (event: globalThis.KeyboardEvent): void => {
     event.preventDefault();
@@ -347,36 +351,41 @@ export function CommandSearch({
     [empty, sources, query],
   );
 
-  // Remote sources are asked once typing has paused; a newer query aborts the older request.
+  const askRemote = useEffectEvent((signal: AbortSignal): void => {
+    for (const source of sources.filter(isRemote)) {
+      void source.search(query, signal).then(
+        (items) => {
+          if (signal.aborted) return;
+          setRemote((all) => ({
+            ...all,
+            [source.id]: { query: queryKey, items },
+          }));
+        },
+        (error: unknown) => {
+          if (signal.aborted) return;
+          reportError(error);
+          setRemote((all) => ({
+            ...all,
+            [source.id]: { query: queryKey, items: [] },
+          }));
+        },
+      );
+    }
+  });
+
+  // Remote sources are asked once typing has paused, keyed by what's asked rather than by the props'
+  // identity, so a parent re-rendering with inline sources or filters doesn't start the request over.
   useEffect(() => {
-    if (empty || remoteSources.length === 0) return undefined;
+    if (empty || remoteIds === "") return undefined;
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      for (const source of remoteSources) {
-        void source.search(query, controller.signal).then(
-          (items) => {
-            if (controller.signal.aborted) return;
-            setRemote((all) => ({
-              ...all,
-              [source.id]: { query: queryKey, items },
-            }));
-          },
-          (error: unknown) => {
-            if (controller.signal.aborted) return;
-            reportError(error);
-            setRemote((all) => ({
-              ...all,
-              [source.id]: { query: queryKey, items: [] },
-            }));
-          },
-        );
-      }
+      askRemote(controller.signal);
     }, timing["delay-search"]);
     return () => {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [empty, remoteSources, query, queryKey]);
+  }, [empty, remoteIds, queryKey]);
 
   const groups: PanelGroup[] = [];
   const suggestions = suggestFilters(filters, typing, empty);

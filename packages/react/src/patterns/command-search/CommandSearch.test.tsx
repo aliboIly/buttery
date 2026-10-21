@@ -8,7 +8,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-import { createRef } from "react";
+import { createRef, useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
@@ -271,6 +271,50 @@ describe("CommandSearch", () => {
       expect(options("Help")).toEqual(["Help: osk"]);
     });
     expect(asked).toEqual(["os", "osk"]);
+  });
+
+  it("lets a remote search finish while its parent re-renders with inline sources and filters", async () => {
+    const asked: string[] = [];
+    function Ticking(): ReactElement {
+      const [, setTick] = useState(0);
+      useEffect(() => {
+        const timer = window.setInterval(() => {
+          setTick((tick) => tick + 1);
+        }, 30);
+        return () => {
+          window.clearInterval(timer);
+        };
+      }, []);
+      return (
+        <ButteryProvider>
+          <CommandSearch
+            filters={[...FILTERS]}
+            sources={[
+              {
+                id: "help",
+                label: "Help",
+                remote: true,
+                search: async (query) => {
+                  asked.push(query.text);
+                  await new Promise((resolve) => setTimeout(resolve, 200));
+                  return [{ id: "a", label: `Help: ${query.text}` }];
+                },
+              },
+            ]}
+          />
+        </ButteryProvider>
+      );
+    }
+    render(<Ticking />);
+    await userEvent.click(field());
+    await userEvent.keyboard("os");
+    await waitFor(
+      () => {
+        expect(options("Help")).toEqual(["Help: os"]);
+      },
+      { timeout: 2000 },
+    );
+    expect(asked).toEqual(["os"]);
   });
 
   it("keeps its size when nothing matches, and shows the suggestions again the moment it's cleared", async () => {

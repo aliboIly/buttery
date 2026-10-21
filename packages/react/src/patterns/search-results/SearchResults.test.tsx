@@ -2,7 +2,8 @@ import "@buttery/core/styles.css";
 import "../../styles.css";
 import { publishSettled } from "@buttery/core";
 import { cleanup, render, screen, within } from "@testing-library/react";
-import { createRef } from "react";
+import { createRef, useEffect, useState } from "react";
+import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { matchesSearch, pageSource } from "../command-search/search.ts";
 import type {
@@ -111,6 +112,53 @@ describe("SearchResults", () => {
       await within(section).findByRole("link", { name: "When payouts arrive" }),
     ).toBeTruthy();
     expect(screen.getAllByText("1 result")).toHaveLength(2);
+  });
+
+  it("asks a remote source once while its parent re-renders with an inline query", async () => {
+    let asked = 0;
+    function Ticking(): ReactElement {
+      const [, setTick] = useState(0);
+      useEffect(() => {
+        const timer = window.setInterval(() => {
+          setTick((tick) => tick + 1);
+        }, 30);
+        return () => {
+          window.clearInterval(timer);
+        };
+      }, []);
+      return (
+        <SearchResults
+          query={{ text: "payouts", filters: [] }}
+          sources={[
+            {
+              id: "help",
+              label: "Help",
+              remote: true,
+              search: async () => {
+                asked += 1;
+                await new Promise((resolve) => setTimeout(resolve, 200));
+                return [
+                  {
+                    id: "payouts",
+                    label: "When payouts arrive",
+                    href: "#help",
+                  },
+                ];
+              },
+            },
+          ]}
+        />
+      );
+    }
+    render(<Ticking />);
+    expect(
+      await screen.findByRole(
+        "link",
+        { name: "When payouts arrive" },
+        { timeout: 2000 },
+      ),
+    ).toBeTruthy();
+    expect(asked).toBe(1);
   });
 
   it("names the filters in its title and says when nothing matched", () => {

@@ -1,6 +1,6 @@
 import { Icon, cx, hasContent } from "@buttery/core";
 import { ChevronRight, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { LoadingPill } from "../../components/loading-pill/LoadingPill.tsx";
 import { AppPage } from "../app-page/AppPage.tsx";
@@ -166,25 +166,35 @@ export function SearchResults({
   );
   const [remote, setRemote] = useState<Readonly<Record<string, Answer>>>({});
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const remoteIds = sources
+    .filter(isRemote)
+    .map((source) => source.id)
+    .join("\n");
+  const askRemote = useEffectEvent((signal: AbortSignal): void => {
     for (const source of sources.filter(isRemote)) {
-      void source.search(query, controller.signal).then(
+      void source.search(query, signal).then(
         (items) => {
-          if (controller.signal.aborted) return;
+          if (signal.aborted) return;
           setRemote((all) => ({ ...all, [source.id]: { key, items } }));
         },
         (error: unknown) => {
-          if (controller.signal.aborted) return;
+          if (signal.aborted) return;
           reportError(error);
           setRemote((all) => ({ ...all, [source.id]: { key, items: [] } }));
         },
       );
     }
+  });
+
+  // Keyed by what's asked, so a parent re-rendering with an inline query or sources doesn't ask again.
+  useEffect(() => {
+    if (remoteIds === "") return undefined;
+    const controller = new AbortController();
+    askRemote(controller.signal);
     return () => {
       controller.abort();
     };
-  }, [sources, query, key]);
+  }, [remoteIds, key]);
 
   const sections = sources
     .map((source) => {
