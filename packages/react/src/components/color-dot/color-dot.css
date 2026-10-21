@@ -1,22 +1,25 @@
 @layer bt.components {
   .bt-color-dot {
-    --bt-color-dot-size: 22px;
+    --bt-color-dot-size: 24px;
     --bt-color-dot-hit: 28px;
 
     position: relative;
     display: inline-grid;
     flex: none;
-    place-items: center;
-    inline-size: var(--bt-color-dot-hit);
-    block-size: var(--bt-color-dot-hit);
+    inline-size: var(--bt-color-dot-size);
+    block-size: var(--bt-color-dot-size);
     border-radius: var(--bt-r-full);
   }
 
   .bt-color-dot > [data-bt-part="dot"] {
-    inline-size: var(--bt-color-dot-size);
-    block-size: var(--bt-color-dot-size);
     border-radius: var(--bt-r-full);
     box-shadow: var(--bt-shadow-inset);
+  }
+
+  .bt-color-dot > [data-bt-part="hit"] {
+    position: absolute;
+    inset: calc((var(--bt-color-dot-size) - var(--bt-color-dot-hit)) / 2);
+    border-radius: var(--bt-r-full);
   }
 
   .bt-color-dot:has(> input:focus-visible) > [data-bt-part="dot"] {

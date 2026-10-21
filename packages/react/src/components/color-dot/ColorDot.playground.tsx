@@ -10,8 +10,8 @@ function GradientColors(): ReactElement {
   const [to, setTo] = useState("#f0abfc");
   return (
     <Inline gap={1.5} align="center">
-      <ColorDot label="Start color" value={from} onValueChange={setFrom} />
-      <ColorDot label="End color" value={to} onValueChange={setTo} />
+      <ColorDot label="First hue" value={from} onValueChange={setFrom} />
+      <ColorDot label="Second hue" value={to} onValueChange={setTo} />
       <IconButton
         icon={ArrowLeftRight}
         label="Swap colors"

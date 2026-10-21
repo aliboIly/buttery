@@ -10,14 +10,14 @@ export function GradientStops(): ReactElement {
   return (
     <Inline gap={1.5} align="center">
       <ColorDot
-        label="Start color"
+        label="First hue"
         value={stops.from}
         onValueChange={(from) => {
           setStops({ ...stops, from });
         }}
       />
       <ColorDot
-        label="End color"
+        label="Second hue"
         value={stops.to}
         onValueChange={(to) => {
           setStops({ ...stops, to });
