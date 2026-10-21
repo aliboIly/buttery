@@ -128,14 +128,19 @@ export function useAuthForm<Values>(
   };
 }
 
+/** Props for `AuthErrorSummary`. */
+export interface AuthErrorSummaryProps {
+  /** The summary's title, such as "Check these fields". */
+  readonly title: string;
+  /** The form from `useAuthForm`, whose problems and failure it lists. */
+  readonly form: AuthForm;
+}
+
 /** The summary over a form: a danger callout that's read out, with a link to each field that needs fixing. */
 export function AuthErrorSummary({
   title,
   form,
-}: {
-  readonly title: string;
-  readonly form: AuthForm;
-}): ReactElement | null {
+}: AuthErrorSummaryProps): ReactElement | null {
   const { reported: problems, failure, summary } = form;
   if (problems.length === 0 && failure === undefined) return null;
   return (
@@ -169,14 +174,19 @@ export function AuthErrorSummary({
   );
 }
 
+/** Props for `AuthProviders`. */
+export interface AuthProvidersProps {
+  /** The word on the rule above the buttons, such as "or". */
+  readonly or: string;
+  /** The other ways in, in order. Nothing renders without any. */
+  readonly providers: readonly AuthProvider[];
+}
+
 /** Other ways in, under an "or" rule: a full-width soft button for each. */
 export function AuthProviders({
   or,
   providers,
-}: {
-  readonly or: string;
-  readonly providers: readonly AuthProvider[];
-}): ReactElement | null {
+}: AuthProvidersProps): ReactElement | null {
   if (providers.length === 0) return null;
   return (
     <>

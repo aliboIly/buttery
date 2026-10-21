@@ -51,20 +51,28 @@ export function useFormFieldIds(shown: FormFieldShown): FormFieldIds {
   };
 }
 
-/** A field's label and, under it, its hint. */
+/** Props for `FormFieldCaption`. */
+export interface FormFieldCaptionProps {
+  /** The id of the control the label names, for its `htmlFor`. */
+  readonly htmlFor: string;
+  /** The label's own id, for a control named through `aria-labelledby`. */
+  readonly labelId?: string | undefined;
+  /** What the control asks for. */
+  readonly label: string;
+  /** A hint under the label, or nothing. */
+  readonly hint: ReactNode;
+  /** The hint's id, for the control's `aria-describedby`. */
+  readonly hintId: string;
+}
+
+/** A field's label and, under it, its hint: the top of every buttery field, for a field of your own. */
 export function FormFieldCaption({
   htmlFor,
   labelId,
   label,
   hint,
   hintId,
-}: {
-  readonly htmlFor: string;
-  readonly labelId?: string | undefined;
-  readonly label: string;
-  readonly hint: ReactNode;
-  readonly hintId: string;
-}): ReactElement {
+}: FormFieldCaptionProps): ReactElement {
   return (
     <div data-bt-part="caption">
       <label
@@ -100,6 +108,18 @@ function textOf(node: ReactNode): string {
   return "";
 }
 
+/** Props for `FormFieldError`. */
+export interface FormFieldErrorProps {
+  /** The error's id, for the control's `aria-describedby`. */
+  readonly id: string;
+  /** The field's name, read before a new error ("Email: Enter an email address"). */
+  readonly name: string | undefined;
+  /** Whether a new error is read out as it appears; off when an error summary that takes focus reads it. */
+  readonly announce: boolean;
+  /** What's wrong, or nothing while nothing is. */
+  readonly children: ReactNode;
+}
+
 /**
  * A field's error, under its control, with an icon so it doesn't rest on color alone. It describes the
  * control, and a new error's words are also read out politely as it appears, with the field's name, so an
@@ -111,12 +131,7 @@ export function FormFieldError({
   name,
   announce,
   children,
-}: {
-  readonly id: string;
-  readonly name: string | undefined;
-  readonly announce: boolean;
-  readonly children: ReactNode;
-}): ReactElement {
+}: FormFieldErrorProps): ReactElement {
   const shown = hasContent(children);
   const text = shown ? textOf(children) : "";
   const words =

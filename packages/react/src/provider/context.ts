@@ -17,6 +17,10 @@ export interface ButteryContextValue {
   readonly reducedMotion: boolean;
 }
 
+/**
+ * What the nearest `ButteryProvider` resolved, or `null` without one. Read it with `use(ButteryContext)` in a
+ * component that works with or without a provider; `useButtery()` throws without one.
+ */
 export const ButteryContext: Context<ButteryContextValue | null> =
   createContext<ButteryContextValue | null>(null);
 

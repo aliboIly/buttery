@@ -14,7 +14,7 @@ export type {
   ColorSchemePreference,
   ReducedMotionPreference,
 } from "./provider/ButteryProvider.tsx";
-export { useButtery } from "./provider/context.ts";
+export { ButteryContext, useButtery } from "./provider/context.ts";
 export type { ButteryContextValue, Platform } from "./provider/context.ts";
 export { useMediaQuery } from "./provider/use-media-query.ts";
 export { Button } from "./components/button/Button.tsx";
@@ -23,12 +23,15 @@ export type {
   ButtonSize,
   ButtonVariant,
 } from "./components/button/Button.tsx";
-export type { ArrowDirection } from "./parts/arrow/Arrow.tsx";
+export { Arrow } from "./parts/arrow/Arrow.tsx";
+export type { ArrowDirection, ArrowProps } from "./parts/arrow/Arrow.tsx";
+export { Spinner } from "./parts/spinner/Spinner.tsx";
 export { ArrowLink } from "./components/arrow-link/ArrowLink.tsx";
 export type { ArrowLinkProps } from "./components/arrow-link/ArrowLink.tsx";
-export { Tooltip } from "./components/tooltip/Tooltip.tsx";
+export { Tooltip, TooltipProvider } from "./components/tooltip/Tooltip.tsx";
 export type {
   TooltipProps,
+  TooltipProviderProps,
   TooltipSide,
 } from "./components/tooltip/Tooltip.tsx";
 export { IconButton } from "./components/icon-button/IconButton.tsx";
@@ -59,13 +62,28 @@ export type {
   ToneToastOptions,
 } from "./components/toaster/Toaster.tsx";
 export { Field } from "./components/field/Field.tsx";
+export {
+  FormFieldCaption,
+  FormFieldError,
+  useFormFieldIds,
+} from "./parts/form-field/FormFieldParts.tsx";
+export type {
+  FormFieldCaptionProps,
+  FormFieldErrorProps,
+  FormFieldIds,
+  FormFieldShown,
+} from "./parts/form-field/FormFieldParts.tsx";
 export type {
   FieldControlProps,
   FieldProps,
 } from "./components/field/Field.tsx";
-export { TextField } from "./components/text-field/TextField.tsx";
+export {
+  TextField,
+  TextFieldShell,
+} from "./components/text-field/TextField.tsx";
 export type {
   TextFieldProps,
+  TextFieldShellProps,
   TextFieldSize,
 } from "./components/text-field/TextField.tsx";
 export { PasswordField } from "./components/password-field/PasswordField.tsx";
@@ -103,8 +121,18 @@ export type {
   SignUpLabels,
   SignUpValues,
 } from "./patterns/sign-up-form/SignUpForm.tsx";
+export {
+  AuthErrorSummary,
+  AuthProviders,
+  looksLikeEmail,
+  useAuthForm,
+} from "./parts/auth/AuthParts.tsx";
 export type {
+  AuthErrorSummaryProps,
+  AuthForm,
+  AuthProblem,
   AuthProvider,
+  AuthProvidersProps,
   AuthSubmit,
   AuthSubmitResult,
 } from "./parts/auth/AuthParts.tsx";
@@ -187,4 +215,7 @@ export type {
 export { AppShell } from "./patterns/app-shell/AppShell.tsx";
 export type { AppShellProps } from "./patterns/app-shell/AppShell.tsx";
 export { ColorPicker } from "./components/color-picker/ColorPicker.tsx";
-export type { ColorPickerProps } from "./components/color-picker/ColorPicker.tsx";
+export type {
+  ColorPickerLabels,
+  ColorPickerProps,
+} from "./components/color-picker/ColorPicker.tsx";

@@ -25,12 +25,19 @@ export interface TooltipProps {
   readonly className?: string | undefined;
 }
 
-/** Hover intent shared by every tooltip under one `ButteryProvider`, so moving between them skips the delay. */
+/** Props for `TooltipProvider`. */
+export interface TooltipProviderProps {
+  /** The part of the app whose tooltips share the hover intent. */
+  readonly children?: ReactNode;
+}
+
+/**
+ * Hover intent shared by every tooltip under it, so moving between them skips the delay. The root
+ * `ButteryProvider` hosts one; render it yourself only without the provider.
+ */
 export function TooltipProvider({
   children,
-}: {
-  readonly children?: ReactNode;
-}): ReactElement {
+}: TooltipProviderProps): ReactElement {
   return (
     <RadixTooltip.Provider delayDuration={timing["delay-tooltip"]}>
       {children}
