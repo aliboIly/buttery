@@ -391,3 +391,10 @@ export type {
   SidebarRecentProps,
   SidebarSectionProps,
 } from "./patterns/sidebar/Sidebar.tsx";
+export { TopBar } from "./patterns/top-bar/TopBar.tsx";
+export type {
+  TopBarActionProps,
+  TopBarComponent,
+  TopBarCreate,
+  TopBarProps,
+} from "./patterns/top-bar/TopBar.tsx";

@@ -1,0 +1,34 @@
+@layer bt.patterns {
+  .bt-top-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+    block-size: var(--bt-h-header);
+    padding-inline: var(--bt-space-4);
+  }
+
+  .bt-top-bar > [data-bt-part="search"] {
+    display: flex;
+    flex: 0 1 var(--bt-w-search);
+    min-inline-size: 0;
+  }
+
+  /* The actions keep room for their "…" button, so the search narrows before anything overlaps. */
+  .bt-top-bar > [data-bt-part="actions"] {
+    min-inline-size: var(--bt-overflow-cluster-more-size);
+  }
+
+  /* Padded like the page under it: 24 from 640px of column, 32 from 1024. */
+  @container bt-column (width >= 640px) {
+    .bt-top-bar {
+      padding-inline: var(--bt-space-6);
+    }
+  }
+
+  @container bt-column (width >= 1024px) {
+    .bt-top-bar {
+      padding-inline: var(--bt-space-8);
+    }
+  }
+}
