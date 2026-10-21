@@ -1,6 +1,6 @@
 import { Text } from "@buttery/core";
 import type { ExamplePlay } from "@buttery/core";
-import { Button, SettingsSection } from "@buttery/react";
+import { Button, SettingsSection, toast } from "@buttery/react";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 
@@ -21,7 +21,23 @@ export function SessionsThatLoad(): ReactElement {
     <SettingsSection
       title="Sessions"
       description="Where you're signed in."
-      action={<Button size="sm">Sign out everywhere else</Button>}
+      action={
+        <Button
+          size="sm"
+          disabled={sessions === undefined || sessions.length < 2}
+          onClick={() => {
+            const others = (sessions?.length ?? 1) - 1;
+            setSessions(sessions?.slice(0, 1));
+            toast(
+              others === 1
+                ? "Signed out of 1 other session."
+                : `Signed out of ${String(others)} other sessions.`,
+            );
+          }}
+        >
+          Sign out everywhere else
+        </Button>
+      }
       loading={sessions === undefined}
     >
       {sessions?.map((session) => (
@@ -33,6 +49,8 @@ export function SessionsThatLoad(): ReactElement {
   );
 }
 
-export const play: ExamplePlay = async ({ see }) => {
-  await see("Portland, this browser");
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Seattle, 3 days ago");
+  await press("button", "Sign out everywhere else");
+  await see("Signed out of 1 other session.");
 };

@@ -34,7 +34,12 @@ const context: ExamplePlayContext = {
   see: async (text) => {
     await waitFor(
       () => {
-        expect(screen.getAllByText(text).length).toBeGreaterThan(0);
+        const shown = screen
+          .queryAllByText(text)
+          .filter((element) =>
+            element.checkVisibility({ visibilityProperty: true }),
+          );
+        expect(shown.length).toBeGreaterThan(0);
       },
       { timeout: 3000 },
     );

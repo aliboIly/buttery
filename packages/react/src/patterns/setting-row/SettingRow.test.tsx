@@ -61,18 +61,22 @@ describe("SettingRow", () => {
 
   it("wraps a long title and keeps its action's size", () => {
     render(
-      <div style={{ inlineSize: "280px" }}>
-        <SettingRow
-          title="Check cards saved for later payments against fraud rules"
-          action={<Button size="sm">Turn on</Button>}
-        />
-      </div>,
+      <>
+        <div style={{ inlineSize: "280px" }}>
+          <SettingRow
+            title="Check cards saved for later payments against fraud rules"
+            action={<Button size="sm">Turn on</Button>}
+          />
+        </div>
+        <Button size="sm">Turn on</Button>
+      </>,
     );
     const title = screen.getByRole("heading", { level: 3 });
     expect(title.getBoundingClientRect().height).toBeGreaterThan(30);
-    expect(
-      screen.getByRole("button", { name: "Turn on" }).getBoundingClientRect()
-        .height,
-    ).toBe(28);
+    const [inRow, alone] = screen
+      .getAllByRole("button", { name: "Turn on" })
+      .map((button) => button.getBoundingClientRect());
+    expect(inRow?.height).toBe(28);
+    expect(inRow?.width).toBe(alone?.width);
   });
 });

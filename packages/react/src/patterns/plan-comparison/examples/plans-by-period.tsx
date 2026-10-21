@@ -1,5 +1,5 @@
 import type { ExamplePlay } from "@buttery/core";
-import { Button, PlanComparison } from "@buttery/react";
+import { Button, PlanComparison, toast } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 
@@ -26,7 +26,18 @@ export function PlansByPeriod(): ReactElement {
           description: "For a roastery selling to its own customers.",
           price: price(MONTHLY.starter),
           period: yearly ? "per year" : "per month",
-          action: <Button variant="primary">Choose Starter</Button>,
+          action: (
+            <Button
+              variant="primary"
+              onClick={() => {
+                toast(
+                  `Starter is yours, ${price(MONTHLY.starter)} ${yearly ? "a year" : "a month"}.`,
+                );
+              }}
+            >
+              Choose Starter
+            </Button>
+          ),
           featuresTitle: "Includes",
           features: ["Online shop", "Subscriptions"],
         },
@@ -37,7 +48,18 @@ export function PlansByPeriod(): ReactElement {
           price: price(MONTHLY.roaster),
           period: yearly ? "per year" : "per month",
           ribbon: "30 days free",
-          action: <Button variant="primary">Try Roaster</Button>,
+          action: (
+            <Button
+              variant="primary"
+              onClick={() => {
+                toast(
+                  `Roaster is free for 30 days, then ${price(MONTHLY.roaster)} ${yearly ? "a year" : "a month"}.`,
+                );
+              }}
+            >
+              Try Roaster
+            </Button>
+          ),
           featuresTitle: "Everything in Starter, and",
           features: ["Wholesale accounts", "Price lists"],
         },
@@ -49,4 +71,6 @@ export function PlansByPeriod(): ReactElement {
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "Yearly");
   await see("$390");
+  await press("button", "Try Roaster");
+  await see("Roaster is free for 30 days, then $390 a year.");
 };
