@@ -84,4 +84,40 @@ describe("Breadcrumbs", () => {
     await userEvent.click(screen.getByRole("link", { name: "Settings" }));
     expect(onNavigate).toHaveBeenCalledWith("#settings", expect.anything());
   });
+
+  it("leaves a click for a new tab to the browser", async () => {
+    const onNavigate = vi.fn();
+    trail(600, onNavigate);
+    const settings = screen.getByRole("link", { name: "Settings" });
+    settings.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    await userEvent.keyboard("{Meta>}");
+    await userEvent.click(settings);
+    await userEvent.keyboard("{/Meta}");
+    expect(onNavigate).not.toHaveBeenCalled();
+  });
+
+  it("points its chevrons the other way right to left", () => {
+    render(
+      <div dir="rtl" style={{ inlineSize: "360px" }}>
+        <Breadcrumbs items={[...TRAIL, { label: "Invoices", href: "#i" }]} />
+      </div>,
+    );
+    const icons = [
+      ...document.querySelectorAll(
+        ':is([data-bt-part="separator"], [data-bt-part="back"]) > .bt-icon',
+      ),
+    ];
+    expect(icons.length).toBeGreaterThan(1);
+    for (const icon of icons) expect(getComputedStyle(icon).scale).toBe("-1 1");
+  });
+
+  it("fades a link's color on hover", () => {
+    trail();
+    const link = screen.getByRole("link", { name: "Settings" });
+    const style = getComputedStyle(link);
+    expect(style.transitionProperty).toBe("color");
+    expect(style.transitionDuration).not.toBe("0s");
+  });
 });

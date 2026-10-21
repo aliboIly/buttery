@@ -1,4 +1,4 @@
-import { Icon, cx } from "@buttery/core";
+import { Icon, cx, opensElsewhere } from "@buttery/core";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ComponentPropsWithRef, MouseEvent, ReactElement } from "react";
 
@@ -16,7 +16,7 @@ export interface BreadcrumbsProps extends ComponentPropsWithRef<"nav"> {
   readonly items: readonly BreadcrumbItem[];
   /** Names the navigation for screen readers. Defaults to `"Breadcrumbs"`. */
   readonly label?: string | undefined;
-  /** Runs as a link is followed, where a router can take over. */
+  /** Runs as a link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
   readonly onNavigate?:
     ((href: string, event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
 }
@@ -63,7 +63,7 @@ export function Breadcrumbs({
               data-role="label"
               data-bt-part="link"
               onClick={(event) => {
-                onNavigate?.(item.href, event);
+                if (!opensElsewhere(event)) onNavigate?.(item.href, event);
               }}
             >
               <span data-bt-part="back" aria-hidden="true">
