@@ -15,6 +15,7 @@ export {
 } from "./color/color.ts";
 export type { Hsv, Oklch, Rgb } from "./color/color.ts";
 export { useControllableState } from "./hooks/use-controllable-state.ts";
+export { useScrollSpy } from "./hooks/use-scroll-spy.ts";
 export {
   isTypingField,
   matchesShortcut,
@@ -264,6 +265,7 @@ export { hasContent } from "./utils/has-content.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement } from "./utils/pressable.ts";
 export { hasTabbable } from "./utils/tabbable.ts";
+export { scrollRootOf } from "./utils/scroll-root.ts";
 export { Slot } from "./utils/slot.tsx";
 export { variants } from "./utils/variants.ts";
 export type {

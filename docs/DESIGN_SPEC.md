@@ -158,6 +158,7 @@ The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px;
 | `--bt-h-row` | 50 (49 + 1px divider) | 42 | Inspector row |
 | `--bt-h-row-split` | 64 (63 + 1px divider) | 56 | Inspector split row (tilt pad, anchor grid); measured 63.5 in Phase 2 |
 | `--bt-h-header` | 56 | 48 | App header bar |
+| `--bt-h-sub-nav` | 48 | 48 | Page sub nav bar under the nav bar; page chrome keeps its height |
 
 ### Widths & layout sizes
 

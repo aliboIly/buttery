@@ -117,7 +117,7 @@ The generated files are committed and Prettier skips them; a unit test fails whe
 
 | Import | Contents |
 |---|---|
-| `@buttery/core` | The token tables as typed data (`spring` for Motion included), the OKLCH and HSV color helpers, `createTheme`, the primitives (`Control` among them), the layers and what they're built from (`FloatingMotion`, `LayerContext`), the motion hooks and presets (`useButteryTransition`, `useLayoutAnimation`, `presencePresets`, `revealOnce`), `variants()`, `LayoutGuard` and `useControllableState` |
+| `@buttery/core` | The token tables as typed data (`spring` for Motion included), the OKLCH and HSV color helpers, `createTheme`, the primitives (`Control` among them), the layers and what they're built from (`FloatingMotion`, `LayerContext`), the motion hooks and presets (`useButteryTransition`, `useLayoutAnimation`, `presencePresets`, `revealOnce`), `variants()`, `LayoutGuard`, `useControllableState`, and the page helpers `useScrollSpy`, `scrollRootOf` and `hasTabbable` |
 | `@buttery/core/layout` | The in-page layout checker (`createLayoutToolkit`, `runLayoutChecks`), without React, for test runners |
 | `@buttery/core/palettes` | Gradient and solid presets, `gradientCss` |
 | `@buttery/core/styles.css` | Layer order, reset, Inter, tokens, base styles and recipes in one file |

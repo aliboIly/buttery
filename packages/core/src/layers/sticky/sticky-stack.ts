@@ -1,4 +1,5 @@
 import { isDevelopment, warnOnce } from "../../utils/dev.ts";
+import { scrollRootOf } from "../../utils/scroll-root.ts";
 
 /** Which edge of its scroll container a sticky element holds to. */
 export type StickyEdge = "top" | "bottom";
@@ -17,23 +18,6 @@ interface StickyEntry {
 }
 
 const stacks = new Map<HTMLElement, Set<StickyEntry>>();
-
-function isScrollContainer(style: CSSStyleDeclaration): boolean {
-  return [style.overflowX, style.overflowY].some(
-    (overflow) => overflow !== "visible" && overflow !== "clip",
-  );
-}
-
-function scrollRootOf(element: HTMLElement): HTMLElement {
-  for (
-    let node = element.parentElement;
-    node && node !== document.body;
-    node = node.parentElement
-  ) {
-    if (isScrollContainer(getComputedStyle(node))) return node;
-  }
-  return document.documentElement;
-}
 
 function inDocumentOrder(a: StickyEntry, b: StickyEntry): number {
   return a.element.compareDocumentPosition(b.element) &
