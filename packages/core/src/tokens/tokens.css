@@ -263,6 +263,7 @@
     --bt-h-row: 50px;
     --bt-h-row-split: 64px;
     --bt-h-header: 56px;
+    --bt-h-nav-bar: 64px;
     --bt-h-sub-nav: 48px;
   }
 
@@ -275,6 +276,7 @@
     --bt-h-row: 42px;
     --bt-h-row-split: 56px;
     --bt-h-header: 48px;
+    --bt-h-nav-bar: 64px;
     --bt-h-sub-nav: 48px;
   }
 

@@ -264,7 +264,7 @@ export { isDevelopment, warnOnce } from "./utils/dev.ts";
 export { hasContent } from "./utils/has-content.ts";
 export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement } from "./utils/pressable.ts";
-export { hasTabbable } from "./utils/tabbable.ts";
+export { hasTabbable, tabbables } from "./utils/tabbable.ts";
 export { scrollRootOf } from "./utils/scroll-root.ts";
 export { Slot } from "./utils/slot.tsx";
 export { variants } from "./utils/variants.ts";

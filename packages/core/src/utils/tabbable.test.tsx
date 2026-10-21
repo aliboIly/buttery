@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { hasTabbable } from "./tabbable.ts";
+import { hasTabbable, tabbables } from "./tabbable.ts";
 
 function holding(html: string): HTMLElement {
   const element = document.createElement("div");
@@ -24,6 +24,20 @@ describe("hasTabbable", () => {
     expect(hasTabbable(holding("<p>Words</p>"))).toBe(false);
     expect(hasTabbable(holding("<button disabled>Go</button>"))).toBe(false);
     expect(hasTabbable(holding('<div tabindex="-1">Panel</div>'))).toBe(false);
+    expect(hasTabbable(holding('<a href="#top" tabindex="-1">Top</a>'))).toBe(
+      false,
+    );
     expect(hasTabbable(null)).toBe(false);
+  });
+
+  it("lists the tab stops in document order", () => {
+    const element = holding(
+      '<button>One</button><p>Text</p><a href="#two">Two</a><button disabled>Off</button>',
+    );
+    expect(tabbables(element).map((stop) => stop.textContent)).toEqual([
+      "One",
+      "Two",
+    ]);
+    expect(tabbables(null)).toEqual([]);
   });
 });

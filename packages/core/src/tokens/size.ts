@@ -56,6 +56,12 @@ export const heights = {
     compact: 48,
     description: "App header bar.",
   },
+  "nav-bar": {
+    comfortable: 64,
+    compact: 64,
+    description:
+      "Page nav bar. Page chrome, so it keeps its height in compact.",
+  },
   "sub-nav": {
     comfortable: 48,
     compact: 48,
