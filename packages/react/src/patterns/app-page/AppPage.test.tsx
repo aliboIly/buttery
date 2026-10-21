@@ -181,6 +181,28 @@ describe("AppPage", () => {
     }
   });
 
+  it("gives a section a description with no heading, and tops its own head's row only when it has one", () => {
+    inShell(
+      1280,
+      <AppPage header={<h1>Pickup</h1>}>
+        <AppPage.Section
+          title="Hours"
+          actions={<button type="button">Edit</button>}
+        >
+          <AppPage.Section description="When customers can collect.">
+            <p>Weekdays 8–4</p>
+          </AppPage.Section>
+        </AppPage.Section>
+      </AppPage>,
+    );
+    expect(screen.getByText("When customers can collect.")).toBeTruthy();
+    const head = screen
+      .getByRole("heading", { level: 2, name: "Hours" })
+      .closest('[data-bt-part="section-head"]');
+    if (!head) throw new Error("No head.");
+    expect(getComputedStyle(head).alignItems).toBe("center");
+  });
+
   it("gives its last block the rest of the height when filled", () => {
     inShell(1440, <Orders fill />);
     const page = document.querySelector(

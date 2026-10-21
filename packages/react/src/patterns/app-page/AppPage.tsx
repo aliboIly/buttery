@@ -126,6 +126,7 @@ export function AppPageSection({
 }: AppPageSectionProps): ReactElement {
   const titleId = useId();
   const titled = title !== undefined;
+  const described = hasContent(description);
   const reflow = useReflow();
   const tracking = useAnimationTracking();
   return (
@@ -139,21 +140,23 @@ export function AppPageSection({
       data-bt-part="section"
       data-bt-region=""
     >
-      {titled || hasContent(actions) ? (
+      {titled || described || hasContent(actions) ? (
         <div data-bt-part="section-head">
-          {titled ? (
+          {titled || described ? (
             <div data-bt-part="section-titles">
-              <h2
-                id={titleId}
-                className="bt-text bt-truncate"
-                data-role="title-md"
-                data-bt-truncate=""
-                title={title}
-                data-bt-part="section-title"
-              >
-                {title}
-              </h2>
-              {hasContent(description) ? (
+              {titled ? (
+                <h2
+                  id={titleId}
+                  className="bt-text bt-truncate"
+                  data-role="title-md"
+                  data-bt-truncate=""
+                  title={title}
+                  data-bt-part="section-title"
+                >
+                  {title}
+                </h2>
+              ) : null}
+              {described ? (
                 <p
                   className="bt-text"
                   data-role="body-sm"

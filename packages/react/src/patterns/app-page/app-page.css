@@ -109,8 +109,10 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-app-page-section:has([data-bt-part="section-description"])
-    > [data-bt-part="section-head"] {
+  .bt-app-page-section
+    > [data-bt-part="section-head"]:has(
+      > [data-bt-part="section-titles"] > [data-bt-part="section-description"]
+    ) {
     align-items: flex-start;
   }
 
