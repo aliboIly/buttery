@@ -1,6 +1,6 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { Menu, publishSettled } from "@buttery/core";
+import { FloatingLanes, Menu, publishSettled } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
@@ -119,6 +119,30 @@ describe("SidePanel", () => {
     expect(column().width).toBe(before.width - 360);
     expect(column().right).toBe(box.left);
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("keeps a floating lane's item on the page's side of it while docked", async () => {
+    render(
+      <>
+        <FloatingLanes />
+        <Help width={1440} />
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "240px", blockSize: "80px" }}>
+            Setup guide
+          </div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const guide = (): DOMRect =>
+      screen.getByText("Setup guide").getBoundingClientRect();
+    expect(window.innerWidth - guide().right).toBe(24);
+    await userEvent.click(helpButton());
+    const panel = screen
+      .getByRole("complementary", { name: "Help" })
+      .getBoundingClientRect();
+    await waitFor(() => {
+      expect(panel.left - guide().right).toBe(24);
+    });
   });
 
   it("takes its new width at once, and fades only its content in over dur-fast, 100ms with reduced motion", async () => {

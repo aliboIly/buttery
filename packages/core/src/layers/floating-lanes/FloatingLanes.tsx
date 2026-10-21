@@ -38,6 +38,23 @@ function laneRef(
   };
 }
 
+/**
+ * How far in from the window's end edge the lanes keep, past any obstacle that runs at least half the
+ * window's height along that edge, such as a docked side panel.
+ */
+function endInset(blockers: readonly HTMLElement[]): number {
+  const width = document.documentElement.clientWidth;
+  const rtl = getComputedStyle(document.documentElement).direction === "rtl";
+  let inset = 0;
+  for (const blocker of blockers) {
+    const rect = blocker.getBoundingClientRect();
+    if (rect.width === 0 || rect.height < window.innerHeight / 2) continue;
+    if (rtl ? rect.left <= 1 : rect.right >= width - 1)
+      inset = Math.max(inset, rtl ? rect.right : width - rect.left);
+  }
+  return inset;
+}
+
 function overlapsHorizontally(a: DOMRect, b: DOMRect): boolean {
   return a.left < b.right && b.left < a.right && a.width > 0 && b.width > 0;
 }
@@ -67,12 +84,19 @@ function px(value: number): string {
   return `${String(value)}px`;
 }
 
-/** Whether the bottom-center lane, centered in the window, would come within a gap of the bottom-end lane. */
-function lanesWouldTouch(center: HTMLElement, end: HTMLElement): boolean {
+/**
+ * Whether the bottom-center lane, centered in the room the lanes have, would come within a gap of the
+ * bottom-end lane.
+ */
+function lanesWouldTouch(
+  center: HTMLElement,
+  end: HTMLElement,
+  inset: number,
+): boolean {
   const centerBox = center.getBoundingClientRect();
   const endBox = end.getBoundingClientRect();
   if (centerBox.height === 0 || endBox.height === 0) return false;
-  const width = document.documentElement.clientWidth;
+  const width = document.documentElement.clientWidth - inset;
   return (
     width / 2 + centerBox.width / 2 + space["2"] >
     width - space["6"] - endBox.width
@@ -105,11 +129,14 @@ function useLanePlacement(): void {
     const apply = (): void => {
       const center = lanes["bottom-center"]?.element;
       const end = lanes["bottom-end"]?.element;
+      // The lanes move in from the end first, so stacking and lifting measure them where they'll be.
+      const inset = endInset(blockers);
+      root.style.setProperty("--bt-lane-inset-end", px(inset));
       // Stacking moves the center lane, so it's settled before any lane measures what it has to clear.
       const stacked =
         center !== undefined &&
         end !== undefined &&
-        lanesWouldTouch(center, end);
+        lanesWouldTouch(center, end, inset);
       center?.toggleAttribute("data-stacked", stacked);
       for (const lane of elements)
         lane.style.setProperty(
@@ -144,6 +171,7 @@ function useLanePlacement(): void {
       window.removeEventListener("resize", schedule);
       window.removeEventListener("scroll", schedule, true);
       root.style.removeProperty("--bt-lane-clearance");
+      root.style.removeProperty("--bt-lane-inset-end");
     };
   }, [lanes, blockers]);
 }
@@ -250,7 +278,9 @@ export interface FloatingLanesComponent {
  * above dialogs, and guidance someone works through, such as a setup guide, in bottom-end, which steps
  * back under dialogs with the rest of the page.
  * Items stack with an 8px gap, never grow wider than their lane, keep clear of sticky headers and footers,
- * and move out of the way of registered obstacles. When the bottom lanes would touch, in a narrow window,
+ * and move out of the way of registered obstacles: up from one at the bottom, and in from the end past one
+ * that runs the window's height along its end edge, such as a docked side panel. When the bottom lanes
+ * would touch, in a narrow window,
  * the center lane moves above the end lane as one column. It publishes how far the bottom lanes reach,
  * plus 8px, as `--bt-lane-clearance` on `<html>`, for scroll areas to add at their end. `ButteryProvider`
  * mounts the host once; render items with `FloatingLanes.Item`. For toasts, call `toast()` from

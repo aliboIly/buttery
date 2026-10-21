@@ -11,6 +11,7 @@ import {
   useAnimationTracking,
   useCloseFocus,
   useControllableState,
+  useFloatingObstacle,
   useMergedRefs,
   useMotionPreference,
 } from "@buttery/core";
@@ -108,7 +109,8 @@ function PanelParts({
  * the column, full height, 360px wide (560 expanded), and the page takes the rest of the width in the same
  * frame instead of being covered; under that it opens as a sheet at the window's end over a dim scrim. Its
  * header holds its title, an overflow menu, an expand button (docked only) and a close button; its body
- * scrolls above a pinned `footer`. A docked panel appears in one frame and its content fades in over
+ * scrolls above a pinned `footer`; floating lanes, such as a setup guide's, keep to the page's side of a docked
+ * panel. A docked panel appears in one frame and its content fades in over
  * `dur-fast`; the sheet rises as the sidebar's does. Opening it moves focus to its first field to type in,
  * else to the panel itself; Escape or the close button closes it and hands focus back to what opened it.
  * Outside a shell it docks where it's placed.
@@ -154,6 +156,8 @@ export function SidePanel({
   });
   const surface = useRef<HTMLElement>(null);
   const refs = useMergedRefs(ref, surface);
+  const obstacle = useFloatingObstacle();
+  const dockedRefs = useMergedRefs(refs, obstacle);
   const titleId = useId();
   const closeFocus = useCloseFocus(isOpen, surface);
   const shown = useRef({ open: isOpen, docked });
@@ -200,7 +204,7 @@ export function SidePanel({
         aria-labelledby={titleId}
         tabIndex={-1}
         {...rest}
-        ref={refs}
+        ref={dockedRefs}
         className={cx("bt-side-panel", className)}
         data-bt="SidePanel"
         data-mode="docked"

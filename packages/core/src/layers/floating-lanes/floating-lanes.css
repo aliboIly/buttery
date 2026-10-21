@@ -10,7 +10,9 @@
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-2);
-    max-inline-size: calc(100% - 2 * var(--bt-space-6));
+    max-inline-size: calc(
+      100% - 2 * var(--bt-space-6) - var(--bt-lane-inset-end, 0px)
+    );
   }
 
   /* An item never grows past its lane, so long text inside it truncates or wraps instead of running off screen. */
@@ -24,7 +26,7 @@
       calc(var(--bt-sticky-bottom, 0px) + var(--bt-space-6)),
       var(--bt-lane-lift, 0px)
     );
-    inset-inline-start: 50%;
+    inset-inline-start: calc((100% - var(--bt-lane-inset-end, 0px)) / 2);
     align-items: center;
     inline-size: max-content;
     transform: translateX(-50%);
@@ -35,12 +37,12 @@
       calc(var(--bt-sticky-bottom, 0px) + var(--bt-space-6)),
       var(--bt-lane-lift, 0px)
     );
-    inset-inline-end: var(--bt-space-6);
+    inset-inline-end: calc(var(--bt-space-6) + var(--bt-lane-inset-end, 0px));
     align-items: flex-end;
   }
 
   .bt-floating-lanes > [data-lane="bottom-center"][data-stacked] {
-    inset-inline: auto var(--bt-space-6);
+    inset-inline: auto calc(var(--bt-space-6) + var(--bt-lane-inset-end, 0px));
     align-items: flex-end;
     transform: none;
   }
@@ -50,7 +52,7 @@
       calc(var(--bt-sticky-top, 0px) + var(--bt-space-6)),
       var(--bt-lane-lift, 0px)
     );
-    inset-inline-end: var(--bt-space-6);
+    inset-inline-end: calc(var(--bt-space-6) + var(--bt-lane-inset-end, 0px));
     align-items: flex-end;
   }
 }

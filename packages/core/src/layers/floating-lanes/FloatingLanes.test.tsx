@@ -186,6 +186,51 @@ describe("FloatingLanes", () => {
     });
   });
 
+  it("moves the end lanes in past an obstacle that runs the window's height along its end, centering toasts in the room left", async () => {
+    function Panel(): ReactElement {
+      const obstacle = useFloatingObstacle();
+      return (
+        <div
+          ref={obstacle}
+          data-testid="panel"
+          style={{
+            position: "fixed",
+            insetBlock: 0,
+            insetInlineEnd: 0,
+            inlineSize: "360px",
+          }}
+        />
+      );
+    }
+    render(
+      <>
+        <FloatingLanes />
+        <Panel />
+        <FloatingLanes.Item lane="bottom-end">
+          <Toast>Setup guide</Toast>
+        </FloatingLanes.Item>
+        <FloatingLanes.Item lane="top-end">
+          <Toast>Saved</Toast>
+        </FloatingLanes.Item>
+        <FloatingLanes.Item>
+          <Toast>Card deleted</Toast>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const panel = screen.getByTestId("panel").getBoundingClientRect();
+    await waitFor(() => {
+      const guide = screen.getByText("Setup guide").getBoundingClientRect();
+      expect(panel.left - guide.right).toBe(24);
+    });
+    const saved = screen.getByText("Saved").getBoundingClientRect();
+    expect(panel.left - saved.right).toBe(24);
+    expect(saved.top).toBe(24);
+    const toast = screen.getByText("Card deleted").getBoundingClientRect();
+    expect(
+      Math.abs((toast.left + toast.right) / 2 - panel.left / 2),
+    ).toBeLessThanOrEqual(0.5);
+  });
+
   it("follows an obstacle that moves without changing size once told", async () => {
     render(
       <>
