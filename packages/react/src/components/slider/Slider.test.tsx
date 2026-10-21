@@ -109,6 +109,54 @@ describe("Slider", () => {
     expect(change).toHaveBeenLastCalledWith(1);
   });
 
+  it("commits a key step after the change it makes", async () => {
+    const calls: string[] = [];
+    render(
+      <Slider
+        label="Scale"
+        defaultValue={40}
+        onValueChange={(next) => calls.push(`change ${String(next)}`)}
+        onValueCommit={(next) => calls.push(`commit ${String(next)}`)}
+      />,
+    );
+    thumb().focus();
+    await browser.keyboard("{ArrowRight}");
+    await browser.keyboard("{End}");
+    expect(calls).toEqual([
+      "change 41",
+      "commit 41",
+      "change 100",
+      "commit 100",
+    ]);
+  });
+
+  it("commits each drag once on release, even one that ends where it started", async () => {
+    const commit = vi.fn();
+    const { container } = render(
+      <Slider label="Scale" defaultValue={50} onValueCommit={commit} />,
+    );
+    const track = trackOf(container);
+    await browser.dragAndDrop(thumb(), track, {
+      targetPosition: along(track, 0.8),
+    });
+    expect(commit).toHaveBeenCalledTimes(1);
+    expect(commit).toHaveBeenLastCalledWith(expect.closeTo(80, -1));
+    cleanup();
+
+    const unchanged = vi.fn();
+    render(
+      <Slider
+        label="Scale"
+        defaultValue={50}
+        step={50}
+        onValueCommit={unchanged}
+      />,
+    );
+    await browser.click(thumb());
+    expect(unchanged).toHaveBeenCalledTimes(1);
+    expect(unchanged).toHaveBeenLastCalledWith(50);
+  });
+
   it("resets on a double-click of its label or badge, or Backspace on the thumb, and commits the reset", async () => {
     const change = vi.fn();
     const commit = vi.fn<(value: number) => void>();
@@ -165,6 +213,20 @@ describe("Slider", () => {
     expect(
       thumb().querySelector("[data-bt-hit]")?.getBoundingClientRect().height,
     ).toBe(36);
+  });
+
+  it("commits nothing when a disabled slider is pressed", async () => {
+    const commit = vi.fn();
+    render(
+      <Slider
+        label="Depth"
+        defaultValue={30}
+        disabled
+        onValueCommit={commit}
+      />,
+    );
+    await browser.click(thumb(), { force: true });
+    expect(commit).not.toHaveBeenCalled();
   });
 
   it("holds its value when disabled", async () => {

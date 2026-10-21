@@ -87,6 +87,8 @@ export function Slider({
     onChange: onValueChange,
   });
   const dragging = useRef(false);
+  const latest = useRef(current);
+  const keyCommit = useRef<number | null>(null);
   const write = formatterFor(format, step);
   const reset = (): void => {
     if (disabled) return;
@@ -130,18 +132,31 @@ export function Slider({
         step={step}
         disabled={disabled}
         onPointerDown={() => {
+          if (disabled) return;
           dragging.current = true;
+          latest.current = current;
+        }}
+        onLostPointerCapture={() => {
+          if (disabled || !dragging.current) return;
+          dragging.current = false;
+          onValueCommit?.(latest.current);
         }}
         onValueChange={([next]) => {
           if (next === undefined) return;
           const detent = dragging.current
             ? detents.find((candidate) => Math.abs(next - candidate) <= pull)
             : undefined;
-          setCurrent(detent ?? next);
+          latest.current = detent ?? next;
+          setCurrent(latest.current);
+          const committed = keyCommit.current;
+          keyCommit.current = null;
+          if (committed !== null) onValueCommit?.(latest.current);
         }}
         onValueCommit={([committed]) => {
-          dragging.current = false;
-          if (committed !== undefined) onValueCommit?.(committed);
+          // A key step commits before its change lands, so the commit waits for it; a drag commits on release.
+          if (!dragging.current && committed !== undefined) {
+            keyCommit.current = committed;
+          }
         }}
         className="bt-slider-control"
         data-bt-part="control"
