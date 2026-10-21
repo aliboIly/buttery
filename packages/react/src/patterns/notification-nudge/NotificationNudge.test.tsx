@@ -200,4 +200,14 @@ describe("NotificationNudge", () => {
     expect(body.classList.contains("nudge")).toBe(true);
     expect(body.style.maxInlineSize).toBe("240px");
   });
+
+  it("leaves focus where it is when it starts open", async () => {
+    render(<Bar defaultOpen />);
+    const dialog = await screen.findByRole("dialog", {
+      name: "2 customers asked about delivery",
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(dialog.contains(document.activeElement)).toBe(false);
+    expect(document.activeElement).toBe(document.body);
+  });
 });

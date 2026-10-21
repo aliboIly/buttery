@@ -109,7 +109,7 @@ export function AnnouncementDialog({
   const [firstTime] = useState(
     defaultOpen ?? (storageKey !== undefined && !seen),
   );
-  const openedByItself = useRef(firstTime);
+  const openedByItself = useRef(open === undefined && firstTime);
   const [isOpen, setOpen] = useControllableState({
     value: open,
     defaultValue: firstTime,

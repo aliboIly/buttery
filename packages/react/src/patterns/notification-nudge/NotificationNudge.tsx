@@ -39,7 +39,10 @@ export interface NotificationNudgeProps {
   readonly storageKey?: string | undefined;
   /** Whether it's open, when you control it. */
   readonly open?: boolean | undefined;
-  /** Whether it starts open when uncontrolled. Defaults to `false`; with `storageKey` it opens by itself once in view. */
+  /**
+   * Whether it starts open when uncontrolled, without taking focus. Defaults to `false`; with `storageKey`
+   * it opens by itself once in view.
+   */
   readonly defaultOpen?: boolean | undefined;
   /** Called when it opens or closes. */
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
@@ -103,7 +106,8 @@ export function NotificationNudge({
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
-  const byItself = useRef(false);
+  // Open from the start means nobody asked for it, so it takes no focus, as when it opens by itself.
+  const byItself = useRef(isOpen);
   const [announcement, setAnnouncement] = useState("");
   const trigger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);

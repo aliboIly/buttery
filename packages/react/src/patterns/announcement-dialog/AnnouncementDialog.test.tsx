@@ -9,7 +9,7 @@ import {
   within,
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { createRef } from "react";
+import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { page, userEvent as browser } from "vitest/browser";
@@ -112,6 +112,39 @@ describe("AnnouncementDialog", () => {
     await waitFor(() => {
       expect(document.activeElement).toBe(trigger);
     });
+  });
+
+  it("hands focus back to what opened it when the app controls it, storage key and all", async () => {
+    function Controlled(): ReactElement {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <Button
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Read the news
+          </Button>
+          <News
+            trigger={undefined}
+            storageKey="test-news"
+            open={open}
+            onOpenChange={setOpen}
+          />
+        </>
+      );
+    }
+    render(<Controlled />);
+    const opener = screen.getByRole("button", { name: "Read the news" });
+    opener.focus();
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog", { name: "Roasts plan themselves now" });
+    await browser.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(document.activeElement).toBe(opener);
   });
 
   it("puts the media beside the copy when wide, and above it in a narrow window", async () => {
