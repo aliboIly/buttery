@@ -1,0 +1,66 @@
+@layer bt.components {
+  .bt-scope-badge {
+    --bt-scope-badge-hit: 24px;
+    --bt-scope-badge-icon: 12px;
+    --bt-scope-badge-line: 1px;
+    --bt-transition-hover:
+      background-color var(--bt-dur-fast) var(--bt-ease-standard),
+      color var(--bt-dur-fast) var(--bt-ease-standard);
+
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    block-size: var(--bt-h-badge);
+    padding-block: 0;
+    padding-inline: var(--bt-space-1_5);
+    border: var(--bt-scope-badge-line) solid var(--bt-border);
+    border-radius: var(--bt-r-xs);
+    background-color: transparent;
+    color: var(--bt-text-secondary);
+    font-family: inherit;
+    font-size: var(--bt-text-badge-size);
+    font-weight: var(--bt-text-badge-weight);
+    line-height: var(--bt-text-badge-line);
+    letter-spacing: var(--bt-text-badge-tracking);
+    white-space: nowrap;
+    appearance: none;
+  }
+
+  .bt-scope-badge > .bt-icon {
+    --bt-icon-size: var(--bt-scope-badge-icon);
+
+    flex: none;
+  }
+
+  @media (hover: hover) {
+    .bt-scope-badge:hover {
+      background-color: var(--bt-bg-item-hover);
+      color: var(--bt-text);
+    }
+  }
+
+  /* aria-expanded, since the tooltip's data-state takes the place of the popover's. */
+  .bt-scope-badge[aria-expanded="true"] {
+    background-color: var(--bt-bg-item-hover);
+    color: var(--bt-text);
+  }
+
+  /* The badge is 20px tall, so its target reaches 24 both ways. */
+  .bt-scope-badge > [data-bt-part="hit"] {
+    position: absolute;
+    inset-block: calc((100% - var(--bt-scope-badge-hit)) / 2);
+    inset-inline: min(0px, calc((100% - var(--bt-scope-badge-hit)) / 2));
+  }
+
+  .bt-scope-badge-popover {
+    max-inline-size: min(
+      var(--bt-w-aside),
+      var(--radix-popover-content-available-width)
+    );
+    padding: var(--bt-space-3);
+  }
+}

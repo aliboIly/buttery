@@ -90,3 +90,5 @@
 @import "./patterns/announcement-dialog/announcement-dialog.css";
 @import "./patterns/settings-index/settings-index.css";
 @import "./components/info-button/info-button.css";
+@import "./components/breadcrumbs/breadcrumbs.css";
+@import "./components/scope-badge/scope-badge.css";

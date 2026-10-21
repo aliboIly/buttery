@@ -18,6 +18,12 @@ export interface PageHeaderProps extends Omit<
 > {
   /** The page's title, its `h1`. Long titles truncate once the actions have folded away. */
   readonly title: string;
+  /** The trail of pages above this one, a `Breadcrumbs`, over the title. Only a nested page has one. */
+  readonly breadcrumbs?: ReactNode;
+  /** A `ScopeBadge` after the title, saying what the page's settings apply to. */
+  readonly badge?: ReactNode;
+  /** One line under the title's row saying what the page is for, in `body` and `text-secondary`. */
+  readonly description?: ReactNode;
   /** A figure after the title, such as a count or a balance, in the title's size at regular weight. */
   readonly value?: ReactNode;
   /** What the value means, behind an `InfoButton` after it: a tooltip on hover and focus, a popover on a press or a tap. */
@@ -32,6 +38,9 @@ export interface PageHeaderProps extends Omit<
 
 function PageHeaderRoot({
   title,
+  breadcrumbs,
+  badge,
+  description,
   value,
   valueInfo,
   actions,
@@ -47,33 +56,46 @@ function PageHeaderRoot({
       data-bt="PageHeader"
       data-bt-region=""
     >
-      <div data-bt-part="bar">
-        <div data-bt-part="heading">
-          <h1
-            className="bt-text bt-truncate"
-            data-role="title-lg"
-            data-bt-truncate=""
-            title={title}
-            data-bt-part="title"
-          >
-            {title}
-          </h1>
-          {hasContent(value) ? (
-            <span className="bt-text" data-role="title-lg" data-bt-part="value">
-              {value}
-            </span>
+      <div data-bt-part="head">
+        {hasContent(breadcrumbs) ? breadcrumbs : null}
+        <div data-bt-part="bar">
+          <div data-bt-part="heading">
+            <h1
+              className="bt-text bt-truncate"
+              data-role="title-lg"
+              data-bt-truncate=""
+              title={title}
+              data-bt-part="title"
+            >
+              {title}
+            </h1>
+            {hasContent(value) ? (
+              <span
+                className="bt-text"
+                data-role="title-lg"
+                data-bt-part="value"
+              >
+                {value}
+              </span>
+            ) : null}
+            {valueInfo === undefined ? null : <InfoButton info={valueInfo} />}
+            {hasContent(badge) ? badge : null}
+          </div>
+          {hasContent(actions) ? (
+            <OverflowCluster
+              gap={2}
+              justify="end"
+              moreLabel={moreLabel}
+              data-bt-part="actions"
+            >
+              {actions}
+            </OverflowCluster>
           ) : null}
-          {valueInfo === undefined ? null : <InfoButton info={valueInfo} />}
         </div>
-        {hasContent(actions) ? (
-          <OverflowCluster
-            gap={2}
-            justify="end"
-            moreLabel={moreLabel}
-            data-bt-part="actions"
-          >
-            {actions}
-          </OverflowCluster>
+        {hasContent(description) ? (
+          <p className="bt-text" data-role="body" data-bt-part="description">
+            {description}
+          </p>
         ) : null}
       </div>
       {children}

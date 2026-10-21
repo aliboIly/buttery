@@ -32,6 +32,11 @@ export interface AppPageProps extends ComponentPropsWithRef<"main"> {
    * it. Defaults to `false`.
    */
   readonly fill?: boolean | undefined;
+  /**
+   * A small footer that ends the page under a hairline, such as a feedback link and the keyboard
+   * shortcuts, in `body-sm` and `text-secondary`.
+   */
+  readonly footer?: ReactNode;
 }
 
 function AppPageRoot({
@@ -40,6 +45,7 @@ function AppPageRoot({
   aside,
   asideLabel = "Details",
   fill = false,
+  footer,
   className,
   children,
   ...rest
@@ -74,6 +80,15 @@ function AppPageRoot({
                 </aside>
               ) : null}
             </div>
+            {hasContent(footer) ? (
+              <footer
+                className="bt-text"
+                data-role="body-sm"
+                data-bt-part="footer"
+              >
+                {footer}
+              </footer>
+            ) : null}
           </div>
         </AppPageContext>
       </ReflowGroup>
@@ -88,6 +103,8 @@ export interface AppPageSectionProps extends Omit<
 > {
   /** The section's heading, an `h2` in `title-md`, which names it. */
   readonly title?: string | undefined;
+  /** One line under the heading saying what the section is for, in `body-sm` and `text-secondary`. */
+  readonly description?: ReactNode;
   /** Actions at the end of the heading's row, such as a small "See all" button. */
   readonly actions?: ReactNode;
 }
@@ -98,6 +115,7 @@ export interface AppPageSectionProps extends Omit<
  */
 export function AppPageSection({
   title,
+  description,
   actions,
   className,
   children,
@@ -121,16 +139,27 @@ export function AppPageSection({
       {titled || hasContent(actions) ? (
         <div data-bt-part="section-head">
           {titled ? (
-            <h2
-              id={titleId}
-              className="bt-text bt-truncate"
-              data-role="title-md"
-              data-bt-truncate=""
-              title={title}
-              data-bt-part="section-title"
-            >
-              {title}
-            </h2>
+            <div data-bt-part="section-titles">
+              <h2
+                id={titleId}
+                className="bt-text bt-truncate"
+                data-role="title-md"
+                data-bt-truncate=""
+                title={title}
+                data-bt-part="section-title"
+              >
+                {title}
+              </h2>
+              {hasContent(description) ? (
+                <p
+                  className="bt-text"
+                  data-role="body-sm"
+                  data-bt-part="section-description"
+                >
+                  {description}
+                </p>
+              ) : null}
+            </div>
           ) : null}
           {hasContent(actions) ? (
             <div data-bt-part="section-actions">{actions}</div>

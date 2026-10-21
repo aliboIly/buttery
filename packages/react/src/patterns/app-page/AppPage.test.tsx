@@ -85,6 +85,41 @@ describe("AppPage", () => {
     expect(box("header").left - frame.left).toBe(32);
   });
 
+  it("ends the page with a footer under a hairline, and gives a section a description under its heading", () => {
+    inShell(
+      1280,
+      <AppPage
+        header={<h1>Pickup</h1>}
+        footer={<a href="#feedback">Share feedback</a>}
+      >
+        <AppPage.Section
+          title="Hours"
+          description="When customers can collect."
+          actions={<button type="button">Edit</button>}
+        >
+          <p>Weekdays 8–4</p>
+        </AppPage.Section>
+      </AppPage>,
+    );
+    const footer = box("footer");
+    const main = box("main");
+    expect(footer.top).toBeGreaterThanOrEqual(main.bottom);
+    const part = document.querySelector<HTMLElement>('[data-bt-part="footer"]');
+    expect(part?.tagName).toBe("FOOTER");
+    if (!part) throw new Error("No footer.");
+    expect(getComputedStyle(part).borderTopWidth).toBe("1px");
+    const heading = screen
+      .getByRole("heading", { level: 2, name: "Hours" })
+      .getBoundingClientRect();
+    const description = screen
+      .getByText("When customers can collect.")
+      .getBoundingClientRect();
+    expect(description.top - heading.bottom).toBe(4);
+    expect(
+      screen.getByRole("button", { name: "Edit" }).getBoundingClientRect().top,
+    ).toBe(heading.top);
+  });
+
   it("keeps a settings page at most 960px and a dense form at most 820px, centered", () => {
     inShell(1728, <AppPage width="medium" header={<h1>Pickup</h1>} />);
     expect(box("frame").width).toBe(960);

@@ -1,0 +1,73 @@
+@layer bt.components {
+  .bt-breadcrumbs {
+    --bt-breadcrumbs-hit: 24px;
+    --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
+
+    container: bt-breadcrumbs / inline-size;
+    min-inline-size: 0;
+  }
+
+  .bt-breadcrumbs > [data-bt-part="list"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bt-breadcrumbs [data-bt-part="item"] {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-breadcrumbs [data-bt-part="separator"] {
+    display: inline-flex;
+    flex: none;
+    color: var(--bt-text-tertiary);
+  }
+
+  .bt-breadcrumbs [data-bt-part="link"] {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+    border-radius: var(--bt-r-xs);
+    color: var(--bt-primary);
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .bt-breadcrumbs [data-bt-part="link"]:hover {
+      color: var(--bt-primary-hover);
+    }
+  }
+
+  .bt-breadcrumbs [data-bt-part="back"] {
+    display: none;
+  }
+
+  /* The link's line is shorter than a target needs, so its hit area reaches 24px. */
+  .bt-breadcrumbs [data-bt-part="hit"] {
+    position: absolute;
+    inset-block: calc((100% - var(--bt-breadcrumbs-hit)) / 2);
+    inset-inline: 0;
+  }
+
+  @container bt-breadcrumbs (width < 480px) {
+    .bt-breadcrumbs [data-bt-part="item"]:not(:last-child),
+    .bt-breadcrumbs [data-bt-part="separator"] {
+      display: none;
+    }
+
+    .bt-breadcrumbs [data-bt-part="back"] {
+      display: inline-flex;
+      flex: none;
+    }
+  }
+}

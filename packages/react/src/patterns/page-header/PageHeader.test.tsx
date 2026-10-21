@@ -54,6 +54,38 @@ function Orders({
 }
 
 describe("PageHeader", () => {
+  it("puts breadcrumbs 8 over the title, a badge after it and a description 8 under its row", () => {
+    render(
+      <div style={{ inlineSize: "900px" }}>
+        <PageHeader
+          title="Pickup"
+          breadcrumbs={
+            <nav aria-label="Breadcrumbs" data-testid="crumbs">
+              <a href="#settings">Settings</a>
+            </nav>
+          }
+          badge={<span data-testid="badge">All shops</span>}
+          description="When and where customers collect their orders."
+        />
+      </div>,
+    );
+    const crumbs = screen.getByTestId("crumbs").getBoundingClientRect();
+    const bar = document
+      .querySelector('[data-bt-part="bar"]')
+      ?.getBoundingClientRect();
+    const title = screen
+      .getByRole("heading", { level: 1, name: "Pickup" })
+      .getBoundingClientRect();
+    const badge = screen.getByTestId("badge").getBoundingClientRect();
+    const description = screen
+      .getByText("When and where customers collect their orders.")
+      .getBoundingClientRect();
+    if (!bar) throw new Error("No bar.");
+    expect(bar.top - crumbs.bottom).toBe(8);
+    expect(badge.left).toBeGreaterThan(title.right);
+    expect(description.top - bar.bottom).toBe(8);
+  });
+
   it("stamps its class and data-bt, forwards its ref and spreads props", () => {
     const ref = createRef<HTMLDivElement>();
     render(

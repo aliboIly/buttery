@@ -524,3 +524,7 @@ export { SettingsIndex } from "./patterns/settings-index/SettingsIndex.tsx";
 export type { SettingsIndexProps } from "./patterns/settings-index/SettingsIndex.tsx";
 export { InfoButton } from "./components/info-button/InfoButton.tsx";
 export type { InfoButtonProps } from "./components/info-button/InfoButton.tsx";
+export { Breadcrumbs } from "./components/breadcrumbs/Breadcrumbs.tsx";
+export type { BreadcrumbsProps } from "./components/breadcrumbs/Breadcrumbs.tsx";
+export { ScopeBadge } from "./components/scope-badge/ScopeBadge.tsx";
+export type { ScopeBadgeProps } from "./components/scope-badge/ScopeBadge.tsx";

@@ -15,6 +15,6 @@ export const meta: ComponentMeta = {
     "An editor's work area: use AppShell's inspector layout with a Stage",
   ],
   related: ["AppShell", "PageHeader", "DataTable"],
-  a11y: "The page's main landmark. Each titled section is a region named by its h2; the right rail is a complementary landmark named by asideLabel.",
+  a11y: "The page's main landmark. Each titled section is a region named by its h2, its description a paragraph under it; the right rail is a complementary landmark named by asideLabel; the footer is a footer element after the page's content.",
   motion: "morph",
 };
