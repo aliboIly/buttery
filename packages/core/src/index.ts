@@ -16,6 +16,8 @@ export {
 export type { Hsv, Oklch, Rgb } from "./color/color.ts";
 export { useControllableState } from "./hooks/use-controllable-state.ts";
 export { useScrollSpy } from "./hooks/use-scroll-spy.ts";
+export { useStoredState } from "./hooks/use-stored-state.ts";
+export type { StoredStateSetter } from "./hooks/use-stored-state.ts";
 export {
   isTypingField,
   matchesShortcut,
