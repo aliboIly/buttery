@@ -18,6 +18,16 @@ export interface Oklch {
   readonly h: number;
 }
 
+/** A color by hue, saturation and value (also called HSB): what a color picker's area and hue track set. */
+export interface Hsv {
+  /** Hue in degrees, 0–360. */
+  readonly h: number;
+  /** Saturation, 0–1. */
+  readonly s: number;
+  /** Value, or brightness, 0–1. */
+  readonly v: number;
+}
+
 const HEX = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i;
 
 function clamp(value: number, min: number, max: number): number {
@@ -34,6 +44,11 @@ function fromLinear(channel: number): number {
   return channel <= 0.0031308
     ? channel * 12.92
     : 1.055 * channel ** (1 / 2.4) - 0.055;
+}
+
+/** Whether `text` is a hex color `parseHex` reads: `#rgb` or `#rrggbb`, the `#` optional. */
+export function isHex(text: string): boolean {
+  return HEX.test(text.trim());
 }
 
 /** Parses `#rgb` or `#rrggbb`. Throws on anything else. */
@@ -56,6 +71,34 @@ export function formatHex({ r, g, b }: Rgb): string {
       .toString(16)
       .padStart(2, "0");
   return `#${channel(r)}${channel(g)}${channel(b)}`;
+}
+
+/** Converts sRGB to HSV. Grays have no hue of their own, so they get 0. */
+export function rgbToHsv({ r, g, b }: Rgb): Hsv {
+  const max = Math.max(r, g, b);
+  const delta = max - Math.min(r, g, b);
+  const sector =
+    delta === 0
+      ? 0
+      : max === r
+        ? ((g - b) / delta) % 6
+        : max === g
+          ? (b - r) / delta + 2
+          : (r - g) / delta + 4;
+  return {
+    h: (sector * 60 + 360) % 360,
+    s: max === 0 ? 0 : delta / max,
+    v: max,
+  };
+}
+
+/** Converts HSV to sRGB. */
+export function hsvToRgb({ h, s, v }: Hsv): Rgb {
+  const channel = (n: number): number => {
+    const k = (n + h / 60) % 6;
+    return v - v * s * clamp(Math.min(k, 4 - k), 0, 1);
+  };
+  return { r: channel(5), g: channel(3), b: channel(1) };
 }
 
 /** Converts sRGB to OKLCH. */

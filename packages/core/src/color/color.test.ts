@@ -4,10 +4,13 @@ import {
   formatHex,
   formatOklch,
   hexToOklch,
+  hsvToRgb,
+  isHex,
   mixOklab,
   oklchToHex,
   oklchToRgb,
   parseHex,
+  rgbToHsv,
 } from "./color.ts";
 
 describe("hex parsing", () => {
@@ -64,5 +67,39 @@ describe("contrast", () => {
     expect(contrastRatio("#000000", "#ffffff")).toBeCloseTo(21, 5);
     expect(contrastRatio("#ffffff", "#ffffff")).toBeCloseTo(1, 5);
     expect(contrastRatio("#6b6b6b", "#ffffff")).toBeCloseTo(5.33, 2);
+  });
+});
+
+describe("hsv", () => {
+  it("round-trips hex through HSV", () => {
+    for (const hex of [
+      "#2862e0",
+      "#c7d2fe",
+      "#f5d06f",
+      "#177245",
+      "#ff0000",
+      "#000000",
+      "#ffffff",
+    ]) {
+      expect(formatHex(hsvToRgb(rgbToHsv(parseHex(hex))))).toBe(hex);
+    }
+  });
+
+  it("reads the primaries and grays", () => {
+    expect(rgbToHsv(parseHex("#ff0000"))).toEqual({ h: 0, s: 1, v: 1 });
+    expect(rgbToHsv(parseHex("#00ff00"))).toEqual({ h: 120, s: 1, v: 1 });
+    expect(rgbToHsv(parseHex("#0000ff"))).toEqual({ h: 240, s: 1, v: 1 });
+    expect(rgbToHsv(parseHex("#ff00ff")).h).toBe(300);
+    expect(rgbToHsv(parseHex("#808080"))).toEqual({ h: 0, s: 0, v: 128 / 255 });
+    expect(formatHex(hsvToRgb({ h: 210, s: 0, v: 1 }))).toBe("#ffffff");
+    expect(formatHex(hsvToRgb({ h: 60, s: 1, v: 1 }))).toBe("#ffff00");
+  });
+
+  it("tells hex colors from other text", () => {
+    expect(isHex("#2862e0")).toBe(true);
+    expect(isHex("2862E0")).toBe(true);
+    expect(isHex(" #fff ")).toBe(true);
+    expect(isHex("#ffff")).toBe(false);
+    expect(isHex("blue")).toBe(false);
   });
 });

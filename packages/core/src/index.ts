@@ -3,14 +3,17 @@ export {
   formatHex,
   formatOklch,
   hexToOklch,
+  hsvToRgb,
+  isHex,
   mixOklab,
   oklchToHex,
   oklchToRgb,
   parseHex,
   relativeLuminance,
+  rgbToHsv,
   rgbToOklch,
 } from "./color/color.ts";
-export type { Oklch, Rgb } from "./color/color.ts";
+export type { Hsv, Oklch, Rgb } from "./color/color.ts";
 export { useControllableState } from "./hooks/use-controllable-state.ts";
 export {
   isTypingField,

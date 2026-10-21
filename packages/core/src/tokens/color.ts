@@ -268,6 +268,12 @@ export const colors = {
     dark: "#b2b2b2",
     description: "The two grip lines on the slider thumb.",
   },
+  "knob-ring": {
+    light: "#ffffff",
+    dark: "#ffffff",
+    description:
+      "The ring around a thumb drawn over picked colors (the color picker's), the same in both themes so it shows on any color.",
+  },
   "traffic-red": {
     light: "#ed6c61",
     dark: "#ed6c61",

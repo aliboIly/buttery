@@ -53,6 +53,7 @@
     --bt-knob-border: #1c1c1c;
     --bt-knob-highlight: #7a7a7a;
     --bt-knob-grip: #b2b2b2;
+    --bt-knob-ring: #ffffff;
     --bt-traffic-red: #ed6c61;
     --bt-traffic-yellow: #f5c05c;
     --bt-traffic-green: #5ac55e;
@@ -318,6 +319,7 @@
     --bt-knob-border: #000000;
     --bt-knob-highlight: #7a7a7a;
     --bt-knob-grip: #b2b2b2;
+    --bt-knob-ring: #ffffff;
     --bt-traffic-red: #ed6c61;
     --bt-traffic-yellow: #f5c05c;
     --bt-traffic-green: #5ac55e;
@@ -390,6 +392,7 @@
       --bt-knob-border: #000000;
       --bt-knob-highlight: #7a7a7a;
       --bt-knob-grip: #b2b2b2;
+      --bt-knob-ring: #ffffff;
       --bt-traffic-red: #ed6c61;
       --bt-traffic-yellow: #f5c05c;
       --bt-traffic-green: #5ac55e;
