@@ -15,6 +15,6 @@ export const meta: ComponentMeta = {
     "Errors and confirmations: show them inline or in a toast",
   ],
   related: ["IconButton", "Popover"],
-  a11y: "Opens after 500ms of hover and at once on keyboard focus; Escape closes it. Its text describes its element (aria-describedby). It never takes focus and holds no interactive content.",
+  a11y: "Opens after 500ms of hover and at once on keyboard focus; Escape closes it. Its text describes its element (aria-describedby) unless describes is off, for a tooltip that only repeats the element's name. It never takes focus and holds no interactive content.",
   motion: "presence",
 };

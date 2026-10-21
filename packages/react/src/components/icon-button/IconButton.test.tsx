@@ -1,6 +1,6 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { BookOpen, Undo2 } from "lucide-react";
 import { createRef } from "react";
 import type { ReactElement } from "react";
@@ -50,6 +50,25 @@ describe("IconButton", () => {
     expect(document.querySelector('[data-bt="Tooltip"]')?.textContent).toBe(
       "Undo",
     );
+  });
+
+  it("isn't described by its tooltip, which only repeats its name", async () => {
+    render(<IconButton icon={Undo2} label="Undo" />);
+    const button = screen.getByRole("button", { name: "Undo" });
+    await userEvent.keyboard("{Shift}");
+    button.focus();
+    await waitFor(() => {
+      expect(document.querySelector('[data-bt="Tooltip"]')).not.toBeNull();
+    });
+    expect(button.hasAttribute("aria-describedby")).toBe(false);
+  });
+
+  it("shows no tooltip with tooltip off", async () => {
+    render(<IconButton icon={Undo2} label="Undo" tooltip={false} />);
+    await userEvent.keyboard("{Shift}");
+    screen.getByRole("button", { name: "Undo" }).focus();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.querySelector('[data-bt="Tooltip"]')).toBeNull();
   });
 
   it("keeps a description it was given", () => {

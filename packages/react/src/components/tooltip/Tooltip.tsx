@@ -1,5 +1,6 @@
 import {
   Layer,
+  Slot,
   cx,
   lastInput,
   space,
@@ -8,7 +9,7 @@ import {
 } from "@buttery/core";
 import { Tooltip as RadixTooltip } from "radix-ui";
 import { use } from "react";
-import type { ReactElement, ReactNode } from "react";
+import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { ButteryContext } from "../../provider/context.ts";
 
 /** Which side of its element a tooltip opens on. */
@@ -28,8 +29,20 @@ export interface TooltipProps {
   readonly defaultOpen?: boolean | undefined;
   /** Called when it opens or closes. */
   readonly onOpenChange?: ((open: boolean) => void) | undefined;
+  /**
+   * Whether it describes its element to screen readers while it's open. Defaults to `true`; turn it off
+   * when it only repeats the element's name, as `IconButton`'s does. A description the element was given
+   * stays either way.
+   */
+  readonly describes?: boolean | undefined;
   /** Extra classes for the tooltip itself. */
   readonly className?: string | undefined;
+}
+
+// Radix describes its trigger with the open tooltip, joined to the element's own description. Passing on
+// everything else leaves the element only its own.
+function Undescribed(props: ComponentPropsWithRef<typeof Slot>): ReactElement {
+  return <Slot {...props} aria-describedby={undefined} />;
 }
 
 /** Props for `TooltipProvider`. */
@@ -68,6 +81,7 @@ export function Tooltip({
   open,
   defaultOpen = false,
   onOpenChange,
+  describes = true,
   className,
 }: TooltipProps): ReactElement {
   const [isOpen, setOpen] = useControllableState({
@@ -84,7 +98,7 @@ export function Tooltip({
           if (lastInput() === "pointer") event.preventDefault();
         }}
       >
-        {children}
+        {describes ? children : <Undescribed>{children}</Undescribed>}
       </RadixTooltip.Trigger>
       {isOpen ? (
         <Layer band="tooltip">

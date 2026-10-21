@@ -49,6 +49,34 @@ describe("InfoButton", () => {
     expect(document.activeElement).toBe(button);
   });
 
+  it("leaves focus on the button as it opens, its tooltip closed while the popover shows the words", async () => {
+    render(<InfoButton info={INFO} />);
+    const button = screen.getByRole("button", { name: INFO });
+    await browser.keyboard("{Shift}");
+    button.focus();
+    await waitFor(() => {
+      expect(document.querySelector('[data-bt="Tooltip"]')).not.toBeNull();
+    });
+    await browser.keyboard("{Enter}");
+    await screen.findByRole("dialog", { name: INFO });
+    await waitFor(() => {
+      expect(document.querySelector('[data-bt="Tooltip"]')).toBeNull();
+    });
+    expect(document.activeElement).toBe(button);
+    expect(button.hasAttribute("aria-describedby")).toBe(false);
+  });
+
+  it("shows no tooltip over its open popover when the pointer comes back to it", async () => {
+    render(<InfoButton info={INFO} />);
+    const button = screen.getByRole("button", { name: INFO });
+    await browser.click(button);
+    await browser.hover(await screen.findByRole("dialog", { name: INFO }));
+    await browser.hover(button);
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    expect(screen.getByRole("dialog", { name: INFO })).toBeTruthy();
+    expect(document.querySelector('[data-bt="Tooltip"]')).toBeNull();
+  });
+
   it("opens on a tap, which no tooltip answers", async () => {
     render(<InfoButton info={INFO} />);
     const user = userEvent.setup();

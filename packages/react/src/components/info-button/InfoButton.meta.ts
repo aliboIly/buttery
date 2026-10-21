@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "Naming an icon-only action: use IconButton, whose tooltip is its name",
   ],
   related: ["IconButton", "Tooltip", "Popover", "PageHeader", "MetricCard"],
-  a11y: "A native button named by its words (aria-label), which also show as a tooltip on hover and keyboard focus. A press, a tap, Enter or Space opens them in a popover named by its text; Escape closes it with focus back on the button.",
+  a11y: "A native button named by its words (aria-label), which also show as a tooltip on hover and keyboard focus. A press, a tap, Enter or Space opens them in a popover named by its text while focus stays on the button and the tooltip stays closed, so the words are read once; Escape, Tab or a press elsewhere closes it.",
   motion: "press",
 };

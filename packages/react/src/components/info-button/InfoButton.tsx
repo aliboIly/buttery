@@ -1,4 +1,4 @@
-import { Popover, cx } from "@buttery/core";
+import { Popover, cx, useControllableState } from "@buttery/core";
 import { Info } from "lucide-react";
 import { useId } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
@@ -24,8 +24,9 @@ export interface InfoButtonProps extends Omit<
 
 /**
  * A 28px info button (ⓘ) that explains the value or title beside it. Its words show in a tooltip on hover
- * and keyboard focus, and a press, a tap or Enter opens them in a popover that stays until Escape or a
- * press elsewhere, so a touch screen shows them too.
+ * and keyboard focus, and a press, a tap or Enter opens them in a popover that stays until Escape, Tab or
+ * a press elsewhere, so a touch screen shows them too. Focus stays on the button and the tooltip stays
+ * closed while the popover is open, so screen readers hear the words once, as the button's name.
  *
  * @example
  * <InfoButton info="Every sale, before refunds and fees." />
@@ -40,8 +41,13 @@ export function InfoButton({
   ...rest
 }: InfoButtonProps): ReactElement {
   const text = useId();
+  const [isOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   return (
-    <Popover open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+    <Popover open={isOpen} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <IconButton
           asChild
@@ -49,6 +55,7 @@ export function InfoButton({
           label={info}
           size="sm"
           tooltipSide={side}
+          tooltip={!isOpen}
         >
           <button
             type="button"
@@ -63,6 +70,9 @@ export function InfoButton({
         align="start"
         aria-labelledby={text}
         className="bt-info-button-popover"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+        }}
       >
         <p id={text} className="bt-text" data-role="body-sm">
           {info}

@@ -17,6 +17,6 @@ export const meta: ComponentMeta = {
     "A page's main action, which needs its words: use Button variant primary",
   ],
   related: ["Button", "Tooltip"],
-  a11y: 'A native button named by label (aria-label); the same label shows as a tooltip on hover and keyboard focus, which Radix also links as its description while it\'s open. Toggles use aria-pressed. A dot adds ", new" (or dotLabel) to the name.',
+  a11y: 'A native button named by label (aria-label); the same label shows as a tooltip on hover and keyboard focus, which doesn\'t also describe the button, since it repeats the name; a description given in aria-describedby stays. Toggles use aria-pressed. A dot adds ", new" (or dotLabel) to the name.',
   motion: "press",
 };

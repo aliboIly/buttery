@@ -22,6 +22,11 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
   readonly variant?: "ghost" | "primary" | undefined;
   /** Which side the tooltip opens on. Defaults to `"top"`. */
   readonly tooltipSide?: TooltipSide | undefined;
+  /**
+   * Whether the label shows as a tooltip. Defaults to `true`; turn it off while the same words show
+   * elsewhere, such as in a popover the button opened.
+   */
+  readonly tooltip?: boolean | undefined;
   /** Draws an accent dot at the icon's top end, for something new behind the button, and adds it to the name. */
   readonly dot?: boolean | undefined;
   /** What the dot adds to the button's name. Defaults to `"new"`, read as "Notifications, new". */
@@ -31,10 +36,12 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
 }
 
 /**
- * A square button that shows only an icon, named by a `label` that also appears as its tooltip. Ghost by
- * default: the background shows on hover, and `aria-pressed` holds it on for toggles. Use `aria-disabled`
- * instead of `disabled` to keep it focusable while it can't act, such as Undo with nothing left to undo:
- * it looks disabled and ignores presses, and focus stays where it was.
+ * A square button that shows only an icon, named by a `label` that also appears as its tooltip. The
+ * tooltip repeats the name, so it doesn't describe the button to screen readers as well; a description
+ * given in `aria-describedby` stays. Ghost by default: the background shows on hover, and `aria-pressed`
+ * holds it on for toggles. Use `aria-disabled` instead of `disabled` to keep it focusable while it can't
+ * act, such as Undo with nothing left to undo: it looks disabled and ignores presses, and focus stays
+ * where it was.
  *
  * @example
  * <IconButton icon={Undo2} label="Undo" onClick={undo} />
@@ -45,6 +52,7 @@ export function IconButton({
   size = "md",
   variant = "ghost",
   tooltipSide,
+  tooltip = true,
   dot = false,
   dotLabel = "new",
   asChild = false,
@@ -69,7 +77,12 @@ export function IconButton({
     onClick?.(event);
   };
   return (
-    <Tooltip label={label} side={tooltipSide}>
+    <Tooltip
+      label={label}
+      side={tooltipSide}
+      describes={false}
+      open={tooltip ? undefined : false}
+    >
       {asChild ? (
         <Slot
           {...rest}
