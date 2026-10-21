@@ -425,3 +425,8 @@ export type {
   DataTableSort,
   SkeletonShape,
 } from "./patterns/data-table/DataTable.tsx";
+export { SavedViews } from "./patterns/saved-views/SavedViews.tsx";
+export type {
+  SavedView,
+  SavedViewsProps,
+} from "./patterns/saved-views/SavedViews.tsx";
