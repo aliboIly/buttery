@@ -364,3 +364,9 @@ export type {
   QuickActionsComponent,
   QuickActionsProps,
 } from "./patterns/quick-actions/QuickActions.tsx";
+export { PageHeader } from "./patterns/page-header/PageHeader.tsx";
+export type {
+  PageHeaderActionProps,
+  PageHeaderComponent,
+  PageHeaderProps,
+} from "./patterns/page-header/PageHeader.tsx";
