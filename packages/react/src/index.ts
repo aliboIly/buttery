@@ -337,3 +337,5 @@ export type {
 } from "./components/status-badge/StatusBadge.tsx";
 export { SearchField } from "./components/search-field/SearchField.tsx";
 export type { SearchFieldProps } from "./components/search-field/SearchField.tsx";
+export { LoadingPill } from "./components/loading-pill/LoadingPill.tsx";
+export type { LoadingPillProps } from "./components/loading-pill/LoadingPill.tsx";

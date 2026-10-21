@@ -1,0 +1,29 @@
+@layer bt.components {
+  .bt-loading-pill {
+    --bt-loading-pill-spinner: 14px;
+
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-2);
+    block-size: var(--bt-h-sm);
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-text-control-size);
+    font-weight: var(--bt-text-control-weight);
+    line-height: var(--bt-text-control-line);
+    letter-spacing: var(--bt-text-control-tracking);
+    white-space: nowrap;
+  }
+
+  /* The spinner sits in the row here rather than centered over a control. */
+  .bt-loading-pill > [data-bt-part="spinner"] {
+    position: static;
+    flex: none;
+    inline-size: var(--bt-loading-pill-spinner);
+    block-size: var(--bt-loading-pill-spinner);
+    translate: none;
+  }
+}
