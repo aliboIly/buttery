@@ -1,6 +1,7 @@
 export { colors, contrastPairs } from "./color.ts";
 export type { ColorDefinition, ColorToken, ContrastPair } from "./color.ts";
 export {
+  assembleScale,
   durations,
   easingCurves,
   easings,

@@ -109,7 +109,7 @@ export {
 export type { MotionPreference } from "./motion/preference.ts";
 export { presencePresets, reducedPresence } from "./motion/presets.ts";
 export { revealOnce } from "./motion/reveal.ts";
-export type { RevealOnceOptions } from "./motion/reveal.ts";
+export type { RevealArrival, RevealOnceOptions } from "./motion/reveal.ts";
 export type { PresenceMotion, PresencePreset } from "./motion/presets.ts";
 export type { MotionElementProps } from "./motion/props.ts";
 export { isSettled, publishSettled, trackAnimation } from "./motion/settle.ts";
@@ -199,6 +199,7 @@ export type {
   ThemeOptions,
 } from "./theme/create-theme.ts";
 export {
+  assembleScale,
   colors,
   contrastPairs,
   displayBreakpoints,

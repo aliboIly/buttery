@@ -160,6 +160,7 @@
     --bt-announcement-life: 1000ms;
     --bt-typeahead: 500ms;
     --bt-delay-follow: 80ms;
+    --bt-count-up: 800ms;
     --bt-press-scale: 0.97;
     --bt-icon-stroke: 1.75;
     --bt-text-title-size: 15px;

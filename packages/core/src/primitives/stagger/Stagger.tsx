@@ -3,6 +3,7 @@ import { use, useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { useMotionPreference } from "../../motion/preference.ts";
 import { revealOnce } from "../../motion/reveal.ts";
+import type { RevealArrival } from "../../motion/reveal.ts";
 import { AnimationTrackingContext } from "../../motion/use-animation-tracking.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
@@ -11,6 +12,8 @@ import { useMergedRefs } from "../../utils/merge-refs.ts";
 export interface StaggerProps extends ComponentPropsWithRef<"div"> {
   /** Render the single child element (such as a `Grid`) instead of a `div`, with Stagger's props merged onto it. */
   readonly asChild?: boolean | undefined;
+  /** How the items come in: `"rise"` (the default) or `"assemble"`, which also grows them from 96%, for a hero visual. */
+  readonly arrival?: RevealArrival | undefined;
 }
 
 /** Props for `Stagger.Item`. */
@@ -32,6 +35,7 @@ export function StaggerItem({
 
 function StaggerRoot({
   asChild = false,
+  arrival = "rise",
   className,
   ref,
   ...rest
@@ -61,11 +65,12 @@ function StaggerRoot({
     return revealOnce(node, items, {
       tracked,
       stepped: true,
+      arrival,
       onShown: () => {
         shown.current = true;
       },
     });
-  }, [reduced, tracked]);
+  }, [reduced, tracked, arrival]);
 
   const Root = asChild ? Slot : "div";
   return (

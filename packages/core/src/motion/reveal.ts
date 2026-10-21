@@ -1,6 +1,6 @@
 import { animate, stagger } from "motion";
 import type { DOMKeyframesDefinition } from "motion";
-import { spring, timing, travel } from "../tokens/motion.ts";
+import { assembleScale, spring, timing, travel } from "../tokens/motion.ts";
 import { trackAnimation } from "./settle.ts";
 import { fadeIn } from "./transitions.ts";
 
@@ -9,9 +9,21 @@ const SHOWN_TRANSFORM = "translateY(0px)";
 const AMOUNT = 0.15;
 const LONGEST_ENTRANCE = timing["entrance-max"] / 1000;
 
-const arrive: DOMKeyframesDefinition = {
-  opacity: [0, 1],
-  transform: [HIDDEN_TRANSFORM, SHOWN_TRANSFORM],
+/** How targets come in: rising into place, or also growing from `assembleScale`, as a hero visual assembles. */
+export type RevealArrival = "rise" | "assemble";
+
+const ARRIVALS: Readonly<Record<RevealArrival, DOMKeyframesDefinition>> = {
+  rise: {
+    opacity: [0, 1],
+    transform: [HIDDEN_TRANSFORM, SHOWN_TRANSFORM],
+  },
+  assemble: {
+    opacity: [0, 1],
+    transform: [
+      `${HIDDEN_TRANSFORM} scale(${String(assembleScale)})`,
+      `${SHOWN_TRANSFORM} scale(1)`,
+    ],
+  },
 };
 
 const arriveOptions = {
@@ -96,6 +108,8 @@ export interface RevealOnceOptions {
   readonly stepped: boolean;
   /** Runs once the targets have arrived. */
   readonly onShown?: (() => void) | undefined;
+  /** How they come in: `"rise"` (the default) or `"assemble"`, which also grows them from 96%. */
+  readonly arrival?: RevealArrival | undefined;
 }
 
 /**
@@ -110,7 +124,7 @@ export interface RevealOnceOptions {
 export function revealOnce(
   trigger: HTMLElement,
   targets: readonly HTMLElement[],
-  { tracked, stepped, onShown }: RevealOnceOptions,
+  { tracked, stepped, onShown, arrival = "rise" }: RevealOnceOptions,
 ): () => void {
   let release: (() => void) | null = null;
   let running: { complete: () => void } | null = null;
@@ -175,7 +189,7 @@ export function revealOnce(
         )
       : 0;
   const stop = whenInView(trigger, () => {
-    play(arrive, delayEach);
+    play(ARRIVALS[arrival], delayEach);
   });
   return () => {
     stop();

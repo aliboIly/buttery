@@ -61,6 +61,9 @@ export const travel = {
 /** The scale menus and dialogs grow from as they arrive. Leaving, they fade without shrinking. */
 export const enterScale = 0.97;
 
+/** The scale a hero visual's pieces grow from as they assemble, rising into place. */
+export const assembleScale = 0.96;
+
 /**
  * Timing tokens that aren't durations of a single transition, in milliseconds: the gap between staggered
  * items, hover intent (a menu opens once the pointer has rested on its trigger, at once when it moves between
@@ -68,8 +71,8 @@ export const enterScale = 0.97;
  * choreographed entrance, a confetti burst's life, how long a toast stays (longer with an action, so
  * there's time to reach it), how long a live region holds what it announced before it's cleared, so
  * reading the page later doesn't hear it again, how long letters typed in a list build up one search
- * before it starts over, and how long chrome that follows a change waits before it arrives, as crop mode's
- * handles and toolbar do.
+ * before it starts over, how long chrome that follows a change waits before it arrives, as crop mode's
+ * handles and toolbar do, and how long a stat takes to count up to its number.
  */
 export const timing = {
   stagger: 50,
@@ -84,6 +87,7 @@ export const timing = {
   "announcement-life": 1000,
   typeahead: 500,
   "delay-follow": 80,
+  "count-up": 800,
 } as const;
 
 /** Scale applied while a pressable element is held down. */
