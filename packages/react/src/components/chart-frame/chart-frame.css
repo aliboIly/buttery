@@ -113,6 +113,12 @@
     justify-content: space-between;
   }
 
+  /* A lone tick is zero, which sits on the plot's bottom edge. */
+  .bt-chart-frame > [data-bt-part="y-axis"]:has(> :only-child),
+  .bt-chart-frame [data-bt-part="grid"]:has(> :only-child) {
+    justify-content: flex-end;
+  }
+
   .bt-chart-frame [data-bt-part="grid"] > span {
     block-size: var(--bt-chart-frame-hairline);
     background-color: var(--bt-border);

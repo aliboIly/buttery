@@ -6,21 +6,34 @@ export interface ValueScale {
   readonly max: number;
   /** The gridline values from `min` to `max`, ascending. */
   readonly ticks: readonly number[];
+  /** How many decimal places the ticks need to read as what they are, such as 2 for steps of 0.25. */
+  readonly decimals: number;
 }
 
 const NICE_STEPS = [1, 2, 2.5, 5, 10] as const;
+const WHOLE_STEPS = [1, 2, 5, 10] as const;
 
-function niceStep(rough: number): number {
+function niceStep(rough: number, whole: boolean): number {
   const magnitude = 10 ** Math.floor(Math.log10(rough));
   const residual = rough / magnitude;
-  const step = NICE_STEPS.find((candidate) => residual <= candidate) ?? 10;
+  const steps: readonly number[] = whole ? WHOLE_STEPS : NICE_STEPS;
+  const step = steps.find((candidate) => residual <= candidate) ?? 10;
   return step * magnitude;
+}
+
+function places(step: number): number {
+  for (let digits = 0; digits < 8; digits += 1) {
+    const scaled = step * 10 ** digits;
+    if (Math.abs(Math.round(scaled) - scaled) < 1e-9) return digits;
+  }
+  return 8;
 }
 
 /**
  * A value axis that always takes in zero and lands on round numbers, with about `intervals` gaps between
- * its ticks; whole-number values, such as counts, get whole-number ticks. Values that are all zero, or
- * none, give a single tick at zero on the plot's bottom edge.
+ * its ticks; whole-number values, such as counts, get whole-number ticks, in steps of 1, 2 or 5 times a
+ * power of ten. Values that are all zero, or none, give a single tick at zero on the plot's bottom edge.
+ * Values that aren't finite numbers are left out.
  */
 export function valueScale(
   values: Iterable<number>,
@@ -30,14 +43,15 @@ export function valueScale(
   let high = 0;
   let whole = true;
   for (const value of values) {
+    if (!Number.isFinite(value)) continue;
     low = Math.min(low, value);
     high = Math.max(high, value);
     whole &&= Number.isInteger(value);
   }
-  if (low === high) return { min: 0, max: 1, ticks: [0] };
-  const fine = niceStep((high - low) / intervals);
+  if (low === high) return { min: 0, max: 1, ticks: [0], decimals: 0 };
+  const fine = niceStep((high - low) / intervals, whole);
   const step = whole ? Math.max(1, fine) : fine;
-  const decimals = Math.max(0, 1 - Math.floor(Math.log10(step)));
+  const decimals = places(step);
   const min = Math.floor(low / step) * step;
   const max = Math.ceil(high / step) * step;
   const count = Math.round((max - min) / step);
@@ -48,6 +62,7 @@ export function valueScale(
     min: ticks[0] ?? min,
     max: ticks.at(-1) ?? max,
     ticks,
+    decimals,
   };
 }
 

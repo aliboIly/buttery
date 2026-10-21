@@ -304,4 +304,89 @@ describe("ChartFrame", () => {
     );
     warn.mockRestore();
   });
+
+  it("keeps the point it shows, and its slider value, true to the data when the data changes", async () => {
+    const { rerender } = render(<Chart />);
+    const plot = screen.getByRole("slider");
+    plot.focus();
+    await userEvent.keyboard("{Home}");
+    expect(plot.getAttribute("aria-valuenow")).toBe("0");
+    rerender(
+      <Chart
+        series={[
+          { ...THIS_WEEK, values: [70, 38, 51, 47, 63, 71, 58] },
+          LAST_WEEK,
+        ]}
+      />,
+    );
+    expect(plot.getAttribute("aria-valuenow")).toBe("0");
+    expect(plot.getAttribute("aria-valuetext")).toContain(
+      "Oct 8: This week 70",
+    );
+    expect(
+      [...document.querySelectorAll('[data-bt-part="tooltip-value"]')].map(
+        (value) => value.textContent,
+      ),
+    ).toContain("70");
+  });
+
+  it("puts a lone zero tick on the plot's bottom edge", () => {
+    render(
+      <Chart
+        series={[
+          { key: "now", label: "Refunds", values: [0, 0, 0, 0, 0, 0, 0] },
+        ]}
+      >
+        <ChartFrame.Line series="now" />
+      </Chart>,
+    );
+    const plot = screen.getByRole("slider").getBoundingClientRect();
+    const [line] = part("grid").children;
+    const [label] = part("y-axis").children;
+    if (!line || !label) throw new Error("No tick.");
+    expect(
+      Math.abs(line.getBoundingClientRect().bottom - plot.bottom),
+    ).toBeLessThanOrEqual(1);
+    const box = label.getBoundingClientRect();
+    expect(
+      Math.abs(box.top + box.height / 2 - plot.bottom),
+    ).toBeLessThanOrEqual(1);
+  });
+
+  it("labels fractional ticks with the decimals they need", () => {
+    render(
+      <Chart
+        series={[
+          {
+            key: "now",
+            label: "Rate",
+            values: [0.2, 0.4, 0.9, 1, 0.6, 0.3, 0.5],
+          },
+        ]}
+      >
+        <ChartFrame.Line series="now" />
+      </Chart>,
+    );
+    expect(
+      [...part("y-axis").children].map((label) => label.textContent),
+    ).toEqual(["1", "0.75", "0.5", "0.25", "0"]);
+  });
+
+  it("leaves out values that aren't finite numbers instead of breaking its axis", () => {
+    render(
+      <Chart
+        series={[
+          {
+            key: "now",
+            label: "Orders",
+            values: [4, Number.NaN, 9, 6, 2, 8, 5],
+          },
+        ]}
+      >
+        <ChartFrame.Line series="now" />
+      </Chart>,
+    );
+    expect(part("y-axis").children.length).toBeGreaterThan(1);
+    expect(part("y-axis").textContent).not.toContain("NaN");
+  });
 });

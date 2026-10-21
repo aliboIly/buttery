@@ -2,7 +2,14 @@ import { Text, cx, space, useMergedRefs, warnOnce } from "@buttery/core";
 import type { ColorToken, CssVariables } from "@buttery/core";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
-import { createContext, use, useEffect, useId, useRef } from "react";
+import {
+  createContext,
+  use,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import type {
   ComponentPropsWithRef,
   CSSProperties,
@@ -105,10 +112,21 @@ const SERIES_COLORS = [
 const plainNumber = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 2,
 });
-const shortNumber = new Intl.NumberFormat(undefined, {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
+const shortNumbers = new Map<number, Intl.NumberFormat>();
+
+/** Compact numbers ("2.5K") with as many decimals as the ticks need, at least one for the compact forms. */
+function shortNumber(decimals: number): Intl.NumberFormat {
+  const digits = Math.max(1, decimals);
+  let format = shortNumbers.get(digits);
+  if (format === undefined) {
+    format = new Intl.NumberFormat(undefined, {
+      notation: "compact",
+      maximumFractionDigits: digits,
+    });
+    shortNumbers.set(digits, format);
+  }
+  return format;
+}
 const signedPercent = new Intl.NumberFormat(undefined, {
   style: "percent",
   maximumFractionDigits: 1,
@@ -203,7 +221,7 @@ function ChartFrameRoot({
   layout = "point",
   size = "md",
   formatValue = (value) => plainNumber.format(value),
-  formatTick = (value) => shortNumber.format(value),
+  formatTick,
   lowerIsBetter = false,
   loading = false,
   loadingLabel = "Loading data",
@@ -219,6 +237,7 @@ function ChartFrameRoot({
   const rootRefs = useMergedRefs(ref, root);
   const plot = useRef<HTMLDivElement>(null);
   const shown = useRef<number | null>(null);
+  const position = useRef<number | null>(null);
   const summaryId = useId();
   const resolved = resolveSeries(series);
   const scale = valueScale(
@@ -233,6 +252,9 @@ function ChartFrameRoot({
     resolved.every((entry) => entry.values.every((value) => value === null));
   const state = loading ? "loading" : empty ? "empty" : "ready";
   const ticks = [...scale.ticks].reverse();
+  const tickText =
+    formatTick ??
+    ((value: number) => shortNumber(scale.decimals).format(value));
   const frameStyle: CSSProperties & CssVariables = {
     ...style,
     "--bt-chart-frame-bands": String(Math.max(1, count)),
@@ -351,9 +373,7 @@ function ChartFrameRoot({
       hide();
       return;
     }
-    const from =
-      shown.current ??
-      Number(event.currentTarget.getAttribute("aria-valuenow"));
+    const from = shown.current ?? position.current ?? last;
     const next =
       event.key === "ArrowLeft" || event.key === "ArrowDown"
         ? Math.max(0, from - 1)
@@ -366,10 +386,25 @@ function ChartFrameRoot({
               : undefined;
     if (next === undefined) return;
     event.preventDefault();
+    position.current = next;
     event.currentTarget.setAttribute("aria-valuenow", String(next));
     event.currentTarget.setAttribute("aria-valuetext", describe(next));
     show(next);
   };
+
+  // The slider's value and the shown point are written straight to the page, so after every render they're
+  // written again for the data as it is now, kept inside its points.
+  useLayoutEffect(() => {
+    const area = plot.current;
+    if (area === null) {
+      shown.current = null;
+      return;
+    }
+    const at = Math.min(last, Math.max(0, position.current ?? last));
+    area.setAttribute("aria-valuenow", String(at));
+    area.setAttribute("aria-valuetext", describe(at));
+    if (shown.current !== null) show(Math.min(last, shown.current));
+  });
 
   const trendBadge = (trend: Trend): ReactElement => {
     const good = trend === "rise" ? !lowerIsBetter : lowerIsBetter;
@@ -405,7 +440,7 @@ function ChartFrameRoot({
         <>
           <div data-bt-part="y-axis" aria-hidden="true">
             {ticks.map((tick) => (
-              <span key={tick}>{formatTick(tick)}</span>
+              <span key={tick}>{tickText(tick)}</span>
             ))}
           </div>
           <div
@@ -417,7 +452,6 @@ function ChartFrameRoot({
             aria-valuemin={0}
             aria-valuemax={last}
             aria-valuenow={last}
-            aria-valuetext={describe(last)}
             className="bt-focus"
             data-bt-part="plot"
             onPointerMove={(event) => {
@@ -431,7 +465,7 @@ function ChartFrameRoot({
             onKeyDown={step}
             onFocus={(event) => {
               if (event.currentTarget.matches(":focus-visible"))
-                show(Number(event.currentTarget.getAttribute("aria-valuenow")));
+                show(position.current ?? last);
             }}
             onBlur={hide}
           >

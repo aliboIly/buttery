@@ -7,6 +7,7 @@ describe("valueScale", () => {
       min: 0,
       max: 80,
       ticks: [0, 20, 40, 60, 80],
+      decimals: 0,
     });
   });
 
@@ -21,13 +22,42 @@ describe("valueScale", () => {
     expect(valueScale([0.07, 0.31], 4).ticks).toEqual([0, 0.1, 0.2, 0.3, 0.4]);
   });
 
-  it("keeps counts on whole numbers", () => {
+  it("keeps counts on whole numbers, in steps of 1, 2 or 5 times a power of ten", () => {
     expect(valueScale([0, 1, 2, 1], 4).ticks).toEqual([0, 1, 2]);
+    expect(valueScale([0, 10], 4).ticks).toEqual([0, 5, 10]);
+    expect(valueScale([3, 5], 2).ticks).toEqual([0, 5]);
+    for (const tick of valueScale([12, 37, 68], 4).ticks)
+      expect(Number.isInteger(tick)).toBe(true);
+  });
+
+  it("says how many decimals its ticks need", () => {
+    expect(valueScale([0.2, 1], 4)).toMatchObject({
+      ticks: [0, 0.25, 0.5, 0.75, 1],
+      decimals: 2,
+    });
+    expect(valueScale([0.004, 0.019], 4).decimals).toBe(3);
+    expect(valueScale([1200, 9800], 4).decimals).toBe(0);
+  });
+
+  it("leaves out values that aren't finite numbers", () => {
+    expect(valueScale([4, Number.NaN, 9, Number.POSITIVE_INFINITY], 4)).toEqual(
+      valueScale([4, 9], 4),
+    );
   });
 
   it("gives one tick at zero for no values or all zeros", () => {
-    expect(valueScale([], 4)).toEqual({ min: 0, max: 1, ticks: [0] });
-    expect(valueScale([0, 0], 4)).toEqual({ min: 0, max: 1, ticks: [0] });
+    expect(valueScale([], 4)).toEqual({
+      min: 0,
+      max: 1,
+      ticks: [0],
+      decimals: 0,
+    });
+    expect(valueScale([0, 0], 4)).toEqual({
+      min: 0,
+      max: 1,
+      ticks: [0],
+      decimals: 0,
+    });
   });
 
   it("spaces its ticks evenly", () => {
