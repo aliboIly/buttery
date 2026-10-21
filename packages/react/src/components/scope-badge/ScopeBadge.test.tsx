@@ -37,11 +37,19 @@ describe("ScopeBadge", () => {
     expect(badge().className).toBe("bt-scope-badge bt-focus custom");
   });
 
-  it("is 20px tall with a target reaching 24", () => {
+  it("is 20px tall with a target reaching 24, a control the height check sees", () => {
     render(<ScopeBadge label="All shops" info={INFO} />);
     expect(badge().getBoundingClientRect().height).toBe(20);
+    expect(badge().hasAttribute("data-bt-control")).toBe(true);
     const hit = badge().querySelector('[data-bt-part="hit"]');
     expect(hit?.getBoundingClientRect().height).toBe(24);
+  });
+
+  it("fades its colors on hover", () => {
+    render(<ScopeBadge label="All shops" info={INFO} />);
+    const style = getComputedStyle(badge());
+    expect(style.transitionProperty).toBe("background-color, color");
+    expect(style.transitionDuration).not.toBe("0s");
   });
 
   it("keeps keyboard focus on itself as Enter opens the popover", async () => {

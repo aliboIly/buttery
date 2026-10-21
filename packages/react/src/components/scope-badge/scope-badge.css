@@ -3,9 +3,6 @@
     --bt-scope-badge-hit: 24px;
     --bt-scope-badge-icon: 12px;
     --bt-scope-badge-line: 1px;
-    --bt-transition-hover:
-      background-color var(--bt-dur-fast) var(--bt-ease-standard),
-      color var(--bt-dur-fast) var(--bt-ease-standard);
 
     position: relative;
     display: inline-flex;
@@ -27,6 +24,9 @@
     line-height: var(--bt-text-badge-line);
     letter-spacing: var(--bt-text-badge-tracking);
     white-space: nowrap;
+    transition:
+      background-color var(--bt-dur-fast) var(--bt-ease-standard),
+      color var(--bt-dur-fast) var(--bt-ease-standard);
     appearance: none;
   }
 

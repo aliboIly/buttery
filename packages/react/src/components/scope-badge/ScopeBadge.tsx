@@ -55,6 +55,7 @@ export function ScopeBadge({
             {...rest}
             className={cx("bt-scope-badge bt-focus", className)}
             data-bt="ScopeBadge"
+            data-bt-control=""
           >
             <span
               className="bt-truncate"
