@@ -57,8 +57,11 @@
     }
   }
 
-  .bt-settings-index-section [data-bt-part="link"][data-more] {
-    border: var(--bt-settings-index-line) dashed var(--bt-border-strong);
+  /* Drawn inside the link, so its tile and text sit where a plain link's do. Keyboard focus shows the ring instead. */
+  .bt-settings-index-section
+    [data-bt-part="link"][data-more]:not(:focus-visible) {
+    outline: var(--bt-settings-index-line) dashed var(--bt-border-strong);
+    outline-offset: calc(var(--bt-settings-index-line) * -1);
   }
 
   .bt-settings-index-section [data-bt-part="tile"] {

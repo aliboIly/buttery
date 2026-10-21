@@ -87,9 +87,100 @@ describe("SettingsIndex", () => {
       </SettingsIndex>,
     );
     const more = screen.getByRole("link", { name: /Find more settings/ });
-    expect(getComputedStyle(more).borderTopStyle).toBe("dashed");
+    expect(getComputedStyle(more).outlineStyle).toBe("dashed");
     expect(more.getAttribute("href")).toBe("#more");
     expect(more.querySelector('[data-bt-part="tile"] svg')).not.toBeNull();
+  });
+
+  it("draws its dashed edge inside, so its tile sits where a plain link's does, and rings it on keyboard focus", async () => {
+    render(
+      <SettingsIndex>
+        <SettingsIndex.Section title="Your shop">
+          <SettingsIndex.Link icon={Truck} title="Shipping" href="#shipping" />
+          <SettingsIndex.More title="Find more settings" href="#more" />
+        </SettingsIndex.Section>
+      </SettingsIndex>,
+    );
+    const inset = (name: RegExp): number => {
+      const link = screen.getByRole("link", { name });
+      const tile = link.querySelector('[data-bt-part="tile"]');
+      if (!tile) throw new Error("No tile.");
+      return (
+        tile.getBoundingClientRect().left - link.getBoundingClientRect().left
+      );
+    };
+    expect(inset(/Find more settings/)).toBe(inset(/Shipping/));
+    await userEvent.tab();
+    await userEvent.tab();
+    const more = screen.getByRole("link", { name: /Find more settings/ });
+    expect(document.activeElement).toBe(more);
+    expect(getComputedStyle(more).outlineStyle).toBe("solid");
+  });
+
+  it("hands a router the link followed, and leaves a click for a new tab to the browser", async () => {
+    const onNavigate = vi.fn(
+      (_href: string, event: { preventDefault: () => void }) => {
+        event.preventDefault();
+      },
+    );
+    render(
+      <SettingsIndex>
+        <SettingsIndex.Section title="Your shop">
+          <SettingsIndex.Link
+            icon={Truck}
+            title="Shipping"
+            href="#shipping"
+            onNavigate={onNavigate}
+          />
+          <SettingsIndex.More
+            title="Find more settings"
+            href="#more"
+            onNavigate={onNavigate}
+          />
+        </SettingsIndex.Section>
+      </SettingsIndex>,
+    );
+    await userEvent.click(screen.getByRole("link", { name: /Shipping/ }));
+    expect(onNavigate).toHaveBeenCalledWith("#shipping", expect.anything());
+    const more = screen.getByRole("link", { name: /Find more/ });
+    more.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    await userEvent.keyboard("{Meta>}");
+    await userEvent.click(more);
+    await userEvent.keyboard("{/Meta}");
+    expect(onNavigate).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes a link and the link to more their ref, class and other props", () => {
+    const link = createRef<HTMLAnchorElement>();
+    const more = createRef<HTMLAnchorElement>();
+    render(
+      <SettingsIndex>
+        <SettingsIndex.Section title="Your shop">
+          <SettingsIndex.Link
+            ref={link}
+            icon={Truck}
+            title="Shipping"
+            href="#shipping"
+            className="custom"
+            aria-describedby="hint"
+          />
+          <SettingsIndex.More
+            ref={more}
+            title="Find more settings"
+            href="#more"
+            className="custom"
+            target="_blank"
+          />
+        </SettingsIndex.Section>
+      </SettingsIndex>,
+    );
+    expect(link.current).toBe(screen.getByRole("link", { name: /Shipping/ }));
+    expect(link.current?.className).toBe("bt-focus custom");
+    expect(link.current?.getAttribute("aria-describedby")).toBe("hint");
+    expect(more.current?.getAttribute("target")).toBe("_blank");
+    expect(more.current?.className).toBe("bt-focus custom");
   });
 
   it("lays links in three columns with room, two from 640px and one under that", () => {

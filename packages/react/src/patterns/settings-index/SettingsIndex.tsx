@@ -1,4 +1,4 @@
-import { Icon, Text, cx } from "@buttery/core";
+import { Icon, Text, cx, opensElsewhere } from "@buttery/core";
 import { Plus } from "lucide-react";
 import type { IconComponentProps, TextStackTitleElement } from "@buttery/core";
 import { useId } from "react";
@@ -61,7 +61,10 @@ export function SettingsIndexSection({
 }
 
 /** Props for `SettingsIndex.Link`. */
-export interface SettingsIndexLinkProps {
+export interface SettingsIndexLinkProps extends Omit<
+  ComponentPropsWithRef<"a">,
+  "title" | "children" | "href"
+> {
   /** A 16px icon in its tile. */
   readonly icon: ComponentType<IconComponentProps>;
   /** The settings page's name, such as "Shipping". */
@@ -70,22 +73,36 @@ export interface SettingsIndexLinkProps {
   readonly description?: string | undefined;
   /** The settings page. */
   readonly href: string;
-  /** Runs as the link is followed, where a router can take over. */
-  readonly onClick?:
-    ((event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
+  /** Runs as the link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
+  readonly onNavigate?:
+    ((href: string, event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
 }
 
-/** One settings page: a block link (r12, padded 12) with an icon tile, its name and a line on what's inside. */
-export function SettingsIndexLink({
+function SettingsEntry({
   icon,
   title,
   description,
   href,
+  onNavigate,
   onClick,
-}: SettingsIndexLinkProps): ReactElement {
+  className,
+  more = false,
+  ...rest
+}: SettingsIndexLinkProps & { readonly more?: boolean }): ReactElement {
   return (
     <li>
-      <a href={href} onClick={onClick} className="bt-focus" data-bt-part="link">
+      <a
+        {...rest}
+        href={href}
+        className={cx("bt-focus", className)}
+        data-bt-part="link"
+        data-more={more ? "" : undefined}
+        onClick={(event) => {
+          onClick?.(event);
+          if (event.defaultPrevented || opensElsewhere(event)) return;
+          onNavigate?.(href, event);
+        }}
+      >
         <span data-bt-part="tile">
           <Icon icon={icon} />
         </span>
@@ -102,49 +119,17 @@ export function SettingsIndexLink({
   );
 }
 
-/** Props for `SettingsIndex.More`. */
-export interface SettingsIndexMoreProps {
-  /** Where it leads, such as "Find more settings". */
-  readonly title: string;
-  /** A line on what's there. */
-  readonly description?: string | undefined;
-  /** The page it opens. */
-  readonly href: string;
-  /** Runs as the link is followed, where a router can take over. */
-  readonly onClick?:
-    ((event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
+/** One settings page: a block link (r12, padded 12) with an icon tile, its name and a line on what's inside. */
+export function SettingsIndexLink(props: SettingsIndexLinkProps): ReactElement {
+  return <SettingsEntry {...props} />;
 }
 
-/** The last link of a section, to more of them: a block with a 1px dashed `border`, a plus in its tile. */
-export function SettingsIndexMore({
-  title,
-  description,
-  href,
-  onClick,
-}: SettingsIndexMoreProps): ReactElement {
-  return (
-    <li>
-      <a
-        href={href}
-        onClick={onClick}
-        className="bt-focus"
-        data-bt-part="link"
-        data-more=""
-      >
-        <span data-bt-part="tile">
-          <Icon icon={Plus} />
-        </span>
-        <span data-bt-part="text">
-          <Text>{title}</Text>
-          {description === undefined ? null : (
-            <Text variant="body-sm" asChild>
-              <span>{description}</span>
-            </Text>
-          )}
-        </span>
-      </a>
-    </li>
-  );
+/** Props for `SettingsIndex.More`: a link without an icon of its own. */
+export type SettingsIndexMoreProps = Omit<SettingsIndexLinkProps, "icon">;
+
+/** The last link of a section, to more of them: a block edged with a 1px dashed `border-strong` line inside it, a plus in its tile. */
+export function SettingsIndexMore(props: SettingsIndexMoreProps): ReactElement {
+  return <SettingsEntry {...props} icon={Plus} more />;
 }
 
 /** `SettingsIndex` with its parts. */
