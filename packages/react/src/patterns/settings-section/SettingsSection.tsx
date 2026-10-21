@@ -115,7 +115,9 @@ export function SettingsSection({
       {...rest}
       title={title}
       description={description}
-      actions={form ? (buttons === "header" ? controls : null) : action}
+      actions={
+        form ? (buttons === "header" && !loading ? controls : null) : action
+      }
       className={cx("bt-settings-section", className)}
       data-divider={divider ? "" : undefined}
     >

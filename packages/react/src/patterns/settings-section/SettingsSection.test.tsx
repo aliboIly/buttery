@@ -141,6 +141,35 @@ describe("SettingsSection", () => {
     expect(onSave).toHaveBeenCalledWith("9 River Road");
   });
 
+  it("shows neither Save nor Cancel while it loads, wherever they go, and keeps a plain action", () => {
+    for (const buttons of ["header", "footer"] as const) {
+      render(
+        <SettingsSection
+          title="Pickup address"
+          loading
+          onSave={() => undefined}
+          onCancel={() => undefined}
+          buttons={buttons}
+        >
+          <p>12 Mill Street</p>
+        </SettingsSection>,
+      );
+      expect(screen.queryByRole("button", { name: "Save" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
+      cleanup();
+    }
+    render(
+      <SettingsSection
+        title="Sessions"
+        loading
+        action={<Button size="sm">Sign out everywhere else</Button>}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Sign out everywhere else" }),
+    ).toBeTruthy();
+  });
+
   it('puts Save and Cancel under its content with buttons="footer", and nowhere else', () => {
     render(<Address buttons="footer" />);
     const head = document.querySelector('[data-bt-part="section-head"]');
