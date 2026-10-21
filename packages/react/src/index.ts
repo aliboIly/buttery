@@ -288,3 +288,5 @@ export type {
 } from "./patterns/bento/Bento.tsx";
 export { ExpandableCard } from "./patterns/expandable-card/ExpandableCard.tsx";
 export type { ExpandableCardProps } from "./patterns/expandable-card/ExpandableCard.tsx";
+export { ArticleLayout } from "./patterns/article-layout/ArticleLayout.tsx";
+export type { ArticleLayoutProps } from "./patterns/article-layout/ArticleLayout.tsx";

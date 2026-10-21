@@ -1,0 +1,48 @@
+@layer bt.patterns {
+  /* The layout is its own size container, so the aside moves beside the article only when there's room. */
+  .bt-article-layout {
+    min-inline-size: 0;
+    container: bt-article / inline-size;
+  }
+
+  .bt-article-layout > [data-bt-part="grid"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-12);
+    min-inline-size: 0;
+  }
+
+  .bt-article-layout [data-bt-part="main"],
+  .bt-article-layout [data-bt-part="aside"] {
+    min-inline-size: 0;
+  }
+
+  /* Stacked, the aside is a plain block after the article. */
+  @container bt-article (width < 1024px) {
+    .bt-article-layout [data-bt-part="sticky"] {
+      position: static;
+      max-block-size: none;
+      overflow: visible;
+    }
+  }
+
+  @container bt-article (width >= 1024px) {
+    .bt-article-layout > [data-bt-part="grid"] {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: var(--bt-space-6);
+    }
+
+    .bt-article-layout [data-bt-part="main"] {
+      grid-column: 1 / span 8;
+    }
+
+    .bt-article-layout [data-bt-part="aside"] {
+      grid-column: 10 / span 3;
+    }
+
+    /* The aside keeps its distance from the bars it sticks under as padding, so it fits between them. */
+    .bt-article-layout [data-bt-part="sticky"] {
+      padding-block: var(--bt-space-6);
+    }
+  }
+}
