@@ -155,6 +155,40 @@ export const colors = {
     dark: "#6b6b6b",
     description: "Secondary text and actions in tooltips and toasts.",
   },
+  "inverse-success": {
+    light: "#4cc38a",
+    dark: "#177245",
+    description:
+      "Success on the inverse surface: a success toast's icon. Each theme takes the other theme's success, which reads on its inverse surface.",
+  },
+  "inverse-warning": {
+    light: "#f2a33a",
+    dark: "#9a4d00",
+    description: "Warning on the inverse surface: a warning toast's icon.",
+  },
+  "inverse-danger": {
+    light: "#ff7a6e",
+    dark: "#c72a1c",
+    description: "Danger on the inverse surface: a danger toast's icon.",
+  },
+  "inverse-success-bg": {
+    light: "#26342c",
+    dark: "#d5e0d9",
+    description:
+      "A success toast: the inverse surface mixed toward inverse-success in OKLab, 18% (14% in dark).",
+  },
+  "inverse-warning-bg": {
+    light: "#3b3024",
+    dark: "#e7dad3",
+    description:
+      "A warning toast: the inverse surface mixed toward inverse-warning, 18% (14% in dark).",
+  },
+  "inverse-danger-bg": {
+    light: "#3e2b28",
+    dark: "#f0d9d5",
+    description:
+      "A danger toast: the inverse surface mixed toward inverse-danger, 18% (14% in dark).",
+  },
   accent: {
     light: "#2862e0",
     dark: "#4f89ff",
@@ -357,6 +391,17 @@ export const contrastPairs: readonly ContrastPair[] = [
   { text: "on-primary", on: "primary-hover", minimum: 4.5 },
   { text: "inverse-text", on: "inverse-bg", minimum: 4.5 },
   { text: "inverse-text-secondary", on: "inverse-bg", minimum: 4.5 },
+  ...textOn("inverse-text", [
+    "inverse-success-bg",
+    "inverse-warning-bg",
+    "inverse-danger-bg",
+  ]),
+  { text: "inverse-success", on: "inverse-success-bg", minimum: 3 },
+  { text: "inverse-warning", on: "inverse-warning-bg", minimum: 3 },
+  { text: "inverse-danger", on: "inverse-danger-bg", minimum: 3 },
+  { text: "inverse-success", on: "inverse-bg", minimum: 3 },
+  { text: "inverse-warning", on: "inverse-bg", minimum: 3 },
+  { text: "inverse-danger", on: "inverse-bg", minimum: 3 },
   ...textOn("danger", [...TEXT_SURFACES, "danger-subtle"]),
   ...textOn("success", [...TEXT_SURFACES, "success-subtle"]),
   ...textOn("warning", [...TEXT_SURFACES, "warning-subtle"]),

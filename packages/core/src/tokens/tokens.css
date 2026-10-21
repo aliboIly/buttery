@@ -31,6 +31,12 @@
     --bt-inverse-bg: #1a1a1a;
     --bt-inverse-text: #ffffff;
     --bt-inverse-text-secondary: #a3a3a3;
+    --bt-inverse-success: #4cc38a;
+    --bt-inverse-warning: #f2a33a;
+    --bt-inverse-danger: #ff7a6e;
+    --bt-inverse-success-bg: #26342c;
+    --bt-inverse-warning-bg: #3b3024;
+    --bt-inverse-danger-bg: #3e2b28;
     --bt-accent: #2862e0;
     --bt-accent-subtle: #e9f0fd;
     --bt-accent-text: #2862e0;
@@ -297,6 +303,12 @@
     --bt-inverse-bg: #f2f2f3;
     --bt-inverse-text: #111111;
     --bt-inverse-text-secondary: #6b6b6b;
+    --bt-inverse-success: #177245;
+    --bt-inverse-warning: #9a4d00;
+    --bt-inverse-danger: #c72a1c;
+    --bt-inverse-success-bg: #d5e0d9;
+    --bt-inverse-warning-bg: #e7dad3;
+    --bt-inverse-danger-bg: #f0d9d5;
     --bt-accent: #4f89ff;
     --bt-accent-subtle: #16223b;
     --bt-accent-text: #4f89ff;
@@ -370,6 +382,12 @@
       --bt-inverse-bg: #f2f2f3;
       --bt-inverse-text: #111111;
       --bt-inverse-text-secondary: #6b6b6b;
+      --bt-inverse-success: #177245;
+      --bt-inverse-warning: #9a4d00;
+      --bt-inverse-danger: #c72a1c;
+      --bt-inverse-success-bg: #d5e0d9;
+      --bt-inverse-warning-bg: #e7dad3;
+      --bt-inverse-danger-bg: #f0d9d5;
       --bt-accent: #4f89ff;
       --bt-accent-subtle: #16223b;
       --bt-accent-text: #4f89ff;
