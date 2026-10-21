@@ -43,8 +43,8 @@ function Settings({
             <span data-testid={`full-${String(index)}`}>Fills the row</span>
           </Inspector.Row>
           <Inspector.Row.Split>
-            <Inspector.Row label="Tilt" />
-            <Inspector.Row label="Position" />
+            <Inspector.Row label="Lean" />
+            <Inspector.Row label="Anchor" />
           </Inspector.Row.Split>
         </Inspector.Section>
       ))}

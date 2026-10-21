@@ -11,8 +11,9 @@
     overflow: hidden;
   }
 
-  /* The sections scroll inside the panel with faded edges; the footer stays at the bottom. */
   .bt-inspector > [data-bt-part="body"] {
+    --bt-scroll-fade-size: var(--bt-space-2);
+
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -102,6 +103,28 @@
 
   .bt-inspector-section
     > [data-bt-part="card"]
+    > :is([data-bt-part="row"], [data-bt-part="split"])
+    + :is([data-bt-part="row"], [data-bt-part="split"]) {
+    border-block-start: var(--bt-inspector-line) solid var(--bt-border);
+  }
+
+  /* Rows that change together sit in a Morph and keep their dividers; the Morph itself stays borderless so its measured height holds. */
+  .bt-inspector-section
+    > [data-bt-part="card"]
+    > .bt-morph
+    + :is([data-bt-part="row"], [data-bt-part="split"]),
+  .bt-inspector-section
+    > [data-bt-part="card"]
+    > :is([data-bt-part="row"], [data-bt-part="split"])
+    + .bt-morph
+    > [data-bt-part="content"]
+    > [data-bt-part="view"]
+    > :is([data-bt-part="row"], [data-bt-part="split"]):first-child,
+  .bt-inspector-section
+    > [data-bt-part="card"]
+    > .bt-morph
+    > [data-bt-part="content"]
+    > [data-bt-part="view"]
     > :is([data-bt-part="row"], [data-bt-part="split"])
     + :is([data-bt-part="row"], [data-bt-part="split"]) {
     border-block-start: var(--bt-inspector-line) solid var(--bt-border);

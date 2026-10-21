@@ -19,7 +19,7 @@ import {
 import type { Anchor, Swatch, TiltValue } from "@buttery/react";
 import { ArrowLeftRight, Copy } from "lucide-react";
 
-type Edge = "none" | "light" | "dark";
+type Edge = "plain" | "outline" | "glow";
 
 const GRADIENTS: readonly Swatch[] = gradients.slice(0, 12).map((preset) => ({
   value: preset.id,
@@ -29,18 +29,21 @@ const GRADIENTS: readonly Swatch[] = gradients.slice(0, 12).map((preset) => ({
 
 const LEVEL: TiltValue = { x: 0, y: 0 };
 
+const MIST = gradients.find((preset) => preset.id === "mist");
+
 function CardSettings(): ReactElement {
-  const [edge, setEdge] = useState<Edge>("dark");
-  const [scale, setScale] = useState(80);
-  const [roundness, setRoundness] = useState(12);
-  const [rotation, setRotation] = useState(0);
-  const [tilt, setTilt] = useState<TiltValue>({ x: 0.3, y: -0.1 });
+  const [edge, setEdge] = useState<Edge>("outline");
+  const [scale, setScale] = useState(75);
+  const [corners, setCorners] = useState(16);
+  const [turn, setTurn] = useState(0);
+  const [lean, setLean] = useState<TiltValue>({ x: 0.3, y: -0.1 });
   const [anchor, setAnchor] = useState<Anchor>("center");
-  const [background, setBackground] = useState("lilac");
-  const [from, setFrom] = useState("#a5b4fc");
-  const [to, setTo] = useState("#f0abfc");
-  const cardChanged = edge !== "dark" || scale !== 80 || roundness !== 12;
-  const placeChanged = rotation !== 0 || tilt !== LEVEL || anchor !== "center";
+  const [backdrop, setBackdrop] = useState("mist");
+  const [first, setFirst] = useState(MIST?.fromHex ?? "#000000");
+  const [second, setSecond] = useState(MIST?.toHex ?? "#000000");
+  const level = lean.x === 0 && lean.y === 0;
+  const cardChanged = edge !== "outline" || scale !== 75 || corners !== 16;
+  const placeChanged = turn !== 0 || !level || anchor !== "center";
   return (
     <Inspector
       label="Card settings"
@@ -61,18 +64,18 @@ function CardSettings(): ReactElement {
         title="Card"
         resettable={cardChanged}
         onReset={() => {
-          setEdge("dark");
-          setScale(80);
-          setRoundness(12);
+          setEdge("outline");
+          setScale(75);
+          setCorners(16);
         }}
       >
         <Inspector.Row label="Edge">
           <SegmentedControl<Edge>
             label="Edge"
             options={[
-              { value: "none", label: "None" },
-              { value: "light", label: "Light" },
-              { value: "dark", label: "Dark" },
+              { value: "plain", label: "Plain" },
+              { value: "outline", label: "Outline" },
+              { value: "glow", label: "Glow" },
             ]}
             value={edge}
             onValueChange={setEdge}
@@ -84,92 +87,96 @@ function CardSettings(): ReactElement {
             format="%"
             min={20}
             max={100}
-            resetValue={80}
+            resetValue={75}
             value={scale}
             onValueChange={setScale}
           />
         </Inspector.Row>
         <Inspector.Row>
           <Slider
-            label="Roundness"
+            label="Corners"
             min={0}
             max={40}
-            resetValue={12}
-            value={roundness}
-            onValueChange={setRoundness}
+            resetValue={16}
+            value={corners}
+            onValueChange={setCorners}
           />
         </Inspector.Row>
       </Inspector.Section>
       <Inspector.Section
-        title="Position"
+        title="Placement"
         resettable={placeChanged}
         onReset={() => {
-          setRotation(0);
-          setTilt(LEVEL);
+          setTurn(0);
+          setLean(LEVEL);
           setAnchor("center");
         }}
       >
         <Inspector.Row>
           <Slider
-            label="Rotate"
+            label="Turn"
             format="°"
             min={-180}
             max={180}
             detents={[0]}
             resetValue={0}
-            value={rotation}
-            onValueChange={setRotation}
+            value={turn}
+            onValueChange={setTurn}
           />
         </Inspector.Row>
         <Inspector.Row.Split>
           <Inspector.Row
-            label="Tilt"
+            label="Lean"
             extra={
               <Chip
-                disabled={tilt.x === 0 && tilt.y === 0}
+                aria-disabled={level}
                 onClick={() => {
-                  setTilt(LEVEL);
+                  setLean(LEVEL);
                 }}
               >
-                Reset
+                Flat
               </Chip>
             }
           >
-            <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
+            <TiltPad label="Lean" value={lean} onValueChange={setLean} />
           </Inspector.Row>
-          <Inspector.Row label="Position">
+          <Inspector.Row label="Anchor">
             <AnchorGrid
-              label="Position"
+              label="Anchor"
               value={anchor}
               onValueChange={setAnchor}
             />
           </Inspector.Row>
         </Inspector.Row.Split>
       </Inspector.Section>
-      <Inspector.Section title="Background">
+      <Inspector.Section title="Backdrop">
         <Inspector.Row block>
           <SwatchGrid
-            label="Background"
+            label="Backdrop"
             swatches={GRADIENTS}
-            value={background}
-            onValueChange={setBackground}
+            value={backdrop}
+            onValueChange={setBackdrop}
           />
         </Inspector.Row>
-        <Inspector.Row label="Colors">
+        <Inspector.Row label="Hues">
           <Inline gap={1.5} align="center">
             <ColorDot
-              label="Start color"
-              value={from}
-              onValueChange={setFrom}
+              label="First hue"
+              value={first}
+              onValueChange={setFirst}
             />
-            <ColorDot label="End color" value={to} onValueChange={setTo} />
+            <ColorDot
+              label="Second hue"
+              value={second}
+              onValueChange={setSecond}
+            />
             <IconButton
               icon={ArrowLeftRight}
-              label="Swap colors"
+              label="Swap hues"
               size="sm"
               onClick={() => {
-                setFrom(to);
-                setTo(from);
+                setFirst(second);
+                setSecond(first);
               }}
             />
           </Inline>
@@ -183,7 +190,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Card settings",
     description:
-      "Sections on nested surfaces, rows of controls, a split row for the tilt pad and the anchor grid, and a footer that stays put while the sections scroll.",
+      "Sections on nested surfaces, rows of controls, a split row for the lean pad and the anchor grid, and a footer that stays put while the sections scroll.",
     render: () => <CardSettings />,
   },
 ];

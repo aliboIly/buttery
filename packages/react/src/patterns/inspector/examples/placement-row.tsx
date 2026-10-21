@@ -3,34 +3,32 @@ import type { ReactElement } from "react";
 import { AnchorGrid, Chip, Inspector, TiltPad } from "@buttery/react";
 import type { Anchor, TiltValue } from "@buttery/react";
 
-/** A split row: a tilt pad with its reset chip beside an anchor grid, inside a section. */
+const LEVEL: TiltValue = { x: 0, y: 0 };
+
+/** A split row: a lean pad with the chip that lays it flat, beside an anchor grid, inside a section. */
 export function PlacementRow(): ReactElement {
-  const [tilt, setTilt] = useState<TiltValue>({ x: 0, y: 0 });
+  const [lean, setLean] = useState<TiltValue>(LEVEL);
   const [anchor, setAnchor] = useState<Anchor>("center");
   return (
-    <Inspector.Section title="Position">
+    <Inspector.Section title="Placement">
       <Inspector.Row.Split>
         <Inspector.Row
-          label="Tilt"
+          label="Lean"
           extra={
             <Chip
-              disabled={tilt.x === 0 && tilt.y === 0}
+              aria-disabled={lean.x === 0 && lean.y === 0}
               onClick={() => {
-                setTilt({ x: 0, y: 0 });
+                setLean(LEVEL);
               }}
             >
-              Reset
+              Flat
             </Chip>
           }
         >
-          <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
+          <TiltPad label="Lean" value={lean} onValueChange={setLean} />
         </Inspector.Row>
-        <Inspector.Row label="Position">
-          <AnchorGrid
-            label="Position"
-            value={anchor}
-            onValueChange={setAnchor}
-          />
+        <Inspector.Row label="Anchor">
+          <AnchorGrid label="Anchor" value={anchor} onValueChange={setAnchor} />
         </Inspector.Row>
       </Inspector.Row.Split>
     </Inspector.Section>

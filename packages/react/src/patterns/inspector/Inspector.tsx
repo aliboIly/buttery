@@ -39,7 +39,7 @@ export interface InspectorSectionProps extends Omit<
   ComponentPropsWithRef<"section">,
   "title"
 > {
-  /** The section's heading, such as "Background". */
+  /** The section's heading, such as "Backdrop". */
   readonly title: string;
   /** Puts back the section's defaults. Given, the header shows a Reset action. */
   readonly onReset?: (() => void) | undefined;
