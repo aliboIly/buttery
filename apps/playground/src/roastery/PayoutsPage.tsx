@@ -15,6 +15,7 @@ import type { ReactElement } from "react";
 import { AWAITING_PAYOUT, NEXT_PAYOUT, PAYOUTS, salesTotal } from "./data.ts";
 import type { Payout } from "./data.ts";
 import { money, shortDate, shortMoney } from "./format.ts";
+import { PageFooter } from "./page-footer.tsx";
 
 const STATES: Readonly<
   Record<
@@ -64,9 +65,11 @@ export function PayoutsPage(): ReactElement {
     .reverse();
   return (
     <AppPage
+      footer={<PageFooter />}
       header={
         <PageHeader
           title="Payouts"
+          description="Sales on their way to the bank, and the ones already there."
           value={money(incoming)}
           valueInfo="Paid orders that aren't in a payout yet."
         >

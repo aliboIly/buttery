@@ -613,6 +613,35 @@ const roasteryInteractions: Readonly<
     { name: "start a new order", run: press("New order") },
     escape,
     {
+      name: "open help, docked or as a sheet",
+      run: async (page: Page) => {
+        const help = page.getByRole("button", { name: "Help", exact: true });
+        if (await help.isVisible()) await help.click();
+        else {
+          await page.getByRole("button", { name: /^More app actions/ }).click();
+          await page.getByRole("menuitem", { name: "Help" }).click();
+        }
+        await page
+          .getByRole("dialog", { name: "Help" })
+          .or(page.getByRole("complementary", { name: "Help" }))
+          .first()
+          .waitFor();
+      },
+    },
+    escape,
+    {
+      name: "search for orders",
+      run: async (page: Page) => {
+        await page
+          .getByRole("combobox", { name: "Search", exact: true })
+          .click();
+        await page.keyboard.type("reading");
+        await page.getByRole("listbox").waitFor();
+      },
+    },
+    escape,
+    escape,
+    {
       name: "show the last 12 months by month against the year before",
       run: async (page: Page) => {
         await choose(page, "Date range", "Last 12 months");
@@ -679,6 +708,12 @@ const roasteryInteractions: Readonly<
   "roastery/settings/team": [
     { name: "invite someone", run: press("Invite someone") },
   ],
+  "roastery/settings/profile": [
+    { name: "change the password", run: press("Change") },
+  ],
+  "roastery/settings/plans": [
+    { name: "try a plan", run: press("Try Roaster") },
+  ],
 };
 
 const roasteryPages = [
@@ -694,6 +729,11 @@ const roasteryPages = [
   "roastery/settings/pickup",
   "roastery/settings/team",
   "roastery/settings/fraud",
+  "roastery/settings/profile",
+  "roastery/settings/notifications",
+  "roastery/settings/team-notifications",
+  "roastery/settings/plans",
+  "roastery/search?q=decaf",
 ];
 
 for (const route of roasteryPages) {
@@ -722,7 +762,10 @@ test("a roastery customer's page is buttery", async ({ page }) => {
     interactions: [
       {
         name: "show their orders",
-        allowMove: ['[data-bt="AppPage"] [data-bt-part="aside"]'],
+        allowMove: [
+          '[data-bt="AppPage"] [data-bt-part="aside"]',
+          '[data-bt="AppPage"] [data-bt-part="footer"]',
+        ],
         run: async (target: Page) => {
           await target
             .getByRole("tab", { name: "Orders", exact: true })

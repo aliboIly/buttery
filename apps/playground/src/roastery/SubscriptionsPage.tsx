@@ -22,6 +22,7 @@ import {
   shortDate,
   shortMoney,
 } from "./format.ts";
+import { PageFooter } from "./page-footer.tsx";
 
 const REVENUE = monthly(
   (orders) =>
@@ -97,9 +98,11 @@ export function SubscriptionsPage(): ReactElement {
       .length;
   return (
     <AppPage
+      footer={<PageFooter />}
       header={
         <PageHeader
           title="Subscriptions"
+          description="Bags that go out every week or two."
           value={number(count("active"))}
           valueInfo="Subscriptions that deliver on schedule, not counting paused ones."
           actions={

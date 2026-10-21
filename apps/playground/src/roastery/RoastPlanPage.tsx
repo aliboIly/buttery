@@ -2,6 +2,7 @@ import { AppPage, GroupedList, InitialsTile, PageHeader } from "@buttery/react";
 import type { ReactElement } from "react";
 import { ORDERS, SUBSCRIPTIONS, TODAY, coffeeOf, dayNumber } from "./data.ts";
 import { number } from "./format.ts";
+import { PageFooter } from "./page-footer.tsx";
 
 const DAYS = Array.from(
   { length: 5 },
@@ -52,9 +53,11 @@ export function RoastPlanPage(): ReactElement {
   );
   return (
     <AppPage
+      footer={<PageFooter />}
       header={
         <PageHeader
           title="Roast plan"
+          description="What to roast each day, from orders and subscriptions."
           value={`${number(total)} bags`}
           valueInfo="Bags to roast over the next five days: orders waiting to roast, then subscriptions as they come due."
         />

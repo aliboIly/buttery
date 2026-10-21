@@ -4,18 +4,23 @@ import {
   AnnouncementDialog,
   AppShell,
   ChoiceDialog,
+  CommandSearch,
   IconButton,
   NotificationNudge,
-  SearchField,
+  SearchResults,
   SetupGuide,
   Sidebar,
   TopBar,
+  formatSearch,
+  pageSource,
+  parseSearch,
   toast,
 } from "@buttery/react";
 import {
   ArrowLeft,
   Bell,
   CalendarDays,
+  CircleHelp,
   Ellipsis,
   House,
   Landmark,
@@ -28,12 +33,13 @@ import {
   Store,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactElement } from "react";
-import type { SetupTask } from "@buttery/react";
+import type { SearchSource, SetupTask } from "@buttery/react";
 import { useSettings } from "../location.ts";
 import { CustomerPage } from "./CustomerPage.tsx";
 import { CustomersPage } from "./CustomersPage.tsx";
+import { HelpPanel } from "./HelpPanel.tsx";
 import { OrdersPage } from "./OrdersPage.tsx";
 import { OverviewPage } from "./OverviewPage.tsx";
 import { PayoutsPage } from "./PayoutsPage.tsx";
@@ -44,6 +50,13 @@ import { SubscriptionsPage } from "./SubscriptionsPage.tsx";
 import { WholesalePage } from "./WholesalePage.tsx";
 import { WeekPlan } from "./WeekPlan.tsx";
 import { go } from "./navigation.ts";
+import {
+  CUSTOMER_SOURCE,
+  FILTERS,
+  ORDER_SOURCE,
+  PAGES,
+  helpSource,
+} from "./search.ts";
 import { useInvites, usePickup } from "./shop-state.ts";
 import "./roastery.css";
 
@@ -58,12 +71,19 @@ type Place =
   | { readonly page: "stock" }
   | { readonly page: "wholesale"; readonly tab: "accounts" | "prices" }
   | { readonly page: "settings" }
-  | { readonly page: "setting"; readonly id: string };
+  | { readonly page: "setting"; readonly id: string }
+  | { readonly page: "search"; readonly search: string };
 
 function placeOf(route: string): Place {
-  const [, part, id] = route.split("/");
+  const [path = "", query = ""] = route.split("?");
+  const [, part, id] = path.split("/");
   const section = part ?? "";
   switch (section) {
+    case "search":
+      return {
+        page: "search",
+        search: new URLSearchParams(query).get("q") ?? "",
+      };
     case "orders":
     case "subscriptions":
     case "payouts":
@@ -234,23 +254,37 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
 }
 
 function RoasteryTopBar({
+  sources,
   onNewOrder,
+  onHelp,
 }: {
+  readonly sources: readonly SearchSource[];
   readonly onNewOrder: () => void;
+  readonly onHelp: () => void;
 }): ReactElement {
   const [whatsNew, setWhatsNew] = useState<boolean | undefined>(undefined);
   return (
     <TopBar
       search={
-        <SearchField
-          label="Search"
-          placeholder="Search orders and customers"
-          variant="soft"
-          shortcut="/"
+        <CommandSearch
+          placeholder="Search pages, orders and customers"
+          sources={sources}
+          filters={FILTERS}
+          resultsHref={(query) =>
+            `#/roastery/search?q=${encodeURIComponent(formatSearch(query))}`
+          }
+          storageKey="roastery"
+          emptyHint="Try another word, or a filter such as status:shipped."
         />
       }
       actions={
         <>
+          <TopBar.Action
+            label="Help"
+            icon={CircleHelp}
+            priority={2}
+            onSelect={onHelp}
+          />
           <OverflowCluster.Item
             priority={1}
             menuItem={{
@@ -328,17 +362,47 @@ export function Roastery(): ReactElement {
   const { route } = useSettings();
   const place = placeOf(route);
   const [choosing, setChoosing] = useState(false);
+  const [helping, setHelping] = useState(false);
+  const [article, setArticle] = useState<string | null>(null);
   const tasks = useSetupTasks();
   const newOrder = (): void => {
     setChoosing(true);
   };
+  const sources = useMemo<readonly SearchSource[]>(
+    () => [
+      pageSource({ pages: PAGES }),
+      ORDER_SOURCE,
+      CUSTOMER_SOURCE,
+      helpSource((id) => {
+        setArticle(id);
+        setHelping(true);
+      }),
+    ],
+    [],
+  );
   return (
     <div className="rs-root" data-testid="roastery">
       <AppShell
         layout="sidebar"
         sidebarLabel="Halfmoon Roastery"
         sidebar={<RoasterySidebar place={place} />}
-        topBar={<RoasteryTopBar onNewOrder={newOrder} />}
+        topBar={
+          <RoasteryTopBar
+            sources={sources}
+            onNewOrder={newOrder}
+            onHelp={() => {
+              setHelping((open) => !open);
+            }}
+          />
+        }
+        panel={
+          <HelpPanel
+            open={helping}
+            onOpenChange={setHelping}
+            article={article}
+            onArticleChange={setArticle}
+          />
+        }
       >
         {place.page === "overview" ? <OverviewPage /> : null}
         {place.page === "orders" ? <OrdersPage onNewOrder={newOrder} /> : null}
@@ -354,6 +418,14 @@ export function Roastery(): ReactElement {
         {place.page === "settings" ? <SettingsPage /> : null}
         {place.page === "setting" ? (
           <SettingPage key={place.id} id={place.id} />
+        ) : null}
+        {place.page === "search" ? (
+          <SearchResults
+            key={place.search}
+            query={parseSearch(place.search, FILTERS)}
+            sources={sources}
+            emptyHint="Try another word, or a filter such as status:shipped."
+          />
         ) : null}
       </AppShell>
       <ChoiceDialog

@@ -270,3 +270,106 @@ test("switching workspace says what happened", async ({ page }) => {
     }),
   ).toBeVisible();
 });
+
+test("the search finds a customer by name and opens their page", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery");
+  await page.locator("h1").first().waitFor();
+  await page.keyboard.press("/");
+  const search = page.getByRole("combobox", { name: "Search", exact: true });
+  await expect(search).toBeFocused();
+  await expect(
+    search.locator("xpath=ancestor::*[@data-bt='CommandSearch']"),
+  ).toHaveAttribute("data-focused", "");
+  const name = "The Reading Room";
+  await page.keyboard.type("reading room");
+  const option = page.getByRole("option", { name: new RegExp(`^${name}`) });
+  await expect(option).toBeVisible();
+  await page.keyboard.press("ArrowDown");
+  while ((await option.getAttribute("aria-selected")) !== "true")
+    await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await expect(page.locator("h1").first()).toHaveText(name);
+  await expect(search).toHaveValue("");
+});
+
+test("a finished filter becomes a chip, and Enter shows every result for it", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery");
+  await page.locator("h1").first().waitFor();
+  await page.getByRole("combobox", { name: "Search", exact: true }).click();
+  await page.keyboard.type("stat");
+  await page.keyboard.press("Tab");
+  await page.keyboard.type("shipped ");
+  await expect(page.locator('[data-bt-part="chip"]')).toHaveText(
+    "status:shipped",
+  );
+  await expect(
+    page.getByRole("group", { name: "Orders" }).getByRole("option").first(),
+  ).toContainText("shipped");
+  await page.keyboard.press("Enter");
+  await expect(page.locator("h1").first()).toHaveText(
+    'Results for "status:shipped"',
+  );
+  await expect(page.getByRole("region", { name: "Orders" })).toBeVisible();
+});
+
+test("help docks beside the page on a wide screen, and covers it as a sheet on a narrow one", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery");
+  await page.locator("h1").first().waitFor();
+  const column = page.locator('[data-bt="AppShell"] > [data-bt-part="column"]');
+  const before = await column.boundingBox();
+  await page.getByRole("button", { name: "Help", exact: true }).click();
+  const panel = page.getByRole("complementary", { name: "Help" });
+  await expect(panel).toBeVisible();
+  const after = await column.boundingBox();
+  expect((before?.width ?? 0) - (after?.width ?? 0)).toBe(360);
+  await expect(
+    page.getByRole("textbox", { name: "Ask the roasting team" }),
+  ).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(panel).toHaveCount(0);
+  await page.setViewportSize({ width: 1100, height: 800 });
+  await page.getByRole("button", { name: "Help", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Help" })).toBeVisible();
+});
+
+test("Turn on alerts leads to the notifications setting", async ({ page }) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery");
+  await page.locator("h1").first().waitFor();
+  await page.getByRole("link", { name: "Turn on alerts" }).click();
+  await expect(page.locator("h1").first()).toHaveText("Notifications");
+  await page
+    .getByRole("button", { name: "Turn on: Green coffee running low" })
+    .click();
+  await expect(
+    page.getByText("On. Emailed when a lot drops under 200 kg."),
+  ).toBeVisible();
+});
+
+test("trying a plan spells out the trial, then moves the shop onto it", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery/settings/plans");
+  await page.locator("h1").first().waitFor();
+  await page.getByRole("button", { name: "Try Roaster" }).click();
+  const dialog = page.getByRole("dialog", { name: "Try Roaster" });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Start the trial" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByText(/^You're on Roaster\./)).toBeVisible();
+});

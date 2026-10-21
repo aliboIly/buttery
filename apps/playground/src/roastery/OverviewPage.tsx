@@ -28,6 +28,7 @@ import {
 } from "./period.ts";
 import { usePickup } from "./shop-state.ts";
 import { StockList } from "./stock.tsx";
+import { PageFooter } from "./page-footer.tsx";
 
 const WEEKDAYS = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
 
@@ -97,13 +98,22 @@ export function OverviewPage(): ReactElement {
   const nextPayout = NEXT_PAYOUT;
   return (
     <AppPage
-      header={<PageHeader title="Overview" />}
+      footer={<PageFooter />}
+      header={
+        <PageHeader
+          title="Overview"
+          description="How the roastery is doing, and what needs you today."
+        />
+      }
       aside={
         <>
           <AppPage.Section>
             <RecommendationCard
               title="Get an alert when green coffee runs low"
-              action={{ label: "Turn on alerts", href: "#/roastery/stock" }}
+              action={{
+                label: "Turn on alerts",
+                href: "#/roastery/settings/notifications",
+              }}
               estimate="2 min"
               storageKey="roastery-low-stock"
             >

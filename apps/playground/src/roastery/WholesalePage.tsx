@@ -24,6 +24,7 @@ import {
 } from "./data.ts";
 import type { Customer } from "./data.ts";
 import { money, number } from "./format.ts";
+import { PageFooter } from "./page-footer.tsx";
 
 function CafeCases(): ReactElement {
   const cases = [0, 1, 2];
@@ -239,10 +240,12 @@ export function WholesalePage({
 }): ReactElement {
   return (
     <AppPage
+      footer={<PageFooter />}
       key={tab}
       header={
         <PageHeader
           title="Wholesale"
+          description="Cafés that buy from the roastery, and the prices they pay."
           value={number(ACCOUNTS.length)}
           valueInfo="Cafés with a wholesale account."
         >

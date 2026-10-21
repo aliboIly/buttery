@@ -2,6 +2,7 @@ import { Grid, Stack } from "@buttery/core";
 import { useState } from "react";
 import {
   AppPage,
+  Breadcrumbs,
   ArrowLink,
   DataTable,
   EmptyState,
@@ -22,6 +23,7 @@ import { SUBSCRIPTIONS, TODAY, coffeeOf, dayNumber } from "./data.ts";
 import type { Order } from "./data.ts";
 import { dateTime, money, number, shortDate, since } from "./format.ts";
 import { go } from "./navigation.ts";
+import { PageFooter } from "./page-footer.tsx";
 
 const ORDERS_PAGE = 25;
 
@@ -67,7 +69,19 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
   const customer = CUSTOMER_ROWS.find((row) => row.id === id);
   if (customer === undefined)
     return (
-      <AppPage header={<PageHeader title="Customer" />}>
+      <AppPage
+        footer={<PageFooter />}
+        header={
+          <PageHeader
+            title="Customer"
+            breadcrumbs={
+              <Breadcrumbs
+                items={[{ label: "Customers", href: "#/roastery/customers" }]}
+              />
+            }
+          />
+        }
+      >
         <EmptyState
           icon={UserX}
           title="This customer isn't here"
@@ -89,9 +103,16 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
   return (
     <Tabs defaultValue="overview">
       <AppPage
+        footer={<PageFooter />}
         header={
           <PageHeader
             title={customer.name}
+            breadcrumbs={
+              <Breadcrumbs
+                items={[{ label: "Customers", href: "#/roastery/customers" }]}
+              />
+            }
+            description={`${customer.email}, ${customer.city}`}
             actions={
               <PageHeader.Action
                 label="Email"

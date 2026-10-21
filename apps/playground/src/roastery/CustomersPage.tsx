@@ -157,6 +157,7 @@ export function CustomersPage(): ReactElement {
       header={
         <PageHeader
           title="Customers"
+          description="Everyone who has bought from the roastery."
           value={number(CUSTOMER_ROWS.length)}
           actions={
             <PageHeader.Action

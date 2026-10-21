@@ -225,6 +225,7 @@ export function OrdersPage({
       header={
         <PageHeader
           title="Orders"
+          description="Every order from the shop, cafés and subscriptions."
           actions={
             <>
               <PageHeader.Action

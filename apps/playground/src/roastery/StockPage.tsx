@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { STOCK, bagCount, daily, dayLabels, sum } from "./data.ts";
 import { kilograms } from "./format.ts";
 import { StockList } from "./stock.tsx";
+import { PageFooter } from "./page-footer.tsx";
 
 const WEEKS = 8;
 const KILOGRAMS_PER_BAG = 0.34;
@@ -15,9 +16,11 @@ const WEEK_ENDS = Array.from(
 export function StockPage(): ReactElement {
   return (
     <AppPage
+      footer={<PageFooter />}
       header={
         <PageHeader
           title="Green coffee"
+          description="Lots on the shelf and how long they'll last."
           value={kilograms(sum(STOCK.map((lot) => lot.kilograms)))}
         />
       }
