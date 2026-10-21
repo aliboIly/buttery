@@ -122,6 +122,33 @@ describe("Dialog", () => {
     });
   });
 
+  it("opens on its first field to type in, past a link in the copy above it", async () => {
+    render(
+      <Dialog defaultOpen>
+        <Dialog.Content label="Add a backup email">
+          <Dialog.Body>
+            <Dialog.Description>
+              We send sign-in codes there. <a href="#why">Why a backup?</a>
+            </Dialog.Description>
+            <label>
+              Backup email
+              <input type="email" />
+            </label>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog>,
+    );
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveAccessibleDescription(
+      "We send sign-in codes there. Why a backup?",
+    );
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByLabelText("Backup email"),
+      );
+    });
+  });
+
   it("closes on Escape and hands focus back to its trigger", async () => {
     render(<Confirm />);
     await openConfirm();

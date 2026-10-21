@@ -46,8 +46,17 @@ const TriggerContext = createContext<RefObject<HTMLElement | null> | null>(
  * How `Dialog.Text` tells the content around it that it has a title, and a description when it has a body.
  * It counts, since text that crossfades (an onboarding's steps) is briefly there twice.
  */
+// A dialog that has a field to type in opens on it, as a form dialog's first field takes focus.
+const TEXT_ENTRY =
+  'input:not([type="checkbox"], [type="radio"], [type="button"], [type="submit"], [type="reset"]), textarea, [role="combobox"]';
+
+function takesText(element: HTMLElement): boolean {
+  return element.matches(TEXT_ENTRY);
+}
+
 interface ContentRegistry {
   readonly register: (withBody: boolean) => () => void;
+  readonly describe: () => () => void;
 }
 
 const ContentContext = createContext<ContentRegistry | null>(null);
@@ -168,6 +177,14 @@ export function DialogContent({
           setDescribed(descriptions.current > 0);
         };
       },
+      describe: () => {
+        descriptions.current += 1;
+        setDescribed(true);
+        return () => {
+          descriptions.current -= 1;
+          setDescribed(descriptions.current > 0);
+        };
+      },
     }),
     [],
   );
@@ -229,7 +246,8 @@ export function DialogContent({
                   if (!focusOnSettle.current) return;
                   focusOnSettle.current = false;
                   if (document.activeElement !== element.current) return;
-                  tabbables(body.current)[0]?.focus();
+                  const stops = tabbables(body.current);
+                  (stops.find(takesText) ?? stops[0])?.focus();
                 }}
                 initial={motionOf.initial}
                 animate={motionOf.animate}
@@ -299,6 +317,33 @@ export function DialogMedia({
         {children}
       </div>
     </div>
+  );
+}
+
+/** Props for `Dialog.Description`. */
+export type DialogDescriptionProps = ComponentPropsWithRef<"p">;
+
+/**
+ * Copy in the dialog's body that describes it for screen readers, such as what a form is for, with links
+ * in it. Use it when the description sits under a divider or among fields rather than in `Dialog.Text`.
+ */
+export function DialogDescription({
+  className,
+  ...rest
+}: DialogDescriptionProps): ReactElement {
+  const content = use(ContentContext);
+
+  useLayoutEffect(() => content?.describe(), [content]);
+
+  return (
+    <RadixDialog.Description asChild>
+      <p
+        {...rest}
+        className={cx("bt-text bt-dialog-description", className)}
+        data-role="body-sm"
+        data-bt-part="description"
+      />
+    </RadixDialog.Description>
   );
 }
 
@@ -409,6 +454,8 @@ export interface DialogComponent {
   readonly Media: typeof DialogMedia;
   /** The title, body and caption. */
   readonly Text: typeof DialogText;
+  /** Copy in the body that describes the dialog. */
+  readonly Description: typeof DialogDescription;
   /** Content between the text and the actions. */
   readonly Body: typeof DialogBody;
   /** The buttons. */
@@ -438,6 +485,7 @@ export const Dialog: DialogComponent = Object.assign(DialogRoot, {
   Trigger: DialogTrigger,
   Content: DialogContent,
   Media: DialogMedia,
+  Description: DialogDescription,
   Text: DialogText,
   Body: DialogBody,
   Actions: DialogActions,
