@@ -1,0 +1,43 @@
+@layer bt.components {
+  .bt-avatar {
+    --bt-avatar-xs: 20px;
+    --bt-avatar-sm: 24px;
+    --bt-avatar-md: 32px;
+    --bt-avatar-lg: 40px;
+    --bt-avatar-size: var(--bt-avatar-sm);
+
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-avatar-size);
+    block-size: var(--bt-avatar-size);
+    overflow: hidden;
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-text-badge-size);
+    font-weight: var(--bt-text-badge-weight);
+    line-height: var(--bt-text-badge-line);
+    letter-spacing: var(--bt-text-badge-tracking);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .bt-avatar[data-size="xs"] {
+    --bt-avatar-size: var(--bt-avatar-xs);
+  }
+
+  .bt-avatar[data-size="md"] {
+    --bt-avatar-size: var(--bt-avatar-md);
+  }
+
+  .bt-avatar[data-size="lg"] {
+    --bt-avatar-size: var(--bt-avatar-lg);
+  }
+
+  .bt-avatar > [data-bt-part="picture"] {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+}

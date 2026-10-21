@@ -56,3 +56,5 @@
 @import "./patterns/sub-nav/sub-nav.css";
 @import "./patterns/morph-menu/morph-menu.css";
 @import "./patterns/nav-bar/nav-bar.css";
+@import "./components/initials-tile/initials-tile.css";
+@import "./components/avatar/avatar.css";

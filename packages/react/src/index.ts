@@ -320,3 +320,13 @@ export type {
   NavBarBehavior,
   NavBarProps,
 } from "./patterns/nav-bar/NavBar.tsx";
+export {
+  InitialsTile,
+  initialsOf,
+} from "./components/initials-tile/InitialsTile.tsx";
+export type {
+  AvatarSize,
+  InitialsTileProps,
+} from "./components/initials-tile/InitialsTile.tsx";
+export { Avatar } from "./components/avatar/Avatar.tsx";
+export type { AvatarProps } from "./components/avatar/Avatar.tsx";

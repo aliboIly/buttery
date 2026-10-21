@@ -1,0 +1,41 @@
+@layer bt.components {
+  .bt-initials-tile {
+    --bt-initials-tile-xs: 20px;
+    --bt-initials-tile-sm: 24px;
+    --bt-initials-tile-md: 32px;
+    --bt-initials-tile-lg: 40px;
+    --bt-initials-tile-size: var(--bt-initials-tile-sm);
+
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-initials-tile-size);
+    block-size: var(--bt-initials-tile-size);
+    overflow: hidden;
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-text-badge-size);
+    font-weight: var(--bt-text-badge-weight);
+    line-height: var(--bt-text-badge-line);
+    letter-spacing: var(--bt-text-badge-tracking);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .bt-initials-tile[data-size="xs"] {
+    --bt-initials-tile-size: var(--bt-initials-tile-xs);
+  }
+
+  .bt-initials-tile[data-size="md"] {
+    --bt-initials-tile-size: var(--bt-initials-tile-md);
+
+    border-radius: var(--bt-r-sm);
+  }
+
+  .bt-initials-tile[data-size="lg"] {
+    --bt-initials-tile-size: var(--bt-initials-tile-lg);
+
+    border-radius: var(--bt-r-sm);
+  }
+}
