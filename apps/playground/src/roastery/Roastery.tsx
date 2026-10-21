@@ -14,9 +14,11 @@ import {
 import {
   ArrowLeft,
   Bell,
-  Coffee,
+  CalendarDays,
+  Ellipsis,
   House,
   Landmark,
+  Package,
   Receipt,
   Repeat,
   Settings,
@@ -27,18 +29,21 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import type { SetupTask } from "@buttery/react";
 import { useSettings } from "../location.ts";
 import { CustomerPage } from "./CustomerPage.tsx";
 import { CustomersPage } from "./CustomersPage.tsx";
 import { OrdersPage } from "./OrdersPage.tsx";
 import { OverviewPage } from "./OverviewPage.tsx";
 import { PayoutsPage } from "./PayoutsPage.tsx";
-import { SettingsPage } from "./SettingsPage.tsx";
+import { RoastPlanPage } from "./RoastPlanPage.tsx";
+import { SettingPage, SettingsPage } from "./SettingsPage.tsx";
 import { StockPage } from "./StockPage.tsx";
 import { SubscriptionsPage } from "./SubscriptionsPage.tsx";
 import { WholesalePage } from "./WholesalePage.tsx";
 import { WeekPlan } from "./WeekPlan.tsx";
 import { go } from "./navigation.ts";
+import { useInvites, usePickup } from "./shop-state.ts";
 import "./roastery.css";
 
 type Place =
@@ -48,9 +53,11 @@ type Place =
   | { readonly page: "customer"; readonly id: string }
   | { readonly page: "subscriptions" }
   | { readonly page: "payouts" }
+  | { readonly page: "roasts" }
   | { readonly page: "stock" }
-  | { readonly page: "wholesale" }
-  | { readonly page: "settings" };
+  | { readonly page: "wholesale"; readonly tab: "accounts" | "prices" }
+  | { readonly page: "settings" }
+  | { readonly page: "setting"; readonly id: string };
 
 function placeOf(route: string): Place {
   const [, part, id] = route.split("/");
@@ -59,10 +66,16 @@ function placeOf(route: string): Place {
     case "orders":
     case "subscriptions":
     case "payouts":
+    case "roasts":
     case "stock":
-    case "wholesale":
-    case "settings":
       return { page: section };
+    case "wholesale":
+      return {
+        page: "wholesale",
+        tab: id === "prices" ? "prices" : "accounts",
+      };
+    case "settings":
+      return id === undefined ? { page: "settings" } : { page: "setting", id };
     case "customers":
       return id === undefined
         ? { page: "customers" }
@@ -72,23 +85,30 @@ function placeOf(route: string): Place {
   }
 }
 
-const SETUP_TASKS = [
-  { id: "coffee", title: "Add your first coffee", done: true },
-  { id: "shipping", title: "Set shipping rates", done: true },
-  { id: "bank", title: "Connect your bank", done: true },
-  {
-    id: "pickup",
-    title: "Offer local pickup",
-    description: "Customers nearby collect their bags at the roastery.",
-    action: { label: "Turn on pickup", href: "#/roastery/settings/pickup" },
-  },
-  {
-    id: "team",
-    title: "Invite your team",
-    description: "Give the roasters and packers their own sign-in.",
-    action: { label: "Invite", href: "#/roastery/settings/team" },
-  },
-] as const;
+/** The shop's setup, done where the rest of the demo says it is. */
+function useSetupTasks(): readonly SetupTask[] {
+  const [pickup] = usePickup();
+  const [invites] = useInvites();
+  return [
+    { id: "coffee", title: "Add your first coffee", done: true },
+    { id: "shipping", title: "Set shipping rates", done: true },
+    { id: "bank", title: "Connect your bank", done: true },
+    {
+      id: "pickup",
+      title: "Offer local pickup",
+      description: "Customers nearby collect their bags at the roastery.",
+      action: { label: "Turn on pickup", href: "#/roastery/settings/pickup" },
+      done: pickup,
+    },
+    {
+      id: "team",
+      title: "Invite your team",
+      description: "Give the roasters and packers their own sign-in.",
+      action: { label: "Invite", href: "#/roastery/settings/team" },
+      done: invites.length > 0,
+    },
+  ];
+}
 
 const ORDER_KINDS = [
   {
@@ -171,26 +191,40 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
         current={place.page === "payouts"}
       />
       <Sidebar.Recent />
-      <Sidebar.Group icon={Coffee} label="Roastery">
+      <Sidebar.Section title="Roastery">
         <Sidebar.Item
+          icon={CalendarDays}
+          label="Roast plan"
+          href="#/roastery/roasts"
+          current={place.page === "roasts"}
+        />
+        <Sidebar.Item
+          icon={Package}
           label="Green coffee"
           href="#/roastery/stock"
           current={place.page === "stock"}
         />
+        <Sidebar.Group icon={Store} label="Wholesale">
+          <Sidebar.Item
+            label="Accounts"
+            href="#/roastery/wholesale"
+            current={place.page === "wholesale" && place.tab === "accounts"}
+          />
+          <Sidebar.Item
+            label="Price lists"
+            href="#/roastery/wholesale/prices"
+            current={place.page === "wholesale" && place.tab === "prices"}
+          />
+        </Sidebar.Group>
+      </Sidebar.Section>
+      <Sidebar.Group icon={Ellipsis} label="More">
         <Sidebar.Item
-          label="Wholesale"
-          href="#/roastery/wholesale"
-          current={place.page === "wholesale"}
-        />
-      </Sidebar.Group>
-      <Sidebar.Section title="Account">
-        <Sidebar.Item
-          icon={Settings}
           label="Settings"
           href="#/roastery/settings"
-          current={place.page === "settings"}
+          current={place.page === "settings" || place.page === "setting"}
         />
-      </Sidebar.Section>
+        <Sidebar.Item label="Back to the playground" href="#/tokens" />
+      </Sidebar.Group>
     </Sidebar>
   );
 }
@@ -242,8 +276,8 @@ function RoasteryTopBar({
               ]}
               media={<WeekPlan />}
               learnMore={{
-                label: "How roast planning works",
-                href: "#/roastery/stock",
+                label: "See next week's roasts",
+                href: "#/roastery/roasts",
               }}
             />
           </OverflowCluster.Item>
@@ -252,7 +286,10 @@ function RoasteryTopBar({
             menuItem={{
               label: "Notifications",
               icon: Bell,
-              onSelect: () => undefined,
+              dot: true,
+              onSelect: () => {
+                go("#/roastery/orders");
+              },
             }}
           >
             <NotificationNudge
@@ -287,6 +324,7 @@ export function Roastery(): ReactElement {
   const { route } = useSettings();
   const place = placeOf(route);
   const [choosing, setChoosing] = useState(false);
+  const tasks = useSetupTasks();
   const newOrder = (): void => {
     setChoosing(true);
   };
@@ -306,9 +344,13 @@ export function Roastery(): ReactElement {
         ) : null}
         {place.page === "subscriptions" ? <SubscriptionsPage /> : null}
         {place.page === "payouts" ? <PayoutsPage /> : null}
+        {place.page === "roasts" ? <RoastPlanPage /> : null}
         {place.page === "stock" ? <StockPage /> : null}
-        {place.page === "wholesale" ? <WholesalePage /> : null}
+        {place.page === "wholesale" ? <WholesalePage tab={place.tab} /> : null}
         {place.page === "settings" ? <SettingsPage /> : null}
+        {place.page === "setting" ? (
+          <SettingPage key={place.id} id={place.id} />
+        ) : null}
       </AppShell>
       <ChoiceDialog
         open={choosing}
@@ -320,7 +362,7 @@ export function Roastery(): ReactElement {
       <SetupGuide
         title="Get your shop ready"
         storageKey="roastery-setup"
-        tasks={SETUP_TASKS}
+        tasks={tasks}
       />
     </div>
   );

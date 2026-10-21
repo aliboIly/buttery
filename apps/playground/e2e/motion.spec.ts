@@ -1934,8 +1934,9 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     page,
   }) => {
     await openDemo(page, "/orders");
-    const header = page.getByRole("button", { name: "Roastery", exact: true });
-    const morph = '[data-bt="Sidebar"] .bt-sidebar-group [data-bt="Morph"]';
+    const header = page.getByRole("button", { name: "Wholesale", exact: true });
+    const morph =
+      '[data-bt="Sidebar"] .bt-sidebar-group:has(> [data-bt-part="item"] [title="Wholesale"]) [data-bt="Morph"]';
     await header.focus();
     await startSampling(page, morph);
     await page.keyboard.press("Enter");

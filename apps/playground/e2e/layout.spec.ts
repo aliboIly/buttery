@@ -583,9 +583,9 @@ test("the roastery's sidebar, menus and guide are buttery with the sidebar full 
       },
       escape,
       {
-        name: "open the Roastery group",
+        name: "open the Wholesale group",
         allowMove: ['[data-bt="Sidebar"]'],
-        run: press("Roastery"),
+        run: press("Wholesale"),
       },
       {
         name: "open the setup guide",
@@ -603,8 +603,8 @@ test("the roastery's sidebar, menus and guide are buttery with the sidebar full 
     viewports: [{ width: 960, height: 640 }],
     interactions: [
       {
-        name: "open the Roastery group's flyout",
-        run: press("Roastery"),
+        name: "open the Wholesale group's flyout",
+        run: press("Wholesale"),
       },
       escape,
       {

@@ -16,6 +16,7 @@ import type { ReactElement } from "react";
 import { NEXT_PAYOUT, bagCount, daily, salesTotal, sum } from "./data.ts";
 import type { Order } from "./data.ts";
 import { change, money, number, shortDate, shortMoney } from "./format.ts";
+import { useSimulatedLoad } from "./loading.ts";
 import { go } from "./navigation.ts";
 import {
   alignedBuckets,
@@ -25,6 +26,7 @@ import {
   measured,
   periodDays,
 } from "./period.ts";
+import { usePickup } from "./shop-state.ts";
 import { StockList } from "./stock.tsx";
 
 const WEEKDAYS = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
@@ -76,6 +78,8 @@ export function OverviewPage(): ReactElement {
     interval: "daily",
     comparison: "previous-period",
   });
+  const [pickup] = usePickup();
+  const loading = useSimulatedLoad(JSON.stringify(period), 900);
   const labels = bucketLabels(
     buckets(periodDays(period), period.interval),
     period.interval,
@@ -124,57 +128,66 @@ export function OverviewPage(): ReactElement {
       }
       asideLabel="Tips and payouts"
     >
-      <Banner
-        icon={Truck}
-        action={{ label: "Turn on pickup", href: "#/roastery/settings" }}
-        estimate="2 min"
-        storageKey="roastery-pickup"
-      >
-        Customers within 20 miles can collect their coffee at the roastery.
-      </Banner>
+      {pickup ? null : (
+        <Banner
+          icon={Truck}
+          action={{
+            label: "Turn on pickup",
+            href: "#/roastery/settings/pickup",
+          }}
+          estimate="2 min"
+          storageKey="roastery-pickup"
+        >
+          Customers within 20 miles can collect their coffee at the roastery.
+        </Banner>
+      )}
       <AppPage.Section title="Your numbers">
         <DateRangeBar value={period} onValueChange={setPeriod} />
         <Grid columns={{ base: 1, md: 2 }} gap={4}>
           <MetricCard
             title="Sales"
             info="Every sale, before refunds and fees."
-            value={money(sales.value)}
-            delta={sales.delta}
+            value={loading ? undefined : money(sales.value)}
+            delta={loading ? undefined : sales.delta}
             labels={labels}
             series={sales.series}
             formatValue={money}
             formatTick={shortMoney}
             updated="Updated just now"
+            loading={loading}
             href="#/roastery/payouts"
           />
           <MetricCard
             title="Orders"
-            value={number(orders.value)}
-            delta={orders.delta}
+            value={loading ? undefined : number(orders.value)}
+            delta={loading ? undefined : orders.delta}
             labels={labels}
             series={orders.series}
             updated="Updated just now"
+            loading={loading}
             href="#/roastery/orders"
           />
           <MetricCard
             title="Bags sold"
             info="Bags in every order, retail and wholesale."
-            value={number(bags.value)}
-            delta={bags.delta}
+            value={loading ? undefined : number(bags.value)}
+            delta={loading ? undefined : bags.delta}
             labels={labels}
             series={bags.series}
             updated="Updated just now"
+            loading={loading}
             href="#/roastery/stock"
           />
           <MetricCard
             title="Refunds"
             info="Orders refunded in the period. Fewer is better."
-            value={number(refunds.value)}
-            delta={refunds.delta}
+            value={loading ? undefined : number(refunds.value)}
+            delta={loading ? undefined : refunds.delta}
             lowerIsBetter
             labels={labels}
             series={refunds.series}
             updated="Updated just now"
+            loading={loading}
             href="#/roastery/orders"
           />
         </Grid>

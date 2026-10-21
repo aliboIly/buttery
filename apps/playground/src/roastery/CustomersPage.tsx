@@ -18,7 +18,9 @@ import type { ReactElement } from "react";
 import { CUSTOMER_ROWS, isNew } from "./customers.ts";
 import type { CustomerRow } from "./customers.ts";
 import { number, since } from "./format.ts";
+import { useSimulatedLoad } from "./loading.ts";
 import { go } from "./navigation.ts";
+import { RenameView } from "./rename-view.tsx";
 
 const PAGE_SIZE = 25;
 
@@ -65,7 +67,7 @@ const COLUMNS: readonly DataTableColumn<CustomerRow>[] = [
     id: "orders",
     header: "Orders",
     cell: (row) => number(row.orders.length),
-    minWidth: "xs",
+    minWidth: "sm",
     align: "end",
     sortable: true,
   },
@@ -125,7 +127,10 @@ function compare(
 
 /** Everyone who's ordered, in saved views, searchable. */
 export function CustomersPage(): ReactElement {
+  const [views, setViews] = useState(VIEWS);
   const [view, setView] = useState("all");
+  const [renaming, setRenaming] = useState(false);
+  const loading = useSimulatedLoad(view, 700);
   const [query, setQuery] = useState("");
   const [cities, setCities] = useState<ReadonlySet<string>>(new Set());
   const [sort, setSort] = useState<DataTableSort | null>({
@@ -169,15 +174,32 @@ export function CustomersPage(): ReactElement {
       <AppPage.Section>
         <SavedViews
           label="Customer views"
-          views={VIEWS}
+          views={views}
           value={view}
           onValueChange={(next) => {
             setView(next);
             setPage(1);
           }}
-          actions={<Menu.Item>Rename view</Menu.Item>}
-          onSaveAs={() => {
-            toast("Saving views is a step further than this demo goes.");
+          actions={
+            <Menu.Item
+              onSelect={() => {
+                setRenaming(true);
+              }}
+            >
+              Rename view
+            </Menu.Item>
+          }
+        />
+        <RenameView
+          open={renaming}
+          onOpenChange={setRenaming}
+          name={views.find((candidate) => candidate.id === view)?.label ?? ""}
+          onRename={(label) => {
+            setViews(
+              views.map((candidate) =>
+                candidate.id === view ? { ...candidate, label } : candidate,
+              ),
+            );
           }}
         />
         <FilterBar
@@ -220,6 +242,7 @@ export function CustomersPage(): ReactElement {
         </FilterBar>
         <DataTable<CustomerRow>
           label="Customers"
+          loading={loading}
           columns={COLUMNS}
           rows={matching.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)}
           rowKey={(row) => row.id}

@@ -6,9 +6,9 @@ import {
   FilterBar,
   FilterPill,
   PageHeader,
+  SavedViews,
   SearchField,
   SegmentedControl,
-  StatTabs,
   StatusBadge,
   toast,
 } from "@buttery/react";
@@ -16,16 +16,19 @@ import type {
   ColumnLayout,
   DataTableColumn,
   DataTableSort,
+  SavedView,
   StatusTone,
 } from "@buttery/react";
 import { Download } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { customerCell } from "./customer-cell.tsx";
-import { ORDERS, coffeeOf, customerOf } from "./data.ts";
+import { ORDERS, TODAY, coffeeOf, customerOf, dayNumber } from "./data.ts";
 import type { Order, OrderStatus } from "./data.ts";
 import { dateTime } from "./format.ts";
+import { useSimulatedLoad } from "./loading.ts";
 import { go } from "./navigation.ts";
+import { RenameView } from "./rename-view.tsx";
 
 const PAGE_SIZE = 25;
 
@@ -38,6 +41,38 @@ const STATUSES: Readonly<
   shipped: { label: "Shipped", tone: "success" },
   refunded: { label: "Refunded", tone: "danger" },
 };
+
+/** A view someone saved: the filters it keeps. */
+interface Filters {
+  readonly channel: Order["channel"] | undefined;
+  readonly query: string;
+}
+
+const VIEWS: readonly SavedView[] = [
+  { id: "all", label: "All orders" },
+  { id: "to-roast", label: "To roast" },
+  { id: "unpaid", label: "Unpaid" },
+  { id: "this-week", label: "Shipped this week" },
+  { id: "refunds", label: "Refunds" },
+];
+
+function inView(view: string, order: Order): boolean {
+  switch (view) {
+    case "to-roast":
+      return order.status === "paid" || order.status === "roasting";
+    case "unpaid":
+      return order.status === "unpaid";
+    case "this-week":
+      return (
+        order.status === "shipped" &&
+        dayNumber(TODAY) - dayNumber(order.placed) < 7
+      );
+    case "refunds":
+      return order.status === "refunded";
+    default:
+      return true;
+  }
+}
 
 const CHANNELS = [
   { value: "web", label: "Web" },
@@ -119,17 +154,21 @@ function compare(sort: DataTableSort | null): (a: Order, b: Order) => number {
   }
 }
 
-/** Every order, by state, with filters, a search and the columns people choose. */
+/** Every order, in saved views, with filters, a search and the columns people choose. */
 export function OrdersPage({
   onNewOrder,
 }: {
   readonly onNewOrder: () => void;
 }): ReactElement {
-  const [state, setState] = useState<string>("all");
+  const [views, setViews] = useState(VIEWS);
+  const [saved, setSaved] = useState<ReadonlyMap<string, Filters>>(new Map());
+  const [view, setView] = useState("all");
+  const [renaming, setRenaming] = useState(false);
   const [channel, setChannel] = useState<Order["channel"] | undefined>(
     undefined,
   );
   const [query, setQuery] = useState("");
+  const loading = useSimulatedLoad(view, 700);
   const [sort, setSort] = useState<DataTableSort | null>({
     column: "placed",
     direction: "descending",
@@ -142,7 +181,7 @@ export function OrdersPage({
   const search = query.trim().toLowerCase();
   const matching = ORDERS.filter(
     (order) =>
-      (state === "all" || order.status === state) &&
+      inView(view, order) &&
       (channel === undefined || order.channel === channel) &&
       (search === "" ||
         order.id.toLowerCase().includes(search) ||
@@ -153,10 +192,27 @@ export function OrdersPage({
   const columns = layout.order
     .filter((id) => layout.visible.has(id))
     .flatMap((id) => COLUMNS.filter((column) => column.id === id));
-  const count = (status: OrderStatus): number =>
-    ORDERS.filter((order) => order.status === status).length;
+  const choose = (next: string): void => {
+    const filters = saved.get(next);
+    setView(next);
+    if (filters !== undefined) {
+      setChannel(filters.channel);
+      setQuery(filters.query);
+    }
+    setPage(1);
+  };
+  const saveAs = (): void => {
+    const id = `saved-${String(saved.size + 1)}`;
+    const label =
+      CHANNELS.find((option) => option.value === channel)?.label ??
+      (query.trim() === "" ? "My orders" : `“${query.trim()}”`);
+    setSaved(new Map(saved).set(id, { channel, query }));
+    setViews([...views, { id, label }]);
+    setView(id);
+    toast.success(`Saved the view “${label}”`);
+  };
   const clearAll = (): void => {
-    setState("all");
+    setView("all");
     setChannel(undefined);
     setQuery("");
     setPage(1);
@@ -191,20 +247,33 @@ export function OrdersPage({
       }
     >
       <AppPage.Section>
-        <StatTabs
-          label="Orders by state"
-          value={state}
-          onValueChange={(next) => {
-            setState(next);
-            setPage(1);
+        <SavedViews
+          label="Order views"
+          views={views}
+          value={view}
+          onValueChange={choose}
+          actions={
+            <Menu.Item
+              onSelect={() => {
+                setRenaming(true);
+              }}
+            >
+              Rename view
+            </Menu.Item>
+          }
+          onSaveAs={saveAs}
+        />
+        <RenameView
+          open={renaming}
+          onOpenChange={setRenaming}
+          name={views.find((candidate) => candidate.id === view)?.label ?? ""}
+          onRename={(label) => {
+            setViews(
+              views.map((candidate) =>
+                candidate.id === view ? { ...candidate, label } : candidate,
+              ),
+            );
           }}
-          tabs={[
-            { value: "all", label: "All", count: ORDERS.length },
-            { value: "unpaid", label: "Unpaid", count: count("unpaid") },
-            { value: "roasting", label: "Roasting", count: count("roasting") },
-            { value: "shipped", label: "Shipped", count: count("shipped") },
-            { value: "refunded", label: "Refunded", count: count("refunded") },
-          ]}
         />
         <FilterBar
           onClearAll={channel === undefined ? undefined : clearAll}
@@ -252,6 +321,7 @@ export function OrdersPage({
         </FilterBar>
         <DataTable<Order>
           label="Orders"
+          loading={loading}
           columns={columns}
           rows={shown}
           rowKey={(order) => order.id}
