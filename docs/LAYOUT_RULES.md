@@ -110,6 +110,7 @@ grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
 ### Tables
 - A `DataTable` is one scroll container for both axes. Its rows share one grid column template, so every column has a minimum width (a token step) and a share of what's left; when the minimums don't fit, the table scrolls sideways inside its container, and the page never does.
 - The header row sticks to the top of the table's scroll area and the first column (with the checkbox column) to its inline start, both on `bg-surface`; the first column shows a 1px edge while the table is scrolled sideways. The header sticks whenever the table scrolls vertically, which it does when it's given a height (`AppPage fill`, or a parent with one); a table that grows with its rows scrolls with the page instead.
+- A table that overflows its scroll area makes that area focusable (a region named by the table's label), so the keyboard can scroll it.
 - Cells never wrap: text truncates with an ellipsis and its full text in a tooltip (`data-bt-truncate`). Numbers are right-aligned and tabular. Row height is `--bt-h-table-row`; skeleton rows use the same height, so swapping them for rows moves nothing.
 
 ### Floating guidance

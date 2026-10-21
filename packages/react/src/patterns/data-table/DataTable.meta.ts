@@ -21,6 +21,6 @@ export const meta: ComponentMeta = {
     "ColumnSettings",
     "AppPage",
   ],
-  a11y: "ARIA table roles on grid rows: a table named by its label, columnheaders with aria-sort on sortable ones (buttons inside), cells. Row checkboxes are named Select and the row's label; the header box selects the page and reads mixed when some are. A row's actions button is named Actions for and the row's label. While loading, the table is aria-busy and says it's loading rows.",
+  a11y: "ARIA table roles on grid rows: a table named by its label, columnheaders with aria-sort on sortable ones (buttons inside), cells. Row checkboxes are named Select and the row's label; the header box selects the page and reads mixed when some are. A row's actions button is named Actions for and the row's label. While loading, the table is aria-busy and says it's loading rows. Its scroll area is a region named by the label, and takes focus while its columns or rows overflow, so the keyboard can scroll it.",
   motion: "presence",
 };

@@ -271,6 +271,18 @@ describe("DataTable", () => {
     expect(getComputedStyle(link).textDecorationLine).toBe("none");
   });
 
+  it("is a region named by its label that takes focus when its columns overflow, so the keyboard can scroll it", () => {
+    render(<Orders width={320} size="compact" />);
+    const region = screen.getByRole("region", { name: "Orders" });
+    expect(region.tabIndex).toBe(0);
+    expect(region.scrollWidth).toBeGreaterThan(region.clientWidth);
+    cleanup();
+    render(<Orders width={900} size="compact" />);
+    expect(
+      screen.getByRole("region", { name: "Orders" }).hasAttribute("tabindex"),
+    ).toBe(false);
+  });
+
   it("shows skeleton rows shaped like its columns while it loads, as many as a page holds", () => {
     render(
       <Orders

@@ -11,7 +11,7 @@ import {
 import type { CssVariables } from "@buttery/core";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import type {
   CSSProperties,
   ComponentPropsWithRef,
@@ -238,8 +238,8 @@ function DataTableRoot<Row>({
     defaultValue: defaultSelected ?? new Set<string>(),
     onChange: onSelectedChange,
   });
-  const scroller = useRef<HTMLDivElement>(null);
   const [scrolledAside, setScrolledAside] = useState(false);
+  const [overflows, setOverflows] = useState(false);
   const [arrived, setArrived] = useState(false);
   const [wasLoading, setWasLoading] = useState(loading);
 
@@ -248,15 +248,25 @@ function DataTableRoot<Row>({
     setArrived(!loading);
   }
 
-  useEffect(() => {
-    const element = scroller.current;
+  const watchScroll = useCallback((element: HTMLDivElement | null) => {
     if (!element) return undefined;
-    const update = (): void => {
+    const scrolled = (): void => {
       setScrolledAside(element.scrollLeft > 0);
     };
-    element.addEventListener("scroll", update, { passive: true });
+    const measure = (): void => {
+      setOverflows(
+        element.scrollWidth > element.clientWidth ||
+          element.scrollHeight > element.clientHeight,
+      );
+    };
+    measure();
+    element.addEventListener("scroll", scrolled, { passive: true });
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    for (const child of element.children) observer.observe(child);
     return () => {
-      element.removeEventListener("scroll", update);
+      element.removeEventListener("scroll", scrolled);
+      observer.disconnect();
     };
   }, []);
 
@@ -333,7 +343,11 @@ function DataTableRoot<Row>({
       data-size={size}
     >
       <div
-        ref={scroller}
+        ref={watchScroll}
+        role="region"
+        aria-label={label}
+        tabIndex={overflows ? 0 : undefined}
+        className="bt-focus"
         data-bt-part="scroll"
         data-scrolled-aside={scrolledAside ? "" : undefined}
       >

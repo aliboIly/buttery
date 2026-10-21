@@ -446,6 +446,7 @@ Chart gridlines use `border`, axis labels `caption` in `text-tertiary`, and a co
   - Sortable headers: the header is a button with a 14px sort arrow (`text-tertiary`, shown on hover while unsorted, `text` while sorted); `aria-sort` on the header; presses go ascending, descending, off.
   - Row hover `bg-item-hover`, at once. Row actions: an `IconButton sm` ("…") in the last column opening a `Menu`, named "Actions for <row>".
   - Sticky header and sticky first column (with the checkbox column), `bg-surface`; while scrolled sideways the first column shows a 1px `border` edge.
+  - Its scroll area is a region named by its label; while its columns or rows overflow it takes focus, so the keyboard can scroll it.
   - Loading: skeleton rows shaped to each column (a checkbox square, text lines of the column's typical width, a badge pill), as many as the page holds.
   - Pagination under it: "1–14 of 14" in `body-sm` `text-secondary`, tabular, at its start; Previous and Next (`soft sm`, with the back and forward arrows, disabled at the ends) at its end.
   - No results: one row across every column, padded 16: "No results" (`label`), a line in `body-sm`, and a `soft sm` "Clear all" at its end. No data at all: an `EmptyState` with an icon tile in the table's place.

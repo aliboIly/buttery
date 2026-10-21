@@ -81,6 +81,13 @@ export default defineConfig(
   {
     files: ["**/*.{ts,tsx}"],
     extends: [reactHooks.configs.flat.recommended, jsxA11y.flatConfigs.strict],
+    rules: {
+      // A region that scrolls takes focus so the keyboard can scroll it (axe: scrollable-region-focusable).
+      "jsx-a11y/no-noninteractive-tabindex": [
+        "error",
+        { tags: [], roles: ["tabpanel", "region"] },
+      ],
+    },
   },
   {
     files: ["**/*.{js,mjs,cjs}"],
