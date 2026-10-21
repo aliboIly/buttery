@@ -84,6 +84,17 @@ export const widths = {
     description: "Inspector panel width.",
   },
   dialog: { cssVar: "--bt-w-dialog", value: 400, description: "Dialog width." },
+  "dialog-md": {
+    cssVar: "--bt-w-dialog-md",
+    value: 560,
+    description: "A wider dialog, such as a list of choices.",
+  },
+  "dialog-lg": {
+    cssVar: "--bt-w-dialog-lg",
+    value: 880,
+    description:
+      "A two-column dialog, such as an announcement with copy beside an illustration.",
+  },
   "menu-min": {
     cssVar: "--bt-w-menu-min",
     value: 200,

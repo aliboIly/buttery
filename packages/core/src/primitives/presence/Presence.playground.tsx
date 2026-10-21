@@ -9,6 +9,8 @@ const PRESETS: readonly PresencePreset[] = [
   "pop",
   "toast",
   "menu",
+  "dialog",
+  "scrim",
 ];
 
 function PresetDemo({
