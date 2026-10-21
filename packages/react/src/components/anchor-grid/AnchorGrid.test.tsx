@@ -19,7 +19,7 @@ describe("AnchorGrid", () => {
     render(
       <AnchorGrid
         ref={ref}
-        label="Position"
+        label="Anchor"
         className="custom"
         data-testid="grid"
       />,
@@ -30,8 +30,8 @@ describe("AnchorGrid", () => {
   });
 
   it("is a 43px radio group of nine named positions, the whole box one target", () => {
-    render(<AnchorGrid label="Position" />);
-    const group = screen.getByRole("radiogroup", { name: "Position" });
+    render(<AnchorGrid label="Anchor" />);
+    const group = screen.getByRole("radiogroup", { name: "Anchor" });
     expect(group.getBoundingClientRect().width).toBe(43);
     expect(group.dataset["btTarget"]).toBe("group");
     expect(screen.getAllByRole("radio")).toHaveLength(9);
@@ -43,7 +43,7 @@ describe("AnchorGrid", () => {
 
   it("moves in two dimensions with the arrow keys, choosing as it goes, and stops at the edges", async () => {
     const onValueChange = vi.fn();
-    render(<AnchorGrid label="Position" onValueChange={onValueChange} />);
+    render(<AnchorGrid label="Anchor" onValueChange={onValueChange} />);
     await userEvent.tab();
     expect(document.activeElement).toBe(cell("Center"));
     await userEvent.keyboard("{ArrowUp}{ArrowRight}");
@@ -59,16 +59,18 @@ describe("AnchorGrid", () => {
 
   it("picks the nearest dot to a press anywhere in the box", async () => {
     const onValueChange = vi.fn();
-    render(<AnchorGrid label="Position" onValueChange={onValueChange} />);
-    await browser.click(screen.getByRole("radiogroup"), {
-      position: { x: 38, y: 38 },
-    });
-    expect(onValueChange).toHaveBeenLastCalledWith("bottom-right");
-    expect(document.activeElement).toBe(cell("Bottom right"));
+    render(<AnchorGrid label="Anchor" onValueChange={onValueChange} />);
+    const box = screen.getByRole("radiogroup");
+    const { width } = box.getBoundingClientRect();
+    await browser.click(box, { position: { x: width / 2, y: 2 } });
+    expect(onValueChange).toHaveBeenLastCalledWith("top");
+    expect(document.activeElement).toBe(cell("Top"));
+    await browser.click(box, { position: { x: 2, y: width / 2 } });
+    expect(onValueChange).toHaveBeenLastCalledWith("left");
   });
 
   it("draws the chosen dot as a 10px knob and hides its idle dot", () => {
-    render(<AnchorGrid label="Position" defaultValue="left" />);
+    render(<AnchorGrid label="Anchor" defaultValue="left" />);
     const knob = cell("Left").querySelector<HTMLElement>(
       '[data-bt-part="indicator"]',
     );

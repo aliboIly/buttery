@@ -54,7 +54,7 @@ export interface AnchorGridProps extends Omit<
   ComponentPropsWithRef<"div">,
   "defaultValue" | "onChange" | "children"
 > {
-  /** What the anchor places, such as "Position". It names the group. */
+  /** What the anchor places, such as "Anchor". It names the group. */
   readonly label: string;
   /** The chosen anchor. Pair with `onValueChange` to control it. */
   readonly value?: Anchor | undefined;
@@ -75,7 +75,7 @@ export interface AnchorGridProps extends Omit<
  * press, which picks the nearest dot, since a single dot is too small to aim at.
  *
  * @example
- * <AnchorGrid label="Position" value={anchor} onValueChange={setAnchor} />
+ * <AnchorGrid label="Anchor" value={anchor} onValueChange={setAnchor} />
  */
 export function AnchorGrid({
   label,

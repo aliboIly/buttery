@@ -51,7 +51,6 @@
     visibility: hidden;
   }
 
-  /* The knob is the shared indicator, drawn small, round and dark in the middle of the chosen cell. */
   .bt-anchor-grid
     > [data-bt-part="cell"]
     > [data-bt-part="indicator-slot"]
@@ -59,7 +58,7 @@
     inset: calc(50% - var(--bt-anchor-grid-knob) / 2);
     border-radius: var(--bt-r-full);
     background: radial-gradient(
-      circle at 50% 35%,
+      circle farthest-side at 50% 30%,
       var(--bt-knob-center),
       var(--bt-knob-edge)
     );

@@ -10,7 +10,7 @@ function Placement(): ReactElement {
   return (
     <Inline gap={3} align="center">
       <Text variant="label">Position</Text>
-      <AnchorGrid label="Position" value={anchor} onValueChange={setAnchor} />
+      <AnchorGrid label="Anchor" value={anchor} onValueChange={setAnchor} />
       <Text variant="caption">{anchor}</Text>
     </Inline>
   );
@@ -26,7 +26,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Disabled",
     render: () => (
-      <AnchorGrid label="Position" defaultValue="top-right" disabled />
+      <AnchorGrid label="Anchor" defaultValue="top-right" disabled />
     ),
   },
 ];

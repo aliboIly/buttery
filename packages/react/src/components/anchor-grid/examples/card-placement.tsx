@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { AnchorGrid } from "@buttery/react";
+import { AnchorGrid, buttery } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
 
 const PLACE: Readonly<Record<Anchor, string>> = {
@@ -15,14 +15,16 @@ const PLACE: Readonly<Record<Anchor, string>> = {
   "bottom-right": "end end",
 };
 
-/** An anchor mapped to where a card sits in its frame, through CSS `place-items`. */
+/** An anchor mapped to where a card sits in its frame, through CSS `place-items`, gliding there on `spring.smooth`. */
 export function CardPlacement(): ReactElement {
   const [anchor, setAnchor] = useState<Anchor>("center");
   return (
     <>
-      <AnchorGrid label="Position" value={anchor} onValueChange={setAnchor} />
+      <AnchorGrid label="Anchor" value={anchor} onValueChange={setAnchor} />
       <output style={{ display: "grid", placeItems: PLACE[anchor] }}>
-        <span>Launch card</span>
+        <buttery.span layout layoutDependency={anchor}>
+          Launch card
+        </buttery.span>
       </output>
     </>
   );
