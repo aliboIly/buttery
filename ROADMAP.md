@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 5 (inspector and app patterns) is done, and the App kit is in the plan (specs, Phase 6B, v0.7). Next: the public-kit refactor, then Phase 6 (overlays and choreography), then Phase 6B.
+**Now:** Phase 5 (inspector and app patterns) is done, and the App kit is in the plan (specs, Phase 6B, v0.7). Next: Phase 6 (overlays and choreography), then Phase 6B. The public-kit rule is in place.
 
 ---
 
@@ -74,7 +74,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 ## v1.0 — Developer & agent experience (Phase 8)
 - [ ] `manifest.json`, `tokens.json`, `llms.txt`, docs + examples shipped in packages
 - [ ] Dev warnings with fixes; VS Code snippets
-- [ ] Public kit: components use only what users can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition`, `variants()`), enforced by the contract test
+- [x] Public kit: components use only what users can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition`, `variants()`), enforced by the contract test
 - [ ] CLI: `create-buttery` (`--template blank|dashboard|editor|marketing`), `init`, `add` (and `add page table|detail|overview|settings|empty|feature-intro`), `create component`, `doctor`, `check`, `migrate`
 - [ ] Make any app: `LayoutGuard`, `buttery check` and the lint configs on user code; every template and `add page` passes `buttery check` with zero edits
 - [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper)

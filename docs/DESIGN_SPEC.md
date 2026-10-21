@@ -376,6 +376,9 @@ Centered in the stage. Title `title`, description `body-sm` 12px below, actions 
 ### Stage (canvas)
 Content box fits the available space at the chosen aspect ratio (container query units, like `FitBox`: never overflows, always centered, 32px minimum margin), r12, shadow-card. It reshapes on `spring.smooth` through a Motion layout animation when its size changes; content that has to keep its own shape meanwhile (a card, text, an image) is a Motion element that spreads `useStageLayout`, so it scales evenly instead of stretching with the canvas. Artwork inside is `data-bt-allow-overlap` and clipped to the canvas. Crop mode: background and shadow fade out (`dur-base`), 8 handles (12px `bg-surface` circles, 1px `ring-selected` border, 24px hit areas) on a 1px frame arrive after `delay-follow` (80ms) over `dur-fast`, FloatingToolbar below. Dragging a handle resizes the canvas at a fixed scale, the opposite edge mirroring the held one, and the canvas fits again on release; `onSizeCommit` reports each drag's final size once, and a drag cut short by crop mode ending lets the canvas fit again. The canvas is an image named by `label`; exact sizes go through fields (a canvas Select's footer).
 
+### Control
+The root of a fixed-height control you build yourself (the `.bt-control` recipe as a primitive): one line, content centered 6 apart, `data-bt-control`. Sizes are the height tokens with padding to match: `badge` 20 (padding-x 6), `sm` 28 (12), `control` 34 (12, the default), `button` 36 (20), `cta` 48 (24); compact density shrinks them as it does every control. With `asChild` it makes a `Pressable` or a link the control. Composed with a `Surface` through `asChild`, the surface gives the look (background, edge, radius) and the control keeps its height and inline padding.
+
 ### Kbd
 Keycap: 20h, min-width 20, r5, `bg-surface`, 1px `border-strong` plus a 1px bottom edge, `kbd` role.
 

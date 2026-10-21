@@ -47,7 +47,7 @@ buttery/
 │  ├─ react/   @buttery/react    # components + patterns, built only on core; ships manifest.json + examples
 │  ├─ test/    @buttery/test     # expectButtery() Playwright checks (human + JSON reports)
 │  ├─ lint/    @buttery/lint     # stylelint + eslint configs
-│  ├─ cli/     buttery CLI       # `npx create-buttery`, `buttery init | add | doctor | check`
+│  ├─ cli/     buttery CLI       # `npx create-buttery`, `buttery init | add | create | doctor | check`
 │  └─ mcp/     @buttery/mcp      # MCP server so any agent can query components, tokens and run layout checks
 ├─ apps/
 │  ├─ playground/                # every component × state × theme × density; demo screens; docs pages; Playwright target
@@ -73,9 +73,9 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
 2. Recipes     CSS classes that bundle tokens: .bt-surface[data-level], .bt-press, .bt-focus,
                .bt-control[data-size], .bt-text[data-role], .bt-truncate, .bt-hover-lift,
                .bt-hover-tint, .bt-scroll-fade
-3. Primitives  Surface, Pressable, Stack, Inline, Grid, Center, Divider, Text, TextStack, Icon, Kbd,
-               FitBox, OverflowCluster, Morph (auto-height + crossfade), Presence (enter/exit presets),
-               SharedIndicator, Reveal, Stagger, Loop
+3. Primitives  Surface, Pressable, Control, Stack, Inline, Grid, Center, Divider, Text, TextStack, Icon,
+               Kbd, FitBox, OverflowCluster, Morph (auto-height + crossfade), Presence (enter/exit presets),
+               SharedIndicator, Reveal, Stagger, Loop; variants() for typed variant attributes
    Layers      (packages/core/src/layers/) Layer/Portal + layer manager, Scrim, Sticky, Popover,
                Menu, FloatingLanes
 4. Components  Button, IconButton, SplitButton, SegmentedControl, Slider, ValueBadge, Chip,
@@ -117,13 +117,13 @@ The generated files are committed and Prettier skips them; a unit test fails whe
 
 | Import | Contents |
 |---|---|
-| `@buttery/core` | The token tables as typed data (`spring` for Motion included), the OKLCH color helpers, `createTheme`, the primitives, the layers, the motion hooks and presets (`useButteryTransition`, `useLayoutAnimation`, `presencePresets`), `LayoutGuard` and `useControllableState` |
+| `@buttery/core` | The token tables as typed data (`spring` for Motion included), the OKLCH and HSV color helpers, `createTheme`, the primitives (`Control` among them), the layers and what they're built from (`FloatingMotion`, `LayerContext`), the motion hooks and presets (`useButteryTransition`, `useLayoutAnimation`, `presencePresets`, `revealOnce`), `variants()`, `LayoutGuard` and `useControllableState` |
 | `@buttery/core/layout` | The in-page layout checker (`createLayoutToolkit`, `runLayoutChecks`), without React, for test runners |
 | `@buttery/core/palettes` | Gradient and solid presets, `gradientCss` |
 | `@buttery/core/styles.css` | Layer order, reset, Inter, tokens, base styles and recipes in one file |
 | `@buttery/core/tailwind.css` | The Tailwind v4 bridge |
 | `@buttery/core/tokens.json` | The token data as JSON |
-| `@buttery/react` | `ButteryProvider`, the components, `celebrate` and the `buttery` factory |
+| `@buttery/react` | `ButteryProvider` (and `ButteryContext`), the components, the parts they share (`Arrow`, `Spinner`, `FormFieldCaption`, `FormFieldError`, `useFormFieldIds`, `TextFieldShell`, `TooltipProvider`, the auth form parts), `celebrate` and the `buttery` factory |
 | `@buttery/react/styles.css` | The components' styles in the `bt.components` layer, after the same layer order statement so it works on its own |
 
 ## "Make anything buttery" — four levels of effort
@@ -176,6 +176,7 @@ A slider labels itself, with its value badge, so its row takes no `label`; a seg
 ## Component contract (every component, no exceptions)
 
 - Accepts `ref` as a regular prop (React 19 — no `forwardRef`); spreads `...rest` onto the root; accepts `className` and `style`.
+- Uses only what a user can import: anything it takes from outside its own folder comes from a package entry point (`@buttery/core` or `@buttery/react`), so anyone can build a component the way buttery builds its own. The contract test fails on a helper no package exports. The usual parts: `Surface`, `Pressable`, `Control`, `Field`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition` and `variants()`.
 - Controlled **and** uncontrolled, with the same names everywhere: `value` / `defaultValue` / `onValueChange` for a selected value, `checked` / `defaultChecked` / `onCheckedChange` for something on or off (checkboxes, switches, where `value` is what a form submits, as in HTML), and `open` / `defaultOpen` / `onOpenChange` for anything that opens (dialogs, menus, popovers, tooltips, sheets).
 - Shared prop vocabulary: `size`, `variant`, `disabled`, `label`, `asChild`. No synonyms.
 - `asChild` where it wraps a single element, through `Slot` from `@buttery/core` (Radix's, also taking its child in a one-item array, which is how `Slottable` hands it on).
