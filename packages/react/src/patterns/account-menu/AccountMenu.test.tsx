@@ -6,6 +6,8 @@ import { userEvent } from "@testing-library/user-event";
 import { LogOut, Settings } from "lucide-react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AppShell } from "../app-shell/AppShell.tsx";
+import { Sidebar } from "../sidebar/Sidebar.tsx";
 import { AccountMenu } from "./AccountMenu.tsx";
 
 beforeEach(() => {
@@ -57,6 +59,34 @@ describe("AccountMenu", () => {
     const tile = trigger.querySelector('[data-bt="InitialsTile"]');
     expect(tile?.getBoundingClientRect().width).toBe(20);
     expect(tile?.textContent).toBe("NR");
+  });
+
+  it("shows its tile alone, centered, in a sidebar's rail, still named for its workspace", () => {
+    render(
+      <div style={{ inlineSize: "900px", blockSize: "600px" }}>
+        <AppShell
+          layout="sidebar"
+          sidebar={
+            <Sidebar switcher={<AccountMenu workspace="Northside Roasters" />}>
+              <Sidebar.Item label="Orders" href="#orders" />
+            </Sidebar>
+          }
+        >
+          Page
+        </AppShell>
+      </div>,
+    );
+    const trigger = screen.getByRole("button", {
+      name: "Workspace: Northside Roasters",
+    });
+    expect(trigger.scrollWidth).toBeLessThanOrEqual(trigger.clientWidth);
+    const tile = trigger.querySelector('[data-bt="InitialsTile"]');
+    if (!tile) throw new Error("No tile.");
+    const box = trigger.getBoundingClientRect();
+    const tileBox = tile.getBoundingClientRect();
+    expect(
+      Math.abs(tileBox.left + tileBox.width / 2 - (box.left + box.width / 2)),
+    ).toBeLessThanOrEqual(0.5);
   });
 
   it("opens a 280px menu with the workspace at the top and its items under it", async () => {

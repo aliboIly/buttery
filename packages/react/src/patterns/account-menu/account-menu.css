@@ -44,6 +44,24 @@
     background-color: var(--bt-bg-item-hover);
   }
 
+  /* In a sidebar's rail the trigger is its tile alone, centered; the name stays in the button's name. */
+  .bt-sidebar[data-mode="rail"] .bt-account-menu-trigger {
+    justify-content: center;
+    gap: 0;
+    padding-inline: 0;
+  }
+
+  .bt-sidebar[data-mode="rail"]
+    .bt-account-menu-trigger
+    > [data-bt-part="name"] {
+    flex: none;
+    inline-size: 0;
+  }
+
+  .bt-sidebar[data-mode="rail"] .bt-account-menu-trigger > .bt-icon {
+    display: none;
+  }
+
   .bt-account-menu {
     inline-size: var(--bt-account-menu-width);
   }
