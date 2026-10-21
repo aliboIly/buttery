@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ReactElement } from "react";
 import { Button, DropZone, EmptyState } from "@buttery/react";
 
-/** An empty canvas that takes an image for its background, by drop, paste, ⌘O or the button. */
+/** An empty canvas that takes a picture for its backdrop: dropped, pasted, opened with ⌘O or picked with the button. */
 export function BackgroundDrop(): ReactElement {
   const [image, setImage] = useState<string | null>(null);
   return (
@@ -13,11 +13,11 @@ export function BackgroundDrop(): ReactElement {
       }}
     >
       <EmptyState
-        title={image ?? "Add a background"}
-        description="Drop an image here, or paste one with ⌘V."
+        title={image ?? "Add a backdrop"}
+        description="Drag a picture onto the canvas, or paste it from your clipboard."
         actions={
           <DropZone.Open>
-            <Button variant="primary">Choose image</Button>
+            <Button variant="primary">Pick a picture</Button>
           </DropZone.Open>
         }
       />

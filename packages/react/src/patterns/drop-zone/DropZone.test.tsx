@@ -43,6 +43,18 @@ function drag(type: string, target: Element, data: DataTransfer): void {
   });
 }
 
+function paste(target: Element, data: DataTransfer): ClipboardEvent {
+  const event = new ClipboardEvent("paste", {
+    bubbles: true,
+    cancelable: true,
+    clipboardData: data,
+  });
+  act(() => {
+    target.dispatchEvent(event);
+  });
+  return event;
+}
+
 function zone(): HTMLElement {
   const element = document.querySelector<HTMLElement>('[data-bt="DropZone"]');
   if (!element) throw new Error("No drop zone.");
@@ -111,14 +123,16 @@ describe("DropZone", () => {
     render(
       <DropZone onFiles={() => undefined}>
         <DropZone.Open>
-          <Button>Choose image</Button>
+          <Button>Pick a picture</Button>
         </DropZone.Open>
       </DropZone>,
     );
     const input = zone().querySelector<HTMLInputElement>('input[type="file"]');
     if (!input) throw new Error("No file input.");
     const click = vi.spyOn(input, "click").mockImplementation(() => undefined);
-    await userEvent.click(screen.getByRole("button", { name: "Choose image" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Pick a picture" }),
+    );
     expect(click).toHaveBeenCalledTimes(1);
     await userEvent.keyboard(`{${mod}>}o{/${mod}}`);
     expect(click).toHaveBeenCalledTimes(2);
@@ -141,5 +155,36 @@ describe("DropZone", () => {
     expect(zone().hasAttribute("data-over")).toBe(false);
     drag("drop", zone(), data);
     expect(onFiles).not.toHaveBeenCalled();
+  });
+
+  it("takes a picture pasted anywhere, except while typing in a field, and only kinds it accepts", () => {
+    const onFiles = vi.fn();
+    render(
+      <>
+        <input aria-label="Title" />
+        <input aria-label="Lean" type="range" />
+        <DropZone accept="image/*" onFiles={onFiles} />
+      </>,
+    );
+    const taken = paste(document.body, holding(image()));
+    expect(onFiles).toHaveBeenCalledTimes(1);
+    expect(taken.defaultPrevented).toBe(true);
+
+    const title = screen.getByRole("textbox", { name: "Title" });
+    title.focus();
+    paste(title, holding(image()));
+    expect(onFiles).toHaveBeenCalledTimes(1);
+
+    const lean = screen.getByRole("slider", { name: "Lean" });
+    lean.focus();
+    paste(lean, holding(image()));
+    expect(onFiles).toHaveBeenCalledTimes(2);
+
+    const notes = paste(
+      document.body,
+      holding(new File(["text"], "notes.txt", { type: "text/plain" })),
+    );
+    expect(onFiles).toHaveBeenCalledTimes(2);
+    expect(notes.defaultPrevented).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import { cx, useMergedRefs, useShortcut } from "@buttery/core";
+import { cx, isTypingField, useMergedRefs, useShortcut } from "@buttery/core";
 import type { Shortcut } from "@buttery/core";
 import { Slot } from "radix-ui";
 import { createContext, use, useEffect, useRef, useState } from "react";
@@ -46,15 +46,6 @@ export function fileMatches(file: File, accept: string | undefined): boolean {
   });
 }
 
-function isField(target: EventTarget | null): boolean {
-  return (
-    target instanceof HTMLElement &&
-    (target.isContentEditable ||
-      target instanceof HTMLTextAreaElement ||
-      target instanceof HTMLInputElement)
-  );
-}
-
 function DropZoneRoot({
   onFiles,
   accept,
@@ -94,7 +85,7 @@ function DropZoneRoot({
   useEffect(() => {
     if (!paste || disabled) return undefined;
     const take = (event: ClipboardEvent): void => {
-      if (isField(event.target)) return;
+      if (isTypingField(event.target)) return;
       const files = [...(event.clipboardData?.files ?? [])];
       const taken = files.filter((file) => fileMatches(file, accept));
       if (taken.length === 0) return;
@@ -159,7 +150,7 @@ function DropZoneRoot({
         ref={refs}
         className={cx("bt-drop-zone", className)}
         data-bt="DropZone"
-        data-over={over ? "" : undefined}
+        data-over={over && !disabled ? "" : undefined}
         data-disabled={disabled ? "" : undefined}
       >
         {children}
@@ -175,7 +166,7 @@ function DropZoneRoot({
             event.target.value = "";
           }}
         />
-        {over ? (
+        {over && !disabled ? (
           <div data-bt-part="drop-hint" aria-hidden="true">
             <span className="bt-text" data-role="label">
               {words.drop}
@@ -189,7 +180,7 @@ function DropZoneRoot({
 
 /** Props for `DropZone.Open`. */
 export interface DropZoneOpenProps {
-  /** The control that opens the file picker, such as a "Choose image" button. */
+  /** The control that opens the file picker, such as a "Pick a picture" button. */
   readonly children: ReactElement;
 }
 
@@ -198,7 +189,7 @@ export function DropZoneOpen({ children }: DropZoneOpenProps): ReactElement {
   const open = use(OpenContext);
   if (!open) {
     throw new Error(
-      "[buttery:DropZone] DropZone.Open has to be inside a <DropZone>. Fix: <DropZone onFiles={…}><DropZone.Open><Button>Choose image</Button></DropZone.Open></DropZone>",
+      "[buttery:DropZone] DropZone.Open has to be inside a <DropZone>. Fix: <DropZone onFiles={…}><DropZone.Open><Button>Pick a picture</Button></DropZone.Open></DropZone>",
     );
   }
   return <Slot.Root onClick={open}>{children}</Slot.Root>;
@@ -220,8 +211,8 @@ export interface DropZoneComponent {
  * <DropZone accept="image/*" onFiles={([image]) => setBackground(image)}>
  *   <EmptyState
  *     title="Add a card"
- *     description="Drop an image for the background, or paste one with ⌘V."
- *     actions={<DropZone.Open><Button variant="primary">Choose image</Button></DropZone.Open>}
+ *     description="Drag a picture onto the canvas, or paste it from your clipboard."
+ *     actions={<DropZone.Open><Button variant="primary">Pick a picture</Button></DropZone.Open>}
  *   />
  * </DropZone>
  */
