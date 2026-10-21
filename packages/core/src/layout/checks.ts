@@ -953,11 +953,16 @@ export function createLayoutToolkit(): LayoutToolkit {
         if (style.display === "none" || !isVisible(element)) continue;
         const rect = element.getBoundingClientRect();
         if (rect.height < 1) continue;
-        if (style.position === "sticky" || style.position === "fixed") {
+        const stickTop = Number.parseFloat(style.top);
+        const stickBottom = Number.parseFloat(style.bottom);
+        // A box that sticks only sideways, such as a table's first column, still scrolls with the page.
+        const staysPut =
+          style.position === "fixed" ||
+          (style.position === "sticky" &&
+            !(Number.isNaN(stickTop) && Number.isNaN(stickBottom)));
+        if (staysPut) {
           let top = rect.top;
           if (style.position === "sticky") {
-            const stickTop = Number.parseFloat(style.top);
-            const stickBottom = Number.parseFloat(style.bottom);
             if (!Number.isNaN(stickTop)) top = stickTop;
             else if (!Number.isNaN(stickBottom))
               top = viewportHeight - stickBottom - rect.height;

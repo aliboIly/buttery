@@ -400,6 +400,21 @@ describe("reach", () => {
     ]);
   });
 
+  it("leaves a box that sticks only sideways alone, such as a table's first column far down the page", () => {
+    expect(
+      check(
+        `<div style="block-size: 3000px"></div>
+         <div style="overflow-x: auto; inline-size: 200px">
+           <div style="display: flex; inline-size: 600px">
+             <div style="position: sticky; inset-inline-start: 0; block-size: 36px; inline-size: 100px">Order</div>
+             <div style="inline-size: 500px">Ines Vale</div>
+           </div>
+         </div>`,
+        ["reach"],
+      ),
+    ).toEqual([]);
+  });
+
   it("reports a contained list that stays put with its end out of view", () => {
     const violations = check(
       `<div style="block-size: 200px"></div>
