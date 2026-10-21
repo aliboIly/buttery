@@ -1,6 +1,8 @@
 @layer bt.patterns {
   .bt-empty-state {
     --bt-empty-state-gap: var(--bt-space-6);
+    --bt-empty-state-tile: 48px;
+    --bt-empty-state-line: 1px;
 
     display: flex;
     flex-direction: column;
@@ -8,6 +10,26 @@
     gap: var(--bt-empty-state-gap);
     min-inline-size: 0;
     text-align: center;
+  }
+
+  .bt-empty-state > [data-bt-part="content"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-empty-state [data-bt-part="icon"] {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-empty-state-tile);
+    block-size: var(--bt-empty-state-tile);
+    border: var(--bt-empty-state-line) solid var(--bt-border);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-section);
+    color: var(--bt-text-secondary);
   }
 
   .bt-empty-state > [data-bt-part="actions"] {

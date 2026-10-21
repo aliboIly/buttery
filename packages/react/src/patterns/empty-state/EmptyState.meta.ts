@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "Loading: keep the layout and show skeletons",
   ],
   related: ["DropZone", "TextStack", "Button"],
-  a11y: "A heading (h2 unless titleAs says otherwise) with its line and the actions as buttons, in reading order.",
+  a11y: "A heading (h2 unless titleAs says otherwise) with its line, the docs link and the actions as buttons, in reading order. The icon tile is decorative.",
   motion: "none",
 };

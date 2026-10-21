@@ -1,6 +1,7 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
+import { Receipt } from "lucide-react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Button } from "../../components/button/Button.tsx";
@@ -59,5 +60,29 @@ describe("EmptyState", () => {
   it("leaves out the actions row when there are none", () => {
     render(<EmptyState title="Nothing here yet" />);
     expect(document.querySelector('[data-bt-part="actions"]')).toBeNull();
+  });
+
+  it("puts an icon tile 16px over the title and a docs link 16px under the text", () => {
+    render(
+      <EmptyState
+        icon={Receipt}
+        title="No orders yet"
+        description="Orders show up here once a customer checks out."
+        docs={<a href="#guide">How orders work</a>}
+      />,
+    );
+    const tile = document.querySelector<HTMLElement>('[data-bt-part="icon"]');
+    const stack = document.querySelector<HTMLElement>('[data-bt="TextStack"]');
+    const docs = document.querySelector<HTMLElement>('[data-bt-part="docs"]');
+    if (!tile || !stack || !docs) throw new Error("A part is missing.");
+    const box = tile.getBoundingClientRect();
+    expect([box.width, box.height]).toEqual([48, 48]);
+    expect(tile.querySelector("svg")?.getBoundingClientRect().width).toBe(20);
+    expect(getComputedStyle(tile).borderRadius).toBe("12px");
+    expect(stack.getBoundingClientRect().top - box.bottom).toBe(16);
+    expect(
+      docs.getBoundingClientRect().top - stack.getBoundingClientRect().bottom,
+    ).toBe(16);
+    expect(screen.getByRole("link", { name: "How orders work" })).toBeTruthy();
   });
 });
