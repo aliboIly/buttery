@@ -1,0 +1,40 @@
+@layer bt.components {
+  .bt-sparkline {
+    --bt-sparkline-height: 24px;
+    --bt-sparkline-line: 2px;
+    --bt-sparkline-dot: 6px;
+    --bt-sparkline-inset: var(--bt-space-1);
+
+    display: block;
+    position: relative;
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--bt-sparkline-height);
+    padding: var(--bt-sparkline-inset);
+  }
+
+  .bt-sparkline > svg {
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  .bt-sparkline path {
+    fill: none;
+    stroke: var(--bt-sparkline-color);
+    stroke-width: var(--bt-sparkline-line);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Chart geometry is physical, as in ChartFrame. */
+  .bt-sparkline > [data-bt-part="dot"] {
+    position: absolute;
+    inline-size: var(--bt-sparkline-dot);
+    block-size: var(--bt-sparkline-dot);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-sparkline-color);
+    translate: -50% -50%;
+  }
+}

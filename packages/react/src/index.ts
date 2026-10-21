@@ -471,3 +471,5 @@ export { AreaChart } from "./components/area-chart/AreaChart.tsx";
 export type { AreaChartProps } from "./components/area-chart/AreaChart.tsx";
 export { BarChart } from "./components/bar-chart/BarChart.tsx";
 export type { BarChartProps } from "./components/bar-chart/BarChart.tsx";
+export { Sparkline } from "./components/sparkline/Sparkline.tsx";
+export type { SparklineProps } from "./components/sparkline/Sparkline.tsx";
