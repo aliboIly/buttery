@@ -1,7 +1,11 @@
 import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
+import type { CSSProperties } from "react";
+import type { CssVariables } from "../../theme/create-theme.ts";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Sticky } from "./Sticky.tsx";
+
+const SHIFTED: CSSProperties & CssVariables = { "--bt-sticky-shift": "64px" };
 
 afterEach(() => {
   cleanup();
@@ -50,6 +54,56 @@ describe("Sticky", () => {
     const scroller = screen.getByTestId("scroller");
     expect(scroller.style.getPropertyValue("--bt-sticky-top")).toBe("64px");
     expect(getComputedStyle(screen.getByTestId("aside")).top).toBe("64px");
+  });
+
+  it("moves the stickies under a bar that slides away up with it, but not the bar", () => {
+    render(
+      <div style={{ ...SHIFTED, overflowY: "auto", blockSize: "300px" }}>
+        <Sticky data-testid="nav">
+          <div style={{ blockSize: "64px" }}>Nav</div>
+        </Sticky>
+        <Sticky data-testid="sub">
+          <div style={{ blockSize: "48px" }}>Sections</div>
+        </Sticky>
+        <Sticky variant="aside" data-testid="aside">
+          <div style={{ blockSize: "120px" }}>Contents</div>
+        </Sticky>
+        <div style={{ blockSize: "2000px" }} />
+      </div>,
+    );
+    expect(getComputedStyle(screen.getByTestId("nav")).top).toBe("0px");
+    expect(getComputedStyle(screen.getByTestId("sub")).top).toBe("0px");
+    expect(getComputedStyle(screen.getByTestId("aside")).top).toBe("48px");
+  });
+
+  it("leaves a sticky that hasn't reached its place where the page puts it, then holds it under the moved bars", () => {
+    render(
+      <div
+        data-testid="scroller"
+        style={{ ...SHIFTED, overflowY: "auto", blockSize: "300px" }}
+      >
+        <Sticky>
+          <div style={{ blockSize: "64px" }}>Nav</div>
+        </Sticky>
+        <div data-testid="title" style={{ blockSize: "200px" }}>
+          Title
+        </div>
+        <Sticky variant="aside" data-testid="aside">
+          <div style={{ blockSize: "120px" }}>Contents</div>
+        </Sticky>
+        <div style={{ blockSize: "2000px" }} />
+      </div>,
+    );
+    const scroller = screen.getByTestId("scroller");
+    const aside = screen.getByTestId("aside");
+    scroller.scrollTop = 100;
+    expect(aside.getBoundingClientRect().top).toBe(
+      screen.getByTestId("title").getBoundingClientRect().bottom,
+    );
+    scroller.scrollTop = 600;
+    expect(aside.getBoundingClientRect().top).toBe(
+      scroller.getBoundingClientRect().top,
+    );
   });
 
   it("stacks inside a scroll container that hides its overflow", () => {

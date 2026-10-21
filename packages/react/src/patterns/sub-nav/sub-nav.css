@@ -6,9 +6,6 @@
     min-inline-size: 0;
     border-block-end: var(--bt-sub-nav-line) solid var(--bt-border);
     background-color: var(--bt-bg-surface);
-
-    /* While an auto-hiding nav bar slides away, the sub nav moves up with it rather than leaving a gap. */
-    translate: 0 calc(var(--bt-sticky-shift, 0px) * -1);
   }
 
   .bt-sub-nav [data-bt-part="bar"] {

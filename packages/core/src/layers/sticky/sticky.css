@@ -4,8 +4,15 @@
     z-index: var(--bt-z-sticky);
   }
 
+  /*
+   * Under a bar that slides away (`--bt-sticky-shift`), a sticky that has stuck moves up with it, while one
+   * still in the page's flow stays put. The first bar slides itself.
+   */
   .bt-sticky[data-edge="top"] {
-    inset-block-start: var(--bt-sticky-offset, 0);
+    inset-block-start: max(
+      0px,
+      calc(var(--bt-sticky-offset, 0px) - var(--bt-sticky-shift, 0px))
+    );
   }
 
   .bt-sticky[data-edge="bottom"] {
