@@ -334,6 +334,13 @@ test("help docks beside the page on a wide screen, and covers it as a sheet on a
   await expect(panel).toBeVisible();
   const after = await column.boundingBox();
   expect((before?.width ?? 0) - (after?.width ?? 0)).toBe(360);
+  const panelBox = await panel.boundingBox();
+  await expect(async () => {
+    const guide = await page.locator('[data-bt="SetupGuide"]').boundingBox();
+    expect((guide?.x ?? 0) + (guide?.width ?? 0)).toBeLessThanOrEqual(
+      (panelBox?.x ?? 0) - 24,
+    );
+  }).toPass();
   await expect(
     page.getByRole("textbox", { name: "Ask the roasting team" }),
   ).toBeFocused();
