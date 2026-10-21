@@ -452,3 +452,16 @@ export type {
   GroupedListItemProps,
   GroupedListProps,
 } from "./patterns/grouped-list/GroupedList.tsx";
+export { ChartFrame } from "./components/chart-frame/ChartFrame.tsx";
+export { seriesPath } from "./components/chart-frame/chart-scale.ts";
+export type { SeriesPlacement } from "./components/chart-frame/chart-scale.ts";
+export type {
+  ChartBarsProps,
+  ChartColor,
+  ChartFrameComponent,
+  ChartFrameProps,
+  ChartLayout,
+  ChartMarkProps,
+  ChartSeries,
+  ChartSize,
+} from "./components/chart-frame/ChartFrame.tsx";

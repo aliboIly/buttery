@@ -1,0 +1,267 @@
+@layer bt.components {
+  .bt-chart-frame {
+    --bt-chart-frame-sm: 160px;
+    --bt-chart-frame-md: 220px;
+    --bt-chart-frame-lg: 300px;
+    --bt-chart-frame-line: 2px;
+    --bt-chart-frame-hairline: 1px;
+    --bt-chart-frame-point: 8px;
+    --bt-chart-frame-ring: 2px;
+    --bt-chart-frame-swatch: 8px;
+    --bt-chart-frame-swatch-radius: 2px;
+    --bt-chart-frame-bar-radius: 4px;
+    --bt-chart-frame-area: 0.12;
+    --bt-chart-frame-height: var(--bt-chart-frame-md);
+    --bt-chart-frame-axis-line: var(--bt-text-caption-line);
+
+    container: bt-chart / inline-size;
+    display: grid;
+    grid-template-areas:
+      ".    y"
+      "plot y"
+      ".    y"
+      "x    .";
+    grid-template-rows:
+      calc(var(--bt-chart-frame-axis-line) / 2)
+      minmax(0, 1fr)
+      calc(var(--bt-chart-frame-axis-line) / 2)
+      var(--bt-chart-frame-axis-line);
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--bt-space-2);
+    position: relative;
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--bt-chart-frame-height);
+  }
+
+  .bt-chart-frame[data-size="sm"] {
+    --bt-chart-frame-height: var(--bt-chart-frame-sm);
+  }
+
+  .bt-chart-frame[data-size="lg"] {
+    --bt-chart-frame-height: var(--bt-chart-frame-lg);
+  }
+
+  .bt-chart-frame [data-bt-part][hidden] {
+    display: none;
+  }
+
+  .bt-chart-frame > :is([data-bt-part="y-axis"], [data-bt-part="x-axis"]) {
+    color: var(--bt-text-tertiary);
+    font-size: var(--bt-text-caption-size);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--bt-chart-frame-axis-line);
+    white-space: nowrap;
+  }
+
+  /* Labels as tall as the half-line above and below the plot, spaced evenly, center on their gridlines. */
+  .bt-chart-frame > [data-bt-part="y-axis"] {
+    display: flex;
+    flex-direction: column;
+    grid-area: 1 / 2 / 4 / 3;
+    justify-content: space-between;
+  }
+
+  .bt-chart-frame > [data-bt-part="x-axis"] {
+    grid-area: x;
+    position: relative;
+    min-inline-size: 0;
+  }
+
+  /* Chart geometry is physical: positions come from pointer coordinates, which run left to right in any writing direction. */
+  .bt-chart-frame > [data-bt-part="x-axis"] > span {
+    position: absolute;
+    top: 0;
+    translate: -50% 0;
+  }
+
+  .bt-chart-frame > [data-bt-part="x-axis"] > span[data-edge="start"] {
+    translate: 0 0;
+  }
+
+  .bt-chart-frame > [data-bt-part="x-axis"] > span[data-edge="end"] {
+    translate: -100% 0;
+  }
+
+  @container bt-chart (width < 640px) {
+    .bt-chart-frame > [data-bt-part="x-axis"] > span:not([data-edge]) {
+      display: none;
+    }
+  }
+
+  .bt-chart-frame > [data-bt-part="plot"] {
+    display: grid;
+    grid-area: plot;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    position: relative;
+    min-inline-size: 0;
+    min-block-size: 0;
+    border-radius: var(--bt-r-xs);
+    touch-action: pan-y;
+  }
+
+  .bt-chart-frame
+    [data-bt-part="plot"]
+    > :is([data-bt-part="grid"], [data-bt-part="mark"], [data-bt-part="bars"]) {
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+  }
+
+  .bt-chart-frame [data-bt-part="grid"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .bt-chart-frame [data-bt-part="grid"] > span {
+    block-size: var(--bt-chart-frame-hairline);
+    background-color: var(--bt-border);
+  }
+
+  .bt-chart-frame [data-bt-part="mark"] {
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  .bt-chart-frame [data-bt-part="line"] {
+    fill: none;
+    stroke: var(--bt-chart-frame-series);
+    stroke-width: var(--bt-chart-frame-line);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .bt-chart-frame [data-bt-part="area"] {
+    fill: var(--bt-chart-frame-series);
+    fill-opacity: var(--bt-chart-frame-area);
+  }
+
+  .bt-chart-frame [data-bt-part="bars"] {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+
+  /* Each slot pads its own half of the 4px between bars, so slot centers sit exactly on the labels' points. */
+  .bt-chart-frame [data-bt-part="band"] {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    column-gap: var(--bt-space-0_5);
+    min-inline-size: 0;
+    padding-inline: min(var(--bt-space-0_5), 12.5%);
+  }
+
+  .bt-chart-frame [data-bt-part="bar-slot"] {
+    position: relative;
+    min-inline-size: 0;
+  }
+
+  .bt-chart-frame [data-bt-part="bar"] {
+    position: absolute;
+    right: 0;
+    left: 0;
+    border-start-start-radius: var(--bt-chart-frame-bar-radius);
+    border-start-end-radius: var(--bt-chart-frame-bar-radius);
+    background-color: var(--bt-chart-frame-series);
+  }
+
+  .bt-chart-frame [data-bt-part="bar"][data-negative] {
+    border-radius: 0 0 var(--bt-chart-frame-bar-radius)
+      var(--bt-chart-frame-bar-radius);
+  }
+
+  .bt-chart-frame [data-bt-part="crosshair"] {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    inline-size: var(--bt-chart-frame-hairline);
+    background-color: var(--bt-border-strong);
+    pointer-events: none;
+  }
+
+  .bt-chart-frame [data-bt-part="column"] {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    inline-size: calc(100% / var(--bt-chart-frame-bands));
+    border-radius: var(--bt-r-xs);
+    background-color: var(--bt-bg-control);
+    pointer-events: none;
+  }
+
+  .bt-chart-frame [data-bt-part="point"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    inline-size: var(--bt-chart-frame-point);
+    block-size: var(--bt-chart-frame-point);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-chart-frame-series);
+    box-shadow: 0 0 0 var(--bt-chart-frame-ring) var(--bt-bg-surface);
+    pointer-events: none;
+  }
+
+  .bt-chart-frame > [data-bt-part="tooltip"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    inline-size: max-content;
+    max-inline-size: 100%;
+    padding-block: var(--bt-space-2);
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-floating);
+    box-shadow: var(--bt-shadow-floating);
+    pointer-events: none;
+  }
+
+  .bt-chart-frame [data-bt-part="tooltip-head"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bt-space-3);
+    min-block-size: var(--bt-h-badge);
+  }
+
+  .bt-chart-frame [data-bt-part="tooltip-row"] {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--bt-space-2);
+  }
+
+  .bt-chart-frame [data-bt-part="swatch"] {
+    inline-size: var(--bt-chart-frame-swatch);
+    block-size: var(--bt-chart-frame-swatch);
+    border-radius: var(--bt-chart-frame-swatch-radius);
+    background-color: var(--bt-chart-frame-series);
+  }
+
+  .bt-chart-frame
+    [data-bt-part="tooltip-row"]
+    > [data-bt-part="tooltip-value"] {
+    padding-inline-start: var(--bt-space-3);
+  }
+
+  .bt-chart-frame > [data-bt-part="empty"] {
+    display: grid;
+    grid-area: 2 / 1 / 3 / 3;
+    place-items: center;
+    border-block-end: var(--bt-chart-frame-hairline) dashed
+      var(--bt-border-strong);
+  }
+
+  .bt-chart-frame > [data-bt-part="loading"] {
+    display: grid;
+    grid-area: 1 / 1 / -1 / -1;
+    place-items: center;
+  }
+}
