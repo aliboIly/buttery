@@ -804,11 +804,17 @@ export function createLayoutToolkit(): LayoutToolkit {
       for (const element of document.querySelectorAll("[data-bt]")) {
         if (isTooling(element) || !isVisible(element)) continue;
         const style = styleOf(element);
+        // A Container's side padding centers its column: half the room the page width leaves, not a gap.
+        const centers = element.getAttribute("data-bt") === "Container";
         const checks: [string, string][] = [
           ["padding-top", style.paddingTop],
-          ["padding-right", style.paddingRight],
           ["padding-bottom", style.paddingBottom],
-          ["padding-left", style.paddingLeft],
+          ...(centers
+            ? []
+            : ([
+                ["padding-right", style.paddingRight],
+                ["padding-left", style.paddingLeft],
+              ] satisfies [string, string][])),
         ];
         if (/flex|grid/.test(style.display)) {
           if (style.rowGap !== "normal") checks.push(["row-gap", style.rowGap]);
