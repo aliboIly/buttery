@@ -398,3 +398,9 @@ export type {
   TopBarCreate,
   TopBarProps,
 } from "./patterns/top-bar/TopBar.tsx";
+export { AppPage } from "./patterns/app-page/AppPage.tsx";
+export type {
+  AppPageComponent,
+  AppPageProps,
+  AppPageSectionProps,
+} from "./patterns/app-page/AppPage.tsx";
