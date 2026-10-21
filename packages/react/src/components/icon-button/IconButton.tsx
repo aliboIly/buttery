@@ -18,6 +18,8 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
   readonly label: string;
   /** `"md"` (36px, the default) in headers and toolbars, `"sm"` (28px) to close a dialog or act inline. */
   readonly size?: "sm" | "md" | undefined;
+  /** `"ghost"` (the default), or `"primary"` for a round create button on the primary color, as in a top bar. */
+  readonly variant?: "ghost" | "primary" | undefined;
   /** Which side the tooltip opens on. Defaults to `"top"`. */
   readonly tooltipSide?: TooltipSide | undefined;
   /** Draws an accent dot at the icon's top end, for something new behind the button, and adds it to the name. */
@@ -41,6 +43,7 @@ export function IconButton({
   icon,
   label,
   size = "md",
+  variant = "ghost",
   tooltipSide,
   dot = false,
   dotLabel = "new",
@@ -76,6 +79,7 @@ export function IconButton({
           data-bt="IconButton"
           data-bt-control=""
           data-size={size}
+          data-variant={variant}
         >
           <Icon icon={icon} />
           {mark}
@@ -91,6 +95,7 @@ export function IconButton({
           data-bt="IconButton"
           data-bt-control=""
           data-size={size}
+          data-variant={variant}
         >
           <Icon icon={icon} />
           {mark}

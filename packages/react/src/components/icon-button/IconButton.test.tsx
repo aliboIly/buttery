@@ -3,6 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { BookOpen, Undo2 } from "lucide-react";
 import { createRef } from "react";
+import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { IconButton } from "./IconButton.tsx";
@@ -118,4 +119,34 @@ describe("IconButton", () => {
       screen.getByRole("button", { name: "Updates, unread" }),
     ).toBeTruthy();
   });
+
+  it("fills itself with the primary color when it's the primary button", () => {
+    render(
+      <>
+        <IconButton
+          icon={BookOpen}
+          label="Create"
+          variant="primary"
+          size="sm"
+        />
+        <PrimaryProbe />
+      </>,
+    );
+    const create = screen.getByRole("button", { name: "Create" });
+    const probe = screen.getByTestId("probe");
+    expect(getComputedStyle(create).backgroundColor).toBe(
+      getComputedStyle(probe).backgroundColor,
+    );
+    expect(getComputedStyle(create).borderRadius).toBe("9999px");
+    expect(create.getBoundingClientRect().height).toBe(28);
+  });
 });
+
+function PrimaryProbe(): ReactElement {
+  return (
+    <span
+      data-testid="probe"
+      style={{ backgroundColor: "var(--bt-primary)" }}
+    />
+  );
+}

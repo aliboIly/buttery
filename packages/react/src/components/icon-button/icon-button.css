@@ -61,4 +61,27 @@
 
     cursor: default;
   }
+
+  .bt-icon-button[data-variant="primary"] {
+    --bt-icon-button-bg: var(--bt-primary);
+    --bt-icon-button-fg: var(--bt-on-primary);
+  }
+
+  @media (hover: hover) {
+    .bt-icon-button[data-variant="primary"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-icon-button-bg: var(--bt-primary-hover);
+      --bt-icon-button-fg: var(--bt-on-primary);
+    }
+  }
+
+  .bt-icon-button[data-variant="primary"]:is(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
+    --bt-icon-button-bg: var(--bt-primary-disabled);
+    --bt-icon-button-fg: var(--bt-on-primary);
+  }
 }
