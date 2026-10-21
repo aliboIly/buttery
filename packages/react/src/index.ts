@@ -525,7 +525,10 @@ export type { SettingsIndexProps } from "./patterns/settings-index/SettingsIndex
 export { InfoButton } from "./components/info-button/InfoButton.tsx";
 export type { InfoButtonProps } from "./components/info-button/InfoButton.tsx";
 export { Breadcrumbs } from "./components/breadcrumbs/Breadcrumbs.tsx";
-export type { BreadcrumbsProps } from "./components/breadcrumbs/Breadcrumbs.tsx";
+export type {
+  BreadcrumbItem,
+  BreadcrumbsProps,
+} from "./components/breadcrumbs/Breadcrumbs.tsx";
 export { ScopeBadge } from "./components/scope-badge/ScopeBadge.tsx";
 export type { ScopeBadgeProps } from "./components/scope-badge/ScopeBadge.tsx";
 export { SettingsSection } from "./patterns/settings-section/SettingsSection.tsx";
@@ -536,3 +539,12 @@ export { SettingsPage } from "./patterns/settings-page/SettingsPage.tsx";
 export type { SettingsPageProps } from "./patterns/settings-page/SettingsPage.tsx";
 export { HoverActions } from "./components/hover-actions/HoverActions.tsx";
 export type { HoverActionsProps } from "./components/hover-actions/HoverActions.tsx";
+export { PreferencesMatrix } from "./components/preferences-matrix/PreferencesMatrix.tsx";
+export type {
+  PreferenceChannel,
+  PreferenceGroup,
+  PreferenceRow,
+  PreferenceTab,
+  PreferenceValue,
+  PreferencesMatrixProps,
+} from "./components/preferences-matrix/PreferencesMatrix.tsx";

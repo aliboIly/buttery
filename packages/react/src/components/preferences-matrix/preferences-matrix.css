@@ -1,0 +1,71 @@
+@layer bt.components {
+  .bt-preferences-matrix {
+    --bt-preferences-matrix-column: 64px;
+    --bt-preferences-matrix-line: 1px;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-6);
+    min-inline-size: 0;
+  }
+
+  .bt-preferences-matrix [data-bt-part="groups"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-8);
+    min-inline-size: 0;
+    padding-block-start: var(--bt-space-4);
+  }
+
+  .bt-preferences-matrix [data-bt-part="group"] {
+    inline-size: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .bt-preferences-matrix [data-bt-part="group"] th,
+  .bt-preferences-matrix [data-bt-part="group"] td {
+    padding-block: var(--bt-space-3);
+    padding-inline: 0;
+    font-weight: inherit;
+    text-align: start;
+  }
+
+  .bt-preferences-matrix thead th {
+    padding-block-start: 0;
+  }
+
+  .bt-preferences-matrix [data-bt-part="channel"] {
+    inline-size: var(--bt-preferences-matrix-column);
+    color: var(--bt-text-secondary);
+    text-align: center;
+  }
+
+  .bt-preferences-matrix [data-bt-part="row"] {
+    border-block-start: var(--bt-preferences-matrix-line) solid var(--bt-border);
+  }
+
+  @media (hover: hover) {
+    .bt-preferences-matrix [data-bt-part="row"]:hover > * {
+      background-color: var(--bt-bg-item-hover);
+    }
+  }
+
+  .bt-preferences-matrix [data-bt-part="topic"] {
+    padding-inline-start: var(--bt-space-2);
+  }
+
+  .bt-preferences-matrix [data-bt-part="topic"] > span {
+    display: block;
+    min-inline-size: 0;
+  }
+
+  .bt-preferences-matrix [data-bt-part="description"] {
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-preferences-matrix [data-bt-part="box"] {
+    display: grid;
+    justify-items: center;
+  }
+}
