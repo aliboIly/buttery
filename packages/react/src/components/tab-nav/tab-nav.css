@@ -1,0 +1,10 @@
+@layer bt.components {
+  .bt-tab-nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bt-tab-nav .bt-tab {
+    text-decoration: none;
+  }
+}

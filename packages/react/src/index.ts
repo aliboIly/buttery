@@ -339,3 +339,17 @@ export { SearchField } from "./components/search-field/SearchField.tsx";
 export type { SearchFieldProps } from "./components/search-field/SearchField.tsx";
 export { LoadingPill } from "./components/loading-pill/LoadingPill.tsx";
 export type { LoadingPillProps } from "./components/loading-pill/LoadingPill.tsx";
+export { Tabs } from "./components/tabs/Tabs.tsx";
+export type {
+  TabsComponent,
+  TabsListProps,
+  TabsPanelProps,
+  TabsProps,
+  TabsTabProps,
+} from "./components/tabs/Tabs.tsx";
+export { TabNav } from "./components/tab-nav/TabNav.tsx";
+export type {
+  TabNavComponent,
+  TabNavLinkProps,
+  TabNavProps,
+} from "./components/tab-nav/TabNav.tsx";

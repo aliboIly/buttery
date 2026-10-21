@@ -61,3 +61,5 @@
 @import "./components/status-badge/status-badge.css";
 @import "./components/search-field/search-field.css";
 @import "./components/loading-pill/loading-pill.css";
+@import "./components/tabs/tabs.css";
+@import "./components/tab-nav/tab-nav.css";

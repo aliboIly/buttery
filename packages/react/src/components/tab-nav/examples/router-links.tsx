@@ -1,0 +1,19 @@
+import type { ReactElement } from "react";
+import { TabNav } from "@buttery/react";
+
+/** A router's own links as tabs, with asChild and a label for the overflow menu. */
+export function RouterLinks(): ReactElement {
+  return (
+    <TabNav label="Settings">
+      <TabNav.Link asChild current label="General">
+        <a href="#settings-general">General</a>
+      </TabNav.Link>
+      <TabNav.Link asChild label="Team">
+        <a href="#settings-team">Team</a>
+      </TabNav.Link>
+      <TabNav.Link asChild label="Billing">
+        <a href="#settings-billing">Billing</a>
+      </TabNav.Link>
+    </TabNav>
+  );
+}

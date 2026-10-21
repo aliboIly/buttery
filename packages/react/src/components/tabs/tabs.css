@@ -1,0 +1,73 @@
+@layer bt.components {
+  /* TabNav draws the same row of tabs, so it shares these. */
+  .bt-tabs,
+  .bt-tab-nav {
+    --bt-tabs-line: 1px;
+    --bt-tabs-underline: 2px;
+
+    min-inline-size: 0;
+  }
+
+  .bt-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-6);
+  }
+
+  /* The row's line runs under every tab and the "…" button, and the underline sits on it. */
+  .bt-tabs-row[data-bt-part="row"] {
+    flex: none;
+    border-block-end: var(--bt-tabs-line) solid var(--bt-border);
+  }
+
+  .bt-tabs-row > [data-bt-part="list"] {
+    display: flex;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-tabs-row > [data-bt-part="list"] > [data-bt-part="item"] {
+    display: flex;
+    flex: none;
+  }
+
+  .bt-tabs-row > [data-bt-part="list"] > [data-bt-part="item"][hidden] {
+    display: none;
+  }
+
+  .bt-tab {
+    display: inline-flex;
+    align-items: center;
+    block-size: var(--bt-h-button);
+    padding-block: 0;
+    padding-inline: var(--bt-space-1);
+    border: 0;
+    background: none;
+    color: var(--bt-text-secondary);
+    white-space: nowrap;
+    cursor: default;
+    transition: color var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  @media (hover: hover) {
+    .bt-tab:hover {
+      color: var(--bt-text);
+    }
+  }
+
+  .bt-tab[data-state="active"] {
+    color: var(--bt-text-strong);
+  }
+
+  .bt-tab > [data-bt-part="indicator-slot"] > [data-bt-part="indicator"] {
+    inset: auto 0 calc(var(--bt-tabs-line) * -1);
+    block-size: var(--bt-tabs-underline);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-primary);
+    box-shadow: none;
+  }
+
+  .bt-tabs-panel {
+    min-inline-size: 0;
+  }
+}
