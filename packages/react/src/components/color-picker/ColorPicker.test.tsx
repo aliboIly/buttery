@@ -219,6 +219,23 @@ describe("ColorPicker", () => {
     ).toBe("true");
   });
 
+  it("lays its presets out as a swatch grid's, each filling its column", () => {
+    render(
+      <ColorPicker
+        label="Backdrop"
+        presets={["#f5d06f", "#2862e0", "#177245"]}
+      />,
+    );
+    const grid = screen
+      .getByRole("radiogroup", { name: "Presets" })
+      .getBoundingClientRect();
+    const preset = screen
+      .getByRole("radio", { name: "#2862e0" })
+      .getBoundingClientRect();
+    expect(Math.abs(preset.width - (grid.width - 5 * 8) / 6)).toBeLessThan(0.5);
+    expect(preset.height).toBe(preset.width);
+  });
+
   it("can be controlled, and glides back when its owner keeps the old color", async () => {
     function Controlled(): ReactElement {
       const [color, setColor] = useState("#ff0000");

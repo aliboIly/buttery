@@ -95,7 +95,7 @@
     min-inline-size: 0;
   }
 
-  .bt-color-picker [data-bt-part="swatch"] {
+  .bt-color-picker > [data-bt-part="code"] > [data-bt-part="swatch"] {
     flex: none;
     inline-size: var(--bt-color-picker-swatch);
     block-size: var(--bt-color-picker-swatch);
@@ -103,7 +103,7 @@
     box-shadow: var(--bt-shadow-inset);
   }
 
-  .bt-color-picker [data-bt-part="field"] {
+  .bt-color-picker > [data-bt-part="code"] > [data-bt-part="field"] {
     display: flex;
     flex: 1;
     align-items: center;
@@ -120,16 +120,21 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .bt-color-picker [data-bt-part="field"]:focus-within {
+  .bt-color-picker
+    > [data-bt-part="code"]
+    > [data-bt-part="field"]:focus-within {
     outline: var(--bt-focus-width) solid var(--bt-accent);
     outline-offset: var(--bt-focus-offset);
   }
 
-  .bt-color-picker [data-bt-part="hash"] {
+  .bt-color-picker
+    > [data-bt-part="code"]
+    > [data-bt-part="field"]
+    > [data-bt-part="hash"] {
     color: var(--bt-text-tertiary);
   }
 
-  .bt-color-picker [data-bt-part="field"] > input {
+  .bt-color-picker > [data-bt-part="code"] > [data-bt-part="field"] > input {
     flex: 1;
     min-inline-size: 0;
     block-size: 100%;
@@ -141,7 +146,10 @@
     appearance: none;
   }
 
-  .bt-color-picker [data-bt-part="field"] > input:focus {
+  .bt-color-picker
+    > [data-bt-part="code"]
+    > [data-bt-part="field"]
+    > input:focus {
     outline: none;
   }
 
