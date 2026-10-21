@@ -4,15 +4,11 @@ import {
   Sticky,
   cx,
   hasContent,
+  opensElsewhere,
   scrollToSection,
   useScrollSpy,
 } from "@buttery/core";
-import type {
-  ComponentPropsWithRef,
-  MouseEvent,
-  ReactElement,
-  ReactNode,
-} from "react";
+import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { Container } from "../container/Container.tsx";
 
 /** One section a `SubNav` links to. */
@@ -43,16 +39,6 @@ export interface SubNavProps extends Omit<
   readonly label?: string | undefined;
   /** Names the button that lists the sections that don't fit. Defaults to `"More sections"`. */
   readonly moreLabel?: string | undefined;
-}
-
-function opensElsewhere(event: MouseEvent): boolean {
-  return (
-    event.metaKey ||
-    event.ctrlKey ||
-    event.shiftKey ||
-    event.altKey ||
-    event.button !== 0
-  );
 }
 
 /**
