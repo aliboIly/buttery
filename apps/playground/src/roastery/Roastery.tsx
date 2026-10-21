@@ -206,6 +206,7 @@ function RoasteryTopBar({
         <SearchField
           label="Search"
           placeholder="Search orders and customers"
+          variant="soft"
           shortcut="/"
         />
       }
