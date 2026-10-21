@@ -1,0 +1,88 @@
+@layer bt.components {
+  .bt-radio-card-group {
+    --bt-radio-card-group-radio: 18px;
+    --bt-radio-card-group-dot: 6px;
+    --bt-radio-card-group-hit: 24px;
+    --bt-radio-card-group-line: 1px;
+    --bt-radio-card-group-indent: calc(
+      var(--bt-radio-card-group-radio) + var(--bt-space-2)
+    );
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
+  .bt-radio-card-group > [data-bt-part="option"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-radio-card-group [data-bt-part="row"] {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-radio-card-group [data-bt-part="radio"] {
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-radio-card-group-radio);
+    block-size: var(--bt-radio-card-group-radio);
+    padding: 0;
+    border: var(--bt-radio-card-group-line) solid var(--bt-control-border);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-radio-card-group [data-bt-part="radio"][data-state="checked"] {
+    border-color: var(--bt-primary);
+    background-color: var(--bt-primary);
+  }
+
+  .bt-radio-card-group [data-bt-part="radio"]:disabled {
+    border-color: var(--bt-border-strong);
+    background-color: var(--bt-bg-control-subtle);
+  }
+
+  .bt-radio-card-group [data-bt-part="dot"] {
+    inline-size: var(--bt-radio-card-group-dot);
+    block-size: var(--bt-radio-card-group-dot);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-on-primary);
+  }
+
+  /* Measured from inside the radio's border, so the target comes out 24px. */
+  .bt-radio-card-group [data-bt-part="hit"] {
+    position: absolute;
+    inset: calc(
+      (
+          var(--bt-radio-card-group-radio) - var(--bt-radio-card-group-hit) -
+            2 * var(--bt-radio-card-group-line)
+        ) /
+        2
+    );
+  }
+
+  .bt-radio-card-group [data-bt-part="label"] {
+    min-inline-size: 0;
+    color: var(--bt-text);
+  }
+
+  .bt-radio-card-group [data-bt-part="description"] {
+    margin: 0;
+    padding-inline-start: var(--bt-radio-card-group-indent);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-radio-card-group [data-bt-part="detail"] {
+    padding-block-start: var(--bt-space-2);
+    padding-inline-start: var(--bt-radio-card-group-indent);
+  }
+}

@@ -578,3 +578,8 @@ export type {
 } from "./patterns/plan-comparison/PlanComparison.tsx";
 export { FormDialog } from "./patterns/form-dialog/FormDialog.tsx";
 export type { FormDialogProps } from "./patterns/form-dialog/FormDialog.tsx";
+export { RadioCardGroup } from "./components/radio-card-group/RadioCardGroup.tsx";
+export type {
+  RadioCardGroupProps,
+  RadioCardOption,
+} from "./components/radio-card-group/RadioCardGroup.tsx";

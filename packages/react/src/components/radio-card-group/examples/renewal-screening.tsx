@@ -1,0 +1,54 @@
+import { Stack, Text } from "@buttery/core";
+import type { ExamplePlay } from "@buttery/core";
+import { RadioCardGroup, Select } from "@buttery/react";
+import { useState } from "react";
+import type { ReactElement } from "react";
+
+/** A screening choice whose second option opens a select of its own. */
+export function RenewalScreening(): ReactElement {
+  const [screening, setScreening] = useState("all");
+  const [count, setCount] = useState("1");
+  return (
+    <Stack gap={3}>
+      <RadioCardGroup
+        label="Renewal screening"
+        value={screening}
+        onValueChange={setScreening}
+        options={[
+          {
+            value: "all",
+            label: "Screen every renewal",
+            description: "Every renewal waits for a fraud check.",
+          },
+          {
+            value: "some",
+            label: "Screen the first renewals only",
+            description: "Renewals after that go through without a check.",
+            detail: (
+              <Select
+                label="Renewals to screen"
+                variant="outline"
+                value={count}
+                onValueChange={setCount}
+                options={[
+                  { value: "1", label: "The first renewal" },
+                  { value: "3", label: "The first three renewals" },
+                ]}
+              />
+            ),
+          },
+        ]}
+      />
+      <Text variant="caption">
+        {screening === "all"
+          ? "Screening every renewal"
+          : `Screening ${count === "1" ? "the first renewal" : "the first three renewals"}`}
+      </Text>
+    </Stack>
+  );
+}
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("radio", "Screen the first renewals only");
+  await see("Screening the first renewal");
+};
