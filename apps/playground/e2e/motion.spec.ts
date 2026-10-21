@@ -1886,7 +1886,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
       `submenu: starts ${ms(fading.start - arrived)} after the pointer arrives (40ms wanted)`,
     );
     expect(fading.start - arrived).toBeGreaterThanOrEqual(40 - FRAME);
-    expect(fading.start - arrived).toBeLessThanOrEqual(40 + TWO_FRAMES * 2);
+    expect(fading.start - arrived).toBeLessThanOrEqual(40 + TWO_FRAMES);
   });
 
   test("a dialog in the app fades in over dur-fast growing from 97%, and fades out over dur-fast", async ({
@@ -1944,18 +1944,33 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     const open = heights.at(-1)?.value ?? 0;
     expect(open).toBeGreaterThan(40);
     expectSpring("sidebar group opening", progress(heights, 0, open), "snappy");
-    await startSampling(page, morph);
+    const view = `${morph} > [data-bt-part="content"] > [data-bt-part="view"]`;
+    await startSampling(page, `${morph}, ${view}`);
     await page.keyboard.press("Enter");
     const closing = await finishSampling(page, 400);
-    expectTween(
-      "sidebar group closing",
+    const [box, leaving] = elementIds(closing);
+    if (box === undefined || leaving === undefined)
+      throw new Error("The group's items weren't there.");
+    // The items' fade shares the height's transition and runs on the compositor, so its curve is the precise
+    // one to fit; the height, moved on the main thread, has to keep up with it.
+    const fading = expectTween(
+      "sidebar group closing (its items' fade)",
+      progress(traceOf(closing, leaving, opacity), 1, 0),
+      EASE_STANDARD,
+      DURATIONS.fast,
+    );
+    const shut = settleTime(
       progress(
-        trace(closing, (reading) => reading.height),
+        traceOf(closing, box, (reading) => reading.height),
         open,
         0,
       ),
-      EASE_STANDARD,
-      DURATIONS.fast,
+    );
+    report(
+      `sidebar group closing: 95% of its height ${ms(shut - fading.start)} after it starts (dur-fast is ${String(DURATIONS.fast)}ms)`,
+    );
+    expect(shut - fading.start).toBeLessThanOrEqual(
+      DURATIONS.fast + TWO_FRAMES,
     );
   });
 
@@ -1976,10 +1991,13 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
         '[data-bt-part="tooltip"]',
       );
       if (!crosshair || !tooltip) throw new Error("No crosshair.");
+      const last = Number(element.getAttribute("aria-valuemax"));
       const seen: {
         readonly now: number;
         readonly next: number;
         readonly shown: boolean;
+        readonly center: number;
+        readonly nearest: number;
       }[] = [];
       for (const share of [0.1, 0.35, 0.6, 0.9]) {
         element.dispatchEvent(
@@ -1990,19 +2008,22 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
             clientY: area.y + area.height / 2,
           }),
         );
-        const now = crosshair.getBoundingClientRect().left;
+        const box = crosshair.getBoundingClientRect();
         await new Promise((resolve) => requestAnimationFrame(resolve));
         seen.push({
-          now,
+          now: box.left,
           next: crosshair.getBoundingClientRect().left,
           shown: !tooltip.hidden && !crosshair.hidden,
+          center: box.left + box.width / 2,
+          nearest: area.x + (Math.round(share * last) / last) * area.width,
         });
       }
       return seen;
     }, box);
-    for (const { now, next, shown } of readings) {
+    for (const { now, next, shown, center, nearest } of readings) {
       expect(shown).toBe(true);
       expect(next).toBe(now);
+      expect(Math.abs(center - nearest)).toBeLessThanOrEqual(1);
     }
     const lefts = readings.map(({ now }) => now);
     expect(new Set(lefts).size).toBe(lefts.length);
@@ -2012,13 +2033,26 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     page,
   }) => {
     await page.goto("/?chrome=0&motion=full#/metric-card");
-    const cards = ".bt-metric-card";
-    await page.locator(cards).first().waitFor();
+    // The example whose numbers arrive after a moment; the page's Loading demo stays a skeleton.
+    const card = page
+      .locator(".bt-metric-card")
+      .filter({ hasText: "Bags roasted" });
+    await expect(card).toHaveAttribute("aria-busy", "true");
+    await card.evaluate((element) => {
+      element.setAttribute("data-testid", "loads");
+    });
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      for (let frame = 0; frame < 2; frame += 1)
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+    const loads = testId("loads");
     await startSampling(
       page,
-      `${cards}, ${cards} .bt-chart-frame, ${cards} [data-bt-part="foot"]`,
+      `${loads}, ${loads} .bt-chart-frame, ${loads} [data-bt-part="foot"]`,
     );
     const run = await finishSampling(page, 2200);
+    await expect(card).not.toHaveAttribute("aria-busy", "true");
     const loaded = run.frames.at(-1)?.elements.length ?? 0;
     expect(loaded).toBeGreaterThan(0);
     const tops = new Map<number, number[]>();
