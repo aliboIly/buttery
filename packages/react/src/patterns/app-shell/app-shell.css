@@ -83,11 +83,12 @@
     min-block-size: 0;
   }
 
+  /* The panel's track is as wide as a docked side panel in it, and takes no room without one. */
   .bt-app-shell[data-layout="sidebar"] {
     container: bt-shell / inline-size;
-    grid-template-areas: "sidebar column";
+    grid-template-areas: "sidebar column panel";
     grid-template-rows: minmax(0, 1fr);
-    grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
+    grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr) auto;
     gap: 0;
     justify-content: stretch;
     padding: 0;
@@ -96,12 +97,19 @@
   }
 
   .bt-app-shell[data-layout="sidebar"][data-sidebar="rail"] {
-    grid-template-columns: var(--bt-w-sidebar-rail) minmax(0, 1fr);
+    grid-template-columns: var(--bt-w-sidebar-rail) minmax(0, 1fr) auto;
   }
 
   .bt-app-shell[data-layout="sidebar"][data-sidebar="sheet"] {
-    grid-template-areas: "column";
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "column panel";
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .bt-app-shell[data-layout="sidebar"] > [data-bt-part="panel"] {
+    display: flex;
+    grid-area: panel;
+    min-inline-size: 0;
+    min-block-size: 0;
   }
 
   .bt-app-shell[data-layout="sidebar"] > [data-bt-part="sidebar"] {

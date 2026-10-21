@@ -128,6 +128,8 @@
     --bt-w-aside: 320px;
     --bt-w-search: 360px;
     --bt-w-search-open: 600px;
+    --bt-w-side-panel: 360px;
+    --bt-w-side-panel-wide: 560px;
     --bt-w-dialog: 400px;
     --bt-w-dialog-md: 560px;
     --bt-w-dialog-lg: 880px;

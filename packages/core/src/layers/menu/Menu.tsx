@@ -263,6 +263,8 @@ export interface MenuItemProps extends Omit<
   readonly dot?: boolean | undefined;
   /** What the dot adds to the item's name. Defaults to `"new"`. */
   readonly dotLabel?: string | undefined;
+  /** `"danger"` draws it in `danger`, for an action that deletes or resets something. Defaults to `"neutral"`. */
+  readonly tone?: "neutral" | "danger" | undefined;
   /** What the action is. Long labels truncate. */
   readonly children: ReactNode;
 }
@@ -274,6 +276,7 @@ export function MenuItem({
   shortcut,
   dot = false,
   dotLabel = "new",
+  tone = "neutral",
   className,
   children,
   ...rest
@@ -291,6 +294,7 @@ export function MenuItem({
       {...rest}
       className={cx("bt-text", className)}
       data-role="menu"
+      data-tone={tone === "danger" ? "danger" : undefined}
       data-bt-part="menu-item"
     >
       {media === undefined ? null : <span data-bt-part="media">{media}</span>}

@@ -4,6 +4,9 @@ import type { Context } from "react";
 /** How an `AppShell`'s sidebar shows: full width, as an icon rail, or as a sheet opened from the top bar. */
 export type SidebarMode = "full" | "rail" | "sheet";
 
+/** How a `SidePanel` in an `AppShell` shows: docked beside the column, or as a sheet over the page. */
+export type PanelMode = "docked" | "sheet";
+
 /**
  * What a `Sidebar` without a `storageKey` remembers (its open groups and Recent), kept by the shell so it
  * lasts while the sidebar moves between the shell and its sheet.
@@ -19,6 +22,8 @@ export interface SidebarMemory {
 export interface AppShellState {
   /** How the sidebar shows at the shell's width. */
   readonly sidebar: SidebarMode;
+  /** How a `SidePanel` shows at the shell's width: docked from 1280px, a sheet under that. */
+  readonly panel: PanelMode;
   /** Opens the sidebar's sheet, while it's in sheet mode. */
   readonly openSidebar: () => void;
   /** Whether the sidebar's sheet is open. */
@@ -31,13 +36,17 @@ export interface AppShellState {
 
 const OUTSIDE_A_SHELL: AppShellState = {
   sidebar: "full",
+  panel: "docked",
   openSidebar: () => undefined,
   sidebarOpen: false,
   scrollPageToTop: () => undefined,
   sidebarMemory: undefined,
 };
 
-/** The state an `AppShell layout="sidebar"` shares. Outside one, the sidebar is full and nothing opens it. */
+/**
+ * The state an `AppShell layout="sidebar"` shares. Outside one, the sidebar is full and nothing opens it, and
+ * a side panel docks where it's placed.
+ */
 export const AppShellContext: Context<AppShellState> =
   createContext<AppShellState>(OUTSIDE_A_SHELL);
 

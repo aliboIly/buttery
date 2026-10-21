@@ -58,6 +58,13 @@
     outline-offset: calc(-1 * var(--bt-focus-width));
   }
 
+  .bt-menu > [data-bt-part="menu-item"][data-tone="danger"],
+  .bt-menu
+    > [data-bt-part="menu-group"]
+    > [data-bt-part="menu-item"][data-tone="danger"] {
+    color: var(--bt-danger);
+  }
+
   .bt-menu > [data-bt-part="menu-item"][data-disabled],
   .bt-menu
     > [data-bt-part="menu-group"]

@@ -143,6 +143,17 @@ export const widths = {
     description:
       "The top bar's search field while it has focus, and its panel, at most.",
   },
+  "side-panel": {
+    cssVar: "--bt-w-side-panel",
+    value: 360,
+    description:
+      "A side panel docked at the shell's end, or its sheet, at most.",
+  },
+  "side-panel-wide": {
+    cssVar: "--bt-w-side-panel-wide",
+    value: 560,
+    description: "A docked side panel once it's expanded.",
+  },
   dialog: { cssVar: "--bt-w-dialog", value: 400, description: "Dialog width." },
   "dialog-md": {
     cssVar: "--bt-w-dialog-md",

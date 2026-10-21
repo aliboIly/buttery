@@ -37,6 +37,7 @@ import { Button } from "../../components/button/Button.tsx";
 import { AppShellContext } from "./app-shell-context.ts";
 import type {
   AppShellState,
+  PanelMode,
   SidebarMemory,
   SidebarMode,
 } from "./app-shell-context.ts";
@@ -77,6 +78,11 @@ export interface AppShellSidebarProps extends Omit<
   readonly sidebar: ReactNode;
   /** The bar over the page, a `TopBar`. */
   readonly topBar?: ReactNode;
+  /**
+   * A `SidePanel`, such as help, at the shell's end: docked beside the column from 1280px of shell, making
+   * the page narrower, and a sheet under that.
+   */
+  readonly panel?: ReactNode;
   /** Names the sidebar's sheet on narrow screens. Defaults to `"Navigation"`. */
   readonly sidebarLabel?: string | undefined;
   /** Whether the sidebar's sheet is open on a narrow screen. Pair with `onOpenChange` to control it. */
@@ -100,6 +106,9 @@ const RAIL_BELOW = 1100;
 
 /** Narrower than this, the sidebar leaves the shell and opens as a sheet from the top bar. */
 const SIDEBAR_SHEET_BELOW = 640;
+
+/** From this wide, a side panel docks beside the column; narrower, it opens as a sheet. */
+const PANEL_DOCKS_FROM = 1280;
 
 function Sheet({
   label,
@@ -315,15 +324,31 @@ function SidebarSheet({
   );
 }
 
-function modeAt(width: number): SidebarMode {
-  if (width >= RAIL_BELOW) return "full";
-  if (width >= SIDEBAR_SHEET_BELOW) return "rail";
-  return "sheet";
+interface ShellModes {
+  readonly sidebar: SidebarMode;
+  readonly panel: PanelMode;
+}
+
+function modesAt(width: number): ShellModes {
+  return {
+    sidebar:
+      width >= RAIL_BELOW
+        ? "full"
+        : width >= SIDEBAR_SHEET_BELOW
+          ? "rail"
+          : "sheet",
+    panel: width >= PANEL_DOCKS_FROM ? "docked" : "sheet",
+  };
+}
+
+function sameModes(first: ShellModes, second: ShellModes): boolean {
+  return first.sidebar === second.sidebar && first.panel === second.panel;
 }
 
 function SidebarShell({
   sidebar,
   topBar,
+  panel,
   sidebarLabel = "Navigation",
   open,
   defaultOpen = false,
@@ -337,8 +362,12 @@ function SidebarShell({
   const root = useRef<HTMLDivElement>(null);
   const page = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, root);
-  const [mode, setMode] = useState<SidebarMode>("full");
-  const shownMode = useRef(mode);
+  const [modes, setModes] = useState<ShellModes>({
+    sidebar: "full",
+    panel: "docked",
+  });
+  const shownModes = useRef(modes);
+  const mode = modes.sidebar;
   const [sheetOpen, setSheetOpen] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
@@ -355,21 +384,22 @@ function SidebarShell({
 
   useLayoutEffect(() => {
     closeSheet.current = setSheetOpen;
-    shownMode.current = mode;
+    shownModes.current = modes;
   });
 
   useLayoutEffect(() => {
     const element = root.current;
     if (!element) return undefined;
     const measure = (): void => {
-      const next = modeAt(element.clientWidth);
-      if (next !== "sheet") closeSheet.current(false);
-      setMode(next);
+      const next = modesAt(element.clientWidth);
+      if (next.sidebar !== "sheet") closeSheet.current(false);
+      setModes((current) => (sameModes(current, next) ? current : next));
     };
     measure();
     const observer = new ResizeObserver(() => {
       // A new mode paints in the frame the shell resized in, not a frame later.
-      if (modeAt(element.clientWidth) === shownMode.current) measure();
+      if (sameModes(modesAt(element.clientWidth), shownModes.current))
+        measure();
       else flushSync(measure);
     });
     observer.observe(element);
@@ -392,6 +422,7 @@ function SidebarShell({
 
   const shell: AppShellState = {
     sidebar: mode,
+    panel: modes.panel,
     openSidebar: () => {
       setSheetOpen(true);
     },
@@ -431,6 +462,7 @@ function SidebarShell({
               {children}
             </div>
           </div>
+          {hasContent(panel) ? <div data-bt-part="panel">{panel}</div> : null}
           {mode === "sheet" ? (
             <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
               <AnimatePresence>
@@ -465,8 +497,9 @@ function SidebarShell({
  * `layout="sidebar"` is a dashboard: the sidebar beside a column holding the top bar and the page, each
  * scrolling on its own, the shell never scrolling. Measured on the shell's own width, the sidebar is full
  * from 1100px, an icon rail under that, and under 640 it leaves the shell and opens as a sheet from the top
- * bar's menu button, closing on navigation, Escape or the scrim. Menus and popovers inside it arrive
- * instantly, as app chrome does.
+ * bar's menu button, closing on navigation, Escape or the scrim. A `panel`, a `SidePanel`, docks at the
+ * shell's end from 1280px, making the column narrower, and opens as a sheet under that. Menus and popovers
+ * inside it arrive instantly, as app chrome does.
  *
  * @example
  * <AppShell header={<HeaderBar title="Launch card" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">

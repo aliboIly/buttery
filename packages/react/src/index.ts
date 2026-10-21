@@ -234,6 +234,7 @@ export {
 } from "./patterns/app-shell/app-shell-context.ts";
 export type {
   AppShellState,
+  PanelMode,
   SidebarMemory,
   SidebarMode,
 } from "./patterns/app-shell/app-shell-context.ts";
@@ -595,3 +596,5 @@ export type {
 } from "./components/option-tiles/OptionTiles.tsx";
 export { FullscreenDialog } from "./patterns/fullscreen-dialog/FullscreenDialog.tsx";
 export type { FullscreenDialogProps } from "./patterns/fullscreen-dialog/FullscreenDialog.tsx";
+export { SidePanel } from "./patterns/side-panel/SidePanel.tsx";
+export type { SidePanelProps } from "./patterns/side-panel/SidePanel.tsx";

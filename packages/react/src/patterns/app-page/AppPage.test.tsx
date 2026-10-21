@@ -160,8 +160,8 @@ describe("AppPage", () => {
     ).toBe(32);
   });
 
-  it("sets its right rail beside the page from 1280px of shell, and under it below that", () => {
-    inShell(1440, <Orders aside={<p>Details</p>} />);
+  it("sets its right rail beside the page from 1040px of column, and under it below that", () => {
+    inShell(1280, <Orders aside={<p>Details</p>} />);
     const rail = screen.getByRole("complementary", { name: "Order details" });
     expect(rail.getBoundingClientRect().width).toBe(320);
     expect(rail.getBoundingClientRect().left - box("main").right).toBe(32);

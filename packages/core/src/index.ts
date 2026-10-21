@@ -296,7 +296,7 @@ export { mergeRefs, useMergedRefs } from "./utils/merge-refs.ts";
 export { isPressableElement, opensElsewhere } from "./utils/pressable.ts";
 export { isApplePlatform } from "./utils/platform.ts";
 export type { ClickModifiers } from "./utils/pressable.ts";
-export { hasTabbable, tabbables } from "./utils/tabbable.ts";
+export { hasTabbable, tabbables, takesText } from "./utils/tabbable.ts";
 export {
   canTakeFocus,
   lastFocusedOutside,

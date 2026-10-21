@@ -314,6 +314,42 @@ describe("Menu", () => {
     expect(screen.getByText("closed")).toBeTruthy();
   });
 
+  it("draws a danger item in danger, highlighted or not, and a disabled one as disabled", async () => {
+    render(
+      <Menu defaultOpen>
+        <Menu.Trigger>Conversation</Menu.Trigger>
+        <Menu.Content aria-label="Conversation">
+          <Menu.Item>Copy the link</Menu.Item>
+          <Menu.Item tone="danger">Start over</Menu.Item>
+          <Menu.Item tone="danger" disabled>
+            Delete
+          </Menu.Item>
+        </Menu.Content>
+      </Menu>,
+    );
+    const probe = document.createElement("span");
+    probe.style.color = "var(--bt-danger)";
+    document.body.append(probe);
+    const danger = getComputedStyle(probe).color;
+    probe.remove();
+    const startOver = await screen.findByRole("menuitem", {
+      name: "Start over",
+    });
+    expect(getComputedStyle(startOver).color).toBe(danger);
+    expect(
+      getComputedStyle(screen.getByRole("menuitem", { name: "Copy the link" }))
+        .color,
+    ).not.toBe(danger);
+    expect(
+      getComputedStyle(screen.getByRole("menuitem", { name: "Delete" })).color,
+    ).not.toBe(danger);
+    startOver.focus();
+    await waitFor(() => {
+      expect(startOver.hasAttribute("data-highlighted")).toBe(true);
+    });
+    expect(getComputedStyle(startOver).color).toBe(danger);
+  });
+
   it("puts a separator between groups and a heading on a group", async () => {
     render(
       <Menu defaultOpen>

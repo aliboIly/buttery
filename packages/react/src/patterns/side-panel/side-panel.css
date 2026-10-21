@@ -1,0 +1,101 @@
+@layer bt.patterns {
+  .bt-side-panel {
+    --bt-side-panel-line: 1px;
+    --bt-side-panel-fade: calc(
+      var(--bt-dur-reduced) + (var(--bt-dur-fast) - var(--bt-dur-reduced)) *
+        var(--bt-motion)
+    );
+
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    min-inline-size: 0;
+    min-block-size: 0;
+    outline: none;
+  }
+
+  .bt-side-panel[data-mode="docked"] {
+    inline-size: var(--bt-w-side-panel);
+    border-inline-start: var(--bt-side-panel-line) solid var(--bt-border);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-side-panel[data-mode="docked"][data-expanded] {
+    inline-size: var(--bt-w-side-panel-wide);
+  }
+
+  .bt-side-panel-scrim[data-bt-part="scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The sheet renders in the modal layer, at the window's end edge, 8px in, as the sidebar's sheet sits at its start. */
+  .bt-side-panel[data-bt-part="sheet"] {
+    position: absolute;
+    inset-block: var(--bt-space-2);
+    inset-inline-end: var(--bt-space-2);
+    inline-size: min(var(--bt-w-side-panel), calc(100% - var(--bt-space-4)));
+    padding: 0;
+    overflow: clip;
+  }
+
+  .bt-side-panel > [data-bt-part="header"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    block-size: var(--bt-h-header);
+    padding-inline: var(--bt-space-4) var(--bt-space-3);
+    border-block-end: var(--bt-side-panel-line) solid var(--bt-border);
+  }
+
+  .bt-side-panel [data-bt-part="title"] {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    margin: 0;
+  }
+
+  .bt-side-panel [data-bt-part="actions"] {
+    display: flex;
+    flex: none;
+    gap: var(--bt-space-1);
+  }
+
+  .bt-side-panel > [data-bt-part="content"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+
+  .bt-side-panel[data-mode="docked"] > [data-bt-part="content"] {
+    animation: bt-side-panel-in var(--bt-side-panel-fade) var(--bt-ease-out);
+  }
+
+  .bt-side-panel [data-bt-part="body"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-4);
+    min-block-size: 0;
+    padding: var(--bt-space-4);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bt-side-panel [data-bt-part="footer"] {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    padding: 0 var(--bt-space-4) var(--bt-space-4);
+  }
+
+  @keyframes bt-side-panel-in {
+    from {
+      opacity: 0;
+    }
+  }
+}

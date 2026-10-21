@@ -26,3 +26,14 @@ export function tabbables(element: Element | null): HTMLElement[] {
 export function hasTabbable(element: Element | null): boolean {
   return tabbables(element).length > 0;
 }
+
+const TEXT_ENTRY =
+  'input:not([type="checkbox"], [type="radio"], [type="button"], [type="submit"], [type="reset"], [type="range"], [type="color"], [type="file"], [type="image"]), textarea, [role="combobox"], [contenteditable]:not([contenteditable="false"])';
+
+/**
+ * Whether `element` is a field to type in: a text-like input, a textarea, a combobox or editable text. A
+ * surface that opens on a field, as a dialog or a side panel does, focuses the first one.
+ */
+export function takesText(element: Element): boolean {
+  return element.matches(TEXT_ENTRY);
+}

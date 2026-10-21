@@ -6,6 +6,7 @@ import {
   presencePresets,
   reducedPresence,
   tabbables,
+  takesText,
   useAnimationTracking,
   useCloseFocus,
   useControllableState,
@@ -49,14 +50,6 @@ const TriggerContext = createContext<RefObject<HTMLElement | null> | null>(
  * How `Dialog.Text` tells the content around it that it has a title, and a description when it has a body.
  * It counts, since text that crossfades (an onboarding's steps) is briefly there twice.
  */
-// A dialog that has a field to type in opens on it, as a form dialog's first field takes focus.
-const TEXT_ENTRY =
-  'input:not([type="checkbox"], [type="radio"], [type="button"], [type="submit"], [type="reset"]), textarea, [role="combobox"]';
-
-function takesText(element: HTMLElement): boolean {
-  return element.matches(TEXT_ENTRY);
-}
-
 interface ContentRegistry {
   readonly register: (withBody: boolean) => () => void;
   readonly describe: () => () => void;

@@ -215,6 +215,35 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   "form-dialog": [opensDialog("Add a backup email")],
   "consequence-dialog": [opensDialog("Try Roaster")],
   "fullscreen-dialog": [opensDialog("Set up the roastery")],
+  "side-panel": [
+    {
+      name: "open the panel's overflow menu",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "More actions", exact: true })
+          .first()
+          .click();
+        await page.getByRole("menu").waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "open help from the shell's top bar",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Help", exact: true })
+          .first()
+          .click();
+        await page
+          .getByRole("dialog", { name: "Help", exact: true })
+          .or(page.getByRole("complementary", { name: "Help", exact: true }))
+          .first()
+          .waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
   "expandable-card": [
     {
       name: "open the card",

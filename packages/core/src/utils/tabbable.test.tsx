@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { hasTabbable, tabbables } from "./tabbable.ts";
+import { hasTabbable, tabbables, takesText } from "./tabbable.ts";
 
 function holding(html: string): HTMLElement {
   const element = document.createElement("div");
@@ -63,5 +63,30 @@ describe("hasTabbable", () => {
       "Two",
     ]);
     expect(tabbables(null)).toEqual([]);
+  });
+});
+
+describe("takesText", () => {
+  it("is true for fields to type in and false for other controls", () => {
+    const element = holding(
+      [
+        '<input aria-label="Name" />',
+        '<input type="email" aria-label="Email" />',
+        '<textarea aria-label="Note"></textarea>',
+        '<div role="combobox" tabindex="0" aria-label="Country"></div>',
+        '<div contenteditable="true" aria-label="Draft"></div>',
+        '<input type="checkbox" aria-label="Agree" />',
+        '<input type="range" aria-label="Volume" />',
+        '<input type="color" aria-label="Color" />',
+        '<input type="file" aria-label="Upload" />',
+        '<div contenteditable="false" tabindex="0" aria-label="Locked"></div>',
+        "<button>Send</button>",
+      ].join(""),
+    );
+    expect(
+      [...element.children]
+        .filter(takesText)
+        .map((field) => field.getAttribute("aria-label")),
+    ).toEqual(["Name", "Email", "Note", "Country", "Draft"]);
   });
 });
