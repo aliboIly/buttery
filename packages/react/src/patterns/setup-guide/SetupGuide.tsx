@@ -15,7 +15,7 @@ import type { MotionElementProps } from "@buttery/core";
 import { ChevronDown, ChevronUp, Circle, CircleCheck, X } from "lucide-react";
 import { motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
-import { useId } from "react";
+import { useCallback, useId, useState } from "react";
 import type { ReactElement } from "react";
 import { Button } from "../../components/button/Button.tsx";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
@@ -54,6 +54,8 @@ export interface SetupGuideLabels {
   readonly toDo: string;
   /** The progress, read with the bar, such as "2 of 5 done". */
   readonly progress: (done: number, total: number) => string;
+  /** Names the list of steps, which takes focus while it scrolls so the keyboard can scroll it. */
+  readonly steps: string;
 }
 
 /** Props for `SetupGuide`. */
@@ -88,6 +90,7 @@ const LABELS: SetupGuideLabels = {
   done: "Done",
   toDo: "To do",
   progress: (done, total) => `${String(done)} of ${String(total)} done`,
+  steps: "Steps",
 };
 
 function isFlag(value: unknown): value is boolean {
@@ -169,6 +172,20 @@ export function SetupGuide({
     storageKey,
     onDismiss,
   });
+  const [overflows, setOverflows] = useState(false);
+  const watchSteps = useCallback((element: HTMLDivElement | null) => {
+    if (!element) return undefined;
+    const measure = (): void => {
+      setOverflows(element.scrollHeight > element.clientHeight);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    for (const list of element.children) observer.observe(list);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
   if (dismissed) return null;
   const total = tasks.length;
   const finished = tasks.filter((task) => task.done === true).length;
@@ -237,53 +254,63 @@ export function SetupGuide({
           </div>
           <Morph contentKey={unfolded ? "steps" : "next"}>
             {unfolded ? (
-              <ol id={stepsId} className="bt-scroll-fade" data-bt-part="steps">
-                {tasks.map((task) => (
-                  <li
-                    key={task.id}
-                    data-bt-part="step"
-                    data-done={task.done === true ? "" : undefined}
-                  >
-                    <Icon
-                      icon={task.done === true ? CircleCheck : Circle}
-                      data-bt-part="check"
-                    />
-                    <div data-bt-part="step-text">
-                      <Text>
-                        <VisuallyHidden.Root>
-                          {`${task.done === true ? words.done : words.toDo}: `}
-                        </VisuallyHidden.Root>
-                        {task.title}
-                      </Text>
-                      {task.description === undefined ? null : (
-                        <Text variant="body-sm">{task.description}</Text>
-                      )}
-                      {task !== next || task.action === undefined ? null : (
-                        <span data-bt-part="step-action">
-                          {task.action.href === undefined ? (
-                            <Button
-                              variant="soft"
-                              size="sm"
-                              onClick={task.action.onClick}
-                            >
-                              {task.action.label}
-                            </Button>
-                          ) : (
-                            <Button variant="soft" size="sm" asChild>
-                              <a
-                                href={task.action.href}
+              <div
+                ref={watchSteps}
+                id={stepsId}
+                role="region"
+                aria-label={words.steps}
+                tabIndex={overflows ? 0 : undefined}
+                className="bt-scroll-fade"
+                data-bt-part="steps-scroll"
+              >
+                <ol data-bt-part="steps">
+                  {tasks.map((task) => (
+                    <li
+                      key={task.id}
+                      data-bt-part="step"
+                      data-done={task.done === true ? "" : undefined}
+                    >
+                      <Icon
+                        icon={task.done === true ? CircleCheck : Circle}
+                        data-bt-part="check"
+                      />
+                      <div data-bt-part="step-text">
+                        <Text>
+                          <VisuallyHidden.Root>
+                            {`${task.done === true ? words.done : words.toDo}: `}
+                          </VisuallyHidden.Root>
+                          {task.title}
+                        </Text>
+                        {task.description === undefined ? null : (
+                          <Text variant="body-sm">{task.description}</Text>
+                        )}
+                        {task !== next || task.action === undefined ? null : (
+                          <span data-bt-part="step-action">
+                            {task.action.href === undefined ? (
+                              <Button
+                                variant="soft"
+                                size="sm"
                                 onClick={task.action.onClick}
                               >
                                 {task.action.label}
-                              </a>
-                            </Button>
-                          )}
-                        </span>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
+                              </Button>
+                            ) : (
+                              <Button variant="soft" size="sm" asChild>
+                                <a
+                                  href={task.action.href}
+                                  onClick={task.action.onClick}
+                                >
+                                  {task.action.label}
+                                </a>
+                              </Button>
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             ) : (
               <p className="bt-text" data-role="caption" data-bt-part="next">
                 {next === undefined ? (

@@ -142,6 +142,28 @@ describe("SetupGuide", () => {
     expect(screen.queryByRole("region", { name: "Setup guide" })).toBeNull();
   });
 
+  it("lets the keyboard reach and scroll its steps while they overflow with nothing in them to focus", async () => {
+    const many = Array.from({ length: 12 }, (_, index) => ({
+      id: `task-${String(index)}`,
+      title: `Finish part ${String(index + 1)} of the shop`,
+      description: "A line or two about what it takes.",
+      done: true,
+    }));
+    render(<Guide tasks={many} defaultOpen />);
+    const steps = within(guide()).getByRole("region", { name: "Steps" });
+    expect(steps.scrollHeight).toBeGreaterThan(steps.clientHeight);
+    await waitFor(() => {
+      expect(steps.tabIndex).toBe(0);
+    });
+    cleanup();
+    render(<Guide defaultOpen />);
+    expect(
+      within(guide())
+        .getByRole("region", { name: "Steps" })
+        .hasAttribute("tabindex"),
+    ).toBe(false);
+  });
+
   it("says it's all set once every task is done", () => {
     render(<Guide tasks={TASKS.map((task) => ({ ...task, done: true }))} />);
     expect(within(guide()).getByText("You're all set.")).toBeTruthy();

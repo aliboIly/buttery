@@ -75,17 +75,26 @@
     color: var(--bt-text);
   }
 
-  .bt-setup-guide [data-bt-part="steps"] {
+  .bt-setup-guide [data-bt-part="steps-scroll"] {
     --bt-scroll-fade-size: var(--bt-space-2);
 
+    max-block-size: var(--bt-setup-guide-steps);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .bt-setup-guide [data-bt-part="steps-scroll"]:focus-visible {
+    outline: var(--bt-focus-width) solid var(--bt-accent);
+    outline-offset: calc(var(--bt-focus-width) * -1);
+  }
+
+  .bt-setup-guide [data-bt-part="steps"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-3);
-    max-block-size: var(--bt-setup-guide-steps);
     margin: 0;
-    padding-inline: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    padding: 0;
     list-style: none;
   }
 
