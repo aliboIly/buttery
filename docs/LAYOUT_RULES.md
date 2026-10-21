@@ -115,7 +115,7 @@ grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
 
 ### Floating guidance
 - `SetupGuide` lives in the `bottom-end` lane and toasts in `bottom-center`. When the two lanes would touch (a narrow window), they stack as one column at the bottom end: toasts above the guide, 8 apart, so neither covers the other.
-- `FloatingLanes` publishes the height its bottom lanes take, plus the gap, as `--bt-lane-clearance` on `<html>` (0 while they're empty). Page and table scroll areas add it to their end padding, so their last row and their pagination can always scroll clear of a toast or the guide. A bar pinned to the bottom of the viewport, such as a filled page's pagination, registers as a lane obstacle, so lane items rise above it.
+- `FloatingLanes` publishes the height its bottom lanes take, plus the gap, as `--bt-lane-clearance` on `<html>` (0 while they're empty). The page adds it to its end padding, and a table in a filled page ends its rows with that much room to scroll (content inside its scroll area, not padding on it, so the area keeps its size and its pagination never moves), so the last row and the pagination can always clear a toast or the guide. A bar pinned to the bottom of the viewport, such as a filled page's pagination, registers as a lane obstacle, so lane items rise above it.
 
 ---
 

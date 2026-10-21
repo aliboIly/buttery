@@ -30,9 +30,15 @@
     isolation: isolate;
   }
 
-  /* Pinned in a filled page, the table scrolls inside, so its own end keeps clear of the floating lanes. */
-  .bt-data-table[data-pinned] > [data-bt-part="scroll"] {
-    padding-block-end: var(--bt-lane-clearance, 0px);
+  /*
+   * Pinned in a filled page, the table scrolls inside, so its rows end with room to scroll clear of the
+   * floating lanes. The room is content, not padding on the scroll area, so however far the lanes reach the
+   * area keeps its size and the pagination, which the lanes stay above, never moves.
+   */
+  .bt-data-table[data-pinned] > [data-bt-part="scroll"]::after {
+    display: block;
+    block-size: var(--bt-lane-clearance, 0px);
+    content: "";
   }
 
   .bt-data-table [data-bt-part="table"] {

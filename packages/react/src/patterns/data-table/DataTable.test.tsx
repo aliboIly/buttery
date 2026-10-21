@@ -11,7 +11,16 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from "vitest";
+import { page } from "vitest/browser";
 import { AppPage } from "../app-page/AppPage.tsx";
 import { DataTable } from "./DataTable.tsx";
 import type { DataTableColumn, DataTableSort } from "./DataTable.tsx";
@@ -393,9 +402,72 @@ describe("DataTable", () => {
     const scroll = table?.querySelector<HTMLElement>('[data-bt-part="scroll"]');
     expect(
       Number.parseFloat(
-        getComputedStyle(scroll ?? document.body).paddingBlockEnd,
+        getComputedStyle(scroll ?? document.body, "::after").blockSize,
       ),
     ).toBeGreaterThan(0);
+  });
+
+  it("keeps its pagination in place in a filled page however far the lanes reach", async () => {
+    const { innerWidth, innerHeight } = window;
+    await page.viewport(800, 500);
+    onTestFinished(async () => {
+      await page.viewport(innerWidth, innerHeight);
+    });
+    render(
+      <>
+        <FloatingLanes />
+        <div style={{ display: "flex", blockSize: "500px" }}>
+          <AppPage fill>
+            <AppPage.Section>
+              <DataTable<Order>
+                label="Orders"
+                columns={COLUMNS}
+                rows={ORDERS}
+                rowKey={(order) => order.id}
+                rowLabel={(order) => order.id}
+                pagination={{
+                  page: 1,
+                  pageSize: 6,
+                  total: 42,
+                  onPageChange: () => undefined,
+                }}
+              />
+            </AppPage.Section>
+          </AppPage>
+        </div>
+        <FloatingLanes.Item>
+          <div style={{ inlineSize: "240px", blockSize: "400px" }}>
+            Set up your shop
+          </div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const table = document.querySelector<HTMLElement>(".bt-data-table");
+    const pagination = document.querySelector('[data-bt-part="pagination"]');
+    const scroll = table?.querySelector<HTMLElement>('[data-bt-part="scroll"]');
+    if (!table || !pagination || !scroll) throw new Error("No table.");
+    await waitFor(() => {
+      const guide = screen
+        .getByText("Set up your shop")
+        .getBoundingClientRect();
+      expect(guide.bottom).toBeLessThanOrEqual(
+        pagination.getBoundingClientRect().top - 8 + 0.5,
+      );
+    });
+    const before = pagination.getBoundingClientRect().top;
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(table.scrollHeight).toBe(table.clientHeight);
+    expect(pagination.getBoundingClientRect().top).toBe(before);
+    expect(pagination.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      table.getBoundingClientRect().bottom + 0.5,
+    );
+    const reach = Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--bt-lane-clearance",
+      ),
+    );
+    expect(reach).toBeGreaterThan(scroll.clientHeight);
+    expect(scroll.scrollHeight).toBeGreaterThan(reach);
   });
 
   it("isn't pinned outside a filled page", () => {
