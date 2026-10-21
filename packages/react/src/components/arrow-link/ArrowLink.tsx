@@ -1,4 +1,5 @@
-import { Slot, cx } from "@buttery/core";
+import { Icon, Slot, cx } from "@buttery/core";
+import { ExternalLink } from "lucide-react";
 import { Slot as RadixSlot } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { Arrow } from "../../parts/arrow/Arrow.tsx";
@@ -6,8 +7,11 @@ import type { ArrowDirection } from "../../parts/arrow/Arrow.tsx";
 
 /** Props for `ArrowLink`. */
 export interface ArrowLinkProps extends ComponentPropsWithRef<"a"> {
-  /** Which way the arrow points: `"forward"` (the default) after the label, `"back"` before it. */
-  readonly arrow?: ArrowDirection | undefined;
+  /**
+   * Which way the arrow points: `"forward"` (the default) after the label, `"back"` before it, or
+   * `"external"`, an external-link icon after the label that holds still, for a link that leaves the app.
+   */
+  readonly arrow?: ArrowDirection | "external" | undefined;
   /** Render the single child element (such as a router's link) as the link, with the arrow merged in. */
   readonly asChild?: boolean | undefined;
 }
@@ -28,7 +32,12 @@ export function ArrowLink({
 }: ArrowLinkProps): ReactElement {
   const classes = cx("bt-arrow-link bt-focus", className);
   const back = arrow === "back" ? <Arrow direction="back" /> : null;
-  const forward = arrow === "forward" ? <Arrow direction="forward" /> : null;
+  const forward =
+    arrow === "forward" ? (
+      <Arrow direction="forward" />
+    ) : arrow === "external" ? (
+      <Icon icon={ExternalLink} data-bt-part="external" />
+    ) : null;
   if (asChild) {
     return (
       <Slot

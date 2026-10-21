@@ -5,7 +5,7 @@ import { Text } from "../text/Text.tsx";
 import type { TextVariant } from "../text/Text.tsx";
 
 /** Which stack: the text roles and the gaps between them. */
-export type TextStackSize = "dialog" | "empty" | "section";
+export type TextStackSize = "dialog" | "empty" | "section" | "feature";
 
 /** The element a stack's title renders as. */
 export type TextStackTitleElement =
@@ -25,7 +25,8 @@ export interface TextStackProps extends Omit<
   /**
    * `"dialog"` (the default): a dialog title, its body 16px below and a caption 20px below that.
    * `"empty"`: an empty state's title with its description 12px below. `"section"`: a page section's
-   * heading over larger body text, 16px apart.
+   * heading over larger body text, 16px apart. `"feature"`: a `title-lg` heading over body text, 12px
+   * apart, as a feature intro or an announcement opens.
    */
   readonly size?: TextStackSize | undefined;
   /** `"start"` (the default) or `"center"`, as in empty states. */
@@ -43,6 +44,7 @@ const ROLES: Readonly<
   dialog: { title: "dialog-title", body: "body" },
   empty: { title: "title", body: "body-sm" },
   section: { title: "heading-2", body: "body-lg" },
+  feature: { title: "title-lg", body: "body" },
 };
 
 /**

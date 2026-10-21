@@ -18,6 +18,11 @@
     --bt-text-stack-caption-gap: var(--bt-space-4);
   }
 
+  .bt-text-stack[data-size="feature"] {
+    --bt-text-stack-gap: var(--bt-space-3);
+    --bt-text-stack-caption-gap: var(--bt-space-4);
+  }
+
   .bt-text-stack > [data-bt-part="head"] {
     display: flex;
     flex-direction: column;

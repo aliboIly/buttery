@@ -69,6 +69,25 @@ describe("ArrowLink", () => {
     );
   });
 
+  it("shows an external-link icon that holds still for a link that leaves the app", async () => {
+    render(
+      <ArrowLink href="https://example.com/guide" arrow="external">
+        Read the guide
+      </ArrowLink>,
+    );
+    const link = screen.getByRole("link", { name: "Read the guide" });
+    const icon = link.querySelector('[data-bt-part="external"]');
+    expect(icon).not.toBeNull();
+    expect(link.querySelector('[data-bt-part="arrow"]')).toBeNull();
+    const width = link.getBoundingClientRect().width;
+    await userEvent.hover(link);
+    expect(link.getBoundingClientRect().width).toBe(width);
+    expect(icon?.getBoundingClientRect().left).toBeGreaterThan(
+      link.querySelector('[data-bt-part="label"]')?.getBoundingClientRect()
+        .right ?? 0,
+    );
+  });
+
   it("takes a router's link with asChild", () => {
     function RouterLink({
       to,
