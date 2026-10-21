@@ -107,6 +107,31 @@ grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
 - The right rail (`AppPage aside`, `--bt-w-aside`, 320) sits beside the main column, 32 apart, from 1280px of shell width, and drops under the main content below that.
 - A page whose main block is a table can give it the rest of the height (`AppPage fill`): the header, tabs and filters keep their size and the table scrolls inside, with its header sticky.
 
+### App pages (Phase 6B)
+Every page in an app shell follows one grammar, from a second set of local references of the same dashboard (`reference/inspiration-settings/`, not in the repo). The page templates (`SettingsPage`, `DetailPage`, `CatalogPage`, `PlanComparison`, `SearchResults`) and `AppPage` build it in, and later `buttery add page` scaffolds it.
+```
+Breadcrumbs (only when the page is nested)
+Title [ScopeBadge ⓘ] ··································· actions (one primary)
+One-line description
+Tabs ─────────────────────────────────────────────────────────────────────
+Section heading ········································ its one action
+One-line description
+content
+                                                       32, or a hairline
+Section heading ········································ its one action
+…
+──────────────────────────────────────────────────────── hairline
+Small footer: feedback · keyboard shortcuts
+```
+- Order: breadcrumbs only when the page is nested, then the title row (the title, an optional `ScopeBadge` whose info button says what the scope means, the page's actions at the end), an optional one-line description, optional tabs, then the content.
+- Sections aren't cards. A section is a heading and a one-line description at the start, its action at the end of the heading's row, and its content under them, with 32 or a hairline between sections. Cards hold objects only: plans, metrics, catalog items and list rows that are things.
+- One primary button per region (a page header, a section, a dialog's footer, a panel); everything else is secondary, ghost or a link. `expectButtery` reports a region with two.
+- Hierarchy comes from type size and weight, not borders or color, and everything on a page shares one start edge: section content isn't indented under its heading.
+- Widths: index and table pages are contained at `--bt-w-app-page` (1280); settings detail pages at most `--bt-w-app-page-md` (960); dense forms and preference matrices at most `--bt-w-app-page-sm` (820).
+- Each section loads on its own, with a skeleton or a `LoadingPill` in its place; nothing blocks the whole page.
+- In a form, Save stays disabled until something changes. Cancel and Save sit in the section's header or its footer, never both.
+- A page ends with a hairline and an optional small footer, such as a feedback link and the keyboard shortcuts.
+
 ### Tables
 - A `DataTable` is one scroll container for both axes. Its rows share one grid column template, so every column has a minimum width (a token step) and a share of what's left; when the minimums don't fit, the table scrolls sideways inside its container, and the page never does.
 - The header row sticks to the top of the table's scroll area and the first column (with the checkbox column) to its inline start, both on `bg-surface`; the first column shows a 1px edge while the table is scrolled sideways. The header sticks whenever the table scrolls vertically, which it does when it's given a height (`AppPage fill`, or a parent with one); a table that grows with its rows scrolls with the page instead.

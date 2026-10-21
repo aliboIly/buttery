@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 6B (the App kit) is at its gate: the review fixes are in and the full checks and the push come next. Then Phase 7 (hardening and brand) and Phase 8 (developer and agent experience). The public-kit rule is in place.
+**Now:** Phase 6B (the App kit): the verification fixes are landing, and settings, search and panels (from a second set of dashboard references) joined the phase before its gate. Then the gate (full checks, comparisons, review, push), Phase 7 (hardening and brand) and Phase 8 (developer and agent experience). The public-kit rule is in place.
 
 ---
 
@@ -62,7 +62,14 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Guidance: `Banner`, `RecommendationCard`, `SetupGuide`, `FeatureIntro`, `EmptyState` icon + docs, `LoadingPill`, `NotificationNudge`
 - [x] Menus and dialogs: `Menu` submenus and instant entrance, `AccountMenu`, `Avatar`/`InitialsTile`, `ChoiceDialog`, `AnnouncementDialog`, `SettingsIndex`
 - [x] Lanes shared by toasts and the setup guide, `--bt-lane-clearance`
-- [ ] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame
+- [ ] Page grammar for app pages (LAYOUT_RULES §3): order, sections that aren't cards, one primary button per region (checked), the 960 and 820 widths, section-level loading, a page footer
+- [ ] `CommandSearch`: the top bar's field and panel, typed sources (pages, filters, recents, the app's own), `key:value` filters, a `SearchResults` page
+- [ ] Settings: `SettingsPage`, `SettingsSection`, `SettingRow`, `PreferencesMatrix`, `HoverActions`; `SettingsIndex` hover and its "more" tile
+- [ ] Pages: `Breadcrumbs`, `ScopeBadge`, `DetailPage`, `CatalogPage` with `TagChip`, `PlanComparison`
+- [ ] Dialogs: `FormDialog`, `RadioCardGroup`, `ConsequenceDialog`, `FullscreenDialog` with `OptionTiles`
+- [ ] `SidePanel`: docked beside the page from 1280, a sheet under it
+- [ ] `SetupGuide` expanded: groups that fold, done steps checked, a footer link
+- [ ] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame; settings (index, profile, team notifications, plans), search across the demo and a help panel
 
 ## v0.9 — Hardening & brand (Phase 7)
 - [ ] Accessibility audit, dark + compact passes, visual regression baselines
@@ -75,7 +82,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] `manifest.json`, `tokens.json`, `llms.txt`, docs + examples shipped in packages
 - [ ] Dev warnings with fixes; VS Code snippets
 - [x] Public kit: components use only what users can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition`, `variants()`), enforced by the contract test
-- [ ] CLI: `create-buttery` (`--template blank|dashboard|editor|marketing`), `init`, `add` (and `add page table|detail|overview|settings|empty|feature-intro`), `create component`, `doctor`, `check`, `migrate`
+- [ ] CLI: `create-buttery` (`--template blank|dashboard|editor|marketing`), `init`, `add` (and `add page table|detail|overview|settings|settings-index|catalog|plans|search-results|empty|feature-intro`, all of them in the dashboard template), `create component`, `doctor`, `check`, `migrate`
 - [ ] Make any app: `LayoutGuard`, `buttery check` and the lint configs on user code; every template and `add page` passes `buttery check` with zero edits
 - [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper)
 - [ ] `@buttery/mcp` (with `scaffold_page` and `scaffold_component`) + configs for the common coding agents (`docs/DX_AND_AI.md`)
