@@ -60,8 +60,8 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Data: `DataTable`, `StatusBadge`, `SavedViews`, `SearchField`, `FilterBar`, `ColumnSettings`, `StatTabs`, `GroupedList`
 - [x] Overview: `MetricCard`, `DateRangeBar`, in-house `LineChart`, `AreaChart`, `BarChart`, `Sparkline`
 - [x] Guidance: `Banner`, `RecommendationCard`, `SetupGuide`, `FeatureIntro`, `EmptyState` icon + docs, `LoadingPill`, `NotificationNudge`
-- [ ] Menus and dialogs: `Menu` submenus and instant entrance, `AccountMenu`, `Avatar`/`InitialsTile`, `ChoiceDialog`, `AnnouncementDialog`, `SettingsIndex`
-- [ ] Lanes shared by toasts and the setup guide, `--bt-lane-clearance`
+- [x] Menus and dialogs: `Menu` submenus and instant entrance, `AccountMenu`, `Avatar`/`InitialsTile`, `ChoiceDialog`, `AnnouncementDialog`, `SettingsIndex`
+- [x] Lanes shared by toasts and the setup guide, `--bt-lane-clearance`
 - [ ] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame
 
 ## v0.9 — Hardening & brand (Phase 7)

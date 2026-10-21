@@ -63,7 +63,35 @@ function clearanceFor(
   return clearance;
 }
 
-function useLaneClearance(): void {
+function px(value: number): string {
+  return `${String(value)}px`;
+}
+
+/** Whether the bottom-center lane, centered in the window, would come within a gap of the bottom-end lane. */
+function lanesWouldTouch(center: HTMLElement, end: HTMLElement): boolean {
+  const centerBox = center.getBoundingClientRect();
+  const endBox = end.getBoundingClientRect();
+  if (centerBox.height === 0 || endBox.height === 0) return false;
+  const width = document.documentElement.clientWidth;
+  return (
+    width / 2 + centerBox.width / 2 + space["2"] >
+    width - space["6"] - endBox.width
+  );
+}
+
+/** How far from the bottom of the window the bottom lanes reach, plus a gap, or 0 while they're empty. */
+function bottomClearance(lanes: ReturnType<typeof getLanes>): number {
+  let top = Number.POSITIVE_INFINITY;
+  for (const name of ["bottom-center", "bottom-end"] as const) {
+    const element = lanes[name]?.element;
+    if (element === undefined || element.childElementCount === 0) continue;
+    top = Math.min(top, element.getBoundingClientRect().top);
+  }
+  if (!Number.isFinite(top)) return 0;
+  return Math.max(0, window.innerHeight - top + space["2"]);
+}
+
+function useLanePlacement(): void {
   const lanes = useSyncExternalStore(subscribe, getLanes, getServerLanes);
   const blockers = useSyncExternalStore(
     subscribe,
@@ -73,13 +101,28 @@ function useLaneClearance(): void {
 
   useLayoutEffect(() => {
     const elements = laneNames.flatMap((name) => lanes[name]?.element ?? []);
+    const root = document.documentElement;
     const apply = (): void => {
-      for (const lane of elements) {
+      for (const lane of elements)
         lane.style.setProperty(
-          "--bt-lane-clearance",
-          `${String(clearanceFor(lane, blockers))}px`,
+          "--bt-lane-lift",
+          px(clearanceFor(lane, blockers)),
         );
+      const center = lanes["bottom-center"]?.element;
+      const end = lanes["bottom-end"]?.element;
+      if (center !== undefined && end !== undefined) {
+        const stacked = lanesWouldTouch(center, end);
+        center.toggleAttribute("data-stacked", stacked);
+        if (stacked) {
+          const above =
+            window.innerHeight - end.getBoundingClientRect().top + space["2"];
+          center.style.setProperty(
+            "--bt-lane-lift",
+            px(Math.max(clearanceFor(center, blockers), above)),
+          );
+        }
       }
+      root.style.setProperty("--bt-lane-clearance", px(bottomClearance(lanes)));
     };
     let frame = 0;
     const schedule = (): void => {
@@ -98,6 +141,7 @@ function useLaneClearance(): void {
       observer.disconnect();
       window.removeEventListener("resize", schedule);
       window.removeEventListener("scroll", schedule, true);
+      root.style.removeProperty("--bt-lane-clearance");
     };
   }, [lanes, blockers]);
 }
@@ -125,7 +169,7 @@ function Lanes(): ReactElement {
 }
 
 function FloatingLanesHost(): ReactElement {
-  useLaneClearance();
+  useLanePlacement();
   return (
     <Layer band="toast">
       <Lanes />
@@ -187,8 +231,11 @@ export interface FloatingLanesComponent {
 /**
  * The host for free-floating UI: toasts in the bottom-center lane, notices in bottom-end and top-end.
  * Items stack with an 8px gap, never grow wider than their lane, keep clear of sticky headers and footers,
- * and move out of the way of registered obstacles. `ButteryProvider` mounts the host once; render items
- * with `FloatingLanes.Item`. For toasts, call `toast()` from @buttery/react instead.
+ * and move out of the way of registered obstacles. When the bottom lanes would touch, in a narrow window,
+ * the center lane moves above the end lane as one column. It publishes how far the bottom lanes reach,
+ * plus 8px, as `--bt-lane-clearance` on `<html>`, for scroll areas to add at their end. `ButteryProvider`
+ * mounts the host once; render items with `FloatingLanes.Item`. For toasts, call `toast()` from
+ * @buttery/react instead.
  *
  * @example
  * <FloatingLanes.Item lane="bottom-end">

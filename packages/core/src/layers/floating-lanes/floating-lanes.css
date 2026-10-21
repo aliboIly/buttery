@@ -22,7 +22,7 @@
   .bt-floating-lanes > [data-lane="bottom-center"] {
     inset-block-end: max(
       calc(var(--bt-sticky-bottom, 0px) + var(--bt-space-6)),
-      var(--bt-lane-clearance, 0px)
+      var(--bt-lane-lift, 0px)
     );
     inset-inline-start: 50%;
     align-items: center;
@@ -33,16 +33,23 @@
   .bt-floating-lanes > [data-lane="bottom-end"] {
     inset-block-end: max(
       calc(var(--bt-sticky-bottom, 0px) + var(--bt-space-6)),
-      var(--bt-lane-clearance, 0px)
+      var(--bt-lane-lift, 0px)
     );
     inset-inline-end: var(--bt-space-6);
     align-items: flex-end;
   }
 
+  /* In a narrow window the toasts' lane sits at the end, above the end lane's items, as one column. */
+  .bt-floating-lanes > [data-lane="bottom-center"][data-stacked] {
+    inset-inline: auto var(--bt-space-6);
+    align-items: flex-end;
+    transform: none;
+  }
+
   .bt-floating-lanes > [data-lane="top-end"] {
     inset-block-start: max(
       calc(var(--bt-sticky-top, 0px) + var(--bt-space-6)),
-      var(--bt-lane-clearance, 0px)
+      var(--bt-lane-lift, 0px)
     );
     inset-inline-end: var(--bt-space-6);
     align-items: flex-end;

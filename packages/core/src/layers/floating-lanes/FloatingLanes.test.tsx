@@ -4,6 +4,7 @@ import { userEvent } from "@testing-library/user-event";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
 import { Popover } from "../popover/Popover.tsx";
 import { FloatingLanes, useFloatingObstacle } from "./FloatingLanes.tsx";
 import { notifyObstacleMoved } from "./lanes-store.ts";
@@ -62,6 +63,60 @@ describe("FloatingLanes", () => {
         .closest("[data-bt-layer]")
         ?.getAttribute("data-bt-layer"),
     ).toBe("toast");
+  });
+
+  it("stacks the bottom lanes as one column at the end when they'd touch, toasts above", async () => {
+    await page.viewport(520, 800);
+    render(
+      <>
+        <FloatingLanes />
+        <FloatingLanes.Item>
+          <Toast>Saved</Toast>
+        </FloatingLanes.Item>
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "288px", blockSize: "100px" }}>Guide</div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await waitFor(() => {
+      const toast = screen.getByText("Saved").getBoundingClientRect();
+      const guide = screen.getByText("Guide").getBoundingClientRect();
+      expect(guide.top - toast.bottom).toBeCloseTo(8, 0);
+      expect(toast.right).toBeCloseTo(guide.right, 0);
+    });
+    await page.viewport(1200, 800);
+    await waitFor(() => {
+      const toast = screen.getByText("Saved").getBoundingClientRect();
+      const guide = screen.getByText("Guide").getBoundingClientRect();
+      expect(toast.bottom).toBeCloseTo(guide.bottom, 0);
+      expect(toast.left + toast.width / 2).toBeCloseTo(
+        document.documentElement.clientWidth / 2,
+        0,
+      );
+    });
+  });
+
+  it("publishes how far the bottom lanes reach, plus 8px, on <html>, and 0 while they're empty", async () => {
+    const clearance = (): string =>
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--bt-lane-clearance",
+      );
+    render(
+      <>
+        <FloatingLanes />
+        <FloatingLanes.Item>
+          <Toast>Saved</Toast>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await waitFor(() => {
+      expect(clearance()).toBe("68px");
+    });
+    cleanup();
+    render(<FloatingLanes />);
+    await waitFor(() => {
+      expect(clearance()).toBe("0px");
+    });
   });
 
   it("moves a lane clear of a registered obstacle", async () => {
