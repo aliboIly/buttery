@@ -39,6 +39,10 @@ const BROKEN = `
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown)">
       <div data-bt="Panel" data-testid="edge" style="position: absolute; inset-inline-start: 2px; inset-block-start: 40px; inline-size: 120px; block-size: 40px; background: white"></div>
     </div>
+    <section data-bt-region data-testid="region" style="display: flex; gap: 8px">
+      <button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)">Save</button>
+      <button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)">Publish</button>
+    </section>
     <nav data-testid="pinned" style="position: sticky; inset-block-start: 0; block-size: 3000px">Pages</nav>
   </main>`;
 
@@ -61,6 +65,10 @@ const FIXED = `
     <div data-bt-layer="dropdown" style="position: fixed; inset: 0; z-index: var(--bt-z-dropdown)">
       <div data-bt="Panel" style="position: absolute; inset-inline-start: 8px; inset-block-start: 40px; inline-size: 120px; block-size: 40px; background: white"></div>
     </div>
+    <section data-bt-region style="display: flex; gap: 8px">
+      <button type="button" data-bt="Button" data-variant="secondary" style="block-size: var(--bt-h-sm)">Cancel</button>
+      <button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)">Save</button>
+    </section>
   </main>`;
 
 describe("runLayoutChecks", () => {
@@ -72,6 +80,7 @@ describe("runLayoutChecks", () => {
     const violations = check(BROKEN);
     expect(rulesOf(violations)).toEqual([
       "clipping",
+      "emphasis",
       "layering",
       "overflow",
       "overlap",
@@ -85,6 +94,34 @@ describe("runLayoutChecks", () => {
       expect(violation.fix.length).toBeGreaterThan(20);
       expect(violation.a.length).toBeGreaterThan(0);
     }
+  });
+
+  it("counts primary buttons in their nearest region, leaving out hidden ones and those in no region", () => {
+    const html = (inner: string): string => `
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 8px">${inner}</div>`;
+    const primary = (name: string, extra = ""): string =>
+      `<button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)${extra}">${name}</button>`;
+    expect(
+      check(
+        html(`
+          <section data-bt-region data-testid="page">
+            ${primary("New order")}
+            <div data-bt-region>${primary("Save")}</div>
+            ${primary("Hidden", "; display: none")}
+          </section>
+          ${primary("Loose")}${primary("Also loose")}`),
+        ["emphasis"],
+      ),
+    ).toEqual([]);
+    const [found] = check(
+      html(
+        `<div role="dialog">${primary("Delete")}${primary("Archive")}</div>`,
+      ),
+      ["emphasis"],
+    );
+    expect(found?.message).toBe(
+      '2 primary buttons in one region: "Delete", "Archive"',
+    );
   });
 
   it("names both elements and the overlap in px", () => {

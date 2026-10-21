@@ -7,7 +7,8 @@ export type LayoutRule =
   | "target-size"
   | "viewport-fit"
   | "layering"
-  | "reach";
+  | "reach"
+  | "emphasis";
 
 /** Every rule `expectButtery` reports. */
 export type ButteryRule = LayoutRule | "accessibility" | "stability";
@@ -410,6 +411,7 @@ export function createLayoutToolkit(): LayoutToolkit {
       "viewport-fit",
       "layering",
       "reach",
+      "emphasis",
     ];
     const enabled = new Set(options.rules ?? allRules);
     const { tokens } = options;
@@ -1097,6 +1099,34 @@ export function createLayoutToolkit(): LayoutToolkit {
           a: selectorFor(element),
           message: `z-index ${zIndex} isn't a z token`,
           fix: "Use a z token, such as var(--bt-z-dropdown), or render the element in a Layer, which picks the band for you.",
+        });
+      }
+    }
+
+    if (enabled.has("emphasis")) {
+      const regions = new Map<Element, Element[]>();
+      for (const button of document.querySelectorAll(
+        '[data-bt="Button"][data-variant="primary"], [data-bt="IconButton"][data-variant="primary"]',
+      )) {
+        if (isTooling(button) || !isVisible(button)) continue;
+        const region = button.closest('[data-bt-region], [role="dialog"]');
+        if (!region) continue;
+        regions.set(region, [...(regions.get(region) ?? []), button]);
+      }
+      for (const [region, buttons] of regions) {
+        if (buttons.length < 2) continue;
+        const names = buttons
+          .map((button) =>
+            (button.getAttribute("aria-label") ?? button.textContent).trim(),
+          )
+          .map((name) => `"${name}"`)
+          .join(", ");
+        report({
+          rule: "emphasis",
+          a: selectorFor(region),
+          px: buttons.length,
+          message: `${String(buttons.length)} primary buttons in one region: ${names}`,
+          fix: "Keep one primary button per region (a page header, a section, a dialog, a panel, a plan card); make the others secondary, ghost or a link.",
         });
       }
     }

@@ -45,6 +45,7 @@ function PageHeaderRoot({
       {...rest}
       className={cx("bt-page-header", className)}
       data-bt="PageHeader"
+      data-bt-region=""
     >
       <div data-bt-part="bar">
         <div data-bt-part="heading">

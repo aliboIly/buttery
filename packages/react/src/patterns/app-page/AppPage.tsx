@@ -116,6 +116,7 @@ export function AppPageSection({
       onLayoutAnimationComplete={tracking.onLayoutAnimationComplete}
       className={cx("bt-app-page-section", className)}
       data-bt-part="section"
+      data-bt-region=""
     >
       {titled || hasContent(actions) ? (
         <div data-bt-part="section-head">
