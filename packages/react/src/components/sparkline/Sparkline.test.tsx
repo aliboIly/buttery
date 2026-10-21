@@ -70,6 +70,16 @@ describe("Sparkline", () => {
     expect(path).toContain(" 50");
   });
 
+  it("leaves a gap for a value that isn't a finite number", () => {
+    render(
+      <Sparkline label="Orders" values={[4, Number.NaN, 9, 6, 2, 8, 5]} />,
+    );
+    const path = document.querySelector("path")?.getAttribute("d");
+    expect(path).not.toContain("NaN");
+    expect(path?.match(/M/g)).toHaveLength(2);
+    expect(Number.isFinite(dot()?.top)).toBe(true);
+  });
+
   it("draws nothing to mark with no values", () => {
     render(<Sparkline label="Orders" values={[null, null]} />);
     expect(document.querySelector("path")?.getAttribute("d")).toBe("");

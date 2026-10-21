@@ -11,7 +11,7 @@ export interface SparklineProps extends Omit<
 > {
   /** Names the trend for screen readers, such as "Orders, last 30 days". */
   readonly label: string;
-  /** The values, oldest first; `null` leaves a gap. */
+  /** The values, oldest first; `null`, or a value that isn't a finite number, leaves a gap. */
   readonly values: readonly (number | null)[];
   /** Its color. Defaults to `chart-1`. */
   readonly color?: ChartColor | undefined;
@@ -32,12 +32,15 @@ function inset(fraction: number): string {
  */
 export function Sparkline({
   label,
-  values,
+  values: given,
   color = "chart-1",
   className,
   style,
   ...rest
 }: SparklineProps): ReactElement {
+  const values = given.map((value) =>
+    value !== null && Number.isFinite(value) ? value : null,
+  );
   const known = values.filter((value) => value !== null);
   const low = Math.min(...known);
   const high = Math.max(...known);

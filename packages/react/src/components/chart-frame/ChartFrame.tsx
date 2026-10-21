@@ -41,7 +41,10 @@ export interface ChartSeries {
   readonly key: string;
   /** Its name in the tooltip and the screen-reader table, such as "This week". */
   readonly label: string;
-  /** One value per label, in order; `null` where there isn't one, which leaves a gap. */
+  /**
+   * One value per label, in order; `null` where there isn't one, which leaves a gap. A value that isn't a
+   * finite number, such as `NaN`, is left out the same way.
+   */
   readonly values: readonly (number | null)[];
   /** Its color. Defaults to `chart-1`, `chart-2` and on in order, or `chart-muted` for the comparison. */
   readonly color?: ChartColor | undefined;
@@ -71,7 +74,10 @@ export interface ChartFrameProps extends Omit<
   readonly size?: ChartSize | undefined;
   /** Writes a value for the tooltip and the table. Defaults to the number with up to two decimals. */
   readonly formatValue?: ((value: number) => string) | undefined;
-  /** Writes a gridline's value at the end edge. Defaults to a short form, such as 1.2K. */
+  /**
+   * Writes a gridline's value at the end edge. Defaults to a short form with the decimals its step needs,
+   * such as 1.25K.
+   */
   readonly formatTick?: ((value: number) => string) | undefined;
   /** Shows a fall against the comparison as good news (`success`) and a rise as bad. Defaults to `false`. */
   readonly lowerIsBetter?: boolean | undefined;
@@ -118,21 +124,11 @@ const SERIES_COLORS = [
 const plainNumber = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 2,
 });
-const shortNumbers = new Map<number, Intl.NumberFormat>();
-
-/** Compact numbers ("2.5K") with as many decimals as the ticks need, at least one for the compact forms. */
-function shortNumber(decimals: number): Intl.NumberFormat {
-  const digits = Math.max(1, decimals);
-  let format = shortNumbers.get(digits);
-  if (format === undefined) {
-    format = new Intl.NumberFormat(undefined, {
-      notation: "compact",
-      maximumFractionDigits: digits,
-    });
-    shortNumbers.set(digits, format);
-  }
-  return format;
-}
+// Room for every decimal a tick on a round step needs in its compact unit, so 1,250 reads "1.25K", not "1.3K".
+const shortNumber = new Intl.NumberFormat(undefined, {
+  notation: "compact",
+  maximumFractionDigits: 8,
+});
 const signedPercent = new Intl.NumberFormat(undefined, {
   style: "percent",
   maximumFractionDigits: 1,
@@ -153,11 +149,16 @@ function useChart(mark: string): ChartModel {
 function resolveSeries(series: readonly ChartSeries[]): ResolvedSeries[] {
   let next = 0;
   return series.map((entry) => {
-    if (entry.color !== undefined) return { ...entry, color: entry.color };
-    if (entry.comparison === true) return { ...entry, color: "chart-muted" };
+    const values = entry.values.map((value) =>
+      value !== null && Number.isFinite(value) ? value : null,
+    );
+    if (entry.color !== undefined)
+      return { ...entry, values, color: entry.color };
+    if (entry.comparison === true)
+      return { ...entry, values, color: "chart-muted" };
     const color = SERIES_COLORS[next % SERIES_COLORS.length] ?? "chart-1";
     next += 1;
-    return { ...entry, color };
+    return { ...entry, values, color };
   });
 }
 
@@ -267,9 +268,7 @@ function ChartFrameRoot({
     resolved.every((entry) => entry.values.every((value) => value === null));
   const state = loading ? "loading" : empty ? "empty" : "ready";
   const ticks = [...scale.ticks].reverse();
-  const tickText =
-    formatTick ??
-    ((value: number) => shortNumber(scale.decimals).format(value));
+  const tickText = formatTick ?? ((value: number) => shortNumber.format(value));
   const frameStyle: CSSProperties & CssVariables = {
     ...style,
     "--bt-chart-frame-bands": String(Math.max(1, count)),

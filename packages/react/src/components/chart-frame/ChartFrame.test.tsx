@@ -380,14 +380,14 @@ describe("ChartFrame", () => {
     ).toEqual(["1", "0.75", "0.5", "0.25", "0"]);
   });
 
-  it("leaves out values that aren't finite numbers instead of breaking its axis", () => {
+  it("leaves out values that aren't finite numbers, as gaps, instead of breaking its axis, line or tooltip", async () => {
     render(
       <Chart
         series={[
           {
             key: "now",
             label: "Orders",
-            values: [4, Number.NaN, 9, 6, 2, 8, 5],
+            values: [4, Number.NaN, 9, 6, 2, Number.POSITIVE_INFINITY, 5],
           },
         ]}
       >
@@ -396,6 +396,36 @@ describe("ChartFrame", () => {
     );
     expect(part("y-axis").children.length).toBeGreaterThan(1);
     expect(part("y-axis").textContent).not.toContain("NaN");
+    const path = document.querySelector('[data-bt-part="line"]');
+    expect(path?.getAttribute("d")).not.toContain("NaN");
+    expect(path?.getAttribute("d")?.match(/M/g)).toHaveLength(3);
+    await pointAt(1);
+    expect(
+      part("tooltip").querySelector('[data-bt-part="tooltip-value"]')
+        ?.textContent,
+    ).toBe("—");
+    const table = screen.getByRole("table", { name: "Orders" });
+    expect(table.textContent).not.toMatch(/NaN|∞/);
+  });
+
+  it("labels compact ticks with the decimals their unit needs", () => {
+    render(
+      <Chart
+        size="lg"
+        series={[
+          {
+            key: "now",
+            label: "Sales",
+            values: [400.5, 900.25, 1200, 1100.75, 700, 300.5, 1000],
+          },
+        ]}
+      >
+        <ChartFrame.Line series="now" />
+      </Chart>,
+    );
+    expect(
+      [...part("y-axis").children].map((label) => label.textContent),
+    ).toEqual(["1.25K", "1K", "750", "500", "250", "0"]);
   });
 
   it("fades in where its loading pill was as the pill fades away", async () => {
