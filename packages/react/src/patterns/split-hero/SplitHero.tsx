@@ -1,0 +1,80 @@
+import { Stagger, cx } from "@buttery/core";
+import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import { useId } from "react";
+import { HeroText } from "../../parts/hero/HeroText.tsx";
+import { Container } from "../container/Container.tsx";
+
+/** Props for `SplitHero`. */
+export interface SplitHeroProps extends Omit<
+  ComponentPropsWithRef<"section">,
+  "title"
+> {
+  /** A short line above the headline, such as what the product is. */
+  readonly eyebrow?: ReactNode;
+  /** The headline's first clause, in the strong color. */
+  readonly title: ReactNode;
+  /** The headline's continuation, in the secondary color. */
+  readonly titleMore?: ReactNode;
+  /** A line or two under the headline. */
+  readonly body?: ReactNode;
+  /** Buttons under the body, such as a primary call to action with `arrow="forward"`. */
+  readonly actions?: ReactNode;
+  /** The visual beside the words. Mark its pieces with `Stagger.Item` and they assemble one after another. */
+  readonly visual: ReactNode;
+  /** Which side the visual sits on once there's room for both: `"end"` (the default) or `"start"`. */
+  readonly visualSide?: "start" | "end" | undefined;
+}
+
+/**
+ * A page's opening band: the words on 7 of the page's 12 columns and a visual on the other 5, centered on
+ * each other, the words first and the visual under them below 1024px of page. The visual assembles as the
+ * page opens: its pieces rise from 96% into place, one after another, within 900ms. The band is a region
+ * named by its headline, an `h1`.
+ *
+ * @example
+ * <SplitHero
+ *   title="Cards that look finished."
+ *   titleMore="Write a title, pick a finish, and export it at any size."
+ *   actions={<Button variant="primary" arrow="forward">Open the studio</Button>}
+ *   visual={<StudioPreview />}
+ * />
+ */
+export function SplitHero({
+  eyebrow,
+  title,
+  titleMore,
+  body,
+  actions,
+  visual,
+  visualSide = "end",
+  className,
+  ...rest
+}: SplitHeroProps): ReactElement {
+  const titleId = useId();
+  return (
+    <section
+      aria-labelledby={titleId}
+      {...rest}
+      className={cx("bt-split-hero", className)}
+      data-bt="SplitHero"
+      data-visual-side={visualSide}
+    >
+      <Container>
+        <div data-bt-part="layout">
+          <HeroText
+            titleId={titleId}
+            eyebrow={eyebrow}
+            title={title}
+            titleMore={titleMore}
+            body={body}
+            actions={actions}
+            data-bt-part="words"
+          />
+          <Stagger arrival="assemble" data-bt-part="visual">
+            {visual}
+          </Stagger>
+        </div>
+      </Container>
+    </section>
+  );
+}

@@ -1,0 +1,38 @@
+@layer bt.patterns {
+  .bt-hero-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-hero-text[data-align="center"] {
+    align-items: center;
+    text-align: center;
+  }
+
+  .bt-hero-text > [data-bt-part="title"] {
+    max-inline-size: 22ch;
+  }
+
+  .bt-hero-text > [data-bt-part="title"] > [data-bt-part="more"] {
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-hero-text > [data-bt-part="body"] {
+    max-inline-size: 60ch;
+  }
+
+  /* 16px of gap and 8 more: the actions sit 24px under the body. */
+  .bt-hero-text > [data-bt-part="actions"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bt-space-2);
+    padding-block-start: var(--bt-space-2);
+  }
+
+  .bt-hero-text[data-align="center"] > [data-bt-part="actions"] {
+    justify-content: center;
+  }
+}

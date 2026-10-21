@@ -4,6 +4,7 @@
 @import "./parts/spinner/spinner.css";
 @import "./parts/form-field/form-field.css";
 @import "./parts/auth/auth.css";
+@import "./parts/hero/hero-text.css";
 @import "./components/confetti/confetti.css";
 @import "./components/button/button.css";
 @import "./components/arrow-link/arrow-link.css";
@@ -44,3 +45,5 @@
 @import "./patterns/page/page.css";
 @import "./patterns/section/section.css";
 @import "./patterns/container/container.css";
+@import "./patterns/split-hero/split-hero.css";
+@import "./patterns/centered-hero/centered-hero.css";
