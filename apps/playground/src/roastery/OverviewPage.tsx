@@ -13,78 +13,60 @@ import type { ChartSeries, DateRangeValue } from "@buttery/react";
 import { Truck } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import {
-  PAYOUTS,
-  bagCount,
-  daily,
-  dayLabels,
-  salesTotal,
-  sum,
-} from "./data.ts";
+import { NEXT_PAYOUT, bagCount, daily, salesTotal, sum } from "./data.ts";
 import type { Order } from "./data.ts";
 import { change, money, number, shortDate, shortMoney } from "./format.ts";
 import { go } from "./navigation.ts";
+import {
+  alignedBuckets,
+  bucketLabels,
+  buckets,
+  comparisonDays,
+  measured,
+  periodDays,
+} from "./period.ts";
 import { StockList } from "./stock.tsx";
 
 const WEEKDAYS = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
 
-function daysIn(period: DateRangeValue): number {
-  switch (period.range) {
-    case "today":
-      return 1;
-    case "last-7-days":
-      return 7;
-    case "month-to-date":
-      return 21;
-    case "last-4-weeks":
-    case "last-3-months":
-    case "last-12-months":
-    case "year-to-date":
-    case "custom":
-      return 28;
-  }
+interface Measured {
+  readonly value: number;
+  readonly delta: number | undefined;
+  readonly series: ChartSeries[];
 }
 
-/** How many days each point covers: one, or a week for a weekly or monthly interval. */
-function spanOf(period: DateRangeValue, days: number): number {
-  return period.interval === "daily" || days < 14 ? 1 : 7;
-}
-
-/** Combines `values` into points of `span` days, counting back from the most recent. */
-function grouped<Value>(
-  values: readonly Value[],
-  span: number,
-  combine: (part: readonly Value[]) => Value,
-): Value[] {
-  if (span === 1) return [...values];
-  const points: Value[] = [];
-  for (let end = values.length; end > 0; end -= span)
-    points.unshift(combine(values.slice(Math.max(0, end - span), end)));
-  return points;
-}
-
-function comparison(
-  measure: (orders: readonly Order[]) => number,
-  days: number,
+/** One metric over the period: its total, its change on the comparison, and its points to plot. */
+function measure(
+  count: (orders: readonly Order[]) => number,
   period: DateRangeValue,
-  label: string,
-): ChartSeries[] {
-  const span = spanOf(period, days);
-  const now: ChartSeries = {
-    key: "now",
-    label,
-    values: grouped(daily(measure, days), span, sum),
+): Measured {
+  const days = periodDays(period);
+  const groups = buckets(days, period.interval);
+  const now = measured(count, groups);
+  const before = comparisonDays(period, days);
+  if (before === undefined)
+    return {
+      value: sum(now),
+      delta: undefined,
+      series: [{ key: "now", label: "This period", values: now }],
+    };
+  const then = measured(count, alignedBuckets(groups, before));
+  return {
+    value: sum(now),
+    delta: change(sum(now), sum(then)),
+    series: [
+      { key: "now", label: "This period", values: now },
+      {
+        key: "before",
+        label:
+          period.comparison === "previous-year"
+            ? "A year before"
+            : "Period before",
+        values: then,
+        comparison: true,
+      },
+    ],
   };
-  if (period.comparison !== "previous-period") return [now];
-  return [
-    now,
-    {
-      key: "before",
-      label: "Period before",
-      values: grouped(daily(measure, days, days), span, sum),
-      comparison: true,
-    },
-  ];
 }
 
 /** The roastery's front page: today's numbers, what's roasting and what's on hand. */
@@ -94,31 +76,20 @@ export function OverviewPage(): ReactElement {
     interval: "daily",
     comparison: "previous-period",
   });
-  const days = daysIn(period);
-  const labels = grouped(
-    dayLabels(days),
-    spanOf(period, days),
-    (part) => part[0] ?? "",
+  const labels = bucketLabels(
+    buckets(periodDays(period), period.interval),
+    period.interval,
   );
-  const metric = (
-    measure: (orders: readonly Order[]) => number,
-  ): readonly [number, number | undefined] => {
-    const now = sum(daily(measure, days));
-    const before = sum(daily(measure, days, days));
-    return [
-      now,
-      period.comparison === "previous-period" ? change(now, before) : undefined,
-    ];
-  };
-  const [volume, volumeChange] = metric(salesTotal);
-  const [orders, ordersChange] = metric((list) => list.length);
-  const [bags, bagsChange] = metric(bagCount);
-  const refunded = (list: readonly Order[]): number =>
-    list.filter((order) => order.status === "refunded").length;
-  const [refunds, refundsChange] = metric(refunded);
+  const sales = measure(salesTotal, period);
+  const orders = measure((list) => list.length, period);
+  const bags = measure(bagCount, period);
+  const refunds = measure(
+    (list) => list.filter((order) => order.status === "refunded").length,
+    period,
+  );
   const thisWeek = daily(bagCount, 7);
   const lastWeek = daily(bagCount, 7, 7);
-  const nextPayout = PAYOUTS[0];
+  const nextPayout = NEXT_PAYOUT;
   return (
     <AppPage
       header={<PageHeader title="Overview" />}
@@ -167,10 +138,10 @@ export function OverviewPage(): ReactElement {
           <MetricCard
             title="Sales"
             info="Every sale, before refunds and fees."
-            value={money(volume)}
-            delta={volumeChange}
+            value={money(sales.value)}
+            delta={sales.delta}
             labels={labels}
-            series={comparison(salesTotal, days, period, "This period")}
+            series={sales.series}
             formatValue={money}
             formatTick={shortMoney}
             updated="Updated just now"
@@ -178,36 +149,31 @@ export function OverviewPage(): ReactElement {
           />
           <MetricCard
             title="Orders"
-            value={number(orders)}
-            delta={ordersChange}
+            value={number(orders.value)}
+            delta={orders.delta}
             labels={labels}
-            series={comparison(
-              (list) => list.length,
-              days,
-              period,
-              "This period",
-            )}
+            series={orders.series}
             updated="Updated just now"
             href="#/roastery/orders"
           />
           <MetricCard
             title="Bags sold"
             info="Bags in every order, retail and wholesale."
-            value={number(bags)}
-            delta={bagsChange}
+            value={number(bags.value)}
+            delta={bags.delta}
             labels={labels}
-            series={comparison(bagCount, days, period, "This period")}
+            series={bags.series}
             updated="Updated just now"
             href="#/roastery/stock"
           />
           <MetricCard
             title="Refunds"
             info="Orders refunded in the period. Fewer is better."
-            value={number(refunds)}
-            delta={refundsChange}
+            value={number(refunds.value)}
+            delta={refunds.delta}
             lowerIsBetter
             labels={labels}
-            series={comparison(refunded, days, period, "This period")}
+            series={refunds.series}
             updated="Updated just now"
             href="#/roastery/orders"
           />
