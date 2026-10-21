@@ -19,7 +19,8 @@ function niceStep(rough: number): number {
 
 /**
  * A value axis that always takes in zero and lands on round numbers, with about `intervals` gaps between
- * its ticks. Values that are all zero, or none, give a single tick at zero on the plot's bottom edge.
+ * its ticks; whole-number values, such as counts, get whole-number ticks. Values that are all zero, or
+ * none, give a single tick at zero on the plot's bottom edge.
  */
 export function valueScale(
   values: Iterable<number>,
@@ -27,12 +28,15 @@ export function valueScale(
 ): ValueScale {
   let low = 0;
   let high = 0;
+  let whole = true;
   for (const value of values) {
     low = Math.min(low, value);
     high = Math.max(high, value);
+    whole &&= Number.isInteger(value);
   }
   if (low === high) return { min: 0, max: 1, ticks: [0] };
-  const step = niceStep((high - low) / intervals);
+  const fine = niceStep((high - low) / intervals);
+  const step = whole ? Math.max(1, fine) : fine;
   const decimals = Math.max(0, 1 - Math.floor(Math.log10(step)));
   const min = Math.floor(low / step) * step;
   const max = Math.ceil(high / step) * step;

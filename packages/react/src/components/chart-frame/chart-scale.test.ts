@@ -21,6 +21,10 @@ describe("valueScale", () => {
     expect(valueScale([0.07, 0.31], 4).ticks).toEqual([0, 0.1, 0.2, 0.3, 0.4]);
   });
 
+  it("keeps counts on whole numbers", () => {
+    expect(valueScale([0, 1, 2, 1], 4).ticks).toEqual([0, 1, 2]);
+  });
+
   it("gives one tick at zero for no values or all zeros", () => {
     expect(valueScale([], 4)).toEqual({ min: 0, max: 1, ticks: [0] });
     expect(valueScale([0, 0], 4)).toEqual({ min: 0, max: 1, ticks: [0] });
