@@ -35,6 +35,30 @@ export const demos: readonly DemoSection[] = [
     ),
   },
   {
+    title: "Submenus",
+    description:
+      "An item that opens a second list beside it, once the pointer rests on it for 40ms or with ArrowRight.",
+    render: () => (
+      <Inline>
+        <Menu>
+          <Trigger label="Workspace" />
+          <Menu.Content align="start">
+            <Menu.Item>Settings</Menu.Item>
+            <Menu.Sub>
+              <Menu.SubTrigger>Switch workspace</Menu.SubTrigger>
+              <Menu.SubContent>
+                <Menu.Item>Harbor Beans</Menu.Item>
+                <Menu.Item>Northside Roasters</Menu.Item>
+              </Menu.SubContent>
+            </Menu.Sub>
+            <Menu.Separator />
+            <Menu.Item>Sign out</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      </Inline>
+    ),
+  },
+  {
     title: "Instant, as app chrome",
     description:
       'entrance="instant" shows the menu complete in the next frame and removes it at once.',

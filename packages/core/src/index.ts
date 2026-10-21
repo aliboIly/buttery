@@ -74,6 +74,9 @@ export {
   MenuRadioGroup,
   MenuRadioItem,
   MenuSeparator,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
   MenuTrigger,
 } from "./layers/menu/Menu.tsx";
 export type {
@@ -85,6 +88,9 @@ export type {
   MenuRadioGroupProps,
   MenuRadioItemProps,
   MenuSeparatorProps,
+  MenuSubContentProps,
+  MenuSubProps,
+  MenuSubTriggerProps,
   MenuTriggerProps,
 } from "./layers/menu/Menu.tsx";
 export type {

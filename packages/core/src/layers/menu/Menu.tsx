@@ -1,6 +1,13 @@
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { DropdownMenu } from "radix-ui";
-import { createContext, use, useId, useLayoutEffect, useRef } from "react";
+import {
+  createContext,
+  use,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import type {
   ComponentPropsWithRef,
   ComponentType,
@@ -10,8 +17,13 @@ import type {
   RefObject,
 } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state.ts";
+import { useMotionPreference } from "../../motion/preference.ts";
+import { reducedPresence } from "../../motion/presets.ts";
+import { fadeOut } from "../../motion/transitions.ts";
+import { useAnimationTracking } from "../../motion/use-animation-tracking.ts";
 import { Icon } from "../../primitives/icon/Icon.tsx";
 import type { IconComponentProps } from "../../primitives/icon/Icon.tsx";
+import { durations, easingCurves, timing } from "../../tokens/motion.ts";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
@@ -57,6 +69,21 @@ function Check(props: IconComponentProps): ReactElement {
       {...props}
     >
       <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+function Chevron(props: IconComponentProps): ReactElement {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="m9 18 6-6-6-6" />
     </svg>
   );
 }
@@ -388,6 +415,189 @@ export function MenuRadioItem({
   );
 }
 
+interface SubState {
+  readonly open: boolean;
+  readonly setOpen: (open: boolean) => void;
+}
+
+const SubContext: Context<SubState | null> = createContext<SubState | null>(
+  null,
+);
+
+function useSub(part: string): SubState {
+  const sub = use(SubContext);
+  if (!sub) {
+    throw new Error(
+      `[buttery:Menu] Menu.${part} has to be inside a <Menu.Sub>. Fix: <Menu.Sub><Menu.SubTrigger>…</Menu.SubTrigger><Menu.SubContent>…</Menu.SubContent></Menu.Sub>`,
+    );
+  }
+  return sub;
+}
+
+/** Props for `Menu.Sub`. */
+export interface MenuSubProps {
+  /** Whether the submenu is open. Pair with `onOpenChange` to control it. */
+  readonly open?: boolean | undefined;
+  /** Whether it starts open when uncontrolled. Defaults to `false`. */
+  readonly defaultOpen?: boolean | undefined;
+  /** Called when the submenu opens or closes. */
+  readonly onOpenChange?: ((open: boolean) => void) | undefined;
+  /** `Menu.SubTrigger` and `Menu.SubContent`. */
+  readonly children?: ReactNode;
+}
+
+/** A submenu: an item that opens a second list to its side. */
+export function MenuSub({
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  children,
+}: MenuSubProps): ReactElement {
+  const [isOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+  return (
+    <SubContext value={{ open: isOpen, setOpen }}>
+      <DropdownMenu.Sub open={isOpen} onOpenChange={setOpen}>
+        {children}
+      </DropdownMenu.Sub>
+    </SubContext>
+  );
+}
+
+/** Props for `Menu.SubTrigger`. */
+export interface MenuSubTriggerProps extends Omit<
+  ComponentPropsWithRef<typeof DropdownMenu.SubTrigger>,
+  "asChild"
+> {
+  /** An icon before the label. */
+  readonly icon?: ComponentType<IconComponentProps> | undefined;
+  /** What the submenu holds, such as "Switch workspace". Long labels truncate. */
+  readonly children: ReactNode;
+}
+
+/**
+ * The item that opens a submenu, with a chevron at its end. The submenu opens once the pointer has rested
+ * on it for `--bt-delay-submenu` (40ms), or with ArrowRight; moving toward the submenu on a diagonal keeps it
+ * open.
+ */
+export function MenuSubTrigger({
+  icon,
+  className,
+  children,
+  onPointerMove,
+  onPointerLeave,
+  ...rest
+}: MenuSubTriggerProps): ReactElement {
+  const sub = useSub("SubTrigger");
+  const timer = useRef(0);
+  const cancel = (): void => {
+    window.clearTimeout(timer.current);
+    timer.current = 0;
+  };
+
+  useEffect(() => cancel, []);
+
+  return (
+    <DropdownMenu.SubTrigger
+      {...rest}
+      className={cx("bt-text", className)}
+      data-role="menu"
+      data-bt-part="menu-item"
+      onPointerMove={(event) => {
+        onPointerMove?.(event);
+        if (event.pointerType !== "mouse" || sub.open || timer.current !== 0)
+          return;
+        // Radix waits 100ms before it opens a submenu; buttery opens it sooner, with Radix's pointer grace intact.
+        timer.current = window.setTimeout(() => {
+          timer.current = 0;
+          sub.setOpen(true);
+        }, timing["delay-submenu"]);
+      }}
+      onPointerLeave={(event) => {
+        onPointerLeave?.(event);
+        cancel();
+      }}
+    >
+      {icon ? <Icon icon={icon} /> : null}
+      <span
+        className="bt-truncate"
+        data-bt-truncate=""
+        data-bt-part="label"
+        title={typeof children === "string" ? children : undefined}
+      >
+        {children}
+      </span>
+      <span data-bt-part="chevron">
+        <Icon icon={Chevron} />
+      </span>
+    </DropdownMenu.SubTrigger>
+  );
+}
+
+/** Props for `Menu.SubContent`. Offsets and collision padding are fixed by buttery. */
+export type MenuSubContentProps = Omit<
+  ComponentPropsWithRef<typeof DropdownMenu.SubContent>,
+  "sideOffset" | "alignOffset" | "collisionPadding" | "forceMount" | "asChild"
+>;
+
+const subFadeIn = {
+  duration: durations.fast / 1000,
+  ease: easingCurves.out,
+};
+
+/**
+ * The submenu's list, beside its trigger with its first item level with it, on the floating surface. It
+ * fades in over `dur-fast` and out as quickly.
+ */
+export function MenuSubContent({
+  className,
+  children,
+  ...rest
+}: MenuSubContentProps): ReactElement {
+  const sub = useSub("SubContent");
+  const reduced = useMotionPreference() === "reduced";
+  const tracking = useAnimationTracking();
+  return (
+    <AnimatePresence>
+      {sub.open ? (
+        <Layer band="dropdown" key="submenu">
+          <DropdownMenu.SubContent
+            {...rest}
+            forceMount
+            asChild
+            sideOffset={space["2"]}
+            alignOffset={-space["1.5"]}
+            collisionPadding={space["2"]}
+          >
+            <motion.div
+              {...tracking}
+              initial={reduced ? reducedPresence.initial : { opacity: 0 }}
+              animate={
+                reduced
+                  ? reducedPresence.animate
+                  : { opacity: 1, transition: subFadeIn }
+              }
+              exit={
+                reduced
+                  ? reducedPresence.exit
+                  : { opacity: 0, transition: fadeOut }
+              }
+              className={cx("bt-surface bt-menu", className)}
+              data-level="floating"
+              data-bt="Menu"
+            >
+              {children}
+            </motion.div>
+          </DropdownMenu.SubContent>
+        </Layer>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
 /** `Menu` with its parts. */
 export interface MenuComponent {
   (props: MenuProps): ReactElement;
@@ -405,6 +615,12 @@ export interface MenuComponent {
   readonly RadioGroup: typeof MenuRadioGroup;
   /** One choice in a radio group. */
   readonly RadioItem: typeof MenuRadioItem;
+  /** A submenu. */
+  readonly Sub: typeof MenuSub;
+  /** The item that opens a submenu. */
+  readonly SubTrigger: typeof MenuSubTrigger;
+  /** The submenu's list. */
+  readonly SubContent: typeof MenuSubContent;
 }
 
 /**
@@ -432,4 +648,7 @@ export const Menu: MenuComponent = Object.assign(MenuRoot, {
   Group: MenuGroup,
   RadioGroup: MenuRadioGroup,
   RadioItem: MenuRadioItem,
+  Sub: MenuSub,
+  SubTrigger: MenuSubTrigger,
+  SubContent: MenuSubContent,
 });

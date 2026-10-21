@@ -15,6 +15,6 @@ export const meta: ComponentMeta = {
     "Navigation between pages: use NavBar (Phase 6)",
   ],
   related: ["Select", "Popover", "SplitButton", "OverflowCluster"],
-  a11y: "The trigger gets aria-haspopup and aria-expanded; the content is a menu of menuitems (menuitemradio in a radio group, with aria-checked). Arrow keys move, typing jumps to an item, Enter or Space chooses, Escape closes. Focus goes back to the trigger as it closes, unless a press elsewhere closed it, and it never takes focus back once you've moved on. Groups are named by their headings.",
+  a11y: "The trigger gets aria-haspopup and aria-expanded; the content is a menu of menuitems (menuitemradio in a radio group, with aria-checked). Arrow keys move, typing jumps to an item, Enter or Space chooses, Escape closes. Focus goes back to the trigger as it closes, unless a press elsewhere closed it, and it never takes focus back once you've moved on. Groups are named by their headings. A submenu's item has aria-haspopup and aria-expanded; ArrowRight opens it and ArrowLeft closes it.",
   motion: "presence",
 };

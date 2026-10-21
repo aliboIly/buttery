@@ -1,5 +1,12 @@
 import "../../styles/index.css";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
@@ -345,5 +352,75 @@ describe("Menu", () => {
     expect(
       new DOMMatrix(getComputedStyle(screen.getByRole("menu")).transform).a,
     ).toBeLessThan(1);
+  });
+
+  function Workspaces({
+    onSwitch = () => undefined,
+  }: {
+    readonly onSwitch?: (name: string) => void;
+  }): ReactElement {
+    return (
+      <Menu>
+        <Menu.Trigger>Workspace</Menu.Trigger>
+        <Menu.Content>
+          <Menu.Item>Settings</Menu.Item>
+          <Menu.Sub>
+            <Menu.SubTrigger>Switch workspace</Menu.SubTrigger>
+            <Menu.SubContent>
+              <Menu.Item
+                onSelect={() => {
+                  onSwitch("Harbor Beans");
+                }}
+              >
+                Harbor Beans
+              </Menu.Item>
+              <Menu.Item>Northside Roasters</Menu.Item>
+            </Menu.SubContent>
+          </Menu.Sub>
+        </Menu.Content>
+      </Menu>
+    );
+  }
+
+  it("opens a submenu with ArrowRight beside its item, whose items act and close the menu", async () => {
+    const onSwitch = vi.fn();
+    render(<Workspaces onSwitch={onSwitch} />);
+    await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+    const item = screen.getByRole("menuitem", { name: "Switch workspace" });
+    expect(item.getAttribute("aria-haspopup")).toBe("menu");
+    item.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    const [, submenu] = await screen.findAllByRole("menu");
+    if (!submenu) throw new Error("No submenu.");
+    expect(item.getAttribute("aria-expanded")).toBe("true");
+    await settled();
+    const first = screen.getByRole("menuitem", { name: "Harbor Beans" });
+    expect(Math.round(first.getBoundingClientRect().top)).toBe(
+      Math.round(item.getBoundingClientRect().top),
+    );
+    expect(submenu.getBoundingClientRect().left).toBeGreaterThan(
+      item.getBoundingClientRect().right,
+    );
+    await userEvent.keyboard("{Enter}");
+    expect(onSwitch).toHaveBeenCalledWith("Harbor Beans");
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
+  });
+
+  it("opens a submenu once the pointer has rested on its item for 40ms", async () => {
+    render(<Workspaces />);
+    await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+    const item = screen.getByRole("menuitem", { name: "Switch workspace" });
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fireEvent.pointerMove(item, { pointerType: "mouse" });
+    act(() => {
+      vi.advanceTimersByTime(39);
+    });
+    expect(item.getAttribute("aria-expanded")).toBe("false");
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(item.getAttribute("aria-expanded")).toBe("true");
   });
 });
