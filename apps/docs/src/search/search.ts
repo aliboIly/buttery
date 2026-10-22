@@ -173,19 +173,22 @@ function expand(query: string): Query {
     : { combineWith: "OR", queries: [query, ...alternatives] };
 }
 
+/** `summary` from `start`, at most a snippet long, ending in an ellipsis only where it was cut short. */
+function clip(summary: string, start: number): string {
+  const end = start + SNIPPET_LENGTH;
+  const part = summary.slice(start, end).trim();
+  return end >= summary.length ? part : `${part.replace(/[\s.,;:!?]+$/, "")}…`;
+}
+
 function snippetOf(summary: string, terms: readonly string[]): string {
   const lower = summary.toLowerCase();
   const at = terms
     .map((term) => lower.indexOf(term.toLowerCase()))
     .filter((index) => index >= 0)
     .sort((a, b) => a - b)[0];
-  if (at === undefined || at < SNIPPET_LENGTH / 2) {
-    return summary.length > SNIPPET_LENGTH
-      ? `${summary.slice(0, SNIPPET_LENGTH).trimEnd()}…`
-      : summary;
-  }
+  if (at === undefined || at < SNIPPET_LENGTH / 2) return clip(summary, 0);
   const start = summary.lastIndexOf(" ", at - SNIPPET_LENGTH / 3) + 1;
-  return `…${summary.slice(start, start + SNIPPET_LENGTH).trim()}…`;
+  return `…${clip(summary, start)}`;
 }
 
 /** The titles and full-text indexes of `docs`, for the build to write out and for tests. */

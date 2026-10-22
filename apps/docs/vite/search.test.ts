@@ -95,6 +95,14 @@ describe("docs search", () => {
     expect(spacing?.text).toMatch(/^buttery's spacing is a scale/);
   });
 
+  it("ends a snippet with one ellipsis where it was cut, after a word rather than its punctuation", () => {
+    const snippets = ["menu", "content", "dialog", "button", "layout", "theme"]
+      .flatMap((query) => searchDocs(indexes, query))
+      .map((hit) => hit.snippet);
+    expect(snippets.length).toBeGreaterThan(20);
+    expect(snippets.filter((snippet) => /[.,;:!?]…/.test(snippet))).toEqual([]);
+  });
+
   it("finds titles before the full text has loaded", () => {
     const top = searchDocs({ titles: indexes.titles, text: null }, "Dialog")
       .slice(0, 1)
