@@ -98,17 +98,9 @@ const COLUMNS: readonly DataTableColumn<Order>[] = [
   {
     id: "coffee",
     header: "Coffee",
-    cell: (order) => coffeeOf(order.coffeeId).name,
-    minWidth: "md",
+    cell: (order) => `${String(order.bags)} × ${coffeeOf(order.coffeeId).name}`,
+    minWidth: "lg",
     grow: 2,
-  },
-  {
-    id: "bags",
-    header: "Bags",
-    cell: (order) => order.bags,
-    minWidth: "sm",
-    align: "end",
-    sortable: true,
   },
   {
     id: "amount",
@@ -146,8 +138,6 @@ const COLUMN_SETTINGS = COLUMNS.map((column) => ({
 function compare(sort: DataTableSort | null): (a: Order, b: Order) => number {
   const direction = sort?.direction === "ascending" ? 1 : -1;
   switch (sort?.column ?? "placed") {
-    case "bags":
-      return (a, b) => (a.bags - b.bags) * direction;
     case "amount":
       return (a, b) => (a.amount - b.amount) * direction;
     default:

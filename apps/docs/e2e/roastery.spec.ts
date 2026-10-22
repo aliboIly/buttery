@@ -102,6 +102,30 @@ test("the delivery nudge waits for the overview to open by itself, so it never c
   }
 });
 
+test("at 1280 the orders table shows every column, its row actions too, without scrolling sideways", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/demos/roastery/orders");
+  const table = page.locator('[data-bt="DataTable"]');
+  const actions = table
+    .getByRole("button", { name: /^Actions for ord_/ })
+    .first();
+  await expect(actions).toBeVisible();
+  const scroll = table.locator('> [data-bt-part="scroll"]');
+  const box = await actions.boundingBox();
+  const area = await scroll.boundingBox();
+  if (!box || !area)
+    throw new Error("The table and its actions are on the page.");
+  expect(box.x + box.width).toBeLessThanOrEqual(area.x + area.width + 0.5);
+  expect(
+    await scroll.evaluate(
+      (element) => element.scrollWidth - element.clientWidth,
+    ),
+  ).toBeLessThanOrEqual(0);
+});
+
 test("the sidebar is a sheet on a phone, a rail on a small laptop and full on a wide screen", async ({
   page,
 }) => {
