@@ -156,6 +156,8 @@ export const demos: readonly DemoSection[] = [
   },
   {
     title: "Disabled",
+    description:
+      "Pass aria-disabled for an action that isn't available yet, such as Save before a form is complete or Back on a first step: the button looks like this and ignores presses but stays in the Tab order, so focus doesn't drop to the page when it turns off and screen readers still find it. Pass disabled only for an action that stays off for as long as the screen is open, such as one the person has no permission for.",
     render: () => (
       <Inline gap={2} wrap>
         {VARIANTS.map((variant) => (

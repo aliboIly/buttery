@@ -18,7 +18,7 @@ export const meta: ComponentMeta = {
     "A main action with a few alternatives: use SplitButton",
   ],
   related: ["IconButton", "ArrowLink", "SplitButton", "Pressable"],
-  a11y: 'A native button, or the element you give it with asChild, named by its label; type="button" by default. loading sets aria-busy and aria-disabled and ignores presses, keeping focus where it is. A shortcut is announced through aria-keyshortcuts; bind it with useShortcut. Icons, the arrow and the spinner are hidden from assistive technology.',
+  a11y: 'A native button, or the element you give it with asChild, named by its label; type="button" by default. loading sets aria-busy and aria-disabled and ignores presses, keeping focus where it is. aria-disabled on its own does the same without the spinner: the button stays in the Tab order and screen readers announce it as unavailable, while disabled takes it out of the Tab order, so keyboard and screen-reader users pass it without hearing it. A shortcut is announced through aria-keyshortcuts; bind it with useShortcut. Icons, the arrow and the spinner are hidden from assistive technology.',
   motion: "press",
   keyboard: [
     {
