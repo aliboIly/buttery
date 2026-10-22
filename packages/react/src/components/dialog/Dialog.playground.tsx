@@ -1,9 +1,10 @@
+import { Trash2 } from "lucide-react";
 import type { ReactElement } from "react";
 import { Center, Inline, Surface, Text } from "@buttery/core";
 import { demoChoice } from "@buttery/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Button, Dialog } from "@buttery/react";
+import { Button, Dialog, IconButton } from "@buttery/react";
 
 export const page: DocsPage = {
   section: "components/overlays",
@@ -113,27 +114,38 @@ function Sized({ size }: { readonly size: "md" | "lg" }): ReactElement {
   );
 }
 
+const TRIGGERS = ["Button", "IconButton"] as const;
+
+function triggerOf(
+  trigger: (typeof TRIGGERS)[number],
+  text: string,
+): { readonly element: ReactElement; readonly code: string } {
+  return trigger === "IconButton"
+    ? {
+        element: <IconButton icon={Trash2} label={text} />,
+        code: `<IconButton icon={Trash2} label="${text}" />`,
+      }
+    : {
+        element: <Button variant="soft">{text}</Button>,
+        code: `<Button variant="soft">${text}</Button>`,
+      };
+}
+
 export const live: LiveDemo = {
   controls: {
-    size: {
-      kind: "choice",
-      options: ["sm", "md", "lg", "full"],
-      initial: "sm",
-    },
-    showClose: { kind: "toggle", initial: true },
-    title: { kind: "text", initial: "Delete this card?" },
-    body: { kind: "text", initial: "It stays in the trash for 30 days." },
+    trigger: { kind: "choice", options: TRIGGERS, initial: "Button" },
+    triggerText: { kind: "text", initial: "Delete card" },
   },
-  render: ({ size, showClose, title, body }) => (
+  render: ({ trigger, triggerText }) => (
     <Dialog>
       <Dialog.Trigger asChild>
-        <Button variant="soft">Open the dialog</Button>
+        {triggerOf(demoChoice(trigger, TRIGGERS), String(triggerText)).element}
       </Dialog.Trigger>
-      <Dialog.Content
-        size={demoChoice(size, ["sm", "md", "lg", "full"])}
-        showClose={showClose === true}
-      >
-        <Dialog.Text title={String(title)} body={String(body)} />
+      <Dialog.Content>
+        <Dialog.Text
+          title="Delete this card?"
+          body="It stays in the trash for 30 days, then it's gone for good."
+        />
         <Dialog.Actions>
           <Dialog.Close asChild>
             <Button variant="soft" size="cta" shape="rounded">
@@ -149,12 +161,15 @@ export const live: LiveDemo = {
       </Dialog.Content>
     </Dialog>
   ),
-  code: ({ size, showClose, title, body }) => `<Dialog>
+  code: ({ trigger, triggerText }) => `<Dialog>
   <Dialog.Trigger asChild>
-    <Button variant="soft">Open the dialog</Button>
+    ${triggerOf(demoChoice(trigger, TRIGGERS), String(triggerText)).code}
   </Dialog.Trigger>
-  <Dialog.Content size="${String(size)}" showClose={${String(showClose)}}>
-    <Dialog.Text title="${String(title)}" body="${String(body)}" />
+  <Dialog.Content>
+    <Dialog.Text
+      title="Delete this card?"
+      body="It stays in the trash for 30 days, then it's gone for good."
+    />
     <Dialog.Actions>
       <Dialog.Close asChild>
         <Button variant="soft" size="cta" shape="rounded">Keep it</Button>

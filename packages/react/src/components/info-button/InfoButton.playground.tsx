@@ -19,15 +19,17 @@ export const live: LiveDemo = {
       kind: "text",
       initial: "Bags that left the roaster since Monday.",
     },
+    open: { kind: "toggle", initial: false },
     side: {
       kind: "choice",
       options: ["top", "right", "bottom", "left"],
       initial: "bottom",
     },
   },
-  render: ({ info, side }) => (
+  render: ({ info, open, side }) => (
     <InfoButton
       info={String(info)}
+      open={open === true ? true : undefined}
       side={demoChoice(side, ["bottom", "top", "right", "left"])}
     />
   ),

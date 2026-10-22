@@ -15,13 +15,18 @@ export const page: DocsPage = {
 export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "All shops" },
+    open: { kind: "toggle", initial: false },
     info: {
       kind: "text",
       initial: "Changes here apply to every Halfmoon shop.",
     },
   },
-  render: ({ label, info }) => (
-    <ScopeBadge label={String(label)} info={String(info)} />
+  render: ({ label, open, info }) => (
+    <ScopeBadge
+      label={String(label)}
+      open={open === true ? true : undefined}
+      info={String(info)}
+    />
   ),
 };
 
