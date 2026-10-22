@@ -13,6 +13,7 @@ import {
   useLayoutAnimation,
   useMergedRefs,
   useShortcut,
+  space,
   useStoredState,
   widths,
 } from "@buttery/core";
@@ -152,6 +153,25 @@ const NO_FILTERS: readonly SearchFilter[] = [];
 const RECENT_LIMIT = 5;
 const GROUP_LIMIT = 5;
 const SUGGESTION_LIMIT = 6;
+
+/**
+ * The room above and below `field` for the panel, past its 8px offset and the window's 8px margin, in whole
+ * pixels: a panel that filled a fraction more would overflow by it, and Radix would flip it to the other side.
+ */
+function roomAround(field: HTMLElement): {
+  readonly above: number;
+  readonly below: number;
+} {
+  const rect = field.getBoundingClientRect();
+  const gap = space["2"] * 2;
+  return {
+    above: Math.floor(rect.top - gap),
+    below: Math.floor(
+      document.documentElement.clientHeight - rect.bottom - gap,
+    ),
+  };
+}
+
 const PREVIEW_WIDTH = widths.inspector.value;
 const NO_ITEMS: readonly SearchItem[] = [];
 
@@ -382,6 +402,7 @@ export function CommandSearch({
     readonly end: number;
     readonly start: number;
   }>({ end: 0, start: 0 });
+  const [side, setSide] = useState<"top" | "bottom">("bottom");
   const refs = useMergedRefs(ref, input);
   const baseId = useId();
   const listboxId = `${baseId}-listbox`;
@@ -623,6 +644,47 @@ export function CommandSearch({
       window.removeEventListener("resize", measure);
     };
   }, [panelOpen]);
+
+  // The side is settled before the panel first paints: under the field where its least height fits or there's
+  // more room than above, else over it.
+  useLayoutEffect(() => {
+    const element = field.current;
+    if (!element || !panelOpen) return;
+    const least = Number.parseFloat(
+      getComputedStyle(element).getPropertyValue("--bt-command-search-min"),
+    );
+    const { above, below } = roomAround(element);
+    setSide(below >= least || below >= above ? "bottom" : "top");
+  }, [panelOpen]);
+
+  // Its height follows the room on that side, written straight onto it: Radix writes its own height variable
+  // while it delivers resize notifications, so a panel sized from that would resize in the middle of them.
+  useLayoutEffect(() => {
+    const element = field.current;
+    const panel = scroller.current?.parentElement;
+    if (!element || !panel || !panelOpen) return undefined;
+    const fit = (): void => {
+      const { above, below } = roomAround(element);
+      panel.style.setProperty(
+        "--bt-command-search-room",
+        `${String(Math.max(0, side === "bottom" ? below : above))}px`,
+      );
+    };
+    const scrolled = (event: Event): void => {
+      if (event.target instanceof Node && panel.contains(event.target)) return;
+      fit();
+    };
+    fit();
+    window.addEventListener("scroll", scrolled, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("resize", fit);
+    return () => {
+      window.removeEventListener("scroll", scrolled, { capture: true });
+      window.removeEventListener("resize", fit);
+    };
+  }, [panelOpen, side]);
 
   useLayoutEffect(() => {
     if (activeId === undefined) return;
@@ -1143,6 +1205,7 @@ export function CommandSearch({
         </motion.div>
       </Popover.Anchor>
       <Popover.Content
+        side={side}
         align={previewing && previewSide === "start" ? "end" : "start"}
         role="presentation"
         className="bt-command-search-panel"

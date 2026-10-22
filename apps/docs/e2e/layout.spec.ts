@@ -228,8 +228,8 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "open the search's suggestions",
       run: async (page: Page) => {
         await page
+          .getByRole("region", { name: "CommandSearch variants and states" })
           .getByRole("combobox", { name: "Search", exact: true })
-          .first()
           .click();
         await page.getByRole("listbox").first().waitFor();
       },
