@@ -2,6 +2,7 @@ import { Icon, cx, hasContent } from "@buttery/core";
 import { ChevronRight, Search } from "lucide-react";
 import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
+import { Button } from "../../components/button/Button.tsx";
 import { LoadingPill } from "../../components/loading-pill/LoadingPill.tsx";
 import { AppPage } from "../app-page/AppPage.tsx";
 import type { AppPageProps } from "../app-page/AppPage.tsx";
@@ -27,6 +28,8 @@ export interface SearchResultsLabels {
   readonly loading: string;
   /** Says nothing matched. */
   readonly noResults: (search: string) => string;
+  /** The button under a section with more to show, such as "Show 50 more". */
+  readonly showMore: (count: number) => string;
 }
 
 /** Props for `SearchResults`. */
@@ -40,6 +43,8 @@ export interface SearchResultsProps extends Omit<
   readonly sources: readonly SearchSource[];
   /** A line under "No results", such as a link to the help site. */
   readonly emptyHint?: ReactNode;
+  /** How many results a section shows before a "Show more" button under it adds as many again. Defaults to `50`. */
+  readonly pageSize?: number | undefined;
   /** Its words, for another language or your own. */
   readonly labels?: Partial<SearchResultsLabels>;
 }
@@ -49,6 +54,7 @@ const LABELS: SearchResultsLabels = {
   count: (count) => `${String(count)} ${count === 1 ? "result" : "results"}`,
   loading: "Searching",
   noResults: (search) => `No results for "${search}"`,
+  showMore: (count) => `Show ${String(count)} more`,
 };
 
 interface Answer {
@@ -137,11 +143,53 @@ function ResultRow({
   return <div data-bt-part="result">{content}</div>;
 }
 
+function ResultList({
+  items,
+  source,
+  query,
+  pageSize,
+  showMore,
+}: {
+  readonly items: readonly SearchItem[];
+  readonly source: SearchSource;
+  readonly query: SearchQuery;
+  readonly pageSize: number;
+  readonly showMore: (count: number) => string;
+}): ReactElement {
+  const [shown, setShown] = useState(pageSize);
+  const rest = items.length - shown;
+  return (
+    <>
+      <ul data-bt-part="results">
+        {items.slice(0, shown).map((item, index) => (
+          <li key={`${item.id}:${String(index)}`}>
+            <ResultRow item={item} source={source} query={query} />
+          </li>
+        ))}
+      </ul>
+      {rest > 0 ? (
+        <div data-bt-part="search-results-more">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setShown(shown + pageSize);
+            }}
+          >
+            {showMore(Math.min(pageSize, rest))}
+          </Button>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
 /**
  * A page of every result for a search, in an `AppPage`: its title says what was searched for and its
  * description how many results there are; then a section for each source that found something, with every
- * result as a row (its path, the label with the matching characters highlighted, a detail), each row a link.
- * A remote source's section shows a loading pill until it answers. With nothing found, an empty state says
+ * result as a row (its path, the label with the matching characters highlighted, a detail), each row a link,
+ * 50 at first and then 50 more at a time under a "Show more" button. A remote source's section shows a
+ * loading pill until it answers. With nothing found, an empty state says
  * so, with `emptyHint` under it. It's where `CommandSearch`'s "View all results" leads.
  *
  * @example
@@ -151,6 +199,7 @@ export function SearchResults({
   query,
   sources,
   emptyHint,
+  pageSize = 50,
   labels,
   className,
   ...rest
@@ -249,13 +298,14 @@ export function SearchResults({
                 <LoadingPill label={words.loading} />
               </div>
             ) : (
-              <ul data-bt-part="results">
-                {items.map((item) => (
-                  <li key={item.id}>
-                    <ResultRow item={item} source={source} query={query} />
-                  </li>
-                ))}
-              </ul>
+              <ResultList
+                key={key}
+                items={items}
+                source={source}
+                query={query}
+                pageSize={pageSize}
+                showMore={words.showMore}
+              />
             )}
           </AppPage.Section>
         ))

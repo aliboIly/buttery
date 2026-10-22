@@ -68,6 +68,10 @@
     color: var(--bt-text-secondary);
   }
 
+  .bt-search-results [data-bt-part="search-results-more"] {
+    display: flex;
+  }
+
   .bt-search-results [data-bt-part="search-results-loading"] {
     display: grid;
     place-items: center;

@@ -18,13 +18,13 @@ const PAGES = pageSource({
     {
       label: "Shipping rates",
       path: ["Settings"],
-      href: "#search-results",
+      href: "#/search-results/shipping-rates",
       icon: Settings,
     },
     {
       label: "Shipping labels",
       path: ["Orders"],
-      href: "#search-results",
+      href: "#/search-results/shipping-labels",
       icon: Settings,
     },
   ],
@@ -39,7 +39,10 @@ const ORDERS: LocalSearchSource = {
       { id: "1043", label: "Order 1043, shipping Friday", detail: "$22.50" },
     ]
       .filter((order) => matchesSearch(query.text, order.label))
-      .map((order) => ({ ...order, href: "#search-results" })),
+      .map((order) => ({
+        ...order,
+        href: `#/search-results/orders/${order.id}`,
+      })),
 };
 
 export const demos: readonly DemoSection[] = [

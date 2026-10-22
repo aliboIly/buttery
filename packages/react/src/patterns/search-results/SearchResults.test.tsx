@@ -5,6 +5,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { createRef, useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { userEvent } from "vitest/browser";
 import { matchesSearch, pageSource } from "../command-search/search.ts";
 import type {
   LocalSearchSource,
@@ -182,5 +183,36 @@ describe("SearchResults", () => {
       screen.getByText('No results for "status:shipped zzz"'),
     ).toBeTruthy();
     expect(screen.getByText("Try another word.")).toBeTruthy();
+  });
+
+  it("shows 50 rows of a long section at first, then 50 more at a time, counting every one", async () => {
+    const orders: LocalSearchSource = {
+      id: "orders",
+      label: "Orders",
+      search: () =>
+        Array.from({ length: 120 }, (_, index) => ({
+          id: String(index),
+          label: `Order ${String(1000 + index)}`,
+          href: `#order-${String(index)}`,
+        })),
+    };
+    render(
+      <SearchResults
+        query={{ text: "order", filters: [] }}
+        sources={[orders]}
+      />,
+    );
+    const section = screen.getByRole("region", { name: "Orders" });
+    expect(within(section).getByText("120 results")).toBeTruthy();
+    expect(within(section).getAllByRole("link")).toHaveLength(50);
+    await userEvent.click(
+      within(section).getByRole("button", { name: "Show 50 more" }),
+    );
+    expect(within(section).getAllByRole("link")).toHaveLength(100);
+    await userEvent.click(
+      within(section).getByRole("button", { name: "Show 20 more" }),
+    );
+    expect(within(section).getAllByRole("link")).toHaveLength(120);
+    expect(within(section).queryByRole("button")).toBeNull();
   });
 });
