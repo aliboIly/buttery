@@ -1,4 +1,4 @@
-import { isValidElement } from "react";
+import { createContext, isValidElement, use } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { Grid, Icon, Inline, Stack, Surface, Text } from "@buttery/core";
 import { ArrowLink, Breadcrumbs, Callout } from "@buttery/react";
@@ -36,6 +36,29 @@ function linkHref(href: string | undefined): string | undefined {
   return href !== undefined && /^\/(?!\/)/.test(href) ? siteHref(href) : href;
 }
 
+/** Whether the text is inside a note, whose Callout sets its size and line so its icon sits on the first line. */
+const InNote = createContext(false);
+
+function Paragraph({ children }: ComponentPropsWithRef<"p">): ReactElement {
+  return use(InNote) ? (
+    <p>{children}</p>
+  ) : (
+    <Text variant="body" asChild>
+      <p>{children}</p>
+    </Text>
+  );
+}
+
+function ListItem({ children }: ComponentPropsWithRef<"li">): ReactElement {
+  return use(InNote) ? (
+    <li>{children}</li>
+  ) : (
+    <Text variant="body" asChild>
+      <li>{children}</li>
+    </Text>
+  );
+}
+
 /** A heading's anchor id from what it renders. */
 export function slugOf(children: ReactNode): string {
   return slugify(textOf(children));
@@ -67,11 +90,7 @@ export const markdown = {
       </h3>
     </Text>
   ),
-  p: ({ children }: ComponentPropsWithRef<"p">): ReactElement => (
-    <Text variant="body" asChild>
-      <p>{children}</p>
-    </Text>
-  ),
+  p: Paragraph,
   ul: ({ children }: ComponentPropsWithRef<"ul">): ReactElement => (
     <Stack gap={3} asChild>
       <ul className="docs-list">{children}</ul>
@@ -82,11 +101,7 @@ export const markdown = {
       <ol className="docs-list">{children}</ol>
     </Stack>
   ),
-  li: ({ children }: ComponentPropsWithRef<"li">): ReactElement => (
-    <Text variant="body" asChild>
-      <li>{children}</li>
-    </Text>
-  ),
+  li: ListItem,
   a: ({ children, href }: ComponentPropsWithRef<"a">): ReactElement => (
     <a href={linkHref(href)} className="docs-link bt-focus">
       {children}
@@ -102,7 +117,9 @@ export const markdown = {
     children,
   }: ComponentPropsWithRef<"blockquote">): ReactElement => (
     <Callout tone="info" className="docs-note">
-      <Stack gap={3}>{children}</Stack>
+      <InNote value>
+        <Stack gap={3}>{children}</Stack>
+      </InNote>
     </Callout>
   ),
   pre: CodeBlock,

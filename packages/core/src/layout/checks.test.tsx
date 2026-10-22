@@ -846,4 +846,53 @@ describe("alignment", () => {
     expect(check(iconButton("inline-grid"), ["alignment"])).toEqual([]);
     expect(check(iconButton("inline-flex", "Menu"), ["alignment"])).toEqual([]);
   });
+
+  const icon = `<svg width="16" height="16" viewBox="0 0 16 16" style="flex: none"><rect width="16" height="16" /></svg>`;
+  const beside = (align: string, iconBox = ""): string => `
+    <div style="display: flex; align-items: ${align}; gap: 12px; inline-size: 400px; line-height: 40px">
+      ${iconBox ? `<span style="display: flex; align-items: center; block-size: ${iconBox}">${icon}</span>` : icon}
+      <p style="margin: 0">Seeing the columns</p>
+    </div>`;
+
+  it("flags a small icon off the middle of the line beside it, before the words or after them", () => {
+    const [leading] = check(beside("flex-start"), ["alignment"]);
+    expect(leading?.message).toMatch(
+      /^its icon sits [\d.]+px above the middle of the line beside it$/,
+    );
+    expect(leading?.px).toBeGreaterThan(10);
+    const [trailing] = check(
+      `<button type="button" style="display: inline-flex; align-items: flex-end; line-height: 40px; padding: 0; border: 0">Next ${icon}</button>`,
+      ["alignment"],
+    );
+    expect(trailing?.message).toMatch(
+      /^its icon sits [\d.]+px below the middle of the line beside it$/,
+    );
+    expect(trailing?.px).toBeGreaterThan(10);
+  });
+
+  it("passes an icon centered on its line, by the row or by a box as tall as the line", () => {
+    expect(check(beside("center"), ["alignment"])).toEqual([]);
+    expect(check(beside("flex-start", "40px"), ["alignment"])).toEqual([]);
+  });
+
+  it("leaves an icon centered on a title and its description, and an icon in a tinted tile", () => {
+    expect(
+      check(
+        `<div style="display: flex; align-items: center; gap: 12px; line-height: 20px">
+          ${icon}
+          <div><p style="margin: 0">Payouts</p><p style="margin: 0">Every Friday</p></div>
+        </div>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
+    expect(
+      check(
+        `<div style="display: flex; align-items: flex-start; gap: 12px; line-height: 20px">
+          <span style="display: grid; place-items: center; inline-size: 40px; block-size: 40px">${icon}</span>
+          <p style="margin: 0">Payouts</p>
+        </div>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
+  });
 });

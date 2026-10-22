@@ -1452,6 +1452,114 @@ export function createLayoutToolkit(): LayoutToolkit {
           fix: "Center an icon-only control's icon: keep the component's own display (IconButton is a grid with place-items: center) rather than setting another, and give the icon no margin.",
         });
       }
+
+      // A small icon beside words, as in a callout, a menu item or a button, sits on the middle of the line next to it.
+      const linesOf = (node: Node): DOMRect[] => {
+        const range = document.createRange();
+        const rects: DOMRect[] = [];
+        const texts: Text[] = [];
+        if (node instanceof Text) texts.push(node);
+        else {
+          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+          for (let text = walker.nextNode(); text; text = walker.nextNode())
+            if (text instanceof Text) texts.push(text);
+        }
+        for (const text of texts) {
+          const parent = text.parentElement;
+          if (!text.data.trim() || !parent || parent.closest("svg")) continue;
+          if (!isVisible(parent) || withinVisuallyHidden(parent)) continue;
+          range.selectNodeContents(text);
+          for (const rect of range.getClientRects())
+            if (rect.width > 0.5 && rect.height > 0.5) rects.push(rect);
+        }
+        return rects;
+      };
+      const isRow = (element: Element): boolean => {
+        const { display, flexDirection } = styleOf(element);
+        if (display.includes("grid")) return true;
+        return display.includes("flex") && flexDirection.startsWith("row");
+      };
+      const sibling = (
+        item: Element,
+        forward: boolean,
+      ): { readonly node: Node; readonly lines: DOMRect[] } | null => {
+        for (
+          let node = forward ? item.nextSibling : item.previousSibling;
+          node;
+          node = forward ? node.nextSibling : node.previousSibling
+        ) {
+          if (node instanceof Text && !node.data.trim()) continue;
+          if (node instanceof Element && !isVisible(node)) continue;
+          const lines = linesOf(node);
+          return lines.length > 0 ? { node, lines } : null;
+        }
+        return null;
+      };
+      for (const icon of document.querySelectorAll("svg")) {
+        if (icon.parentElement?.closest("svg")) continue;
+        if (isTooling(icon) || !isVisible(icon)) continue;
+        const scale = drawnScale(icon);
+        const mark = icon.getBoundingClientRect();
+        if (mark.width / scale > 32 || mark.height / scale > 32) continue;
+        if (mark.height / scale < 8) continue;
+        let item: Element = icon;
+        let beside: ReturnType<typeof sibling> = null;
+        let leading = true;
+        for (let depth = 0; depth < 3 && item.parentElement; depth += 1) {
+          const row = item.parentElement;
+          if (isRow(row)) {
+            beside = sibling(item, true);
+            if (!beside) {
+              beside = sibling(item, false);
+              leading = false;
+            }
+            if (beside) break;
+          }
+          if (linesOf(row).length > 0 || row === document.body) break;
+          item = row;
+        }
+        if (!beside) continue;
+        const { lines } = beside;
+        const line = leading ? lines[0] : lines.at(-1);
+        if (!line) continue;
+        if (Math.min(line.bottom, mark.bottom) <= Math.max(line.top, mark.top))
+          continue;
+        // An icon in a box larger than a line, such as a tinted tile, lines up with its text by the tile.
+        const host =
+          beside.node instanceof Element ? beside.node : item.parentElement;
+        const lineHeight =
+          (host ? Number.parseFloat(styleOf(host).lineHeight) : Number.NaN) ||
+          line.height / scale;
+        if (
+          item !== icon &&
+          item.getBoundingClientRect().height / scale >
+            Math.max(mark.height / scale, lineHeight) + 2
+        )
+          continue;
+        const center = mark.top + mark.height / 2;
+        const off = (center - (line.top + line.height / 2)) / scale;
+        if (Math.abs(off) <= 1) continue;
+        const others = lines.filter(
+          (rect) => rect.top >= line.bottom - 1 || rect.bottom <= line.top + 1,
+        );
+        if (others.length > 0) {
+          // Centered on a title and its description together, a choice rather than a slip.
+          const top = Math.min(...lines.map((rect) => rect.top));
+          const bottom = Math.max(...lines.map((rect) => rect.bottom));
+          if (Math.abs(center - (top + bottom) / 2) / scale <= 1) continue;
+          const pitch = Math.min(
+            ...others.map((rect) => Math.abs(rect.top - line.top)),
+          );
+          if (Math.abs(off) * scale >= pitch / 2) continue;
+        }
+        report({
+          rule: "alignment",
+          a: selectorFor(item),
+          px: Math.round(Math.abs(off) * 10) / 10,
+          message: `its icon sits ${px(Math.abs(off))} ${off > 0 ? "below" : "above"} the middle of the line beside it`,
+          fix: "Center a small icon on the line of text beside it: center the row (align-items: center) when the text is one line, or give the icon a box as tall as the text's line and leave the text untrimmed (text-box: normal) so the two lines match.",
+        });
+      }
     }
 
     return violations;
