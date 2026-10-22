@@ -1,5 +1,5 @@
 import { Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Breadcrumbs, Button, DetailPage } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -49,6 +49,8 @@ export function PlanDetail(): ReactElement {
     </DetailPage>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Choose this plan");

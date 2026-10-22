@@ -1,5 +1,5 @@
 import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, DetailPage } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -40,6 +40,8 @@ export function GreenCoffeeLot(): ReactElement {
     </DetailPage>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Reorder 300 kg");
