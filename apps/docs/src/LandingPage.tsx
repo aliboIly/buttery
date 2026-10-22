@@ -192,9 +192,20 @@ export function LandingPage({
             <Button variant="secondary" size="cta" asChild>
               <a href={`/${COMPONENTS_OVERVIEW}`}>Browse components</a>
             </Button>
-            <div className="docs-landing-command">
+            <Stack gap={1} align="center" className="docs-landing-command">
               <CopyLine text={NEW_APP} label="Copy the command" />
-            </div>
+              <Text variant="caption" tone="secondary">
+                Run it in a clone of the buttery repository until buttery is on
+                npm.{" "}
+                <a
+                  href="/get-started/installation"
+                  className="docs-link bt-focus"
+                >
+                  Installation
+                </a>{" "}
+                has the steps.
+              </Text>
+            </Stack>
           </>
         }
       />

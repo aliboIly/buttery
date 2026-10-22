@@ -89,6 +89,26 @@ test("the landing page shows the newest three releases and opens every one", asy
   );
 });
 
+test("the landing page says under its command where the command runs, linking Installation", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const command = page.locator(".docs-copy-line", {
+    hasText: "pnpm new-app my-app",
+  });
+  const note = page.getByText(/^Run it in a clone of the buttery repository/);
+  await expect(note).toBeVisible();
+  const [above, below] = await Promise.all([
+    command.boundingBox(),
+    note.boundingBox(),
+  ]);
+  expect(below && above && below.y).toBeGreaterThanOrEqual(
+    above ? above.y + above.height : Number.POSITIVE_INFINITY,
+  );
+  await note.getByRole("link", { name: "Installation" }).click();
+  await expect(page).toHaveURL(/\/get-started\/installation$/);
+});
+
 test("the landing page's settings card changes its preview", async ({
   page,
 }) => {
