@@ -295,6 +295,21 @@ describe("Dialog", () => {
     );
   });
 
+  it("warns, with the fix, when a description prop sits beside a Dialog.Text body", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <Dialog defaultOpen>
+        <Dialog.Content description="We never share it.">
+          <Dialog.Text title="Add a backup email" body="For sign-in codes." />
+        </Dialog.Content>
+      </Dialog>,
+    );
+    await screen.findByRole("dialog");
+    expect(warn).toHaveBeenCalledWith(
+      "[buttery:Dialog] A dialog has a Dialog.Text body and a description prop, and screen readers read only one of them. Fix: drop the description prop, or the body.",
+    );
+  });
+
   it("is 400, 560 or 880 wide by size, and stays 16px inside a narrow window", async () => {
     await page.viewport(1200, 800);
     for (const [size, width] of [

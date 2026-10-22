@@ -53,6 +53,7 @@ const TriggerContext = createContext<RefObject<HTMLElement | null> | null>(
 interface ContentRegistry {
   readonly register: (withBody: boolean) => () => void;
   readonly describe: () => () => void;
+  readonly describeByProp: () => () => void;
 }
 
 const ContentContext = createContext<ContentRegistry | null>(null);
@@ -160,6 +161,7 @@ export function DialogContent({
   const titles = useRef(0);
   const descriptions = useRef(0);
   const bodies = useRef(0);
+  const byProp = useRef(false);
   const element = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, element);
   const body = useRef<HTMLDivElement>(null);
@@ -173,12 +175,17 @@ export function DialogContent({
   const registry = useMemo<ContentRegistry>(() => {
     // Radix gives every description in a dialog the same id, so a screen reader reads only the first.
     const warnIfTwo = (): void => {
-      if (bodies.current === 0 || descriptions.current <= bodies.current)
-        return;
-      warnOnce(
-        "Dialog",
-        "A dialog has both a Dialog.Text body and a Dialog.Description, and screen readers read only one of them. Fix: put the description in Dialog.Text's body, or move the body into the Dialog.Description.",
-      );
+      if (bodies.current === 0) return;
+      if (descriptions.current > bodies.current)
+        warnOnce(
+          "Dialog",
+          "A dialog has both a Dialog.Text body and a Dialog.Description, and screen readers read only one of them. Fix: put the description in Dialog.Text's body, or move the body into the Dialog.Description.",
+        );
+      if (byProp.current)
+        warnOnce(
+          "Dialog",
+          "A dialog has a Dialog.Text body and a description prop, and screen readers read only one of them. Fix: drop the description prop, or the body.",
+        );
     };
     return {
       register: (withBody) => {
@@ -207,8 +214,20 @@ export function DialogContent({
           setDescribed(descriptions.current > 0);
         };
       },
+      describeByProp: () => {
+        byProp.current = true;
+        warnIfTwo();
+        return () => {
+          byProp.current = false;
+        };
+      },
     };
   }, []);
+  const hasDescription = description !== undefined;
+  useLayoutEffect(
+    () => (hasDescription ? registry.describeByProp() : undefined),
+    [registry, hasDescription],
+  );
   const motionOf = reduced
     ? reducedPresence
     : size === "full"
