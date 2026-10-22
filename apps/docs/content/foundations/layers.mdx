@@ -14,25 +14,51 @@ A layer is a band of the page's stacking order, such as `dropdown`, `modal` or `
 
 ## The bands
 
-From the lowest. Each band is a token, `--bt-z-<band>`, and buttery's stylelint config fails a `z-index` that isn't one.
+Each band is a token, `--bt-z-<band>`, listed here from the lowest. buttery's stylelint config fails a `z-index` that isn't one of them.
 
 <LayerTokens />
 
-## Put something in a layer
+## The layer primitives
+
+Four primitives put things over the page or keep them in view while it scrolls. Each has its own section below, with its examples and props.
+
+<Cards>
+<Card title="Layer">
 
 `Layer` renders its children above the page in the band you name, in a container that covers the window but lets clicks through. A layer opened from inside another one stacks above it. Menus, popovers, dialogs and tooltips open their own layers, so most code never renders `Layer` itself.
 
-## Scrims
+</Card>
+<Card title="Scrim">
 
 `Scrim` covers the window behind a layer's content: `dim` darkens it, as behind a dialog, and `blur` softens it, as behind a menu that opens over busy content. Put it first inside the `Layer`, so it sits under what it sets apart.
 
-## Sticky bars
+</Card>
+<Card title="Sticky">
 
 `Sticky` keeps a bar at the top or bottom of its scroll container while the rest scrolls, and stacks with the other sticky bars there instead of covering them. `variant="aside"` makes a sticky side column, such as this site's sidebar.
 
-## Floating lanes
+</Card>
+<Card title="FloatingLanes">
 
-Toasts, notices and guides that float over the page go in a lane, so they stack instead of covering each other: toasts at the bottom center, notices at the top end, and guidance, such as a setup guide, at the bottom end. Lanes move out of the way of sticky bars and anything registered with `useFloatingObstacle`. Render into one with `FloatingLanes.Item`; for toasts, call `toast()` from `@buttery/react`.
+Toasts, notices and guides that float over the page go in a lane, so they stack instead of covering each other. Lanes move out of the way of sticky bars and anything registered with `useFloatingObstacle`. Render into one with `FloatingLanes.Item`; for toasts, call `toast()` from `@buttery/react`.
+
+</Card>
+</Cards>
+
+`FloatingLanes.Item` takes the lane as `lane`, `"bottom-center"` by default:
+
+<DocsTable
+  columns={["Lane", "What goes there", "Band"]}
+  rows={[
+    ["`bottom-center`", "Toasts", "`toast`, above dialogs"],
+    ["`top-end`", "Notices", "`toast`, above dialogs"],
+    [
+      "`bottom-end`",
+      "Guidance, such as a setup guide",
+      "`floating`, under dialogs",
+    ],
+  ]}
+/>
 
 ## Layer
 

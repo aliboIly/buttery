@@ -29,7 +29,7 @@ export function Root(): ReactElement {
 }
 ```
 
-A `ButteryProvider` inside another one sets the scheme for its part of the page only, which is how [Elevation](/foundations/elevation) shows light and dark surfaces side by side.
+> **Part of a page.** A `ButteryProvider` inside another one sets the scheme for its part of the page only, which is how [Elevation](/foundations/elevation) shows light and dark surfaces side by side.
 
 ## Density
 
@@ -41,7 +41,17 @@ A `ButteryProvider` inside another one sets the scheme for its part of the page 
 
 ## Reading the settings in code
 
-`useButtery()` returns what the nearest `ButteryProvider` resolved: `colorScheme` (`"light"` or `"dark"`, with `"system"` already settled), `density`, `platform` (`"web"`, or `"desktop"` in a Tauri window) and `reducedMotion` as a boolean. It throws without a provider above it, so a component that has to work with or without one reads `ButteryContext` with `use(ButteryContext)` instead, which gives `null` outside a provider.
+`useButtery()` returns what the nearest `ButteryProvider` resolved:
+
+<DocsTable
+  columns={["Field", "Value"]}
+  rows={[
+    ["`colorScheme`", '`"light"` or `"dark"`, with `"system"` already settled'],
+    ["`density`", '`"comfortable"` or `"compact"`'],
+    ["`platform`", '`"web"`, or `"desktop"` in a Tauri window'],
+    ["`reducedMotion`", "A boolean, `true` when motion is reduced"],
+  ]}
+/>
 
 ```tsx
 import type { ReactElement } from "react";
@@ -53,6 +63,8 @@ export function SchemeNote(): ReactElement {
   return <Text variant="caption">Showing the {colorScheme} theme</Text>;
 }
 ```
+
+> **Without a provider.** `useButtery()` throws when there's no `ButteryProvider` above it. A component that has to work with or without one reads `ButteryContext` with `use(ButteryContext)` instead, which gives `null` outside a provider.
 
 ## Your own theme
 
@@ -79,9 +91,38 @@ export function Root(): ReactElement {
 }
 ```
 
-- `accent` sets the focus ring, selection and links, as hex. buttery works out the shades for light and dark, and an `accent-text` that meets contrast.
-- `primary` sets the main button's color, as hex.
-- `neutral` tints every gray: `"gray"`, `"warm"` or `"cool"`.
-- `radius` makes corners rounder or tighter: `"soft"`, `"default"` or `"crisp"`. Nested surfaces stay concentric at every scale.
-- `density` is the density the provider starts in.
-- `overrides` has the final word on any color token, per scheme.
+Each choice is optional:
+
+<DocsTable
+  columns={["Option", "What it sets", "Default"]}
+  rows={[
+    [
+      "`accent`",
+      "The focus ring, selection and links, as hex",
+      "buttery's blue",
+    ],
+    [
+      "`primary`",
+      "The main button's color, as hex",
+      "Near-black, inverted in dark",
+    ],
+    [
+      "`neutral`",
+      'The tint of every gray: `"gray"`, `"warm"` or `"cool"`',
+      '`"gray"`',
+    ],
+    [
+      "`radius`",
+      'Rounder or tighter corners: `"soft"`, `"default"` or `"crisp"`',
+      '`"default"`',
+    ],
+    ["`density`", "The density the provider starts in", '`"comfortable"`'],
+    [
+      "`overrides`",
+      "The final word on any color token, per scheme, under `light` and `dark`",
+      "None",
+    ],
+  ]}
+/>
+
+From an `accent`, buttery works out the shades for light and dark, and an `accent-text` that meets contrast. At every `radius`, nested surfaces stay concentric.

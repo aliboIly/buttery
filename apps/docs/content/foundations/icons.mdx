@@ -34,17 +34,29 @@ export function ShippingNote(): ReactElement {
 
 An icon is hidden from screen readers unless it has a `label`, because the text beside it usually says the same thing. When an icon stands alone and means something, give it a label and it becomes an image named by it.
 
+<DoDont>
+<Do>
+
 ```tsx
 import type { ReactElement } from "react";
-import { Icon, Inline, Text } from "@buttery/core";
-import { TriangleAlert, Truck } from "lucide-react";
+import { Icon } from "@buttery/core";
+import { TriangleAlert } from "lucide-react";
 
-// Do: an icon that means something on its own says what.
 export function PaymentFailed(): ReactElement {
   return <Icon icon={TriangleAlert} label="Payment failed" />;
 }
+```
 
-// Don't: a label that repeats the text beside it is read twice.
+An icon that means something on its own says what.
+
+</Do>
+<Dont>
+
+```tsx
+import type { ReactElement } from "react";
+import { Icon, Inline, Text } from "@buttery/core";
+import { Truck } from "lucide-react";
+
 export function Shipping(): ReactElement {
   return (
     <Inline gap={2} align="center">
@@ -55,11 +67,29 @@ export function Shipping(): ReactElement {
 }
 ```
 
-A button that's only an icon is an `IconButton`, which takes a required `label` and shows it as a tooltip.
+A label that repeats the text beside it is read twice.
+
+</Dont>
+</DoDont>
+
+> **Icon buttons.** A button that's only an icon is an `IconButton`, which takes a required `label` and shows it as a tooltip.
 
 ## The arrow and the spinner
 
-Two drawn parts sit beside the icon set. `Arrow` is the navigation arrow that `Button` and `ArrowLink` draw beside their label: a chevron, `direction="forward"` or `"back"`, that grows a stem into an arrow while the control holding it, marked `data-arrow`, is hovered or focused. Only transforms change, so the control never changes size. `Spinner` is the small turning ring a busy control shows over its label, and it holds still with reduced motion. Reach for them through `Button`'s `arrow` and `loading` props first, and on their own only inside a control of your own.
+Two drawn parts sit beside the icon set. Reach for them through `Button`'s props first, and on their own only inside a control of your own.
+
+<Cards>
+<Card title="Arrow">
+
+`Arrow` is the navigation arrow that `Button` and `ArrowLink` draw beside their label: a chevron, `direction="forward"` or `"back"`, that grows a stem into an arrow while the control holding it, marked `data-arrow`, is hovered or focused. Only transforms change, so the control never changes size. On a `Button`, it's the `arrow` prop.
+
+</Card>
+<Card title="Spinner">
+
+`Spinner` is the small turning ring a busy control shows over its label, and it holds still with reduced motion. On a `Button`, it's the `loading` prop, which keeps the button's size while it's busy.
+
+</Card>
+</Cards>
 
 ## Icon
 

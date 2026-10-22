@@ -42,21 +42,36 @@ export function PayoutCard(): ReactElement {
 }
 ```
 
+Every step, with its variable and its length:
+
+<SpacingScale />
+
 In CSS the steps are variables, `--bt-space-<step>`, with an underscore for a half step: `var(--bt-space-0_5)`.
 
+<DoDont>
+<Do>
+
 ```css
-/* Do: a step from the scale. */
 .toolbar {
   gap: var(--bt-space-2);
 }
+```
 
-/* Don't: a length off the scale, which buttery's stylelint config fails. */
+A step from the scale: 8px, the same space as `gap={2}`.
+
+</Do>
+<Dont>
+
+```css
 .toolbar {
   gap: 10px;
 }
 ```
 
-<SpacingScale />
+A length off the scale, which buttery's stylelint config fails.
+
+</Dont>
+</DoDont>
 
 ## Control heights
 

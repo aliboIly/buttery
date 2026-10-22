@@ -14,7 +14,7 @@ The palettes are 24 gradient presets and the solid colors taken from them, made 
 
 ## Use a preset
 
-Import them from `@buttery/core/palettes`. `gradientCss` turns a gradient into a CSS background:
+Import them from `@buttery/core/palettes`. `gradientCss` turns a gradient into a CSS background, blended in OKLab at 135° unless you pass another angle:
 
 ```tsx
 import type { ReactElement } from "react";
@@ -36,6 +36,21 @@ export function Cover(): ReactElement {
 
 ## The presets
 
-Three rows run over six hue families, one to a column (butter, apricot, rose, lilac, sky and mint): cream pastels, fresh mids and a deep row. The fourth row is neutral, from paper to graphite. Each stop shifts lightness, chroma and hue a little toward its neighbor, so the blends stay soft.
+The gradients come in four rows of six. The first three share six hue families, one to a column: butter, apricot, rose, lilac, sky and mint. Every stop shifts lightness, chroma and hue a little toward its neighbor, so the blends stay soft.
+
+<DocsTable
+  columns={["Row", "Presets, by id"]}
+  rows={[
+    ["Cream pastels", "`cream`, `peach`, `blush`, `lilac`, `mist`, `mint`"],
+    ["Fresh mids", "`honey`, `apricot`, `rose`, `violet`, `sky`, `sea`"],
+    ["Deep tones", "`espresso`, `rust`, `plum`, `ink`, `navy`, `forest`"],
+    [
+      "Neutrals, from paper to graphite",
+      "`paper`, `fog`, `stone`, `sand`, `slate`, `graphite`",
+    ],
+  ]}
+/>
+
+The 18 solids are the midpoints of the cream, deep and neutral gradients, mixed in OKLab. Every preset, with its OKLCH and hex values:
 
 <PaletteGrids />

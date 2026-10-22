@@ -10,9 +10,38 @@ related: [foundations/elevation, layout/surface-and-nesting]
 
 import { RadiusScale } from "../../src/foundations/blocks.tsx";
 
-The radius scale names the corner radii buttery uses, from `xs` (6px) to `full`. Use a radius token for every rounded corner, and let nested surfaces work out their own.
+The radius scale names the corner radii buttery uses, from `xs` (6px) to `full`, and a few named for the part they round, such as `kbd` (5px) for keycaps. Use a radius token for every rounded corner, and let nested surfaces work out their own.
 
 <RadiusScale />
+
+## Use a radius token
+
+Each radius is a CSS variable, `--bt-r-<name>`. Read it with `var()`, never a length of your own:
+
+<DoDont>
+<Do>
+
+```css
+.tile {
+  border-radius: var(--bt-r-lg);
+}
+```
+
+A radius from the scale, which follows the theme when `createTheme`'s `radius` makes corners rounder or tighter.
+
+</Do>
+<Dont>
+
+```css
+.tile {
+  border-radius: 11px;
+}
+```
+
+A radius off the scale, which won't nest and fails buttery's stylelint config.
+
+</Dont>
+</DoDont>
 
 ## Concentric corners
 
@@ -34,15 +63,3 @@ export function SettingsGroup(): ReactElement {
 ```
 
 <Example of="Surface" name="nested-section" />
-
-```css
-/* Do: a radius from the scale. */
-.tile {
-  border-radius: var(--bt-r-lg);
-}
-
-/* Don't: a radius off the scale, which won't nest and fails buttery's stylelint config. */
-.tile {
-  border-radius: 11px;
-}
-```

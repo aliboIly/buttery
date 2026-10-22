@@ -17,14 +17,21 @@ A surface level is a background, edge, shadow, radius and padding that together 
 
 From the lowest:
 
-- `app`: the background behind everything.
-- `panel`: a large region on the app background, such as an inspector.
-- `section`: a quiet well that groups cards.
-- `card`: content on a page or in a section.
-- `raised`: a card that's lifted, such as a selected item.
-- `floating`: menus, popovers and toolbars that float over the page.
-- `dialog`: dialogs, over a scrim.
-- `inset`: a sunken field inside a card.
+<DocsTable
+  columns={["Level", "What it's for"]}
+  rows={[
+    ["`app`", "The background behind everything"],
+    ["`panel`", "A large region on the app background, such as an inspector"],
+    ["`section`", "A quiet well that groups cards"],
+    ["`card`", "Content on a page or in a section"],
+    ["`raised`", "A card that's lifted, such as a selected item"],
+    ["`floating`", "Menus, popovers and toolbars that float over the page"],
+    ["`dialog`", "Dialogs, over a scrim"],
+    ["`inset`", "A sunken field inside a card"],
+  ]}
+/>
+
+Give `Surface` its level with `level`, which is `"card"` by default:
 
 ```tsx
 import type { ReactElement } from "react";
@@ -41,7 +48,7 @@ export function MenuPanel(): ReactElement {
 
 <Example of="Surface" name="floating-menu" />
 
-In dark mode surfaces get lighter as they rise instead of casting stronger shadows, which can't be seen on a dark background. The same levels in both:
+In dark mode, surfaces get lighter as they rise instead of casting stronger shadows, which can't be seen on a dark background. The same levels in both:
 
 <SurfaceLevels />
 
