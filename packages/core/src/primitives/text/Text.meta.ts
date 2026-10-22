@@ -14,4 +14,7 @@ export const meta: ComponentMeta = {
   related: ["Stack", "Icon"],
   a11y: "Renders a p or span; use asChild to render a heading (h1–h6) so the document outline stays correct. Truncated text keeps the full text in its title.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "Block roles (the titles, body, caption and the display roles) are paragraphs trimmed to their text, with body text wrapping at 60 characters and display headings at 22; the other roles are inline spans. With truncate it keeps to one line and ends in an ellipsis, with its full text in its title. It has no hit area.",
 };

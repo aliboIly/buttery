@@ -17,4 +17,7 @@ export const meta: ComponentMeta = {
   related: ["Text", "Stack"],
   a11y: "The title is a real heading, an h2 unless titleAs says otherwise, so the stack shows up in a screen reader's list of headings; pick the level that fits the page. Use titleAs=\"p\" when the title isn't a heading. The body and caption are paragraphs.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It's as wide as its parent. The size sets the gaps, measured between trimmed text: a dialog's body sits 16px under its title and the caption 20px under that, an empty state's 12 and 12, a section's 16 and 16, and a feature's 12 and 16. Text wraps, body text at 60 characters, and it has no hit area.",
 };

@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A dialog's title, body and caption, each in its role. */
 export function Roles(): ReactElement {
@@ -16,3 +17,10 @@ export function Roles(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Make it yours");
+  await see("Tip: hold Shift for finer steps.");
+};
