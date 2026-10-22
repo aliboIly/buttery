@@ -51,8 +51,7 @@ export function ShippingAddress(): ReactElement {
             error={missing(postcode)}
           />
           <TextField
-            label="City"
-            hint="Optional"
+            label="City (optional)"
             autoComplete="address-level2"
             value={city}
             onValueChange={setCity}
