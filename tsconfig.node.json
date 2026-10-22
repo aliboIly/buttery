@@ -22,6 +22,8 @@
     "apps/docs/src/slug.ts",
     "apps/docs/src/search/search.ts",
     "apps/docs/src/search/synonyms.ts",
+    "apps/docs/src/foundations/color-groups.ts",
+    "apps/docs/src/motion-text.ts",
     "apps/docs/tests/**/*.ts"
   ],
   "references": [

@@ -2,7 +2,7 @@ import { createElement, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Copy, Check } from "lucide-react";
 import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { DemoValues, Density, MotionClass } from "@buttery/core";
+import type { DemoValues, Density } from "@buttery/core";
 import {
   Breadcrumbs,
   Button,
@@ -14,6 +14,7 @@ import {
 } from "@buttery/react";
 import type { StatusTone } from "@buttery/react";
 import { CodeText } from "./CodeBlock.tsx";
+import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { ExampleFrame } from "./ExampleFrame.tsx";
 import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
 import { PageFooter } from "./PageFooter.tsx";
@@ -21,6 +22,7 @@ import { TableScroll } from "./TableScroll.tsx";
 import type { Neighbor } from "./PageFooter.tsx";
 import { ExportDocs, PropsTables } from "./PropsTables.tsx";
 import type { Heading } from "./content.ts";
+import { MOTION_TEXT, REDUCED_TEXT } from "./motion-text.ts";
 import { rootOf } from "./nav.ts";
 import { components } from "./registry.ts";
 import type { ComponentEntry } from "./registry.ts";
@@ -77,36 +79,6 @@ function Facts({
 function idFor(entry: ComponentEntry, depth: Depth, title: string): string {
   return depth === 2 ? slugify(title) : slugify(`${entry.meta.name} ${title}`);
 }
-
-/** What each motion class does, in a sentence for a component's Motion part. */
-const MOTION: Readonly<Record<MotionClass, string>> = {
-  none: "It doesn't move.",
-  press:
-    "It scales to 97% while it's pressed, over `--bt-dur-press`, and springs back when it's let go.",
-  hover:
-    "It answers the pointer and keyboard focus within `--bt-dur-fast`, such as an arrow growing its stem, without changing size.",
-  indicator:
-    "Its selection indicator slides to the chosen option on `spring.snappy`, inside one track.",
-  presence:
-    "It appears with a `Presence` preset and leaves faster than it came, in about 60% of the time.",
-  morph:
-    "It changes shape as one surface, on `spring.smooth`, or `spring.morph` for a big change, rather than closing and reopening.",
-  loop: "It cycles its states every few seconds and pauses while it's offscreen.",
-  celebration:
-    "It celebrates a real finish with one short burst, never a routine action.",
-};
-
-/** What each motion class does with reduced motion, unless a component's meta says more. */
-const REDUCED: Readonly<Record<MotionClass, string>> = {
-  none: "Nothing changes.",
-  press: "It presses in at once, without easing.",
-  hover: "The change happens at once.",
-  indicator: "The indicator moves at once.",
-  presence: "It fades in and out in 100ms, without moving.",
-  morph: "It takes its new shape at once.",
-  loop: "It stops on its first state.",
-  celebration: "It doesn't celebrate.",
-};
 
 const STATUS: Readonly<
   Record<
@@ -375,9 +347,10 @@ export function ComponentBody({
           <HeadingAt depth={depth} id={idFor(entry, depth, "Motion")}>
             Motion
           </HeadingAt>
-          <Text variant="body">{MOTION[meta.motion]}</Text>
+          <Text variant="body">{MOTION_TEXT[meta.motion]}</Text>
           <Text variant="body">
-            With reduced motion: {meta.reducedMotion ?? REDUCED[meta.motion]}
+            With reduced motion:{" "}
+            {meta.reducedMotion ?? REDUCED_TEXT[meta.motion]}
           </Text>
         </section>
       </Stack>
@@ -489,7 +462,14 @@ export function ComponentPage({
               >{`Since ${page.since}`}</Text>
             ) : null}
           </Inline>
-          <ImportLine entry={entry} />
+          <Inline gap={2} align="center" wrap>
+            <ImportLine entry={entry} />
+            <CopyPageMarkdown
+              route={
+                page ? `${rootOf(page.section)}/${entry.route}` : entry.route
+              }
+            />
+          </Inline>
         </Stack>
         <Stack gap={4} asChild>
           <section aria-label={`${meta.name} demo`}>

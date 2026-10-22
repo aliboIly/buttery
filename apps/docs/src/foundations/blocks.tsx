@@ -16,28 +16,17 @@ import {
 } from "@buttery/core";
 import type { SpaceStep } from "@buttery/core";
 import "./blocks.css";
+import { COLOR_GROUPS } from "./color-groups.ts";
+import type { ColorGroup } from "./color-groups.ts";
 import { TableScroll } from "../TableScroll.tsx";
 
 const SAMPLE = "Pick a backdrop and round the corners";
-
-/** The color tokens in each role, by how their names start. */
-export const COLOR_GROUPS = {
-  surfaces: ["bg-"],
-  text: ["text-", "icon-"],
-  borders: ["border", "control-border", "divider-"],
-  emphasis: ["primary", "on-primary", "accent", "selection", "ring-"],
-  status: ["danger", "success", "warning"],
-  inverse: ["inverse-"],
-  charts: ["chart-"],
-  marks: ["overlay", "wash", "dot", "skeleton"],
-  decorative: ["traffic-", "brand-", "knob-"],
-} as const;
 
 /** A table of the color tokens in one role: a swatch, the token, its light and dark values, and its use. */
 export function ColorTable({
   group,
 }: {
-  readonly group: keyof typeof COLOR_GROUPS;
+  readonly group: ColorGroup;
 }): ReactElement {
   const starts: readonly string[] = COLOR_GROUPS[group];
   const rows = Object.entries(colors).filter(([name]) =>

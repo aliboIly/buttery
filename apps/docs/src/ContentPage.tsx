@@ -1,8 +1,9 @@
 import { isValidElement } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
-import { Icon, Stack, Text } from "@buttery/core";
+import { Icon, Inline, Stack, Text } from "@buttery/core";
 import { Link2 } from "lucide-react";
 import { CodeBlock } from "./CodeBlock.tsx";
+import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { ComponentDocs } from "./ComponentDocs.tsx";
 import { DocsTable } from "./DocsTable.tsx";
 import { Example } from "./Example.tsx";
@@ -107,6 +108,9 @@ export function ContentPage({
             <h1>{page.title}</h1>
           </Text>
           <Text variant="body-lg">{page.description}</Text>
+          <Inline gap={2}>
+            <CopyPageMarkdown route={entry.route} />
+          </Inline>
         </Stack>
         <Stack gap={5}>
           <Content components={markdown} />
