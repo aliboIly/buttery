@@ -1,14 +1,33 @@
 ---
 title: Installation
-description: How to start an app on buttery today, and what it adds to an existing one.
+description: What you need to run buttery before its first npm release, how to get it, and what an app built on it depends on.
 section: get-started
 order: 20
 status: beta
 since: 0.9.0
-related: [get-started/introduction]
+related: [get-started/introduction, get-started/quick-start]
 ---
 
-buttery isn't on npm yet, so a new app starts as a copy of the starter in the buttery repository. Use this page to get an app running on the web and as a desktop app.
+buttery isn't on npm yet, and its repository is private, so until the first npm release you need access to the repository to use it. With access, an app starts as a copy of the starter inside the repository, and this page takes you from cloning it to an app running on the web and as a desktop app.
+
+## What you need
+
+- Access to the buttery repository on GitHub. Ask its maintainer for it.
+- Node 22.18 or later in the 22 line, 24.11 or later in the 24 line, or 26 and later. That's the `engines` range in the repository's root `package.json`.
+- pnpm 12. The root `package.json` pins 12.14.0 as its `packageManager`, and on Node 22 and 24, `corepack enable` installs that version for you.
+- For the desktop app, Rust through `rustup` and, on macOS, the Xcode Command Line Tools (`xcode-select --install`), which Tauri v2 builds with.
+
+## Get the repository
+
+Clone it and install everything in it:
+
+```bash
+git clone https://github.com/aliboIly/buttery.git
+cd buttery
+pnpm install
+```
+
+`pnpm install` installs every package and app in the repository and turns on its git hooks.
 
 ## Start a new app
 
@@ -19,7 +38,7 @@ pnpm new-app my-app
 pnpm --filter my-app dev
 ```
 
-The copy lives in `apps/my-app`. It already loads buttery's styles, wraps the app in `ButteryProvider` and runs the layout checks in its Playwright tests.
+`pnpm new-app` copies `apps/starter` to `apps/my-app`, gives the copy its name and the next free port, and installs it. The app already loads buttery's styles, wraps itself in `ButteryProvider` and runs the layout checks in its Playwright tests. Add `--template dashboard`, `editor` or `marketing` to start from one of the [templates](/templates/blank) instead.
 
 ## Run it as a desktop app
 
@@ -29,7 +48,49 @@ The starter is also a Tauri v2 app. With Rust installed, open it in a desktop wi
 pnpm --filter my-app tauri dev
 ```
 
-## What an app needs
+## What an app depends on
+
+These are the packages in the starter's `package.json`. Inside the repository, the `@buttery/*` packages come from the workspace.
+
+<DocsTable
+  columns={["Package", "Kind", "What it's for"]}
+  rows={[
+    [
+      "@buttery/core",
+      "Dependency",
+      "The tokens, the stylesheet with the Inter font, the layout primitives, the layers and the motion presets",
+    ],
+    [
+      "@buttery/react",
+      "Dependency",
+      "ButteryProvider, the components and the patterns, and their stylesheet",
+    ],
+    [
+      "lucide-react",
+      "Dependency",
+      "The icons: components take them as props, such as iconStart={Plus} on a Button, and draw some of their own with them",
+    ],
+    ["react and react-dom", "Dependency", "React 19"],
+    [
+      "@buttery/test",
+      "Dev tool",
+      "expectButtery, the layout, accessibility and stability checks for Playwright, which the starter's e2e/layout.spec.ts runs",
+    ],
+    [
+      "@buttery/lint",
+      "Dev tool",
+      "buttery's stylelint and ESLint configs; in the repository, the root eslint.config.js and stylelint.config.mjs already apply them to every app",
+    ],
+    [
+      "vite and @vitejs/plugin-react",
+      "Dev tool",
+      "The dev server and the build, with the React Compiler through babel-plugin-react-compiler",
+    ],
+    ["@tauri-apps/cli", "Dev tool", "The desktop app's build and dev window"],
+  ]}
+/>
+
+## What an app needs in its code
 
 An app on buttery imports two stylesheets once, at its entry, and renders inside `ButteryProvider`:
 
@@ -54,3 +115,7 @@ createRoot(container).render(
 ```
 
 `ButteryProvider` sets the color scheme, density and motion preference for everything inside it, and mounts the layers that menus, dialogs and toasts open into.
+
+## Server rendering
+
+The components render to HTML with `react-dom/server`, which this site uses to prerender every page, but they use state and effects, so with React Server Components, render them from your own client components.
