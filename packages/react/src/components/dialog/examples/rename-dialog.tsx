@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Dialog, TextField } from "@buttery/react";
 
 /** A short task in a controlled dialog: rename, then close it from the form's submit. */
@@ -50,3 +51,12 @@ export function RenameDialog(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "controlled";
+
+export const play: ExamplePlay = async ({ press, type, see }) => {
+  await press("button", "Rename");
+  await type("Name", " sale");
+  await press("button", "Save");
+  await see("Spring launch sale");
+};

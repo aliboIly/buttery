@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { Center, Inline, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Button, Dialog } from "@buttery/react";
 
@@ -111,6 +112,60 @@ function Sized({ size }: { readonly size: "md" | "lg" }): ReactElement {
     </Dialog>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    size: {
+      kind: "choice",
+      options: ["sm", "md", "lg", "full"],
+      initial: "sm",
+    },
+    showClose: { kind: "toggle", initial: true },
+    title: { kind: "text", initial: "Delete this card?" },
+    body: { kind: "text", initial: "It stays in the trash for 30 days." },
+  },
+  render: ({ size, showClose, title, body }) => (
+    <Dialog>
+      <Dialog.Trigger asChild>
+        <Button variant="soft">Open the dialog</Button>
+      </Dialog.Trigger>
+      <Dialog.Content
+        size={demoChoice(size, ["sm", "md", "lg", "full"])}
+        showClose={showClose === true}
+      >
+        <Dialog.Text title={String(title)} body={String(body)} />
+        <Dialog.Actions>
+          <Dialog.Close asChild>
+            <Button variant="soft" size="cta" shape="rounded">
+              Keep it
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close asChild>
+            <Button variant="primary" size="cta" shape="rounded">
+              Delete
+            </Button>
+          </Dialog.Close>
+        </Dialog.Actions>
+      </Dialog.Content>
+    </Dialog>
+  ),
+  code: ({ size, showClose, title, body }) => `<Dialog>
+  <Dialog.Trigger asChild>
+    <Button variant="soft">Open the dialog</Button>
+  </Dialog.Trigger>
+  <Dialog.Content size="${String(size)}" showClose={${String(showClose)}}>
+    <Dialog.Text title="${String(title)}" body="${String(body)}" />
+    <Dialog.Actions>
+      <Dialog.Close asChild>
+        <Button variant="soft" size="cta" shape="rounded">Keep it</Button>
+      </Dialog.Close>
+      <Dialog.Close asChild>
+        <Button variant="primary" size="cta" shape="rounded">Delete</Button>
+      </Dialog.Close>
+    </Dialog.Actions>
+  </Dialog.Content>
+</Dialog>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

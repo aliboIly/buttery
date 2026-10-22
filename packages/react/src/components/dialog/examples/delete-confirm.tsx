@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Dialog, toast } from "@buttery/react";
 
 /** A confirmation before something can't be undone, with the safe choice first, where focus lands. */
@@ -36,3 +37,12 @@ export function DeleteConfirm(): ReactElement {
     </Dialog>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Delete card");
+  await see("Delete this card?");
+  await press("button", "Delete");
+  await see("Card deleted");
+};
