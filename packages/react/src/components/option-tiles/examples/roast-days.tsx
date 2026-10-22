@@ -1,18 +1,20 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { OptionTiles } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Inline, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Button, OptionTiles } from "@buttery/react";
 
-/** The days the roaster runs, each with what it roasts, Sunday shown but closed. */
+const days = new Intl.ListFormat("en", { type: "conjunction" });
+
+/** The days the roaster runs, kept in state so a button outside the tiles can clear them; Sunday shows but is closed. */
 export function RoastDays(): ReactElement {
-  const [days, setDays] = useState<readonly string[]>(["Monday"]);
+  const [chosen, setChosen] = useState<readonly string[]>(["Monday"]);
   return (
     <Stack gap={3}>
       <OptionTiles
         label="Roast days"
-        value={days}
-        onValueChange={setDays}
+        value={chosen}
+        onValueChange={setChosen}
         options={[
           { value: "Monday", label: "Monday", description: "Espresso blends" },
           { value: "Tuesday", label: "Tuesday", description: "Single origins" },
@@ -29,16 +31,32 @@ export function RoastDays(): ReactElement {
           },
         ]}
       />
-      <Text variant="caption">
-        {days.length === 0
-          ? "No roast days"
-          : `Roasting on ${days.join(" and ")}`}
-      </Text>
+      <Inline gap={3} align="center" justify="between">
+        <Text variant="caption">
+          {chosen.length === 0
+            ? "No roast days"
+            : `Roasting on ${days.format(chosen)}`}
+        </Text>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-disabled={chosen.length === 0}
+          onClick={() => {
+            setChosen([]);
+          }}
+        >
+          Clear
+        </Button>
+      </Inline>
     </Stack>
   );
 }
 
+export const kind: ExampleKind = "controlled";
+
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("checkbox", "Tuesday");
   await see("Roasting on Monday and Tuesday");
+  await press("button", "Clear");
+  await see("No roast days");
 };
