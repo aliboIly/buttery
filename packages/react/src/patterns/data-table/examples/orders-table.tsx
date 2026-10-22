@@ -46,6 +46,7 @@ const COLUMNS: readonly DataTableColumn<Order>[] = [
   {
     id: "total",
     header: "Total",
+    minWidth: "md",
     align: "end",
     sortable: true,
     cell: (order) => <DataTable.Amount value={order.total} currency="USD" />,

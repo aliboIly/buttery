@@ -142,7 +142,10 @@ export interface DataTableProps<Row> extends Omit<
   readonly sort?: DataTableSort | null | undefined;
   /** Called when a sortable header is pressed: ascending, then descending, then none. */
   readonly onSortChange?: ((sort: DataTableSort | null) => void) | undefined;
-  /** A row's actions, as `Menu.Item`s, behind a "…" button in its last cell. */
+  /**
+   * A row's actions, as `Menu.Item`s, behind a "…" button in its last cell. Return `null` for a row with
+   * nothing to do: its cell stays empty, with no button.
+   */
   readonly rowActions?: ((row: Row) => ReactNode) | undefined;
   /** Shows skeleton rows shaped like each column while the rows load. */
   readonly loading?: boolean | undefined;
@@ -242,6 +245,7 @@ function DataTableRoot<Row>({
     onChange: onSelectedChange,
   });
   const [scrolledAside, setScrolledAside] = useState(false);
+  const [moreAside, setMoreAside] = useState(false);
   const [overflows, setOverflows] = useState(false);
   const [arrived, setArrived] = useState(false);
   const [wasLoading, setWasLoading] = useState(loading);
@@ -258,9 +262,12 @@ function DataTableRoot<Row>({
   const watchScroll = useCallback((element: HTMLDivElement | null) => {
     if (!element) return undefined;
     const scrolled = (): void => {
-      setScrolledAside(Math.abs(element.scrollLeft) > 0);
+      const along = Math.abs(element.scrollLeft);
+      setScrolledAside(along > 0);
+      setMoreAside(along + element.clientWidth < element.scrollWidth - 1);
     };
     const measure = (): void => {
+      scrolled();
       setOverflows(
         element.scrollWidth > element.clientWidth ||
           element.scrollHeight > element.clientHeight,
@@ -362,6 +369,7 @@ function DataTableRoot<Row>({
         tabIndex={overflows ? 0 : undefined}
         data-bt-part="scroll"
         data-scrolled-aside={scrolledAside ? "" : undefined}
+        data-more-aside={moreAside ? "" : undefined}
       >
         <div
           role="table"
@@ -584,16 +592,10 @@ function DataTableRoot<Row>({
                         data-bt-part="data-table-cell"
                         data-check=""
                       >
-                        <Menu>
-                          <Menu.Trigger asChild>
-                            <IconButton
-                              icon={Ellipsis}
-                              label={words.actionsFor(nameOf(row))}
-                              size="sm"
-                            />
-                          </Menu.Trigger>
-                          <Menu.Content>{rowActions(row)}</Menu.Content>
-                        </Menu>
+                        <RowActions
+                          label={words.actionsFor(nameOf(row))}
+                          actions={rowActions(row)}
+                        />
                       </div>
                     ) : null}
                   </div>
@@ -646,6 +648,24 @@ function DataTableRoot<Row>({
   );
 }
 
+/** A row's "…" menu, or nothing for a row whose actions came back empty. */
+function RowActions({
+  label,
+  actions,
+}: {
+  readonly label: string;
+  readonly actions: ReactNode;
+}): ReactElement | null {
+  return hasContent(actions) ? (
+    <Menu>
+      <Menu.Trigger asChild>
+        <IconButton icon={Ellipsis} label={label} size="sm" />
+      </Menu.Trigger>
+      <Menu.Content>{actions}</Menu.Content>
+    </Menu>
+  ) : null;
+}
+
 /** Props for `DataTable.Amount`. */
 export interface DataTableAmountProps extends Omit<
   ComponentPropsWithRef<"span">,
@@ -653,7 +673,10 @@ export interface DataTableAmountProps extends Omit<
 > {
   /** The amount. */
   readonly value: number;
-  /** Its ISO 4217 currency, such as `"USD"`, written after the number in `text-tertiary`. */
+  /**
+   * Its ISO 4217 currency, such as `"USD"`: the number shows with the currency's symbol, and the code after
+   * it in `text-tertiary`, as in "$14.50 USD".
+   */
   readonly currency: string;
 }
 

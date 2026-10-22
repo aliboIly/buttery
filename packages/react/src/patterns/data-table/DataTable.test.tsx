@@ -254,6 +254,46 @@ describe("DataTable", () => {
     expect(onRefund).toHaveBeenCalledWith("ORD-1042");
   });
 
+  it("leaves a row's last cell empty when its actions come back empty", () => {
+    render(
+      <Orders
+        rowActions={(order) =>
+          order.id === "ORD-1042" ? <Menu.Item>Refund</Menu.Item> : null
+        }
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Actions for ORD-1042" }),
+    ).toBeTruthy();
+    expect(
+      screen.getAllByRole("button", { name: /^Actions for/ }),
+    ).toHaveLength(1);
+    for (const row of rows()) {
+      expect(within(row).getAllByRole("cell")).toHaveLength(COLUMNS.length + 1);
+    }
+  });
+
+  it("fades its end edge while more of it lies to the side, and stops once scrolled to the end", async () => {
+    render(<Orders width={300} />);
+    const scroll = document.querySelector<HTMLElement>(
+      '[data-bt-part="scroll"]',
+    );
+    if (!scroll) throw new Error("No scroll area.");
+    await waitFor(() => {
+      expect(scroll.hasAttribute("data-more-aside")).toBe(true);
+    });
+    expect(getComputedStyle(scroll).maskImage).toContain("linear-gradient");
+    scroll.scrollLeft = scroll.scrollWidth;
+    await waitFor(() => {
+      expect(scroll.hasAttribute("data-more-aside")).toBe(false);
+    });
+    expect(getComputedStyle(scroll).maskImage).toBe("none");
+    cleanup();
+    render(<Orders width={900} />);
+    const wide = document.querySelector<HTMLElement>('[data-bt-part="scroll"]');
+    expect(wide?.hasAttribute("data-more-aside")).toBe(false);
+  });
+
   it("links a row to its own page from a cell, in the row's text color, tall enough to hit", () => {
     render(
       <Orders

@@ -31,6 +31,23 @@
     isolation: isolate;
   }
 
+  /* While more of the table lies past the end edge, that edge fades, so a table scrolled on a phone shows it scrolls. */
+  .bt-data-table > [data-bt-part="scroll"][data-more-aside] {
+    mask-image: linear-gradient(
+      to left,
+      transparent,
+      var(--bt-text) var(--bt-space-8)
+    );
+  }
+
+  .bt-data-table > [data-bt-part="scroll"][data-more-aside]:dir(rtl) {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--bt-text) var(--bt-space-8)
+    );
+  }
+
   .bt-data-table > [data-bt-part="scroll"]:focus-visible {
     outline: var(--bt-focus-width) solid var(--bt-accent);
     outline-offset: calc(var(--bt-focus-width) * -1);

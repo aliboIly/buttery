@@ -37,6 +37,7 @@ export function Payouts(): ReactElement {
         {
           id: "amount",
           header: "Amount",
+          minWidth: "md",
           align: "end",
           cell: (payout) => (
             <DataTable.Amount value={payout.amount} currency="USD" />
