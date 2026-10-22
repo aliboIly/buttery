@@ -8,6 +8,7 @@ import {
   splitFrontmatter,
 } from "../apps/docs/vite/frontmatter.ts";
 import { demoPages } from "../apps/docs/src/routes.ts";
+import { COMPONENT_SECTIONS, exampleTitle } from "../apps/docs/src/anatomy.ts";
 import { slugify } from "../apps/docs/src/slug.ts";
 import { exportsOf, propsTablesIn } from "../apps/docs/vite/props.ts";
 import {
@@ -52,6 +53,25 @@ function kebab(name) {
     .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
     .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
     .toLowerCase();
+}
+
+/**
+ * The ids of a component's headings: its sections and its examples', each after `prefix` on the written page
+ * that shows it with `<ComponentDocs>`, where it has no Demo.
+ */
+function componentHeadings(folder, prefix = "") {
+  const examples = existsSync(join(folder, "examples"))
+    ? readdirSync(join(folder, "examples")).filter((file) =>
+        file.endsWith(".tsx"),
+      )
+    : [];
+  const id = (text) => slugify(prefix === "" ? text : `${prefix} ${text}`);
+  return [
+    ...COMPONENT_SECTIONS.filter(
+      (section) => prefix === "" || section !== "Demo",
+    ).map(id),
+    ...examples.map((file) => id(`${exampleTitle(file)} example`)),
+  ];
 }
 
 /** The text of a page outside its fenced code blocks, where headings and links can be. */
@@ -231,7 +251,7 @@ export function checkDocs({
     pages.push({
       route,
       file: playground,
-      headings: new Set(),
+      headings: new Set(componentHeadings(dirname(meta))),
       links: [],
       ...page,
     });
@@ -254,7 +274,10 @@ export function checkDocs({
       problems.push(
         `${say(written.file)} is ${name}'s home but doesn't show it. Fix: add a "## ${name}" heading and <ComponentDocs of="${name}" /> under it.`,
       );
+      continue;
     }
+    for (const id of componentHeadings(dirname(file), name))
+      written.headings.add(id);
   }
 
   for (const reference of references) {

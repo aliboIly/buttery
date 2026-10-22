@@ -54,6 +54,19 @@ describe("docs check", () => {
     ]);
   });
 
+  it("knows a component page's headings, so a link to its examples passes and one to a heading it lacks fails", () => {
+    const button = join(
+      root,
+      "packages/react/src/components/button/Button.meta.ts",
+    );
+    const problems = fixture("component-anchor", { metaFiles: [button] });
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(
+      /links to \/components\/button#nowhere, but components\/button has no heading with the id nowhere/,
+    );
+    expect(problems[0]).toContain("save-and-cancel-example");
+  });
+
   it("fails a page that shows an example that doesn't exist", () => {
     expect(
       fixture("missing-example", {

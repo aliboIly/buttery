@@ -1,20 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { COMPONENT_SECTIONS } from "../src/anatomy.ts";
 import { componentRoutes, url } from "./routes.ts";
 
 test.use({ viewport: { width: 1280, height: 900 } });
-
-/** A component page's sections, in the order `docs/DOCS_SITE.md` gives them. */
-const PARTS = [
-  "Demo",
-  "When to use it",
-  "Examples",
-  "Variants and states",
-  "Props",
-  "Accessibility",
-  "Motion",
-  "Layout",
-  "Related",
-];
 
 for (const { route, name } of componentRoutes) {
   test(`the ${name} page has every part of a component page, in order`, async ({
@@ -43,7 +31,9 @@ for (const { route, name } of componentRoutes) {
     const headings = await article
       .locator(":scope > section > h2, :scope > div > section > h2")
       .allTextContents();
-    expect(headings.map((text) => text.trim())).toEqual(PARTS);
+    expect(headings.map((text) => text.trim())).toEqual([
+      ...COMPONENT_SECTIONS,
+    ]);
 
     const demo = article.getByRole("region", { name: `${name} demo` });
     await expect(

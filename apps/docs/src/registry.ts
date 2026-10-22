@@ -7,6 +7,7 @@ import type {
   DocsPage,
   LiveDemo,
 } from "@buttery/core";
+import { exampleTitle } from "./anatomy.ts";
 import { rootOf } from "./nav.ts";
 import { componentRoute } from "./routes.ts";
 import { slugify } from "./slug.ts";
@@ -76,12 +77,6 @@ function folderOf(path: string): string {
   return path.slice(0, path.lastIndexOf("/"));
 }
 
-function titleOf(path: string): string {
-  const base = path.slice(path.lastIndexOf("/") + 1).replace(/\.tsx$/, "");
-  const words = base.replaceAll("-", " ");
-  return words.charAt(0).toUpperCase() + words.slice(1);
-}
-
 function isComponent(value: unknown): value is ComponentType {
   return typeof value === "function";
 }
@@ -98,7 +93,7 @@ function examplesIn(folder: string): Example[] {
         ? [
             {
               name: path.slice(path.lastIndexOf("/") + 1, -".tsx".length),
-              title: titleOf(path),
+              title: exampleTitle(path),
               Component,
               code,
             },
