@@ -207,6 +207,19 @@ describe("Menu", () => {
     ]);
   });
 
+  it("is inert while it fades out, so it can't take focus back from what an item opened", async () => {
+    render(<CardActions />);
+    await userEvent.click(trigger());
+    await settled();
+    const menu = screen.getByRole("menu");
+    expect(menu.inert).toBe(false);
+    await userEvent.keyboard("{Escape}");
+    expect(menu.isConnected).toBe(true);
+    expect(menu.inert).toBe(true);
+    menu.focus();
+    expect(document.activeElement).not.toBe(menu);
+  });
+
   it("passes presses on its spot to the page while it fades out", async () => {
     render(<CardActions />);
     await userEvent.click(trigger());

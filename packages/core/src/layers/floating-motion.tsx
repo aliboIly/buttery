@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion, useIsPresent } from "motion/react";
 import { createContext, use } from "react";
 import type { Context, ReactElement } from "react";
 import { useMotionPreference } from "../motion/preference.ts";
@@ -39,7 +39,8 @@ export interface FloatingMotionProps extends MotionElementProps<"div"> {
  * The element a menu or popover renders as inside `AnimatePresence`: it grows from 97% on the side of its
  * trigger on `spring.snappy` with a `dur-base` fade, and leaves with a `dur-fast` fade. With reduced motion
  * it fades in and out in 100ms. With `entrance="instant"` it shows complete and unmounts as it closes, so
- * a second Escape right after closing it reaches the dialog or sheet beneath.
+ * a second Escape right after closing it reaches the dialog or sheet beneath. While it leaves it's inert, so
+ * it can't take focus back from a dialog one of its items opened.
  */
 export function FloatingMotion({
   origin,
@@ -51,10 +52,12 @@ export function FloatingMotion({
   const tracking = useAnimationTracking();
   const preset = reduced ? reducedPresence : presencePresets.menu;
   const instant = entrance === "instant";
+  const present = useIsPresent();
   return (
     <motion.div
       {...rest}
       {...tracking}
+      inert={!present}
       initial={instant ? false : preset.initial}
       animate={preset.animate}
       {...(instant ? {} : { exit: preset.exit })}
