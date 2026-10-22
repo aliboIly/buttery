@@ -2,7 +2,11 @@ import { expect, test } from "@playwright/test";
 import type { Locator } from "@playwright/test";
 import { componentRoutes } from "./routes.ts";
 
-/** Changes one control to a value it doesn't have: another option, the other side of a switch, new text. */
+/**
+ * Changes one control to a value it doesn't have: another option, the other side of a switch, new text.
+ * A choice with more options than fit side by side is a select, found by the prop its caption names, so
+ * its trigger's role doesn't matter; its list has closed before this returns.
+ */
 async function change(control: Locator): Promise<void> {
   const unchecked = control.getByRole("radio", { checked: false });
   if ((await unchecked.count()) > 0) {
@@ -25,9 +29,11 @@ async function change(control: Locator): Promise<void> {
     await slider.press("End");
     return;
   }
-  const select = control.getByRole("combobox");
-  await select.click();
-  await control.page().getByRole("option", { selected: false }).first().click();
+  const name = (await control.getByText(/./).first().textContent()) ?? "";
+  const list = control.page().getByRole("listbox", { name, exact: true });
+  await control.getByLabel(name).click();
+  await list.getByRole("option", { selected: false }).first().click();
+  await expect(list).toHaveCount(0);
 }
 
 for (const { name, route } of componentRoutes) {
