@@ -1,4 +1,10 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,10 +19,23 @@ import {
   pageMarkdown,
 } from "./markdown.ts";
 import type { MarkdownMiddleware } from "./markdown.ts";
+import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
 import { SECTIONS } from "../src/nav.ts";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const components = componentSources(root);
+
+/** The pages `llms.txt` lists under `heading`, by their links, in its order. */
+function listedUnder(text: string, heading: string): string[] {
+  const start = text.indexOf(`\n## ${heading}\n`);
+  if (start === -1) return [];
+  const end = text.indexOf("\n## ", start + 1);
+  return [
+    ...text
+      .slice(start, end === -1 ? undefined : end)
+      .matchAll(/^- \[[^\]]+\]\(([^)]+)\)/gm),
+  ].map(([, href]) => href ?? "");
+}
 
 /** What `handle` does with a request for `url`: the status and type it answers with, or whether it passes it on. */
 function ask(
@@ -145,6 +164,51 @@ describe("the site as Markdown", () => {
         .map((component) => `${component.name} ${componentHref(component)}.md`);
       expect(listed, group.title).toEqual(wanted);
     }
+  });
+
+  it("lists each section's pages in llms.txt in the nav's order, and the components under their groups' names", () => {
+    const text = llmsText(root, components);
+    const written = contentRoutesIn(root).map((route) => {
+      const { block } = splitFrontmatter(
+        readFileSync(join(root, "apps/docs/content", `${route}.mdx`), "utf8"),
+      );
+      const data = parseFrontmatter(block ?? "", route);
+      return {
+        section: String(data["section"]),
+        order: Number(data["order"]),
+        title: String(data["title"]),
+        href: `/${route}.md`,
+      };
+    });
+    const pages = [
+      ...written,
+      ...components
+        .filter((component) => component.home === undefined)
+        .map((component) => ({
+          section: component.section,
+          order: component.order,
+          title: component.title,
+          href: `${componentHref(component)}.md`,
+        })),
+    ];
+    const inOrder = (section: string): string[] =>
+      pages
+        .filter((page) => page.section === section)
+        .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title))
+        .map((page) => page.href);
+    for (const section of SECTIONS) {
+      expect(listedUnder(text, section.title), section.title).toEqual(
+        inOrder(section.root),
+      );
+      for (const group of section.groups ?? [])
+        expect(
+          listedUnder(text, `${section.title} › ${group.title}`),
+          group.title,
+        ).toEqual(inOrder(group.section));
+    }
+    expect(listedUnder(text, "Get started")[0]).toBe(
+      "/get-started/introduction.md",
+    );
   });
 
   it("links a template's page to its live preview", () => {

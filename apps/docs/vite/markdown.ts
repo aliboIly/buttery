@@ -9,6 +9,7 @@ import { captionOf } from "./code.ts";
 import { shownSource } from "./example-source.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
 import { listed, screensByDemo } from "../src/demo-sentence.ts";
+import { SECTIONS } from "../src/nav.ts";
 import { demoUsesIn } from "./demo-uses.ts";
 import { propsTablesIn, typeTablesIn } from "./props.ts";
 import type { PropDoc } from "./props.ts";
@@ -645,67 +646,69 @@ export function pageMarkdown(
     : null;
 }
 
-/** The site's sections in its nav's order. */
-const SECTION_ORDER = [
-  "get-started",
-  "foundations",
-  "layout",
-  "motion",
-  "components",
-  "patterns",
-  "templates",
-  "guides",
-  "tools",
-  "resources",
-] as const;
+/** A page as `llms.txt` lists it: where it sits in the nav, and its link line. */
+interface ListedPage {
+  readonly section: string;
+  readonly order: number;
+  readonly title: string;
+  readonly line: string;
+}
 
-/** `llms.txt`: what buttery is, and every page of the site with a link to its Markdown, by section. */
+/**
+ * `llms.txt`: what buttery is, and every page of the site with a link to its Markdown, under the nav's
+ * sections in the nav's order, and the components under their groups' names, such as "Components › Actions".
+ */
 export function llmsText(
   root: string,
   components: readonly ComponentSource[] = componentSources(root),
 ): string {
-  const pages = contentRoutesIn(root).map((route) => {
-    const { block } = splitFrontmatter(
-      readFileSync(join(root, "apps/docs/content", `${route}.mdx`), "utf8"),
-    );
-    const data = block === null ? {} : parseFrontmatter(block, route);
-    return {
-      route,
-      title: typeof data["title"] === "string" ? data["title"] : route,
-      description:
-        typeof data["description"] === "string" ? data["description"] : "",
-    };
-  });
-  const own = components.filter((component) => component.home === undefined);
-  const sections = SECTION_ORDER.filter(
-    (section) =>
-      section === "components" ||
-      pages.some(({ route }) => route.startsWith(`${section}/`)),
-  );
-  const lines = [
+  const pages: ListedPage[] = [
+    ...contentRoutesIn(root).map((route) => {
+      const { block } = splitFrontmatter(
+        readFileSync(join(root, "apps/docs/content", `${route}.mdx`), "utf8"),
+      );
+      const data = block === null ? {} : parseFrontmatter(block, route);
+      const title = typeof data["title"] === "string" ? data["title"] : route;
+      const description =
+        typeof data["description"] === "string" ? data["description"] : "";
+      return {
+        section: typeof data["section"] === "string" ? data["section"] : "",
+        order: typeof data["order"] === "number" ? data["order"] : 0,
+        title,
+        line: `- [${title}](/${route}.md): ${description}`,
+      };
+    }),
+    ...components
+      .filter((component) => component.home === undefined)
+      .map((component) => ({
+        section: component.section,
+        order: component.order,
+        title: component.title,
+        line: `- [${component.name}](${markdownHref(componentHref(component))}): ${textOf(component.meta["purpose"])}`,
+      })),
+  ];
+  const listing = (heading: string, section: string): string[] => {
+    const listed = pages
+      .filter((page) => page.section === section)
+      .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+    return listed.length === 0
+      ? []
+      : [`## ${heading}`, "", ...listed.map((page) => page.line), ""];
+  };
+  return `${[
     "# buttery",
     "",
     "> A React design system and layout and motion framework for web and desktop apps: tokens, components, patterns and checks that keep an app buttery.",
     "",
-  ];
-  for (const section of sections) {
-    lines.push(
-      `## ${section.charAt(0).toUpperCase()}${section.slice(1).replaceAll("-", " ")}`,
-      "",
-    );
-    for (const page of pages.filter(({ route }) =>
-      route.startsWith(`${section}/`),
-    ))
-      lines.push(`- [${page.title}](/${page.route}.md): ${page.description}`);
-    if (section === "components") {
-      for (const component of own)
-        lines.push(
-          `- [${component.name}](${markdownHref(componentHref(component))}): ${textOf(component.meta["purpose"])}`,
-        );
-    }
-    lines.push("");
-  }
-  return `${lines.join("\n").trim()}\n`;
+    ...SECTIONS.flatMap((section) => [
+      ...listing(section.title, section.root),
+      ...(section.groups ?? []).flatMap((group) =>
+        listing(`${section.title} › ${group.title}`, group.section),
+      ),
+    ]),
+  ]
+    .join("\n")
+    .trim()}\n`;
 }
 
 /** The parts of a request the Markdown middlewares read. */

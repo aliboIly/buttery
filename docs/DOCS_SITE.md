@@ -123,7 +123,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 - The same headings in the same order on every page (the anatomy above), so people and coding agents know where to look.
 - Nothing lives only in a picture or a demo: whatever a demo shows is also said in text or code. Tables are real tables. Code blocks carry a language tag and full imports.
 - Do and don't pairs are code, each with a one-line reason.
-- Every page is also served as clean Markdown at its path plus `.md`, with a "Copy page as Markdown" button, and `llms.txt` links to those versions.
+- Every page is also served as clean Markdown at its path plus `.md`, with a "Copy page as Markdown" button, and `llms.txt` links to those versions, under the nav's sections in the nav's order, each component group a section of its own, such as `## Components › Actions`.
 - A comprehension gate per group of pages: a reviewer who hasn't seen the code reads the rendered page cold and answers three questions about it, and the page is fixed if any answer is wrong. Then a fresh agent gets only a component's `.md` page and builds a small feature with that component; its code has to typecheck and pass `expectButtery`. If it fails, the page is unclear: the page gets fixed, not the test.
 
 ## Demos
