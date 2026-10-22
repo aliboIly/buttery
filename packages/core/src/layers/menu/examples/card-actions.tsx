@@ -42,9 +42,7 @@ export function CardActions(): ReactElement {
           </Menu.Item>
         </Menu.Content>
       </Menu>
-      <Text variant="body" tone="secondary">
-        {last}
-      </Text>
+      <Text variant="caption">{last}</Text>
     </Inline>
   );
 }

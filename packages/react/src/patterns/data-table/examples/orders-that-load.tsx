@@ -44,7 +44,11 @@ export function OrdersThatLoad(): ReactElement {
         label="Orders"
         loading={loading}
         columns={[
-          { id: "id", header: "Order", cell: (order) => order.id },
+          {
+            id: "id",
+            header: "Order",
+            cell: (order) => <DataTable.Id value={order.id} />,
+          },
           {
             id: "customer",
             header: "Customer",
