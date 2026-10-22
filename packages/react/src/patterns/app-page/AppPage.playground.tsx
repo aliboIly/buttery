@@ -1,5 +1,5 @@
 import { Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DemoWidth, DocsPage } from "@buttery/core";
 import { AppPage, Button, PageHeader } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -12,6 +12,8 @@ export const page: DocsPage = {
   since: "0.7.0",
   home: "patterns/app-shell",
 };
+
+export const width: DemoWidth = "desktop";
 
 export const demos: readonly DemoSection[] = [
   {

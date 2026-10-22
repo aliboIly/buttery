@@ -3,6 +3,7 @@ import type {
   ComponentMeta,
   DemoFrame,
   DemoSection,
+  DemoWidth,
   DocsPage,
   LiveDemo,
 } from "@buttery/core";
@@ -17,6 +18,7 @@ interface MetaModule {
 interface DemoModule {
   readonly demos: readonly DemoSection[];
   readonly frame?: DemoFrame;
+  readonly width?: DemoWidth;
   readonly page?: DocsPage;
   readonly live?: LiveDemo;
 }
@@ -63,6 +65,8 @@ export interface ComponentEntry {
   readonly meta: ComponentMeta;
   readonly demos: readonly DemoSection[];
   readonly frame: DemoFrame;
+  /** Whether its demos and examples lay out at their frame's width or a desktop's, from its `*.playground.tsx`. */
+  readonly width: DemoWidth;
   readonly examples: readonly Example[];
   /** Its page's live demo with prop controls, from its `*.playground.tsx`; undefined until it has one. */
   readonly live: LiveDemo | undefined;
@@ -118,6 +122,7 @@ export const components: readonly ComponentEntry[] = Object.entries(metaModules)
       demos: page?.demos ?? [],
       live: page?.live,
       frame: page?.frame ?? "section",
+      width: page?.width ?? "frame",
       examples: examplesIn(folder),
     };
   })

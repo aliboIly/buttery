@@ -123,6 +123,7 @@ export type {
   DemoFrame,
   DemoSection,
   DemoValues,
+  DemoWidth,
   DocsPage,
   DocsSection,
   DocsStatus,

@@ -65,6 +65,13 @@ export interface KeyboardRow {
 export type DemoFrame = "section" | "page";
 
 /**
+ * How wide a playground page's demos and examples lay out: at their frame's width (`"frame"`, the default) or,
+ * for a page-scale component whose layout changes at desktop widths, such as `AppShell`, at an app page's
+ * width (`"desktop"`), drawn scaled down to fit a frame from 640px wide and at the frame's own width under it.
+ */
+export type DemoWidth = "frame" | "desktop";
+
+/**
  * Where a page sits on the docs site (`docs/DOCS_SITE.md`): its section, and for a component the group
  * that says what it's for. `"components"` alone is for a written page about the components as a whole,
  * such as the overview that lists them.

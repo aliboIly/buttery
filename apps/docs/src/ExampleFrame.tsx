@@ -3,7 +3,8 @@ import type { ReactElement } from "react";
 import { Inline, Stack, Surface, Text } from "@buttery/core";
 import { Button } from "@buttery/react";
 import { CodeHtml } from "./CodeBlock.tsx";
-import type { DemoFrame } from "@buttery/core";
+import { DesktopPreview } from "./DesktopPreview.tsx";
+import type { DemoFrame, DemoWidth } from "@buttery/core";
 import type { Example } from "./registry.ts";
 
 /**
@@ -13,11 +14,14 @@ import type { Example } from "./registry.ts";
 export function ExampleFrame({
   example,
   frame = "section",
+  width = "frame",
   headingId,
   headingLevel = 3,
 }: {
   readonly example: Example;
   readonly frame?: DemoFrame;
+  /** Whether the example lays out at its frame's width or, scaled down to fit, a desktop's. Defaults to `"frame"`. */
+  readonly width?: DemoWidth;
   readonly headingId?: string;
   /** The level of the example's title among the page's headings. Defaults to 3. */
   readonly headingLevel?: 3 | 4;
@@ -46,7 +50,13 @@ export function ExampleFrame({
         radius="lg"
         className="pg-stage"
       >
-        <Component />
+        {width === "desktop" ? (
+          <DesktopPreview>
+            <Component />
+          </DesktopPreview>
+        ) : (
+          <Component />
+        )}
       </Surface>
       <Inline gap={2}>
         <Button

@@ -1,17 +1,12 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactElement } from "react";
-import { Stack, Surface, widths } from "@buttery/core";
+import { Stack, Surface } from "@buttery/core";
 import type { CssVariables } from "@buttery/core";
 import { ArrowLink } from "@buttery/react";
+import { desktopScale } from "../desktop-scale.ts";
 import { useSettings } from "../location.ts";
 import { templates } from "../routes.ts";
 import type { TemplateName } from "../routes.ts";
-
-/** The width the preview draws a template at before scaling it down to the frame: an app page's. */
-const DESKTOP = widths["app-page"].value;
-
-/** Under this frame width, the preview shows the template's own narrow layout at full size instead. */
-const NARROWEST_SCALED = 640;
 
 /**
  * A template's live preview: the template's own app in a frame, served by the docs site at
@@ -34,8 +29,7 @@ export function TemplatePreview({
     const element = frame.current;
     if (!element) return undefined;
     const measure = (): void => {
-      const width = element.clientWidth;
-      setScale(width >= NARROWEST_SCALED ? width / DESKTOP : null);
+      setScale(desktopScale(element.clientWidth));
     };
     measure();
     const observer = new ResizeObserver(measure);

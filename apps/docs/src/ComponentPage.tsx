@@ -17,6 +17,7 @@ import { listed, screensByDemo } from "./demo-sentence.ts";
 import { CodeText } from "./CodeBlock.tsx";
 import { CopyLine } from "./CopyLine.tsx";
 import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
+import { DesktopPreview } from "./DesktopPreview.tsx";
 import { ExampleFrame } from "./ExampleFrame.tsx";
 import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
 import { PageFooter } from "./PageFooter.tsx";
@@ -98,6 +99,21 @@ function minorOf(version: string): string {
   return version.split(".").slice(0, 2).join(".");
 }
 
+/** A demo in its stage, drawn at a desktop's width and scaled down to fit when its component is page-scale. */
+function DemoDrawing({
+  entry,
+  children,
+}: {
+  readonly entry: ComponentEntry;
+  readonly children: ReactNode;
+}): ReactElement {
+  return entry.width === "desktop" ? (
+    <DesktopPreview>{children}</DesktopPreview>
+  ) : (
+    <>{children}</>
+  );
+}
+
 /**
  * The live demo: the component in a frame that follows the site's theme and density until its own toggles
  * change them, controls for its props, and the code for what it shows.
@@ -153,7 +169,9 @@ function LiveDemoFrame({
           className="pg-stage"
           data-testid="live-demo"
         >
-          {live?.render(values)}
+          {live ? (
+            <DemoDrawing entry={entry}>{live.render(values)}</DemoDrawing>
+          ) : null}
         </Surface>
       </ButteryProvider>
       {live ? (
@@ -234,6 +252,7 @@ export function ComponentBody({
                 key={example.name}
                 example={example}
                 frame={frame}
+                width={entry.width}
                 headingId={idFor(entry, depth, `${example.title} example`)}
                 headingLevel={inner}
               />
@@ -261,7 +280,7 @@ export function ComponentBody({
                   )}
                 </Stack>
                 <Surface level={stage} pad={6} radius="lg" className="pg-stage">
-                  {demo.render()}
+                  <DemoDrawing entry={entry}>{demo.render()}</DemoDrawing>
                 </Surface>
               </Stack>
             ))}

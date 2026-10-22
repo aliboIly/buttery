@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Center, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DemoWidth, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   AppShell,
@@ -23,6 +23,8 @@ export const page: DocsPage = {
   since: "0.5.0",
   home: "patterns/app-shell",
 };
+
+export const width: DemoWidth = "desktop";
 
 const BACKDROP = gradients.find((preset) => preset.id === "mint");
 

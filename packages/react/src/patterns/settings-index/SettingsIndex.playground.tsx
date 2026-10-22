@@ -1,4 +1,10 @@
-import type { DemoFrame, DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DemoWidth,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { SettingsIndex } from "@buttery/react";
 import {
   Bell,
@@ -24,6 +30,8 @@ export const page: DocsPage = {
 };
 
 export const frame: DemoFrame = "page";
+
+export const width: DemoWidth = "desktop";
 
 export const live: LiveDemo = {
   controls: {

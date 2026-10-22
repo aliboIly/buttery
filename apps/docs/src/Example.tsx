@@ -25,6 +25,7 @@ export function Example({
     <ExampleFrame
       example={example}
       frame={entry.frame}
+      width={entry.width}
       headingId={slugify(`${of} ${example.title}`)}
     />
   );

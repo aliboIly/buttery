@@ -1,4 +1,9 @@
-import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DemoWidth,
+  DocsPage,
+} from "@buttery/core";
 import { Button, PlanComparison } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -13,6 +18,8 @@ export const page: DocsPage = {
 };
 
 export const frame: DemoFrame = "page";
+
+export const width: DemoWidth = "desktop";
 
 export const demos: readonly DemoSection[] = [
   {
