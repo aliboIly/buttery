@@ -38,8 +38,9 @@ export interface SetupTask {
   /** Where to do it: the "Next:" link takes the task's title, and the unfolded guide shows this as a button. */
   readonly action?: GuidanceAction | undefined;
   /**
-   * The group it's listed under when the guide is unfolded, such as "Take payments". Tasks in a row with the
-   * same group sit under its header, which folds; the group holding the next task starts open.
+   * The group it's listed under when the guide is unfolded, such as "Take payments". Tasks with the same group
+   * sit under one header, where the group's first task is, which folds; the group holding the next task starts
+   * open.
    */
   readonly group?: string | undefined;
 }
@@ -125,7 +126,17 @@ function sectionsOf(tasks: readonly SetupTask[]): readonly TaskSection[] {
   const sections: { group: string | undefined; tasks: SetupTask[] }[] = [];
   for (const task of tasks) {
     const last = sections.at(-1);
-    if (last !== undefined && last.group === task.group) last.tasks.push(task);
+    const named =
+      task.group === undefined
+        ? undefined
+        : sections.find((section) => section.group === task.group);
+    if (named !== undefined) named.tasks.push(task);
+    else if (
+      last?.group === undefined &&
+      last !== undefined &&
+      task.group === undefined
+    )
+      last.tasks.push(task);
     else sections.push({ group: task.group, tasks: [task] });
   }
   return sections;

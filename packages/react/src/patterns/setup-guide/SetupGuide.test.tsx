@@ -273,20 +273,58 @@ describe("SetupGuide", () => {
     );
   });
 
-  it("opens the group holding the next task as tasks get done, unless it was folded by hand", () => {
-    const { rerender } = render(<Guide tasks={GROUPED} defaultOpen />);
+  it("opens the group holding the next task as tasks get done, unless it was folded by hand", async () => {
     const doneShipping = GROUPED.map((task) =>
       task.id === "shipping" ? { ...task, done: true } : task,
     );
-    rerender(
-      <ButteryProvider>
-        <SetupGuide tasks={doneShipping} defaultOpen />
-      </ButteryProvider>,
-    );
+    const first = render(<Guide tasks={GROUPED} defaultOpen />);
+    first.rerender(<Guide tasks={doneShipping} defaultOpen />);
     expect(groupHead("Get paid").getAttribute("aria-expanded")).toBe("true");
     expect(groupHead("Take orders").getAttribute("aria-expanded")).toBe(
       "false",
     );
+    cleanup();
+    const second = render(<Guide tasks={GROUPED} defaultOpen />);
+    await userEvent.click(groupHead("Get paid"));
+    await userEvent.click(groupHead("Get paid"));
+    expect(groupHead("Get paid").getAttribute("aria-expanded")).toBe("false");
+    second.rerender(<Guide tasks={doneShipping} defaultOpen />);
+    expect(groupHead("Get paid").getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("lists tasks of one group under one header, where the group's first task is", () => {
+    const errors = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    render(
+      <Guide
+        defaultOpen
+        tasks={[
+          {
+            id: "coffee",
+            title: "Add your first coffee",
+            group: "Stock the shop",
+          },
+          { id: "shipping", title: "Set shipping rates", group: "Take orders" },
+          { id: "photos", title: "Add photos", group: "Stock the shop" },
+        ]}
+      />,
+    );
+    const heads = [
+      ...guide().querySelectorAll('[data-bt-part="setup-guide-group-head"]'),
+    ].map((head) => head.textContent);
+    expect(heads).toEqual(["Stock the shop", "Take orders"]);
+    expect(
+      within(
+        groupHead("Stock the shop").closest<HTMLElement>(
+          '[data-bt-part="setup-guide-group"]',
+        ) ?? guide(),
+      )
+        .getAllByRole("listitem")
+        .map((item) => item.textContent),
+    ).toEqual(["To do: Add your first coffee", "To do: Add photos"]);
+    expect(errors).not.toHaveBeenCalled();
+    errors.mockRestore();
   });
 
   it("draws a done task's circle filled with its check knocked out, and a task to do as a ring", () => {
