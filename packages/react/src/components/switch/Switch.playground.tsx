@@ -1,5 +1,5 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Switch } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -10,6 +10,24 @@ export const page: DocsPage = {
   order: 110,
   status: "stable",
   since: "0.4.5",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Snap to the grid" },
+    hint: { kind: "text", initial: "Cards line up as you drag them." },
+    defaultChecked: { kind: "toggle", initial: true },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ label, hint, defaultChecked, disabled }) => (
+    <Switch
+      key={String(defaultChecked)}
+      label={String(label)}
+      hint={String(hint)}
+      defaultChecked={defaultChecked === true}
+      disabled={disabled === true}
+    />
+  ),
 };
 
 export const demos: readonly DemoSection[] = [
