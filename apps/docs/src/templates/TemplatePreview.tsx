@@ -4,7 +4,7 @@ import { Stack, Surface } from "@buttery/core";
 import type { CssVariables } from "@buttery/core";
 import { ArrowLink } from "@buttery/react";
 import { desktopScale } from "../desktop-scale.ts";
-import { useSettings } from "../location.ts";
+import { siteHref, useSettings } from "../location.ts";
 import { templates } from "../routes.ts";
 import type { TemplateName } from "../routes.ts";
 
@@ -23,7 +23,9 @@ export function TemplatePreview({
   const frame = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number | null>(null);
   const title = templates.find((template) => template.name === name)?.title;
-  const src = `/templates/${name}/preview${theme === "system" ? "" : `?theme=${theme}`}`;
+  const src = siteHref(
+    `/templates/${name}/preview${theme === "system" ? "" : `?theme=${theme}`}`,
+  );
 
   useLayoutEffect(() => {
     const element = frame.current;

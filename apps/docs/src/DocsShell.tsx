@@ -15,6 +15,7 @@ import { DisplaySettings } from "./DisplaySettings.tsx";
 import { DocsSearch } from "./search/DocsSearch.tsx";
 import { OnThisPage } from "./OnThisPage.tsx";
 import type { Heading } from "./content.ts";
+import { siteHref } from "./location.ts";
 import type { Settings } from "./location.ts";
 import { COMPONENTS_OVERVIEW, groupHref } from "./nav.ts";
 import { demoLinks, nav } from "./pages.tsx";
@@ -45,7 +46,10 @@ const TOP_MENUS: readonly {
   {
     label: "Components",
     roots: ["components"],
-    footer: { label: "Every component", href: `/${COMPONENTS_OVERVIEW}` },
+    footer: {
+      label: "Every component",
+      href: siteHref(`/${COMPONENTS_OVERVIEW}`),
+    },
   },
   { label: "Patterns", roots: ["patterns", "templates"] },
   { label: "Guides", roots: ["guides", "tools"] },
@@ -62,7 +66,7 @@ function PagesNav({ current }: { readonly current: string }): ReactElement {
             <Sidebar.Item
               key={route}
               label={page.title}
-              href={`/${route}`}
+              href={siteHref(`/${route}`)}
               current={route === current}
             />
           ))}
@@ -76,7 +80,7 @@ function PagesNav({ current }: { readonly current: string }): ReactElement {
                 <Sidebar.Item
                   key={route}
                   label={page.title}
-                  href={`/${route}`}
+                  href={siteHref(`/${route}`)}
                   current={route === current}
                 />
               ))}
@@ -89,7 +93,7 @@ function PagesNav({ current }: { readonly current: string }): ReactElement {
           <Sidebar.Item
             key={route}
             label={title}
-            href={`/${route}`}
+            href={siteHref(`/${route}`)}
             current={route === current}
           />
         ))}
@@ -142,7 +146,7 @@ export function DocsShell({
         skipTo="content"
         className="docs-top"
         brand={
-          <a href="/">
+          <a href={siteHref("/")}>
             <BrandMark size={24} />
             buttery
           </a>
@@ -210,7 +214,7 @@ export function DocsShell({
                         {column.map((group) => (
                           <MorphMenu.Entry
                             key={group.title}
-                            href={groupHref(group.title)}
+                            href={siteHref(groupHref(group.title))}
                             title={group.title}
                             caption={group.summary}
                           />
@@ -225,7 +229,7 @@ export function DocsShell({
                         {column.map(({ route, page }) => (
                           <MorphMenu.Entry
                             key={route}
-                            href={`/${route}`}
+                            href={siteHref(`/${route}`)}
                             title={page.title}
                             aria-current={
                               route === current ? "page" : undefined
@@ -240,7 +244,7 @@ export function DocsShell({
                   {demoLinks.map(({ route, title }) => (
                     <MorphMenu.Entry
                       key={route}
-                      href={`/${route}`}
+                      href={siteHref(`/${route}`)}
                       title={title}
                       aria-current={route === current ? "page" : undefined}
                     />

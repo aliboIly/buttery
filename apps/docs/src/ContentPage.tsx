@@ -9,6 +9,7 @@ import { DocsTable } from "./DocsTable.tsx";
 import { Example } from "./Example.tsx";
 import "./foundations/blocks.css";
 import type { ContentEntry } from "./content.ts";
+import { siteHref } from "./location.ts";
 import { PageFooter } from "./PageFooter.tsx";
 import type { Neighbor } from "./PageFooter.tsx";
 import { slugify } from "./slug.ts";
@@ -19,6 +20,11 @@ function textOf(node: ReactNode): string {
   if (isValidElement<{ readonly children?: ReactNode }>(node))
     return textOf(node.props.children);
   return "";
+}
+
+/** Where a Markdown link goes: a path written from the site's root, such as `/foundations/colors`, under the base. */
+function linkHref(href: string | undefined): string | undefined {
+  return href !== undefined && /^\/(?!\/)/.test(href) ? siteHref(href) : href;
 }
 
 /** A heading's anchor id from what it renders. */
@@ -73,7 +79,7 @@ export const markdown = {
     </Text>
   ),
   a: ({ children, href }: ComponentPropsWithRef<"a">): ReactElement => (
-    <a href={href} className="docs-link bt-focus">
+    <a href={linkHref(href)} className="docs-link bt-focus">
       {children}
     </a>
   ),

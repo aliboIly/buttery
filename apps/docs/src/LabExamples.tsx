@@ -27,6 +27,7 @@ export function LabExamples({
               pad={6}
               radius="lg"
               className="pg-stage"
+              data-docs-example=""
             >
               <Component />
             </Surface>

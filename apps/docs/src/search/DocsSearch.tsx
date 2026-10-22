@@ -15,6 +15,7 @@ import type {
   SearchSource,
 } from "@buttery/react";
 import { initialValues } from "../LiveControls.tsx";
+import { siteHref } from "../location.ts";
 import { components, docsRouteOf, packageOf } from "../registry.ts";
 import { SOURCE_URL } from "../routes.ts";
 import {
@@ -41,31 +42,31 @@ export const SEARCH_SUGGESTIONS: readonly SearchItem[] = [
     id: "page:get-started/quick-start",
     label: "Quick start",
     path: ["Get started"],
-    href: "/get-started/quick-start",
+    href: siteHref("/get-started/quick-start"),
   },
   {
     id: "component:Button",
     label: "Button",
     path: ["Components"],
-    href: "/components/button",
+    href: siteHref("/components/button"),
   },
   {
     id: "component:Dialog",
     label: "Dialog",
     path: ["Components"],
-    href: "/components/dialog",
+    href: siteHref("/components/dialog"),
   },
   {
     id: "page:foundations/theming",
     label: "Theming",
     path: ["Foundations"],
-    href: "/foundations/theming",
+    href: siteHref("/foundations/theming"),
   },
   {
     id: "page:layout/the-layout-contract",
     label: "The layout contract",
     path: ["Layout"],
-    href: "/layout/the-layout-contract",
+    href: siteHref("/layout/the-layout-contract"),
   },
 ];
 
@@ -109,7 +110,7 @@ function itemOf(hit: SearchHit): SearchItem {
     label: hit.entry.title,
     path: hit.entry.path.filter((place) => place !== hit.entry.group).slice(-2),
     detail: hit.snippet === "" ? undefined : hit.snippet,
-    href: hit.entry.href,
+    href: siteHref(hit.entry.href),
   };
 }
 
@@ -207,9 +208,9 @@ function previewOf(indexes: SearchIndexes | null, item: SearchItem): ReactNode {
   ) : null;
 }
 
-/** The query as the results page's address, such as `/search?q=dialog`. */
+/** The query as the results page's address, such as `/search?q=dialog`, under the site's base. */
 export function resultsHref(query: SearchQuery): string {
-  return `/search?q=${encodeURIComponent(formatSearch(query))}`;
+  return siteHref(`/search?q=${encodeURIComponent(formatSearch(query))}`);
 }
 
 /**

@@ -2,6 +2,7 @@ import { useId } from "react";
 import type { ReactElement } from "react";
 import { Grid, Stack, Text } from "@buttery/core";
 import { ArrowLink } from "@buttery/react";
+import { siteHref } from "./location.ts";
 import { DocsSearch } from "./search/DocsSearch.tsx";
 
 /** A section of the site and the page it starts on. */
@@ -48,8 +49,9 @@ export function NotFoundPage({
             <h1>Page not found</h1>
           </Text>
           <Text variant="body-lg">
-            No page lives at <code className="docs-code">{`/${address}`}</code>.
-            Search for what you were after, or start from one of the sections.
+            No page lives at{" "}
+            <code className="docs-code">{siteHref(`/${address}`)}</code>. Search
+            for what you were after, or start from one of the sections.
           </Text>
         </Stack>
         <DocsSearch shortcut={false} defaultValue={wordsOf(address)} />

@@ -28,6 +28,7 @@ import {
 import { releases } from "virtual:buttery-whats-new";
 import { CopyLine } from "./CopyLine.tsx";
 import { withInlineCode } from "./inline-code.tsx";
+import { siteHref } from "./location.ts";
 import { COMPONENTS_OVERVIEW } from "./nav.ts";
 import { DOCS_VERSION, SOURCE_URL } from "./routes.ts";
 import { ReleaseCard } from "./WhatsNew.tsx";
@@ -56,21 +57,21 @@ const STARTS: readonly {
     icon: Package,
     title: "A new app",
     text: `\`${NEW_APP}\` copies the starter with the provider, the styles and the layout checks already in place, for the web and the desktop.`,
-    href: "/get-started/installation",
+    href: siteHref("/get-started/installation"),
     link: "Installation",
   },
   {
     icon: Wrench,
     title: "An existing app",
     text: "Add the provider and the styles, then move one screen at a time onto buttery's components, from the top down, with the layout check watching.",
-    href: "/guides/make-an-existing-app-buttery",
+    href: siteHref("/guides/make-an-existing-app-buttery"),
     link: "Make an existing app buttery",
   },
   {
     icon: Bot,
     title: "With a coding agent",
     text: "`AGENTS.md` and the make-it-buttery skill give an agent the rules, and every check says how to fix what it finds.",
-    href: "/get-started/using-coding-agents",
+    href: siteHref("/get-started/using-coding-agents"),
     link: "Using coding agents",
   },
 ];
@@ -187,10 +188,12 @@ export function LandingPage({
         actions={
           <>
             <Button variant="primary" size="cta" arrow="forward" asChild>
-              <a href="/get-started/introduction">Get started</a>
+              <a href={siteHref("/get-started/introduction")}>Get started</a>
             </Button>
             <Button variant="secondary" size="cta" asChild>
-              <a href={`/${COMPONENTS_OVERVIEW}`}>Browse components</a>
+              <a href={siteHref(`/${COMPONENTS_OVERVIEW}`)}>
+                Browse components
+              </a>
             </Button>
             <Stack gap={1} align="center" className="docs-landing-command">
               <CopyLine text={NEW_APP} label="Copy the command" />
@@ -198,7 +201,7 @@ export function LandingPage({
                 Run it in a clone of the buttery repository until buttery is on
                 npm.{" "}
                 <a
-                  href="/get-started/installation"
+                  href={siteHref("/get-started/installation")}
                   className="docs-link bt-focus"
                 >
                   Installation
@@ -242,7 +245,7 @@ export function LandingPage({
               ))}
             </Grid>
             <Inline>
-              <ArrowLink href="/resources/whats-new">
+              <ArrowLink href={siteHref("/resources/whats-new")}>
                 Every release and change
               </ArrowLink>
             </Inline>
@@ -294,16 +297,24 @@ export function LandingPage({
       >
         <Footer.Column title="Project">
           <Footer.Link href={SOURCE_URL}>GitHub</Footer.Link>
-          <Footer.Link href="/resources/roadmap">Roadmap</Footer.Link>
-          <Footer.Link href="/resources/whats-new">What's new</Footer.Link>
-          <Footer.Link href="/resources/brand">Brand</Footer.Link>
+          <Footer.Link href={siteHref("/resources/roadmap")}>
+            Roadmap
+          </Footer.Link>
+          <Footer.Link href={siteHref("/resources/whats-new")}>
+            What's new
+          </Footer.Link>
+          <Footer.Link href={siteHref("/resources/brand")}>Brand</Footer.Link>
         </Footer.Column>
         <Footer.Column title="Docs">
-          <Footer.Link href="/get-started/introduction">
+          <Footer.Link href={siteHref("/get-started/introduction")}>
             Get started
           </Footer.Link>
-          <Footer.Link href={`/${COMPONENTS_OVERVIEW}`}>Components</Footer.Link>
-          <Footer.Link href="/patterns/overview">Patterns</Footer.Link>
+          <Footer.Link href={siteHref(`/${COMPONENTS_OVERVIEW}`)}>
+            Components
+          </Footer.Link>
+          <Footer.Link href={siteHref("/patterns/overview")}>
+            Patterns
+          </Footer.Link>
         </Footer.Column>
       </Footer>
     </Page>

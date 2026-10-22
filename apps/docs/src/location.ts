@@ -1,6 +1,15 @@
 import { useSyncExternalStore } from "react";
 import type { Density } from "@buttery/core";
 import type { ColorSchemePreference } from "@buttery/react";
+import { pathUnderBase, routeOf, sitePath } from "./base.ts";
+
+/**
+ * An address on the site, written from the site's root, such as `/components/button`, as this build serves
+ * it: under the base `BUTTERY_DOCS_BASE` set, `/buttery/components/button` under `/buttery/`.
+ */
+export function siteHref(path: string): string {
+  return sitePath(path, import.meta.env.BASE_URL);
+}
 
 function subscribe(onChange: () => void): () => void {
   window.addEventListener("popstate", onChange);
@@ -33,7 +42,7 @@ function useHref(): string {
 export type MotionSetting = "system" | "full" | "reduced";
 
 export interface Settings {
-  /** The path without its leading slash, such as `components/button`; empty on the home page. */
+  /** The path under the site's base without its slashes, such as `components/button`; empty on the home page. */
   readonly route: string;
   /** The query string, such as `?q=decaf`, for pages that read their own parameters. */
   readonly query: string;
@@ -55,7 +64,7 @@ function parseMotion(value: string | null): MotionSetting {
 export function useSettings(): Settings {
   const url = new URL(useHref());
   return {
-    route: url.pathname.replace(/^\/+|\/+$/g, ""),
+    route: routeOf(url.pathname, import.meta.env.BASE_URL),
     query: url.search,
     theme: parseTheme(url.searchParams.get("theme")),
     density:
@@ -69,8 +78,8 @@ export function useSettings(): Settings {
 const KEPT = ["theme", "density", "motion", "chrome"] as const;
 
 /**
- * Goes to `href`, a path on this site, adding a history entry. The theme, density, motion and chrome
- * settings in the URL carry over unless `href` sets them.
+ * Goes to `href`, an address on this site under its base, as a link's is, adding a history entry. The
+ * theme, density, motion and chrome settings in the URL carry over unless `href` sets them.
  */
 export function navigate(href: string): void {
   const current = new URL(window.location.href);
@@ -96,7 +105,7 @@ export function navigate(href: string): void {
 /** Moves the address to the page at `route` without a history entry, keeping its query and hash, as a redirect does. */
 export function redirectTo(route: string): void {
   const url = new URL(window.location.href);
-  url.pathname = `/${route}`;
+  url.pathname = siteHref(`/${route}`);
   window.history.replaceState(null, "", url);
   announce();
 }
@@ -129,7 +138,9 @@ function leavesPage(event: MouseEvent, link: HTMLAnchorElement): boolean {
 
 /**
  * Makes a click on any link to a path on this site a navigation within the page, so every buttery link
- * component works as it is. A link to an anchor on the same page is left to the browser. Returns the
+ * component works as it is. A link to an anchor on the same page, or to an address outside the site's
+ * base, is left to the browser, but one outside the base in a live example (`data-docs-example`) does
+ * nothing: it points into the app the example stands for, such as a sidebar's `/orders`. Returns the
  * function that stops it.
  */
 export function followLinks(): () => void {
@@ -137,6 +148,10 @@ export function followLinks(): () => void {
     const link =
       event.target instanceof Element ? event.target.closest("a[href]") : null;
     if (!(link instanceof HTMLAnchorElement) || leavesPage(event, link)) return;
+    if (pathUnderBase(link.pathname, import.meta.env.BASE_URL) === null) {
+      if (link.closest("[data-docs-example]") !== null) event.preventDefault();
+      return;
+    }
     const next = new URL(link.href);
     const here = new URL(window.location.href);
     if (

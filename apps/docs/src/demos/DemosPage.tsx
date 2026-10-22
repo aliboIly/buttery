@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
 import { Button, useButtery } from "@buttery/react";
 import { CopyLine } from "../CopyLine.tsx";
+import { siteHref } from "../location.ts";
 import { components, docsRouteOf } from "../registry.ts";
 import { SOURCE_URL, demoPages } from "../routes.ts";
 import type { DemoInfo } from "../routes.ts";
@@ -23,7 +24,11 @@ export function ComponentLinks({
             {name}
           </Text>
         ) : (
-          <a key={name} href={`/${route}`} className="docs-link bt-focus">
+          <a
+            key={name}
+            href={siteHref(`/${route}`)}
+            className="docs-link bt-focus"
+          >
             {name}
           </a>
         );
@@ -47,7 +52,9 @@ function DemoCard({
           <Grid columns={{ base: 1, md: 2 }} gap={5} align="start">
             <img
               className="docs-demo-preview"
-              src={`/previews/${demo.route}-${dark ? "dark" : "light"}.png`}
+              src={siteHref(
+                `/previews/${demo.route}-${dark ? "dark" : "light"}.png`,
+              )}
               alt={`${demo.title} as it opens`}
               width={960}
               height={600}
@@ -70,7 +77,7 @@ function DemoCard({
               </Stack>
               <Inline gap={2}>
                 <Button variant="primary" arrow="forward" asChild>
-                  <a href={`/demos/${demo.route}`}>Open demo</a>
+                  <a href={siteHref(`/demos/${demo.route}`)}>Open demo</a>
                 </Button>
                 <Button variant="secondary" asChild>
                   <a href={`${SOURCE_URL}/tree/main/apps/demos/${demo.route}`}>
@@ -88,7 +95,7 @@ function DemoCard({
               <p>
                 The{" "}
                 <a
-                  href={`/templates/${demo.template}`}
+                  href={siteHref(`/templates/${demo.template}`)}
                   className="docs-link bt-focus"
                 >
                   {demo.template} template

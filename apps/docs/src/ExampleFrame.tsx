@@ -69,6 +69,7 @@ export function ExampleFrame({
         pad={6}
         radius="lg"
         className="pg-stage"
+        data-docs-example=""
       >
         {width === "desktop" ? (
           <DesktopPreview>

@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import type { DocsSection } from "@buttery/core";
+import { siteHref } from "./location.ts";
 import { SECTIONS } from "./nav.ts";
 import { components, docsRouteOf } from "./registry.ts";
 import type { ComponentEntry } from "./registry.ts";
@@ -50,7 +51,7 @@ export function ComponentList({
             <tr key={entry.meta.name}>
               <td>
                 <a
-                  href={`/${docsRouteOf(entry) ?? ""}`}
+                  href={siteHref(`/${docsRouteOf(entry) ?? ""}`)}
                   className="docs-link bt-focus"
                 >
                   {entry.meta.name}

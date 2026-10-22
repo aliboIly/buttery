@@ -21,6 +21,7 @@ import {
 } from "@buttery/core";
 import type { PresencePreset, SpringToken } from "@buttery/core";
 import { ArrowLink, Button as ButteryButton, celebrate } from "@buttery/react";
+import { siteHref } from "../location.ts";
 import "./motion-page.css";
 
 const SPRINGS = Object.keys(spring) as SpringToken[];
@@ -258,13 +259,19 @@ export function MotionPage(): ReactElement {
                 >
                   Get started
                 </ButteryButton>
-                <ArrowLink href="/components/button" data-testid="arrow-link">
+                <ArrowLink
+                  href={siteHref("/components/button")}
+                  data-testid="arrow-link"
+                >
                   More about buttons
                 </ArrowLink>
               </Inline>
               <Surface asChild level="card" pad={4} className="mo-card">
                 <Pressable asChild className="bt-hover-lift">
-                  <a href="/components/pressable" data-testid="lift-card">
+                  <a
+                    href={siteHref("/components/pressable")}
+                    data-testid="lift-card"
+                  >
                     <Stack gap={1}>
                       <Text variant="label">Pressable</Text>
                       <Text variant="caption">The press and hover recipes</Text>

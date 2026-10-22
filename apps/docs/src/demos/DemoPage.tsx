@@ -9,7 +9,7 @@ import {
   useStoredState,
 } from "@buttery/core";
 import { BrandMark, Button, IconButton, buttery } from "@buttery/react";
-import { navigate, useSettings } from "../location.ts";
+import { navigate, siteHref, useSettings } from "../location.ts";
 import { SOURCE_URL } from "../routes.ts";
 import type { DemoInfo } from "../routes.ts";
 import { ThemeToggle } from "../ThemeToggle.tsx";
@@ -38,14 +38,15 @@ export function HostedApp({
   base,
 }: {
   readonly App: ComponentType<HostedAppProps>;
+  /** Where the site serves it, written from the site's root, such as `/demos/roastery`. */
   readonly base: string;
 }): ReactElement {
   const { route, query } = useSettings();
   return (
     <App
-      base={base}
+      base={siteHref(base)}
       navigate={navigate}
-      serverHref={`http://localhost/${route}${query}`}
+      serverHref={`http://localhost${siteHref(`/${route}`)}${query}`}
     />
   );
 }
@@ -117,7 +118,7 @@ function DemoPill({
         ) : (
           <Inline gap={1} align="center">
             <Button variant="ghost" size="sm" asChild>
-              <a href="/demos">
+              <a href={siteHref("/demos")}>
                 <BrandMark size={16} />
                 Docs
               </a>

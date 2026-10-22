@@ -9,6 +9,7 @@ import { LandingPage } from "./LandingPage.tsx";
 import type { ExploreSection } from "./LandingPage.tsx";
 import { contentPages, labPages } from "./content.ts";
 import type { Heading } from "./content.ts";
+import { siteHref } from "./location.ts";
 import type { Neighbor } from "./PageFooter.tsx";
 import { buildNav, groupHref, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
@@ -175,8 +176,12 @@ function crumbsFor(
   );
   const first = found.pages[0] ?? found.groups[0]?.pages[0];
   return [
-    ...(first ? [{ label: found.title, href: `/${first.route}` }] : []),
-    ...(group ? [{ label: group.title, href: groupHref(group.title) }] : []),
+    ...(first
+      ? [{ label: found.title, href: siteHref(`/${first.route}`) }]
+      : []),
+    ...(group
+      ? [{ label: group.title, href: siteHref(groupHref(group.title)) }]
+      : []),
   ];
 }
 
@@ -210,9 +215,9 @@ const sectionLinks: readonly SectionLink[] = [
     const home = sectionHomes.get(section.root);
     return home === undefined
       ? []
-      : [{ title: section.title, href: `/${home}` }];
+      : [{ title: section.title, href: siteHref(`/${home}`) }];
   }),
-  { title: "Demos", href: "/demos" },
+  { title: "Demos", href: siteHref("/demos") },
 ];
 
 /** The pages the site's menus show, grouped: the nav's sections, then the demos. */
@@ -267,14 +272,19 @@ const exploreSections: readonly ExploreSection[] = [
       ? [
           {
             title: section.title,
-            href: `/${first.route}`,
+            href: siteHref(`/${first.route}`),
             count: counted.length,
             unit,
           },
         ]
       : [];
   }),
-  { title: "Demos", href: "/demos", count: demoPages.length, unit: "demos" },
+  {
+    title: "Demos",
+    href: siteHref("/demos"),
+    count: demoPages.length,
+    unit: "demos",
+  },
 ];
 
 /** The site's front page, at `/`. */

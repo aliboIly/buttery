@@ -24,6 +24,7 @@
     "apps/demos/*/package.json",
     "apps/demos/*/e2e/**/*.ts",
     "packages/*/e2e/**/*.ts",
+    "apps/docs/src/base.ts",
     "apps/docs/src/routes.ts",
     "apps/docs/src/nav.ts",
     "apps/docs/src/slug.ts",

@@ -10,6 +10,7 @@ import {
 } from "vite";
 import type { Plugin } from "vite";
 import manifest from "./package.json" with { type: "json" };
+import { docsBase } from "./src/base.ts";
 import { exampleCode } from "./vite/code.ts";
 import { butteryDates } from "./vite/dates.ts";
 import { frontmatter } from "./vite/frontmatter.ts";
@@ -31,23 +32,26 @@ const REFERENCE_MODULE = "virtual:buttery-reference";
 function referenceCaptures(): Plugin {
   const folder = fileURLToPath(new URL("../../reference", import.meta.url));
   let serving = false;
+  let base = "/";
   return {
     name: "buttery-reference",
     configResolved(config) {
       serving = config.command === "serve";
+      base = config.base;
     },
     resolveId(source) {
       return source === REFERENCE_MODULE ? `\0${REFERENCE_MODULE}` : undefined;
     },
     load(id) {
       if (id !== `\0${REFERENCE_MODULE}`) return undefined;
-      const root = serving && existsSync(folder) ? `/@fs${folder}` : null;
+      const root = serving && existsSync(folder) ? `${base}@fs${folder}` : null;
       return `export const referenceRoot = ${JSON.stringify(root)};`;
     },
   };
 }
 
 export default defineConfig({
+  base: docsBase(process.env["BUTTERY_DOCS_BASE"]),
   plugins: [
     butteryProps(fileURLToPath(new URL("../..", import.meta.url))),
     butteryDates(fileURLToPath(new URL("../..", import.meta.url))),

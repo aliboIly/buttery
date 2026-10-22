@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { renderToString } from "react-dom/server";
 import { App } from "./App.tsx";
-import { setServerHref } from "./location.ts";
+import { setServerHref, siteHref } from "./location.ts";
 import { hostedRoutes, pageAt, pages, sectionHomes } from "./pages.tsx";
 
 /** One page as the static build writes it: its markup, and its title and description for the head. */
@@ -33,7 +33,7 @@ export function sectionRoutes(): readonly (readonly [string, string])[] {
 /** The page at `route`, rendered to markup the way the site first draws it. */
 export function render(route: string): PrerenderedPage {
   const page = pageAt(route);
-  setServerHref(`http://localhost/${route}`);
+  setServerHref(`http://localhost${siteHref(`/${route}`)}`);
   const html = renderToString(
     <StrictMode>
       <App />

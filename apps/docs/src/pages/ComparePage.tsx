@@ -22,6 +22,7 @@ import {
 } from "@buttery/react";
 import type { Swatch } from "@buttery/react";
 import { referenceRoot } from "virtual:buttery-reference";
+import { siteHref } from "../location.ts";
 import "./compare-page.css";
 
 interface Capture {
@@ -343,7 +344,9 @@ const CROPS: readonly Crop[] = [
     height: 0,
     note: "An open select, the crop toolbar and a toast float over the app, so the phase report compares them as whole screens of Card Studio next to the captures.",
     ours: () => (
-      <ArrowLink href="/demos/card-studio">Open Card Studio</ArrowLink>
+      <ArrowLink href={siteHref("/demos/card-studio")}>
+        Open Card Studio
+      </ArrowLink>
     ),
   },
   {
@@ -359,7 +362,9 @@ const CROPS: readonly Crop[] = [
         <Button variant="primary" arrow="forward">
           Get started
         </Button>
-        <ArrowLink href="/components/button">More about buttons</ArrowLink>
+        <ArrowLink href={siteHref("/components/button")}>
+          More about buttons
+        </ArrowLink>
       </Inline>
     ),
   },

@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import { lastChanged } from "virtual:buttery-dates";
 import { Inline, Stack, Text } from "@buttery/core";
 import { ArrowLink } from "@buttery/react";
+import { siteHref } from "./location.ts";
 import { SOURCE_URL } from "./routes.ts";
 
 /** A page the footer links to: before or after this one in the nav. */
@@ -30,14 +31,16 @@ export function PageFooter({
       <footer className="docs-page-footer">
         <Inline gap={4} justify="between" wrap>
           {previous ? (
-            <ArrowLink href={`/${previous.route}`} arrow="back">
+            <ArrowLink href={siteHref(`/${previous.route}`)} arrow="back">
               {previous.title}
             </ArrowLink>
           ) : (
             <span />
           )}
           {next ? (
-            <ArrowLink href={`/${next.route}`}>{next.title}</ArrowLink>
+            <ArrowLink href={siteHref(`/${next.route}`)}>
+              {next.title}
+            </ArrowLink>
           ) : null}
         </Inline>
         <Inline gap={3} wrap>

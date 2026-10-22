@@ -20,6 +20,7 @@ import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { DesktopPreview } from "./DesktopPreview.tsx";
 import { DemoHeading, ExampleFrame } from "./ExampleFrame.tsx";
 import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
+import { siteHref } from "./location.ts";
 import { PageFooter } from "./PageFooter.tsx";
 import { TableScroll } from "./TableScroll.tsx";
 import type { Neighbor } from "./PageFooter.tsx";
@@ -168,6 +169,7 @@ function LiveDemoFrame({
           radius="lg"
           className="pg-stage"
           data-testid="live-demo"
+          data-docs-example=""
         >
           {live ? (
             <DemoDrawing entry={entry}>{live.render(values)}</DemoDrawing>
@@ -273,7 +275,13 @@ export function ComponentBody({
                   level={inner}
                   id={idFor(entry, depth, demo.title)}
                 />
-                <Surface level={stage} pad={6} radius="lg" className="pg-stage">
+                <Surface
+                  level={stage}
+                  pad={6}
+                  radius="lg"
+                  className="pg-stage"
+                  data-docs-example=""
+                >
                   <DemoDrawing entry={entry}>{demo.render()}</DemoDrawing>
                 </Surface>
               </Stack>
@@ -352,7 +360,11 @@ export function ComponentBody({
             </HeadingAt>
             <Inline gap={4} wrap className="docs-related">
               {related.map(({ name, route }) => (
-                <a key={name} href={`/${route}`} className="docs-link bt-focus">
+                <a
+                  key={name}
+                  href={siteHref(`/${route}`)}
+                  className="docs-link bt-focus"
+                >
                   {name}
                 </a>
               ))}
@@ -367,7 +379,7 @@ export function ComponentBody({
                       screen.page === undefined ? (
                         <a
                           key={screen.href}
-                          href={screen.href}
+                          href={siteHref(screen.href)}
                           className="docs-link bt-focus"
                         >
                           {screen.demo}
@@ -377,7 +389,10 @@ export function ComponentBody({
                           {index === 0
                             ? `${group.demo}'s `
                             : listed(group.screens, index)}
-                          <a href={screen.href} className="docs-link bt-focus">
+                          <a
+                            href={siteHref(screen.href)}
+                            className="docs-link bt-focus"
+                          >
                             {screen.page}
                           </a>
                         </Fragment>
