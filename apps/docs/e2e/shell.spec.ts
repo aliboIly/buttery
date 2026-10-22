@@ -19,3 +19,48 @@ test("the site sits on the surface color, as the landing's own sections do, so f
   });
   expect(colors.shell).toBe(colors.page);
 });
+
+test("the phone's menu sheet shows its tools as labelled rows that start where the menus start", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/foundations/colors");
+  await page.getByRole("button", { name: "Menu", exact: true }).click();
+  const sheet = page.getByRole("dialog");
+  const learn = sheet.getByRole("button", { name: "Learn", exact: true });
+  await expect(learn).toBeVisible();
+  const start = await learn.evaluate(
+    (button) =>
+      button.getBoundingClientRect().left +
+      Number.parseFloat(getComputedStyle(button).paddingInlineStart),
+  );
+  for (const [role, name] of [
+    ["button", "Use the dark theme"],
+    ["button", "Display settings"],
+    ["link", "Source on GitHub"],
+  ] as const) {
+    const tool = sheet.getByRole(role, { name, exact: true });
+    await expect(tool).toBeVisible();
+    const { label, icon } = await tool.evaluate((element) => ({
+      label: element instanceof HTMLElement ? element.innerText.trim() : "",
+      icon: element.querySelector("svg")?.getBoundingClientRect().left ?? 0,
+    }));
+    expect(label).toBe(name);
+    expect(Math.abs(icon - start)).toBeLessThanOrEqual(1);
+  }
+});
+
+test("the display settings say which row is the theme, the density and the motion", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/foundations/colors");
+  await page
+    .getByRole("button", { name: "Display settings", exact: true })
+    .click();
+  const settings = page.getByRole("dialog", { name: "Display settings" });
+  for (const name of ["Theme", "Density", "Motion"]) {
+    await expect(settings.getByText(name, { exact: true })).toBeVisible();
+    await expect(settings.getByRole("radiogroup", { name })).toBeVisible();
+  }
+});

@@ -5,6 +5,7 @@ import { Sticky, Text, useFloatingObstacle } from "@buttery/core";
 import {
   ArrowLink,
   BrandMark,
+  Button,
   IconButton,
   MorphMenu,
   NavBar,
@@ -149,14 +150,39 @@ export function DocsShell({
         search={<DocsSearch />}
         actions={
           <>
-            <Text variant="caption" tone="secondary" className="docs-version">
+            <Text
+              variant="caption"
+              tone="secondary"
+              className="docs-version docs-bar-only"
+            >
               {`v${DOCS_VERSION}`}
             </Text>
-            <ThemeToggle />
+            <ThemeToggle className="docs-bar-only" />
+            <ThemeToggle labelled className="docs-sheet-only docs-tool" />
             <DisplaySettings settings={settings} />
-            <IconButton icon={Code} label="Source on GitHub" asChild>
+            <IconButton
+              icon={Code}
+              label="Source on GitHub"
+              asChild
+              className="docs-bar-only"
+            >
               <a href={SOURCE_URL} aria-label="Source on GitHub" />
             </IconButton>
+            <Button
+              variant="ghost"
+              iconStart={Code}
+              asChild
+              className="docs-sheet-only docs-tool"
+            >
+              <a href={SOURCE_URL}>Source on GitHub</a>
+            </Button>
+            <Text
+              variant="caption"
+              tone="secondary"
+              className="docs-sheet-only docs-sheet-version"
+            >
+              {`Version ${DOCS_VERSION}`}
+            </Text>
           </>
         }
       >

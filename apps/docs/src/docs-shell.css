@@ -37,6 +37,26 @@
   display: none;
 }
 
+/*
+ * The bar's tools are icons beside the version; in the phone's menu sheet they're labelled rows instead,
+ * starting where the menus above them start, with the version under them.
+ */
+.docs-top .docs-sheet-only,
+.docs-bar-only:not(.docs-top *) {
+  display: none;
+}
+
+.docs-tool:not(.docs-top *) {
+  --bt-button-padding: var(--bt-space-4);
+
+  justify-content: flex-start;
+  border-radius: var(--bt-r-md);
+}
+
+.docs-sheet-version {
+  padding-inline: var(--bt-space-4);
+}
+
 .docs-body {
   display: grid;
   grid-template-columns:

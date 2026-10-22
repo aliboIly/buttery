@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { ReactElement } from "react";
 import { Settings2 } from "lucide-react";
 import { RadioGroup } from "radix-ui";
@@ -13,28 +14,35 @@ interface ToggleProps {
   readonly onChange: (value: string) => void;
 }
 
+/** One setting: its name over its options, which it names. */
 function Toggle({
   label,
   options,
   value,
   onChange,
 }: ToggleProps): ReactElement {
+  const labelId = useId();
   return (
-    <RadioGroup.Root
-      className="pg-toggle"
-      aria-label={label}
-      orientation="horizontal"
-      value={value}
-      onValueChange={onChange}
-    >
-      {options.map((option) => (
-        <RadioGroup.Item key={option} value={option} asChild>
-          <Pressable className="pg-toggle-option">
-            <Text variant="control">{option}</Text>
-          </Pressable>
-        </RadioGroup.Item>
-      ))}
-    </RadioGroup.Root>
+    <Stack gap={1.5} align="start">
+      <Text id={labelId} variant="caption" tone="secondary">
+        {label}
+      </Text>
+      <RadioGroup.Root
+        className="pg-toggle"
+        aria-labelledby={labelId}
+        orientation="horizontal"
+        value={value}
+        onValueChange={onChange}
+      >
+        {options.map((option) => (
+          <RadioGroup.Item key={option} value={option} asChild>
+            <Pressable className="pg-toggle-option">
+              <Text variant="control">{option}</Text>
+            </Pressable>
+          </RadioGroup.Item>
+        ))}
+      </RadioGroup.Root>
+    </Stack>
   );
 }
 
@@ -44,9 +52,9 @@ function SettingsControls({
   readonly settings: Settings;
 }): ReactElement {
   return (
-    <Stack gap={3} align="start">
+    <Stack gap={4} align="start">
       <Toggle
-        label="Color scheme"
+        label="Theme"
         options={["system", "light", "dark"]}
         value={settings.theme}
         onChange={(value) => {
@@ -86,7 +94,7 @@ export function DisplaySettings({
           variant="ghost"
           iconStart={Settings2}
           aria-label="Display settings"
-          className="pg-display"
+          className="pg-display docs-tool"
         >
           <span className="pg-display-text">Display settings</span>
         </Button>
