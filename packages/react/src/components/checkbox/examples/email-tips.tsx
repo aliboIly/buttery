@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
+import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Checkbox } from "@buttery/react";
 
@@ -23,10 +23,12 @@ export function EmailTips(): ReactElement {
           hint="About once a month."
           name="tips"
         />
-        <Button type="submit">Save</Button>
-        <Text variant="body-sm" tone="secondary" role="status">
-          {saved ?? ""}
-        </Text>
+        <Inline gap={3} align="center">
+          <Button type="submit">Save</Button>
+          <Text variant="body-sm" tone="secondary" role="status">
+            {saved ?? ""}
+          </Text>
+        </Inline>
       </Stack>
     </form>
   );

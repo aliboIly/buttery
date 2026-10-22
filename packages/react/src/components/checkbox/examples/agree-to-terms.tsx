@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
+import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Checkbox } from "@buttery/react";
 
@@ -28,18 +28,20 @@ export function AgreeToTerms(): ReactElement {
         hint="Available on the Roaster plan."
         disabled
       />
-      <Button
-        variant="primary"
-        onClick={() => {
-          setTried(true);
-          setCreated(agreed);
-        }}
-      >
-        Create account
-      </Button>
-      <Text variant="body-sm" tone="secondary" role="status">
-        {created ? "Account created" : ""}
-      </Text>
+      <Inline gap={3} align="center">
+        <Button
+          variant="primary"
+          onClick={() => {
+            setTried(true);
+            setCreated(agreed);
+          }}
+        >
+          Create account
+        </Button>
+        <Text variant="body-sm" tone="secondary" role="status">
+          {created ? "Account created" : ""}
+        </Text>
+      </Inline>
     </Stack>
   );
 }
