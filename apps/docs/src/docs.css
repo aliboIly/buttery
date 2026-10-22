@@ -44,12 +44,15 @@
 }
 
 /* A 2px side leaves punctuation after a chip closer than a space, so "`Stack`," doesn't read as "Stack ,". */
+/* A chip that wraps at a hyphen keeps its padding and corners on each line. */
 .docs-code {
   padding-inline: var(--bt-space-0_5);
   border-radius: var(--bt-r-xs);
   background-color: var(--bt-bg-control);
   font-family: var(--bt-font-mono);
   font-size: var(--bt-text-body-sm-size);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /* A line of code on its own, such as an import, sits in a padded box; inside a sentence a chip keeps to 2px. */
