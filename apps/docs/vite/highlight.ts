@@ -5,6 +5,7 @@ import type { Highlighter } from "shiki";
 export const LANGUAGES = [
   "tsx",
   "ts",
+  "js",
   "css",
   "bash",
   "json",

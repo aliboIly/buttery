@@ -111,7 +111,7 @@ Coding agents get the rules people get: `AGENTS.md`, the make-it-buttery skill, 
 
 ### Layout checks
 
-`expectButtery` fails a Playwright test on overlap, overflow, off-scale spacing, small targets, contrast and layout shift, with a fix for each. `LayoutGuard` shows the same problems while you work.
+`expectButtery` fails a Playwright test on overlap, overflow, off-scale spacing, small targets, contrast and layout shift, with a fix for each. `LayoutGuard` outlines the layout problems among them while you work.
 
 </td>
 </tr>

@@ -14,6 +14,7 @@ import { CodeBlock } from "./CodeBlock.tsx";
 import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { ComponentDocs } from "./ComponentDocs.tsx";
 import { DocsTable } from "./DocsTable.tsx";
+import { codeClass } from "./inline-code.tsx";
 import { Example } from "./Example.tsx";
 import "./foundations/blocks.css";
 import type { ContentEntry } from "./content.ts";
@@ -95,13 +96,13 @@ export const markdown = {
     children,
     className,
   }: ComponentPropsWithRef<"code">): ReactElement => (
-    <code className={className ?? "docs-code"}>{children}</code>
+    <code className={className ?? codeClass(textOf(children))}>{children}</code>
   ),
   blockquote: ({
     children,
   }: ComponentPropsWithRef<"blockquote">): ReactElement => (
     <Callout tone="info" className="docs-note">
-      {children}
+      <Stack gap={3}>{children}</Stack>
     </Callout>
   ),
   pre: CodeBlock,

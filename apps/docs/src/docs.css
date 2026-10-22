@@ -362,3 +362,8 @@
 .docs-token {
   white-space: nowrap;
 }
+
+/* A short chip, such as `z-index`, stays on one line; a code block's own code keeps its line breaks. */
+:not(pre) > .docs-code-whole {
+  white-space: nowrap;
+}

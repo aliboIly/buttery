@@ -30,6 +30,18 @@ describe("plainText", () => {
     );
     expect(text).toBe("Surfaces nest in that order.");
   });
+
+  it("keeps a table's words, from its columns and its cells", () => {
+    const text = plainText(
+      [
+        "<DocsTable",
+        '  columns={["Option", "Default"]}',
+        '  rows={[["`viewports`", "390 and 1280"]]}',
+        "/>",
+      ].join("\n"),
+    );
+    expect(text).toBe("Option Default viewports 390 and 1280");
+  });
 });
 
 describe("docs search", () => {

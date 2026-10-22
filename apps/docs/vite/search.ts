@@ -74,7 +74,13 @@ function sectionTitle(section: string): string {
 /** A page's prose as plain words: no code blocks, components, imports or Markdown marks. */
 export function plainText(markdown: string): string {
   return withoutJsx(
-    withoutModuleBlocks(markdown).replace(/^```[\s\S]*?^```/gm, " "),
+    withoutModuleBlocks(markdown)
+      .replace(/^```[\s\S]*?^```/gm, " ")
+      .replace(/^<DocsTable\b[\s\S]*?\/>/gm, (table) =>
+        [...table.matchAll(/"((?:[^"\\]|\\.)*)"/g)]
+          .map(([, cell]) => cell)
+          .join(" "),
+      ),
   )
     .replace(/<\/?[A-Za-z][^>]*>/g, " ")
     .replace(/\{[^{}]*\}/g, " ")
