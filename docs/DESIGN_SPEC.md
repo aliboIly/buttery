@@ -75,6 +75,7 @@ Decorative (onboarding illustrations, brand mark):
 |---|---|
 | `--bt-traffic-red/yellow/green` | `#ed6c61` / `#f5c05c` / `#5ac55e` |
 | `--bt-brand-butter` / `--bt-brand-butter-deep` / `--bt-brand-cream` | `#f5d06f` / `#e8b64a` / `#fff4d6` — buttery's own brand colors (see `BRAND.md`). Decorative only: the mark, docs site, marketing. The UI itself stays neutral. |
+| `--bt-brand-gloss` / `--bt-brand-shadow` | `#ffffff` / `#8a5a12` — the mark's highlight and its contact shadow (drawn at 20% and blurred), the same in both themes. |
 | `--bt-skeleton` / `--bt-skeleton-strong` | `#f2f2f4` / `#ececee` (a `Skeleton`'s fill and the band that sweeps across it; skeleton blocks and lines in illustrations) |
 
 ### Palettes (`@buttery/core/palettes`)

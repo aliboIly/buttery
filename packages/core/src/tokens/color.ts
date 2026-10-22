@@ -374,6 +374,16 @@ export const colors = {
     dark: "#fff4d6",
     description: "The brand mark's top face.",
   },
+  "brand-gloss": {
+    light: "#ffffff",
+    dark: "#ffffff",
+    description: "The brand mark's highlight, white on any background.",
+  },
+  "brand-shadow": {
+    light: "#8a5a12",
+    dark: "#8a5a12",
+    description: "The brand mark's contact shadow, drawn faint and blurred.",
+  },
   skeleton: {
     light: "#f2f2f4",
     dark: "#232326",
