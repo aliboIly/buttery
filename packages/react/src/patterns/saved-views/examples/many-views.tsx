@@ -1,20 +1,40 @@
+import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { SavedViews } from "@buttery/react";
+
+const VIEWS = [
+  { id: "all", label: "Everyone" },
+  { id: "subscribers", label: "Subscribers" },
+  { id: "lapsed", label: "Lapsed" },
+  { id: "wholesale", label: "Wholesale" },
+  { id: "local", label: "Picks up in store" },
+];
 
 /** More views than room: the last ones fold away and stay in the … menu. */
 export function ManyViews(): ReactElement {
+  const [shown, setShown] = useState("Everyone");
   return (
-    <div style={{ maxInlineSize: "var(--bt-w-dialog)" }}>
+    <Stack gap={3} style={{ maxInlineSize: "var(--bt-w-dialog)" }}>
       <SavedViews
         label="Customer views"
-        views={[
-          { id: "all", label: "Everyone" },
-          { id: "subscribers", label: "Subscribers" },
-          { id: "lapsed", label: "Lapsed" },
-          { id: "wholesale", label: "Wholesale" },
-          { id: "local", label: "Picks up in store" },
-        ]}
+        views={VIEWS}
+        onValueChange={(id) => {
+          setShown(VIEWS.find((view) => view.id === id)?.label ?? id);
+        }}
       />
-    </div>
+      <Text variant="body" tone="secondary">
+        {`View: ${shown}`}
+      </Text>
+    </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "More views");
+  await press("menuitemradio", "Picks up in store");
+  await see("View: Picks up in store");
+};

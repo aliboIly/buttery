@@ -1,4 +1,4 @@
-import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
+import type { DemoFrame, DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { SettingsIndex } from "@buttery/react";
 import {
   Bell,
@@ -24,6 +24,56 @@ export const page: DocsPage = {
 };
 
 export const frame: DemoFrame = "page";
+
+export const live: LiveDemo = {
+  controls: {
+    title: { kind: "text", initial: "Your shop" },
+    description: {
+      kind: "text",
+      initial: "Rates by region, packaging and local pickup.",
+    },
+  },
+  render: ({ title, description }) => (
+    <SettingsIndex>
+      <SettingsIndex.Section title={String(title)}>
+        <SettingsIndex.Link
+          icon={Building2}
+          title="Business details"
+          description="The roastery's name, address and tax number."
+          href="#settings-business"
+        />
+        <SettingsIndex.Link
+          icon={Truck}
+          title="Shipping"
+          description={String(description)}
+          href="#settings-shipping"
+        />
+        <SettingsIndex.Link
+          icon={Users}
+          title="Team"
+          description="Who can roast, pack and refund."
+          href="#settings-team"
+        />
+        <SettingsIndex.More
+          title="Find more settings"
+          description="Add-ons for tax, labels and accounting."
+          href="#settings-more"
+        />
+      </SettingsIndex.Section>
+    </SettingsIndex>
+  ),
+  code: ({ title, description }) =>
+    [
+      "<SettingsIndex>",
+      `  <SettingsIndex.Section title="${String(title)}">`,
+      '    <SettingsIndex.Link icon={Building2} title="Business details" description="The roastery\'s name, address and tax number." href="#settings-business" />',
+      `    <SettingsIndex.Link icon={Truck} title="Shipping" description="${String(description)}" href="#settings-shipping" />`,
+      '    <SettingsIndex.Link icon={Users} title="Team" description="Who can roast, pack and refund." href="#settings-team" />',
+      '    <SettingsIndex.More title="Find more settings" description="Add-ons for tax, labels and accounting." href="#settings-more" />',
+      "  </SettingsIndex.Section>",
+      "</SettingsIndex>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {
