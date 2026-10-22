@@ -1,6 +1,7 @@
-import { Icon, cx, hasContent } from "@buttery/core";
+import { Icon, cx, hasContent, tabbables } from "@buttery/core";
 import { ChevronRight, Search } from "lucide-react";
-import { useEffect, useEffectEvent, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import type { ReactElement, ReactNode } from "react";
 import { Button } from "../../components/button/Button.tsx";
 import { LoadingPill } from "../../components/loading-pill/LoadingPill.tsx";
@@ -157,10 +158,11 @@ function ResultList({
   readonly showMore: (count: number) => string;
 }): ReactElement {
   const [shown, setShown] = useState(pageSize);
+  const list = useRef<HTMLUListElement>(null);
   const rest = items.length - shown;
   return (
     <>
-      <ul data-bt-part="results">
+      <ul ref={list} data-bt-part="results">
         {items.slice(0, shown).map((item, index) => (
           <li key={`${item.id}:${String(index)}`}>
             <ResultRow item={item} source={source} query={query} />
@@ -173,7 +175,14 @@ function ResultList({
             variant="ghost"
             size="sm"
             onClick={() => {
-              setShown(shown + pageSize);
+              flushSync(() => {
+                setShown(shown + pageSize);
+              });
+              // Focus goes to the first row it showed, rather than staying on a button that moved past them.
+              const [first] = [...(list.current?.children ?? [])]
+                .slice(shown)
+                .flatMap((row) => tabbables(row));
+              first?.focus();
             }}
           >
             {showMore(Math.min(pageSize, rest))}

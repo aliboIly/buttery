@@ -4,7 +4,7 @@ import { publishSettled } from "@buttery/core";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { createRef, useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { matchesSearch, pageSource } from "../command-search/search.ts";
 import type {
@@ -214,5 +214,48 @@ describe("SearchResults", () => {
     );
     expect(within(section).getAllByRole("link")).toHaveLength(120);
     expect(within(section).queryByRole("button")).toBeNull();
+  });
+
+  it("hands focus to the first row it shows, and starts over for a new search", async () => {
+    const orders: LocalSearchSource = {
+      id: "orders",
+      label: "Orders",
+      search: (query) =>
+        Array.from({ length: 70 }, (_, index) => ({
+          id: "same",
+          label: `${query.text} order ${String(1000 + index)}`,
+          href: `#order-${String(index)}`,
+        })),
+    };
+    const errors = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const { rerender } = render(
+      <SearchResults
+        query={{ text: "decaf", filters: [] }}
+        sources={[orders]}
+      />,
+    );
+    const section = screen.getByRole("region", { name: "Orders" });
+    await userEvent.click(
+      within(section).getByRole("button", { name: "Show 20 more" }),
+    );
+    expect(document.activeElement).toBe(
+      screen.getByRole("link", { name: "decaf order 1050" }),
+    );
+    expect(within(section).queryByRole("button")).toBeNull();
+    rerender(
+      <SearchResults
+        query={{ text: "kenya", filters: [] }}
+        sources={[orders]}
+      />,
+    );
+    expect(
+      within(screen.getByRole("region", { name: "Orders" })).getAllByRole(
+        "link",
+      ),
+    ).toHaveLength(50);
+    expect(errors).not.toHaveBeenCalled();
+    errors.mockRestore();
   });
 });

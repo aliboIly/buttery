@@ -14,6 +14,6 @@ export const meta: ComponentMeta = {
     "A few results as you type: use CommandSearch",
   ],
   related: ["CommandSearch", "AppPage", "EmptyState", "PageHeader"],
-  a11y: "A main landmark with the search as its h1 and the count under it. Each source is a region named by its heading, its results links in a list, read with their path first. A section waiting on a server shows a loading pill that says Searching. With nothing found, the empty state's heading says so.",
+  a11y: "A main landmark with the search as its h1 and the count under it. Each source is a region named by its heading, its results links in a list, read with their path first; a long section shows 50 at a time, and its Show more button hands focus to the first row it shows. A section waiting on a server shows a loading pill that says Searching. With nothing found, the empty state's heading says so.",
   motion: "none",
 };

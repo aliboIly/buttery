@@ -323,6 +323,22 @@ test("a finished filter becomes a chip, and Enter shows every result for it", as
   await expect(page.getByRole("region", { name: "Orders" })).toBeVisible();
 });
 
+test("a results page reads a filter typed last, and pages its rows", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/roastery/search?q=status%3Arefunded");
+  await expect(page.locator("h1").first()).toHaveText(
+    'Results for "status:refunded"',
+  );
+  const orders = page.getByRole("region", { name: "Orders" });
+  await expect(orders.getByRole("link")).toHaveCount(50);
+  await orders.getByRole("button", { name: "Show 50 more" }).click();
+  await expect(orders.getByRole("link")).toHaveCount(100);
+  await expect(orders.getByRole("link").nth(50)).toBeFocused();
+});
+
 test("help docks beside the page on a wide screen, and covers it as a sheet on a narrow one", async ({
   page,
 }) => {
