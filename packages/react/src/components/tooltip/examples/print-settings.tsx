@@ -1,36 +1,37 @@
 import type { ReactElement } from "react";
+import { Grid } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Inspector, NumberField, Tooltip } from "@buttery/react";
 
 /** Tooltips that explain terse labels in an inspector, shown as each field takes focus. */
 export function PrintSettings(): ReactElement {
   return (
-    <Inspector label="Print settings">
-      <Inspector.Section title="Print">
-        <Inspector.Row>
+    <Inspector.Section title="Print">
+      <Inspector.Row block>
+        <Grid columns={2} gap={2}>
           <Tooltip label="Extra edge the printer trims off, so color runs to the cut">
             <NumberField
               label="Bleed"
+              labelPosition="top"
               unit="mm"
               min={0}
               max={10}
               defaultValue={3}
             />
           </Tooltip>
-        </Inspector.Row>
-        <Inspector.Row>
           <Tooltip label="Room inside the cut that text stays clear of">
             <NumberField
               label="Margin"
+              labelPosition="top"
               unit="mm"
               min={0}
               max={20}
               defaultValue={5}
             />
           </Tooltip>
-        </Inspector.Row>
-      </Inspector.Section>
-    </Inspector>
+        </Grid>
+      </Inspector.Row>
+    </Inspector.Section>
   );
 }
 
