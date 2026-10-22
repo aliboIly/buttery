@@ -1,6 +1,8 @@
 import { isValidElement } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
-import { Stack, Text } from "@buttery/core";
+import { Icon, Stack, Text } from "@buttery/core";
+import { Link2 } from "lucide-react";
+import { CodeBlock } from "./CodeBlock.tsx";
 import type { ContentEntry } from "./content.ts";
 import { slugify } from "./slug.ts";
 
@@ -21,12 +23,22 @@ export function slugOf(children: ReactNode): string {
 export const markdown = {
   h2: ({ children }: ComponentPropsWithRef<"h2">): ReactElement => (
     <Text variant="heading-2" asChild>
-      <h2 id={slugOf(children)}>{children}</h2>
+      <h2 id={slugOf(children)}>
+        <a href={`#${slugOf(children)}`} className="docs-anchor">
+          {children}
+          <Icon icon={Link2} />
+        </a>
+      </h2>
     </Text>
   ),
   h3: ({ children }: ComponentPropsWithRef<"h3">): ReactElement => (
     <Text variant="title" asChild>
-      <h3 id={slugOf(children)}>{children}</h3>
+      <h3 id={slugOf(children)}>
+        <a href={`#${slugOf(children)}`} className="docs-anchor">
+          {children}
+          <Icon icon={Link2} />
+        </a>
+      </h3>
     </Text>
   ),
   p: ({ children }: ComponentPropsWithRef<"p">): ReactElement => (
@@ -60,18 +72,7 @@ export const markdown = {
   }: ComponentPropsWithRef<"code">): ReactElement => (
     <code className={className ?? "docs-code"}>{children}</code>
   ),
-  pre: ({
-    children,
-    className,
-    style,
-  }: ComponentPropsWithRef<"pre">): ReactElement => (
-    <pre
-      className={["docs-pre", className].filter(Boolean).join(" ")}
-      style={style}
-    >
-      {children}
-    </pre>
-  ),
+  pre: CodeBlock,
 };
 
 /** A page written in MDX: its title and description from its frontmatter, then its content. */

@@ -84,7 +84,10 @@ export function rehypeHighlight(): (tree: HastNode) => Promise<void> {
             theme: "buttery",
           }) as HastNode;
           const [pre] = root.children ?? [];
-          if (pre) node.children[index] = pre;
+          if (pre) {
+            pre.properties = { ...pre.properties, "data-language": lang };
+            node.children[index] = pre;
+          }
           continue;
         }
         visit(child);

@@ -3,6 +3,7 @@
  * shiki's theme writes.
  */
 .docs-prose {
+  --bt-docs-line: 1px;
   --docs-code-foreground: var(--bt-text);
   --docs-code-background: var(--bt-bg-section);
   --docs-code-token-comment: var(--bt-text-tertiary);
@@ -64,4 +65,46 @@
 
 .docs-prose h3 {
   padding-block-start: var(--bt-space-3);
+}
+
+/* A heading links to itself: its text keeps the heading's look, and a link icon shows while it's pointed at or focused. */
+.docs-anchor {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bt-space-2);
+  color: inherit;
+  text-decoration: none;
+}
+
+.docs-anchor .bt-icon {
+  color: var(--bt-text-tertiary);
+  opacity: 0;
+  transition: opacity var(--bt-dur-fast) var(--bt-ease-out);
+}
+
+.docs-anchor:is(:hover, :focus-visible) .bt-icon {
+  opacity: 1;
+}
+
+.docs-code-block {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  overflow: hidden;
+  border-radius: var(--bt-r-lg);
+  background-color: var(--docs-code-background);
+}
+
+.docs-code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bt-space-2);
+  min-block-size: var(--bt-h-control);
+  padding-inline: var(--bt-space-5) var(--bt-space-2);
+  border-block-end: var(--bt-docs-line) solid var(--bt-border);
+}
+
+.docs-code-block .docs-pre {
+  border-radius: 0;
 }
