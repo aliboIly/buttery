@@ -16,4 +16,7 @@ export const meta: ComponentMeta = {
   related: ["SettingsSection", "SettingsPage", "Button", "Switch"],
   a11y: 'Its title is an h3 under the section\'s h2; its state is a paragraph. The action is whatever control it\'s given, named on its own ("Manage screening", not just "Manage", when several rows have one).',
   motion: "none",
+  keyboard: [],
+  layout:
+    "It fills its parent's width: the title and state take the room left, wrapping rather than truncating, and the action keeps its own size 16px from them at the end, centered on the text. Its height is its text's, and its only hit area is the action's own.",
 };

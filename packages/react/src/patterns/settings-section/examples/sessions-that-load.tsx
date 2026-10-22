@@ -1,8 +1,8 @@
-import { Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { Button, SettingsSection, toast } from "@buttery/react";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
+import { Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Button, SettingsSection, toast } from "@buttery/react";
 
 /** A section that loads on its own while the rest of the page is ready. */
 export function SessionsThatLoad(): ReactElement {
@@ -50,6 +50,8 @@ export function SessionsThatLoad(): ReactElement {
     </SettingsSection>
   );
 }
+
+export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Seattle, 3 days ago");

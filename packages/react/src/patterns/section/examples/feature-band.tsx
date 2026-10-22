@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Grid, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Section } from "@buttery/react";
 
 const FEATURES = ["Finish", "Backdrop", "Placement"] as const;
@@ -21,3 +22,10 @@ export function FeatureBand(): ReactElement {
     </Section>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Everything a card needs");
+  await see("Backdrop");
+};

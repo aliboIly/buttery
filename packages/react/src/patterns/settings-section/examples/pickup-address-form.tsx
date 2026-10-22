@@ -1,8 +1,8 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { SettingsSection, TextField } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { SettingsSection, TextField } from "@buttery/react";
 
 /** A settings form whose Save and Cancel wait for a change, then save it. */
 export function PickupAddressForm(): ReactElement {
@@ -27,6 +27,8 @@ export function PickupAddressForm(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ type, press, see }) => {
   await type("Address", ", side door");
