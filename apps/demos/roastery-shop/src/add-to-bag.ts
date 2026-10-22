@@ -3,18 +3,22 @@ import { toast } from "@buttery/react";
 import { addCoffee, setPlan, useBag } from "./bag.ts";
 import type { CoffeeLine, Plan } from "./bag.ts";
 import { coffeeOf, sizeLabel } from "./data.ts";
+import { firstName } from "./plan.ts";
 import { ShopContext } from "./shop-context.ts";
+
+/** The id of the toast that says something went into the bag, which opening the bag closes. */
+export const BAG_TOAST = "bag";
 
 /** Puts coffee or a subscription in the bag and says so in a toast that can open the bag. */
 export function useAddToBag(): {
   readonly addCoffee: (choice: Omit<CoffeeLine, "quantity">) => void;
   readonly addPlan: (plan: Plan) => void;
 } {
-  const [bag, setBag] = useBag();
+  const [, setBag] = useBag();
   const { openBag } = use(ShopContext);
   const announce = (message: string): void => {
     toast.success(message, {
-      id: "bag",
+      id: BAG_TOAST,
       action: {
         label: "View bag",
         onAction: openBag,
@@ -26,15 +30,15 @@ export function useAddToBag(): {
     addCoffee: (choice) => {
       setBag((current) => addCoffee(current, choice));
       announce(
-        `Added ${coffeeOf(choice.coffee).name}, ${sizeLabel(choice.size)}.`,
+        `Added a ${sizeLabel(choice.size)} bag of ${coffeeOf(choice.coffee).name}.`,
       );
     },
     addPlan: (plan) => {
       setBag((current) => setPlan(current, plan));
       announce(
-        bag.plan === null
+        plan.recipient === null
           ? "Your subscription is in the bag."
-          : "Your subscription in the bag is updated.",
+          : `The gift for ${firstName(plan.recipient.name)} is in the bag.`,
       );
     },
   };

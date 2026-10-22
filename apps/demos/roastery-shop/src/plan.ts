@@ -32,12 +32,17 @@ export function planCoffeeName(coffee: PlanCoffee): string {
   return coffee === "choice" ? "Roaster's choice" : coffeeOf(coffee).name;
 }
 
-/** A subscription's name, such as "Huila subscription" or "Huila, a gift of 6 deliveries". */
+/** A subscription's name, such as "Huila subscription" or "Huila, a gift for Sam". */
 export function planName(plan: Plan): string {
   const coffee = planCoffeeName(plan.coffee);
-  return plan.gift === null
+  return plan.recipient === null
     ? `${coffee} subscription`
-    : `${coffee}, a gift of ${String(plan.gift)} deliveries`;
+    : `${coffee}, a gift for ${firstName(plan.recipient.name)}`;
+}
+
+/** The first word of a name, such as "Sam" for "Sam Okafor". */
+export function firstName(name: string): string {
+  return name.trim().split(/\s+/)[0] ?? name;
 }
 
 /** How much a subscription sends and how often, such as "2 bags every 2 weeks". */

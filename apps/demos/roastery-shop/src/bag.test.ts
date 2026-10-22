@@ -23,6 +23,7 @@ const PLAN: Plan = {
   every: "two-weeks",
   grind: "whole",
   gift: null,
+  recipient: null,
 };
 
 describe("the bag", () => {
@@ -83,7 +84,12 @@ describe("what the bag costs", () => {
     const bag = setPlan(addCoffee(EMPTY_BAG, GUJI), PLAN);
     expect(subtotal(bag)).toBe(1900 + 3240);
     expect(shippingFor(bag, "standard")).toBe(0);
-    const gift = setPlan(EMPTY_BAG, { ...PLAN, bags: 1, gift: 3 });
+    const gift = setPlan(EMPTY_BAG, {
+      ...PLAN,
+      bags: 1,
+      gift: 3,
+      recipient: { name: "Sam Okafor", email: "sam@example.com" },
+    });
     expect(subtotal(gift)).toBe(1620 * 3);
   });
 });
@@ -103,5 +109,8 @@ describe("isBag", () => {
       false,
     );
     expect(isBag({ lines: [], plan: { ...PLAN, every: "month" } })).toBe(false);
+    expect(isBag({ lines: [], plan: { ...PLAN, recipient: "Sam" } })).toBe(
+      false,
+    );
   });
 });

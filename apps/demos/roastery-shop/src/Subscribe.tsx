@@ -8,8 +8,16 @@ import {
   SegmentedControl,
   Select,
   StatusBadge,
+  TextField,
+  looksLikeEmail,
 } from "@buttery/react";
-import { CalendarClock, PackageCheck, Truck } from "lucide-react";
+import {
+  CalendarCheck,
+  CalendarClock,
+  Gift,
+  Repeat,
+  Truck,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAddToBag } from "./add-to-bag.ts";
 import { Shelf } from "./BagArt.tsx";
@@ -38,18 +46,47 @@ import type {
 /** Who a subscription is for: the customer, or someone they give it to. */
 export type PlanFor = "me" | "gift";
 
-const PROMISES: readonly {
+interface Perk {
   readonly icon: LucideIcon;
   readonly text: string;
-}[] = [
-  { icon: Truck, text: "Every delivery ships free" },
-  { icon: CalendarClock, text: "Skip, change or pause any time" },
-  { icon: PackageCheck, text: "Roasted the morning it ships" },
-];
+}
+
+const PERKS: Readonly<Record<PlanFor, readonly Perk[]>> = {
+  me: [
+    { icon: Truck, text: "Free shipping on each delivery" },
+    {
+      icon: CalendarClock,
+      text: "Skip or pause up to the day before it roasts",
+    },
+    { icon: Repeat, text: "Change the coffee whenever you like" },
+  ],
+  gift: [
+    { icon: Gift, text: "We email them a card when the first bag ships" },
+    { icon: Truck, text: "Free shipping on each delivery" },
+    { icon: CalendarCheck, text: "Ends by itself after the last delivery" },
+  ],
+};
+
+/** What's wrong with a gift's recipient, by field, while anything is. */
+interface RecipientErrors {
+  readonly name?: string;
+  readonly email?: string;
+}
+
+function recipientErrors(name: string, email: string): RecipientErrors {
+  return {
+    ...(name === "" ? { name: "Enter the name of the person it's for." } : {}),
+    ...(email === ""
+      ? { email: "Enter their email, so we can tell them it's coming." }
+      : looksLikeEmail(email)
+        ? {}
+        : { email: "Enter an email address like name@example.com." }),
+  };
+}
 
 /**
- * The subscription builder: how often, how many bags, which coffee and grind, and whether it's a gift, with
- * the price per delivery following each choice.
+ * The subscription builder: who it's for, how often, how many bags, which coffee and grind, and for a gift
+ * how many deliveries and who gets them, with the price following each choice.
  */
 export function Subscribe({
   planFor,
@@ -63,17 +100,35 @@ export function Subscribe({
   const [coffee, setCoffee] = useState<PlanCoffee>("choice");
   const [grind, setGrind] = useState<GrindId>("whole");
   const [length, setLength] = useState<GiftLength>(3);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState<RecipientErrors>({});
   const [bag] = useBag();
   const { addPlan } = useAddToBag();
   const gift = planFor === "gift" ? length : null;
   const price = planPrice(coffee, count, gift);
+  const schedule = planSchedule({ bags: count, every });
+
+  const add = (): void => {
+    if (gift === null) {
+      addPlan({ coffee, bags: count, every, grind, gift, recipient: null });
+      return;
+    }
+    const recipient = { name: name.trim(), email: email.trim() };
+    const problems = recipientErrors(recipient.name, recipient.email);
+    setErrors(problems);
+    if (problems.name !== undefined || problems.email !== undefined) return;
+    addPlan({ coffee, bags: count, every, grind, gift, recipient });
+  };
+
   return (
     <Section
       id="subscribe"
+      tone="muted"
       title="Never run out"
-      body="Choose how often and how much. Every bag in a subscription is 10% off and ships free, and you can skip, change or pause it from your account."
+      body="Choose how often and how much, and we roast it fresh for each delivery. A subscription takes 10% off every bag."
     >
-      <Grid columns={{ base: 1, lg: 2 }} gap={4}>
+      <Grid columns={{ base: 1, lg: 2 }} gap={4} align="start">
         <Surface level="card" pad={6}>
           <Stack gap={5}>
             <Field label="Who it's for">
@@ -103,7 +158,7 @@ export function Subscribe({
             </Field>
             <Field
               label="Bags each time"
-              hint="Each bag holds 12 oz, about 20 cups."
+              hint="A 12 oz bag makes about 20 cups."
             >
               {(control) => (
                 <SegmentedControl
@@ -148,25 +203,56 @@ export function Subscribe({
             </Grid>
             <Morph contentKey={planFor}>
               {planFor === "gift" ? (
-                <Field
-                  label="Deliveries in the gift"
-                  hint="Paid today. We email them a card with the first delivery."
-                >
-                  {(control) => (
-                    <SegmentedControl
-                      {...control}
-                      label="Deliveries in the gift"
-                      options={GIFT_LENGTHS.map((option) => ({
-                        value: String(option),
-                        label: String(option),
-                      }))}
-                      value={String(length)}
+                <Stack gap={5}>
+                  <Field label="Deliveries in the gift" hint="Paid today.">
+                    {(control) => (
+                      <SegmentedControl
+                        {...control}
+                        label="Deliveries in the gift"
+                        options={GIFT_LENGTHS.map((option) => ({
+                          value: String(option),
+                          label: String(option),
+                        }))}
+                        value={String(length)}
+                        onValueChange={(next) => {
+                          setLength(giftLengthFrom(next) ?? length);
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <Grid columns={{ base: 1, md: 2 }} gap={4}>
+                    <TextField
+                      label="Their name"
+                      autoComplete="off"
+                      value={name}
+                      error={errors.name}
                       onValueChange={(next) => {
-                        setLength(giftLengthFrom(next) ?? length);
+                        setName(next);
+                        setErrors((current) =>
+                          current.email === undefined
+                            ? {}
+                            : { email: current.email },
+                        );
                       }}
                     />
-                  )}
-                </Field>
+                    <TextField
+                      label="Their email"
+                      type="email"
+                      autoComplete="off"
+                      inputMode="email"
+                      value={email}
+                      error={errors.email}
+                      onValueChange={(next) => {
+                        setEmail(next);
+                        setErrors((current) =>
+                          current.name === undefined
+                            ? {}
+                            : { name: current.name },
+                        );
+                      }}
+                    />
+                  </Grid>
+                </Stack>
               ) : null}
             </Morph>
           </Stack>
@@ -182,7 +268,7 @@ export function Subscribe({
                 <Text variant="title-md">{planCoffeeName(coffee)}</Text>
                 <Text variant="body-sm" tone="secondary">
                   {coffee === "choice"
-                    ? "A different single origin each time, picked from what's roasting that week."
+                    ? "A different single origin each time, from what's roasting that week."
                     : `${notesOf(coffeeOf(coffee))}.`}
                 </Text>
               </Stack>
@@ -193,38 +279,33 @@ export function Subscribe({
               </Text>
               <Text variant="body-sm" tone="secondary">
                 {gift === null
-                  ? `Per delivery: ${planSchedule({ bags: count, every })}, sent ${grindPhrase(grind)}.`
-                  : `Today, for ${String(gift)} deliveries of ${bags(count)}, sent ${grindPhrase(grind)}.`}
+                  ? `A delivery of ${schedule}, sent ${grindPhrase(grind)}.`
+                  : `Today, for ${String(gift)} deliveries of ${schedule}, sent ${grindPhrase(grind)}.`}
               </Text>
             </Stack>
             <Inline>
               <StatusBadge tone="success">
-                {`You save ${money(price.saving)} on every delivery`}
+                {`You save ${money(price.saving)} a delivery`}
               </StatusBadge>
             </Inline>
             <Stack gap={3} asChild>
               <ul role="list">
-                {PROMISES.map((promise) => (
-                  <li key={promise.text} className="shop-promise">
+                {PERKS[planFor].map((perk) => (
+                  <li key={perk.text} className="shop-perk">
                     <span className="shop-icon-line">
-                      <Icon icon={promise.icon} />
+                      <Icon icon={perk.icon} />
                     </span>
-                    <Text tone="secondary">{promise.text}</Text>
+                    <Text tone="secondary">{perk.text}</Text>
                   </li>
                 ))}
               </ul>
             </Stack>
-            <Button
-              variant="primary"
-              size="cta"
-              shape="rounded"
-              onClick={() => {
-                addPlan({ coffee, bags: count, every, grind, gift });
-              }}
-            >
-              {bag.plan === null
-                ? "Add the subscription to your bag"
-                : "Put this subscription in your bag"}
+            <Button variant="primary" size="cta" shape="rounded" onClick={add}>
+              {bag.plan !== null
+                ? "Replace the subscription in your bag"
+                : gift === null
+                  ? "Add the subscription to your bag"
+                  : "Add the gift to your bag"}
             </Button>
           </Stack>
         </Surface>

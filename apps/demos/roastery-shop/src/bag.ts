@@ -23,6 +23,12 @@ export interface CoffeeLine {
   readonly quantity: number;
 }
 
+/** Who a gift subscription goes to. */
+export interface Recipient {
+  readonly name: string;
+  readonly email: string;
+}
+
 /** A subscription waiting in the bag, which starts when the order is placed. */
 export interface Plan {
   readonly coffee: PlanCoffee;
@@ -31,6 +37,8 @@ export interface Plan {
   readonly grind: GrindId;
   /** How many deliveries it pays for up front as a gift, or `null` for an ongoing one. */
   readonly gift: GiftLength | null;
+  /** Who the gift goes to, or `null` for the customer's own subscription. */
+  readonly recipient: Recipient | null;
 }
 
 /** What someone is about to order: bags of coffee, and at most one subscription. */
@@ -131,6 +139,14 @@ function isLine(value: unknown): value is CoffeeLine {
   );
 }
 
+function isRecipient(value: unknown): value is Recipient {
+  return (
+    isRecord(value) &&
+    typeof value["name"] === "string" &&
+    typeof value["email"] === "string"
+  );
+}
+
 function isPlan(value: unknown): value is Plan {
   return (
     isRecord(value) &&
@@ -141,7 +157,8 @@ function isPlan(value: unknown): value is Plan {
     (value["gift"] === null ||
       value["gift"] === 3 ||
       value["gift"] === 6 ||
-      value["gift"] === 12)
+      value["gift"] === 12) &&
+    (value["recipient"] === null || isRecipient(value["recipient"]))
   );
 }
 
