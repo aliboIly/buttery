@@ -6,8 +6,10 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
+import { Button } from "./components/button/Button.tsx";
 import { SegmentedControl } from "./components/segmented-control/SegmentedControl.tsx";
 import { toast } from "./components/toaster/Toaster.tsx";
+import { Tooltip } from "./components/tooltip/Tooltip.tsx";
 import { ButteryProvider } from "./provider/ButteryProvider.tsx";
 
 const modules = import.meta.glob<Readonly<Record<string, unknown>>>(
@@ -39,6 +41,15 @@ const context: ExamplePlayContext = {
       target.matches(":disabled"),
       `Pressing the ${role} "${String(name)}" disabled it, which drops focus from it. Fix: mark it aria-disabled instead, which keeps it focusable and ignores presses.`,
     ).toBe(false);
+  },
+  hover: async (role, name) => {
+    await userEvent.hover(await screen.findByRole(role, { name }));
+  },
+  focus: async (role, name) => {
+    const target = await screen.findByRole(role, { name });
+    // A key first, as Tab presses one: a tooltip stays shut for focus that follows a click.
+    await userEvent.keyboard("{Shift}");
+    target.focus();
   },
   type: async (label, text) => {
     await userEvent.type(await screen.findByLabelText(label), text);
@@ -132,6 +143,32 @@ describe("examples", () => {
 });
 
 describe("the play actions", () => {
+  it("open a tooltip by resting the pointer on its element", async () => {
+    render(
+      <ButteryProvider>
+        <Tooltip label="Saves a copy">
+          <Button>Export</Button>
+        </Tooltip>
+      </ButteryProvider>,
+    );
+    await context.hover("button", "Export");
+    await context.see("Saves a copy");
+  });
+
+  it("open a tooltip by focusing its element, even after a click", async () => {
+    render(
+      <ButteryProvider>
+        <Button>Got it</Button>
+        <Tooltip label="Saves a copy">
+          <Button>Export</Button>
+        </Tooltip>
+      </ButteryProvider>,
+    );
+    await context.press("button", "Got it");
+    await context.focus("button", "Export");
+    await context.see("Saves a copy");
+  });
+
   it("hold a key down long enough for a radio group to choose with it", async () => {
     render(<SegmentedControl label="Fit" options={["Fit", "Fill", "Crop"]} />);
     screen.getByRole("radio", { name: "Fit" }).focus();

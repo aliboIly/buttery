@@ -32,6 +32,15 @@ const context: ExamplePlayContext = {
   press: async (role, name) => {
     await userEvent.click(await screen.findByRole(role, { name }));
   },
+  hover: async (role, name) => {
+    await userEvent.hover(await screen.findByRole(role, { name }));
+  },
+  focus: async (role, name) => {
+    const target = await screen.findByRole(role, { name });
+    // A key first, as Tab presses one: a tooltip stays shut for focus that follows a click.
+    await userEvent.keyboard("{Shift}");
+    target.focus();
+  },
   type: async (label, text) => {
     await userEvent.type(await screen.findByLabelText(label), text);
   },
@@ -107,6 +116,26 @@ describe("examples", () => {
 });
 
 describe("the play actions", () => {
+  it("rest the pointer on an element and move focus to it", async () => {
+    const felt: string[] = [];
+    render(
+      <button
+        type="button"
+        onPointerEnter={() => {
+          felt.push("pointer");
+        }}
+        onFocus={() => {
+          felt.push("focus");
+        }}
+      >
+        Export
+      </button>,
+    );
+    await context.hover("button", "Export");
+    await context.focus("button", "Export");
+    expect(felt).toEqual(["pointer", "focus"]);
+  });
+
   it("hold a key down long enough for a radio group to choose with it", async () => {
     render(
       <RadioGroup.Root aria-label="Fit" defaultValue="fit">

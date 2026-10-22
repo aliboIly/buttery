@@ -117,6 +117,16 @@ export interface DocsPage {
 export interface ExamplePlayContext {
   /** Presses the element with this role and name, such as `press("button", "Next")`. */
   readonly press: (role: string, name: string | RegExp) => Promise<void>;
+  /**
+   * Rests the pointer on the element with this role and name, such as `hover("button", "Export")`, which
+   * opens its tooltip once the tooltip's delay has passed.
+   */
+  readonly hover: (role: string, name: string | RegExp) => Promise<void>;
+  /**
+   * Moves keyboard focus to the element with this role and name, as Tab would, which opens its tooltip at
+   * once. It reaches a button in WebKit too, where neither a click nor Tab focuses one.
+   */
+  readonly focus: (role: string, name: string | RegExp) => Promise<void>;
   /** Types into the field with this label. */
   readonly type: (label: string | RegExp, text: string) => Promise<void>;
   /**
