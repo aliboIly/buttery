@@ -53,6 +53,30 @@ describe("Slider", () => {
     expect(ref.current?.className).toBe("bt-slider custom");
   });
 
+  it("sets its label and value on a line above a track as wide as it, with labelPosition top", () => {
+    const { container } = render(
+      <div style={{ inlineSize: "320px" }}>
+        <Slider label="Delta" labelPosition="top" defaultValue={9} />
+      </div>,
+    );
+    const root = container.querySelector<HTMLElement>('[data-bt="Slider"]');
+    const label = screen.getByText("Delta").getBoundingClientRect();
+    const badge = container
+      .querySelector(".bt-value-badge")
+      ?.getBoundingClientRect();
+    const control = container
+      .querySelector('[data-bt-part="control"]')
+      ?.getBoundingClientRect();
+    const track = trackOf(container).getBoundingClientRect();
+    expect(root?.getBoundingClientRect().width).toBe(320);
+    expect(Math.round(control?.width ?? 0)).toBe(320);
+    expect(track.width).toBeGreaterThan(280);
+    expect(track.top).toBeGreaterThanOrEqual(label.bottom);
+    expect(Math.round(badge?.right ?? 0)).toBe(
+      Math.round(root?.getBoundingClientRect().right ?? 0),
+    );
+  });
+
   it("is a slider named by its label, with the formatted value for screen readers and the badge", () => {
     render(
       <Slider

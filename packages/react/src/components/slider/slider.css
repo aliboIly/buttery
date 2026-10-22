@@ -23,6 +23,19 @@
     min-inline-size: 0;
   }
 
+  /* Labelled from above, as a field is: the value at the label line's end, the track across the column on a control-high line. */
+  .bt-slider[data-label-position="top"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bt-slider[data-label-position="top"] > [data-bt-part="caption"] {
+    justify-content: space-between;
+  }
+
+  .bt-slider[data-label-position="top"] > .bt-slider-control {
+    block-size: var(--bt-h-control);
+  }
+
   .bt-slider
     > [data-bt-part="caption"]
     > :is([data-bt-part="label"], .bt-value-badge) {

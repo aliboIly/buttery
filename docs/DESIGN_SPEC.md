@@ -281,7 +281,7 @@ Primary pill 36h. Main segment + 1px `divider-on-primary` divider, half the butt
 Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12, `control` type. Re-measured in Phase 1: the track and items are full pills (the first spec said r14 and r12). The capture insets its items 3px; buttery keeps the 2px step, so its active item is 2px taller. Inactive text `text-secondary`; active = `bg-raised` + `shadow-selected`, text `text`. Exactly one item is always selected: Radix `ToggleGroup type="single"` lets users deselect, so ignore empty values in `onValueChange` (or build on `RadioGroup`). The active background is one shared element that slides. Segments share the track equally (equal grid columns), so the pill keeps its width as it slides; built on Radix `RadioGroup`, so arrow keys move the selection.
 
 ### Slider row
-- Row grid: `[label + badge] [track]`. Label `label` role, gap 8 to badge.
+- Row grid: `[label + badge] [track]`. Label `label` role, gap 8 to badge. With `labelPosition="top"` the label and badge share a line above a track that fills the column, the badge at the line's end, and the track sits on a control-high line (`h-control`), as a field's box does, so it lines up beside one.
 - Value badge: 20h, r6, bg `bg-control`, padding-x 6, `badge` role, min-width reserved for the longest formatted value (e.g. `-180°`) so it never jitters.
 - Track: 160w × 14h (measured 162–164), r7, 1px `border-strong`, fill `bg-surface`, 8 after the caption. **No filled range** (reference). Optional `showRange`.
 - Thumb: 24×24, r7, knob gradient + border + highlight, two 1.5×8 grip lines 3px apart, shadow-knob. Hit area 36×36 via a `[data-bt-hit]` element.

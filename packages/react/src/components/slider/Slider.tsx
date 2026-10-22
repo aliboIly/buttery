@@ -41,6 +41,11 @@ export interface SliderProps extends Omit<
   readonly showRange?: boolean | undefined;
   /** Keeps the value from changing. */
   readonly disabled?: boolean | undefined;
+  /**
+   * Where the label and its value sit: `"side"` (the default), before a 160px track, as in an inspector
+   * row, or `"top"`, on a line above a track that fills the column, as a field's label sits.
+   */
+  readonly labelPosition?: "side" | "top" | undefined;
 }
 
 const DETENT_PULL = 0.02;
@@ -77,6 +82,7 @@ export function Slider({
   format,
   showRange = false,
   disabled = false,
+  labelPosition = "side",
   className,
   ...rest
 }: SliderProps): ReactElement {
@@ -117,6 +123,7 @@ export function Slider({
       className={cx("bt-slider", className)}
       data-bt="Slider"
       data-disabled={disabled ? "" : undefined}
+      data-label-position={labelPosition}
     >
       <div data-bt-part="caption">
         <Text id={labelId} truncate data-bt-part="label" onDoubleClick={reset}>
