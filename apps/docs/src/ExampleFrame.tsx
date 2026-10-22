@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Stack, Surface, Text } from "@buttery/core";
-import { Button } from "@buttery/react";
 import { CodeHtml } from "./CodeBlock.tsx";
+import { CodeToggle } from "./CodeToggle.tsx";
 import { DesktopPreview } from "./DesktopPreview.tsx";
 import type { DemoFrame, DemoWidth } from "@buttery/core";
 import type { Example } from "./registry.ts";
@@ -58,18 +58,14 @@ export function ExampleFrame({
           <Component />
         )}
       </Surface>
-      <Inline gap={2}>
-        <Button
-          size="sm"
-          variant="ghost"
-          aria-expanded={showing}
-          aria-label={`${showing ? "Hide" : "Show"} code for ${title}`}
-          onClick={() => {
+      <Inline>
+        <CodeToggle
+          open={showing}
+          label={title}
+          onToggle={() => {
             setShowing(!showing);
           }}
-        >
-          {showing ? "Hide code" : "Show code"}
-        </Button>
+        />
       </Inline>
       {showing ? <CodeHtml html={code.html} language="tsx" /> : null}
     </Stack>

@@ -4,7 +4,6 @@ import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
 import type { ColorScheme, DemoValues, Density } from "@buttery/core";
 import {
   Breadcrumbs,
-  Button,
   ButteryProvider,
   SegmentedControl,
   StatusBadge,
@@ -15,6 +14,7 @@ import type { StatusTone } from "@buttery/react";
 import { demoUses } from "virtual:buttery-demo-uses";
 import { listed, screensByDemo } from "./demo-sentence.ts";
 import { CodeText } from "./CodeBlock.tsx";
+import { CodeToggle } from "./CodeToggle.tsx";
 import { CopyLine } from "./CopyLine.tsx";
 import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { DesktopPreview } from "./DesktopPreview.tsx";
@@ -185,18 +185,14 @@ function LiveDemoFrame({
       ) : null}
       {code === undefined ? null : (
         <Stack gap={3}>
-          <Inline gap={2}>
-            <Button
-              size="sm"
-              variant="ghost"
-              aria-expanded={showing}
-              aria-label={`${showing ? "Hide" : "Show"} code for the ${entry.meta.name} demo`}
-              onClick={() => {
+          <Inline>
+            <CodeToggle
+              open={showing}
+              label={`the ${entry.meta.name} demo`}
+              onToggle={() => {
                 setShowing(!showing);
               }}
-            >
-              {showing ? "Hide code" : "Show code"}
-            </Button>
+            />
           </Inline>
           {showing ? <CodeText code={code} /> : null}
         </Stack>

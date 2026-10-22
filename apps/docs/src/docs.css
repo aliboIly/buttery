@@ -256,3 +256,27 @@
   justify-content: center;
   min-inline-size: 0;
 }
+
+/* Plain text on the column's edge, its chevron after it: a padded button's label would sit 12px in from the content above. */
+.docs-code-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bt-space-1);
+  min-block-size: var(--bt-h-sm);
+  color: var(--bt-text-secondary);
+  transition: color calc(var(--bt-dur-fast) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.docs-code-toggle:hover {
+  color: var(--bt-text);
+}
+
+.docs-code-toggle > svg {
+  transition: transform calc(var(--bt-dur-fast) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.docs-code-toggle > svg[data-open] {
+  transform: rotate(180deg);
+}
