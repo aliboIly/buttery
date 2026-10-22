@@ -120,6 +120,42 @@ const context: ExamplePlayContext = {
   },
 };
 
+/**
+ * The first heading on the page more than one level under the heading before it, such as `"h1 then h3"`:
+ * a screen reader's list of headings reads the gap as a missing section.
+ */
+function skippedHeading(): string | undefined {
+  const levels = [
+    ...document.body.querySelectorAll<HTMLElement>(
+      "h1, h2, h3, h4, h5, h6, [role='heading']",
+    ),
+  ]
+    .filter(
+      (heading) =>
+        heading.checkVisibility() &&
+        heading.closest("[aria-hidden='true']") === null,
+    )
+    .map((heading) =>
+      heading.getAttribute("role") === "heading"
+        ? Number(heading.getAttribute("aria-level") ?? "2")
+        : Number(heading.tagName.slice(1)),
+    );
+  for (let index = 1; index < levels.length; index += 1) {
+    const before = levels[index - 1] ?? 0;
+    const level = levels[index] ?? 0;
+    if (level > before + 1) return `h${String(before)} then h${String(level)}`;
+  }
+  return undefined;
+}
+
+function expectHeadingsInOrder(name: string): void {
+  const skipped = skippedHeading();
+  expect(
+    skipped,
+    `${name} skips a heading level (${String(skipped)}). Fix: give the lower heading the level after the one above it, through its titleAs or the element you pass it, or put it in a section with a heading of the level between.`,
+  ).toBeUndefined();
+}
+
 /** `slider/opacity-row` for `./components/slider/examples/opacity-row.tsx`: whole, so `-t` can pick out a folder. */
 function testName(path: string): string {
   return path.replace(/^.*\/([^/]+)\/examples\/([^/]+)\.tsx$/, "$1/$2");
@@ -192,7 +228,9 @@ describe("examples", () => {
           <Example />
         </ButteryProvider>,
       );
+      expectHeadingsInOrder(name);
       await play(context);
+      expectHeadingsInOrder(name);
       for (const spy of logged) expect(spy).not.toHaveBeenCalled();
     });
   }
