@@ -38,12 +38,14 @@ export const live: LiveDemo = {
     align: { kind: "choice", options: ALIGNS, initial: "end" },
     disabled: { kind: "toggle", initial: false },
     children: { kind: "text", initial: "Card actions" },
+    open: { kind: "toggle", initial: false },
+    dot: { kind: "toggle", initial: false },
   },
-  render: ({ align, disabled, children }) => {
+  render: ({ align, disabled, children, open, dot }) => {
     const edge = demoChoice(align, ALIGNS);
     return (
       <Inline justify={edge}>
-        <Menu>
+        <Menu open={open === true ? true : undefined}>
           <Surface asChild level="raised" padX={4} padY={2} radius="full">
             <Menu.Trigger asChild disabled={disabled === true}>
               <Pressable>
@@ -53,7 +55,7 @@ export const live: LiveDemo = {
           </Surface>
           <Menu.Content align={edge}>
             <Menu.Item>Duplicate</Menu.Item>
-            <Menu.Item>Move to Drafts</Menu.Item>
+            <Menu.Item dot={dot === true}>Move to Drafts</Menu.Item>
             <Menu.Separator />
             <Menu.Item tone="danger">Delete</Menu.Item>
           </Menu.Content>
@@ -61,11 +63,11 @@ export const live: LiveDemo = {
       </Inline>
     );
   },
-  code: ({ align, disabled, children }) => {
+  code: ({ align, disabled, children, open, dot }) => {
     const edge = demoChoice(align, ALIGNS);
     return [
       `<Inline justify="${edge}">`,
-      "  <Menu>",
+      `  <Menu${open === true ? " open" : ""}>`,
       '    <Surface asChild level="raised" padX={4} padY={2} radius="full">',
       `      <Menu.Trigger asChild${disabled === true ? " disabled" : ""}>`,
       "        <Pressable>",
@@ -75,7 +77,7 @@ export const live: LiveDemo = {
       "    </Surface>",
       `    <Menu.Content align="${edge}">`,
       "      <Menu.Item>Duplicate</Menu.Item>",
-      "      <Menu.Item>Move to Drafts</Menu.Item>",
+      `      <Menu.Item${dot === true ? " dot" : ""}>Move to Drafts</Menu.Item>`,
       "      <Menu.Separator />",
       '      <Menu.Item tone="danger">Delete</Menu.Item>',
       "    </Menu.Content>",
