@@ -56,7 +56,7 @@ export function RevenuePanel(): ReactElement {
             onValueChange={setPeriod}
           />
         </Inline>
-        <Stack gap={1}>
+        <Stack gap={3}>
           <Text variant="title-lg" tabular>
             {dollars.format(total)}
           </Text>

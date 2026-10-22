@@ -8,7 +8,7 @@ export function SeeAll(): ReactElement {
   return (
     <Stack gap={3} align="start">
       <Text variant="title">Recent cards</Text>
-      <Stack gap={1}>
+      <Stack gap={2}>
         <Text variant="body">Spring launch</Text>
         <Text variant="body">Studio open day</Text>
         <Text variant="body">Winter catalog</Text>

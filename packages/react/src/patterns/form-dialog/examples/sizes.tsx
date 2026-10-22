@@ -61,7 +61,7 @@ export function Sizes(): ReactElement {
           </Grid>
         </FormDialog>
       </Inline>
-      <Stack gap={1}>
+      <Stack gap={2}>
         <Text variant="caption">{`Order email: ${email}`}</Text>
         <Text variant="caption">{`Ships to ${address.street}, ${address.town}`}</Text>
       </Stack>

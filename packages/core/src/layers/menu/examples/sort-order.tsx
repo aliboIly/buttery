@@ -61,7 +61,7 @@ export function SortOrder(): ReactElement {
           </Menu.RadioGroup>
         </Menu.Content>
       </Menu>
-      <Stack gap={1}>
+      <Stack gap={2}>
         {[...CARDS].sort(COMPARE[order]).map((card) => (
           <Text key={card.name} variant="body">
             {card.name}

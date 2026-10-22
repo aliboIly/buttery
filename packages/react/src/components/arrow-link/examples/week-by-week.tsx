@@ -35,7 +35,7 @@ export function WeekByWeek(): ReactElement {
   return (
     <Stack gap={3}>
       <Text variant="title">{`Week of ${weekOf(offset)}`}</Text>
-      <Stack gap={1}>
+      <Stack gap={2}>
         {roastsFor(offset).map((roast) => (
           <Text key={roast} variant="body">
             {roast}

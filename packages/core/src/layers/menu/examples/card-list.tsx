@@ -30,7 +30,7 @@ export function CardList(): ReactElement {
   return (
     <Stack gap={3}>
       <Text variant="caption">{`${String(cards.length)} cards`}</Text>
-      <Stack gap={1}>
+      <Stack gap={2}>
         {cards.map((card, index) => (
           <Surface key={card.id} level="card" padX={3} padY={2} radius="md">
             <Inline gap={3} align="center" justify="between">
