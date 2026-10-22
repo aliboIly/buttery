@@ -54,6 +54,13 @@
     justify-content: center;
   }
 
+  /* The `/` hint is for a keyboard, which a touchscreen seldom has beside it. */
+  @media not ((hover: hover) and (pointer: fine)) {
+    .bt-command-search [data-bt-part="shortcut"] {
+      display: none;
+    }
+  }
+
   .bt-command-search > [data-bt-part="chips"] {
     display: flex;
     flex: 0 1 auto;

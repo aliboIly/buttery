@@ -116,6 +116,30 @@ test("the docs search previews the highlighted result, with a component's import
   await expect(preview.getByText("Dialog", { exact: true })).toBeHidden();
 });
 
+test("the docs search shows its / hint only where a keyboard is likely", async ({
+  page,
+  browser,
+  baseURL,
+}) => {
+  const hint = (on: Page): Locator =>
+    on.locator('[data-bt="CommandSearch"] [data-bt-part="shortcut"]');
+  await page.goto("/foundations/colors");
+  await expect(hint(page)).toBeVisible();
+  const phone = await browser.newContext({
+    ...(baseURL === undefined ? {} : { baseURL }),
+    hasTouch: true,
+    isMobile: true,
+    viewport: { width: 390, height: 844 },
+  });
+  const touch = await phone.newPage();
+  await touch.goto("/foundations/colors");
+  await expect(
+    touch.getByRole("combobox", { name: "Search the docs" }),
+  ).toBeVisible();
+  await expect(hint(touch)).toBeHidden();
+  await phone.close();
+});
+
 test("the docs search offers a nearby word when nothing matches", async ({
   page,
 }) => {
