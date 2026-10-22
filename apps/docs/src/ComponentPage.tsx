@@ -1,7 +1,7 @@
 import { createElement, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { DemoValues, Density } from "@buttery/core";
+import type { ColorScheme, DemoValues, Density } from "@buttery/core";
 import {
   Breadcrumbs,
   Button,
@@ -9,6 +9,7 @@ import {
   SegmentedControl,
   StatusBadge,
   TagChip,
+  useButtery,
 } from "@buttery/react";
 import type { StatusTone } from "@buttery/react";
 import { CodeText } from "./CodeBlock.tsx";
@@ -96,16 +97,19 @@ function minorOf(version: string): string {
 }
 
 /**
- * The live demo: the component in a frame with its own theme and density, controls for its props, and the
- * code for what it shows.
+ * The live demo: the component in a frame that follows the site's theme and density until its own toggles
+ * change them, controls for its props, and the code for what it shows.
  */
 function LiveDemoFrame({
   entry,
 }: {
   readonly entry: ComponentEntry;
 }): ReactElement {
-  const [scheme, setScheme] = useState<"light" | "dark">("light");
-  const [density, setDensity] = useState<Density>("comfortable");
+  const site = useButtery();
+  const [schemeSet, setScheme] = useState<ColorScheme | null>(null);
+  const [densitySet, setDensity] = useState<Density | null>(null);
+  const scheme = schemeSet ?? site.colorScheme;
+  const density = densitySet ?? site.density;
   const { live } = entry;
   const [values, setValues] = useState<DemoValues>(() =>
     live ? initialValues(live.controls) : {},

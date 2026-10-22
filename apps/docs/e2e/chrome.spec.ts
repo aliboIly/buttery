@@ -155,3 +155,18 @@ test("the skip link takes Tab past the top bar and the sidebar to the page", asy
     page.getByRole("main").getByRole("link", { name: "Components" }).first(),
   ).toBeFocused();
 });
+
+test("a component's live demo starts in the site's theme and density, then keeps its own", async ({
+  page,
+}) => {
+  await page.goto("/components/button?theme=dark&density=compact");
+  const demo = page.getByRole("region", { name: "Button demo" });
+  await expect(demo.getByRole("radio", { name: "Dark" })).toBeChecked();
+  await expect(demo.getByRole("radio", { name: "Compact" })).toBeChecked();
+  await demo.getByRole("radio", { name: "Light" }).click();
+  await expect(
+    demo
+      .getByTestId("live-demo")
+      .locator("xpath=ancestor::*[@data-bt-theme][1]"),
+  ).toHaveAttribute("data-bt-theme", "light");
+});
