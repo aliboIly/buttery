@@ -29,9 +29,9 @@ export function PublishProgress(): ReactElement {
   }, [sent]);
   return (
     <Stack gap={4} align="start">
-      <Stack gap={2}>
+      <Stack gap={3}>
         {CARDS.map((card, index) => (
-          <Inline key={card} gap={6} justify="between">
+          <Inline key={card} gap={6} justify="between" align="baseline">
             <Text variant="body">{card}</Text>
             <Text variant="caption">
               {sent !== null && sent > index ? "Live" : "Draft"}
