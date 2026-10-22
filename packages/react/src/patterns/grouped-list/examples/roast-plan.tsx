@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { GroupedList } from "@buttery/react";
 
 interface Roast {
@@ -56,3 +57,10 @@ export function RoastPlan(): ReactElement {
     </GroupedList>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Add a roast on Thursday");
+  await see("New roast");
+};
