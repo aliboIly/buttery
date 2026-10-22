@@ -139,6 +139,24 @@ test("the pill folds away to one button and stays folded, and its source link na
   await expect(pill(page).getByRole("link", { name: "Docs" })).toBeVisible();
 });
 
+test("on a phone the pill starts folded, and stays unfolded once someone unfolds it", async ({
+  page,
+}) => {
+  await returningVisitor(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/demos/roastery/orders");
+  const show = pill(page).getByRole("button", {
+    name: "Show the demo controls",
+    exact: true,
+  });
+  await expect(show).toBeVisible();
+  await expect(pill(page).getByRole("link")).toHaveCount(0);
+  await show.click();
+  await expect(pill(page).getByRole("link", { name: "Docs" })).toBeVisible();
+  await page.reload();
+  await expect(pill(page).getByRole("link", { name: "Docs" })).toBeVisible();
+});
+
 test("Reset demo forgets what the demo saved and nothing else, and it opens as on a first visit", async ({
   page,
 }) => {
@@ -238,12 +256,13 @@ test("the demos page and a demo with its pill folded are buttery", async ({
     name: "roastery with the pill",
     interactions: [
       {
-        name: "fold the pill away",
+        name: "fold the pill away, unless it starts folded on a phone",
         allowMove: ['[data-testid="demo-pill"]'],
         run: async (target: Page) => {
-          await pill(target)
-            .getByRole("button", { name: "Hide the demo controls" })
-            .click();
+          const hide = pill(target).getByRole("button", {
+            name: "Hide the demo controls",
+          });
+          if (await hide.isVisible()) await hide.click();
         },
       },
     ],

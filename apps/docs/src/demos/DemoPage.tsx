@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from "react";
 import type { ComponentType, ReactElement } from "react";
 import { motion } from "motion/react";
 import { Code, PanelBottomClose, RotateCcw } from "lucide-react";
@@ -56,9 +57,29 @@ function isFlag(value: unknown): value is boolean {
 /** Where the pill remembers it was folded away, for every demo; Reset demo leaves it as it is. */
 const FOLDED_KEY = "buttery-docs:demo-pill-folded";
 
+/** A phone's window, where the pill starts folded so it and a demo's own floating UI cover less of the page. */
+const PHONE = "(width < 640px)";
+
+function watchPhone(onChange: () => void): () => void {
+  const query = window.matchMedia(PHONE);
+  query.addEventListener("change", onChange);
+  return () => {
+    query.removeEventListener("change", onChange);
+  };
+}
+
+function usePhone(): boolean {
+  return useSyncExternalStore(
+    watchPhone,
+    () => window.matchMedia(PHONE).matches,
+    () => false,
+  );
+}
+
 /**
  * The docs site's few controls over a demo, in a floating pill: back to the docs, the demo's source, the
- * theme and Reset demo. It folds away to one button, and one surface changes size between the two.
+ * theme and Reset demo. It folds away to one button, and one surface changes size between the two. On a
+ * phone it starts folded until someone unfolds it.
  */
 function DemoPill({
   demo,
@@ -67,7 +88,8 @@ function DemoPill({
   readonly demo: DemoInfo;
   readonly onReset: () => void;
 }): ReactElement {
-  const [folded, setFolded] = useStoredState(FOLDED_KEY, false, isFlag);
+  const phone = usePhone();
+  const [folded, setFolded] = useStoredState(FOLDED_KEY, phone, isFlag);
   const keepSize = useLayoutAnimation("smooth", "position");
   return (
     <buttery.div
