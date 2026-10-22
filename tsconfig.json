@@ -27,6 +27,9 @@
     },
     {
       "path": "./apps/templates/dashboard"
+    },
+    {
+      "path": "./apps/templates/editor"
     }
   ]
 }
