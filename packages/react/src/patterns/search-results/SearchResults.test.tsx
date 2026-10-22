@@ -42,6 +42,15 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
+/** How far `element`'s text runs past its own end edge, in px: past zero, it ends in an ellipsis. */
+function overrun(element: HTMLElement): number {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return (
+    range.getBoundingClientRect().right - element.getBoundingClientRect().right
+  );
+}
+
 describe("SearchResults", () => {
   it("is a page that stamps its class and data-bt, forwards its ref and spreads props", () => {
     const ref = createRef<HTMLElement>();
@@ -121,7 +130,7 @@ describe("SearchResults", () => {
       '[data-bt-part="search-results-detail"]',
     );
     if (!label || !detail) throw new Error("No label or detail.");
-    expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth + 1);
+    expect(overrun(label)).toBeLessThanOrEqual(0.001);
     expect(detail.scrollWidth).toBeGreaterThan(detail.clientWidth);
   });
 

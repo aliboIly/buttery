@@ -243,9 +243,12 @@
     color: inherit;
   }
 
-  /* A long detail gives up its room long before the row's path and label shrink at all. */
+  /*
+   * A long detail gives up all its room before the row's path and label shrink at all: flex shrinks every
+   * item in proportion, and even a fraction of a pixel taken from the label would end it in an ellipsis.
+   */
   .bt-command-search-panel [data-bt-part="command-search-detail"] {
-    flex: 0 1000 auto;
+    flex: 0 1000000 auto;
     min-inline-size: 0;
     color: var(--bt-text-secondary);
   }

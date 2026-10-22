@@ -103,6 +103,15 @@ function options(name: string): readonly string[] {
     .map((option) => option.textContent);
 }
 
+/** How far `element`'s text runs past its own end edge, in px: past zero, it ends in an ellipsis. */
+function overrun(element: HTMLElement): number {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return (
+    range.getBoundingClientRect().right - element.getBoundingClientRect().right
+  );
+}
+
 describe("CommandSearch", () => {
   it("is a combobox named Search that takes the ref, its class and style on the field", () => {
     const ref = createRef<HTMLInputElement>();
@@ -202,7 +211,7 @@ describe("CommandSearch", () => {
       '[data-bt-part="command-search-detail"]',
     );
     if (!label || !detail) throw new Error("No label or detail.");
-    expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth + 1);
+    expect(overrun(label)).toBeLessThanOrEqual(0.001);
     expect(detail.scrollWidth).toBeGreaterThan(detail.clientWidth);
   });
 
