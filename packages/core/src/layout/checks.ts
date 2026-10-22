@@ -1407,6 +1407,51 @@ export function createLayoutToolkit(): LayoutToolkit {
           });
         }
       }
+
+      // A control that shows only an icon, such as an IconButton, draws it at its center.
+      const hasVisibleText = (control: Element): boolean => {
+        const walker = document.createTreeWalker(control, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const parent = node.parentElement;
+          if (
+            node.textContent?.trim() &&
+            parent &&
+            isVisible(parent) &&
+            !isVisuallyHidden(parent)
+          )
+            return true;
+        }
+        return false;
+      };
+      for (const control of document.querySelectorAll(
+        'button, a[href], [role="button"]',
+      )) {
+        if (isTooling(control) || !isVisible(control)) continue;
+        if (hasVisibleText(control)) continue;
+        const icons = [...control.querySelectorAll("svg")].filter((icon) => {
+          const box = icon.getBoundingClientRect();
+          return box.width > 0 && box.height > 0 && isVisible(icon);
+        });
+        const [icon] = icons;
+        if (!icon || icons.length !== 1) continue;
+        const box = control.getBoundingClientRect();
+        if (box.width < 12 || box.height < 12) continue;
+        const mark = icon.getBoundingClientRect();
+        const scale = drawnScale(control);
+        const across =
+          (mark.left + mark.width / 2 - (box.left + box.width / 2)) / scale;
+        const down =
+          (mark.top + mark.height / 2 - (box.top + box.height / 2)) / scale;
+        const off = Math.max(Math.abs(across), Math.abs(down));
+        if (off <= 1) continue;
+        report({
+          rule: "alignment",
+          a: selectorFor(control),
+          px: Math.round(off * 10) / 10,
+          message: `its icon sits ${px(Math.abs(across))} across and ${px(Math.abs(down))} down from its center`,
+          fix: "Center an icon-only control's icon: keep the component's own display (IconButton is a grid with place-items: center) rather than setting another, and give the icon no margin.",
+        });
+      }
     }
 
     return violations;

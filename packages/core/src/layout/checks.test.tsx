@@ -828,4 +828,22 @@ describe("alignment", () => {
   it("leaves controls of different heights alone, such as a switch beside a field", () => {
     expect(check(row(20, 8, "var(--bt-h-sm)"), ["alignment"])).toEqual([]);
   });
+
+  const iconButton = (display: string, label = ""): string => `
+    <button aria-label="Menu" style="display: ${display}; place-items: center; inline-size: 36px; block-size: 36px; padding: 0; border: 0">
+      <svg width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" /></svg>${label}
+    </button>`;
+
+  it("flags an icon-only button whose icon sits off its center, as a flex box over a grid's centering leaves it", () => {
+    const [found] = check(iconButton("inline-flex"), ["alignment"]);
+    expect(found?.message).toBe(
+      "its icon sits 10px across and 0px down from its center",
+    );
+    expect(found?.px).toBe(10);
+  });
+
+  it("passes an icon-only button with its icon centered, and a button with words beside its icon", () => {
+    expect(check(iconButton("inline-grid"), ["alignment"])).toEqual([]);
+    expect(check(iconButton("inline-flex", "Menu"), ["alignment"])).toEqual([]);
+  });
 });

@@ -165,8 +165,9 @@
     display: none;
   }
 
+  /* Shown, the button takes IconButton's own display back, the grid that centers its icon. */
   .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-menu-button"] {
-    display: inline-flex;
+    display: revert-layer;
   }
 
   /* Before the bar has measured itself, a narrow one already hides what it will fold. */
@@ -177,7 +178,7 @@
     }
 
     .bt-nav-bar [data-bt-part="nav-bar-menu-button"] {
-      display: inline-flex;
+      display: revert-layer;
     }
   }
 

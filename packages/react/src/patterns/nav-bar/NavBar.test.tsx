@@ -540,6 +540,35 @@ describe("NavBar", () => {
     );
   });
 
+  it("draws the menu button's icon at its center, folded by its own width or by the container's", async () => {
+    for (const width of ["600px", "360px"]) {
+      const { unmount } = render(
+        <div style={{ inlineSize: width }}>
+          <NavBar
+            brand={<a href="#top">Card Studio</a>}
+            search={<input aria-label="Search the guides" />}
+          >
+            <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+          </NavBar>
+        </div>,
+      );
+      const menu = await screen.findByRole("button", { name: "Menu" });
+      const icon = menu.querySelector("svg");
+      if (!icon) throw new Error("The menu button has no icon.");
+      const box = menu.getBoundingClientRect();
+      const mark = icon.getBoundingClientRect();
+      expect(
+        Math.abs(mark.left + mark.width / 2 - (box.left + box.width / 2)),
+        width,
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(mark.top + mark.height / 2 - (box.top + box.height / 2)),
+        width,
+      ).toBeLessThanOrEqual(1);
+      unmount();
+    }
+  });
+
   it("narrows its search rather than squeezing its menus, which never run under it", () => {
     const labels = [
       "Get started",
