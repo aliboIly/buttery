@@ -7,11 +7,12 @@ import {
   hasContent,
   useControllableState,
   useFloatingObstacle,
+  warnOnce,
 } from "@buttery/core";
 import type { CssVariables } from "@buttery/core";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
-import { isValidElement, useCallback, useState } from "react";
+import { isValidElement, useCallback, useEffect, useState } from "react";
 import type {
   AnimationEvent,
   CSSProperties,
@@ -239,6 +240,21 @@ function DataTableRoot<Row>({
   const words = { ...LABELS, ...labels };
   const compact = size === "compact";
   const withSelection = selectable && !compact;
+  const paged = pagination !== undefined;
+
+  useEffect(() => {
+    if (!compact) return;
+    if (paged)
+      warnOnce(
+        "DataTable",
+        `The "${label}" table is size="compact", which leaves out pagination, so its later pages can't be reached. Fix: use size="default" for a table people page through, or show every row without pagination.`,
+      );
+    if (selectable)
+      warnOnce(
+        "DataTable",
+        `The "${label}" table is size="compact", which leaves out the checkbox column, so selectable does nothing. Fix: use size="default" for a table people select rows in, or drop selectable.`,
+      );
+  }, [compact, paged, selectable, label]);
   const withActions = rowActions !== undefined;
   const pinned = useAppPage()?.fill === true;
   const obstacle = useFloatingObstacle();

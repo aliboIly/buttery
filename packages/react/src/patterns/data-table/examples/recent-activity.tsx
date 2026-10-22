@@ -35,13 +35,17 @@ export function RecentActivity(): ReactElement {
       <DataTable
         label="Recent activity"
         size={size}
-        selectable
-        pagination={{
-          page: 1,
-          pageSize: 10,
-          total: ACTIVITY.length,
-          onPageChange: () => undefined,
-        }}
+        {...(size === "default"
+          ? {
+              selectable: true,
+              pagination: {
+                page: 1,
+                pageSize: 10,
+                total: ACTIVITY.length,
+                onPageChange: () => undefined,
+              },
+            }
+          : {})}
         columns={[
           {
             id: "what",

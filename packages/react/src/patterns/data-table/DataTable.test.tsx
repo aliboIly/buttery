@@ -802,3 +802,25 @@ describe("DataTable", () => {
     ).toBe(false);
   });
 });
+
+describe("DataTable size compact", () => {
+  it("warns, with the fix, when it's given pagination or selection, which a compact table leaves out", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <Orders
+        label="Recent orders"
+        size="compact"
+        pagination={{
+          page: 1,
+          pageSize: 2,
+          total: ORDERS.length,
+          onPageChange: () => undefined,
+        }}
+      />,
+    );
+    expect(warn).toHaveBeenCalledWith(
+      '[buttery:DataTable] The "Recent orders" table is size="compact", which leaves out pagination, so its later pages can\'t be reached. Fix: use size="default" for a table people page through, or show every row without pagination.',
+    );
+    warn.mockRestore();
+  });
+});
