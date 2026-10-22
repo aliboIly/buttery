@@ -46,8 +46,8 @@ export interface FloatingToolbarProps extends Omit<
   readonly delayed?: boolean | undefined;
   /**
    * Moves focus to its first button that can act when it opens, for a toolbar that's the next step, such
-   * as crop mode's. Either way, focus inside it goes back where it came from when it closes. Defaults to
-   * `false`.
+   * as crop mode's. Either way, focus inside it goes back where it came from when it closes.
+   * Defaults to `false`.
    */
   readonly focusOnOpen?: boolean | undefined;
   /** The buttons: `FloatingToolbar.Button`s. */

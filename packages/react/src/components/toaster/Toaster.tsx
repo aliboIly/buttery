@@ -58,8 +58,8 @@ export interface ToasterProps {
   /** Read before each message, so screen readers say what it is. Defaults to `"Notification"`. */
   readonly label?: string | undefined;
   /**
-   * Names the region the toasts stack in. `{hotkey}` becomes F8, the key that moves focus there. Defaults
-   * to `"Notifications ({hotkey})"`.
+   * Names the region the toasts stack in. `{hotkey}` becomes F8, the key that moves focus there.
+   * Defaults to `"Notifications ({hotkey})"`.
    */
   readonly regionLabel?: string | undefined;
   /** The words for each tone, read before its message and naming its icon. Defaults to Success, Warning and Error. */
