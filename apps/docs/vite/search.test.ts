@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import { buildSearchIndexes, searchDocs } from "../src/search/search.ts";
 import { searchGolden } from "../tests/search-golden.ts";
@@ -8,6 +9,12 @@ const root = fileURLToPath(new URL("../../..", import.meta.url));
 const indexes = buildSearchIndexes(searchDocsIn(root));
 
 describe("docs search", () => {
+  // 120 KB gzipped is about 100ms on a 10 Mbit/s connection, leaving room for a round trip and parsing.
+  it("keeps the titles index small enough to load in under 200ms", () => {
+    const size = gzipSync(JSON.stringify(indexes.titles)).length;
+    expect(size).toBeLessThan(120_000);
+  });
+
   it("keeps at least 40 golden queries", () => {
     expect(searchGolden.length).toBeGreaterThanOrEqual(40);
   });
