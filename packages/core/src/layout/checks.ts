@@ -1453,10 +1453,12 @@ export function createLayoutToolkit(): LayoutToolkit {
         });
       }
 
-      // A small icon beside words, as in a callout, a menu item or a button, sits on the middle of the line next to it.
-      const linesOf = (node: Node): DOMRect[] => {
+      // A small icon beside words, as in a callout, a menu item or a button, sits on the middle of their first line.
+      const linesOf = (
+        node: Node,
+      ): { readonly rect: DOMRect; readonly block: Element }[] => {
         const range = document.createRange();
-        const rects: DOMRect[] = [];
+        const lines: { readonly rect: DOMRect; readonly block: Element }[] = [];
         const texts: Text[] = [];
         if (node instanceof Text) texts.push(node);
         else {
@@ -1468,11 +1470,13 @@ export function createLayoutToolkit(): LayoutToolkit {
           const parent = text.parentElement;
           if (!text.data.trim() || !parent || parent.closest("svg")) continue;
           if (!isVisible(parent) || withinVisuallyHidden(parent)) continue;
+          const block = blockOf(parent);
           range.selectNodeContents(text);
           for (const rect of range.getClientRects())
-            if (rect.width > 0.5 && rect.height > 0.5) rects.push(rect);
+            if (rect.width > 0.5 && rect.height > 0.5)
+              lines.push({ rect, block });
         }
-        return rects;
+        return lines;
       };
       const isRow = (element: Element): boolean => {
         const { display, flexDirection } = styleOf(element);
@@ -1482,7 +1486,10 @@ export function createLayoutToolkit(): LayoutToolkit {
       const sibling = (
         item: Element,
         forward: boolean,
-      ): { readonly node: Node; readonly lines: DOMRect[] } | null => {
+      ): {
+        readonly node: Node;
+        readonly lines: ReturnType<typeof linesOf>;
+      } | null => {
         for (
           let node = forward ? item.nextSibling : item.previousSibling;
           node;
@@ -1519,14 +1526,20 @@ export function createLayoutToolkit(): LayoutToolkit {
           item = row;
         }
         if (!beside) continue;
-        const { lines } = beside;
-        const line = leading ? lines[0] : lines.at(-1);
+        const { lines, node } = beside;
+        const line = lines[0]?.rect;
         if (!line) continue;
-        if (Math.min(line.bottom, mark.bottom) <= Math.max(line.top, mark.top))
+        const box =
+          node instanceof Element
+            ? node.getBoundingClientRect()
+            : {
+                top: Math.min(...lines.map((entry) => entry.rect.top)),
+                bottom: Math.max(...lines.map((entry) => entry.rect.bottom)),
+              };
+        if (Math.min(box.bottom, mark.bottom) <= Math.max(box.top, mark.top))
           continue;
         // An icon in a box larger than a line, such as a tinted tile, lines up with its text by the tile.
-        const host =
-          beside.node instanceof Element ? beside.node : item.parentElement;
+        const host = node instanceof Element ? node : item.parentElement;
         const lineHeight =
           (host ? Number.parseFloat(styleOf(host).lineHeight) : Number.NaN) ||
           line.height / scale;
@@ -1539,25 +1552,19 @@ export function createLayoutToolkit(): LayoutToolkit {
         const center = mark.top + mark.height / 2;
         const off = (center - (line.top + line.height / 2)) / scale;
         if (Math.abs(off) <= 1) continue;
-        const others = lines.filter(
-          (rect) => rect.top >= line.bottom - 1 || rect.bottom <= line.top + 1,
-        );
-        if (others.length > 0) {
-          // Centered on a title and its description together, a choice rather than a slip.
-          const top = Math.min(...lines.map((rect) => rect.top));
-          const bottom = Math.max(...lines.map((rect) => rect.bottom));
-          if (Math.abs(center - (top + bottom) / 2) / scale <= 1) continue;
-          const pitch = Math.min(
-            ...others.map((rect) => Math.abs(rect.top - line.top)),
-          );
-          if (Math.abs(off) * scale >= pitch / 2) continue;
-        }
+        // Centered on a title and its description together, or a mark after the words centered on them all.
+        const blocks = new Set(lines.map((entry) => entry.block));
+        if (
+          (blocks.size > 1 || !leading) &&
+          Math.abs(center - (box.top + box.bottom) / 2) / scale <= 1
+        )
+          continue;
         report({
           rule: "alignment",
           a: selectorFor(item),
           px: Math.round(Math.abs(off) * 10) / 10,
-          message: `its icon sits ${px(Math.abs(off))} ${off > 0 ? "below" : "above"} the middle of the line beside it`,
-          fix: "Center a small icon on the line of text beside it: center the row (align-items: center) when the text is one line, or give the icon a box as tall as the text's line and leave the text untrimmed (text-box: normal) so the two lines match.",
+          message: `its icon sits ${px(Math.abs(off))} ${off > 0 ? "below" : "above"} the middle of the first line beside it`,
+          fix: "Center a small icon on the first line of the text beside it: center the row (align-items: center) when the text is one line, or give the icon a box as tall as that line and leave the text untrimmed (text-box: normal) so the two match.",
         });
       }
     }

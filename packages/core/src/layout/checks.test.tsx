@@ -857,7 +857,7 @@ describe("alignment", () => {
   it("flags a small icon off the middle of the line beside it, before the words or after them", () => {
     const [leading] = check(beside("flex-start"), ["alignment"]);
     expect(leading?.message).toMatch(
-      /^its icon sits [\d.]+px above the middle of the line beside it$/,
+      /^its icon sits [\d.]+px above the middle of the first line beside it$/,
     );
     expect(leading?.px).toBeGreaterThan(10);
     const [trailing] = check(
@@ -865,9 +865,20 @@ describe("alignment", () => {
       ["alignment"],
     );
     expect(trailing?.message).toMatch(
-      /^its icon sits [\d.]+px below the middle of the line beside it$/,
+      /^its icon sits [\d.]+px below the middle of the first line beside it$/,
     );
     expect(trailing?.px).toBeGreaterThan(10);
+  });
+
+  it("flags an icon centered on a wrapped paragraph instead of its first line", () => {
+    const [found] = check(
+      `<div style="display: flex; align-items: center; gap: 12px; inline-size: 200px; line-height: 20px">
+        ${icon}
+        <p style="margin: 0">Roasted on Monday and at your door by Wednesday, every week</p>
+      </div>`,
+      ["alignment"],
+    );
+    expect(found?.message).toMatch(/^its icon sits [\d.]+px below/);
   });
 
   it("passes an icon centered on its line, by the row or by a box as tall as the line", () => {
@@ -875,13 +886,22 @@ describe("alignment", () => {
     expect(check(beside("flex-start", "40px"), ["alignment"])).toEqual([]);
   });
 
-  it("leaves an icon centered on a title and its description, and an icon in a tinted tile", () => {
+  it("leaves an icon centered on a title and its description, a mark after wrapped words, and an icon in a tinted tile", () => {
     expect(
       check(
         `<div style="display: flex; align-items: center; gap: 12px; line-height: 20px">
           ${icon}
           <div><p style="margin: 0">Payouts</p><p style="margin: 0">Every Friday</p></div>
         </div>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
+    expect(
+      check(
+        `<button type="button" style="display: flex; align-items: center; gap: 12px; inline-size: 200px; line-height: 20px; padding: 0; border: 0">
+          <span>How fresh is the coffee when it arrives at my door?</span>
+          ${icon}
+        </button>`,
         ["alignment"],
       ),
     ).toEqual([]);

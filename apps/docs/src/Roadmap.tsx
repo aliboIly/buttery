@@ -96,7 +96,7 @@ function UpcomingRelease({
             {count}
           </Text>
         </Stack>
-        <Stack gap={3} asChild>
+        <Stack gap={0} asChild>
           <ul role="list" className="docs-roadmap-items">
             {release.items.map((item) => (
               <li key={item.text} data-done={item.done ? "" : undefined}>

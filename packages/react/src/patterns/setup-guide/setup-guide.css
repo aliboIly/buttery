@@ -124,7 +124,9 @@
     column-gap: var(--bt-space-2);
   }
 
+  /* As tall as the step title's line, which centers the circle on it. */
   .bt-setup-guide [data-bt-part="setup-guide-check"] {
+    block-size: var(--bt-text-label-line);
     color: var(--bt-text-tertiary);
   }
 

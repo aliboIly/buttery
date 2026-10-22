@@ -121,16 +121,20 @@
     list-style: none;
   }
 
+  /* Untrimmed, a feature's first line is body-sm's 20px, the box its check centers in. */
   .bt-plan-comparison [data-bt-part="feature-list"] > li {
     display: flex;
     align-items: flex-start;
     gap: var(--bt-space-2);
+    text-box: normal;
   }
 
+  /* As tall as the first line, which centers the check on it however the feature wraps. */
   .bt-plan-comparison [data-bt-part="feature-list"] .bt-icon {
     --bt-icon-size: var(--bt-plan-comparison-check);
 
     flex: none;
+    block-size: var(--bt-text-body-sm-line);
     color: var(--bt-accent);
   }
 

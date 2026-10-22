@@ -102,7 +102,15 @@
   align-items: start;
 }
 
+/* Untrimmed, an item's lines are body's 22px, and the leading they carry spaces the items as a 12px gap
+   between trimmed ones would. */
+.docs-roadmap-items > li > .bt-text {
+  text-box: normal;
+}
+
+/* As tall as the first line, which centers the icon on it however the item wraps. */
 .docs-roadmap-items > li > .bt-icon {
+  block-size: var(--bt-text-body-line);
   color: var(--bt-text-tertiary);
 }
 

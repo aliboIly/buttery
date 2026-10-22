@@ -1,4 +1,10 @@
 @layer bt.patterns {
+  /* The height of the capitals of whatever uses it: the open card title's. */
+  .bt-expandable-card,
+  .bt-expandable-card-panel[data-bt-part="panel"] {
+    --bt-expandable-card-cap: 1cap;
+  }
+
   .bt-expandable-card {
     cursor: pointer;
   }
@@ -41,13 +47,17 @@
   .bt-expandable-card-panel > [data-bt-part="head"] {
     display: flex;
     flex: none;
-    padding: var(--bt-space-6) var(--bt-space-12) 0 var(--bt-space-6);
+    padding: calc(var(--bt-space-6) - var(--bt-space-1_5)) var(--bt-space-12) 0
+      var(--bt-space-6);
   }
 
-  /* The same box as the card's title, so the title travels without stretching. */
+  /* The same box as the card's title, padding included, so the title travels without stretching. */
   .bt-expandable-card-panel > [data-bt-part="head"] > [data-bt-part="title"] {
     min-inline-size: 0;
     max-inline-size: 22ch;
+    padding-block-start: calc(
+      (var(--bt-h-sm) - var(--bt-expandable-card-cap)) / 2
+    );
   }
 
   .bt-expandable-card-panel > [data-bt-part="detail"] {
