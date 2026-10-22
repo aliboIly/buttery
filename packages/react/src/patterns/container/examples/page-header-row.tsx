@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ArrowLink, Container } from "@buttery/react";
 
 /** A row across the top of a page, lined up with the sections under it. */
@@ -15,3 +16,10 @@ export function PageHeaderRow(): ReactElement {
     </Container>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Card Studio");
+  await see("Open the studio");
+};

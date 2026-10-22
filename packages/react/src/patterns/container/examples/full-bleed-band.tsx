@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Container, Section } from "@buttery/react";
 
 /** A band whose background runs edge to edge while its words stay in the column. */
@@ -14,3 +15,9 @@ export function FullBleedBand(): ReactElement {
     </Section>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Every card you make keeps its own history.");
+};
