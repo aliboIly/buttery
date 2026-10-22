@@ -28,7 +28,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "It takes its container's width on a card, its content padded 16px: the badge and a 28px dismiss button on the first line, then the title and the reason, which wrap, and a footer with the action at the start and the time estimate at the end. Media runs edge to edge along the bottom, clipped to the card's corners.",
+    "It takes its container's width on a card, its content padded 16px: the badge and a 28px dismiss button on the first line, then the title and, 12px under it, the reason, both of which wrap, and a footer with the action at the start and the time estimate at the end. Media runs edge to edge along the bottom, clipped to the card's corners.",
   reducedMotion:
     "Dismissed, it fades out over 100ms, and what's below it in a ReflowGroup, such as an AppPage, takes its place at once.",
 };

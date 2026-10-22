@@ -93,10 +93,12 @@ export function RecommendationCard({
             onClick={dismiss}
           />
         </div>
-        <Text variant="title-md" asChild>
-          <Title>{title}</Title>
-        </Text>
-        <Text variant="body-sm">{children}</Text>
+        <div data-bt-part="recommendation-card-text">
+          <Text variant="title-md" asChild>
+            <Title>{title}</Title>
+          </Text>
+          <Text variant="body-sm">{children}</Text>
+        </div>
         {action === undefined && estimate === undefined ? null : (
           <div data-bt-part="recommendation-card-foot">
             {action === undefined ? null : action.href === undefined ? (

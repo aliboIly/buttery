@@ -57,6 +57,27 @@ describe("RecommendationCard", () => {
     );
   });
 
+  it("puts its body 12px under the title, further than a wrapped title's lines are from each other", () => {
+    render(
+      <div style={{ inlineSize: "280px" }}>
+        <RecommendationCard title="Send low-stock alerts to the roastery">
+          Get a message when a green coffee drops under two weeks of roasting.
+        </RecommendationCard>
+      </div>,
+    );
+    const title = screen.getByRole("heading", { level: 3 });
+    const titleBox = title.getBoundingClientRect();
+    const line = Number.parseFloat(getComputedStyle(title).lineHeight);
+    expect(titleBox.height).toBeGreaterThan(line);
+    expect(titleBox.height).toBeLessThan(2 * line);
+    const betweenLines = 2 * line - titleBox.height;
+    const gap =
+      screen.getByText(/^Get a message/).getBoundingClientRect().top -
+      titleBox.bottom;
+    expect(gap).toBe(12);
+    expect(gap).toBeGreaterThan(betweenLines);
+  });
+
   it("makes the action a button that looks like a link when it has no href", async () => {
     const onClick = vi.fn();
     render(
