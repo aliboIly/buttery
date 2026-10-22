@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { InitialsTile } from "@buttery/react";
 
 /** A workspace's tile beside its name, as in a sidebar's workspace switcher. */
@@ -13,3 +14,10 @@ export function WorkspaceName(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("NR");
+  await see("Northside Roasters");
+};
