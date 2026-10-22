@@ -1,22 +1,36 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Banner } from "@buttery/react";
 import { Truck } from "lucide-react";
 
-/** A notice whose action opens something in place, through a button rather than a link. */
+/** A suggestion whose action is a button that makes the change in place, then offers to undo it. */
 export function ShippingCutoff(): ReactElement {
-  const [opened, setOpened] = useState(false);
+  const [later, setLater] = useState(false);
   return (
     <Banner
       icon={Truck}
       action={{
-        label: opened ? "Cutoff settings opened" : "Change the cutoff",
+        label: later ? "Undo" : "Move it to 4pm",
         onClick: () => {
-          setOpened(true);
+          setLater(!later);
         },
       }}
     >
-      Orders placed after 2pm ship the next morning.
+      {later
+        ? "Orders placed before 4pm now ship the same day."
+        : "Ship more orders the same day by moving your cutoff from 2pm to 4pm."}
     </Banner>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Move it to 4pm");
+  await see("Orders placed before 4pm now ship the same day.");
+  await press("button", "Undo");
+  await see(
+    "Ship more orders the same day by moving your cutoff from 2pm to 4pm.",
+  );
+};
