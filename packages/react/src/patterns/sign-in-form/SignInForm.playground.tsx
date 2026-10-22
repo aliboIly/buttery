@@ -32,15 +32,15 @@ async function signIn({
 
 export const demos: readonly DemoSection[] = [
   {
-    title: "Card Studio sign-in",
+    title: "Deckhand sign-in",
     description:
       "Submit it empty to see the summary and the field errors; sam@example.com with any 8-character password signs in.",
     render: () => (
       <Surface level="card" pad={6}>
         <SignInForm
           titleAs="h2"
-          title="Sign in to Card Studio"
-          description="Pick up where you left off."
+          title="Sign in to Deckhand"
+          description="Your decks are where you left them."
           forgotPasswordHref="#/sign-in-form"
           signUpHref="#/sign-up-form"
           providers={[

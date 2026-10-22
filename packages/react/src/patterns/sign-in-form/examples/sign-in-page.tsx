@@ -29,7 +29,7 @@ export function SignInPage(): ReactElement {
     );
   return (
     <SignInForm
-      description="Welcome back to Card Studio."
+      description="Welcome back to Deckhand."
       forgotPasswordHref="#forgot-password"
       signUpHref="#sign-up"
       onSubmit={async ({ email, password }) => {

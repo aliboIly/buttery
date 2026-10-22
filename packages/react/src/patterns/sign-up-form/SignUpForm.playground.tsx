@@ -15,14 +15,14 @@ export const page: DocsPage = {
 
 export const demos: readonly DemoSection[] = [
   {
-    title: "Card Studio sign-up",
+    title: "Deckhand sign-up",
     description:
       "The password's rules tick off as you type; submit it empty to see the summary.",
     render: () => (
       <Surface level="card" pad={6}>
         <SignUpForm
           titleAs="h2"
-          description="Make cards and keep them in one place."
+          description="Make decks and keep them in one place."
           termsHref="#/sign-up-form"
           signInHref="#/sign-in-form"
           onSubmit={async ({ email }) => {
