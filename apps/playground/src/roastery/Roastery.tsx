@@ -438,7 +438,7 @@ export function Roastery(): ReactElement {
               setHelping(true);
             }}
           >
-            Ask the roasting team
+            Ask support
           </ArrowLink>
         }
       />

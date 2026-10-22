@@ -134,9 +134,9 @@ export const ARTICLES: readonly {
     body: "Sales from Monday to Sunday are paid out together on the Friday after, to the bank in Payouts.",
   },
   {
-    id: "shipping-rates",
-    title: "Set shipping rates by region",
-    body: "In Shipping and pickup, add a rate for each region. An order takes the rate of the region it ships to.",
+    id: "pickup",
+    title: "Let customers collect at the roastery",
+    body: "In Pickup, turn on local pickup and set the address. Customers choose it at checkout and pay nothing for shipping.",
   },
   {
     id: "wholesale-terms",

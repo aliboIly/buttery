@@ -342,7 +342,7 @@ test("help docks beside the page on a wide screen, and covers it as a sheet on a
     );
   }).toPass();
   await expect(
-    page.getByRole("textbox", { name: "Ask the roasting team" }),
+    page.getByRole("textbox", { name: "Ask support" }),
   ).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(panel).toHaveCount(0);

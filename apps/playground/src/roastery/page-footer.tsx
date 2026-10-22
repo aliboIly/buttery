@@ -10,7 +10,7 @@ export function PageFooter(): ReactElement {
         href="#feedback"
         onClick={(event) => {
           event.preventDefault();
-          toast("Thanks. Feedback goes to the Halfmoon team in the real app.");
+          toast("Thanks. In a real app, this goes to the team that makes it.");
         }}
       >
         Send feedback

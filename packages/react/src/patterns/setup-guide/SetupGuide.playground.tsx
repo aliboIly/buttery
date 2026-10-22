@@ -74,9 +74,7 @@ function GuideDemo(): ReactElement {
           ...task,
           done: index < finished,
         }))}
-        footer={
-          <ArrowLink href="#setup-guide">Talk to the roasting team</ArrowLink>
-        }
+        footer={<ArrowLink href="#setup-guide">Ask support</ArrowLink>}
       />
     </Stack>
   );

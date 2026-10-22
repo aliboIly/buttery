@@ -309,17 +309,17 @@ describe("SetupGuide", () => {
   });
 
   it("shows its footer under a hairline only while it's unfolded", async () => {
-    render(<Guide footer={<a href="#help">Talk to the roasting team</a>} />);
+    render(<Guide footer={<a href="#help">Ask support</a>} />);
     expect(
       within(guide()).queryByRole("link", {
-        name: "Talk to the roasting team",
+        name: "Ask support",
       }),
     ).toBeNull();
     await userEvent.click(
       within(guide()).getByRole("button", { name: "Show all steps" }),
     );
     const link = await within(guide()).findByRole("link", {
-      name: "Talk to the roasting team",
+      name: "Ask support",
     });
     const footer = link.closest('[data-bt-part="setup-guide-footer"]');
     if (!(footer instanceof HTMLElement)) throw new Error("No footer.");

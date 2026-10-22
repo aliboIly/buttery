@@ -60,9 +60,8 @@ export const SETTING_SECTIONS: readonly {
       {
         id: "pickup",
         icon: Truck,
-        title: "Shipping and pickup",
-        description:
-          "Rates by region, packaging and collecting at the roastery.",
+        title: "Pickup",
+        description: "Whether customers can collect, and where.",
       },
       {
         id: "discounts",

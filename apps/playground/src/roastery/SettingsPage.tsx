@@ -89,9 +89,13 @@ function useArriving<Value>(value: Value): Value | undefined {
 }
 
 const SESSIONS = [
-  { id: "mac", device: "MacBook Air", where: "Portland, this browser" },
-  { id: "phone", device: "iPhone", where: "Portland, 2 hours ago" },
-  { id: "tablet", device: "iPad at the counter", where: "Portland, yesterday" },
+  { id: "laptop", device: "Laptop", where: "Portland, this browser" },
+  { id: "phone", device: "Phone", where: "Portland, 2 hours ago" },
+  {
+    id: "tablet",
+    device: "Tablet at the counter",
+    where: "Portland, yesterday",
+  },
 ];
 
 function ProfileSettings({
@@ -519,7 +523,7 @@ function PlanSettings({
               />
               <PlanComparison.Option
                 name="Priority support"
-                description="A reply from the Halfmoon team within four hours, any day of the week."
+                description="A reply from support within four hours, any day of the week."
               />
             </>
           }
@@ -548,7 +552,7 @@ function PlanSettings({
           {
             icon: CreditCard,
             title: "Charged to the card on file",
-            body: "The Visa ending 4410.",
+            body: "The card ending 4410.",
           },
         ]}
         confirmLabel="Start the trial"

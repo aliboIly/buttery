@@ -43,9 +43,7 @@ export function GroupedSetup(): ReactElement {
       <SetupGuide
         title="Get your shop ready"
         tasks={tasks}
-        footer={
-          <ArrowLink href="#setup-guide">Talk to the roasting team</ArrowLink>
-        }
+        footer={<ArrowLink href="#setup-guide">Ask support</ArrowLink>}
       />
     </>
   );

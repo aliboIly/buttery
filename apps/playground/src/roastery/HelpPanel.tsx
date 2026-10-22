@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
 import { ARTICLES } from "./search.ts";
 
-/** The help panel: popular articles, the one opened from search, and a question for the roasting team. */
+/** The help panel: popular articles, the one opened from search, and a question for support. */
 export function HelpPanel({
   open,
   onOpenChange,
@@ -63,7 +63,7 @@ export function HelpPanel({
         <form onSubmit={ask}>
           <Stack gap={2}>
             <TextArea
-              label="Ask the roasting team"
+              label="Ask support"
               rows={2}
               value={question}
               onValueChange={setQuestion}
@@ -112,9 +112,7 @@ export function HelpPanel({
       {asked.map((entry, index) => (
         <Stack key={`${entry}-${String(index)}`} gap={1}>
           <Text variant="label">{entry}</Text>
-          <Text variant="body-sm">
-            The roasting team replies here within a day.
-          </Text>
+          <Text variant="body-sm">Support replies here within a day.</Text>
         </Stack>
       ))}
     </SidePanel>

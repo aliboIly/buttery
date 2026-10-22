@@ -35,7 +35,7 @@ export const demos: readonly DemoSection[] = [
           {
             icon: CreditCard,
             title: "Charged to the card on file",
-            body: "The Visa ending 4410.",
+            body: "The card ending 4410.",
           },
         ]}
         terms={
