@@ -25,7 +25,7 @@ function page(width = 900): HTMLElement {
         overflowY: "auto",
       }}
     >
-      <SubNav title="Card Studio" items={ITEMS} />
+      <SubNav title="Deckhand" items={ITEMS} />
       {ITEMS.map((item) => (
         <section key={item.id} id={item.id} style={{ blockSize: "400px" }}>
           <h2>{item.label}</h2>
@@ -65,15 +65,15 @@ describe("SubNav", () => {
     render(
       <div style={{ inlineSize: "390px" }}>
         <SubNav
-          title="Card Studio for teams who ship a fresh launch card every single week of the year"
+          title="Deckhand for teams who present a fresh deck to the whole company every single week"
           items={ITEMS}
         />
       </div>,
     );
-    const title = screen.getByText(/Card Studio for teams/);
+    const title = screen.getByText(/Deckhand for teams/);
     expect(title.hasAttribute("data-bt-truncate")).toBe(true);
     expect(title.getAttribute("title")).toBe(
-      "Card Studio for teams who ship a fresh launch card every single week of the year",
+      "Deckhand for teams who present a fresh deck to the whole company every single week",
     );
     expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
   });

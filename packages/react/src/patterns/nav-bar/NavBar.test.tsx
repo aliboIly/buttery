@@ -43,16 +43,16 @@ function page(behavior: NavBarBehavior = "static", width = 1100): HTMLElement {
     >
       <NavBar
         behavior={behavior}
-        brand={<a href="#top">Card Studio</a>}
+        brand={<a href="#top">Deckhand</a>}
         actions={<Button variant="secondary">Sign in</Button>}
         data-testid="bar"
       >
         <MorphMenu.Item label="Product">
           <MorphMenu.Column title="Make">
             <MorphMenu.Entry
-              href="#cards"
-              title="Cards"
-              caption="Titles and finishes"
+              href="#slides"
+              title="Slides"
+              caption="Layouts and notes"
             />
           </MorphMenu.Column>
         </MorphMenu.Item>
@@ -100,19 +100,19 @@ describe("NavBar", () => {
       <>
         <NavBar
           skipTo="content"
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           actions={<Button variant="secondary">Sign in</Button>}
         >
           <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
         </NavBar>
         <main id="content" tabIndex={-1}>
-          <h1>Cards</h1>
+          <h1>Decks</h1>
         </main>
       </>,
     );
     return {
       skip: screen.getByRole("link", { name: "Skip to content" }),
-      brand: screen.getByRole("link", { name: "Card Studio" }),
+      brand: screen.getByRole("link", { name: "Deckhand" }),
     };
   }
 
@@ -156,7 +156,7 @@ describe("NavBar", () => {
   it("sits on the page container unless told not to", () => {
     const { rerender } = render(
       <div style={{ inlineSize: "1600px" }}>
-        <NavBar brand={<a href="#top">Card Studio</a>} data-testid="bar" />
+        <NavBar brand={<a href="#top">Deckhand</a>} data-testid="bar" />
       </div>,
     );
     const row = (): Element | null =>
@@ -165,7 +165,7 @@ describe("NavBar", () => {
     rerender(
       <div style={{ inlineSize: "1600px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           contained={false}
           data-testid="bar"
         />
@@ -240,7 +240,7 @@ describe("NavBar", () => {
       row.getBoundingClientRect().bottom + 8,
     );
     for (const element of [
-      screen.getByRole("link", { name: "Card Studio" }),
+      screen.getByRole("link", { name: "Deckhand" }),
       screen.getByRole("button", { name: "Product" }),
       screen.getByRole("link", { name: "Pricing" }),
       screen.getByRole("button", { name: "Sign in" }),
@@ -311,7 +311,7 @@ describe("NavBar", () => {
     const sheet = await screen.findByRole("dialog", { name: "Main" });
     const section = within(sheet).getByRole("button", { name: "Product" });
     await userEvent.click(section);
-    expect(within(sheet).getByRole("link", { name: /Cards/ })).toBeTruthy();
+    expect(within(sheet).getByRole("link", { name: /Slides/ })).toBeTruthy();
     expect(within(sheet).getByRole("button", { name: "Sign in" })).toBeTruthy();
     await userEvent.keyboard("{Escape}");
     await waitFor(() => {
@@ -326,7 +326,7 @@ describe("NavBar", () => {
     await userEvent.click(
       within(sheet).getByRole("button", { name: "Product" }),
     );
-    await userEvent.click(within(sheet).getByRole("link", { name: /Cards/ }));
+    await userEvent.click(within(sheet).getByRole("link", { name: /Slides/ }));
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
@@ -342,7 +342,7 @@ describe("NavBar", () => {
     render(
       <div style={{ inlineSize: "600px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           actions={<a href="#start">Start free</a>}
         >
           <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
@@ -366,7 +366,7 @@ describe("NavBar", () => {
     await userEvent.click(screen.getByRole("button", { name: "Menu" }));
     sheet = await screen.findByRole("dialog", { name: "Main" });
     await userEvent.click(
-      within(sheet).getByRole("link", { name: "Card Studio" }),
+      within(sheet).getByRole("link", { name: "Deckhand" }),
     );
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
@@ -376,7 +376,7 @@ describe("NavBar", () => {
   it("leaves focus where a link chosen in its sheet moves it", async () => {
     render(
       <div style={{ inlineSize: "600px" }}>
-        <NavBar brand={<a href="#top">Card Studio</a>}>
+        <NavBar brand={<a href="#top">Deckhand</a>}>
           <MorphMenu.Link
             href="#features"
             onClick={(event) => {
@@ -405,10 +405,10 @@ describe("NavBar", () => {
   it("takes Tab past its last menu to what follows the bar, not to its hidden menu button", async () => {
     render(
       <div style={{ inlineSize: "1100px" }}>
-        <NavBar brand={<a href="#top">Card Studio</a>}>
+        <NavBar brand={<a href="#top">Deckhand</a>}>
           <MorphMenu.Item label="Guides">
             <MorphMenu.Column>
-              <MorphMenu.Entry href="#first" title="Your first card" />
+              <MorphMenu.Entry href="#first" title="Your first deck" />
             </MorphMenu.Column>
           </MorphMenu.Item>
         </NavBar>
@@ -417,11 +417,11 @@ describe("NavBar", () => {
     );
     const guides = screen.getByRole("button", { name: "Guides" });
     await userEvent.click(guides);
-    await screen.findByRole("link", { name: /Your first card/ });
+    await screen.findByRole("link", { name: /Your first deck/ });
     guides.focus();
     await browser.keyboard("{Tab}");
     expect(document.activeElement).toBe(
-      screen.getByRole("link", { name: /Your first card/ }),
+      screen.getByRole("link", { name: /Your first deck/ }),
     );
     await browser.keyboard("{Tab}");
     expect(document.activeElement).toBe(
@@ -439,14 +439,14 @@ describe("NavBar", () => {
     });
     await waitFor(() => {
       expect(document.activeElement).toBe(
-        screen.getByRole("link", { name: "Card Studio" }),
+        screen.getByRole("link", { name: "Deckhand" }),
       );
     });
   });
 
   it("stays out while keyboard focus is in an auto-hiding bar, and slides away once it leaves", async () => {
     const scroller = page("auto-hide");
-    const brand = screen.getByRole("link", { name: "Card Studio" });
+    const brand = screen.getByRole("link", { name: "Deckhand" });
     // A key press first makes the focus that follows keyboard focus; WebKit's Tab skips links, as Safari's does.
     await browser.keyboard("{Shift}");
     brand.focus();
@@ -480,7 +480,7 @@ describe("NavBar", () => {
         data-testid="scroller"
         style={{ inlineSize: "1100px", blockSize: "400px", overflowY: "auto" }}
       >
-        <NavBar behavior="auto-hide" brand={<a href="#top">Card Studio</a>}>
+        <NavBar behavior="auto-hide" brand={<a href="#top">Deckhand</a>}>
           <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
         </NavBar>
         <Sticky data-testid="follower">
@@ -519,7 +519,7 @@ describe("NavBar", () => {
     render(
       <div style={{ inlineSize: "700px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           actions={<Button>Start a long free trial now</Button>}
         >
           {["Product", "Templates", "Guides", "Company", "Community"].map(
@@ -542,7 +542,7 @@ describe("NavBar", () => {
     render(
       <div style={{ inlineSize: "600px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           search={<input aria-label="Search the guides" />}
           data-testid="bar"
         >
@@ -564,7 +564,7 @@ describe("NavBar", () => {
       const { unmount } = render(
         <div style={{ inlineSize: width }}>
           <NavBar
-            brand={<a href="#top">Card Studio</a>}
+            brand={<a href="#top">Deckhand</a>}
             search={<input aria-label="Search the guides" />}
           >
             <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
@@ -632,7 +632,7 @@ describe("NavBar", () => {
     render(
       <div style={{ inlineSize: "1100px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           search={<input aria-label="Search the guides" />}
           actions={<Button>Sign in</Button>}
           contained={false}
@@ -662,7 +662,7 @@ describe("NavBar", () => {
     render(
       <div style={{ inlineSize: "1000px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           search={<input aria-label="Search the guides" />}
           actions={<Button>Start a long free trial now</Button>}
         >
@@ -694,7 +694,7 @@ describe("NavBar", () => {
     render(
       <div data-testid="frame" style={{ inlineSize: "390px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           actions={<Button>Start a long free trial now</Button>}
         >
           {["Product", "Templates", "Guides", "Company", "Community"].map(
