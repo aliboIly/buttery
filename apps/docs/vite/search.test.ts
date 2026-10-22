@@ -6,9 +6,27 @@ import { searchGolden } from "../tests/search-golden.ts";
 import { searchDocsIn } from "./search.ts";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const indexes = buildSearchIndexes(searchDocsIn(root));
+const docs = searchDocsIn(root);
+const indexes = buildSearchIndexes(docs);
 
 describe("docs search", () => {
+  it("puts a component's result in the group of its page's section", () => {
+    const groupOf = (name: string): string | undefined =>
+      docs.find((doc) => doc.id === `component:${name}`)?.group;
+    expect(
+      ["Button", "FitBox", "Stack", "Text", "Presence", "PageHeader"].map(
+        groupOf,
+      ),
+    ).toEqual([
+      "Components",
+      "Layout",
+      "Layout",
+      "Foundations",
+      "Motion",
+      "Patterns",
+    ]);
+  });
+
   // 120 KB gzipped is about 100ms on a 10 Mbit/s connection, leaving room for a round trip and parsing.
   it("keeps the titles index small enough to load in under 200ms", () => {
     const size = gzipSync(JSON.stringify(indexes.titles)).length;

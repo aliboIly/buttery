@@ -222,7 +222,7 @@ export function searchDocsIn(root: string): SearchDoc[] {
     docs.push({
       id: `component:${name}`,
       kind: "component",
-      group: "Components",
+      group: sectionTitle(page.section),
       title: name,
       path,
       href,

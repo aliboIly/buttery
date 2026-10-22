@@ -36,6 +36,19 @@ export interface SearchHit {
   readonly score: number;
 }
 
+/**
+ * The docs search's `key:value` filters, each keeping the results it names: `component:` keeps components
+ * wherever their pages are, and `guide:` the guides and the Get started pages.
+ */
+export const FILTER_KEEPS: Readonly<
+  Record<string, (entry: SearchEntry) => boolean>
+> = {
+  component: (entry) => entry.kind === "component",
+  prop: (entry) => entry.kind === "prop",
+  token: (entry) => entry.kind === "token",
+  guide: (entry) => entry.group === "Guides" || entry.group === "Get started",
+};
+
 /** The two indexes: titles, keywords and places load first; the full text after them. */
 export interface SearchIndexes {
   readonly titles: MiniSearch<SearchDoc>;

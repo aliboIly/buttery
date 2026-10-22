@@ -17,7 +17,7 @@ import type {
 import { initialValues } from "../LiveControls.tsx";
 import { components, docsRouteOf, packageOf } from "../registry.ts";
 import { SOURCE_URL } from "../routes.ts";
-import { correctionFor, entryOf, searchDocs } from "./search.ts";
+import { FILTER_KEEPS, correctionFor, entryOf, searchDocs } from "./search.ts";
 import type { SearchEntry, SearchHit, SearchIndexes } from "./search.ts";
 import { loadedSearch, loadSearch, subscribeSearch } from "./store.ts";
 
@@ -38,14 +38,6 @@ export const SEARCH_GROUPS = [
   "Examples",
   "Changelog",
 ] as const;
-
-/** The filters people can type, each narrowing the results to its groups. */
-const FILTER_GROUPS: Readonly<Record<string, readonly string[]>> = {
-  component: ["Components"],
-  prop: ["Props"],
-  token: ["Tokens"],
-  guide: ["Guides", "Get started"],
-};
 
 /** The `key:value` filters the docs search takes. */
 export const SEARCH_FILTERS: readonly SearchFilter[] = [
@@ -111,13 +103,12 @@ function hitsFor(
   const words = [query.text, ...query.filters.map((filter) => filter.value)]
     .join(" ")
     .trim();
-  const groups = query.filters.flatMap(
-    (filter) => FILTER_GROUPS[filter.key] ?? [],
-  );
-  const key = `${words}\u0000${groups.join(",")}`;
+  const keys = query.filters.map((filter) => filter.key);
+  const keeps = keys.flatMap((name) => FILTER_KEEPS[name] ?? []);
+  const key = `${words}\u0000${keys.join(",")}`;
   if (last?.key === key && last.indexes === indexes) return last.hits;
   const hits = searchDocs(indexes, words, RESULT_LIMIT).filter(
-    (hit) => groups.length === 0 || groups.includes(hit.entry.group),
+    (hit) => keeps.length === 0 || keeps.some((keep) => keep(hit.entry)),
   );
   last = { key, indexes, hits };
   return hits;

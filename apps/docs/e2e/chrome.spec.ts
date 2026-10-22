@@ -198,6 +198,19 @@ test("a component's live demo starts in the site's theme and density, then keeps
   ).toHaveAttribute("data-bt-theme", "light");
 });
 
+test("the component: filter keeps components from every section, under their sections", async ({
+  page,
+}) => {
+  await page.goto("/search?q=component%3Astack");
+  await expect(
+    page
+      .getByRole("region", { name: "Layout" })
+      .getByRole("link", { name: /^Stack/ }),
+  ).toBeVisible();
+  await expect(page.getByRole("region", { name: "Props" })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Examples" })).toHaveCount(0);
+});
+
 test("the results page offers a nearby word and a way to ask for docs when nothing matches", async ({
   page,
 }) => {

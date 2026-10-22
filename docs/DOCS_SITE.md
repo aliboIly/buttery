@@ -89,9 +89,9 @@ The docs search is buttery's own `CommandSearch`, opened with ⌘K or `/`. It wo
 
 - The index is generated at build time from the docs content, never by hand: pages, every heading, components, props (name, type, default, description), tokens (name, value per theme, role), examples (title, caption), guides, CLI commands and changelog entries. Titles and headings load on the first focus, fetched ahead while the browser is idle; the full text loads after them.
 - Ranking: an exact title, then a component's name, then a heading, then a prop or token, then body text. It tolerates typos and matches prefixes. `apps/docs/src/search/synonyms.ts` maps the words people use to buttery's names: "modal" and "popup" to `Dialog`, "dropdown" to `Menu` and `Select`, "drawer" to `SidePanel`, "snackbar" to the toast, "spinner" to `LoadingPill`, "toggle" to `SegmentedControl`, and so on.
-- Results are grouped (Components, Guides, Foundations, Patterns, Props, Tokens, Examples, Changelog). Each shows its breadcrumb path and a snippet with the matched text highlighted. Enter goes straight to the heading's anchor; ⌘Enter opens it in a new tab.
+- Results are grouped (Components, Guides, Foundations, Patterns, Props, Tokens, Examples, Changelog). A page, heading or component shows under its page's section, so `Stack` is under Layout and `PageHeader` under Patterns. Each shows its breadcrumb path and a snippet with the matched text highlighted. Enter goes straight to the heading's anchor; ⌘Enter opens it in a new tab.
 - An empty query shows recent searches and suggestions: Quick start, Button, Dialog, Theming and the layout contract.
-- The filter syntax is `CommandSearch`'s: `component:`, `prop:`, `token:` and `guide:`.
+- The filter syntax is `CommandSearch`'s: `component:`, `prop:`, `token:` and `guide:`. `component:` keeps components wherever their pages are, and `guide:` keeps the Guides and Get started pages.
 - Where the window has room beside the search (from about 1024px wide), a preview pane shows the highlighted result: its description, its import line, and a small live demo for a component, left out when the demo is wider than the pane.
 - No results shows a "did you mean" suggestion and a link to ask for the missing docs.
 - `/search?q=` lists every result, with filters by section.
