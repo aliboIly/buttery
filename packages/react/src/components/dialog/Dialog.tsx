@@ -159,6 +159,7 @@ export function DialogContent({
   const [described, setDescribed] = useState(false);
   const titles = useRef(0);
   const descriptions = useRef(0);
+  const bodies = useRef(0);
   const element = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, element);
   const body = useRef<HTMLDivElement>(null);
@@ -169,29 +170,45 @@ export function DialogContent({
   useLayoutEffect(() => {
     if (!open) focusOnSettle.current = false;
   }, [open]);
-  const registry = useMemo<ContentRegistry>(
-    () => ({
+  const registry = useMemo<ContentRegistry>(() => {
+    // Radix gives every description in a dialog the same id, so a screen reader reads only the first.
+    const warnIfTwo = (): void => {
+      if (bodies.current === 0 || descriptions.current <= bodies.current)
+        return;
+      warnOnce(
+        "Dialog",
+        "A dialog has both a Dialog.Text body and a Dialog.Description, and screen readers read only one of them. Fix: put the description in Dialog.Text's body, or move the body into the Dialog.Description.",
+      );
+    };
+    return {
       register: (withBody) => {
         titles.current += 1;
-        if (withBody) descriptions.current += 1;
+        if (withBody) {
+          descriptions.current += 1;
+          bodies.current += 1;
+        }
         setDescribed(descriptions.current > 0);
+        warnIfTwo();
         return () => {
           titles.current -= 1;
-          if (withBody) descriptions.current -= 1;
+          if (withBody) {
+            descriptions.current -= 1;
+            bodies.current -= 1;
+          }
           setDescribed(descriptions.current > 0);
         };
       },
       describe: () => {
         descriptions.current += 1;
         setDescribed(true);
+        warnIfTwo();
         return () => {
           descriptions.current -= 1;
           setDescribed(descriptions.current > 0);
         };
       },
-    }),
-    [],
-  );
+    };
+  }, []);
   const motionOf = reduced
     ? reducedPresence
     : size === "full"

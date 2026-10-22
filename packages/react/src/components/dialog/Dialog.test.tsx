@@ -281,6 +281,24 @@ describe("Dialog", () => {
     );
   });
 
+  it("warns, with the fix, when a Dialog.Description sits beside a Dialog.Text body", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <Dialog defaultOpen>
+        <Dialog.Content>
+          <Dialog.Text title="Add a backup email" body="For sign-in codes." />
+          <Dialog.Body>
+            <Dialog.Description>We never share it.</Dialog.Description>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog>,
+    );
+    await screen.findByRole("dialog");
+    expect(warn).toHaveBeenCalledWith(
+      "[buttery:Dialog] A dialog has both a Dialog.Text body and a Dialog.Description, and screen readers read only one of them. Fix: put the description in Dialog.Text's body, or move the body into the Dialog.Description.",
+    );
+  });
+
   it("is 400, 560 or 880 wide by size, and stays 16px inside a narrow window", async () => {
     await page.viewport(1200, 800);
     for (const [size, width] of [
