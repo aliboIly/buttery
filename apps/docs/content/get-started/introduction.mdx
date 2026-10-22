@@ -23,3 +23,31 @@ buttery is a React design system with layout and motion rules for web apps and T
 The sections in the sidebar go from first steps to reference. Get started takes you to a first screen. Foundations, Layout and Motion explain the rules the components follow. Components and Patterns have a page for every part, with live examples you can copy. Templates, Guides and Tools cover whole apps, common tasks and the command line.
 
 Every page is also available as Markdown at its address plus `.md`, for reading in an editor or handing to a coding agent.
+
+## Status badges
+
+Every component page has a badge under its title that says how settled the component is:
+
+<DocsTable
+  columns={["Badge", "What it means"]}
+  rows={[
+    [
+      "Stable",
+      "It has been in buttery for several releases, and its props aren't expected to change.",
+    ],
+    [
+      "New",
+      "It arrived in a recent release. It's tested like the rest, but its props may still change as apps use it.",
+    ],
+    [
+      "Beta",
+      "It works, but it's still being shaped, and its props are likely to change.",
+    ],
+    [
+      "Deprecated",
+      "It's on its way out, and its page says what to use instead.",
+    ],
+  ]}
+/>
+
+Beside the badge, "Since" gives the release a component arrived in, and a "New in" tag marks one from the current release. Until the first npm release, those are the releases on the [roadmap](/resources/roadmap).
