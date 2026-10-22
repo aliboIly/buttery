@@ -406,6 +406,9 @@ The root of a fixed-height control you build yourself (the `.bt-control` recipe 
 ### Kbd
 Keycap: 20h, min-width 20, r5, `bg-surface`, 1px `border-strong` plus a 1px bottom edge, `kbd` role.
 
+### BrandMark
+buttery's mark at 16, 24, 32 (the default), 64, 128 or 512px, square, shrinking to fit a narrower container. From 24 it's the full drawing on a 128 grid: a 3/4 block with a domed top in a cream gradient, a butter front and a deeper side, each face stroked 10 wide in its own gradient so the corners round off, a white highlight at 75% and a glint at 70% on the top, and a blurred `brand-shadow` ellipse at 20% under it. At 16 it's three flat faces on a 16 grid (cream top, butter front, deep side), which read at favicon size. The gradients mix the brand tokens with `color-mix`. Hidden from screen readers unless it has a `label`.
+
 ### TextStack
 A title over body text and an optional caption, the text block of dialogs, empty states and page sections, measured between trimmed text (§2). `size="dialog"` (the default): `dialog-title`, `body` 16 below, `caption` 20 below. `size="empty"`: `title`, `body-sm` 12 below, `caption` 12 below. `size="section"`: `heading-2`, `body-lg` 16 below, `caption` 16 below. `align="center"` centers it. The title is an `h2` unless `titleAs` names another level or `p`.
 

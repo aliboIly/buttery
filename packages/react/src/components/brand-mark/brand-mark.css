@@ -1,0 +1,94 @@
+@layer bt.components {
+  .bt-brand-mark {
+    --bt-brand-mark-top-from: color-mix(
+      in oklab,
+      var(--bt-brand-cream) 45%,
+      var(--bt-brand-gloss)
+    );
+    --bt-brand-mark-top-to: color-mix(
+      in oklab,
+      var(--bt-brand-cream) 80%,
+      var(--bt-brand-butter)
+    );
+    --bt-brand-mark-front-from: color-mix(
+      in oklab,
+      var(--bt-brand-butter) 75%,
+      var(--bt-brand-cream)
+    );
+    --bt-brand-mark-front-to: color-mix(
+      in oklab,
+      var(--bt-brand-butter) 70%,
+      var(--bt-brand-butter-deep)
+    );
+    --bt-brand-mark-side-from: color-mix(
+      in oklab,
+      var(--bt-brand-butter-deep) 70%,
+      var(--bt-brand-butter)
+    );
+    --bt-brand-mark-side-to: color-mix(
+      in oklab,
+      var(--bt-brand-butter-deep) 88%,
+      var(--bt-brand-shadow)
+    );
+
+    display: block;
+    flex: none;
+    block-size: auto;
+    aspect-ratio: 1;
+  }
+
+  .bt-brand-mark [data-bt-part="top-from"] {
+    stop-color: var(--bt-brand-mark-top-from);
+  }
+
+  .bt-brand-mark [data-bt-part="top-to"] {
+    stop-color: var(--bt-brand-mark-top-to);
+  }
+
+  .bt-brand-mark [data-bt-part="front-from"] {
+    stop-color: var(--bt-brand-mark-front-from);
+  }
+
+  .bt-brand-mark [data-bt-part="front-to"] {
+    stop-color: var(--bt-brand-mark-front-to);
+  }
+
+  .bt-brand-mark [data-bt-part="side-from"] {
+    stop-color: var(--bt-brand-mark-side-from);
+  }
+
+  .bt-brand-mark [data-bt-part="side-to"] {
+    stop-color: var(--bt-brand-mark-side-to);
+  }
+
+  .bt-brand-mark [data-bt-part="shadow"] {
+    fill: var(--bt-brand-shadow);
+    opacity: 0.2;
+  }
+
+  .bt-brand-mark [data-bt-part="gloss"] {
+    fill: var(--bt-brand-gloss);
+    opacity: 0.75;
+  }
+
+  .bt-brand-mark [data-bt-part="glint"] {
+    fill: var(--bt-brand-gloss);
+    opacity: 0.7;
+  }
+
+  /* The 16px drawing has flat faces, each stroked in its own color so the corners round off. */
+  .bt-brand-mark [data-bt-part="top"] {
+    fill: var(--bt-brand-cream);
+    stroke: var(--bt-brand-cream);
+  }
+
+  .bt-brand-mark [data-bt-part="front"] {
+    fill: var(--bt-brand-mark-front-to);
+    stroke: var(--bt-brand-mark-front-to);
+  }
+
+  .bt-brand-mark [data-bt-part="side"] {
+    fill: var(--bt-brand-mark-side-to);
+    stroke: var(--bt-brand-mark-side-to);
+  }
+}

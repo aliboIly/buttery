@@ -631,3 +631,8 @@ export type {
   SearchResultsLabels,
   SearchResultsProps,
 } from "./patterns/search-results/SearchResults.tsx";
+export { BrandMark } from "./components/brand-mark/BrandMark.tsx";
+export type {
+  BrandMarkProps,
+  BrandMarkSize,
+} from "./components/brand-mark/BrandMark.tsx";
