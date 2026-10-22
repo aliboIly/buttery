@@ -6,6 +6,7 @@ import type { ReactElement } from "react";
 import { Inbox } from "lucide-react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OverflowCluster } from "./OverflowCluster.tsx";
+import { meta } from "./OverflowCluster.meta.ts";
 
 afterEach(() => {
   cleanup();
@@ -79,6 +80,23 @@ describe("OverflowCluster", () => {
     expect(items.map((item) => item.textContent)).toEqual(["Share", "Help"]);
     await userEvent.click(screen.getByRole("menuitem", { name: "Help" }));
     expect(onSelect).toHaveBeenCalledWith("Help");
+  });
+
+  it("presses its More button and grows its menu in, so its meta doesn't say it stays still", async () => {
+    render(<Toolbar width={200} onSelect={vi.fn()} />);
+    const more = await screen.findByRole("button", { name: "More actions" });
+    expect(more.classList.contains("bt-press")).toBe(true);
+    await userEvent.click(more);
+    let drawn = 1;
+    for (
+      let node: Element | null = screen.getByRole("menu");
+      node;
+      node = node.parentElement
+    )
+      drawn *= Number(getComputedStyle(node).opacity);
+    expect(drawn).toBeLessThan(1);
+    expect(meta.motion).toBe("presence");
+    expect(meta.reducedMotion).toBeDefined();
   });
 
   it("sizes the More button to match its items", async () => {

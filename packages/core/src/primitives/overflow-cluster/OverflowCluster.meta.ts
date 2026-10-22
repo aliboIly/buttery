@@ -14,7 +14,7 @@ export const meta: ComponentMeta = {
   ],
   related: ["Inline", "Popover", "Divider"],
   a11y: "Hidden items leave the tab order and the accessibility tree; their actions stay reachable through the More button, a menu button with arrow-key navigation, Enter to choose and Escape to close. Items that say whether they're chosen are listed as radio items, the others as menu items with their icons, shortcuts and dots; the More button shows a dot, and says so in its name, while a folded item has one.",
-  motion: "none",
+  motion: "presence",
   keyboard: [
     {
       keys: "Enter, Space or Down arrow",
@@ -34,4 +34,6 @@ export const meta: ComponentMeta = {
   ],
   layout:
     "It fills the space its parent gives it and keeps its items on one row at their own size, never wrapping, overlapping or shrinking them: what doesn't fit moves into the More menu, lowest priority first, and comes back as the row grows. The More button is a circle as tall as its size, --bt-h-sm (28px), --bt-h-control (34px) or --bt-h-button (36px, the default), and that circle is its hit area.",
+  reducedMotion:
+    'The More button still shrinks to 97% while it\'s pressed, but at once instead of easing, and its menu fades in and out over 100ms without growing from the button; with entrance="instant" the menu shows and goes at once either way.',
 };
