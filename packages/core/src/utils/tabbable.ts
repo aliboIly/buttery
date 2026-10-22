@@ -32,7 +32,10 @@ export function tabbables(element: Element | null): HTMLElement[] {
   );
 }
 
-/** Whether anything inside `element` takes focus from the Tab key: a button, link or field, or a `tabindex` of 0 or more. */
+/**
+ * Whether anything inside `element` takes focus from the Tab key: a button, link, field or editable text, or
+ * a `tabindex` of 0 or more, rendered and outside `inert`.
+ */
 export function hasTabbable(element: Element | null): boolean {
   return tabbables(element).length > 0;
 }
