@@ -1,8 +1,24 @@
+import { Fragment } from "react";
 import type { ReactElement } from "react";
 import { exportDocs, propsTables, typeTables } from "virtual:buttery-props";
 import type { PropDoc } from "virtual:buttery-props";
 import { Stack, Text } from "@buttery/core";
+import { withInlineCode } from "./inline-code.tsx";
 import { TableScroll } from "./TableScroll.tsx";
+
+/** Code that wraps only at its spaces, never inside a word such as `"last-7-days"` or `ComponentType<IconProps>`. */
+function CodeWords({ text }: { readonly text: string }): ReactElement {
+  return (
+    <code className="pg-mono">
+      {text.split(" ").map((word, index) => (
+        <Fragment key={`${String(index)}-${word}`}>
+          {index > 0 ? " " : null}
+          <span className="docs-word">{word}</span>
+        </Fragment>
+      ))}
+    </code>
+  );
+}
 
 /** A props table, or a type's fields, under its heading, with what else it takes after it. */
 function PropsBlock({
@@ -30,7 +46,7 @@ function PropsBlock({
         <TableScroll
           label={`${title} ${column === "Prop" ? "props" : "fields"}`}
         >
-          <table className="tk-table">
+          <table className="tk-table docs-props">
             <thead>
               <tr>
                 <th scope="col">{column}</th>
@@ -42,13 +58,23 @@ function PropsBlock({
             <tbody>
               {props.map((prop) => (
                 <tr key={prop.name}>
-                  <td className="pg-mono">
-                    {prop.name}
-                    {prop.required ? " (required)" : ""}
+                  <td>
+                    <code className="pg-mono docs-word">{prop.name}</code>
+                    {prop.required ? (
+                      <Text variant="caption" tone="secondary">
+                        required
+                      </Text>
+                    ) : null}
                   </td>
-                  <td className="pg-mono docs-type">{prop.type}</td>
-                  <td className="pg-mono">{prop.defaultValue ?? ""}</td>
-                  <td>{prop.description}</td>
+                  <td>
+                    <CodeWords text={prop.type} />
+                  </td>
+                  <td>
+                    {prop.defaultValue === null ? null : (
+                      <CodeWords text={prop.defaultValue} />
+                    )}
+                  </td>
+                  <td>{withInlineCode(prop.description)}</td>
                 </tr>
               ))}
             </tbody>
@@ -130,7 +156,7 @@ export function ExportDocs({
         {headingLevel === 3 ? <h3>Also exported</h3> : <h4>Also exported</h4>}
       </Text>
       <TableScroll label={`${name} exports`}>
-        <table className="tk-table">
+        <table className="tk-table docs-props">
           <thead>
             <tr>
               <th scope="col">Export</th>
@@ -140,8 +166,10 @@ export function ExportDocs({
           <tbody>
             {docs.map((doc) => (
               <tr key={doc.name}>
-                <td className="pg-mono docs-type">{doc.signature}</td>
-                <td>{doc.description}</td>
+                <td>
+                  <CodeWords text={doc.signature} />
+                </td>
+                <td>{withInlineCode(doc.description)}</td>
               </tr>
             ))}
           </tbody>

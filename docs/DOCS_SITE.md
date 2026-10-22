@@ -67,7 +67,7 @@ Every component page has the same parts in the same order.
 3. When to use it, when not to, and what to use instead.
 4. Examples, from `examples/`.
 5. Anatomy, variants, sizes and states.
-6. A props table generated from the types and their JSDoc, one per part: its own props and the ones it takes from buttery's types, with DOM and library props summarized in a line. After them, the fields of each exported type its props use, such as `DataTableColumn`. Under "Also exported", the hooks and helpers its folder exports, with their signatures and JSDoc.
+6. A props table generated from the types and their JSDoc, one per part: its own props and the ones it takes from buttery's types, with DOM and library props summarized in a line. After them, the fields of each exported type its props use, such as `DataTableColumn`. Under "Also exported", the hooks and helpers its folder exports, with their signatures and JSDoc. A name stays on one line, types and defaults break only at their spaces, and a description shows its backticked code as code. Descriptions keep at least 30 characters of width, so in a narrow column the table scrolls sideways instead of squeezing them.
 7. Accessibility: a keyboard table and ARIA notes.
 8. Motion: the preset it uses and what reduced motion does.
 9. Layout: its sizing rules, truncation and hit areas.

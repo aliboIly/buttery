@@ -157,9 +157,16 @@
   tab-size: 2;
 }
 
-/* A props table's types can be long unions; they wrap at their separators rather than widening the table. */
-.docs-type {
-  overflow-wrap: anywhere;
+/*
+ * A props table keeps each name on one line and breaks types and defaults only at their spaces. Its
+ * descriptions keep room to read, so in a narrow column the table scrolls sideways instead of squeezing them.
+ */
+.docs-word {
+  white-space: nowrap;
+}
+
+.docs-props th:last-child {
+  min-inline-size: 30ch;
 }
 
 .docs-kbd {
