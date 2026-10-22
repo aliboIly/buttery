@@ -12,7 +12,7 @@ export interface ShadowDefinition {
 export const shadows = {
   "shadow-card": {
     light: "0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)",
-    dark: "0 0 0 1px rgba(255, 255, 255, 0.06), 0 1px 2px rgba(0, 0, 0, 0.24)",
+    dark: "0 0 0 1px rgba(255, 255, 255, 0.09), 0 1px 2px rgba(0, 0, 0, 0.24)",
     description:
       "Header bar, inspector panel, inner card. The 1px ring is the card's edge.",
   },
