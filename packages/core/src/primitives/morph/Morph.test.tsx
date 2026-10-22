@@ -1,6 +1,7 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { MotionPreferenceContext } from "../../motion/preference.ts";
@@ -340,6 +341,159 @@ describe("Morph", () => {
     expect(innerMoved).toBe(true);
     expect(Math.max(...gaps)).toBeLessThan(0.5);
     expect(outer.getBoundingClientRect().height).toBe(140);
+    expect(loops).toEqual([]);
+  });
+
+  it("lets go of a held height when its motion setting changes mid-hold, so later content still fits", async () => {
+    function Toggled({
+      reduced,
+      tone,
+      tall,
+    }: {
+      readonly reduced: boolean;
+      readonly tone: string;
+      readonly tall: boolean;
+    }): ReactElement {
+      return (
+        <MotionPreferenceContext value={reduced ? "reduced" : "full"}>
+          <Morph data-testid="morph">
+            <div
+              data-tone={tone}
+              style={{ blockSize: tall ? "80px" : "40px" }}
+            />
+          </Morph>
+        </MotionPreferenceContext>
+      );
+    }
+    const { rerender } = render(
+      <Toggled reduced={false} tone="a" tall={false} />,
+    );
+    await measured(40);
+    await nextFrames(3);
+    rerender(<Toggled reduced={false} tone="b" tall={false} />);
+    await Promise.resolve();
+    rerender(<Toggled reduced tone="b" tall={false} />);
+    await nextFrames(3);
+    rerender(<Toggled reduced tone="b" tall />);
+    await nextFrames(2);
+    expect(height()).toBe(80);
+  });
+
+  it("moves on its own again once a Morph inside it unmounts mid-animation", async () => {
+    function Nested({
+      open,
+      inner,
+      extra,
+    }: {
+      readonly open: boolean;
+      readonly inner: boolean;
+      readonly extra: boolean;
+    }): ReactElement {
+      return (
+        <Morph data-testid="outer">
+          <p style={{ margin: 0, blockSize: "20px" }}>Roast plan</p>
+          {inner ? (
+            <Morph disclosure>
+              {open ? <div style={{ blockSize: "120px" }} /> : null}
+            </Morph>
+          ) : null}
+          {extra ? <div style={{ blockSize: "100px" }} /> : null}
+        </Morph>
+      );
+    }
+    const { rerender } = render(<Nested open={false} inner extra={false} />);
+    const outer = screen.getByTestId("outer");
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(20);
+    });
+    await nextFrames(3);
+    rerender(<Nested open inner extra={false} />);
+    await nextFrames(3);
+    rerender(<Nested open inner={false} extra={false} />);
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(20);
+    });
+    await nextFrames(3);
+    rerender(<Nested open inner={false} extra />);
+    const heights: number[] = [];
+    for (let frame = 0; frame < 20; frame += 1) {
+      await nextFrames(1);
+      heights.push(outer.getBoundingClientRect().height);
+    }
+    expect(heights.some((value) => value > 20.5 && value < 119.5)).toBe(true);
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(120);
+    });
+  });
+
+  it("isn't held still by a Morph rendered elsewhere from inside it", async () => {
+    function Portaled({ open }: { readonly open: boolean }): ReactElement {
+      return (
+        <Morph data-testid="outer">
+          <p style={{ margin: 0, blockSize: "20px" }}>Roast plan</p>
+          {open ? <div style={{ blockSize: "100px" }} /> : null}
+          {createPortal(
+            <Morph disclosure>
+              {open ? <div style={{ blockSize: "60px" }} /> : null}
+            </Morph>,
+            document.body,
+          )}
+        </Morph>
+      );
+    }
+    const { rerender } = render(<Portaled open={false} />);
+    const outer = screen.getByTestId("outer");
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(20);
+    });
+    await nextFrames(3);
+    rerender(<Portaled open />);
+    const heights: number[] = [];
+    for (let frame = 0; frame < 20; frame += 1) {
+      await nextFrames(1);
+      heights.push(outer.getBoundingClientRect().height);
+    }
+    expect(heights.some((value) => value > 20.5 && value < 119.5)).toBe(true);
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(120);
+    });
+  });
+
+  it("follows a Morph inside it without a ResizeObserver loop when both change at once", async () => {
+    const loops: string[] = [];
+    const listen = (event: ErrorEvent): void => {
+      if (event.message.includes("ResizeObserver loop"))
+        loops.push(event.message);
+    };
+    window.addEventListener("error", listen);
+    const observer = new ResizeObserver(() => undefined);
+    function Both({ open }: { readonly open: boolean }): ReactElement {
+      return (
+        <div data-testid="page">
+          <Morph data-testid="outer">
+            <p style={{ margin: 0, blockSize: "20px" }}>Roast plan</p>
+            {open ? <div style={{ blockSize: "40px" }} /> : null}
+            <Morph disclosure>
+              {open ? <div style={{ blockSize: "120px" }} /> : null}
+            </Morph>
+          </Morph>
+        </div>
+      );
+    }
+    const { rerender } = render(<Both open={false} />);
+    observer.observe(screen.getByTestId("page"));
+    const outer = screen.getByTestId("outer");
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(20);
+    });
+    await nextFrames(3);
+    rerender(<Both open />);
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(180);
+    });
+    await nextFrames(2);
+    observer.disconnect();
+    window.removeEventListener("error", listen);
     expect(loops).toEqual([]);
   });
 });

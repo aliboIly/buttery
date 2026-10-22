@@ -25,6 +25,8 @@ interface Busy {
 
 /** How a `Morph` inside another one tells it that its height is moving, so the outer one follows at once. */
 interface MorphParent {
+  /** Whether its box holds `node`, which one rendered into a layer or portal from inside it doesn't. */
+  readonly holds: (node: Node) => boolean;
   readonly follow: () => void;
   readonly unfollow: () => void;
 }
@@ -129,6 +131,7 @@ export function Morph({
   const parent = use(MorphParentContext);
   const asParent = useMemo<MorphParent>(
     () => ({
+      holds: (node) => outer.current?.contains(node) === true,
       follow: () => {
         followers.current += 1;
         follow.current();
@@ -224,11 +227,19 @@ export function Morph({
       held = false;
       toAuto();
     };
-    // A nested Morph starts moving while its own box still holds its old height, so letting go here changes
-    // nothing on screen.
+    // A nested Morph starts moving while its own box still holds its old height, so letting go a frame later
+    // changes nothing on screen, and keeps this box from resizing while the browser delivers ResizeObserver
+    // notifications.
+    let following = 0;
     follow.current = () => {
-      if (running !== null) settle();
-      else if (held) release.current();
+      if (held || running !== null) {
+        busy.current.growing = true;
+        syncClip(box, busy.current);
+      }
+      cancelAnimationFrame(following);
+      following = requestAnimationFrame(() => {
+        if (running !== null || held) settle();
+      });
     };
     const observer = new ResizeObserver(([entry]) => {
       const size = entry?.borderBoxSize[0];
@@ -247,7 +258,9 @@ export function Morph({
         Math.abs(to - from) < 0.5 ||
         (!rendered.current && !animating)
       ) {
-        if (animating || held) settle();
+        if (!animating && !held) return;
+        if (followers.current > 0) follow.current();
+        else settle();
         return;
       }
       if (!held) {
@@ -258,7 +271,7 @@ export function Morph({
       busy.current.growing = true;
       syncClip(box, busy.current);
       tracking.onAnimationStart();
-      if (!leading && parent) {
+      if (!leading && parent?.holds(box) === true) {
         leading = true;
         parent.follow();
       }
@@ -271,13 +284,20 @@ export function Morph({
     observer.observe(node);
     return () => {
       observer.disconnect();
+      cancelAnimationFrame(following);
       hold.current = () => undefined;
       release.current = () => undefined;
       follow.current = () => undefined;
       if (running) {
         running.stop();
         settle();
-      } else if (leading) {
+        return;
+      }
+      if (held) {
+        held = false;
+        toAuto();
+      }
+      if (leading) {
         leading = false;
         parent?.unfollow();
       }
