@@ -152,7 +152,7 @@ export function revealOnce(
   };
 
   const play = (keyframes: DOMKeyframesDefinition, delayEach: number): void => {
-    release = tracked ? trackAnimation() : null;
+    release ??= tracked ? trackAnimation() : null;
     const controls = animate([...targets], keyframes, {
       ...arriveOptions,
       ...(delayEach > 0 ? { delay: stagger(delayEach) } : {}),
@@ -174,8 +174,16 @@ export function revealOnce(
   };
 
   if (!stepped && isInView(trigger)) {
-    play({ opacity: [0, 1] }, 0);
-    return finish;
+    // A page's first render can hold the main thread past the fade, so its clock starts on the first frame drawn.
+    for (const target of targets) target.style.opacity = "0";
+    release = tracked ? trackAnimation() : null;
+    const first = requestAnimationFrame(() => {
+      play({ opacity: [0, 1] }, 0);
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      finish();
+    };
   }
 
   // Waiting targets are only transparent: an offset would push them past their container until they arrive.

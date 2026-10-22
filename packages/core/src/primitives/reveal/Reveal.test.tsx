@@ -22,6 +22,14 @@ function opacity(id: string): number {
   return Number(getComputedStyle(screen.getByTestId(id)).opacity);
 }
 
+/** Keeps the main thread busy, as the rest of a page's first render does. */
+function busyFor(ms: number): number {
+  const until = performance.now() + ms;
+  let spins = 0;
+  while (performance.now() < until) spins += 1;
+  return spins;
+}
+
 function offsetY(id: string): number {
   const { transform } = getComputedStyle(screen.getByTestId(id));
   return transform === "none" ? 0 : new DOMMatrix(transform).m42;
@@ -44,6 +52,16 @@ describe("Reveal", () => {
     render(<Reveal data-testid="hero">Your canvas is empty</Reveal>);
     expect(opacity("hero")).toBeLessThan(1);
     expect(offsetY("hero")).toBe(0);
+    await waitFor(() => {
+      expect(opacity("hero")).toBe(1);
+    });
+  });
+
+  it("starts the fade on the first frame drawn, not during a long first render", async () => {
+    render(<Reveal data-testid="hero">Your canvas is empty</Reveal>);
+    busyFor(150);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(opacity("hero")).toBeLessThan(0.1);
     await waitFor(() => {
       expect(opacity("hero")).toBe(1);
     });

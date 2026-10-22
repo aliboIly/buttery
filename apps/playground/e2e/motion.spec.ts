@@ -879,12 +879,14 @@ test.describe("full motion", () => {
 });
 
 test.describe("full motion from the first frame", () => {
-  test("content in view as the page loads gets one 200ms fade, without rising", async ({
+  test("content in view as the page loads gets one 200ms fade from the first frame it's drawn in, without rising", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 2400 });
     await open(page, "full", testId("reveal"));
     const run = await finishSampling(page, 600);
+    const drawn = run.frames.find(({ elements }) => elements.length > 0);
+    expect(drawn?.elements[0]?.opacity).toBeLessThan(0.1);
     expectTween(
       "Reveal in view on load",
       progress(trace(run, opacity), 0, 1),

@@ -178,7 +178,7 @@ Clicking a bento card turns *that card* into the modal (shared layout). Grid beh
 ### 4.3 Staggered entrance (`Reveal`, `Stagger`)
 - On first entering the viewport (IntersectionObserver, 15% visible, `once`): opacity 0→1, y 16→0, `spring.gentle`, children staggered `--bt-stagger`.
 - Hero assembly: elements start low and slightly scaled (0.96, `assembleScale`), rise into an arranged layout with stagger, total ≤ 900ms: `Stagger arrival="assemble"`, which `SplitHero` and `CenteredHero` put around their visual.
-- Never reveal content the user is already looking at (above the fold on load = immediate or a single 200ms fade).
+- Never reveal content the user is already looking at (above the fold on load = immediate or a single 200ms fade). The fade starts on the first frame the page draws, since a page's first render can hold the main thread for longer than the fade (WebKit drew it 70–99% done without that).
 
 ### 4.4 Living demos (`Loop`)
 Product visuals inside cards and heroes quietly cycle states — numbers tick to a new value, a row appears, a line chart extends, a connector pulses.
