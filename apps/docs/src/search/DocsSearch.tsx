@@ -220,11 +220,17 @@ export function resultsHref(query: SearchQuery): string {
 export function DocsSearch({
   shortcut = true,
   defaultValue = "",
+  fill = false,
 }: {
   /** Whether `/` and ⌘K focus it, as they do the top bar's; a second search on a page leaves them to that one. */
   readonly shortcut?: boolean;
   /** What it holds at first, such as the words of an address with no page. */
   readonly defaultValue?: string;
+  /**
+   * Whether it fills its column, open or closed, as a page's own search does, rather than widening as it
+   * opens, as the top bar's does. Defaults to `false`.
+   */
+  readonly fill?: boolean;
 }): ReactElement {
   const indexes = useSyncExternalStore(
     subscribeSearch,
@@ -252,6 +258,7 @@ export function DocsSearch({
   return (
     <CommandSearch
       label="Search the docs"
+      style={fill ? { inlineSize: "100%" } : undefined}
       shortcut={shortcut}
       value={search}
       onValueChange={setSearch}

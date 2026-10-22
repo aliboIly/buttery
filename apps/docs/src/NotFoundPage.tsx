@@ -54,7 +54,7 @@ export function NotFoundPage({
             for what you were after, or start from one of the sections.
           </Text>
         </Stack>
-        <DocsSearch shortcut={false} defaultValue={wordsOf(address)} />
+        <DocsSearch shortcut={false} defaultValue={wordsOf(address)} fill />
         <Stack gap={4} asChild>
           <section aria-labelledby={headingId}>
             <Text variant="heading-2" asChild>

@@ -1,0 +1,92 @@
+:root {
+  --bt-blocks-step: 28px;
+  --bt-blocks-line: 1px;
+  --bt-blocks-icon: 36px;
+}
+
+/* Numbered steps: each number on a line that runs down to the next, the step's heading level with it. */
+.docs-steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  counter-reset: docs-step;
+}
+
+.docs-step {
+  display: grid;
+  grid-template-columns: var(--bt-blocks-step) minmax(0, 1fr);
+  column-gap: var(--bt-space-4);
+  counter-increment: docs-step;
+}
+
+.docs-step-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.docs-step-number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: var(--bt-blocks-step);
+  block-size: var(--bt-blocks-step);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-accent-subtle);
+  color: var(--bt-accent-text);
+  font-family: var(--bt-font-sans);
+  font-size: var(--bt-text-label-size);
+  font-weight: var(--bt-text-label-weight);
+  line-height: var(--bt-text-label-line);
+  font-variant-numeric: tabular-nums;
+}
+
+.docs-step-number::before {
+  content: counter(docs-step);
+}
+
+.docs-step-line {
+  flex: 1 1 auto;
+  inline-size: var(--bt-blocks-line);
+  min-block-size: var(--bt-space-4);
+  margin-block-start: var(--bt-space-2);
+  background-color: var(--bt-border);
+}
+
+.docs-step:last-child .docs-step-line {
+  visibility: hidden;
+}
+
+/* The step's heading starts level with its number: half the number's height less half the heading's capitals. */
+.docs-step-body {
+  min-inline-size: 0;
+  padding-block: var(--bt-space-2) var(--bt-space-10);
+}
+
+.docs-step:last-child .docs-step-body {
+  padding-block-end: 0;
+}
+
+.docs-step-body > .docs-h3 {
+  padding-block-start: 0;
+}
+
+/* Cards: an icon on a tinted tile, a title and a few lines under it. */
+.docs-cards {
+  margin: 0;
+  padding: 0;
+}
+
+.docs-card-icon {
+  display: grid;
+  place-items: center;
+  inline-size: var(--bt-blocks-icon);
+  block-size: var(--bt-blocks-icon);
+  border-radius: var(--bt-r-md);
+  background-color: var(--bt-accent-subtle);
+  color: var(--bt-accent-text);
+}
+
+.docs-card-body {
+  min-inline-size: 0;
+}

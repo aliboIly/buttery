@@ -5,14 +5,14 @@ section: get-started
 order: 50
 status: beta
 since: 0.9.0
-related: [get-started/installation]
+related: [get-started/installation, patterns/inspector]
 ---
 
 buttery apps run as desktop apps through Tauri v2, which wraps the same web code in a native window. Use it when an app should live in the dock and work offline, with the same components as on the web.
 
 ## Run it
 
-Every app made from the starter is already a Tauri app. With Rust installed:
+Every app made from the starter is already a Tauri app. With Rust installed, as [What you need](/get-started/installation#what-you-need) lists:
 
 ```bash
 pnpm --filter my-app tauri dev
@@ -20,11 +20,44 @@ pnpm --filter my-app tauri dev
 
 ## What changes on the desktop
 
-- `ButteryProvider` sees it's inside Tauri and sets `platform` to `desktop`, where controls use the default cursor rather than the pointing hand, as native apps do.
-- A header can be the window's title bar: `HeaderBar` takes `dragRegion`, which lets the window be dragged by the bar's empty space, and leaves room for the window controls on macOS.
-- Fonts are bundled with `@buttery/core` and nothing loads from the network, so an app works offline.
-- On macOS the window renders with the system's WebKit, so check desktop builds in Safari's engine too. buttery's own checks run in Chromium and WebKit for this reason.
+<Cards>
+<Card icon="monitor" title="It knows it's on the desktop">
+
+`ButteryProvider` sees it's inside Tauri and sets `platform` to `desktop`, where controls use the default cursor rather than the pointing hand, as native apps do.
+
+</Card>
+<Card icon="template" title="A header can be the title bar">
+
+`HeaderBar` takes `dragRegion`, which lets the window be dragged by the bar's empty space and leaves room for the window controls on macOS.
+
+</Card>
+<Card icon="package" title="It works offline">
+
+The fonts come with `@buttery/core` and nothing loads from the network, so the app needs no connection.
+
+</Card>
+<Card icon="shield" title="It draws with the system's WebKit">
+
+On macOS the window renders with the system's WebKit, so check desktop builds in Safari's engine too. buttery's own checks run in Chromium and WebKit for this reason.
+
+</Card>
+</Cards>
+
+A header that's the window's title bar is a `HeaderBar` with `dragRegion`:
+
+```tsx
+import type { ReactElement } from "react";
+import { HeaderBar } from "@buttery/react";
+
+export function WindowHeader(): ReactElement {
+  return <HeaderBar title="Untitled card" dragRegion />;
+}
+```
 
 ## Icons
 
-The starter's app icons are made from buttery's mark by `pnpm brand:assets`. Replace them with your own by running `pnpm --filter my-app tauri icon` on a 1024px PNG.
+The starter's app icons are made from buttery's mark by `pnpm brand:assets`. Make your own from a 1024px PNG:
+
+```bash
+pnpm --filter my-app tauri icon app-icon.png
+```

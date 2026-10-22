@@ -9,7 +9,9 @@ export interface Heading {
 }
 
 interface ContentModule {
-  readonly page: DocsPage | undefined;
+  readonly page:
+    | (DocsPage & { readonly related?: readonly string[] | undefined })
+    | undefined;
   readonly headings: readonly Heading[];
   readonly default: (props: {
     readonly components?: Readonly<Record<string, unknown>>;
@@ -26,6 +28,8 @@ export interface ContentEntry {
   readonly route: string;
   readonly page: DocsPage;
   readonly headings: readonly Heading[];
+  /** The pages its frontmatter's `related` names, by path, such as `layout/the-layout-contract`. */
+  readonly related: readonly string[];
   readonly Content: ContentModule["default"];
   /** Its source file from the repository's root, for "Edit this page". */
   readonly source: string;
@@ -44,6 +48,7 @@ export const contentPages: readonly ContentEntry[] = Object.entries(modules)
             route: routeOf(path),
             page: module.page,
             headings: module.headings,
+            related: module.page.related ?? [],
             Content: module.default,
             source: `apps/docs/content/${routeOf(path)}.mdx`,
           },
@@ -79,6 +84,7 @@ export const labPages: readonly ContentEntry[] = Object.entries(labModules).map(
         since: "0.9.0",
       },
       headings: module.headings,
+      related: module.page?.related ?? [],
       Content: module.default,
       source: path.replace(/^\.\.\//, "apps/docs/"),
     };

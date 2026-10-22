@@ -5,78 +5,64 @@ section: get-started
 order: 30
 status: beta
 since: 0.9.0
-related: [get-started/installation, get-started/make-anything-buttery]
+related:
+  [
+    get-started/installation,
+    get-started/make-anything-buttery,
+    guides/check-your-layout,
+  ]
 ---
 
-This page builds a first screen, a card that turns order emails on and off, in the starter app. Follow it once to see how buttery's pieces fit: primitives for layout, components for controls, and the layout check at the end.
+This page builds a first screen in the starter: a card that turns order emails on and off. Follow it once to see how buttery's pieces fit together, primitives for layout, components for controls, and the layout check at the end. It assumes you've cloned the repository and run `pnpm install`, as [Installation](/get-started/installation) shows.
 
-## Start the app
+## What you'll build
+
+The finished screen, running. Press Save, or switch the site to dark with the theme button in the top bar.
+
+<QuickStartPreview />
+
+## Build it
+
+<Steps>
+<Step>
+
+### Start a new app
 
 ```bash
 pnpm new-app first-screen
 pnpm --filter first-screen dev
 ```
 
-The starter opens with a page header and one section, an `AppPage` with nothing in it yet. Everything below goes in `apps/first-screen/src/App.tsx`.
+The starter opens with a page header and an empty section. Everything below goes in `apps/first-screen/src/App.tsx`.
 
-## Build the screen
+</Step>
+<Step>
 
-Lay the card out with `Stack` and `Inline`, give it a surface with `Surface`, and use `Switch` and `Button` for the controls. There are no styles to write: spacing comes from `gap` and `pad`, and everything else from the components.
+### Lay out the card
 
-```tsx
-import { useState } from "react";
-import type { ReactElement } from "react";
-import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
-import { Button, Switch, toast } from "@buttery/react";
+Replace the file with this. `Stack` and `Inline` lay the card out, `Surface` gives it its background, corners and shadow, and `Switch` and `Button` are the controls. There are no styles to write: spacing comes from `gap` and `pad`, and everything else from the components.
 
-export function App(): ReactElement {
-  const [emails, setEmails] = useState(true);
-  return (
-    <Center>
-      <Surface level="card" pad={6}>
-        <Stack gap={5}>
-          <Stack gap={2}>
-            <Text variant="title-md" asChild>
-              <h1>Order emails</h1>
-            </Text>
-            <Text variant="body-sm" tone="secondary">
-              Tell customers when their coffee ships.
-            </Text>
-          </Stack>
-          <Switch
-            label="Send an email when an order ships"
-            checked={emails}
-            onCheckedChange={setEmails}
-          />
-          <Inline gap={2} justify="end">
-            <Button
-              variant="primary"
-              onClick={() => {
-                toast("Saved");
-              }}
-            >
-              Save
-            </Button>
-          </Inline>
-        </Stack>
-      </Surface>
-    </Center>
-  );
-}
-```
+<QuickStartCode />
 
-Save, and the page shows the card. Press Save and a toast rises from the bottom of the window; switch the system to dark mode and the card follows.
+</Step>
+<Step>
 
-## Check the layout
+### Try it
 
-In development, `LayoutGuard` outlines anything on the page that overlaps, overflows or drifts off the scale. Narrow the window to a phone's width and nothing should light up.
+Save the file, and the page shows the card. Press Save and a toast rises from the bottom of the window; switch the system to dark mode and the card follows, since every color in it is a token with a value for each scheme.
 
-The starter's Playwright test runs the same checks at a phone's width and a desktop's, in light and dark:
+</Step>
+<Step>
+
+### Check the layout
+
+In development, `LayoutGuard` outlines anything on the page that overlaps, overflows or sits off the spacing scale. Narrow the window to a phone's width and nothing should light up. The starter's Playwright test runs the same checks at a phone's width and a desktop's, in light and dark:
 
 ```bash
 pnpm test:e2e apps/first-screen
 ```
 
-## Next
+</Step>
+</Steps>
 
-[Make anything buttery](/get-started/make-anything-buttery) covers the other ways in, from wrapping a component you already have to whole-page patterns.
+> **Keyboard shortcuts.** ⌥⇧L hides `LayoutGuard`'s outlines and ⌥⇧G shows the page's grid, while you work.

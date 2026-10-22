@@ -1,7 +1,13 @@
 import { isValidElement } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
-import { Icon, Inline, Stack, Text } from "@buttery/core";
+import { Grid, Icon, Inline, Stack, Surface, Text } from "@buttery/core";
+import { ArrowLink, Breadcrumbs, Callout } from "@buttery/react";
 import { Link2 } from "lucide-react";
+import { Card, Cards } from "./blocks/Cards.tsx";
+import { QuickStartCode, QuickStartPreview } from "./blocks/QuickStart.tsx";
+import { StarterEntry } from "./blocks/StarterEntry.tsx";
+import { Step, Steps } from "./blocks/Steps.tsx";
+import { TemplateCards } from "./blocks/TemplateCards.tsx";
 import { CodeBlock } from "./CodeBlock.tsx";
 import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { ComponentDocs } from "./ComponentDocs.tsx";
@@ -89,19 +95,87 @@ export const markdown = {
   }: ComponentPropsWithRef<"code">): ReactElement => (
     <code className={className ?? "docs-code"}>{children}</code>
   ),
+  blockquote: ({
+    children,
+  }: ComponentPropsWithRef<"blockquote">): ReactElement => (
+    <Callout tone="info" className="docs-note">
+      {children}
+    </Callout>
+  ),
   pre: CodeBlock,
   Example,
   ComponentDocs,
   DocsTable,
+  Steps,
+  Step,
+  Cards,
+  Card,
+  TemplateCards,
+  StarterEntry,
+  QuickStartPreview,
+  QuickStartCode,
 };
 
-/** A page written in MDX: its title and description from its frontmatter, then its content. */
+/** A page a written page names as related, with what it's about. */
+export interface RelatedPage {
+  readonly route: string;
+  readonly title: string;
+  readonly description: string;
+}
+
+/** The pages a written page's frontmatter names as related, as cards under a heading of their own. */
+function RelatedPages({
+  pages,
+}: {
+  readonly pages: readonly RelatedPage[];
+}): ReactElement | null {
+  if (pages.length === 0) return null;
+  const Heading = markdown.h2;
+  return (
+    <Stack gap={5} asChild>
+      <section aria-labelledby="related">
+        <Heading>Related</Heading>
+        <Grid columns={{ base: 1, md: 2 }} gap={4} asChild>
+          <ul role="list" className="docs-cards">
+            {pages.map((related) => (
+              <Surface key={related.route} level="section" pad={5} asChild>
+                <li>
+                  <Stack gap={2} align="start">
+                    <ArrowLink href={siteHref(`/${related.route}`)}>
+                      {related.title}
+                    </ArrowLink>
+                    <Text variant="body-sm" tone="secondary">
+                      {related.description}
+                    </Text>
+                  </Stack>
+                </li>
+              </Surface>
+            ))}
+          </ul>
+        </Grid>
+      </section>
+    </Stack>
+  );
+}
+
+/**
+ * A page written in MDX: its section, its title and description from its frontmatter, its content, the pages
+ * it names as related, and the pages before and after it.
+ */
 export function ContentPage({
   entry,
+  crumbs = [],
+  related = [],
   previous,
   next,
 }: {
   readonly entry: ContentEntry;
+  /** Its section, linking to the section's first page. */
+  readonly crumbs?: readonly {
+    readonly label: string;
+    readonly href: string;
+  }[];
+  readonly related?: readonly RelatedPage[];
   readonly previous?: Neighbor | undefined;
   readonly next?: Neighbor | undefined;
 }): ReactElement {
@@ -110,6 +184,7 @@ export function ContentPage({
     <Stack gap={8} asChild>
       <article className="docs-prose">
         <Stack gap={4}>
+          {crumbs.length > 0 ? <Breadcrumbs items={crumbs} /> : null}
           <Text variant="heading-1" asChild>
             <h1>{page.title}</h1>
           </Text>
@@ -121,6 +196,7 @@ export function ContentPage({
         <Stack gap={5}>
           <Content components={markdown} />
         </Stack>
+        <RelatedPages pages={related} />
         <PageFooter previous={previous} next={next} source={entry.source} />
       </article>
     </Stack>

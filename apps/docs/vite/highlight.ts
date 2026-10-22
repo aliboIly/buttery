@@ -46,6 +46,12 @@ interface HastNode {
   value?: string;
   properties?: Record<string, unknown>;
   children?: HastNode[];
+  data?: { meta?: string | null };
+}
+
+/** The file a fenced block's info line names, as in ```tsx title="src/main.tsx"```, if it names one. */
+export function titleOf(meta: string | null | undefined): string | undefined {
+  return /\btitle="([^"]+)"/.exec(meta ?? "")?.[1];
 }
 
 function textOf(node: HastNode): string {
@@ -85,7 +91,12 @@ export function rehypeHighlight(): (tree: HastNode) => Promise<void> {
           }) as HastNode;
           const [pre] = root.children ?? [];
           if (pre) {
-            pre.properties = { ...pre.properties, "data-language": lang };
+            const title = titleOf(code.data?.meta);
+            pre.properties = {
+              ...pre.properties,
+              "data-language": lang,
+              ...(title === undefined ? {} : { "data-title": title }),
+            };
             node.children[index] = pre;
           }
           continue;

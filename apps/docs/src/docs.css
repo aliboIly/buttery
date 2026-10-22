@@ -78,6 +78,7 @@
  * page's own headings: a component shown on the page keeps its own.
  */
 .docs-h2 {
+  max-inline-size: none;
   padding-block-start: var(--bt-space-6);
 }
 
@@ -328,4 +329,31 @@
 
 .docs-progress-fill:dir(rtl) {
   transform-origin: right center;
+}
+
+/* The pages before and after this one: whole cards to press, the next one set from the far edge. */
+.docs-neighbor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-1);
+  min-inline-size: 0;
+  color: var(--bt-text);
+  text-decoration: none;
+  transition: background-color calc(var(--bt-dur-fast) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.docs-neighbor:hover {
+  background-color: var(--bt-bg-item-hover);
+}
+
+.docs-neighbor[data-direction="next"] {
+  align-items: end;
+  text-align: end;
+}
+
+/* The file a block of code belongs in, named in the code face where its language would be. */
+.docs-code-title {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-text);
 }

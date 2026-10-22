@@ -15,7 +15,7 @@ import {
 } from "./frontmatter.ts";
 import { listed, screensByDemo } from "../src/demo-sentence.ts";
 import { SECTIONS } from "../src/nav.ts";
-import { demoPages } from "../src/routes.ts";
+import { demoPages, templates } from "../src/routes.ts";
 import { demoUsesIn } from "./demo-uses.ts";
 import { exportDocsFor, propsTablesIn, typeTablesIn } from "./props.ts";
 import type { PropDoc } from "./props.ts";
@@ -687,11 +687,12 @@ function bodyMarkdown(
       out.push(line);
       continue;
     }
-    if (
-      /^<\/[A-Z][A-Za-z]*>\s*$/.test(line) ||
-      /^<[A-Z][A-Za-z]*(?:\s[^>]*[^/])?>\s*$/.test(line)
-    )
+    if (/^<\/[A-Z][A-Za-z]*>\s*$/.test(line)) continue;
+    if (/^<[A-Z][A-Za-z]*(?:\s[^>]*[^/])?>\s*$/.test(line)) {
+      const title = /\btitle="([^"]+)"/.exec(line)?.[1];
+      if (title !== undefined) out.push(`**${title}**`, "");
       continue;
+    }
     if (!/^<[A-Z]/.test(line)) {
       out.push(linksUnder(line, base));
       continue;
@@ -737,6 +738,24 @@ function bodyMarkdown(
       out.push(
         linksUnder(roadmapMarkdown(roadmapIn(root), releasesIn(root)), base),
       );
+    } else if (name === "QuickStartCode") {
+      out.push(
+        '```tsx title="src/App.tsx"',
+        readFileSync(
+          join(root, "apps/docs/src/blocks/quick-start/App.tsx"),
+          "utf8",
+        ).trimEnd(),
+        "```",
+      );
+    } else if (name === "StarterEntry") {
+      const entry = join(root, "apps/starter/src/main.tsx");
+      out.push(
+        '```tsx title="src/main.tsx"',
+        readFileSync(entry, "utf8").trimEnd(),
+        "```",
+      );
+    } else if (name === "TemplateCards") {
+      out.push(templateCardsMarkdown(root, base));
     } else if (name === "NextSteps") {
       const after =
         /after="([^"]+)"/.exec(jsx)?.[1] ?? "get-started/introduction";
@@ -756,6 +775,55 @@ function bodyMarkdown(
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+/** Each template a new app can start from: its page, what it is, and its flag for `pnpm new-app`. */
+function templateCardsMarkdown(root: string, base: string): string {
+  return templates
+    .map((template) => {
+      const file = join(
+        root,
+        "apps/docs/content/templates",
+        `${template.name}.mdx`,
+      );
+      const { block } = splitFrontmatter(
+        existsSync(file) ? readFileSync(file, "utf8") : "",
+      );
+      const data = block === null ? {} : parseFrontmatter(block, file);
+      const about =
+        typeof data["description"] === "string" ? data["description"] : "";
+      return `- [${template.title}](${sitePath(`/templates/${template.name}`, base)}), \`--template ${template.name}\`: ${about}`;
+    })
+    .join("\n");
+}
+
+/** The pages a written page names as related, under a heading, each a link with what the page covers. */
+function relatedMarkdown(
+  root: string,
+  routes: readonly string[],
+  components: readonly ComponentSource[],
+  base: string,
+): string {
+  const lines = routes.flatMap((route) => {
+    const file = join(root, "apps/docs/content", `${route}.mdx`);
+    if (existsSync(file)) {
+      const { block } = splitFrontmatter(readFileSync(file, "utf8"));
+      const data = block === null ? {} : parseFrontmatter(block, route);
+      const title = typeof data["title"] === "string" ? data["title"] : route;
+      const about =
+        typeof data["description"] === "string" ? data["description"] : "";
+      return [`- [${title}](${sitePath(`/${route}`, base)}): ${about}`];
+    }
+    const component = components.find(
+      (candidate) => componentHref(candidate) === `/${route}`,
+    );
+    return component
+      ? [
+          `- [${component.title}](${sitePath(`/${route}`, base)}): ${component.description}`,
+        ]
+      : [];
+  });
+  return lines.length === 0 ? "" : ["## Related", "", ...lines].join("\n");
 }
 
 /**
@@ -811,7 +879,8 @@ export function pageMarkdown(
     const title = typeof data["title"] === "string" ? data["title"] : route;
     const description =
       typeof data["description"] === "string" ? data["description"] : "";
-    return `${[heading(1, title), "", description, "", bodyMarkdown(root, { route, title }, body, components, base)].join("\n").trim()}\n`;
+    const related = data["related"];
+    return `${[heading(1, title), "", description, "", bodyMarkdown(root, { route, title }, body, components, base), "", relatedMarkdown(root, Array.isArray(related) ? related : [], components, base)].join("\n").trim()}\n`;
   }
   const component = components.find(
     (candidate) => componentHref(candidate) === `/${route}`,

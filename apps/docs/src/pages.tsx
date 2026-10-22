@@ -4,6 +4,7 @@ import type { DocsPage, DocsSection } from "@buttery/core";
 import { referenceRoot } from "virtual:buttery-reference";
 import { ComponentPage, componentHeadings } from "./ComponentPage.tsx";
 import { ContentPage } from "./ContentPage.tsx";
+import type { RelatedPage } from "./ContentPage.tsx";
 import { LabExamples } from "./LabExamples.tsx";
 import { LandingPage } from "./LandingPage.tsx";
 import type { ExploreSection } from "./LandingPage.tsx";
@@ -133,10 +134,30 @@ const componentDocs: readonly Page[] = components.flatMap((entry) => {
 const contentDocs: readonly Page[] = contentPages.map((entry) => ({
   route: entry.route,
   title: entry.page.title,
-  render: () => <ContentPage entry={entry} {...neighbors(entry.route)} />,
+  render: () => (
+    <ContentPage
+      entry={entry}
+      crumbs={crumbsFor(entry.page.section)}
+      related={relatedPages(entry.related)}
+      {...neighbors(entry.route)}
+    />
+  ),
   docs: entry.page,
-  headings: entry.headings,
+  headings:
+    entry.related.length > 0
+      ? [...entry.headings, { depth: 2, text: "Related", id: "related" }]
+      : entry.headings,
 }));
+
+/** The pages `routes` name, written or a component's, with their titles and descriptions. */
+function relatedPages(routes: readonly string[]): readonly RelatedPage[] {
+  return routes.flatMap((route) => {
+    const found = docsPages.find((page) => page.route === route)?.docs;
+    return found
+      ? [{ route, title: found.title, description: found.description }]
+      : [];
+  });
+}
 
 const docsPages = [...contentDocs, ...componentDocs];
 

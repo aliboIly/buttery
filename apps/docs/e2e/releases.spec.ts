@@ -80,7 +80,9 @@ test("What's new lists every release on its page list, newest first, each openin
 }) => {
   await page.goto("/resources/whats-new");
   const list = page.getByRole("navigation", { name: "On this page" });
-  await expect(list.getByRole("link")).toHaveText(
+  await expect(
+    list.getByRole("link").filter({ hasText: /^\d+\.\d+\.\d+ / }),
+  ).toHaveText(
     releases.map((release) => `${release.version} ${release.title}`),
   );
   const second = releases[1];

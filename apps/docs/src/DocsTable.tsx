@@ -1,7 +1,8 @@
 import type { ReactElement } from "react";
+import { withInlineCode } from "./inline-code.tsx";
 import { TableScroll } from "./TableScroll.tsx";
 
-/** A table on a written page: a header row of `columns`, then `rows` of cells, each a short string. */
+/** A table on a written page: a header row of `columns`, then `rows` of cells, each a short string whose backticked code shows as code. */
 export function DocsTable({
   columns,
   rows,
@@ -25,7 +26,7 @@ export function DocsTable({
           {rows.map((row) => (
             <tr key={row.join("|")}>
               {row.map((cell, index) => (
-                <td key={`${String(index)}-${cell}`}>{cell}</td>
+                <td key={`${String(index)}-${cell}`}>{withInlineCode(cell)}</td>
               ))}
             </tr>
           ))}
