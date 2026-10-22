@@ -29,6 +29,7 @@
     "new-app": "node scripts/new-app.mjs",
     "new-component": "node scripts/new-component.mjs",
     "brand:assets": "node scripts/brand-assets.mjs",
+    "demos:previews": "node scripts/demo-previews.mjs",
     "changeset": "changeset",
     "prepare": "node scripts/install-hooks.mjs"
   },

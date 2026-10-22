@@ -69,6 +69,7 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 - `pnpm new-component <Name>` — scaffold a compliant component (from Phase 2)
 - `pnpm new-app <name> [--template blank|dashboard|editor|marketing]` — new app from a template: `apps/starter` for `blank` (the default), `apps/templates/<template>` for the others
 - `pnpm --filter starter tauri dev` — desktop app
+- `pnpm --filter demo-<name> dev` — a demo on its own (`card-studio`, `card-studio-site`, `roastery`); the docs site serves them at `/demos/<name>`
 
 ## Making things buttery
 To build or restyle any UI with buttery, follow `.claude/skills/make-it-buttery/SKILL.md` step by step (Claude Code loads it as a skill; other agents read the file directly).

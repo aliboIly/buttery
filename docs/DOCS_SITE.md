@@ -22,7 +22,7 @@ The sidebar's sections and their pages, in this order.
 4. Motion: Principles (the ten rules) · Tokens · Presets (`Presence`, `Morph`, `SharedIndicator`, `Reveal`, `Stagger`, `Loop`) · Choreography (the morph menu, card to modal, the staggered entrance) · Reduced motion.
 5. Components, grouped by job and alphabetical inside each group: Actions · Inputs · Selection · Navigation · Overlays · Data display · Feedback and status. The table below assigns each one.
 6. Patterns, smallest to largest: Page header · Forms · Settings pages · Detail page · Catalog page · Plans · Search and results · Data table page · Overview · Onboarding · Inspector · App shell · Marketing page.
-7. Templates: a page each for `blank`, `dashboard`, `editor` and `marketing`, with a live preview, `create-buttery --template <name>` and what's inside.
+7. Templates: a page each for `blank`, `dashboard`, `editor` and `marketing`, with a live preview, `create-buttery --template <name>` (with `pnpm new-app my-app --template <name>`, the command that works until `create-buttery` is published) and what's inside: its files and the patterns it's made from. The preview is the template's own app in a frame, served full-window at `/templates/<name>/preview`, a route the nav leaves out.
 8. Guides, by task: Build an app in 15 minutes · Build your own buttery component · Make an existing app buttery · Bring your brand (theming) · Check your layout (`buttery check`, `LayoutGuard`) · Accessibility.
 9. Tools: CLI · MCP server · Lint configs · Testing (`expectButtery`) · VS Code.
 10. Resources: What's new · Roadmap · Brand · Contributing.
@@ -126,18 +126,19 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 
 ## Demos
 
-- Each demo is its own app in `apps/demos/<name>/`, with its own entry, routing and state, served inside the site at `/demos/<name>/` as a full-screen site without the docs' chrome.
-- The demos: Card Studio (an editor), the roaster (a dashboard, with settings and search), the Card Studio marketing site, and any later ones. Phase 7 moves the existing demos out of the playground into this structure.
-- A `/demos` page lists them as cards: a preview image, a one-line description, the components and patterns it uses, "Open demo", "View source", and "Start from this template" with its `create-buttery` command.
-- Inside a demo, a small floating pill in a `FloatingLanes` lane, never over the demo's own UI, holds "Docs", "View source" and a theme toggle, and it folds away. Deep links work, such as `/demos/roaster/settings/notifications`. State is saved locally, with a "Reset demo" action. Data is fake and deterministic, and everything works offline.
+- Each demo is its own app in `apps/demos/<name>/` (package `demo-<name>`), with its own entry, routing and state, served inside the site at `/demos/<name>/` as a full-screen site without the docs' chrome. The site depends on each demo's package and renders the root it exports under that path.
+- The demos: Card Studio (an editor, `card-studio`), Halfmoon Roastery (a coffee roaster's dashboard, with settings and search, `roastery`), the Card Studio marketing site (`card-studio-site`), and any later ones.
+- A `/demos` page lists them as cards: a preview image, a one-line description, the components and patterns it uses, "Open demo", "View source", and "Start from this template" with its `create-buttery` command (`pnpm new-app my-app --template <name>` until `create-buttery` is published). `pnpm demos:previews` takes the pictures from each demo's own dev server, light and dark, into `apps/docs/public/previews`.
+- Inside a demo, a small floating pill in the bottom-end `FloatingLanes` lane, never over the demo's own UI, holds "Docs" (back to `/demos`), "View source", a theme toggle and "Reset demo", and it folds away to one button, staying folded from demo to demo. Lanes keep clear of the demo's own chrome and floating UI, and it steps back under its dialogs. Deep links work, such as `/demos/roastery/settings/notifications`. State is saved locally: each demo keeps everything it saves under one storage prefix and exports `clearSavedState`, which "Reset demo" calls before reloading. Data is fake and deterministic, and everything works offline.
+- Every app, template or demo, has a small router of its own in `src/router.tsx` (a `useSyncExternalStore` over the address and `popstate`, with links made from a base path), so it runs at `/` on its own and under `/demos/<name>` or `/templates/<name>/preview` inside the site. The site passes its own navigation, so its display settings stay in the address as a demo moves between pages.
 - Each demo is its template plus demo content, so templates stay small and the demos prove the templates hold up.
-- Pattern and component pages link to the exact demo screen that uses them, such as "See it in the roaster's settings".
-- `pnpm docs:build` builds the docs and every demo into one static output, and each demo also runs on its own with `pnpm --filter demo-<name> dev`.
+- Pattern and component pages link to the exact demo screen that uses them, such as "See it in the roastery's settings".
+- `pnpm docs:build` builds the docs and every demo into one static output, and each demo also runs on its own with `pnpm --filter demo-<name> dev`. A node test checks that each demo keeps its template's entry, router, Vite config, tsconfig and `index.html`, apart from its name.
 - Each demo passes the full matrix, runs its end-to-end flows from earlier phases, and logs no console errors.
 
 ## Build and deploy
 
-- `pnpm docs:build` writes prerendered HTML for every public route, the demos and a `sitemap.xml` into `apps/docs/dist`, with each page's Markdown at its path plus `.md` and `llms.txt`. It renders each route with React's own `react-dom/server` and the app takes over in the browser; `DOCS_URL` sets the site address the sitemap links to. It runs the docs check first and builds nothing while the check finds a problem.
+- `pnpm docs:build` writes prerendered HTML for every public route, the demos and a `sitemap.xml` into `apps/docs/dist`, with each page's Markdown at its path plus `.md` and `llms.txt`. The demos and the template previews come with the pages inside them, from the paths each app's package exports as `routes`, and a `404.html` lets the app draw any other address, such as a demo's customer page. It renders each route with React's own `react-dom/server` and the app takes over in the browser; `DOCS_URL` sets the site address the sitemap links to. It runs the docs check first and builds nothing while the check finds a problem.
 - Approved if they're needed: `@mdx-js/rollup`, `shiki` and `minisearch`. For static prerendering, use the smallest maintained option and log the choice in `docs/DECISIONS.md`.
 - Where it's deployed is the maintainer's call. When Phase 7 gets there, it goes in `notes/NEEDS-YOU.md` with a recommendation.
 
@@ -152,7 +153,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 | A component page (a `*.meta.ts` with its `*.playground.tsx` and `examples/`) | Its component page, in the group the table above gives it |
 | Tokens, Surfaces, Levels, Palettes, Text stacks | Foundations (Colors, Elevation, Palettes, Typography and the rest) |
 | Motion | Motion |
-| Card Studio, the Card Studio site, Halfmoon Roastery | Their own apps in `apps/demos/<name>/`, served at `/demos/<name>/` and previewed on the `editor`, `marketing` and `dashboard` template pages |
+| Card Studio, the Card Studio site, Halfmoon Roastery | Their own apps in `apps/demos/<name>/`, served at `/demos/<name>/`, built on the `editor`, `marketing` and `dashboard` templates, whose pages link to them |
 | Compare, and the routes only tests visit | `/lab` |
 
 ## Phase 8

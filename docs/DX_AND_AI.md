@@ -15,7 +15,7 @@ buttery should be **the easiest correct way to build UI** — for a developer in
 
 | Tool | What it does |
 |---|---|
-| `npx create-buttery my-app --template blank\|dashboard\|editor\|marketing` | New Vite + React (+ optional Tauri) app, fully wired, with agent files. `dashboard` starts from the App kit (sidebar shell, overview, a table page, settings), `editor` from the inspector shell, `marketing` from the page patterns. Each passes `buttery check` with zero edits. |
+| `npx create-buttery my-app --template blank\|dashboard\|editor\|marketing` | New Vite + React (+ optional Tauri) app, fully wired, with agent files. `dashboard` starts from the App kit (sidebar shell, overview, a table page, settings), `editor` from the inspector shell, `marketing` from the page patterns. Each passes `buttery check` with zero edits. Until it's published, `pnpm new-app my-app --template <name>` makes the same apps inside the buttery repository, from `apps/starter` (`blank`) and `apps/templates/<name>`. |
 | `npx buttery init` | Adds buttery to an existing React app: packages, provider, styles, font, lint config, `AGENTS.md` section, `CLAUDE.md` import, skill. Idempotent. |
 | `buttery add <pattern>` | Scaffolds a screen from a pattern (`app-shell`, `settings`, `onboarding`, `marketing-page`, `article`). |
 | `buttery add page table\|detail\|overview\|settings\|empty\|feature-intro` | Adds an App kit page to a dashboard app: a filtered table, a detail page with a right rail, an overview of metric cards and charts, a settings index, an empty state, a feature intro. Each passes `buttery check` with zero edits. |

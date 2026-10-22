@@ -200,6 +200,8 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 | `pnpm test:layout` | Layout checks across the full viewport, theme and density matrix; `--reporter=json` prints one report |
 | `pnpm new-component <Name> --purpose "…"` | Scaffolds a component folder that passes the contract once it's filled in |
 | `pnpm --filter starter tauri dev` | Runs the starter as a desktop app |
+| `pnpm --filter demo-roastery dev` | Runs a demo on its own (`demo-card-studio`, `demo-card-studio-site` and `demo-roastery`) |
+| `pnpm demos:previews` | Retakes the demos' pictures for the docs site's demos page |
 | `pnpm new-app <name> --template <template>` | Copies a template to `apps/<name>`: `blank` (the starter, the default), `dashboard`, `editor` or `marketing` |
 
 ## Repo layout

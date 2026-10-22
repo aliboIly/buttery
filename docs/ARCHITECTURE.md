@@ -51,14 +51,18 @@ buttery/
 │  ├─ cli/     buttery CLI       # `npx create-buttery`, `buttery init | add | create | doctor | check`
 │  └─ mcp/     @buttery/mcp      # MCP server so any agent can query components, tokens and run layout checks
 ├─ apps/
-│  ├─ docs/                      # the docs site: every component × state × theme × density; demo screens; Playwright target
-│  └─ starter/                   # template for new apps: Vite + React + Tauri v2, wired up, with agent files + skill
+│  ├─ docs/                      # the docs site: every component × state × theme × density; serves the demos; Playwright target
+│  ├─ starter/                   # the blank template for new apps: Vite + React + Tauri v2, wired up, with agent files + skill
+│  ├─ templates/                 # the dashboard, editor and marketing templates: web apps on the starter's shell, built from the patterns
+│  └─ demos/                     # card-studio, card-studio-site, roastery: each a template plus its own content, served at /demos/<name>
 ├─ scripts/
 │  ├─ check-ai-tells.mjs         # authorship checks (pnpm check + commit-msg hook)
 │  ├─ check-private-paths.mjs    # fails if reference/ or PROMPTS.md is tracked
 │  ├─ new-component.mjs          # scaffolds a component that already follows every rule
 │  ├─ component-contract.test.mjs # fails until every component folder is complete
 │  ├─ test-layout.mjs            # expectButtery across the full matrix (--reporter=json)
+│  ├─ demo-previews.mjs          # pictures of each demo for the docs site's demos page
+│  ├─ demo-templates.test.mjs    # each demo keeps its template's shell files
 │  └─ new-app.mjs                # copies a template (apps/starter or apps/templates/<name>) → apps/<name>
 ├─ .githooks/                    # commit-msg and pre-commit, installed by pnpm install
 └─ tooling/                      # shared tsconfig presets
