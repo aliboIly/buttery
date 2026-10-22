@@ -46,7 +46,7 @@ function Brand(): ReactElement {
           style={{ fill: "var(--bt-bg-surface)" }}
         />
       </svg>
-      Card Studio
+      Deckhand
     </a>
   );
 }
@@ -57,9 +57,9 @@ function Story(): ReactElement {
       <Text variant="control" tone="secondary">
         New
       </Text>
-      <Text variant="title">The lean pad</Text>
+      <Text variant="title">The presenter view</Text>
       <Text variant="body-sm" tone="secondary">
-        Turn the card toward you, up to 20 degrees.
+        Notes and the next slide, on your screen only.
       </Text>
     </Stack>
   );
@@ -93,26 +93,26 @@ function Bar({
       >
         <MorphMenu.Column title="Make">
           <MorphMenu.Entry
-            href="#cards"
-            title="Cards"
-            caption="Titles, finishes and leans"
+            href="#slides"
+            title="Slides"
+            caption="Layouts and notes"
           />
           <MorphMenu.Entry
-            href="#backdrops"
-            title="Backdrops"
-            caption="Blends, colors or your own picture"
+            href="#themes"
+            title="Themes"
+            caption="Fonts and colors"
           />
           <MorphMenu.Entry
             href="#sizes"
             title="Sizes"
-            caption="Square to story, or your own"
+            caption="Widescreen, square or your own"
           />
         </MorphMenu.Column>
         <MorphMenu.Column title="Share">
           <MorphMenu.Entry
             href="#export"
             title="Export"
-            caption="PNG or JPG at the canvas's size"
+            caption="PDF or PNG files"
           />
           <MorphMenu.Entry
             href="#copy"
@@ -124,9 +124,9 @@ function Bar({
       <MorphMenu.Item label="Guides">
         <MorphMenu.Column title="Learn">
           <MorphMenu.Entry
-            href="#first-card"
-            title="Your first card"
-            caption="Five minutes from blank to done"
+            href="#first-deck"
+            title="Your first deck"
+            caption="Ten minutes from blank to done"
           />
           <MorphMenu.Entry
             href="#shortcuts"
@@ -138,12 +138,12 @@ function Bar({
           <MorphMenu.Entry
             href="#launch"
             title="Launch day"
-            caption="Cards for an announcement"
+            caption="Slides for an announcement"
           />
           <MorphMenu.Entry
             href="#events"
             title="Events"
-            caption="Speaker cards and schedules"
+            caption="Talks, agendas and schedules"
           />
         </MorphMenu.Column>
       </MorphMenu.Item>
@@ -185,10 +185,12 @@ function Site({
       >
         <Bar behavior={behavior} contained={contained} />
         <Stack gap={4} padX={8} padY={16}>
-          <Text variant="display">Cards for launch days</Text>
-          <Text variant="body-lg">Made in a minute, ready for every post.</Text>
+          <Text variant="display">Decks for every meeting</Text>
+          <Text variant="body-lg">
+            Written in an afternoon, ready for any screen.
+          </Text>
         </Stack>
-        {["Features", "Backdrops", "Export"].map((title) => (
+        {["Features", "Themes", "Export"].map((title) => (
           <Section
             key={title}
             size="sm"
@@ -206,7 +208,7 @@ function navBarCode({ behavior, contained }: DemoValues): string {
     "<NavBar",
     `  behavior="${String(behavior)}"`,
     ...(contained === true ? [] : ["  contained={false}"]),
-    '  brand={<a href="/">Card Studio</a>}',
+    '  brand={<a href="/">Deckhand</a>}',
     "  actions={",
     "    <>",
     '      <Button variant="secondary">Sign in</Button>',

@@ -8,7 +8,7 @@ export function SiteHeader(): ReactElement {
   return (
     <Page>
       <NavBar
-        brand={<a href="#top">Card Studio</a>}
+        brand={<a href="#top">Deckhand</a>}
         actions={
           <>
             <Button asChild variant="secondary">
@@ -27,9 +27,9 @@ export function SiteHeader(): ReactElement {
               <Text variant="control" tone="secondary">
                 New
               </Text>
-              <Text variant="title">The lean pad</Text>
+              <Text variant="title">The presenter view</Text>
               <Text variant="body-sm" tone="secondary">
-                Turn the card toward you, up to 20 degrees.
+                Notes and the next slide, on your screen only.
               </Text>
             </Stack>
           }
@@ -37,31 +37,33 @@ export function SiteHeader(): ReactElement {
         >
           <MorphMenu.Column title="Make">
             <MorphMenu.Entry
-              href="#cards"
-              title="Cards"
-              caption="Titles, finishes and leans"
+              href="#slides"
+              title="Slides"
+              caption="Layouts and notes"
             />
             <MorphMenu.Entry
-              href="#backdrops"
-              title="Backdrops"
-              caption="Blends, colors or your own picture"
+              href="#themes"
+              title="Themes"
+              caption="Fonts and colors"
             />
           </MorphMenu.Column>
         </MorphMenu.Item>
         <MorphMenu.Item label="Guides">
           <MorphMenu.Column title="Learn">
             <MorphMenu.Entry
-              href="#first-card"
-              title="Your first card"
-              caption="Five minutes from blank to done"
+              href="#first-deck"
+              title="Your first deck"
+              caption="Ten minutes from blank to done"
             />
           </MorphMenu.Column>
         </MorphMenu.Item>
         <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
       </NavBar>
       <Stack gap={4} padX={8} padY={12}>
-        <Text variant="display">Cards for launch days</Text>
-        <Text variant="body-lg">Made in a minute, ready for every post.</Text>
+        <Text variant="display">Decks for every meeting</Text>
+        <Text variant="body-lg">
+          Written in an afternoon, ready for any screen.
+        </Text>
       </Stack>
     </Page>
   );
@@ -72,6 +74,6 @@ export const kind: ExampleKind = "composition";
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Menu");
   await press("button", "Product");
-  await see("Titles, finishes and leans");
-  await see("The lean pad");
+  await see("Layouts and notes");
+  await see("The presenter view");
 };

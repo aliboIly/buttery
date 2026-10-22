@@ -6,7 +6,7 @@ import { Button, MorphMenu, NavBar } from "@buttery/react";
 export function LinksOnly(): ReactElement {
   return (
     <NavBar
-      brand={<a href="#home">Card Studio</a>}
+      brand={<a href="#home">Deckhand</a>}
       actions={
         <Button asChild variant="primary" arrow="forward">
           <a href="#get-started">Get started</a>
