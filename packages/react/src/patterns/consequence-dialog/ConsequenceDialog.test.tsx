@@ -174,8 +174,12 @@ describe("ConsequenceDialog", () => {
       screen.getByRole("button", { name: "Start the trial" }),
     );
     await userEvent.keyboard("{Escape}");
+    const close = screen.getByRole("button", { name: "Close" });
+    expect(close.getAttribute("aria-disabled")).toBe("true");
+    await userEvent.click(close, { force: true });
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(close.hasAttribute("aria-disabled")).toBe(true);
     finish?.();
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();

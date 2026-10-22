@@ -64,7 +64,8 @@ export interface ConsequenceDialogProps {
  * A dialog that spells out what saying yes will do before anyone does: its title in `title-lg`, then rows
  * 20 apart, each a 32px icon tile and a heading over a line; then small print under a 1px divider; then
  * one full-width primary button. Focus goes to the dialog itself, so the rows are read before anything can
- * be confirmed. It closes after `onConfirm`, or after the promise it returns resolves.
+ * be confirmed. It closes after `onConfirm`, or after the promise it returns resolves; until then the close
+ * button shows disabled, and Escape and the scrim leave it open.
  *
  * @example
  * <ConsequenceDialog
@@ -139,6 +140,7 @@ export function ConsequenceDialog({
         size="md"
         ref={refs}
         closeLabel={closeLabel}
+        closeDisabled={pending}
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           dialog.current?.focus({ preventScroll: true });

@@ -30,7 +30,8 @@ export interface FormDialogProps {
   readonly valid?: boolean | undefined;
   /**
    * Sends the form: called on Submit, or Enter in a field, while it's valid. It closes once this returns,
-   * or once the promise it returns resolves, Submit showing busy until then; a rejected promise leaves it open.
+   * or once the promise it returns resolves, Submit showing busy until then and nothing closing it meanwhile;
+   * a rejected promise leaves it open.
    */
   readonly onSubmit: () => void | Promise<void>;
   /** Submit's label. Defaults to `"Save"`. */
@@ -53,7 +54,8 @@ export interface FormDialogProps {
  * A dialog that asks for a value or two: its title over a 1px divider, then copy that says what the form
  * is for (links welcome), the fields (the first focused once the dialog settles), and Cancel and Submit at
  * the end of its footer. Submit stays disabled (`aria-disabled`) until `valid`. It closes after a submit,
- * or after the promise `onSubmit` returns resolves.
+ * or after the promise `onSubmit` returns resolves; until then Cancel and the close button show disabled, and
+ * Escape and the scrim leave it open.
  *
  * @example
  * <FormDialog
@@ -128,7 +130,12 @@ export function FormDialog({
       {trigger === undefined ? null : (
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       )}
-      <Dialog.Content size={size} ref={ref} closeLabel={closeLabel}>
+      <Dialog.Content
+        size={size}
+        ref={ref}
+        closeLabel={closeLabel}
+        closeDisabled={pending}
+      >
         <div
           className={cx("bt-form-dialog", className)}
           style={style}

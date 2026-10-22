@@ -175,6 +175,9 @@ describe("FormDialog", () => {
     const cancel = screen.getByRole("button", { name: "Cancel" });
     expect(cancel.getAttribute("aria-disabled")).toBe("true");
     await userEvent.click(cancel, { force: true });
+    const close = screen.getByRole("button", { name: "Close" });
+    expect(close.getAttribute("aria-disabled")).toBe("true");
+    await userEvent.click(close, { force: true });
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(screen.getByRole("dialog")).toBeTruthy();
     finish?.();

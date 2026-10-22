@@ -132,6 +132,11 @@ export interface DialogContentProps extends Omit<
   readonly showClose?: boolean | undefined;
   /** Names the close button. Defaults to `"Close"`. */
   readonly closeLabel?: string | undefined;
+  /**
+   * Shows the close button disabled (`aria-disabled`, still focusable) and stops it closing the dialog, such
+   * as while a submit is pending. Defaults to `false`.
+   */
+  readonly closeDisabled?: boolean | undefined;
 }
 
 /**
@@ -146,6 +151,7 @@ export function DialogContent({
   description,
   showClose = true,
   closeLabel = "Close",
+  closeDisabled = false,
   className,
   children,
   onOpenAutoFocus,
@@ -326,6 +332,7 @@ export function DialogContent({
                       icon={X}
                       label={closeLabel}
                       size="sm"
+                      aria-disabled={closeDisabled || undefined}
                       data-bt-part="close"
                       data-bt-allow-overlap=""
                     />

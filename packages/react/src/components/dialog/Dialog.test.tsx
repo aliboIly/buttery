@@ -208,6 +208,23 @@ describe("Dialog", () => {
     });
   });
 
+  it("shows its close button disabled with closeDisabled, and pressing it leaves the dialog open", async () => {
+    render(
+      <Dialog defaultOpen>
+        <Dialog.Content closeDisabled>
+          <Dialog.Text title="Saving your card" body="This takes a moment." />
+        </Dialog.Content>
+      </Dialog>,
+    );
+    await screen.findByRole("dialog");
+    await settled();
+    const close = screen.getByRole("button", { name: "Close" });
+    expect(close.getAttribute("aria-disabled")).toBe("true");
+    await browser.click(close, { force: true });
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(screen.getByRole("dialog")).toBeTruthy();
+  });
+
   it("keeps focus inside while it's open", async () => {
     render(<Confirm />);
     const dialog = await openConfirm();
