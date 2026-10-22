@@ -20,6 +20,10 @@ export function App(): ReactElement {
     ) ??
     pages[0];
   if (!page) throw new Error("The docs site needs at least one page.");
+  const title = page.route === "" ? "buttery" : `${page.title} · buttery`;
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
   const content = page.render();
   return (
     <ButteryProvider

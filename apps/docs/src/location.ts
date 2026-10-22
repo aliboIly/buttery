@@ -13,8 +13,19 @@ function subscribe(onChange: () => void): () => void {
   };
 }
 
+let serverHref = "http://localhost/";
+
+/** The address a page renders for when there's no window, as the static build renders each route. */
+export function setServerHref(href: string): void {
+  serverHref = href;
+}
+
 function useHref(): string {
-  return useSyncExternalStore(subscribe, () => window.location.href);
+  return useSyncExternalStore(
+    subscribe,
+    () => window.location.href,
+    () => serverHref,
+  );
 }
 
 /** Motion on the site: the OS setting, or forced full or reduced. */

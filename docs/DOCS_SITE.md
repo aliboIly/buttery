@@ -137,7 +137,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 
 ## Build and deploy
 
-- `pnpm docs:build` writes prerendered HTML for every public route, the demos and a `sitemap.xml`.
+- `pnpm docs:build` writes prerendered HTML for every public route, the demos and a `sitemap.xml` into `apps/docs/dist`, with each page's Markdown at its path plus `.md` and `llms.txt`. It renders each route with React's own `react-dom/server` and the app takes over in the browser; `DOCS_URL` sets the site address the sitemap links to.
 - Approved if they're needed: `@mdx-js/rollup`, `shiki` and `minisearch`. For static prerendering, use the smallest maintained option and log the choice in `docs/DECISIONS.md`.
 - Where it's deployed is the maintainer's call. When Phase 7 gets there, it goes in `notes/NEEDS-YOU.md` with a recommendation.
 

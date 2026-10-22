@@ -27,3 +27,4 @@ apps/*/src-tauri/gen/schemas/
 .vitest/
 
 /apps/starter/src/examples-check/
+/apps/docs/dist-server*/

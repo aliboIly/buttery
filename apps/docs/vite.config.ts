@@ -3,7 +3,11 @@ import { fileURLToPath } from "node:url";
 import mdx from "@mdx-js/rollup";
 import babel from "@rolldown/plugin-babel";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
-import { defaultClientConditions, defineConfig } from "vite";
+import {
+  defaultClientConditions,
+  defaultServerConditions,
+  defineConfig,
+} from "vite";
 import type { Plugin } from "vite";
 import manifest from "./package.json" with { type: "json" };
 import { exampleCode } from "./vite/code.ts";
@@ -58,6 +62,11 @@ export default defineConfig({
     referenceCaptures(),
   ],
   resolve: { conditions: ["@buttery/source", ...defaultClientConditions] },
+  // The static build renders every page on the server from the packages' source, as the dev server does.
+  ssr: {
+    noExternal: [/^@buttery\//],
+    resolve: { conditions: ["@buttery/source", ...defaultServerConditions] },
+  },
   server: { port, strictPort: true },
   preview: { port: port + 2000, strictPort: true },
   build: { target: ["es2024", "safari17.5", "chrome130"] },
