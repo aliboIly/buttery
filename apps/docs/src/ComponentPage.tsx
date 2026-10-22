@@ -115,7 +115,6 @@ function LiveDemoFrame({
     live ? initialValues(live.controls) : {},
   );
   const [showing, setShowing] = useState(false);
-  const [demo] = entry.demos;
   const stage = entry.frame === "page" ? "card" : "section";
   const code = live
     ? (live.code ?? ((current: DemoValues) => jsxOf(entry.meta.name, current)))(
@@ -152,7 +151,7 @@ function LiveDemoFrame({
           className="pg-stage"
           data-testid="live-demo"
         >
-          {live ? live.render(values) : demo ? demo.render() : null}
+          {live?.render(values)}
         </Surface>
       </ButteryProvider>
       {live ? (
