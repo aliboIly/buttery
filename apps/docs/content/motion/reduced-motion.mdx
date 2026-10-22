@@ -18,9 +18,42 @@ Reduced motion is the mode buttery switches to when a person asks their system f
 - Hover lifts and arrow nudges are skipped.
 - Layout still updates: a panel that changes size still changes size, just without animating.
 
+## Setting it for an app
+
+`ButteryProvider`'s `reducedMotion` decides when motion is reduced for everything inside it.
+
+<DocsTable
+  columns={["Value", "What it does"]}
+  rows={[
+    ['`"user"`', "The default: follows the system"],
+    ['`"always"`', "Reduces motion for everyone"],
+    [
+      '`"never"`',
+      "Keeps full motion whatever the system says, such as from a setting of your app's own",
+    ],
+  ]}
+/>
+
 ## In your own code
 
-`useMotionPreference()` returns `"full"` or `"reduced"`, and `useButteryTransition(name)` returns the spring you name, or an instant one with reduced motion. CSS can read the same thing: `--bt-motion` is 1 with full motion and 0 with reduced, for durations worked out with `calc()`.
+Read the setting with a hook, or in CSS:
+
+<DocsTable
+  columns={["Read it with", "What it gives"]}
+  rows={[
+    ["`useMotionPreference()`", '`"full"` or `"reduced"`'],
+    [
+      "`useButteryTransition(name)`",
+      "The spring you name, or an instant one with reduced motion",
+    ],
+    [
+      "`--bt-motion`",
+      "In CSS, 1 with full motion and 0 with reduced, for durations worked out with `calc()`",
+    ],
+  ]}
+/>
+
+A progress bar that glides to its value on `spring.smooth`, and lands at once with reduced motion:
 
 ```tsx
 import type { ReactElement } from "react";
@@ -38,5 +71,3 @@ export function Progress({ done }: { readonly done: number }): ReactElement {
   );
 }
 ```
-
-`ButteryProvider`'s `reducedMotion` is `"user"` by default, following the system. Set `"always"` to reduce motion for everyone, or `"never"` to keep full motion whatever the system says, such as from a setting of your app's own.

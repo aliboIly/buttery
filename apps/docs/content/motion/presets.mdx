@@ -12,13 +12,40 @@ The motion presets are primitives that animate one kind of change the buttery wa
 
 ## Which one
 
-- `Presence` for something that appears and leaves, with a fade, a rise or a pop.
-- `Morph` for a container whose height follows its content.
-- `SharedIndicator` for a highlight that slides between options, such as a tab's underline.
-- `Reveal` and `Stagger` for content entering the first time it scrolls into view.
-- `Loop` for a demo that cycles its states quietly, pausing offscreen and with reduced motion.
+<Cards columns={3}>
+<Card title="Presence">
 
-For an element of your own, `buttery.div` and the other `buttery` elements take `enter` and `layout` props that use the same presets, and turn them off with reduced motion.
+For something that appears and leaves, with a fade, a rise or a pop.
+
+</Card>
+<Card title="Morph">
+
+For a container whose height follows its content.
+
+</Card>
+<Card title="SharedIndicator">
+
+For a highlight that slides between options, such as a tab's underline.
+
+</Card>
+<Card title="Reveal and Stagger">
+
+For content entering the first time it scrolls into view.
+
+</Card>
+<Card title="Loop">
+
+For a demo that cycles its states quietly, pausing offscreen and with reduced motion.
+
+</Card>
+<Card title="buttery elements">
+
+For an element of your own, through the `enter` and `layout` props of `buttery.div` and the other `buttery` elements.
+
+</Card>
+</Cards>
+
+`enter` and `layout` use the same presets, and turn them off with reduced motion. This `buttery.div` rises in when it mounts:
 
 ```tsx
 import type { ReactElement } from "react";
