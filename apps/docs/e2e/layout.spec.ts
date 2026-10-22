@@ -273,6 +273,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           })
           .waitFor();
       },
+      acrossMatrix: true,
     },
     escape,
     {
@@ -1058,7 +1059,7 @@ for (const route of roasteryPages) {
   });
 }
 
-test("demos/roastery-shop is buttery on a wide window, its menus, sign-in and origins open", async ({
+test("demos/roastery-shop is buttery on a wide window, through its menus, sign-in, bag and checkout", async ({
   page,
 }) => {
   const wide = { width: 1280, height: 800 };
@@ -1110,6 +1111,42 @@ test("demos/roastery-shop is buttery on a wide window, its menus, sign-in and or
           await target.getByText("There's a problem").waitFor();
         },
       },
+      {
+        name: "sign in, which shows a toast and puts Account in the bar",
+        allowMove: ['[data-bt-part="nav-bar-actions"]', PILL],
+        run: async (target: Page) => {
+          const dialog = target.getByRole("dialog", { name: "Sign in" });
+          await dialog
+            .getByRole("textbox", { name: "Email" })
+            .fill("ines@example.com");
+          await dialog.getByLabel("Password", { exact: true }).fill("halfmoon");
+          await dialog
+            .getByRole("button", { name: "Sign in", exact: true })
+            .click();
+          await target
+            .getByRole("button", { name: "Account", exact: true })
+            .waitFor();
+        },
+      },
+      {
+        name: "open the account menu",
+        run: async (target: Page) => {
+          await target
+            .getByRole("button", { name: "Account", exact: true })
+            .click();
+          await target.getByRole("menu", { name: "Account" }).waitFor();
+        },
+      },
+      escape,
+      {
+        name: "open the empty bag",
+        run: async (target: Page) => {
+          await target.getByRole("button", { name: /^Bag, / }).click();
+          await target
+            .getByRole("dialog", { name: "Your bag is empty" })
+            .waitFor();
+        },
+      },
       escape,
       {
         name: "list the origins",
@@ -1118,6 +1155,35 @@ test("demos/roastery-shop is buttery on a wide window, its menus, sign-in and or
             target.getByRole("combobox", { name: /^Origin/ }),
           );
           await target.getByRole("listbox").waitFor();
+        },
+      },
+      escape,
+      {
+        name: "put a gift subscription in the bag and open it",
+        allowMove: ["#subscribe", "#subscribe ~ *", '[data-bt="Footer"]', PILL],
+        run: async (target: Page) => {
+          await pressInMiddle(
+            target.getByRole("radio", { name: "As a gift", exact: true }),
+          );
+          await target
+            .getByRole("button", { name: /subscription to your bag/ })
+            .click();
+          await target.getByRole("button", { name: /^Bag, / }).click();
+          await target.getByRole("dialog", { name: "Your bag" }).waitFor();
+        },
+      },
+      {
+        name: "check out and place the order",
+        allowMove: ['[role="dialog"]'],
+        run: async (target: Page) => {
+          await target.getByRole("button", { name: "Check out" }).click();
+          await target
+            .getByRole("dialog", { name: "Check out" })
+            .getByRole("button", { name: "Place order" })
+            .click();
+          await target
+            .getByRole("dialog", { name: "Thanks, your order is in" })
+            .waitFor();
         },
       },
       escape,
