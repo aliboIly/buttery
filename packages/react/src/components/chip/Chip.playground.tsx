@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Chip } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -30,6 +30,16 @@ function ResetDemo(): ReactElement {
     </Inline>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    "aria-disabled": { kind: "toggle", initial: false },
+    children: { kind: "text", initial: "Reset" },
+  },
+  render: ({ "aria-disabled": unavailable, children }) => (
+    <Chip aria-disabled={unavailable === true}>{String(children)}</Chip>
+  ),
+};
 
 export const demos: readonly DemoSection[] = [
   {

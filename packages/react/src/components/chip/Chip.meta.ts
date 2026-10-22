@@ -16,4 +16,10 @@ export const meta: ComponentMeta = {
   related: ["Button", "Slider"],
   a11y: 'A native button named by its text, type="button". Its 24px hit area is larger than its 20px box. Disabled while there\'s nothing to reset.',
   motion: "press",
+  keyboard: [
+    { keys: "Enter or Space", does: "Presses it, unless it's aria-disabled" },
+  ],
+  layout:
+    "It's --bt-h-badge (20px) tall and as wide as its label, never wider than its container, where a long label truncates with an ellipsis and shows in full as its title. Its hit area reaches 24px both ways, past its 20px box.",
+  reducedMotion: "It presses in at once, without the scale animating.",
 };
