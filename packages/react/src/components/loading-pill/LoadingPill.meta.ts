@@ -16,4 +16,9 @@ export const meta: ComponentMeta = {
   related: ["Button", "DataTable", "MetricCard"],
   a11y: "A polite status region stays mounted and gets its words when the pill appears, so they're announced, unless announce is off because something around it, such as a card marked busy, already says it's loading; the pill itself is hidden from screen readers. The spinner is decorative and holds still with reduced motion.",
   motion: "presence",
+  keyboard: [],
+  layout:
+    "A pill 28px tall (--bt-h-sm) and as wide as its 14px spinner and its label, padded 12px a side; it never wraps or shrinks. It takes no presses, so it has no hit area.",
+  reducedMotion:
+    "It still waits 300ms, then fades in and out over 100ms, and its spinner holds still.",
 };

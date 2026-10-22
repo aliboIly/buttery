@@ -1,4 +1,4 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { LoadingPill } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -9,6 +9,18 @@ export const page: DocsPage = {
   order: 60,
   status: "new",
   since: "0.7.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Loading payouts" },
+    loading: { kind: "toggle", initial: true },
+  },
+  render: ({ label, loading }) => (
+    <LoadingPill label={String(label)} loading={loading === true} />
+  ),
+  code: ({ label, loading }) =>
+    `<LoadingPill label="${String(label)}" loading={${String(loading === true)}} />`,
 };
 
 export const demos: readonly DemoSection[] = [
