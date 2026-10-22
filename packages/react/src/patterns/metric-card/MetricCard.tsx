@@ -1,4 +1,4 @@
-import { Morph, Skeleton, Text, cx } from "@buttery/core";
+import { Morph, Skeleton, Text, cx, opensElsewhere } from "@buttery/core";
 import type { TextStackTitleElement } from "@buttery/core";
 import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
@@ -103,7 +103,7 @@ export function MetricCard({
 }: MetricCardProps): ReactElement {
   const titleId = useId();
   const follow = (event: MouseEvent<HTMLAnchorElement>): void => {
-    if (href !== undefined) onNavigate?.(href, event);
+    if (href !== undefined && !opensElsewhere(event)) onNavigate?.(href, event);
   };
   const trend =
     delta === undefined

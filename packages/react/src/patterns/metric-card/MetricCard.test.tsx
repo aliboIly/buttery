@@ -2,6 +2,7 @@ import "@buttery/core/styles.css";
 import "../../styles.css";
 import {
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -150,6 +151,11 @@ describe("MetricCard", () => {
     await userEvent.click(details);
     expect(onNavigate).toHaveBeenCalledWith("#sales", expect.anything());
     expect(screen.getByText("Updated 4 min ago")).toBeTruthy();
+    details.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    fireEvent.click(details, { metaKey: true });
+    expect(onNavigate).toHaveBeenCalledOnce();
   });
 
   it("holds every part in its place while loading, so nothing moves when the numbers arrive", () => {
