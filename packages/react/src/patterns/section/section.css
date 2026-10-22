@@ -28,12 +28,12 @@
     background-color: var(--bt-bg-app);
   }
 
-  .bt-section [data-bt-part="section-intro"] {
+  .bt-section [data-bt-part="section-intro"]:not([data-alone]) {
     padding-block-end: var(--bt-space-12);
   }
 
   @container bt-page (width >= 1024px) {
-    .bt-section [data-bt-part="section-intro"] {
+    .bt-section [data-bt-part="section-intro"]:not([data-alone]) {
       padding-block-end: var(--bt-space-16);
     }
   }

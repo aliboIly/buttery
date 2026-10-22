@@ -27,7 +27,8 @@ export interface SectionProps extends Omit<
 
 /**
  * A band of a page: room above and below, an optional heading and body (a `TextStack` at its section size,
- * 48px above the content, 64 once the page is past 1024px), and the content in a `Container`.
+ * 48px above the content, 64 once the page is past 1024px, with no gap under it when nothing follows), and
+ * the content in a `Container`.
  *
  * @example
  * <Section title="Made for launch days" body="Every card exports at the size you need.">
@@ -56,6 +57,7 @@ export function Section({
           title={<span id={titleId}>{title}</span>}
           body={body}
           data-bt-part="section-intro"
+          data-alone={hasContent(children) ? undefined : ""}
         />
       ) : null}
       {children}
