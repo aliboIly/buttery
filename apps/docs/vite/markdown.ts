@@ -2,6 +2,7 @@ import { existsSync, globSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import ts from "typescript";
 import type { Plugin } from "vite";
+import { pathUnderBase, sitePath } from "../src/base.ts";
 import { COLOR_GROUPS, isColorGroup } from "../src/foundations/color-groups.ts";
 import { MOTION_TEXT, REDUCED_TEXT } from "../src/motion-text.ts";
 import { slugify } from "../src/slug.ts";
@@ -166,6 +167,14 @@ function markdownHref(href: string): string {
   return `${path}.md${anchor === undefined ? "" : `#${anchor}`}`;
 }
 
+/** Each Markdown link in `line` to a path written from the site's root, such as `](/foundations/colors)`, under `base`. */
+function linksUnder(line: string, base: string): string {
+  return line.replace(
+    /\]\((\/(?!\/)[^)\s]*)\)/g,
+    (_, href: string) => `](${sitePath(href, base)})`,
+  );
+}
+
 function cell(text: string): string {
   return text.replace(/\|/g, "\\|").replace(/\n+/g, " ").trim();
 }
@@ -270,13 +279,14 @@ function galleryOf(
  * A component's documentation as Markdown, its parts in the order its page shows them: what it is and its
  * import, where its live demo is, when to use it, its examples as code, what its variants and states show,
  * its props, accessibility, motion, layout and related pages. `depth` is its title's heading level: 1 on a
- * page of its own, 3 inside a written page.
+ * page of its own, 3 inside a written page. Its links are under `base`, the path the site is served under.
  */
 export function componentMarkdown(
   root: string,
   component: ComponentSource,
   components: readonly ComponentSource[],
   depth = 1,
+  base = "/",
 ): string {
   const { name, meta, folder } = component;
   const part = depth + 1;
@@ -290,7 +300,7 @@ export function componentMarkdown(
     "",
   );
   const live = (title: string): string =>
-    `[${name} › ${title}](${component.home === undefined ? componentHref(component) : `/${component.home}`}#${slugify(depth === 1 ? title : `${name} ${title}`)})`;
+    `[${name} › ${title}](${sitePath(`${component.home === undefined ? componentHref(component) : `/${component.home}`}#${slugify(depth === 1 ? title : `${name} ${title}`)}`, base)})`;
   if (depth === 1)
     lines.push(
       heading(part, "Demo"),
@@ -413,7 +423,9 @@ export function componentMarkdown(
 
   const related = stringsOf(meta["related"]).flatMap((other) => {
     const found = components.find((candidate) => candidate.name === other);
-    return found ? [`- [${other}](${markdownHref(componentHref(found))})`] : [];
+    return found
+      ? [`- [${other}](${sitePath(markdownHref(componentHref(found)), base)})`]
+      : [];
   });
   const seen = folder.includes("/primitives/")
     ? []
@@ -428,8 +440,8 @@ export function componentMarkdown(
                 `See it in ${group.screens
                   .map((screen, index) =>
                     screen.page === undefined
-                      ? `[${screen.demo}](${screen.href})`
-                      : `${index === 0 ? `${group.demo}'s ` : listed(group.screens, index)}[${screen.page}](${screen.href})`,
+                      ? `[${screen.demo}](${sitePath(screen.href, base)})`
+                      : `${index === 0 ? `${group.demo}'s ` : listed(group.screens, index)}[${screen.page}](${sitePath(screen.href, base)})`,
                   )
                   .join("")}.`,
             )
@@ -458,12 +470,13 @@ export function componentsIn(
 function componentListOf(
   jsx: string,
   components: readonly ComponentSource[],
+  base: string,
 ): string {
   const group = /group="([^"]+)"/.exec(jsx)?.[1] ?? "";
   return table(
     ["Component", "What it's for"],
     componentsIn(`components/${group}`, components).map((component) => [
-      `[${component.name}](${markdownHref(componentHref(component))})`,
+      `[${component.name}](${sitePath(markdownHref(componentHref(component)), base)})`,
       component.description || textOf(component.meta["purpose"]),
     ]),
   );
@@ -642,18 +655,20 @@ function tokenBlock(
 
 /**
  * A written page's body as Markdown: its components written out as text, tables and code, and a block that
- * only draws, such as a gallery of surfaces, as a line pointing to it on the live page.
+ * only draws, such as a gallery of surfaces, as a line pointing to it on the live page. Its links are under
+ * `base`.
  */
 function bodyMarkdown(
   root: string,
   page: { readonly route: string; readonly title: string },
   body: string,
   components: readonly ComponentSource[],
+  base: string,
 ): string {
   const out: string[] = [];
   const lines = withoutModuleBlocks(body).split("\n");
   let fenced = false;
-  let place = { title: page.title, href: `/${page.route}` };
+  let place = { title: page.title, href: sitePath(`/${page.route}`, base) };
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
     if (line.startsWith("```")) fenced = !fenced;
@@ -661,10 +676,14 @@ function bodyMarkdown(
     if (titled !== undefined && titled !== null)
       place = {
         title: `${page.title} › ${titled.replace(/[`*_]/g, "")}`,
-        href: `/${page.route}#${slugify(titled)}`,
+        href: sitePath(`/${page.route}#${slugify(titled)}`, base),
       };
-    if (fenced || line.startsWith("```") || !/^<[A-Z]/.test(line)) {
+    if (fenced || line.startsWith("```")) {
       out.push(line);
+      continue;
+    }
+    if (!/^<[A-Z]/.test(line)) {
+      out.push(linksUnder(line, base));
       continue;
     }
     let jsx = line;
@@ -677,7 +696,7 @@ function bodyMarkdown(
       const of = /of="([^"]+)"/.exec(jsx)?.[1] ?? "";
       const component = components.find((candidate) => candidate.name === of);
       if (component)
-        out.push(componentMarkdown(root, component, components, 3));
+        out.push(componentMarkdown(root, component, components, 3, base));
     } else if (name === "Example") {
       const of = /of="([^"]+)"/.exec(jsx)?.[1] ?? "";
       const file = /name="([^"]+)"/.exec(jsx)?.[1] ?? "";
@@ -698,12 +717,12 @@ function bodyMarkdown(
     } else if (name === "DocsTable") {
       out.push(docsTableOf(jsx));
     } else if (name === "ComponentList") {
-      out.push(componentListOf(jsx, components));
+      out.push(componentListOf(jsx, components, base));
     } else if (name === "WhatsNew") {
       out.push(releasesMarkdown(releasesIn(root)));
     } else if (name === "TemplatePreview") {
       const template = /name="([^"]+)"/.exec(jsx)?.[1] ?? "";
-      const preview = `/templates/${template}/preview`;
+      const preview = sitePath(`/templates/${template}/preview`, base);
       out.push(`The template runs live at [${preview}](${preview}).`);
     } else {
       out.push(
@@ -725,11 +744,15 @@ export function contentRoutesIn(root: string): string[] {
     .sort();
 }
 
-/** The Markdown of the page at `route`, a written page or a component's own page, or `null` without one. */
+/**
+ * The Markdown of the page at `route`, a written page or a component's own page, or `null` without one, its
+ * links under `base`, the path the site is served under.
+ */
 export function pageMarkdown(
   root: string,
   route: string,
   components: readonly ComponentSource[] = componentSources(root),
+  base = "/",
 ): string | null {
   const file = join(root, "apps/docs/content", `${route}.mdx`);
   if (existsSync(file)) {
@@ -738,13 +761,13 @@ export function pageMarkdown(
     const title = typeof data["title"] === "string" ? data["title"] : route;
     const description =
       typeof data["description"] === "string" ? data["description"] : "";
-    return `${[heading(1, title), "", description, "", bodyMarkdown(root, { route, title }, body, components)].join("\n").trim()}\n`;
+    return `${[heading(1, title), "", description, "", bodyMarkdown(root, { route, title }, body, components, base)].join("\n").trim()}\n`;
   }
   const component = components.find(
     (candidate) => componentHref(candidate) === `/${route}`,
   );
   return component
-    ? `${componentMarkdown(root, component, components)}\n`
+    ? `${componentMarkdown(root, component, components, 1, base)}\n`
     : null;
 }
 
@@ -759,11 +782,13 @@ interface ListedPage {
 /**
  * `llms.txt`: what buttery is, and every page of the site with a link to its Markdown, under the nav's
  * sections in the nav's order, and the components under their groups' names, such as "Components › Actions";
- * then the demos, which are apps, by their own addresses.
+ * then the demos, which are apps, by their own addresses. Its links are under `base`, the path the site is
+ * served under.
  */
 export function llmsText(
   root: string,
   components: readonly ComponentSource[] = componentSources(root),
+  base = "/",
 ): string {
   const pages: ListedPage[] = [
     ...contentRoutesIn(root).map((route) => {
@@ -778,7 +803,7 @@ export function llmsText(
         section: typeof data["section"] === "string" ? data["section"] : "",
         order: typeof data["order"] === "number" ? data["order"] : 0,
         title,
-        line: `- [${title}](/${route}.md): ${description}`,
+        line: `- [${title}](${sitePath(`/${route}.md`, base)}): ${description}`,
       };
     }),
     ...components
@@ -787,7 +812,7 @@ export function llmsText(
         section: component.section,
         order: component.order,
         title: component.title,
-        line: `- [${component.name}](${markdownHref(componentHref(component))}): ${textOf(component.meta["purpose"])}`,
+        line: `- [${component.name}](${sitePath(markdownHref(componentHref(component)), base)}): ${textOf(component.meta["purpose"])}`,
       })),
   ];
   const listing = (heading: string, section: string): string[] => {
@@ -811,10 +836,10 @@ export function llmsText(
     ]),
     "## Demos",
     "",
-    "- [Demos](/demos): Small apps made only from buttery's components, each one a template with its own content, that open as sites of their own.",
+    `- [Demos](${sitePath("/demos", base)}): Small apps made only from buttery's components, each one a template with its own content, that open as sites of their own.`,
     ...demoPages.map(
       (demo) =>
-        `- [${demo.title}](/demos/${demo.route}): ${demo.description} It's built on the ${demo.template} template, and its source is in \`apps/demos/${demo.route}\`.`,
+        `- [${demo.title}](${sitePath(`/demos/${demo.route}`, base)}): ${demo.description} It's built on the ${demo.template} template, and its source is in \`apps/demos/${demo.route}\`.`,
     ),
   ]
     .join("\n")
@@ -840,34 +865,48 @@ export type MarkdownMiddleware = (
   next: () => void,
 ) => void;
 
-function pathOf(request: MarkdownRequest): string {
-  return decodeURIComponent((request.url ?? "").split("?")[0] ?? "");
+/** The path a request asks for, from the site's root, or `null` for an address outside `base`. */
+function pathOf(request: MarkdownRequest, base: string): string | null {
+  return pathUnderBase(
+    decodeURIComponent((request.url ?? "").split("?")[0] ?? ""),
+    base,
+  );
 }
 
-function notFound(response: MarkdownResponse, path: string): void {
+function notFound(
+  response: MarkdownResponse,
+  path: string,
+  base: string,
+): void {
   response.statusCode = 404;
   response.setHeader("Content-Type", "text/plain; charset=utf-8");
   response.end(
-    `No page has its Markdown at ${path}. /llms.txt links to every page's.\n`,
+    `No page has its Markdown at ${sitePath(path, base)}. ${sitePath("/llms.txt", base)} links to every page's.\n`,
   );
 }
 
 /**
- * Answers `llms.txt` and each page's Markdown at its path plus `.md`, written from the repository on each
- * request, and 404 for a `.md` address that's no page's and isn't a file `served` says the server has.
- * Anything else goes on to `next`.
+ * Answers `llms.txt` and each page's Markdown at its path plus `.md`, under `base`, written from the
+ * repository on each request, and 404 for a `.md` address that's no page's and isn't a file `served` says
+ * the server has, given its path from the site's root. Anything else, and any address outside the base,
+ * goes on to `next`.
  */
 export function markdownRequests(
   root: string,
   served: (path: string) => boolean,
+  base = "/",
 ): MarkdownMiddleware {
   return (request, response, next) => {
-    const path = pathOf(request);
+    const path = pathOf(request, base);
+    if (path === null) {
+      next();
+      return;
+    }
     const markdown =
       path === "/llms.txt"
-        ? llmsText(root)
+        ? llmsText(root, componentSources(root), base)
         : path.endsWith(".md")
-          ? pageMarkdown(root, path.slice(1, -3))
+          ? pageMarkdown(root, path.slice(1, -3), componentSources(root), base)
           : null;
     if (markdown !== null) {
       response.setHeader(
@@ -880,19 +919,7 @@ export function markdownRequests(
       return;
     }
     if (path.endsWith(".md") && !served(path)) {
-      notFound(response, path);
-      return;
-    }
-    next();
-  };
-}
-
-/** Answers 404 for a `.md` address with no file in `out`, the static build, rather than the app's HTML. */
-export function missingMarkdown(out: string): MarkdownMiddleware {
-  return (request, response, next) => {
-    const path = pathOf(request);
-    if (path.endsWith(".md") && !existsSync(join(out, path))) {
-      notFound(response, path);
+      notFound(response, path, base);
       return;
     }
     next();
@@ -900,15 +927,31 @@ export function missingMarkdown(out: string): MarkdownMiddleware {
 }
 
 /**
- * Serves every page as Markdown at its path plus `.md`, and `llms.txt`, from the dev server, written from
- * the repository on each request so they follow the pages as they change; the static build writes the same
- * files. Both answer 404 for a `.md` address no page has, the static build when `vite preview` serves it.
+ * Answers 404 for a `.md` address under `base` with no file in `out`, the static build, rather than the
+ * app's HTML.
+ */
+export function missingMarkdown(out: string, base = "/"): MarkdownMiddleware {
+  return (request, response, next) => {
+    const path = pathOf(request, base);
+    if (path?.endsWith(".md") === true && !existsSync(join(out, path))) {
+      notFound(response, path, base);
+      return;
+    }
+    next();
+  };
+}
+
+/**
+ * Serves every page as Markdown at its path plus `.md`, and `llms.txt`, from the dev server under its base,
+ * written from the repository on each request so they follow the pages as they change; the static build
+ * writes the same files. Both answer 404 for a `.md` address no page has, the static build when
+ * `vite preview` serves it.
  */
 export function butteryMarkdown(root: string): Plugin {
   return {
     name: "buttery-docs-markdown",
     configureServer(server) {
-      const { root: app, publicDir } = server.config;
+      const { root: app, publicDir, base } = server.config;
       server.middlewares.use(
         markdownRequests(
           root,
@@ -916,6 +959,7 @@ export function butteryMarkdown(root: string): Plugin {
             path.startsWith("/@") ||
             existsSync(join(app, path)) ||
             (publicDir !== "" && existsSync(join(publicDir, path))),
+          base,
         ),
       );
     },
@@ -923,6 +967,7 @@ export function butteryMarkdown(root: string): Plugin {
       server.middlewares.use(
         missingMarkdown(
           resolve(server.config.root, server.config.build.outDir),
+          server.config.base,
         ),
       );
     },

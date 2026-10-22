@@ -64,6 +64,33 @@ function ask(
   };
 }
 
+/** What `handle` answers a request for `url` with, or `null` when it passes the request on. */
+function bodyOf(handle: MarkdownMiddleware, url: string): string | null {
+  const written: string[] = [];
+  handle(
+    { url },
+    {
+      statusCode: 200,
+      setHeader: () => undefined,
+      end: (body: string) => written.push(body),
+    },
+    () => undefined,
+  );
+  return written[0] ?? null;
+}
+
+/** The links in `markdown`, outside its code blocks, to a path on the site that isn't under `base`. */
+function linksOutside(markdown: string, base: string): string[] {
+  let fenced = false;
+  return markdown.split("\n").flatMap((line) => {
+    if (line.startsWith("```")) fenced = !fenced;
+    if (fenced || line.startsWith("```")) return [];
+    return [...line.matchAll(/\]\((\/[^)\s]*)\)/g)].flatMap(([, href = ""]) =>
+      href.startsWith(base) ? [] : [href],
+    );
+  });
+}
+
 /** The lines of `markdown` outside its code blocks that still look like JSX. */
 function jsxLeftIn(markdown: string): string[] {
   const left: string[] = [];
@@ -322,6 +349,100 @@ describe("the Markdown addresses", () => {
         passed: false,
       });
       expect(ask(handle, "/get-started/instalation").passed).toBe(true);
+    } finally {
+      rmSync(out, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("the site as Markdown under a base", () => {
+  const base = "/buttery/";
+
+  it("links every page's Markdown under the base: its own links, its components' and the live page's", () => {
+    const routes = [
+      ...contentRoutesIn(root),
+      ...components
+        .filter((component) => component.home === undefined)
+        .map((component) => componentHref(component).slice(1)),
+    ];
+    for (const route of routes) {
+      const markdown = pageMarkdown(root, route, components, base) ?? "";
+      expect(linksOutside(markdown, base), route).toEqual([]);
+    }
+    expect(
+      pageMarkdown(root, "foundations/palettes", components, base),
+    ).toContain("[color tokens](/buttery/foundations/colors)");
+    const button = pageMarkdown(root, "components/button", components, base);
+    expect(button).toContain(
+      "[Button › Demo](/buttery/components/button#demo)",
+    );
+    expect(button).toContain(
+      "- [IconButton](/buttery/components/icon-button.md)",
+    );
+    expect(
+      pageMarkdown(root, "components/data-table", components, base),
+    ).toContain("(/buttery/demos/roastery/orders)");
+    expect(
+      pageMarkdown(root, "templates/dashboard", components, base),
+    ).toContain(
+      "The template runs live at [/buttery/templates/dashboard/preview](/buttery/templates/dashboard/preview).",
+    );
+  });
+
+  it("lists every page in llms.txt with a link to its Markdown under the base", () => {
+    const text = llmsText(root, components, base);
+    for (const route of contentRoutesIn(root))
+      expect(text).toContain(`(/buttery/${route}.md)`);
+    expect(text).toContain("(/buttery/components/button.md)");
+    expect(listedUnder(text, "Demos")).toEqual([
+      "/buttery/demos",
+      ...demoPages.map((demo) => `/buttery/demos/${demo.route}`),
+    ]);
+    expect(linksOutside(text, base)).toEqual([]);
+  });
+
+  it("answers each page's Markdown and llms.txt at their addresses under the base", () => {
+    const handle = markdownRequests(root, (path) => path === "/notes.md", base);
+    expect(ask(handle, "/buttery/get-started/installation.md")).toEqual({
+      status: 200,
+      type: "text/markdown; charset=utf-8",
+      passed: false,
+    });
+    expect(
+      linksOutside(
+        bodyOf(handle, "/buttery/get-started/installation.md") ?? "",
+        base,
+      ),
+    ).toEqual([]);
+    expect(ask(handle, "/buttery/llms.txt").type).toBe(
+      "text/plain; charset=utf-8",
+    );
+    expect(bodyOf(handle, "/buttery/llms.txt")).toContain(
+      "(/buttery/components/button.md)",
+    );
+    expect(ask(handle, "/buttery/get-started/instalation.md").status).toBe(404);
+    expect(ask(handle, "/buttery/notes.md").passed).toBe(true);
+    expect(ask(handle, "/get-started/installation.md").passed).toBe(true);
+  });
+
+  it("answers 404 for a .md address under the base the static build has no file for", () => {
+    const out = mkdtempSync(join(tmpdir(), "buttery-markdown-"));
+    try {
+      mkdirSync(join(out, "get-started"));
+      writeFileSync(
+        join(out, "get-started/installation.md"),
+        "# Installation\n",
+      );
+      const handle = missingMarkdown(out, base);
+      expect(ask(handle, "/buttery/get-started/installation.md").passed).toBe(
+        true,
+      );
+      expect(ask(handle, "/buttery/get-started/instalation.md")).toEqual({
+        status: 404,
+        type: "text/plain; charset=utf-8",
+        passed: false,
+      });
+      expect(ask(handle, "/get-started/instalation.md").passed).toBe(true);
     } finally {
       rmSync(out, { recursive: true, force: true });
     }
