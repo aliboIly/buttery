@@ -539,15 +539,18 @@ export function CommandSearch({
 
   // With nothing found, the panel holds the height it last had with results, so it doesn't jump.
   useLayoutEffect(() => {
-    const element = scroller.current;
-    if (!element) return;
+    const panel = scroller.current?.parentElement;
+    if (!panel) return;
     if (noResults) {
-      element.style.minBlockSize =
-        heldHeight.current > 0 ? `${String(heldHeight.current)}px` : "";
+      if (heldHeight.current > 0)
+        panel.style.setProperty(
+          "--bt-command-search-held",
+          `${String(heldHeight.current)}px`,
+        );
       return;
     }
-    element.style.minBlockSize = "";
-    heldHeight.current = element.offsetHeight;
+    panel.style.removeProperty("--bt-command-search-held");
+    heldHeight.current = panel.offsetHeight;
   });
 
   const update = (next: string): void => {

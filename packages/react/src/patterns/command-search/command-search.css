@@ -9,6 +9,7 @@
     --bt-command-search-min: 160px;
     --bt-command-search-max: 480px;
     --bt-command-search-line: 1px;
+    --bt-command-search-held: 0px;
   }
 
   .bt-command-search {
@@ -131,11 +132,19 @@
 
   /*
    * The panel takes the field's width from the component and scrolls inside, never shorter than a steady
-   * minimum, nor taller than the room left under the field.
+   * minimum (or the height it held before nothing matched), nor taller than the room left beside the field;
+   * where the room is shorter than the minimum, its rows give way and its footer stays.
    */
   .bt-command-search-panel.bt-popover {
     display: flex;
     flex-direction: column;
+    min-block-size: min(
+      max(var(--bt-command-search-min), var(--bt-command-search-held)),
+      var(
+        --radix-popover-content-available-height,
+        var(--bt-command-search-max)
+      )
+    );
     max-block-size: min(
       var(--bt-command-search-max),
       var(
@@ -162,7 +171,7 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    min-block-size: var(--bt-command-search-min);
+    min-block-size: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
   }

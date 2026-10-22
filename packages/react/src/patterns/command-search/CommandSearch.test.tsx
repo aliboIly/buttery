@@ -749,6 +749,26 @@ describe("CommandSearch", () => {
     expect(panel.getBoundingClientRect().top).toBeGreaterThanOrEqual(8);
   });
 
+  it("keeps its footer in a window too short for its minimum, its rows giving way", async () => {
+    await page.viewport(1280, 240);
+    render(<Search onSearch={() => undefined} />);
+    await userEvent.click(field());
+    for (const typed of ["ines", "zzz"]) {
+      await userEvent.keyboard(typed);
+      const panel = document.querySelector(".bt-command-search-panel");
+      const footer = document.querySelector(
+        '.bt-command-search-panel [data-bt-part="command-search-footer"]',
+      );
+      if (!panel || !footer) throw new Error("No footer.");
+      await waitFor(() => {
+        expect(panel.getBoundingClientRect().bottom).toBeLessThanOrEqual(240);
+      });
+      expect(footer.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+        panel.getBoundingClientRect().bottom,
+      );
+    }
+  });
+
   it("opens its first empty answer no shorter than its steady minimum", async () => {
     render(<Search sources={[CUSTOMERS]} filters={[]} />);
     await userEvent.click(field());
