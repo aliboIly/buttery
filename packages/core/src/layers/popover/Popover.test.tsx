@@ -85,7 +85,7 @@ function Products({
       <Popover open={open} entrance={entrance}>
         <Popover.Trigger>Products</Popover.Trigger>
         <Popover.Content scrim="blur" aria-label="Products">
-          <p>Card Studio</p>
+          <p>Deckhand</p>
         </Popover.Content>
       </Popover>
     </MotionPreferenceContext>
@@ -216,7 +216,7 @@ describe("Popover", () => {
       <Popover defaultOpen>
         <Popover.Trigger>Products</Popover.Trigger>
         <Popover.Content scrim="blur" aria-label="Products">
-          <p>Card Studio</p>
+          <p>Deckhand</p>
         </Popover.Content>
       </Popover>,
     );
