@@ -346,7 +346,7 @@ function PhoneMenu({
  *
  * @example
  * <NavBar
- *   brand={<a href="/">Card Studio</a>}
+ *   brand={<a href="/">Deckhand</a>}
  *   actions={<Button arrow="forward">Get started</Button>}
  *   behavior="sticky"
  * >

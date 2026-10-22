@@ -111,7 +111,7 @@ export interface SignInFormProps extends Omit<
  *
  * @example
  * <SignInForm
- *   description="Welcome back to Card Studio."
+ *   description="Welcome back to Deckhand."
  *   forgotPasswordHref="/forgot"
  *   signUpHref="/sign-up"
  *   onSubmit={async ({ email, password }) => (await signIn(email, password)) ? undefined : "That email and password don't match."}
