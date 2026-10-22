@@ -132,7 +132,7 @@ export const demos: readonly DemoSection[] = [
         <Trigger label="Products" />
         <Popover.Content scrim="blur" align="start" aria-label="Products">
           <Stack gap={1} padX={2} padY={1}>
-            <Text variant="menu">Card Studio</Text>
+            <Text variant="menu">Deckhand</Text>
             <Text variant="menu">Templates</Text>
           </Stack>
         </Popover.Content>
