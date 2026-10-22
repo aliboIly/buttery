@@ -1,5 +1,5 @@
-import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice, Stack } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { ChartFrame } from "@buttery/react";
 import type { ChartSeries } from "@buttery/react";
 
@@ -33,6 +33,45 @@ const bags: ChartSeries = {
   key: "bags",
   label: "Bags roasted",
   values: [48, 40, 55, 52, 60, 74, 66],
+};
+
+export const live: LiveDemo = {
+  controls: {
+    size: { kind: "choice", options: ["sm", "md", "lg"], initial: "md" },
+    loading: { kind: "toggle", initial: false },
+  },
+  render: ({ size, loading }) => (
+    <ChartFrame
+      label="Orders and bags roasted"
+      summary="Both peaked on Oct 13."
+      labels={DAYS}
+      series={[orders, bags]}
+      layout="band"
+      size={demoChoice(size, ["md", "sm", "lg"])}
+      loading={loading === true}
+    >
+      <ChartFrame.Bars series={["orders"]} />
+      <ChartFrame.Line series="bags" />
+    </ChartFrame>
+  ),
+  code: ({ size, loading }) =>
+    [
+      "<ChartFrame",
+      '  label="Orders and bags roasted"',
+      '  summary="Both peaked on Oct 13."',
+      `  labels={${JSON.stringify(DAYS)}}`,
+      "  series={[",
+      `    { key: "orders", label: "Orders", values: ${JSON.stringify(orders.values)} },`,
+      `    { key: "bags", label: "Bags roasted", values: ${JSON.stringify(bags.values)} },`,
+      "  ]}",
+      '  layout="band"',
+      `  size="${demoChoice(size, ["md", "sm", "lg"])}"`,
+      ...(loading === true ? ["  loading"] : []),
+      ">",
+      '  <ChartFrame.Bars series={["orders"]} />',
+      '  <ChartFrame.Line series="bags" />',
+      "</ChartFrame>",
+    ].join("\n"),
 };
 
 export const demos: readonly DemoSection[] = [
