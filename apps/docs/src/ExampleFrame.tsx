@@ -4,6 +4,7 @@ import { Inline, Stack, Surface, Text } from "@buttery/core";
 import { CodeHtml } from "./CodeBlock.tsx";
 import { CodeToggle } from "./CodeToggle.tsx";
 import { DesktopPreview } from "./DesktopPreview.tsx";
+import { withInlineCode } from "./inline-code.tsx";
 import type { DemoFrame, DemoWidth } from "@buttery/core";
 import type { Example } from "./registry.ts";
 
@@ -40,7 +41,7 @@ export function ExampleFrame({
         </Text>
         {code.caption === "" ? null : (
           <Text variant="body-sm" tone="secondary">
-            {code.caption}
+            {withInlineCode(code.caption)}
           </Text>
         )}
       </Stack>
