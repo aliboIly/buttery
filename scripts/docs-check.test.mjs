@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { propsTablesIn } from "../apps/docs/vite/props.ts";
 import { checkDocs } from "./docs-check.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -110,6 +111,16 @@ describe("docs check", () => {
     ).toEqual([
       "apps/docs/lab/docs-check/export-without-page/content/guides/helpers.mdx lists mutedHelper in its exports but doesn't describe it. Fix: write about `mutedHelper` on the page, with its name in backticks, alone or called, as in `mutedHelper()`.",
       "quietHelper, exported from apps/docs/lab/docs-check/export-without-page/package/index.ts, has no docs page. Fix: add it to exports: [...] in the frontmatter of the page that documents it, and describe it there.",
+    ]);
+  });
+
+  it("gives FloatingLanes.Item a props table, since its props are named after the part", () => {
+    const tables = propsTablesIn(
+      "FloatingLanes",
+      join(root, "packages/core/src/layers/floating-lanes/FloatingLanes.tsx"),
+    );
+    expect(tables.map((table) => [table.part, table.interfaceName])).toEqual([
+      ["Item", "FloatingLanesItemProps"],
     ]);
   });
 

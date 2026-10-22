@@ -34,12 +34,12 @@ export type {
   ControllableStateSetter,
 } from "./hooks/use-controllable-state.ts";
 export {
-  FloatingLaneItem,
+  FloatingLanesItem,
   FloatingLanes,
   useFloatingObstacle,
 } from "./layers/floating-lanes/FloatingLanes.tsx";
 export type {
-  FloatingLaneItemProps,
+  FloatingLanesItemProps,
   FloatingLanesComponent,
 } from "./layers/floating-lanes/FloatingLanes.tsx";
 export {

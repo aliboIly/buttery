@@ -231,7 +231,7 @@ function FloatingLanesHost(): ReactElement {
 }
 
 /** Props for `FloatingLanes.Item`. */
-export interface FloatingLaneItemProps {
+export interface FloatingLanesItemProps {
   /** Which lane to stack in. Defaults to `"bottom-center"`, where toasts go. */
   readonly lane?: LaneName | undefined;
   /** The item, such as a toast. Menus and tooltips it opens stack above the lane. */
@@ -243,10 +243,10 @@ export interface FloatingLaneItemProps {
  * element of its own: the children go straight into the lane. A lane has room for three items; in
  * development, a fourth logs a warning.
  */
-export function FloatingLaneItem({
+export function FloatingLanesItem({
   lane = "bottom-center",
   children,
-}: FloatingLaneItemProps): ReactElement | null {
+}: FloatingLanesItemProps): ReactElement | null {
   const lanes = useSyncExternalStore(subscribe, getLanes, getServerLanes);
   useEffect(() => (isDevelopment ? countLaneItem(lane) : undefined), [lane]);
   const target = lanes[lane];
@@ -278,7 +278,7 @@ export function useFloatingObstacle(): RefCallback<HTMLElement> {
 export interface FloatingLanesComponent {
   (): ReactElement;
   /** Renders its children into a lane. */
-  readonly Item: typeof FloatingLaneItem;
+  readonly Item: typeof FloatingLanesItem;
 }
 
 /**
@@ -304,5 +304,5 @@ export interface FloatingLanesComponent {
  */
 export const FloatingLanes: FloatingLanesComponent = Object.assign(
   FloatingLanesHost,
-  { Item: FloatingLaneItem },
+  { Item: FloatingLanesItem },
 );
