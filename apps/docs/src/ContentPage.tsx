@@ -142,7 +142,11 @@ function RelatedPages({
     <Stack gap={5} asChild>
       <section aria-labelledby="related">
         <Heading>Related</Heading>
-        <Grid columns={{ base: 1, md: 2 }} gap={4} asChild>
+        <Grid
+          columns={{ base: 1, md: pages.length % 3 === 0 ? 3 : 2 }}
+          gap={4}
+          asChild
+        >
           <ul role="list" className="docs-cards">
             {pages.map((related) => (
               <Surface key={related.route} level="section" pad={5} asChild>

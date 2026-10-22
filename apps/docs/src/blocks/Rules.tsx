@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
 import { Grid, Stack, Surface, Text } from "@buttery/core";
+import { withInlineCode } from "../inline-code.tsx";
 import "./blocks.css";
 
 /**
@@ -34,7 +35,7 @@ export function Rule({
         <span className="docs-rule-number" aria-hidden="true" />
         <Stack gap={2} className="docs-rule-body">
           <Text variant="title-sm" asChild>
-            <p>{title}</p>
+            <p>{withInlineCode(title)}</p>
           </Text>
           {children}
         </Stack>

@@ -357,3 +357,8 @@
   font-family: var(--bt-font-mono);
   color: var(--bt-text);
 }
+
+/* A token's name stays on one line; its values and its use wrap beside it. */
+.docs-token {
+  white-space: nowrap;
+}

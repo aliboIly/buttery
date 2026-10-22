@@ -55,7 +55,7 @@ export function ColorTable({
                   style={{ background: `var(--bt-${name})` }}
                 />
               </td>
-              <td className="pg-mono">--bt-{name}</td>
+              <td className="pg-mono docs-token">--bt-{name}</td>
               <td className="pg-mono">{definition.light}</td>
               <td className="pg-mono">{definition.dark}</td>
               <td>{definition.description}</td>

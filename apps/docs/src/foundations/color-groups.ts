@@ -1,7 +1,7 @@
 /** The color tokens in each role, by how their names start. */
 export const COLOR_GROUPS = {
   surfaces: ["bg-"],
-  text: ["text-", "icon-"],
+  text: ["text", "icon-"],
   borders: ["border", "control-border", "divider-"],
   emphasis: ["primary", "on-primary", "accent", "selection", "ring-"],
   status: ["danger", "success", "warning"],
