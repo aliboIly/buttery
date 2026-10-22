@@ -7,7 +7,7 @@ import type {
   DocsPage,
   LiveDemo,
 } from "@buttery/core";
-import { Button, FilterBar, FilterPill } from "@buttery/react";
+import { Button, FilterBar, FilterPill, SearchField } from "@buttery/react";
 import { Download } from "lucide-react";
 
 export const page: DocsPage = {
@@ -85,85 +85,119 @@ function Filters(): ReactElement {
 
 const STATUSES = ["Paid", "Unpaid", "Refunded"] as const;
 
-type Status = (typeof STATUSES)[number];
+const ORIGINS = ["Ethiopia", "Kenya", "Colombia"] as const;
 
-function LiveFilters({
-  initial,
-  exporting,
-  clearLabel,
+function ChoicePill<Choice extends string>({
+  label,
+  choices,
+  value,
+  onValueChange,
 }: {
-  readonly initial: Status | undefined;
-  readonly exporting: boolean;
-  readonly clearLabel: string;
+  readonly label: string;
+  readonly choices: readonly Choice[];
+  readonly value: Choice | undefined;
+  readonly onValueChange: (value: Choice | undefined) => void;
 }): ReactElement {
-  const [status, setStatus] = useState(initial);
   const [open, setOpen] = useState(false);
   return (
+    <FilterPill
+      label={label}
+      value={value}
+      open={open}
+      onOpenChange={setOpen}
+      onRemove={() => {
+        onValueChange(undefined);
+      }}
+    >
+      <Stack gap={1}>
+        {choices.map((choice) => (
+          <Button
+            key={choice}
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              onValueChange(choice);
+              setOpen(false);
+            }}
+          >
+            {choice}
+          </Button>
+        ))}
+      </Stack>
+    </FilterPill>
+  );
+}
+
+function LiveFilters({
+  initialStatus,
+  initialOrigin,
+  search,
+}: {
+  readonly initialStatus: (typeof STATUSES)[number] | undefined;
+  readonly initialOrigin: (typeof ORIGINS)[number] | undefined;
+  readonly search: boolean;
+}): ReactElement {
+  const [status, setStatus] = useState(initialStatus);
+  const [origin, setOrigin] = useState(initialOrigin);
+  return (
     <FilterBar
-      clearLabel={clearLabel}
+      applied={(status === undefined ? 0 : 1) + (origin === undefined ? 0 : 1)}
       onClearAll={() => {
         setStatus(undefined);
+        setOrigin(undefined);
       }}
       actions={
-        exporting ? (
-          <Button size="sm" iconStart={Download}>
-            Export
-          </Button>
+        search ? (
+          <SearchField label="Search orders" placeholder="Order or customer" />
         ) : undefined
       }
     >
-      <FilterPill
+      <ChoicePill
         label="Status"
+        choices={STATUSES}
         value={status}
-        open={open}
-        onOpenChange={setOpen}
-        onRemove={() => {
-          setStatus(undefined);
-        }}
-      >
-        <Stack gap={1}>
-          {STATUSES.map((choice) => (
-            <Button
-              key={choice}
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setStatus(choice);
-                setOpen(false);
-              }}
-            >
-              {choice}
-            </Button>
-          ))}
-        </Stack>
-      </FilterPill>
+        onValueChange={setStatus}
+      />
+      <ChoicePill
+        label="Origin"
+        choices={ORIGINS}
+        value={origin}
+        onValueChange={setOrigin}
+      />
     </FilterBar>
   );
 }
 
-function filtersCode({ status, actions, clearLabel }: DemoValues): string {
-  const value = demoChoice(status, [...STATUSES, "None"]);
+function pillCode(label: string, value: string, picker: string): string[] {
+  return [
+    value === "None"
+      ? `  <FilterPill label="${label}">`
+      : `  <FilterPill label="${label}" value="${value}" onRemove={() => set${label}(undefined)}>`,
+    `    <${picker} onValueChange={set${label}} />`,
+    "  </FilterPill>",
+  ];
+}
+
+function filtersCode({ status, origin, search }: DemoValues): string {
   return [
     "<FilterBar",
     "  onClearAll={clearFilters}",
-    ...(clearLabel === "Clear filters"
-      ? []
-      : [`  clearLabel="${String(clearLabel)}"`]),
-    ...(actions === true
+    ...(search === true
       ? [
-          "  actions={",
-          '    <Button size="sm" iconStart={Download}>',
-          "      Export",
-          "    </Button>",
-          "  }",
+          '  actions={<SearchField label="Search orders" placeholder="Order or customer" />}',
         ]
       : []),
     ">",
-    value === "None"
-      ? '  <FilterPill label="Status">'
-      : `  <FilterPill label="Status" value="${value}" onRemove={removeStatus}>`,
-    "    <StatusPicker onValueChange={setStatus} />",
-    "  </FilterPill>",
+    ...pillCode(
+      "Status",
+      demoChoice(status, ["None", ...STATUSES]),
+      "StatusPicker",
+    ),
+    ...pillCode(
+      "Origin",
+      demoChoice(origin, ["None", ...ORIGINS]),
+      "OriginPicker",
+    ),
     "</FilterBar>",
   ].join("\n");
 }
@@ -172,20 +206,25 @@ export const live: LiveDemo = {
   controls: {
     status: {
       kind: "choice",
-      options: ["Paid", "Unpaid", "Refunded", "None"],
+      options: ["None", ...STATUSES],
       initial: "Unpaid",
     },
-    actions: { kind: "toggle", initial: true },
-    clearLabel: { kind: "text", initial: "Clear filters" },
+    origin: {
+      kind: "choice",
+      options: ["None", ...ORIGINS],
+      initial: "None",
+    },
+    search: { kind: "toggle", initial: true },
   },
-  render: ({ status, actions, clearLabel }) => {
-    const value = demoChoice(status, [...STATUSES, "None"]);
+  render: ({ status, origin, search }) => {
+    const statusValue = demoChoice(status, ["None", ...STATUSES]);
+    const originValue = demoChoice(origin, ["None", ...ORIGINS]);
     return (
       <LiveFilters
-        key={value}
-        initial={value === "None" ? undefined : value}
-        exporting={actions === true}
-        clearLabel={String(clearLabel)}
+        key={`${statusValue}-${originValue}`}
+        initialStatus={statusValue === "None" ? undefined : statusValue}
+        initialOrigin={originValue === "None" ? undefined : originValue}
+        search={search === true}
       />
     );
   },
