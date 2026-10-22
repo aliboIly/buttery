@@ -1,8 +1,8 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { Breadcrumbs } from "@buttery/react";
 import { useState } from "react";
 import type { MouseEvent, ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Breadcrumbs } from "@buttery/react";
 
 const PAGES = [
   {
@@ -42,6 +42,8 @@ export function NestedSettingsPage(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("link", "Plans and billing");
