@@ -1,7 +1,8 @@
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { HoverActions, IconButton } from "@buttery/react";
-import { Settings } from "lucide-react";
+import { Settings, Trash2 } from "lucide-react";
 
 export const page: DocsPage = {
   section: "components/data-display",
@@ -18,6 +19,54 @@ const ROWS = [
   { name: "Payouts", hint: "Emailed when a payout is sent" },
   { name: "Low green coffee", hint: "Off" },
 ];
+
+const ACTIONS = ["settings", "remove", "both"] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    actions: { kind: "choice", options: ACTIONS, initial: "settings" },
+    children: { kind: "text", initial: "Payouts" },
+  },
+  render: ({ actions, children }) => {
+    const shown = demoChoice(actions, ACTIONS);
+    const name = String(children);
+    return (
+      <HoverActions
+        actions={
+          <>
+            {shown === "remove" ? null : (
+              <IconButton
+                icon={Settings}
+                label={`Settings for ${name}`}
+                size="sm"
+              />
+            )}
+            {shown === "settings" ? null : (
+              <IconButton icon={Trash2} label={`Remove ${name}`} size="sm" />
+            )}
+          </>
+        }
+      >
+        <Text variant="label">{name}</Text>
+      </HoverActions>
+    );
+  },
+  code: ({ actions, children }) => {
+    const shown = demoChoice(actions, ACTIONS);
+    const name = String(children);
+    const settings = `<IconButton icon={Settings} label="Settings for ${name}" size="sm" />`;
+    const remove = `<IconButton icon={Trash2} label="Remove ${name}" size="sm" />`;
+    const buttons =
+      shown === "settings"
+        ? settings
+        : shown === "remove"
+          ? remove
+          : `<>${settings}${remove}</>`;
+    return `<HoverActions actions={${buttons}}>
+  <Text variant="label">${name}</Text>
+</HoverActions>`;
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {
