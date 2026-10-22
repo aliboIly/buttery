@@ -14,7 +14,7 @@ buttery isn't on npm yet, and its repository is private, so until the first npm 
 
 - Access to the buttery repository on GitHub. Ask its maintainer for it.
 - Node 22.18 or later in the 22 line, 24.11 or later in the 24 line, or 26 and later. That's the `engines` range in the repository's root `package.json`.
-- pnpm 12. The root `package.json` pins 12.14.0 as its `packageManager`, and on Node 22 and 24, `corepack enable` installs that version for you.
+- pnpm 12. The root `package.json` pins 12.14.0 as its `packageManager`, and on Node 22 and 24, `corepack enable` installs that version for you. Node 25 and later don't ship Corepack, so on Node 26 run `npm install -g pnpm@12.14.0`.
 - For the desktop app, Rust through `rustup` and, on macOS, the Xcode Command Line Tools (`xcode-select --install`), which Tauri v2 builds with.
 
 ## Get the repository
