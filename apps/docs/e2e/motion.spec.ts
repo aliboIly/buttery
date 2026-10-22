@@ -1266,195 +1266,152 @@ test.describe("motion turning reduced mid-animation", () => {
   });
 });
 
-test.describe("Card Studio (MOTION_SPEC §3)", () => {
-  const CARD = '[data-testid="title-card"]';
+/** Clicks inside the page right after sampling starts, so the first frame is the one the click lands in. */
+async function sampleClickOn(
+  page: Page,
+  target: Locator,
+  selector: string,
+  duration: number,
+): Promise<Run> {
+  await startSampling(page, selector);
+  await target.evaluate((element) => {
+    if (element instanceof HTMLElement) element.click();
+  });
+  return finishSampling(page, duration);
+}
+
+/**
+ * Drags `handle` in steps while reading, as each frame begins, where `control` is and how big `follower` is
+ * drawn. A follower set in the same commit as the control is drawn by Motion during the frame, after this
+ * read, so it shows one read later: `delay` is the most reads the follower took to follow a control move,
+ * and `trailing` counts follower changes more than a read after the control's last move.
+ */
+async function followDrag(
+  page: Page,
+  handle: Locator,
+  control: string,
+  follower: string,
+  offset: { readonly x: number; readonly y: number },
+): Promise<{
+  readonly moved: number;
+  readonly delay: number;
+  readonly trailing: number;
+}> {
+  const { x, y } = await centerOf(handle);
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.evaluate(
+    ({ controlSelector, followerSelector }) => {
+      const controlElement = document.querySelector(controlSelector);
+      const followerElement = document.querySelector(followerSelector);
+      if (!controlElement || !followerElement)
+        throw new Error("No control or follower.");
+      const probe = window as unknown as {
+        followed: { control: number; follower: number }[];
+        stopped: boolean;
+      };
+      probe.followed = [];
+      probe.stopped = false;
+      const read = (): void => {
+        if (probe.stopped) return;
+        const at = controlElement.getBoundingClientRect();
+        const drawn = followerElement.getBoundingClientRect();
+        probe.followed.push({
+          control: Math.round((at.left + at.top * 1000) * 10),
+          follower: Math.round((drawn.width + drawn.height * 1000) * 10),
+        });
+        requestAnimationFrame(read);
+      };
+      requestAnimationFrame(read);
+    },
+    { controlSelector: control, followerSelector: follower },
+  );
+  for (let step = 1; step <= 8; step += 1) {
+    await page.mouse.move(x + (offset.x * step) / 8, y + (offset.y * step) / 8);
+    await page.waitForTimeout(TWO_FRAMES);
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const followed = await page.evaluate(() => {
+    const probe = window as unknown as {
+      followed: { control: number; follower: number }[];
+      stopped: boolean;
+    };
+    probe.stopped = true;
+    return probe.followed;
+  });
+  const changed = (pick: "control" | "follower"): number[] =>
+    followed.flatMap((frame, index) => {
+      const previous = followed[index - 1];
+      return previous && frame[pick] !== previous[pick] ? [index] : [];
+    });
+  const moves = changed("control");
+  const followerChanges = changed("follower");
+  const delay = Math.max(
+    0,
+    ...moves.map((move) => {
+      const next = followerChanges.find((index) => index >= move);
+      return next === undefined ? Number.POSITIVE_INFINITY : next - move;
+    }),
+  );
+  const lastMove = moves.at(-1) ?? 0;
+  const trailing = followerChanges.filter(
+    (index) => index > lastMove + 1,
+  ).length;
+  return { moved: moves.length, delay, trailing };
+}
+
+test.describe("Deckhand (MOTION_SPEC §3)", () => {
+  const BOX = '[data-testid="stage-slide"] [data-dh-box]';
+  const PLACE = '[data-testid="stage-slide"] .dh-slide-place';
   const CANVAS = '[data-bt="Stage"] > [data-bt-part="canvas"]';
   const BACKGROUND = `${CANVAS} > [data-bt-part="background"]`;
-  const CROP = `${CANVAS} > [data-bt-part="crop"]`;
-  const FINISH_INDICATOR = '[aria-label="Finish"] [data-bt-part="indicator"]';
-  const LEAN_KNOB = '[aria-label="Lean"] [data-bt-part="knob"]';
+  const ALIGN_INDICATOR = '[aria-label="Align"] [data-bt-part="indicator"]';
 
   test.beforeEach(async ({ page }) => {
     await installSampler(page);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/demos/card-studio?chrome=0&motion=full");
-    await page.getByTestId("title-card").waitFor();
+    await page.goto("/demos/deckhand?chrome=0&motion=full");
+    await page.getByTestId("stage-slide").waitFor();
     await page.evaluate(async () => {
       await document.fonts.ready;
     });
     await page.waitForTimeout(300);
   });
 
-  /** Clicks inside the page right after sampling starts, so the first frame is the one the click lands in. */
-  async function sampleClickOn(
-    page: Page,
-    target: Locator,
-    selector: string,
-    duration: number,
-  ): Promise<Run> {
-    await startSampling(page, selector);
-    await target.evaluate((element) => {
-      if (element instanceof HTMLElement) element.click();
-    });
-    return finishSampling(page, duration);
+  async function pickSlide(page: Page, number: number): Promise<void> {
+    await page
+      .getByRole("option", { name: new RegExp(`^Slide ${String(number)}:`) })
+      .click();
+    await page.waitForTimeout(400);
   }
 
-  /**
-   * Drags `handle` in steps while reading, as each frame begins, where `control` is and how big the card
-   * is drawn. A card set in the same commit as the control is drawn by Motion during the frame, after this
-   * read, so it shows one read later: `delay` is the most reads the card took to follow a control move, and
-   * `trailing` counts card changes more than a read after the control's last move.
-   */
-  async function followDrag(
-    page: Page,
-    handle: Locator,
-    control: string,
-    offset: { readonly x: number; readonly y: number },
-  ): Promise<{
-    readonly moved: number;
-    readonly delay: number;
-    readonly trailing: number;
-  }> {
-    const { x, y } = await centerOf(handle);
-    await page.mouse.move(x, y);
-    await page.mouse.down();
-    await page.evaluate(
-      ({ controlSelector, cardSelector }) => {
-        const controlElement = document.querySelector(controlSelector);
-        const cardElement = document.querySelector(cardSelector);
-        if (!controlElement || !cardElement)
-          throw new Error("No control or card.");
-        const probe = window as unknown as {
-          followed: { control: number; card: number }[];
-          stopped: boolean;
-        };
-        probe.followed = [];
-        probe.stopped = false;
-        const read = (): void => {
-          if (probe.stopped) return;
-          const at = controlElement.getBoundingClientRect();
-          const drawn = cardElement.getBoundingClientRect();
-          probe.followed.push({
-            control: Math.round((at.left + at.top * 1000) * 10),
-            card: Math.round((drawn.width + drawn.height * 1000) * 10),
-          });
-          requestAnimationFrame(read);
-        };
-        requestAnimationFrame(read);
-      },
-      { controlSelector: control, cardSelector: CARD },
-    );
-    for (let step = 1; step <= 8; step += 1) {
-      await page.mouse.move(
-        x + (offset.x * step) / 8,
-        y + (offset.y * step) / 8,
-      );
-      await page.waitForTimeout(TWO_FRAMES);
-    }
-    await page.mouse.up();
-    await page.waitForTimeout(300);
-    const followed = await page.evaluate(() => {
-      const probe = window as unknown as {
-        followed: { control: number; card: number }[];
-        stopped: boolean;
-      };
-      probe.stopped = true;
-      return probe.followed;
-    });
-    const changed = (pick: "control" | "card"): number[] =>
-      followed.flatMap((frame, index) => {
-        const previous = followed[index - 1];
-        return previous && frame[pick] !== previous[pick] ? [index] : [];
-      });
-    const moves = changed("control");
-    const cardChanges = changed("card");
-    const delay = Math.max(
-      0,
-      ...moves.map((move) => {
-        const next = cardChanges.find((index) => index >= move);
-        return next === undefined ? Number.POSITIVE_INFINITY : next - move;
-      }),
-    );
-    const lastMove = moves.at(-1) ?? 0;
-    const trailing = cardChanges.filter((index) => index > lastMove + 1).length;
-    return { moved: moves.length, delay, trailing };
+  function position(page: Page, name: string): Locator {
+    return page
+      .getByRole("radiogroup", { name: "Position" })
+      .getByRole("radio", { name, exact: true });
   }
 
-  for (const { name, control } of [
-    { name: "Scale", control: "scale" },
-    { name: "Turn", control: "turn" },
-  ] as const) {
-    test(`a ${control} drag changes the card in the same frame as the thumb, with nothing left to catch up`, async ({
-      page,
-    }) => {
-      const thumb = page.getByRole("slider", { name, exact: true });
-      await thumb.evaluate((element) => {
-        element.setAttribute("data-dragged", "");
-      });
-      const { moved, delay, trailing } = await followDrag(
-        page,
-        thumb,
-        "[data-dragged]",
-        { x: -60, y: 0 },
-      );
-      report(
-        `${name} drag: the thumb moved on ${String(moved)} frames; the card followed within ${String(delay)} read and changed ${String(trailing)} times after`,
-      );
-      expect(moved).toBeGreaterThanOrEqual(4);
-      expect(delay).toBeLessThanOrEqual(1);
-      expect(trailing).toBe(0);
-    });
-  }
-
-  test("a lean drag turns the card in the same frame as the knob, with nothing left to catch up", async ({
+  test("a size drag changes the words in the same frame as the thumb, with nothing left to catch up", async ({
     page,
   }) => {
+    const thumb = page.getByRole("slider", { name: "Size", exact: true });
+    await thumb.evaluate((element) => {
+      element.setAttribute("data-dragged", "");
+    });
     const { moved, delay, trailing } = await followDrag(
       page,
-      page.getByRole("group", { name: "Lean" }),
-      LEAN_KNOB,
-      { x: 24, y: -12 },
+      thumb,
+      "[data-dragged]",
+      BOX,
+      { x: -100, y: 0 },
     );
     report(
-      `Lean drag: the knob moved on ${String(moved)} frames; the card followed within ${String(delay)} read and changed ${String(trailing)} times after`,
+      `Size drag: the thumb moved on ${String(moved)} frames; the words followed within ${String(delay)} read and changed ${String(trailing)} times after`,
     );
     expect(moved).toBeGreaterThanOrEqual(4);
     expect(delay).toBeLessThanOrEqual(1);
     expect(trailing).toBe(0);
-  });
-
-  test("the Flat chip lays a leaning card flat on spring.smooth", async ({
-    page,
-  }) => {
-    await page.getByRole("slider", { name: "Left and right" }).focus();
-    await page.keyboard.press("Shift+ArrowRight");
-    await page.waitForTimeout(800);
-    const turns = await page.evaluate(async (selector) => {
-      const card = document.querySelector<HTMLElement>(selector);
-      const chip = [...document.querySelectorAll<HTMLElement>("button")].find(
-        (button) => button.textContent.trim() === "Flat",
-      );
-      if (!card || !chip) throw new Error("No card or Flat chip.");
-      const angle = (): number =>
-        Number(/rotateY\((-?[\d.]+)deg\)/.exec(card.style.transform)?.[1] ?? 0);
-      const start = angle();
-      const pressed = performance.now();
-      chip.click();
-      const read: { t: number; value: number }[] = [];
-      while (performance.now() - pressed < 700) {
-        const t = await new Promise<number>((resolve) => {
-          requestAnimationFrame(resolve);
-        });
-        read.push({ t: t - pressed, value: angle() });
-      }
-      return { start, read };
-    }, CARD);
-    expect(turns.start).toBeCloseTo(10, 1);
-    expectSpring(
-      "lean back to flat",
-      progress(turns.read, turns.start, 0),
-      "smooth",
-    );
   });
 
   test("a swatch swaps the background in one frame", async ({ page }) => {
@@ -1464,12 +1421,16 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
         ...document.querySelectorAll<HTMLElement>('[role="radio"]'),
       ].find((element) => element.getAttribute("aria-label") === "Peach");
       if (!background || !swatch) throw new Error("No background or swatch.");
-      const before = getComputedStyle(background).backgroundImage;
+      const look = (): string => {
+        const style = getComputedStyle(background);
+        return `${style.backgroundColor} ${style.backgroundImage}`;
+      };
+      const before = look();
       swatch.click();
       const seen: boolean[] = [];
       for (let frame = 0; frame < 6; frame += 1) {
         await new Promise((resolve) => requestAnimationFrame(resolve));
-        seen.push(getComputedStyle(background).backgroundImage !== before);
+        seen.push(look() !== before);
       }
       return seen;
     }, BACKGROUND);
@@ -1477,31 +1438,34 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     expect(frames.indexOf(true)).toBeLessThanOrEqual(1);
   });
 
-  test("the finish control's indicator slides on spring.snappy", async ({
+  test("the align control's indicator slides on spring.snappy", async ({
     page,
   }) => {
     const run = await sampleClickOn(
       page,
       page
-        .getByRole("radiogroup", { name: "Finish" })
-        .getByRole("radio", { name: "Paper" }),
-      FINISH_INDICATOR,
+        .getByRole("radiogroup", { name: "Align" })
+        .getByRole("radio", { name: "Center" }),
+      ALIGN_INDICATOR,
       500,
     );
     expectSpring(
-      "finish indicator",
+      "align indicator",
       travelled(run, (reading) => reading.left),
       "snappy",
     );
   });
 
-  test("the finish crossfades the card's fill, ink and shadow over dur-base", async ({
+  test("a box crossfades the words' fill, ink and shadow over dur-base", async ({
     page,
   }) => {
+    await pickSlide(page, 2);
     const run = await sampleClickOn(
       page,
-      page.getByRole("radio", { name: "Clear" }),
-      CARD,
+      page
+        .getByRole("radiogroup", { name: "Box" })
+        .getByRole("radio", { name: "Dark" }),
+      BOX,
       400,
     );
     for (const property of ["background-color", "color", "box-shadow"]) {
@@ -1514,16 +1478,17 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
   test("a depth drag sets the shadow on every frame, with no transition", async ({
     page,
   }) => {
+    await pickSlide(page, 5);
     const thumb = page.getByRole("slider", { name: "Depth" });
     const shadow = (): Promise<string> =>
       page
-        .getByTestId("title-card")
+        .locator(BOX)
         .evaluate((element) => getComputedStyle(element).boxShadow);
     const before = await shadow();
     const { x, y } = await centerOf(thumb);
     await page.mouse.move(x, y);
     await page.mouse.down();
-    await startSampling(page, CARD);
+    await startSampling(page, BOX);
     for (let step = 1; step <= 6; step += 1) {
       await page.mouse.move(x + 8 * step, y);
       await page.waitForTimeout(FRAME);
@@ -1534,13 +1499,15 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     expect(await shadow()).not.toBe(before);
   });
 
-  test("switching to a color crossfades the fill's rows over dur-fast while the height follows on spring.smooth", async ({
+  test("switching the fill to a color crossfades the rows over dur-fast while the height follows on spring.smooth", async ({
     page,
   }) => {
-    const morph = '[aria-label="Card settings"] [data-bt="Morph"]';
+    const morph = '[data-testid="look-section"] [data-bt="Morph"]';
     const height = await sampleClickOn(
       page,
-      page.getByRole("radio", { name: "Color" }),
+      page
+        .getByRole("radiogroup", { name: "Fill" })
+        .getByRole("radio", { name: "Color" }),
       morph,
       700,
     );
@@ -1549,11 +1516,16 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
       travelled(height, (reading) => reading.height),
       "smooth",
     );
-    await page.getByRole("radio", { name: "Blend" }).click();
+    await page
+      .getByRole("radiogroup", { name: "Fill" })
+      .getByRole("radio", { name: "Gradient" })
+      .click();
     await page.waitForTimeout(800);
     const views = await sampleClickOn(
       page,
-      page.getByRole("radio", { name: "Color" }),
+      page
+        .getByRole("radiogroup", { name: "Fill" })
+        .getByRole("radio", { name: "Color" }),
       `${morph} [data-bt-part="view"]`,
       400,
     );
@@ -1575,91 +1547,84 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     );
   });
 
-  test("a new anchor glides the card there on spring.smooth", async ({
+  test("a new position glides the words there on spring.smooth", async ({
     page,
   }) => {
-    const run = await sampleClickOn(
-      page,
-      page.getByRole("radio", { name: "Right", exact: true }),
-      CARD,
-      700,
-    );
+    const run = await sampleClickOn(page, position(page, "Right"), PLACE, 700);
     expectSpring(
-      "anchor glide",
+      "position glide",
       travelled(run, (reading) => reading.left),
       "smooth",
     );
   });
 
-  test("a section reset springs the card back on spring.smooth", async ({
+  test("the slide section's reset springs the words back on spring.smooth", async ({
     page,
   }) => {
-    await page.getByRole("slider", { name: "Scale" }).focus();
-    await page.keyboard.press("End");
+    await position(page, "Top right").click();
     await page.waitForTimeout(800);
     const run = await sampleClickOn(
       page,
-      page.getByRole("button", { name: "Reset Placement" }),
-      CARD,
+      page.getByRole("button", { name: "Reset Slide" }),
+      PLACE,
       700,
     );
     expectSpring(
       "reset",
-      travelled(run, (reading) => reading.width),
+      travelled(run, (reading) => reading.left),
       "smooth",
     );
   });
 
-  test("a new canvas shape reshapes the stage on spring.smooth, the card keeping its shape in the middle", async ({
+  test("a new slide size reshapes the stage on spring.smooth, the words keeping their shape", async ({
     page,
   }) => {
-    await page.getByRole("combobox", { name: /^Canvas shape/ }).click();
+    await page.getByRole("combobox", { name: /^Slide size/ }).click();
     await page.getByRole("option", { name: "Square · 1:1" }).waitFor();
     await page.waitForTimeout(400);
     const run = await sampleClickOn(
       page,
       page.getByRole("option", { name: "Square · 1:1" }),
-      `${CANVAS}, ${CARD}`,
+      `${CANVAS}, ${BOX}`,
       700,
     );
     expectSpring(
-      "canvas shape",
+      "slide size",
       travelled(run, (reading) => reading.height),
       "smooth",
     );
+    const [, startBox] = run.before.elements;
+    if (!startBox) throw new Error("The words went missing.");
+    const shape = startBox.width / startBox.height;
     for (const { elements } of run.frames) {
-      const [canvas, card] = elements;
-      if (!canvas || !card)
-        throw new Error("The canvas or the card went missing.");
-      expect(card.width / card.height).toBeCloseTo(1.6, 1);
-      expect(card.left + card.width / 2).toBeCloseTo(
-        canvas.left + canvas.width / 2,
-        0,
-      );
-      expect(card.top + card.height / 2).toBeCloseTo(
-        canvas.top + canvas.height / 2,
-        0,
+      const [canvas, box] = elements;
+      if (!canvas || !box)
+        throw new Error("The canvas or the words went missing.");
+      expect(box.width / box.height).toBeCloseTo(shape, 1);
+      expect(box.left).toBeGreaterThanOrEqual(canvas.left - 1);
+      expect(box.top + box.height).toBeLessThanOrEqual(
+        canvas.top + canvas.height + 1,
       );
     }
   });
 
-  test("the canvas shape menu grows in on spring.snappy with a dur-base fade", async ({
+  test("the slide size list grows in on spring.snappy with a dur-base fade", async ({
     page,
   }) => {
     const run = await sampleClickOn(
       page,
-      page.getByRole("combobox", { name: /^Canvas shape/ }),
+      page.getByRole("combobox", { name: /^Slide size/ }),
       '[data-bt="Popover"]',
       600,
     );
     const fading = expectTween(
-      "menu fading in",
+      "list fading in",
       progress(trace(run, opacity), 0, 1),
       EASE_OUT,
       DURATIONS.base,
     );
     const growing = expectSpring(
-      "menu growing",
+      "list growing",
       progress(
         trace(run, (reading) => reading.scale),
         ENTER_SCALE,
@@ -1669,7 +1634,7 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     );
     expect(Math.abs(growing.start - fading.start)).toBeLessThanOrEqual(3);
     const [trigger, active] = await page
-      .getByRole("combobox", { name: /^Canvas shape/ })
+      .getByRole("combobox", { name: /^Slide size/ })
       .evaluate((element) => {
         const probe = document.createElement("span");
         probe.style.backgroundColor = "var(--bt-bg-control-active)";
@@ -1684,46 +1649,12 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     expect(trigger).toBe(active);
   });
 
-  test("resize mode fades the background over dur-base and brings the handles in after the follow delay", async ({
+  test("arrange mode's toolbar rises in on spring.smooth with a dur-base fade after the follow delay", async ({
     page,
   }) => {
     const run = await sampleClickOn(
       page,
-      page.getByRole("button", { name: "Resize", exact: true }),
-      `${BACKGROUND}, ${CROP}`,
-      600,
-    );
-    const background = run.before.elements[0]?.id;
-    const crop = elementIds(run).find((id) => id !== background);
-    if (background === undefined || crop === undefined)
-      throw new Error("Resize mode didn't start.");
-    const fading = expectTween(
-      "background fading out",
-      progress(traceOf(run, background, opacity), 1, 0),
-      EASE_STANDARD,
-      DURATIONS.base,
-    );
-    const handles = expectTween(
-      "handles fading in",
-      progress(traceOf(run, crop, opacity), 0, 1),
-      EASE_OUT,
-      DURATIONS.fast,
-    );
-    const after = handles.start - fading.start;
-    report(
-      `the background starts fading ${ms(fading.start)} after the press, and the handles ${ms(after)} after that (80ms wanted)`,
-    );
-    expect(fading.start).toBeLessThanOrEqual(START_MAX);
-    expect(after).toBeGreaterThanOrEqual(80 - FRAME);
-    expect(after).toBeLessThanOrEqual(80 + FRAME);
-  });
-
-  test("the resize toolbar rises in on spring.smooth with a dur-base fade after the follow delay", async ({
-    page,
-  }) => {
-    const run = await sampleClickOn(
-      page,
-      page.getByRole("button", { name: "Resize", exact: true }),
+      page.getByRole("button", { name: "Arrange", exact: true }),
       '[data-bt-part="floating-toolbar-place"] > div',
       700,
     );
@@ -1750,20 +1681,28 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     expect(Math.abs(rising.start - fading.start)).toBeLessThanOrEqual(FRAME);
   });
 
-  test("deleting the card swaps the stage for the empty state within a frame", async ({
+  test("deleting the last slide swaps the stage for the empty state within a frame", async ({
     page,
   }) => {
+    const remove = page.getByRole("button", {
+      name: "Delete slide",
+      exact: true,
+    });
+    for (let count = 6; count > 1; count -= 1) {
+      await remove.click();
+      await expect(page.getByRole("option")).toHaveCount(count - 1);
+    }
     const frames = await page.evaluate(async () => {
-      const remove = document.querySelector<HTMLElement>(
-        '[data-bt="HeaderBar"] button[aria-label="Delete"]',
+      const button = document.querySelector<HTMLElement>(
+        '[data-bt="HeaderBar"] button[aria-label="Delete slide"]',
       );
-      if (!remove) throw new Error("No Delete button.");
-      remove.click();
+      if (!button) throw new Error("No Delete slide button.");
+      button.click();
       const seen: (readonly [boolean, boolean])[] = [];
       for (let frame = 0; frame < 4; frame += 1) {
         await new Promise((resolve) => requestAnimationFrame(resolve));
         seen.push([
-          document.querySelector('[data-bt="EmptyState"]') !== null,
+          document.querySelector('main [data-bt="EmptyState"]') !== null,
           document.querySelector('[data-bt="Stage"]') !== null,
         ]);
       }
@@ -1772,14 +1711,14 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     expect(frames.findIndex(([empty, stage]) => empty && !stage)).toBe(0);
   });
 
-  test("the card's removal toast rises on spring.snappy and fades in over dur-base", async ({
+  test("a slide's removal toast rises on spring.snappy and fades in over dur-base", async ({
     page,
   }) => {
     const toast =
       '.bt-toaster > [data-bt-part="list"] > [data-bt-part="toast"]';
     const run = await sampleClickOn(
       page,
-      page.getByRole("button", { name: "Delete", exact: true }),
+      page.getByRole("button", { name: "Delete slide", exact: true }),
       `${toast}, ${toast} > [data-bt-part="pill"]`,
       600,
     );
@@ -1802,6 +1741,133 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
       DURATIONS.base,
     );
     expect(Math.abs(rising.start - fading.start)).toBeLessThanOrEqual(FRAME);
+  });
+});
+
+test.describe("Tilt and crop on their docs pages (MOTION_SPEC §3)", () => {
+  test.beforeEach(async ({ page }) => {
+    await installSampler(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
+  });
+
+  async function openPage(page: Page, path: string): Promise<void> {
+    await page.goto(`${path}?motion=full`);
+    await page.getByRole("heading", { level: 1 }).waitFor();
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
+    await page.waitForTimeout(300);
+  }
+
+  test("a lean drag turns a card in the same frame as the knob, with nothing left to catch up", async ({
+    page,
+  }) => {
+    await openPage(page, "/components/tilt-pad");
+    const example = page
+      .getByRole("region", { name: "TiltPad examples" })
+      .locator("[data-docs-example]")
+      .filter({ has: page.getByRole("status", { name: "Card preview" }) });
+    await example.scrollIntoViewIfNeeded();
+    await example.locator('[data-bt-part="knob"]').evaluate((element) => {
+      element.setAttribute("data-follow-control", "");
+    });
+    await example
+      .getByRole("status", { name: "Card preview" })
+      .evaluate((element) => {
+        element.setAttribute("data-follow-card", "");
+      });
+    const { moved, delay, trailing } = await followDrag(
+      page,
+      example.getByRole("group", { name: "Lean" }),
+      "[data-follow-control]",
+      "[data-follow-card]",
+      { x: 24, y: -12 },
+    );
+    report(
+      `Lean drag: the knob moved on ${String(moved)} frames; the card followed within ${String(delay)} read and changed ${String(trailing)} times after`,
+    );
+    expect(moved).toBeGreaterThanOrEqual(4);
+    expect(delay).toBeLessThanOrEqual(1);
+    expect(trailing).toBe(0);
+  });
+
+  test("the Flat chip lays a leaning pad flat on spring.smooth", async ({
+    page,
+  }) => {
+    await openPage(page, "/components/tilt-pad");
+    const demo = page.getByRole("region", {
+      name: "TiltPad variants and states",
+    });
+    await demo.scrollIntoViewIfNeeded();
+    const leans = await demo.evaluate(async (section) => {
+      const knob = section.querySelector<HTMLElement>('[data-bt-part="knob"]');
+      const chip = [...section.querySelectorAll<HTMLElement>("button")].find(
+        (button) => button.textContent.trim() === "Flat",
+      );
+      if (!knob || !chip) throw new Error("No knob or Flat chip.");
+      const lean = (): number =>
+        Number(knob.style.getPropertyValue("--bt-tilt-pad-x"));
+      const start = lean();
+      const pressed = performance.now();
+      chip.click();
+      const read: { t: number; value: number }[] = [];
+      while (performance.now() - pressed < 700) {
+        const t = await new Promise<number>((resolve) => {
+          requestAnimationFrame(resolve);
+        });
+        read.push({ t: t - pressed, value: lean() });
+      }
+      return { start, read };
+    });
+    expect(leans.start).toBeCloseTo(0.4, 2);
+    expectSpring(
+      "lean back to flat",
+      progress(leans.read, leans.start, 0),
+      "smooth",
+    );
+  });
+
+  test("crop mode fades the canvas's background over dur-base and brings the handles in after the follow delay", async ({
+    page,
+  }) => {
+    await openPage(page, "/patterns/inspector");
+    const demo = page.getByRole("region", {
+      name: "Stage variants and states",
+    });
+    await demo.scrollIntoViewIfNeeded();
+    await demo.locator('[data-bt="Stage"]').evaluate((element) => {
+      element.setAttribute("data-sampled-stage", "");
+    });
+    const canvas = '[data-sampled-stage] > [data-bt-part="canvas"]';
+    const run = await sampleClickOn(
+      page,
+      demo.getByRole("button", { name: "Resize", exact: true }),
+      `${canvas} > [data-bt-part="background"], ${canvas} > [data-bt-part="crop"]`,
+      600,
+    );
+    const background = run.before.elements[0]?.id;
+    const crop = elementIds(run).find((id) => id !== background);
+    if (background === undefined || crop === undefined)
+      throw new Error("Crop mode didn't start.");
+    const fading = expectTween(
+      "background fading out",
+      progress(traceOf(run, background, opacity), 1, 0),
+      EASE_STANDARD,
+      DURATIONS.base,
+    );
+    const handles = expectTween(
+      "handles fading in",
+      progress(traceOf(run, crop, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.fast,
+    );
+    const after = handles.start - fading.start;
+    report(
+      `the background starts fading ${ms(fading.start)} after the press, and the handles ${ms(after)} after that (80ms wanted)`,
+    );
+    expect(fading.start).toBeLessThanOrEqual(START_MAX);
+    expect(after).toBeGreaterThanOrEqual(80 - FRAME);
+    expect(after).toBeLessThanOrEqual(80 + FRAME);
   });
 });
 

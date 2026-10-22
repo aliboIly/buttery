@@ -310,6 +310,7 @@ export function DeckInspector({
 
       <Inspector.Section
         title="Look"
+        data-testid="look-section"
         resettable={lookChanged(slide)}
         onReset={() => {
           onLive(false);
