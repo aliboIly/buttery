@@ -2,15 +2,16 @@ import { useSyncExternalStore } from "react";
 import type { Density } from "@buttery/core";
 import type { ColorSchemePreference } from "@buttery/react";
 
-const CHANGE = "docs:location";
-
 function subscribe(onChange: () => void): () => void {
   window.addEventListener("popstate", onChange);
-  window.addEventListener(CHANGE, onChange);
   return () => {
     window.removeEventListener("popstate", onChange);
-    window.removeEventListener(CHANGE, onChange);
   };
+}
+
+/** Tells everything that reads the address it changed, as the back button does, the demos' own routers too. */
+function announce(): void {
+  window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
 let serverHref = "http://localhost/";
@@ -81,7 +82,7 @@ export function navigate(href: string): void {
   }
   if (next.href === current.href) return;
   window.history.pushState(null, "", next);
-  window.dispatchEvent(new Event(CHANGE));
+  announce();
   if (next.hash === "") {
     window.scrollTo({ top: 0 });
     return;
@@ -100,7 +101,7 @@ export function setSetting(
   const url = new URL(window.location.href);
   url.searchParams.set(name, value);
   window.history.replaceState(null, "", url);
-  window.dispatchEvent(new Event(CHANGE));
+  announce();
 }
 
 /** Whether a click on a link is one the browser should handle: another tab, a download, another site. */

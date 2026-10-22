@@ -15,7 +15,8 @@ import type { NavSection } from "./nav.ts";
 import { MotionPage } from "./pages/MotionPage.tsx";
 import { CardStudio } from "./card-studio/CardStudio.tsx";
 import { CardStudioSite } from "./card-studio/CardStudioSite.tsx";
-import { Roastery } from "./roastery/Roastery.tsx";
+import { App as Roastery } from "demo-roastery";
+import { HostedApp } from "./demos/DemoPage.tsx";
 import { components } from "./registry.ts";
 import { SearchPage } from "./search/SearchPage.tsx";
 import { demoPages } from "./routes.ts";
@@ -48,7 +49,10 @@ const DEMOS: Readonly<
 > = {
   "card-studio": { render: () => <CardStudio /> },
   "card-studio-site": { render: () => <CardStudioSite /> },
-  roastery: { render: () => <Roastery />, fullWindow: true },
+  roastery: {
+    render: () => <HostedApp App={Roastery} base="/demos/roastery" />,
+    fullWindow: true,
+  },
 };
 
 const ComparePage =
@@ -259,6 +263,24 @@ export const pages: readonly Page[] = [
   searchPage,
   ...labDocs,
 ];
+
+/**
+ * The page at `route`: the page with that route, else the one whose route is the longest start of it, as a
+ * demo's own path is (`demos/roastery/settings/team`), else the landing page.
+ */
+export function pageAt(route: string): Page {
+  const page =
+    pages.find((candidate) => candidate.route === route) ??
+    pages
+      .filter(
+        (candidate) =>
+          candidate.route !== "" && route.startsWith(`${candidate.route}/`),
+      )
+      .sort((a, b) => b.route.length - a.route.length)[0] ??
+    pages[0];
+  if (!page) throw new Error("The docs site needs at least one page.");
+  return page;
+}
 
 const duplicate = pages.find(
   (page, index) =>

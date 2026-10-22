@@ -11,6 +11,7 @@ import {
   Settings,
   Store,
   Users,
+  UsersRound,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -32,6 +33,7 @@ export type Place =
 /** A page the sidebar links to. */
 export interface NavPage {
   readonly label: string;
+  /** Its path in the demo, such as `/orders`, which the sidebar links to from the demo's base. */
   readonly href: string;
   /** Its icon. The sidebar draws it outside a group; search shows it, or its group's. */
   readonly icon?: ComponentType<IconComponentProps> | undefined;
@@ -63,7 +65,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Home",
-      href: "/demos/roastery",
+      href: "/",
       icon: House,
       current: (place) => place.page === "overview",
     },
@@ -72,7 +74,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Orders",
-      href: "/demos/roastery/orders",
+      href: "/orders",
       icon: Receipt,
       current: (place) => place.page === "orders",
     },
@@ -81,7 +83,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Subscriptions",
-      href: "/demos/roastery/subscriptions",
+      href: "/subscriptions",
       icon: Repeat,
       current: (place) => place.page === "subscriptions",
     },
@@ -90,7 +92,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Customers",
-      href: "/demos/roastery/customers",
+      href: "/customers",
       icon: Users,
       current: (place) =>
         place.page === "customers" || place.page === "customer",
@@ -100,7 +102,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Payouts",
-      href: "/demos/roastery/payouts",
+      href: "/payouts",
       icon: Landmark,
       current: (place) => place.page === "payouts",
     },
@@ -114,7 +116,7 @@ export const NAV: readonly NavBlock[] = [
         kind: "page",
         page: {
           label: "Roast plan",
-          href: "/demos/roastery/roasts",
+          href: "/roasts",
           icon: CalendarDays,
           current: (place) => place.page === "roasts",
         },
@@ -123,7 +125,7 @@ export const NAV: readonly NavBlock[] = [
         kind: "page",
         page: {
           label: "Green coffee",
-          href: "/demos/roastery/stock",
+          href: "/stock",
           icon: Package,
           current: (place) => place.page === "stock",
         },
@@ -135,13 +137,13 @@ export const NAV: readonly NavBlock[] = [
         pages: [
           {
             label: "Accounts",
-            href: "/demos/roastery/wholesale",
+            href: "/wholesale",
             current: (place) =>
               place.page === "wholesale" && place.tab === "accounts",
           },
           {
             label: "Price lists",
-            href: "/demos/roastery/wholesale/prices",
+            href: "/wholesale/prices",
             current: (place) =>
               place.page === "wholesale" && place.tab === "prices",
           },
@@ -157,12 +159,18 @@ export const NAV: readonly NavBlock[] = [
     pages: [
       {
         label: "Settings",
-        href: "/demos/roastery/settings",
+        href: "/settings",
         icon: Settings,
         current: (place) =>
-          place.page === "settings" || place.page === "setting",
+          place.page === "settings" ||
+          (place.page === "setting" && place.id !== "team"),
       },
-      { label: "Back to the playground", href: "/foundations/tokens" },
+      {
+        label: "Team",
+        href: "/settings/team",
+        icon: UsersRound,
+        current: (place) => place.page === "setting" && place.id === "team",
+      },
     ],
   },
 ];

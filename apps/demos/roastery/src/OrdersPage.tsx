@@ -27,8 +27,8 @@ import { ORDERS, TODAY, coffeeOf, customerOf, dayNumber } from "./data.ts";
 import type { Order, OrderStatus } from "./data.ts";
 import { dateTime } from "./format.ts";
 import { useSimulatedLoad } from "./loading.ts";
-import { go } from "./navigation.ts";
 import { RenameView } from "./rename-view.tsx";
+import { useNavigate } from "./router.tsx";
 
 const PAGE_SIZE = 25;
 
@@ -161,6 +161,7 @@ export function OrdersPage({
 }: {
   readonly onNewOrder: () => void;
 }): ReactElement {
+  const navigate = useNavigate();
   const [views, setViews] = useState(VIEWS);
   const [saved, setSaved] = useState<ReadonlyMap<string, Filters>>(new Map());
   const [view, setView] = useState("all");
@@ -343,7 +344,7 @@ export function OrdersPage({
             <>
               <Menu.Item
                 onSelect={() => {
-                  go(`/demos/roastery/customers/${order.customerId}`);
+                  navigate(`/customers/${order.customerId}`);
                 }}
               >
                 View customer

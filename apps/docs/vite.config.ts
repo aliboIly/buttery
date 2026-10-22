@@ -64,9 +64,9 @@ export default defineConfig({
     referenceCaptures(),
   ],
   resolve: { conditions: ["@buttery/source", ...defaultClientConditions] },
-  // The static build renders every page on the server from the packages' source, as the dev server does.
+  // The static build renders every page on the server from source, the packages' and the apps', as the dev server does.
   ssr: {
-    noExternal: [/^@buttery\//],
+    noExternal: [/^@buttery\//, /^demo-/, /^template-/],
     resolve: { conditions: ["@buttery/source", ...defaultServerConditions] },
   },
   server: { port, strictPort: true },

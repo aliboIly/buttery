@@ -17,7 +17,6 @@ import { NEXT_PAYOUT, bagCount, daily, salesTotal, sum } from "./data.ts";
 import type { Order } from "./data.ts";
 import { change, money, number, shortDate, shortMoney } from "./format.ts";
 import { useSimulatedLoad } from "./loading.ts";
-import { go } from "./navigation.ts";
 import {
   alignedBuckets,
   bucketLabels,
@@ -28,7 +27,9 @@ import {
 } from "./period.ts";
 import { usePickup } from "./shop-state.ts";
 import { StockList } from "./stock.tsx";
+import { STORAGE_PREFIX } from "./storage.ts";
 import { PageFooter } from "./page-footer.tsx";
+import { useLink, useNavigate } from "./router.tsx";
 
 const WEEKDAYS = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
 
@@ -75,6 +76,8 @@ function measure(
 
 /** The roastery's front page: today's numbers, what's roasting and what's on hand. */
 export function OverviewPage(): ReactElement {
+  const link = useLink();
+  const navigate = useNavigate();
   const [period, setPeriod] = useState<DateRangeValue>({
     range: "last-7-days",
     interval: "daily",
@@ -112,10 +115,10 @@ export function OverviewPage(): ReactElement {
               title="Get an alert when green coffee runs low"
               action={{
                 label: "Turn on alerts",
-                href: "/demos/roastery/settings/notifications",
+                href: link("/settings/notifications"),
               }}
               estimate="2 min"
-              storageKey="roastery-low-stock"
+              storageKey={`${STORAGE_PREFIX}-low-stock`}
             >
               Nyeri is down to 180 kg, about nine days of roasting.
             </RecommendationCard>
@@ -127,11 +130,7 @@ export function OverviewPage(): ReactElement {
                 info="This week's paid sales, less fees, sent to your bank on Friday."
                 value={money(nextPayout.amount)}
                 updated={`Arrives ${shortDate(nextPayout.arrives)}`}
-                href="/demos/roastery/payouts"
-                onNavigate={(href, event) => {
-                  event.preventDefault();
-                  go(href);
-                }}
+                href={link("/payouts")}
               />
             </AppPage.Section>
           )}
@@ -144,10 +143,10 @@ export function OverviewPage(): ReactElement {
           icon={Truck}
           action={{
             label: "Turn on pickup",
-            href: "/demos/roastery/settings/pickup",
+            href: link("/settings/pickup"),
           }}
           estimate="2 min"
-          storageKey="roastery-pickup"
+          storageKey={`${STORAGE_PREFIX}-pickup`}
         >
           Customers within 20 miles can collect their coffee at the roastery.
         </Banner>
@@ -166,7 +165,7 @@ export function OverviewPage(): ReactElement {
             formatTick={shortMoney}
             updated="Updated just now"
             loading={loading}
-            href="/demos/roastery/payouts"
+            href={link("/payouts")}
           />
           <MetricCard
             title="Orders"
@@ -176,7 +175,7 @@ export function OverviewPage(): ReactElement {
             series={orders.series}
             updated="Updated just now"
             loading={loading}
-            href="/demos/roastery/orders"
+            href={link("/orders")}
           />
           <MetricCard
             title="Bags sold"
@@ -187,7 +186,7 @@ export function OverviewPage(): ReactElement {
             series={bags.series}
             updated="Updated just now"
             loading={loading}
-            href="/demos/roastery/stock"
+            href={link("/stock")}
           />
           <MetricCard
             title="Refunds"
@@ -199,7 +198,7 @@ export function OverviewPage(): ReactElement {
             series={refunds.series}
             updated="Updated just now"
             loading={loading}
-            href="/demos/roastery/orders"
+            href={link("/orders")}
           />
         </Grid>
       </AppPage.Section>
@@ -209,7 +208,7 @@ export function OverviewPage(): ReactElement {
           <Button
             size="sm"
             onClick={() => {
-              go("/demos/roastery/orders");
+              navigate("/orders");
             }}
           >
             See orders
@@ -233,7 +232,7 @@ export function OverviewPage(): ReactElement {
         />
       </AppPage.Section>
       <AppPage.Section title="Green coffee on hand">
-        <StockList href="/demos/roastery/stock" />
+        <StockList href={link("/stock")} />
       </AppPage.Section>
     </AppPage>
   );

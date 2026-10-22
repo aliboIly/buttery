@@ -13,17 +13,24 @@ import { money } from "./format.ts";
 import { navPages } from "./nav.ts";
 import { SETTINGS, settingHref } from "./settings-list.ts";
 
-/** Every page of the demo: the sidebar's, from its navigation, and each setting the settings index reaches. */
+const SETTING_PAGES: readonly SearchPage[] = SETTINGS.filter(
+  (setting) => setting.href === undefined,
+).map((setting) => ({
+  label: setting.title,
+  path: ["Settings"],
+  href: settingHref(setting),
+  icon: setting.icon,
+}));
+
+/**
+ * Every page of the demo, by its path in the demo: the sidebar's, from its navigation, and each setting the
+ * settings index reaches, once each.
+ */
 export const PAGES: readonly SearchPage[] = [
-  ...navPages().filter((page) => page.href.startsWith("/demos/roastery")),
-  ...SETTINGS.filter((setting) => setting.href === undefined).map(
-    (setting) => ({
-      label: setting.title,
-      path: ["Settings"],
-      href: settingHref(setting),
-      icon: setting.icon,
-    }),
+  ...navPages().filter(
+    (page) => !SETTING_PAGES.some((setting) => setting.href === page.href),
   ),
+  ...SETTING_PAGES,
 ];
 
 /** The filters the search takes. */
@@ -65,52 +72,61 @@ function cityMatches(
   return city === undefined || customer?.city.toLowerCase() === city;
 }
 
-/** Orders by their number or their customer's name, narrowed by status, channel and city. */
-export const ORDER_SOURCE: LocalSearchSource = {
-  id: "orders",
-  label: "Orders",
-  search: (query) => {
-    const status = filterOf(query, "status");
-    const channel = filterOf(query, "channel");
-    const city = filterOf(query, "city");
-    return ORDERS.filter((order) => {
-      const customer = BY_ID.get(order.customerId);
-      return (
-        (status === undefined || order.status === status) &&
-        (channel === undefined || order.channel === channel) &&
-        cityMatches(customer, city) &&
-        wordsMatch(query, order.id, customer?.name ?? "")
-      );
-    }).map((order) => ({
-      id: order.id,
-      label: order.id,
-      detail: `${BY_ID.get(order.customerId)?.name ?? "Someone"}, ${money(order.amount)}, ${order.status}`,
-      icon: Receipt,
-      href: `/demos/roastery/customers/${order.customerId}`,
-    }));
-  },
-};
+/**
+ * Orders by their number or their customer's name, narrowed by status, channel and city, each linking to
+ * its customer's page through `link`, which turns a path in the demo into its address.
+ */
+export function orderSource(link: (path: string) => string): LocalSearchSource {
+  return {
+    id: "orders",
+    label: "Orders",
+    search: (query) => {
+      const status = filterOf(query, "status");
+      const channel = filterOf(query, "channel");
+      const city = filterOf(query, "city");
+      return ORDERS.filter((order) => {
+        const customer = BY_ID.get(order.customerId);
+        return (
+          (status === undefined || order.status === status) &&
+          (channel === undefined || order.channel === channel) &&
+          cityMatches(customer, city) &&
+          wordsMatch(query, order.id, customer?.name ?? "")
+        );
+      }).map((order) => ({
+        id: order.id,
+        label: order.id,
+        detail: `${BY_ID.get(order.customerId)?.name ?? "Someone"}, ${money(order.amount)}, ${order.status}`,
+        icon: Receipt,
+        href: link(`/customers/${order.customerId}`),
+      }));
+    },
+  };
+}
 
-/** Customers by name, email or city; order filters find no one. */
-export const CUSTOMER_SOURCE: LocalSearchSource = {
-  id: "customers",
-  label: "Customers",
-  search: (query) => {
-    if (query.filters.some((token) => token.key !== "city")) return [];
-    const city = filterOf(query, "city");
-    return CUSTOMERS.filter(
-      (customer) =>
-        cityMatches(customer, city) &&
-        wordsMatch(query, customer.name, customer.email, customer.city),
-    ).map((customer) => ({
-      id: customer.id,
-      label: customer.name,
-      detail: `${customer.city}, ${customer.email}`,
-      icon: User,
-      href: `/demos/roastery/customers/${customer.id}`,
-    }));
-  },
-};
+/** Customers by name, email or city, each linking to their page through `link`; order filters find no one. */
+export function customerSource(
+  link: (path: string) => string,
+): LocalSearchSource {
+  return {
+    id: "customers",
+    label: "Customers",
+    search: (query) => {
+      if (query.filters.some((token) => token.key !== "city")) return [];
+      const city = filterOf(query, "city");
+      return CUSTOMERS.filter(
+        (customer) =>
+          cityMatches(customer, city) &&
+          wordsMatch(query, customer.name, customer.email, customer.city),
+      ).map((customer) => ({
+        id: customer.id,
+        label: customer.name,
+        detail: `${customer.city}, ${customer.email}`,
+        icon: User,
+        href: link(`/customers/${customer.id}`),
+      }));
+    },
+  };
+}
 
 /** The help center's articles, which the help panel can open. */
 export const ARTICLES: readonly {

@@ -23,8 +23,10 @@ import {
   sum,
 } from "./data.ts";
 import type { Customer } from "./data.ts";
+import { CustomerLink } from "./customer-cell.tsx";
 import { money, number } from "./format.ts";
 import { PageFooter } from "./page-footer.tsx";
+import { useLink } from "./router.tsx";
 
 function CafeCases(): ReactElement {
   const cases = [0, 1, 2];
@@ -114,9 +116,7 @@ const COLUMNS: readonly DataTableColumn<Account>[] = [
     id: "cafe",
     header: "Café",
     cell: (account) => (
-      <DataTable.Link href={`/demos/roastery/customers/${account.customer.id}`}>
-        {account.customer.name}
-      </DataTable.Link>
+      <CustomerLink id={account.customer.id} name={account.customer.name} />
     ),
     minWidth: "lg",
     grow: 2,
@@ -157,15 +157,14 @@ const COLUMNS: readonly DataTableColumn<Account>[] = [
 ];
 
 function AccountCard({ account }: { readonly account: Account }): ReactElement {
+  const link = useLink();
   return (
     <Surface pad={4}>
       <Stack gap={3}>
         <Stack gap={1}>
           <Text variant="title-sm" asChild>
             <h3>
-              <ArrowLink
-                href={`/demos/roastery/customers/${account.customer.id}`}
-              >
+              <ArrowLink href={link(`/customers/${account.customer.id}`)}>
                 {account.customer.name}
               </ArrowLink>
             </h3>
@@ -240,6 +239,7 @@ export function WholesalePage({
 }: {
   readonly tab: "accounts" | "prices";
 }): ReactElement {
+  const link = useLink();
   return (
     <AppPage
       footer={<PageFooter />}
@@ -252,14 +252,11 @@ export function WholesalePage({
           valueInfo="Cafés with a wholesale account."
         >
           <TabNav label="Wholesale">
-            <TabNav.Link
-              href="/demos/roastery/wholesale"
-              current={tab === "accounts"}
-            >
+            <TabNav.Link href={link("/wholesale")} current={tab === "accounts"}>
               Accounts
             </TabNav.Link>
             <TabNav.Link
-              href="/demos/roastery/wholesale/prices"
+              href={link("/wholesale/prices")}
               current={tab === "prices"}
             >
               Price lists

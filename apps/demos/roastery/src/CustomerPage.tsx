@@ -22,8 +22,8 @@ import { CUSTOMER_ROWS } from "./customers.ts";
 import { SUBSCRIPTIONS, TODAY, coffeeOf, dayNumber } from "./data.ts";
 import type { Order } from "./data.ts";
 import { dateTime, money, number, shortDate, since } from "./format.ts";
-import { go } from "./navigation.ts";
 import { PageFooter } from "./page-footer.tsx";
+import { useLink, useNavigate } from "./router.tsx";
 
 const ORDERS_PAGE = 25;
 
@@ -65,6 +65,8 @@ const ORDER_COLUMNS: readonly DataTableColumn<Order>[] = [
 
 /** One customer: what they've bought, their subscriptions, and their details in the rail. */
 export function CustomerPage({ id }: { readonly id: string }): ReactElement {
+  const link = useLink();
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const customer = CUSTOMER_ROWS.find((row) => row.id === id);
   if (customer === undefined)
@@ -76,9 +78,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
             title="Customer"
             breadcrumbs={
               <Breadcrumbs
-                items={[
-                  { label: "Customers", href: "/demos/roastery/customers" },
-                ]}
+                items={[{ label: "Customers", href: link("/customers") }]}
               />
             }
           />
@@ -88,11 +88,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
           icon={UserX}
           title="This customer isn't here"
           description="They may have been removed, or the link is from somewhere else."
-          docs={
-            <ArrowLink href="/demos/roastery/customers">
-              All customers
-            </ArrowLink>
-          }
+          docs={<ArrowLink href={link("/customers")}>All customers</ArrowLink>}
         />
       </AppPage>
     );
@@ -113,9 +109,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
             title={customer.name}
             breadcrumbs={
               <Breadcrumbs
-                items={[
-                  { label: "Customers", href: "/demos/roastery/customers" },
-                ]}
+                items={[{ label: "Customers", href: link("/customers") }]}
               />
             }
             description={`${customer.email}, ${customer.city}`}
@@ -248,7 +242,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
                 title="No subscriptions"
                 description="Coffee on a schedule shows up here once they start one."
                 docs={
-                  <ArrowLink href="/demos/roastery/subscriptions">
+                  <ArrowLink href={link("/subscriptions")}>
                     All subscriptions
                   </ArrowLink>
                 }
@@ -277,7 +271,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
                         }
                         value={`${String(subscription.bags)} ${subscription.bags === 1 ? "bag" : "bags"}`}
                         onClick={() => {
-                          go("/demos/roastery/subscriptions");
+                          navigate("/subscriptions");
                         }}
                       />
                     );

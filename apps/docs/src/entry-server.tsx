@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { renderToString } from "react-dom/server";
 import { App } from "./App.tsx";
 import { setServerHref } from "./location.ts";
-import { pages } from "./pages.tsx";
+import { pageAt, pages } from "./pages.tsx";
 
 /** One page as the static build writes it: its markup, and its title and description for the head. */
 export interface PrerenderedPage {
@@ -21,7 +21,7 @@ export function publicRoutes(): readonly string[] {
 
 /** The page at `route`, rendered to markup the way the site first draws it. */
 export function render(route: string): PrerenderedPage {
-  const page = pages.find((candidate) => candidate.route === route);
+  const page = pageAt(route);
   setServerHref(`http://localhost/${route}`);
   const html = renderToString(
     <StrictMode>
@@ -31,10 +31,7 @@ export function render(route: string): PrerenderedPage {
   return {
     route,
     html,
-    title:
-      page === undefined || route === ""
-        ? "buttery"
-        : `${page.title} · buttery`,
-    description: page?.docs?.description ?? "Make anything buttery.",
+    title: page.route === "" ? "buttery" : `${page.title} · buttery`,
+    description: page.docs?.description ?? "Make anything buttery.",
   };
 }

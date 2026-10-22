@@ -28,16 +28,20 @@ import type { ReactElement, ReactNode } from "react";
 import { PageFooter } from "./page-footer.tsx";
 import { SETTINGS, SETTING_SECTIONS, settingHref } from "./settings-list.ts";
 import type { Setting } from "./settings-list.ts";
+import { useLink } from "./router.tsx";
 import { useInvites, usePickup } from "./shop-state.ts";
 
-const CRUMBS = (
-  <Breadcrumbs
-    items={[{ label: "Settings", href: "/demos/roastery/settings" }]}
-  />
-);
+/** The way back from a setting to the settings index. */
+function SettingsCrumbs(): ReactElement {
+  const link = useLink();
+  return (
+    <Breadcrumbs items={[{ label: "Settings", href: link("/settings") }]} />
+  );
+}
 
 /** Every setting, grouped by what it's about. */
 export function SettingsPage(): ReactElement {
+  const link = useLink();
   return (
     <AppPage
       header={
@@ -58,14 +62,14 @@ export function SettingsPage(): ReactElement {
                   icon={setting.icon}
                   title={setting.title}
                   description={setting.description}
-                  href={settingHref(setting)}
+                  href={link(settingHref(setting))}
                 />
               ))}
               {section.title === "Money" ? (
                 <SettingsIndex.More
                   title="See what each plan adds"
                   description="Roast planning, wholesale and more."
-                  href="/demos/roastery/settings/plans"
+                  href={link("/settings/plans")}
                 />
               ) : null}
             </SettingsIndex.Section>
@@ -119,7 +123,7 @@ function ProfileSettings({
   return (
     <SettingsLayout
       title={setting.title}
-      breadcrumbs={CRUMBS}
+      breadcrumbs={<SettingsCrumbs />}
       description="How the team sees you, and how you sign in."
       footer={<PageFooter />}
     >
@@ -289,7 +293,7 @@ function NotificationSettings({
     <SettingsLayout
       title={setting.title}
       width="narrow"
-      breadcrumbs={CRUMBS}
+      breadcrumbs={<SettingsCrumbs />}
       description="What the roastery emails you about. The team's emails are in Team notifications."
       footer={<PageFooter />}
     >
@@ -339,7 +343,7 @@ function TeamNotificationSettings({
     <SettingsLayout
       title={setting.title}
       width="narrow"
-      breadcrumbs={CRUMBS}
+      breadcrumbs={<SettingsCrumbs />}
       description="Who on the team hears about what. Owners always get money emails."
       footer={<PageFooter />}
     >
@@ -462,7 +466,7 @@ function PlanSettings({
       header={
         <PageHeader
           title={setting.title}
-          breadcrumbs={CRUMBS}
+          breadcrumbs={<SettingsCrumbs />}
           description={`You're on ${PLANS[current].name}. Every plan starts with 30 days free.`}
         />
       }
@@ -582,7 +586,7 @@ function PickupSettings({
   return (
     <SettingsLayout
       title={setting.title}
-      breadcrumbs={CRUMBS}
+      breadcrumbs={<SettingsCrumbs />}
       description={
         pickup
           ? `Customers can collect at ${savedAddress}.`
@@ -651,7 +655,7 @@ function TeamSettings({
   return (
     <SettingsLayout
       title={setting.title}
-      breadcrumbs={CRUMBS}
+      breadcrumbs={<SettingsCrumbs />}
       description="Who can roast, pack and refund."
       footer={<PageFooter />}
     >
@@ -724,7 +728,7 @@ export function SettingPage({ id }: { readonly id: string }): ReactElement {
     return (
       <SettingsLayout
         title="Settings"
-        breadcrumbs={CRUMBS}
+        breadcrumbs={<SettingsCrumbs />}
         footer={<PageFooter />}
       >
         <AppPage.Section>
@@ -741,7 +745,7 @@ export function SettingPage({ id }: { readonly id: string }): ReactElement {
   return (
     <SettingsLayout
       title={setting.title}
-      breadcrumbs={CRUMBS}
+      breadcrumbs={<SettingsCrumbs />}
       description={setting.description}
       footer={<PageFooter />}
     >

@@ -18,7 +18,6 @@ import {
   toast,
 } from "@buttery/react";
 import {
-  ArrowLeft,
   Bell,
   CircleHelp,
   Repeat,
@@ -30,7 +29,6 @@ import {
 import { useMemo, useState } from "react";
 import type { ReactElement } from "react";
 import type { SearchSource, SetupTask } from "@buttery/react";
-import { useSettings } from "../location.ts";
 import { CustomerPage } from "./CustomerPage.tsx";
 import { CustomersPage } from "./CustomersPage.tsx";
 import { HelpPanel } from "./HelpPanel.tsx";
@@ -45,26 +43,24 @@ import { WholesalePage } from "./WholesalePage.tsx";
 import { WeekPlan } from "./WeekPlan.tsx";
 import { NAV } from "./nav.ts";
 import type { NavBlock, Place } from "./nav.ts";
-import { go } from "./navigation.ts";
+import { useLink, useNavigate, useRoute } from "./router.tsx";
 import {
-  CUSTOMER_SOURCE,
   FILTERS,
-  ORDER_SOURCE,
   PAGES,
+  customerSource,
   helpSource,
+  orderSource,
 } from "./search.ts";
 import { useInvites, usePickup } from "./shop-state.ts";
+import { STORAGE_PREFIX } from "./storage.ts";
 import "./roastery.css";
 
-function placeOf(route: string, query: string): Place {
-  const [part, id] = route.split("/").slice(2);
+function placeOf(path: string, query: URLSearchParams): Place {
+  const [part, id] = path.split("/").slice(1);
   const section = part ?? "";
   switch (section) {
     case "search":
-      return {
-        page: "search",
-        search: new URLSearchParams(query).get("q") ?? "",
-      };
+      return { page: "search", search: query.get("q") ?? "" };
     case "orders":
     case "subscriptions":
     case "payouts":
@@ -89,6 +85,7 @@ function placeOf(route: string, query: string): Place {
 
 /** The shop's setup, done where the rest of the demo says it is. */
 function useSetupTasks(): readonly SetupTask[] {
+  const link = useLink();
   const [pickup] = usePickup();
   const [invites] = useInvites();
   return [
@@ -110,7 +107,7 @@ function useSetupTasks(): readonly SetupTask[] {
       description: "Customers nearby collect their bags at the roastery.",
       action: {
         label: "Turn on pickup",
-        href: "/demos/roastery/settings/pickup",
+        href: link("/settings/pickup"),
       },
       group: "Take orders",
       done: pickup,
@@ -125,34 +122,35 @@ function useSetupTasks(): readonly SetupTask[] {
       id: "team",
       title: "Invite your team",
       description: "Give the roasters and packers their own sign-in.",
-      action: { label: "Invite", href: "/demos/roastery/settings/team" },
+      action: { label: "Invite", href: link("/settings/team") },
       group: "Bring in the team",
       done: invites.length > 0,
     },
   ];
 }
 
+/** The kinds of order New order offers, each with its page's path in the demo. */
 const ORDER_KINDS = [
   {
     id: "retail",
     icon: ShoppingBag,
     title: "Retail order",
     description: "One customer, shipped to their door.",
-    href: "/demos/roastery/orders",
+    href: "/orders",
   },
   {
     id: "wholesale",
     icon: Store,
     title: "Wholesale order",
     description: "Cases for a café, invoiced on terms.",
-    href: "/demos/roastery/wholesale",
+    href: "/wholesale",
   },
   {
     id: "subscription",
     icon: Repeat,
     title: "Subscription",
     description: "A bag every week or two, billed each time.",
-    href: "/demos/roastery/subscriptions",
+    href: "/subscriptions",
   },
 ];
 
@@ -163,6 +161,7 @@ function NavBlocks({
   readonly blocks: readonly NavBlock[];
   readonly place: Place;
 }): ReactElement {
+  const link = useLink();
   return (
     <>
       {blocks.map((block) => {
@@ -173,7 +172,7 @@ function NavBlocks({
                 key={block.page.href}
                 icon={block.page.icon}
                 label={block.page.label}
-                href={block.page.href}
+                href={link(block.page.href)}
                 current={block.page.current?.(place) ?? false}
               />
             );
@@ -196,7 +195,7 @@ function NavBlocks({
                   <Sidebar.Item
                     key={page.href}
                     label={page.label}
-                    href={page.href}
+                    href={link(page.href)}
                     current={page.current?.(place) ?? false}
                   />
                 ))}
@@ -213,10 +212,11 @@ function NavBlocks({
 }
 
 function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
+  const link = useLink();
   return (
     <Sidebar
       label="Halfmoon Roastery"
-      storageKey="roastery"
+      storageKey={STORAGE_PREFIX}
       switcher={
         <AccountMenu workspace="Halfmoon Roastery" caption="Portland, Oregon">
           <AccountMenu.Workspaces
@@ -230,14 +230,11 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
                 toast("Halfmoon Café has no orders of its own in this demo.");
             }}
           />
-          <Menu.Link href="/demos/roastery/settings" icon={Settings}>
+          <Menu.Link href={link("/settings")} icon={Settings}>
             Settings
           </Menu.Link>
           <Menu.Separator />
           <AccountMenu.User name="Rosa Delgado" />
-          <Menu.Link href="/foundations/tokens" icon={ArrowLeft}>
-            Back to the playground
-          </Menu.Link>
         </AccountMenu>
       }
     >
@@ -257,6 +254,8 @@ function RoasteryTopBar({
   readonly helping: boolean;
   readonly onHelp: () => void;
 }): ReactElement {
+  const link = useLink();
+  const navigate = useNavigate();
   const [whatsNew, setWhatsNew] = useState<boolean | undefined>(undefined);
   return (
     <TopBar
@@ -266,9 +265,9 @@ function RoasteryTopBar({
           sources={sources}
           filters={FILTERS}
           resultsHref={(query) =>
-            `/demos/roastery/search?q=${encodeURIComponent(formatSearch(query))}`
+            link(`/search?q=${encodeURIComponent(formatSearch(query))}`)
           }
-          storageKey="roastery"
+          storageKey={STORAGE_PREFIX}
           emptyHint="Try another word, or a filter such as status:shipped."
         />
       }
@@ -292,7 +291,7 @@ function RoasteryTopBar({
             }}
           >
             <AnnouncementDialog
-              storageKey="roastery-roast-planning"
+              storageKey={`${STORAGE_PREFIX}-roast-planning`}
               open={whatsNew}
               onOpenChange={setWhatsNew}
               trigger={<IconButton icon={Sparkles} label="What's new" />}
@@ -311,7 +310,7 @@ function RoasteryTopBar({
               media={<WeekPlan />}
               learnMore={{
                 label: "See next week's roasts",
-                href: "/demos/roastery/roasts",
+                href: link("/roasts"),
               }}
             />
           </OverflowCluster.Item>
@@ -322,15 +321,15 @@ function RoasteryTopBar({
               icon: Bell,
               dot: true,
               onSelect: () => {
-                go("/demos/roastery/orders");
+                navigate("/orders");
               },
             }}
           >
             <NotificationNudge
-              storageKey="roastery-delivery-questions"
+              storageKey={`${STORAGE_PREFIX}-delivery-questions`}
               title="2 customers asked about delivery"
               description="Reply before Tuesday's roast ships."
-              action={{ label: "See orders", href: "/demos/roastery/orders" }}
+              action={{ label: "See orders", href: link("/orders") }}
             >
               <IconButton icon={Bell} label="Notifications" dot />
             </NotificationNudge>
@@ -340,7 +339,7 @@ function RoasteryTopBar({
             icon={Settings}
             priority={2}
             onSelect={() => {
-              go("/demos/roastery/settings");
+              navigate("/settings");
             }}
           />
         </>
@@ -355,8 +354,9 @@ function RoasteryTopBar({
  * components on seeded, made-up data.
  */
 export function Roastery(): ReactElement {
-  const { route, query } = useSettings();
-  const place = placeOf(route, query);
+  const { path, query } = useRoute();
+  const link = useLink();
+  const place = placeOf(path, query);
   const [choosing, setChoosing] = useState(false);
   const [helping, setHelping] = useState(false);
   const [article, setArticle] = useState<string | null>(null);
@@ -366,15 +366,17 @@ export function Roastery(): ReactElement {
   };
   const sources = useMemo<readonly SearchSource[]>(
     () => [
-      pageSource({ pages: PAGES }),
-      ORDER_SOURCE,
-      CUSTOMER_SOURCE,
+      pageSource({
+        pages: PAGES.map((page) => ({ ...page, href: link(page.href) })),
+      }),
+      orderSource(link),
+      customerSource(link),
       helpSource((id) => {
         setArticle(id);
         setHelping(true);
       }),
     ],
-    [],
+    [link],
   );
   return (
     <div className="rs-root" data-testid="roastery">
@@ -430,11 +432,14 @@ export function Roastery(): ReactElement {
         onOpenChange={setChoosing}
         title="What kind of order?"
         description="Each kind has its own form."
-        choices={ORDER_KINDS}
+        choices={ORDER_KINDS.map((kind) => ({
+          ...kind,
+          href: link(kind.href),
+        }))}
       />
       <SetupGuide
         title="Get your shop ready"
-        storageKey="roastery-setup"
+        storageKey={`${STORAGE_PREFIX}-setup`}
         tasks={tasks}
         footer={
           <ArrowLink

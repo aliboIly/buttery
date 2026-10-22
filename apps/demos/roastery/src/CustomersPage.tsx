@@ -15,12 +15,13 @@ import type { DataTableColumn, DataTableSort } from "@buttery/react";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { CustomerLink } from "./customer-cell.tsx";
 import { CUSTOMER_ROWS, isNew } from "./customers.ts";
 import type { CustomerRow } from "./customers.ts";
 import { number, since } from "./format.ts";
 import { useSimulatedLoad } from "./loading.ts";
-import { go } from "./navigation.ts";
 import { RenameView } from "./rename-view.tsx";
+import { useNavigate } from "./router.tsx";
 
 const PAGE_SIZE = 25;
 
@@ -36,11 +37,7 @@ const COLUMNS: readonly DataTableColumn<CustomerRow>[] = [
   {
     id: "name",
     header: "Customer",
-    cell: (row) => (
-      <DataTable.Link href={`/demos/roastery/customers/${row.id}`}>
-        {row.name}
-      </DataTable.Link>
-    ),
+    cell: (row) => <CustomerLink id={row.id} name={row.name} />,
     minWidth: "md",
     grow: 2,
   },
@@ -127,6 +124,7 @@ function compare(
 
 /** Everyone who's ordered, in saved views, searchable. */
 export function CustomersPage(): ReactElement {
+  const navigate = useNavigate();
   const [views, setViews] = useState(VIEWS);
   const [view, setView] = useState("all");
   const [renaming, setRenaming] = useState(false);
@@ -264,7 +262,7 @@ export function CustomersPage(): ReactElement {
           rowActions={(row) => (
             <Menu.Item
               onSelect={() => {
-                go(`/demos/roastery/customers/${row.id}`);
+                navigate(`/customers/${row.id}`);
               }}
             >
               View customer
