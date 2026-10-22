@@ -15,6 +15,7 @@
     "@buttery/core": "workspace:*",
     "@buttery/react": "workspace:*",
     "demo-card-studio": "workspace:*",
+    "demo-card-studio-site": "workspace:*",
     "demo-roastery": "workspace:*",
     "lucide-react": "catalog:",
     "minisearch": "catalog:",

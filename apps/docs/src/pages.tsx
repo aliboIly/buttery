@@ -13,8 +13,8 @@ import type { Neighbor } from "./PageFooter.tsx";
 import { buildNav, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
 import { MotionPage } from "./pages/MotionPage.tsx";
-import { CardStudioSite } from "./card-studio/CardStudioSite.tsx";
 import { App as CardStudio } from "demo-card-studio";
+import { App as CardStudioSite } from "demo-card-studio-site";
 import { App as Roastery } from "demo-roastery";
 import { HostedApp } from "./demos/DemoPage.tsx";
 import { components } from "./registry.ts";
@@ -51,7 +51,12 @@ const DEMOS: Readonly<
     render: () => <HostedApp App={CardStudio} base="/demos/card-studio" />,
     fullWindow: true,
   },
-  "card-studio-site": { render: () => <CardStudioSite /> },
+  "card-studio-site": {
+    render: () => (
+      <HostedApp App={CardStudioSite} base="/demos/card-studio-site" />
+    ),
+    fullWindow: true,
+  },
   roastery: {
     render: () => <HostedApp App={Roastery} base="/demos/roastery" />,
     fullWindow: true,

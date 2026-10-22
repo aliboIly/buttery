@@ -29,6 +29,7 @@ import {
 } from "@buttery/react";
 import { CardStudioMark } from "./CardStudioMark.tsx";
 
+/** Where the studio is: beside the site on the docs site, which serves both. */
 const STUDIO = "/demos/card-studio";
 
 const SECTIONS = [
@@ -55,7 +56,7 @@ function fill(id: string): string | undefined {
   return preset ? gradientCss(preset) : undefined;
 }
 
-/** A link that jumps to a section of this page without touching the playground's route. */
+/** A link that jumps to a section of this page without touching the address. */
 function jumpTo(id: string): (event: MouseEvent<HTMLAnchorElement>) => void {
   return (event) => {
     if (scrollToSection(id)) event.preventDefault();
