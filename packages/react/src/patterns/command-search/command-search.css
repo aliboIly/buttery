@@ -295,6 +295,7 @@
     gap: var(--bt-space-2);
     padding: var(--bt-space-8) var(--bt-space-4);
     text-align: center;
+    text-wrap: balance;
   }
 
   .bt-command-search-panel [data-bt-part="empty-icon"] {

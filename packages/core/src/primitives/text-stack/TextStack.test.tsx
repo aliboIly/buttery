@@ -83,6 +83,30 @@ describe("TextStack", () => {
     );
   });
 
+  it("balances a centered stack's lines, so none is left with one word", async () => {
+    render(
+      <div style={{ inlineSize: "480px" }}>
+        <TextStack
+          size="empty"
+          align="center"
+          title="No orders yet"
+          body="Orders show up here once a customer checks out, or when you add one by hand."
+        />
+      </div>,
+    );
+    await document.fonts.ready;
+    const words = document.createRange();
+    words.selectNodeContents(screen.getByText(/^Orders show up here/));
+    const lines = new Map<number, number>();
+    for (const line of words.getClientRects()) {
+      const top = Math.round(line.top);
+      lines.set(top, (lines.get(top) ?? 0) + line.width);
+    }
+    const widths = [...lines.values()];
+    expect(widths).toHaveLength(2);
+    expect(Math.min(...widths)).toBeGreaterThan(Math.max(...widths) / 2);
+  });
+
   it("uses a page section's heading and larger body text", () => {
     render(
       <TextStack

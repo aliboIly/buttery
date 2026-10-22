@@ -233,6 +233,25 @@ describe("CommandSearch", () => {
     ).toBeNull();
   });
 
+  it("balances the lines of its centered hint under No results, so none is left with one word", async () => {
+    render(
+      <Search emptyHint="Search covers pages, customers and orders. Try fewer words, or check the spelling." />,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("zzz");
+    await document.fonts.ready;
+    const words = document.createRange();
+    words.selectNodeContents(screen.getByText(/^Search covers pages/));
+    const lines = new Map<number, number>();
+    for (const line of words.getClientRects()) {
+      const top = Math.round(line.top);
+      lines.set(top, (lines.get(top) ?? 0) + line.width);
+    }
+    const widths = [...lines.values()];
+    expect(widths).toHaveLength(2);
+    expect(Math.min(...widths)).toBeGreaterThan(Math.max(...widths) / 2);
+  });
+
   it("offers a better search under No results, which a row runs", async () => {
     render(
       <Search

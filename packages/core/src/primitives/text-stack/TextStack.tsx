@@ -29,7 +29,7 @@ export interface TextStackProps extends Omit<
    * apart, as a feature intro or an announcement opens.
    */
   readonly size?: TextStackSize | undefined;
-  /** `"start"` (the default) or `"center"`, as in empty states. */
+  /** `"start"` (the default) or `"center"`, as in empty states, which also balances the lines. */
   readonly align?: "start" | "center" | undefined;
   /** What the title renders as: a heading level, or `"p"` when it isn't a heading. Defaults to `"h2"`. */
   readonly titleAs?: TextStackTitleElement | undefined;
