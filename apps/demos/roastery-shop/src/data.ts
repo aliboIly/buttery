@@ -253,7 +253,7 @@ export const GUIDES: readonly Guide[] = [
       "Rinse the filter with hot water and pour that water away.",
       "Add the coffee and pour twice its weight of water just off the boil. Wait 30 seconds while it blooms.",
       "Pour the rest in slow circles, keeping the bed about half full.",
-      "Let it drain. If it runs much past the time on the left, grind a little coarser next time.",
+      "Let it drain. If it runs much past the recipe's time, grind a little coarser next time.",
     ],
     pairing: "guji",
   },
