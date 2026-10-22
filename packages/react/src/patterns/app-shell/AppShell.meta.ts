@@ -35,7 +35,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'It fills its container\'s height. The editor layout is at most 1380px wide (--bt-w-shell-max), centered, padded and spaced 8, with the 340px inspector (--bt-w-inspector) beside the header and stage; under 840px the inspector becomes a bottom sheet opened by a full-width 48px button under the stage. layout="sidebar" puts the 240px sidebar (--bt-w-sidebar) beside the top bar and the page, a 56px rail under 1100px of shell and a sheet under 640, and only the sidebar and the page scroll.',
+    'It fills its container\'s height: the editor at most 1380px wide (--bt-w-shell-max), centered, padded and spaced 8, with the 340px inspector (--bt-w-inspector) beside the header and stage, or under 840px a bottom sheet opened by a full-width 48px button under the stage. With layout="sidebar" the 240px sidebar (--bt-w-sidebar) sits beside the top bar and the page, a 56px rail under 1100px of shell and a sheet under 640, and only the sidebar and the page scroll.',
   reducedMotion:
     "The inspector's and the sidebar's sheets fade in and out in 100ms with their scrims instead of rising.",
 };
