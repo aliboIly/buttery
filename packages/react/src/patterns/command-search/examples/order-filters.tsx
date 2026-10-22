@@ -1,5 +1,5 @@
 import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { CommandSearch, matchesSearch, parseSearch } from "@buttery/react";
 import type { LocalSearchSource, SearchFilter } from "@buttery/react";
 import { useState } from "react";
@@ -58,6 +58,8 @@ export function OrderFilters(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("combobox", "Search orders");

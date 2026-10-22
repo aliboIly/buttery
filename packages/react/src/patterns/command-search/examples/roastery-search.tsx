@@ -1,5 +1,5 @@
 import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { CommandSearch, matchesSearch, pageSource } from "@buttery/react";
 import type { LocalSearchSource } from "@buttery/react";
 import { useState } from "react";
@@ -48,6 +48,8 @@ export function RoasterySearch(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("combobox", "Search");
