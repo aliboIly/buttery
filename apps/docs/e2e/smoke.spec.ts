@@ -1,14 +1,6 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { componentRoutes, url } from "./routes.ts";
-
-const foundations = [
-  { route: "foundations/tokens", landmark: "Text roles" },
-  { route: "foundations/surfaces", landmark: "Inspector" },
-  { route: "foundations/levels", landmark: "dark surfaces" },
-  { route: "foundations/palettes", landmark: "Gradients" },
-  { route: "foundations/text-stacks", landmark: "Make it yours" },
-] as const;
+import { componentRoutes, contentRoutes, url } from "./routes.ts";
 
 /**
  * Collects console errors, page errors, buttery's development warnings and ResizeObserver loops, which
@@ -39,14 +31,14 @@ async function settle(page: Page): Promise<void> {
   await page.waitForTimeout(1200);
 }
 
-for (const { route, landmark } of foundations) {
+for (const { route, title } of contentRoutes) {
   test(`renders the ${route} page with the bundled font and no console problems`, async ({
     page,
   }) => {
     const problems = await watchConsole(page);
     await page.goto(url(route, "theme=light"));
     await expect(
-      page.getByText(landmark).or(page.getByLabel(landmark)).first(),
+      page.getByRole("heading", { level: 1, name: title }),
     ).toBeVisible();
     const interLoaded = await page.evaluate(async () => {
       await document.fonts.ready;

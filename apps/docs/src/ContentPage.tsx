@@ -29,20 +29,24 @@ export function slugOf(children: ReactNode): string {
 export const markdown = {
   h2: ({ children }: ComponentPropsWithRef<"h2">): ReactElement => (
     <Text variant="heading-2" asChild>
-      <h2 id={slugOf(children)}>
+      <h2 id={slugOf(children)} className="docs-h2">
         <a href={`#${slugOf(children)}`} className="docs-anchor">
           {children}
-          <Icon icon={Link2} />
+          <span className="docs-anchor-icon">
+            <Icon icon={Link2} />
+          </span>
         </a>
       </h2>
     </Text>
   ),
   h3: ({ children }: ComponentPropsWithRef<"h3">): ReactElement => (
     <Text variant="title" asChild>
-      <h3 id={slugOf(children)}>
+      <h3 id={slugOf(children)} className="docs-h3">
         <a href={`#${slugOf(children)}`} className="docs-anchor">
           {children}
-          <Icon icon={Link2} />
+          <span className="docs-anchor-icon">
+            <Icon icon={Link2} />
+          </span>
         </a>
       </h3>
     </Text>

@@ -466,10 +466,9 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     {
       name: "show four toasts and hold them under the pointer",
       run: async (page: Page) => {
-        const show = page.getByRole("button", {
-          name: "Show a toast",
-          exact: true,
-        });
+        const show = page
+          .getByRole("region", { name: "Toaster variants and states" })
+          .getByRole("button", { name: "Show a toast", exact: true });
         for (let count = 0; count < 4; count += 1) await show.click();
         await page.getByRole("region", { name: "Notifications (F8)" }).hover();
       },
@@ -478,8 +477,13 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "show a success, a warning and a danger toast (the centered stack widens to the widest one)",
       allowMove: ['[data-bt="Toaster"]'],
       run: async (page: Page) => {
+        const section = page.getByRole("region", {
+          name: "Toaster variants and states",
+        });
         for (const tone of ["Success", "Warning", "Danger"]) {
-          await page.getByRole("button", { name: tone, exact: true }).click();
+          await section
+            .getByRole("button", { name: tone, exact: true })
+            .click();
         }
         await page.getByRole("region", { name: "Notifications (F8)" }).hover();
       },

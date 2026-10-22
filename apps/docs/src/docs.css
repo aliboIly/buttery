@@ -62,32 +62,56 @@
   text-underline-offset: var(--bt-space-1);
 }
 
-/* A heading opens a part of the page, so it sits further from what's above it than paragraphs do. */
-.docs-prose h2 {
+/*
+ * A page's heading opens a part of it, so it sits further from what's above it than paragraphs do. Only the
+ * page's own headings: a component shown on the page keeps its own.
+ */
+.docs-h2 {
   padding-block-start: var(--bt-space-6);
 }
 
-.docs-prose h3 {
+.docs-h3 {
   padding-block-start: var(--bt-space-3);
 }
 
-/* A heading links to itself: its text keeps the heading's look, and a link icon shows while it's pointed at or focused. */
+/*
+ * A heading links to itself: its text keeps the heading's look, and a link icon shows while it's pointed at
+ * or focused. Both stay inline, inside the heading's trimmed text box.
+ */
 .docs-anchor {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--bt-space-2);
   color: inherit;
   text-decoration: none;
 }
 
-.docs-anchor .bt-icon {
+.docs-anchor-icon {
+  padding-inline-start: var(--bt-space-2);
   color: var(--bt-text-tertiary);
   opacity: 0;
   transition: opacity var(--bt-dur-fast) var(--bt-ease-out);
 }
 
-.docs-anchor:is(:hover, :focus-visible) .bt-icon {
+.docs-anchor-icon .bt-icon {
+  display: inline;
+  vertical-align: baseline;
+}
+
+.docs-anchor:is(:hover, :focus-visible) .docs-anchor-icon {
   opacity: 1;
+}
+
+/* A code block that scrolls sideways takes keyboard focus; its ring sits inside the rounded block. */
+.docs-pre:focus-visible,
+.docs-code-html pre:focus-visible {
+  outline: var(--bt-focus-width) solid var(--bt-accent);
+  outline-offset: calc(-1 * var(--bt-focus-width));
+}
+
+/* A link that stands on its own, such as "Edit this page" or a related page, takes a 28px target. */
+.docs-page-footer .docs-link,
+.docs-related .docs-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--bt-h-sm);
 }
 
 .docs-code-block {

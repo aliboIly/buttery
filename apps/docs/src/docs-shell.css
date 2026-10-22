@@ -55,11 +55,12 @@
   padding-inline-start: var(--bt-space-3);
 }
 
+/* Each heading's link is a 28px target, the sidebar items' height, in either density. */
 .docs-toc-link {
   display: flex;
   align-items: center;
   min-inline-size: 0;
-  min-block-size: var(--bt-h-badge);
+  min-block-size: var(--bt-h-sm);
   padding-inline-start: var(--bt-space-3);
   color: var(--bt-text-secondary);
   text-decoration: none;

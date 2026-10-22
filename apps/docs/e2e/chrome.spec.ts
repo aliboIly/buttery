@@ -16,7 +16,7 @@ async function pointAtSidebar(page: Page, sidebar: Locator): Promise<void> {
 test("the sidebar's whole list can be scrolled to with the pointer over it", async ({
   page,
 }) => {
-  await page.goto("/foundations/tokens");
+  await page.goto("/foundations/colors");
   const sidebar = page.getByRole("navigation", { name: "Pages" });
   const links = sidebar.getByRole("link");
   await expect(links.first()).toBeVisible();
@@ -34,7 +34,7 @@ test("the sidebar's whole list can be scrolled to with the pointer over it", asy
 test("at the bottom of a long page, scrolling up over the sidebar reaches its first link", async ({
   page,
 }) => {
-  await page.goto("/foundations/tokens");
+  await page.goto("/foundations/colors");
   const sidebar = page.getByRole("navigation", { name: "Pages" });
   const links = sidebar.getByRole("link");
   await expect(links.first()).toBeVisible();
@@ -54,10 +54,10 @@ test("at the bottom of a long page, scrolling up over the sidebar reaches its fi
 });
 
 test("the sidebar keeps the current page in view", async ({ page }) => {
-  await page.goto("/foundations/sticky");
+  await page.goto("/resources/contributing");
   const current = page
     .getByRole("navigation", { name: "Pages" })
-    .getByRole("link", { name: "Sticky" });
+    .getByRole("link", { name: "Contributing" });
   await expect(current).toHaveAttribute("aria-current", "page");
   await expect(current).toBeInViewport({ ratio: 1 });
 });

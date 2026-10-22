@@ -16,6 +16,7 @@ import {
 } from "@buttery/core";
 import type { SpaceStep } from "@buttery/core";
 import "./blocks.css";
+import { TableScroll } from "../TableScroll.tsx";
 
 const SAMPLE = "Pick a backdrop and round the corners";
 
@@ -43,7 +44,7 @@ export function ColorTable({
     starts.some((start) => name.startsWith(start)),
   );
   return (
-    <div className="tk-table-scroll">
+    <TableScroll label={`${group} colors`}>
       <table className="tk-table">
         <thead>
           <tr>
@@ -73,7 +74,7 @@ export function ColorTable({
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
 

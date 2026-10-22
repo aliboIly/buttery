@@ -17,6 +17,7 @@ import { CodeText } from "./CodeBlock.tsx";
 import { ExampleFrame } from "./ExampleFrame.tsx";
 import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
 import { PageFooter } from "./PageFooter.tsx";
+import { TableScroll } from "./TableScroll.tsx";
 import type { Neighbor } from "./PageFooter.tsx";
 import { ExportDocs, PropsTables } from "./PropsTables.tsx";
 import type { Heading } from "./content.ts";
@@ -294,7 +295,7 @@ export function ComponentBody({
                 key={example.name}
                 example={example}
                 frame={frame}
-                headingId={idFor(entry, depth, example.title)}
+                headingId={idFor(entry, depth, `${example.title} example`)}
                 headingLevel={inner}
               />
             ))}
@@ -346,7 +347,7 @@ export function ComponentBody({
           {meta.keyboard === undefined ? null : meta.keyboard.length === 0 ? (
             <Text variant="body">It takes no keyboard input of its own.</Text>
           ) : (
-            <div className="tk-table-scroll">
+            <TableScroll label={`${meta.name} keyboard`}>
               <table className="tk-table">
                 <thead>
                   <tr>
@@ -365,7 +366,7 @@ export function ComponentBody({
                   ))}
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
           )}
         </section>
       </Stack>
@@ -396,7 +397,7 @@ export function ComponentBody({
             <HeadingAt depth={depth} id={idFor(entry, depth, "Related")}>
               Related
             </HeadingAt>
-            <Inline gap={4} wrap>
+            <Inline gap={4} wrap className="docs-related">
               {related.map(({ name, route }) => (
                 <a key={name} href={`/${route}`} className="docs-link bt-focus">
                   {name}
@@ -426,7 +427,13 @@ export function componentHeadings(entry: ComponentEntry): Heading[] {
     part("Demo"),
     part("When to use it"),
     ...(entry.examples.length > 0
-      ? [part("Examples"), ...entry.examples.map(({ title }) => titled(title))]
+      ? [
+          part("Examples"),
+          ...entry.examples.map(({ title }) => ({
+            ...titled(title),
+            id: slugify(`${title} example`),
+          })),
+        ]
       : []),
     ...(entry.demos.length > 0
       ? [

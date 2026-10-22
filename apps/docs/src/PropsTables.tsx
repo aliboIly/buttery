@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { exportDocs, propsTables } from "virtual:buttery-props";
 import { Stack, Text } from "@buttery/core";
+import { TableScroll } from "./TableScroll.tsx";
 
 /**
  * A component's props, read from its types and their JSDoc at build time: one table for the component and
@@ -25,7 +26,7 @@ export function PropsTables({
               {headingLevel === 3 ? <h3>{title}</h3> : <h4>{title}</h4>}
             </Text>
             {table.props.length > 0 ? (
-              <div className="tk-table-scroll">
+              <TableScroll label={`${title} props`}>
                 <table className="tk-table">
                   <thead>
                     <tr>
@@ -49,7 +50,7 @@ export function PropsTables({
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </TableScroll>
             ) : null}
             {table.inherits.length > 0 ? (
               <Text variant="body-sm" tone="secondary">
@@ -85,7 +86,7 @@ export function ExportDocs({
       <Text variant="label" asChild>
         {headingLevel === 3 ? <h3>Also exported</h3> : <h4>Also exported</h4>}
       </Text>
-      <div className="tk-table-scroll">
+      <TableScroll label={`${name} exports`}>
         <table className="tk-table">
           <thead>
             <tr>
@@ -102,7 +103,7 @@ export function ExportDocs({
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
     </Stack>
   );
 }

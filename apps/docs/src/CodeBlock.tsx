@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { Check, Copy } from "lucide-react";
-import { Text } from "@buttery/core";
+import { Text, useMergedRefs } from "@buttery/core";
 import { IconButton } from "@buttery/react";
+import { focusWhileScrolling } from "./scroll-focus.ts";
 
 /** How long "Copied" shows before the button offers to copy again, in ms. */
 const COPIED_FOR = 2000;
@@ -54,6 +55,10 @@ export function CodeBlock({
   readonly "data-language"?: string;
 }): ReactElement {
   const pre = useRef<HTMLPreElement>(null);
+  const refs = useMergedRefs(
+    pre,
+    focusWhileScrolling(`${language ?? "text"} code`),
+  );
   return (
     <div className="docs-code-block">
       <CodeBar
@@ -61,7 +66,7 @@ export function CodeBlock({
         text={() => pre.current?.textContent ?? ""}
       />
       <pre
-        ref={pre}
+        ref={refs}
         className={["docs-pre", className].filter(Boolean).join(" ")}
         style={style}
       >
@@ -80,6 +85,10 @@ export function CodeHtml({
   readonly language: string;
 }): ReactElement {
   const box = useRef<HTMLDivElement>(null);
+  const refs = useMergedRefs(
+    box,
+    focusWhileScrolling(`${language} code`, "pre"),
+  );
   return (
     <div className="docs-code-block">
       <CodeBar
@@ -87,7 +96,7 @@ export function CodeHtml({
         text={() => box.current?.textContent ?? ""}
       />
       <div
-        ref={box}
+        ref={refs}
         className="docs-code-html"
         dangerouslySetInnerHTML={{ __html: html }}
       />
@@ -100,7 +109,7 @@ export function CodeText({ code }: { readonly code: string }): ReactElement {
   return (
     <div className="docs-code-block">
       <CodeBar language="tsx" text={() => code} />
-      <pre className="docs-pre">
+      <pre ref={focusWhileScrolling("tsx code")} className="docs-pre">
         <code>{code}</code>
       </pre>
     </div>

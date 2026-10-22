@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import { TableScroll } from "./TableScroll.tsx";
 
 /** A table on a written page: a header row of `columns`, then `rows` of cells, each a short string. */
 export function DocsTable({
@@ -9,7 +10,7 @@ export function DocsTable({
   readonly rows: readonly (readonly string[])[];
 }): ReactElement {
   return (
-    <div className="tk-table-scroll">
+    <TableScroll label={columns.join(", ")}>
       <table className="tk-table">
         <thead>
           <tr>
@@ -30,6 +31,6 @@ export function DocsTable({
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
