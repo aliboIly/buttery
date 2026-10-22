@@ -713,6 +713,42 @@ describe("CommandSearch", () => {
     });
   });
 
+  it("keeps its panel's top still over a field that sits low, as answers change how many rows it has", async () => {
+    await page.viewport(1280, 800);
+    const many: LocalSearchSource = {
+      id: "many",
+      label: "Many",
+      limit: 20,
+      search: (query) =>
+        Array.from({ length: 20 - query.text.length * 4 }, (_, index) => ({
+          id: String(index),
+          label: `Result ${String(index)}`,
+        })),
+    };
+    render(
+      <div style={{ paddingBlockStart: "620px" }}>
+        <Search sources={[many]} onSearch={() => undefined} />
+      </div>,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("r");
+    const panel = document.querySelector(".bt-command-search-panel");
+    if (!panel) throw new Error("No panel.");
+    await waitFor(() => {
+      expect(
+        box().getBoundingClientRect().top -
+          panel.getBoundingClientRect().bottom,
+      ).toBe(8);
+    });
+    const { top } = panel.getBoundingClientRect();
+    await userEvent.keyboard("es");
+    await waitFor(() => {
+      expect(options("Many")).toHaveLength(8);
+    });
+    expect(panel.getBoundingClientRect().top).toBe(top);
+    expect(panel.getBoundingClientRect().top).toBeGreaterThanOrEqual(8);
+  });
+
   it("opens its first empty answer no shorter than its steady minimum", async () => {
     render(<Search sources={[CUSTOMERS]} filters={[]} />);
     await userEvent.click(field());

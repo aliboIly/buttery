@@ -147,6 +147,17 @@
     overflow: hidden;
   }
 
+  /* Over its field, for want of room under it, the panel keeps all the room it has, so answers arriving don't move its top edge. */
+  .bt-command-search-panel.bt-popover[data-side="top"] {
+    block-size: min(
+      var(--bt-command-search-max),
+      var(
+        --radix-popover-content-available-height,
+        var(--bt-command-search-max)
+      )
+    );
+  }
+
   .bt-command-search-panel > [data-bt-part="scroll"] {
     display: flex;
     flex: 1 1 auto;
