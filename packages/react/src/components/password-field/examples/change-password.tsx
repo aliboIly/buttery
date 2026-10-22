@@ -4,7 +4,7 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, PasswordField } from "@buttery/react";
 
-/** An account's password section: the current password, a new one with its rules, and Save once both are ready. */
+/** An account's password section: the current password, a new one with its rules, and Change password, held back until both are ready. */
 export function ChangePassword(): ReactElement {
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");

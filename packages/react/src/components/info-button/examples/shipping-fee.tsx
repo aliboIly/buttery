@@ -4,7 +4,7 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, InfoButton } from "@buttery/react";
 
-/** An info button whose popover the page keeps in state, so a link-style button elsewhere can open it too. */
+/** An info button whose popover the page keeps in state, so a button elsewhere can open it too. */
 export function ShippingFee(): ReactElement {
   const [open, setOpen] = useState(false);
   return (
