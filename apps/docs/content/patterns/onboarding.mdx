@@ -5,12 +5,45 @@ section: patterns
 order: 100
 status: stable
 since: 0.7.0
-related: [components/dialog, components/page-dots, components/confetti]
+related:
+  [
+    components/dialog,
+    components/page-dots,
+    components/confetti,
+    motion/principles,
+  ]
 ---
 
 Onboarding is a short tour in a dialog: a scene that morphs between steps, text that crossfades in place, page dots, Back and Next, and confetti once it's finished. Use `Onboarding` the first time someone opens an app or a feature, for three to five steps at most.
 
-The dialog keeps its size as the steps change; Next and Back carry forward and back arrows, and the last step's button finishes the tour. With reduced motion the scene and text change at once and nothing celebrates.
+## How a tour works
+
+<Cards columns={2}>
+<Card icon="file" title="Steps">
+
+Each of the `steps` has a `title`, which names the dialog while it shows, a `body` of a line or two and a scene in `media`, drawn 384×200.
+
+</Card>
+<Card icon="palette" title="Shared pieces">
+
+`Onboarding.Shared` marks a piece of a scene that carries over: a piece with the same `id` in the next step's scene is the same piece, moved.
+
+</Card>
+<Card icon="monitor" title="The first visit">
+
+With a `storageKey`, the tour opens by itself the first time and, once it's finished or closed, never again.
+
+</Card>
+<Card icon="package" title="The last step">
+
+The last step's button finishes the tour, and `onFinish` runs as the confetti flies.
+
+</Card>
+</Cards>
+
+The dialog keeps its size as the steps change, and Next and Back carry forward and back arrows.
+
+> **Reduced motion.** The scene and the text change at once, and nothing celebrates.
 
 ## Onboarding
 

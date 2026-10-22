@@ -5,24 +5,59 @@ section: patterns
 order: 120
 status: stable
 since: 0.6.0
-related: [patterns/page-header, components/sidebar, components/top-bar]
+related:
+  [
+    patterns/page-header,
+    components/sidebar,
+    components/top-bar,
+    patterns/inspector,
+  ]
 ---
 
-The app shell is the frame of a whole app screen: an editor, with a header and a stage beside an inspector, or, with `layout="sidebar"`, a dashboard, with a sidebar beside a top bar and the page. Use `AppShell` for the screen and `AppPage` for each page inside a dashboard.
+The app shell is the frame of a whole app screen, an editor's or a dashboard's. Use `AppShell` for the screen and `AppPage` for each page inside a dashboard.
+
+<Cards columns={2}>
+<Card icon="monitor" title="An editor">
+
+The default, `layout="inspector"`: a header and a stage beside an inspector, which becomes a sheet on a narrow screen. The [Inspector](/patterns/inspector) pattern has its parts.
+
+</Card>
+<Card icon="template" title="A dashboard">
+
+With `layout="sidebar"`: a sidebar beside a top bar and the page, an `AppPage`, and an optional `SidePanel` at the shell's end.
+
+</Card>
+</Cards>
 
 ## The dashboard
 
-From 1100px of shell the sidebar shows in full; under that it becomes an icon rail, and under 640px a sheet opened from the top bar's menu button. The shell never scrolls; the sidebar and the page each scroll on their own. A `SidePanel` docks at the shell's end from 1280px and opens as a sheet under that.
+The shell never scrolls; the sidebar and the page each scroll on their own. The sidebar and a `SidePanel` change with the shell's width:
 
-`AppShell` fills its container's height, so the element around it needs one. In an app that's the window's height, which the templates give their root element in `src/app.css`; in a container with no height of its own, the shell grows with its content and the sidebar and the page stop scrolling on their own.
+<DocsTable
+  columns={["Shell width", "Sidebar", "SidePanel"]}
+  rows={[
+    ["1280px and wider", "In full", "Docked at the shell's end"],
+    ["1100px to 1280px", "In full", "Opens as a sheet"],
+    ["640px to 1100px", "An icon rail", "Opens as a sheet"],
+    [
+      "Under 640px",
+      "A sheet, opened from the top bar's menu button",
+      "Opens as a sheet",
+    ],
+  ]}
+/>
 
-```css
+> **Give the shell a height.** `AppShell` fills its container's height, so the element around it needs one. In an app that's the window's height, which the templates give their root element in `src/app.css`. In a container with no height of its own, the shell grows with its content, and the sidebar and the page stop scrolling on their own.
+
+```css title="src/app.css"
 .app {
   block-size: 100dvh;
 }
 ```
 
-```tsx
+A dashboard with two pages in its sidebar:
+
+```tsx title="src/Dashboard.tsx"
 import type { ReactElement } from "react";
 import { Package, Receipt } from "lucide-react";
 import { AppPage, AppShell, PageHeader, Sidebar, TopBar } from "@buttery/react";

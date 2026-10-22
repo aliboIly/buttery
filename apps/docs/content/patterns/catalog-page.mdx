@@ -10,7 +10,32 @@ related: [components/filter-bar, patterns/detail-page]
 
 A catalog page lays out things to browse, such as add-ons or products: a filter column with a search, categories and checkboxes, beside a featured block and grids of cards. Use `CatalogPage` when people pick from many items by kind.
 
-The filter column sits beside the catalog from 900px of the page's column in a shell at least 1100px wide, and above it otherwise.
+## The parts
+
+<Cards columns={2}>
+<Card icon="wrench" title="The filter column">
+
+`filters` holds a `SearchField`, `CatalogPage.Categories`, a list of links to each category, and a `CatalogPage.Group` for each set of checkboxes, then an action.
+
+</Card>
+<Card icon="palette" title="The featured block">
+
+`CatalogPage.Featured` is the catalog's featured block: its title and its items on a tinted surface.
+
+</Card>
+<Card icon="blocks" title="Sections">
+
+`CatalogPage.Section` is a titled section of items, such as one category's.
+
+</Card>
+<Card icon="package" title="Items">
+
+`CatalogPage.Item` is one thing in the catalog: its tile, its name as a link, what it is, its offer and its tags.
+
+</Card>
+</Cards>
+
+The filter column sits beside the catalog from 900px of the page's column in a shell at least 1100px wide, and above it otherwise. The featured block and each section show their items two to a row from 560px of room.
 
 ## CatalogPage
 

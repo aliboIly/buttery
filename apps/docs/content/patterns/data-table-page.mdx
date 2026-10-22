@@ -5,18 +5,45 @@ section: patterns
 order: 80
 status: new
 since: 0.8.0
-related: [components/data-table, components/filter-bar, components/saved-views]
+related:
+  [
+    components/data-table,
+    components/filter-bar,
+    components/saved-views,
+    components/column-settings,
+  ]
 ---
 
 A data table page is an app page whose main block is a table of records, such as orders: the page header, saved views as tabs, the filters, then the table filling the rest of the height. Build it from `AppPage fill`, `SavedViews`, `FilterBar` and `DataTable`; it adds no component of its own.
 
 ## How it fits together
 
-`AppPage fill` gives the page's last block the height left under the header, tabs and filters, so the table scrolls inside it with its header row sticky, and the page itself doesn't scroll. `SavedViews` keeps named filter sets as tabs; `FilterBar` holds the filters in force as pills, which wrap rather than fold, since a person has to see and remove them. `ColumnSettings` picks which columns show.
+<Cards columns={2}>
+<Card icon="template" title="Room for the table">
+
+`AppPage fill` gives the page's last block the height left under the header, tabs and filters, so the table scrolls inside it with its header row sticky, and the page itself doesn't scroll.
+
+</Card>
+<Card icon="blocks" title="Saved views">
+
+`SavedViews` keeps named filter sets as tabs, the chosen one on a sliding raised pill, with every view and its actions in a menu.
+
+</Card>
+<Card icon="wrench" title="Filters">
+
+`FilterBar` holds the filters in force as pills, which wrap rather than fold, since a person has to see and remove them.
+
+</Card>
+<Card icon="palette" title="Columns">
+
+`ColumnSettings` picks which columns show, and reorders them by dragging or with Alt and the arrow keys.
+
+</Card>
+</Cards>
 
 Here is a whole orders page: two saved views, a status filter and a search in the filter bar, and a table that sorts by its total. The orders are written into the file to keep it short; an app's would come from its data.
 
-```tsx
+```tsx title="src/pages/OrdersPage.tsx"
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack } from "@buttery/core";
@@ -182,4 +209,9 @@ export function OrdersPage(): ReactElement {
 }
 ```
 
-The [FilterBar examples](/components/filter-bar) show the filters and the table working together, and the roastery demo's [orders page](/demos/roastery/orders) is the full version, with saved views you can add and rename, `ColumnSettings`, row actions and pages of results. See [DataTable](/components/data-table), [FilterBar](/components/filter-bar) and [SavedViews](/components/saved-views) for each part.
+Two places show it working:
+
+- The [FilterBar examples](/components/filter-bar) show the filters and the table working together.
+- The roastery demo's [orders page](/demos/roastery/orders) is the full version, with saved views you can add and rename, `ColumnSettings`, row actions and pages of results.
+
+See [DataTable](/components/data-table), [FilterBar](/components/filter-bar) and [SavedViews](/components/saved-views) for each part.

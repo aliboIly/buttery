@@ -12,9 +12,19 @@ A page header is the top of an app page: breadcrumbs when the page is nested, th
 
 ## The page grammar
 
-Every page in an app shell follows one order: breadcrumbs (only on a nested page), the title and its actions (one of them primary), a one-line description, then tabs, filters and the page's content. `PageHeader` builds the top of it; its actions fold into a "More page actions" menu when they don't fit.
+Every page in an app shell follows one order, from the top:
 
-```tsx
+1. Breadcrumbs, only on a nested page.
+2. The title and its actions, one of them primary.
+3. A one-line description.
+4. Tabs and filters.
+5. The page's content.
+
+`PageHeader` builds the top of it. When its actions don't fit, they fold into a "More page actions" menu.
+
+This header shows a count, with what it counts behind an info button, and two actions. `priority={1}` keeps New order, the primary action, in the row after Export has folded away.
+
+```tsx title="src/OrdersHeader.tsx"
 import type { ReactElement } from "react";
 import { Download, Plus } from "lucide-react";
 import { PageHeader } from "@buttery/react";

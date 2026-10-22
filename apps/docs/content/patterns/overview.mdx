@@ -6,18 +6,47 @@ order: 90
 status: new
 since: 0.8.0
 exports: [TimeEstimate, useDismissible]
-related: [components/metric-card, components/stat-tabs, components/setup-guide]
+related:
+  [
+    components/metric-card,
+    components/stat-tabs,
+    components/setup-guide,
+    components/recommendation-card,
+  ]
 ---
 
 An overview is an app's home page: headline numbers for the period, a chart behind one of them, the few things that need attention, and guidance while an account is new. Build it from `MetricCard`, `StatTabs`, the charts and `SetupGuide`; it adds no component of its own.
 
 ## How it fits together
 
-`MetricCard` shows one number with its change and a sparkline, and loads on its own. `StatTabs` puts a few totals over one chart and switches the chart between them. `RecommendationCard` and `Banner` raise what needs a decision, and a `SetupGuide` floats at the bottom end until the account is set up. Every block keeps its size while it loads, so the page doesn't shift as data arrives.
+<Cards columns={2}>
+<Card icon="monitor" title="Headline numbers">
+
+`MetricCard` shows one number with its change and a sparkline, and loads on its own.
+
+</Card>
+<Card icon="template" title="A chart behind them">
+
+`StatTabs` puts a few totals over one chart and switches the chart between them.
+
+</Card>
+<Card icon="book" title="What needs attention">
+
+`RecommendationCard` and `Banner` raise what needs a decision, each with an action and how long it takes, and are dismissed for good once closed.
+
+</Card>
+<Card icon="wrench" title="Guidance while it's new">
+
+`SetupGuide` floats at the bottom end until the account is set up, showing its progress and the next task.
+
+</Card>
+</Cards>
+
+Every block keeps its size while it loads, so the page doesn't shift as data arrives.
 
 Here is a whole overview: a banner, two metric cards for the week, a chart of daily totals under `StatTabs`, a tip, and a setup guide. The numbers are written into the file to keep it short; an app's would come from its data.
 
-```tsx
+```tsx title="src/pages/OverviewPage.tsx"
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid } from "@buttery/core";
@@ -166,15 +195,34 @@ export function OverviewPage(): ReactElement {
 }
 ```
 
-The [MetricCard examples](/components/metric-card) show the cards loading and changing period, the [dashboard template](/templates/dashboard) opens on a smaller overview, and the roastery demo's [overview](/demos/roastery) is the full version, with a date range bar over its cards. See [MetricCard](/components/metric-card), [StatTabs](/components/stat-tabs) and [SetupGuide](/components/setup-guide) for each part.
+Three places show it working:
+
+- The [MetricCard examples](/components/metric-card) show the cards loading and changing period.
+- The [dashboard template](/templates/dashboard) opens on a smaller overview.
+- The roastery demo's [overview](/demos/roastery) is the full version, with a date range bar over its cards.
+
+See [MetricCard](/components/metric-card), [StatTabs](/components/stat-tabs) and [SetupGuide](/components/setup-guide) for each part.
 
 ## Guidance of your own
 
-Two parts behind the guidance components are exported for guidance you build yourself. `TimeEstimate` says how long a task takes, with a 14px clock and the time in `caption`, read as "Takes about 1 min"; `SetupGuide` and `RecommendationCard` show it beside their tasks.
+Two parts behind the guidance components are exported for guidance you build yourself.
 
-`useDismissible` is the state behind a part people can dismiss for good, as `Banner` and `RecommendationCard` are. `dismiss()` fades the part where it is over `dur-fast`, then `dismissed` turns true and you render nothing. Inside an `AppPage`, what's below then slides up into its place. Focus in the part moves on to the next tab stop as it goes, and with a `storageKey` it stays gone on later visits. Spread its `motionProps` on the part's root, a `buttery.div`:
+### TimeEstimate
 
-```tsx
+`TimeEstimate` says how long a task takes, with a 14px clock and the time in `caption`, read as "Takes about 1 min". `SetupGuide` and `RecommendationCard` show it beside their tasks.
+
+### useDismissible
+
+`useDismissible` is the state behind a part people can dismiss for good, as `Banner` and `RecommendationCard` are. When you call `dismiss()`:
+
+- The part fades where it is over `dur-fast`, then `dismissed` turns true and you render nothing.
+- Inside an `AppPage`, what's below then slides up into its place.
+- Focus in the part moves on to the next tab stop as it goes.
+- With a `storageKey`, the part stays gone on later visits.
+
+Spread its `motionProps` on the part's root, a `buttery.div`:
+
+```tsx title="src/RoastDayTip.tsx"
 import { X } from "lucide-react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
