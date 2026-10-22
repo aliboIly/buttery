@@ -175,7 +175,7 @@
   font-size: var(--bt-text-badge-size);
   line-height: var(--bt-text-badge-line);
   color: var(--bt-text-tertiary);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 @container docs-shell (width < 1100px) {
