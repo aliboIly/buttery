@@ -138,6 +138,15 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 - Nothing lives only in a picture or a demo: whatever a demo shows is also said in text or code. Tables are real tables. Code blocks carry a language tag and full imports.
 - Do and don't pairs are code, each with a one-line reason.
 - Every page is also served as clean Markdown at its path plus `.md`, with a "Copy page as Markdown" button, and `llms.txt` links to those versions, under the nav's sections in the nav's order, each component group a section of its own, such as `## Components › Actions`, and last the demos page and each demo, with its template and its folder. A block the Markdown can't write out, such as the surface levels drawn in light and dark, becomes a line linking to it on the live page, under its heading's anchor; a component that only lays out the Markdown inside it, such as `<Feature>`, leaves that Markdown as it is; the release notes, the roadmap, the newest release and the Get started path are written out as Markdown; and a component's Markdown says where its live demo and its variants and states are, listing each section of the gallery with its description.
+- No page runs on as a wall of text. A list of more than four or five long items, or paragraphs that are really parallel items, becomes one of the written page's blocks, which an MDX page uses without importing them, and whose words stay in the page's Markdown:
+  - `<Steps>` with a `<Step>` for each thing done in order, its `###` heading first, for installing, migrating or any procedure (`start={0}` numbers from 0).
+  - `<Rules>` with a `<Rule title="…">` for each of a numbered set of rules or principles, such as the layout contract's 13; the Markdown numbers them.
+  - `<Cards columns={2|3}>` with a `<Card icon="…" title="…">` for each of a set of parallel things: requirements, features, options, what changes where. A card's title is a line of its own, not a heading.
+  - `<DoDont>` with a `<Do>` and a `<Dont>`, each a code block and a line on why.
+  - A blockquote, `> **Name.** …`, for a note: something to know that isn't a step.
+  - `<DocsTable>` for facts in columns, such as names, values and defaults, with code in backticks and no links in its cells.
+  - A code block that belongs in a file names it, as in ` ```tsx title="src/App.tsx" `.
+- Paragraphs stay short: one idea each, about three lines at the column's width.
 - A comprehension gate per group of pages: a reviewer who hasn't seen the code reads the rendered page cold and answers three questions about it, and the page is fixed if any answer is wrong. Then a fresh agent gets only a component's `.md` page and builds a small feature with that component; its code has to typecheck and pass `expectButtery`. If it fails, the page is unclear: the page gets fixed, not the test.
 
 ## Demos
