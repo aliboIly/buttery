@@ -35,5 +35,5 @@ export const meta: ComponentMeta = {
   layout:
     "It's as wide and tall as its content, up to the room beside its trigger, and scrolls inside past that. It opens 8px from its trigger, flips or shifts to stay 8px inside the window and never covers the trigger; what's inside it brings its own hit areas.",
   reducedMotion:
-    'It fades in and out over 100ms without growing from the trigger; with entrance="instant", and for its scrim, it shows and goes at once either way.',
+    'It fades in and out over 100ms without growing from the trigger, and so does its scrim; with entrance="instant", the panel and its scrim show and go at once either way.',
 };

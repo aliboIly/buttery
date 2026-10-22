@@ -1,4 +1,4 @@
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Popover as RadixPopover } from "radix-ui";
 import { createContext, use, useLayoutEffect, useRef } from "react";
 import type {
@@ -9,6 +9,8 @@ import type {
   RefObject,
 } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state.ts";
+import { useMotionPreference } from "../../motion/preference.ts";
+import { presencePresets, reducedPresence } from "../../motion/presets.ts";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
@@ -156,18 +158,39 @@ export interface PopoverContentProps extends Omit<
 > {
   /**
    * Covers the page behind the open popover: `"blur"` for menus that open over content, `"dim"` to set
-   * it apart further. Clicking the scrim closes the popover. Defaults to no scrim.
+   * it apart further. It fades in and out with the panel, and clicking it closes the popover. Defaults to
+   * no scrim.
    */
   readonly scrim?: "dim" | "blur" | undefined;
 }
 
-/** The scrim under an open popover, gone the moment it starts to close so presses reach the page. */
+/**
+ * The scrim under a popover. It fades in and out over `dur-fast` (100ms with reduced motion), or comes and
+ * goes with an instant panel at once, and lets presses through to the page as soon as it starts to close.
+ */
 function PopoverScrim({
   variant,
 }: {
   readonly variant: "dim" | "blur";
-}): ReactElement | null {
-  return usePopover("Content").open ? <Scrim variant={variant} /> : null;
+}): ReactElement {
+  const popover = usePopover("Content");
+  const fade =
+    useMotionPreference() === "reduced"
+      ? reducedPresence
+      : presencePresets.scrim;
+  const instant = popover.entrance === "instant";
+  return (
+    <motion.div
+      initial={instant ? false : fade.initial}
+      animate={fade.animate}
+      {...(instant ? {} : { exit: fade.exit })}
+      className="bt-popover-scrim"
+      data-bt-part="scrim"
+      data-state={popover.open ? "open" : "closed"}
+    >
+      <Scrim variant={variant} />
+    </motion.div>
+  );
 }
 
 /**

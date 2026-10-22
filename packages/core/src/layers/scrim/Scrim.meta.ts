@@ -20,5 +20,5 @@ export const meta: ComponentMeta = {
   layout:
     "It covers the whole window inside its layer and draws only a fill: --bt-overlay for dim, or --bt-wash over a 10px backdrop blur (--bt-blur-scrim) for blur. The whole scrim takes presses, which reach the component it sits under as a press outside.",
   reducedMotion:
-    "It has no motion of its own: a dialog, sheet or nav bar fades it with its layer, over 100ms with reduced motion, and a popover's scrim shows and goes at once either way.",
+    "It has no motion of its own: a dialog, sheet, nav bar or popover fades it with its layer, over 100ms with reduced motion, and a popover with an instant entrance shows and drops it at once.",
 };

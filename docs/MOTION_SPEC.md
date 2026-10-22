@@ -200,7 +200,7 @@ Measured from the same local recording at 10fps. At rest the label is followed b
 Marketing numbers (not user values) count up once when revealed, 800ms (`--bt-count-up`) ease-out, tabular-nums, width reserved for the final value. Screen readers get the final value immediately (`aria-label`); with reduced motion the final value renders directly.
 
 ### 4.8 Context blur (`Scrim`)
-Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). The blur scrim fades in and out over `--bt-dur-fast` (measured ~100–150ms each way behind the nav menu); the dim scrim fades with its layer: in and out over `--bt-dur-fast` under a dialog (§3), in over `--bt-dur-base` and out over `--bt-dur-fast` under a sheet. The blur scrim sits below the nav bar (`--bt-z-scrim-nav`, under the bar's `--bt-z-sticky`), so the bar and its open menu stay crisp.
+Two variants: `scrim="dim"` (modal, `--bt-overlay`) and `scrim="blur"` (menus over content, blur 10px + `--bt-wash`). The blur scrim fades in and out over `--bt-dur-fast` (measured ~100–150ms each way behind the nav menu); the dim scrim fades with its layer: in and out over `--bt-dur-fast` under a dialog (§3), in over `--bt-dur-base` and out over `--bt-dur-fast` under a sheet. Under a `Popover` either scrim fades in and out over `--bt-dur-fast` (100ms with reduced motion) and lets presses through as it leaves; with `entrance="instant"` it comes and goes with the panel at once. The blur scrim sits below the nav bar (`--bt-z-scrim-nav`, under the bar's `--bt-z-sticky`), so the bar and its open menu stay crisp.
 
 ---
 
