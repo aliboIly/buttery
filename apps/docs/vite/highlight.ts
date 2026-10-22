@@ -20,15 +20,22 @@ const THEME = createCssVariablesTheme({
   fontStyle: true,
 });
 
-let highlighter: Promise<Highlighter> | undefined;
+/** Where the process keeps its one highlighter, outside this module, which a config reload loads afresh. */
+const store = globalThis as typeof globalThis & {
+  __butteryDocsHighlighter?: Promise<Highlighter>;
+};
 
-/** One shiki highlighter for the whole build. */
+/**
+ * One shiki highlighter for the whole process. The dev server loads its config again after each change to
+ * it, and a highlighter made on each load fills the regex engine's memory until highlighting fails, so it's
+ * kept on `globalThis` and made once.
+ */
 export function sharedHighlighter(): Promise<Highlighter> {
-  highlighter ??= createHighlighter({
+  store.__butteryDocsHighlighter ??= createHighlighter({
     themes: [THEME],
     langs: [...LANGUAGES],
   });
-  return highlighter;
+  return store.__butteryDocsHighlighter;
 }
 
 /** Highlights `code` as `lang` into HTML at build time, its colors as `--docs-code-*` variables. */
