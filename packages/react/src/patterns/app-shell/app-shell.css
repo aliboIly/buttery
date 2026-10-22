@@ -68,10 +68,15 @@
     inset: 0;
   }
 
+  /*
+   * The inspector's sheet rises 8px above the window's bottom at its end, where the inspector docks, at most a
+   * dialog's width: a phone's whole width, and no wider on a wide window whose shell is narrow.
+   */
   .bt-app-shell-sheet[data-bt-part="sheet"] {
     position: absolute;
     inset-block-end: var(--bt-space-2);
-    inset-inline: var(--bt-space-2);
+    inset-inline-end: var(--bt-space-2);
+    inline-size: min(var(--bt-w-dialog), calc(100% - var(--bt-space-4)));
     display: flex;
     flex-direction: column;
     max-block-size: calc(100dvh - var(--bt-space-16));

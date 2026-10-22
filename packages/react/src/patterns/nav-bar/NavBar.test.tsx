@@ -285,6 +285,25 @@ describe("NavBar", () => {
     }
   });
 
+  it("opens its sheet at the window's end, no wider than a dialog, when the bar folds in a narrow column of a wide window", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1280, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    page("static", 600);
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    const sheet = await screen.findByRole("dialog", { name: "Main" });
+    await waitFor(() => {
+      const box = sheet.getBoundingClientRect();
+      expect(box.width).toBeLessThanOrEqual(400);
+      expect(Math.round(document.documentElement.clientWidth - box.right)).toBe(
+        8,
+      );
+      expect(Math.round(box.top)).toBe(8);
+    });
+  });
+
   it("folds the menus and actions into a menu button under 640px, which opens them in a sheet", async () => {
     page("static", 600);
     expect(screen.queryByRole("button", { name: "Product" })).toBeNull();

@@ -142,6 +142,22 @@ describe("AppShell", () => {
     expect(document.activeElement).toBe(edit);
   });
 
+  it("rises its sheet at the window's end, no wider than a dialog, when the shell is narrow in a wide window", async () => {
+    const { innerWidth, innerHeight } = window;
+    await page.viewport(1280, 800);
+    onTestFinished(async () => {
+      await page.viewport(innerWidth, innerHeight);
+    });
+    render(<Editor width="600px" />);
+    await userEvent.click(screen.getByRole("button", { name: "Edit" }));
+    const sheet = await screen.findByRole("dialog", { name: "Card settings" });
+    const box = sheet.getBoundingClientRect();
+    expect(box.width).toBeLessThanOrEqual(400);
+    expect(Math.round(document.documentElement.clientWidth - box.right)).toBe(
+      8,
+    );
+  });
+
   it("closes the sheet when the screen widens, takes focus along to the inspector beside the stage, and leaves it closed when it narrows again", async () => {
     const onOpenChange = vi.fn();
     const { rerender } = render(

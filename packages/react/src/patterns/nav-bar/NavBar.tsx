@@ -321,10 +321,10 @@ function PhoneMenu({
                   <MorphMenu label={label} layout="stack">
                     {children}
                   </MorphMenu>
-                  {hasContent(actions) ? (
-                    <div data-bt-part="sheet-actions">{actions}</div>
-                  ) : null}
                 </div>
+                {hasContent(actions) ? (
+                  <div data-bt-part="sheet-actions">{actions}</div>
+                ) : null}
               </motion.div>
             </RadixDialog.Content>
           </Layer>
