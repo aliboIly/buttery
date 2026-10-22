@@ -4,7 +4,7 @@ import { searchSynonyms } from "./synonyms.ts";
 
 /** What a search result is, which sets the group it shows under and how it ranks. */
 export type SearchKind =
-  "page" | "component" | "heading" | "prop" | "token" | "example";
+  "page" | "component" | "heading" | "prop" | "token" | "example" | "release";
 
 /** One thing the docs search can find. */
 export interface SearchDoc {
@@ -79,6 +79,7 @@ const KIND_BOOST: Readonly<Record<SearchKind, number>> = {
   prop: 1,
   token: 1,
   example: 0.8,
+  release: 0.8,
 };
 
 const EXACT_TITLE_BOOST = 4;

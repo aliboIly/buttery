@@ -3,11 +3,7 @@ import { Stack, Surface, Text } from "@buttery/core";
 import { releases } from "virtual:buttery-whats-new";
 import type { Release } from "virtual:buttery-whats-new";
 import { withInlineCode } from "./inline-code.tsx";
-
-/** The id of a release's heading, such as `release-0-9-0`, for links to it. */
-export function releaseId(release: Release): string {
-  return `release-${release.version.replaceAll(".", "-")}`;
-}
+import { releaseId } from "./release-id.ts";
 
 /**
  * One release in a card: its version and date, its name, its highlights and, with `changes`, every change the
@@ -31,7 +27,9 @@ export function ReleaseCard({
           {`${release.version} · ${release.date}`}
         </Text>
         <Text variant="title" asChild>
-          <Heading id={heading === "h2" ? releaseId(release) : undefined}>
+          <Heading
+            id={heading === "h2" ? releaseId(release.version) : undefined}
+          >
             {release.title}
           </Heading>
         </Text>

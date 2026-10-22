@@ -26,6 +26,7 @@ export const SEARCH_GROUPS = [
   "Props",
   "Tokens",
   "Examples",
+  "Changelog",
 ] as const;
 
 /** The filters people can type, each narrowing the results to its groups. */

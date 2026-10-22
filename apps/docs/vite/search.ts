@@ -4,10 +4,12 @@ import ts from "typescript";
 import type { Plugin } from "vite";
 import { buildSearchIndexes } from "../src/search/search.ts";
 import type { SearchDoc } from "../src/search/search.ts";
+import { releaseId } from "../src/release-id.ts";
 import { slugify } from "../src/slug.ts";
 import { captionOf } from "./code.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
 import { propsTablesIn } from "./props.ts";
+import { changelogFiles, releasesIn } from "./whats-new.ts";
 
 /** Each section's name in a result's path, by the first part of a page's section. */
 const SECTION_TITLES: Readonly<Record<string, string>> = {
@@ -150,7 +152,8 @@ function componentPage(
 
 /**
  * Everything the docs search finds, read from the repository: each written page and its headings, each
- * component with its props and examples, and each token, with the path and link each result shows.
+ * component with its props and examples, each token and each release, with the path and link each result
+ * shows.
  */
 export function searchDocsIn(root: string): SearchDoc[] {
   const docs: SearchDoc[] = [];
@@ -295,6 +298,24 @@ export function searchDocsIn(root: string): SearchDoc[] {
       });
     }
   }
+
+  for (const release of releasesIn(root)) {
+    docs.push({
+      id: `release:${release.version}`,
+      kind: "release",
+      group: "Changelog",
+      title: `${release.version}: ${release.title}`,
+      path: ["Resources", "What's new"],
+      href: `/resources/whats-new#${releaseId(release.version)}`,
+      keywords: `${release.title} release`,
+      text: plainText(
+        [
+          ...release.highlights,
+          ...release.changes.flatMap((change) => change.lines),
+        ].join("\n"),
+      ),
+    });
+  }
   return docs;
 }
 
@@ -327,11 +348,13 @@ export function butterySearch(root: string): Plugin {
           "packages/*/src/**/*.{ts,tsx}",
           "packages/*/src/*/*/examples/*.tsx",
           "packages/core/src/tokens/tokens.json",
+          "apps/docs/content/whats-new/*.md",
         ],
         { cwd: root },
       )) {
         this.addWatchFile(join(root, file));
       }
+      for (const file of changelogFiles(root)) this.addWatchFile(file);
       if (!built) {
         const { titles, text } = buildSearchIndexes(searchDocsIn(root));
         built = { titles: JSON.stringify(titles), text: JSON.stringify(text) };

@@ -83,6 +83,8 @@ export const searchGolden: readonly GoldenQuery[] = [
   },
   { query: "hero", expect: ["/patterns/marketing-page"] },
   { query: "roadmap", expect: ["/resources/roadmap"] },
+  { query: "changelog", expect: ["/resources/whats-new"] },
+  { query: "release notes", expect: ["/resources/whats-new"] },
   { query: "breadcrumb", expect: ["/components/breadcrumbs"] },
   { query: "useShortcut", expect: ["/components/kbd", "/components/button"] },
 ];

@@ -4,6 +4,8 @@
  */
 export const searchSynonyms: Readonly<Record<string, readonly string[]>> = {
   modal: ["Dialog"],
+  changelog: ["What's new"],
+  "release notes": ["What's new"],
   popup: ["Dialog", "Popover"],
   lightbox: ["Dialog"],
   dropdown: ["Menu", "Select"],

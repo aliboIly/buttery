@@ -20,6 +20,7 @@
     "packages/*/e2e/**/*.ts",
     "apps/docs/src/routes.ts",
     "apps/docs/src/slug.ts",
+    "apps/docs/src/release-id.ts",
     "apps/docs/src/search/search.ts",
     "apps/docs/src/search/synonyms.ts",
     "apps/docs/src/foundations/color-groups.ts",
