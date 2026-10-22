@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 6B (the App kit): the verification fixes are landing, and settings, search and panels (from a second set of dashboard references) joined the phase before its gate. Then the gate (full checks, comparisons, review, push), Phase 7 (hardening and brand) and Phase 8 (developer and agent experience). The public-kit rule is in place.
+**Now:** Phase 7 (hardening, brand and the docs site), then Phase 8 (developer and agent experience). Phase 6B, the App kit with settings, search and panels, passed its gate. The public-kit rule is in place.
 
 ---
 
@@ -62,14 +62,14 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Guidance: `Banner`, `RecommendationCard`, `SetupGuide`, `FeatureIntro`, `EmptyState` icon + docs, `LoadingPill`, `NotificationNudge`
 - [x] Menus and dialogs: `Menu` submenus and instant entrance, `AccountMenu`, `Avatar`/`InitialsTile`, `ChoiceDialog`, `AnnouncementDialog`, `SettingsIndex`
 - [x] Lanes shared by toasts and the setup guide, `--bt-lane-clearance`
-- [ ] Page grammar for app pages (LAYOUT_RULES §3): order, sections that aren't cards, one primary button per region (checked), the 960 and 820 widths, section-level loading, a page footer
-- [ ] `CommandSearch`: the top bar's field and panel, typed sources (pages, filters, recents, the app's own), `key:value` filters, a `SearchResults` page
-- [ ] Settings: `SettingsPage`, `SettingsSection`, `SettingRow`, `PreferencesMatrix`, `HoverActions`; `SettingsIndex` hover and its "more" tile
-- [ ] Pages: `Breadcrumbs`, `ScopeBadge`, `DetailPage`, `CatalogPage` with `TagChip`, `PlanComparison`
-- [ ] Dialogs: `FormDialog`, `RadioCardGroup`, `ConsequenceDialog`, `FullscreenDialog` with `OptionTiles`
-- [ ] `SidePanel`: docked beside the page from 1280, a sheet under it
-- [ ] `SetupGuide` expanded: groups that fold, done steps checked, a footer link
-- [ ] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame; settings (index, profile, team notifications, plans), search across the demo and a help panel
+- [x] Page grammar for app pages (LAYOUT_RULES §3): order, sections that aren't cards, one primary button per region (checked), the 960 and 820 widths, section-level loading, a page footer
+- [x] `CommandSearch`: the top bar's field and panel, typed sources (pages, filters, recents, the app's own), `key:value` filters, a `SearchResults` page
+- [x] Settings: `SettingsPage`, `SettingsSection`, `SettingRow`, `PreferencesMatrix`, `HoverActions`; `SettingsIndex` hover and its "more" tile
+- [x] Pages: `Breadcrumbs`, `ScopeBadge`, `DetailPage`, `CatalogPage` with `TagChip`, `PlanComparison`
+- [x] Dialogs: `FormDialog`, `RadioCardGroup`, `ConsequenceDialog`, `FullscreenDialog` with `OptionTiles`
+- [x] `SidePanel`: docked beside the page from 1280, a sheet under it
+- [x] `SetupGuide` expanded: groups that fold, done steps checked, a footer link
+- [x] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame; settings (index, profile, team notifications, plans), search across the demo and a help panel
 
 ## v0.9 — Hardening, brand & docs site (Phase 7)
 - [ ] 🧈 Original BrandMark (3 directions → pick one) + favicon + app icons + README hero
