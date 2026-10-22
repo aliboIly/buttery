@@ -1,5 +1,5 @@
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { ScopeBadge } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -10,6 +10,19 @@ export const page: DocsPage = {
   order: 130,
   status: "new",
   since: "0.7.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "All shops" },
+    info: {
+      kind: "text",
+      initial: "Changes here apply to every Halfmoon shop.",
+    },
+  },
+  render: ({ label, info }) => (
+    <ScopeBadge label={String(label)} info={String(info)} />
+  ),
 };
 
 export const demos: readonly DemoSection[] = [
