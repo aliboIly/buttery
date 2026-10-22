@@ -1,5 +1,5 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { TextArea } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -16,6 +16,35 @@ const LONG = Array.from(
   { length: 12 },
   (_, line) => `Line ${String(line + 1)} of a long note.`,
 ).join("\n");
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Note" },
+    hint: { kind: "text", initial: "Shown under the card." },
+    error: { kind: "text", initial: "" },
+    rows: { kind: "number", initial: 3, min: 1, max: 8, step: 1 },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ label, hint, error, rows, disabled }) => (
+    <TextArea
+      label={String(label)}
+      hint={String(hint)}
+      error={String(error) === "" ? undefined : String(error)}
+      rows={typeof rows === "number" ? rows : 3}
+      disabled={disabled === true}
+    />
+  ),
+  code: ({ label, hint, error, rows, disabled }) =>
+    [
+      "<TextArea",
+      `  label="${String(label)}"`,
+      ...(String(hint) === "" ? [] : [`  hint="${String(hint)}"`]),
+      ...(String(error) === "" ? [] : [`  error="${String(error)}"`]),
+      `  rows={${String(typeof rows === "number" ? rows : 3)}}`,
+      ...(disabled === true ? ["  disabled"] : []),
+      "/>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {
