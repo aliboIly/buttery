@@ -88,6 +88,43 @@ describe("SearchResults", () => {
     ).toBeTruthy();
   });
 
+  it("cuts a long detail before a row's path and label", () => {
+    const guides: LocalSearchSource = {
+      id: "guides",
+      label: "Guides",
+      search: () => [
+        {
+          id: "dialog",
+          label: "FullscreenDialog",
+          path: ["Overlays"],
+          detail:
+            "A dialog that takes the whole window for one big question, such as what someone wants to build first.",
+          href: "#fullscreen-dialog",
+        },
+      ],
+    };
+    render(
+      <div style={{ inlineSize: "420px" }}>
+        <SearchResults
+          query={{ text: "dialog", filters: [] }}
+          sources={[guides]}
+        />
+      </div>,
+    );
+    const row = within(
+      screen.getByRole("region", { name: "Guides" }),
+    ).getByRole("link");
+    const label = row.querySelector<HTMLElement>(
+      '[data-bt-part="search-results-label"]',
+    );
+    const detail = row.querySelector<HTMLElement>(
+      '[data-bt-part="search-results-detail"]',
+    );
+    if (!label || !detail) throw new Error("No label or detail.");
+    expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth + 1);
+    expect(detail.scrollWidth).toBeGreaterThan(detail.clientWidth);
+  });
+
   it("keeps a remote source's section waiting until it answers", async () => {
     let answer: (items: readonly SearchItem[]) => void = () => undefined;
     const help: RemoteSearchSource = {

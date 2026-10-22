@@ -62,8 +62,9 @@
     color: var(--bt-text-tertiary);
   }
 
+  /* A long detail gives up its room long before the row's path and label shrink at all. */
   .bt-search-results [data-bt-part="search-results-detail"] {
-    flex: 0 1 auto;
+    flex: 0 1000 auto;
     min-inline-size: 0;
     color: var(--bt-text-secondary);
   }

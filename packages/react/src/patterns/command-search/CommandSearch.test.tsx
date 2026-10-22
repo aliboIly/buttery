@@ -176,6 +176,36 @@ describe("CommandSearch", () => {
     expect(options("Customers")).toEqual(["Setareh Amini"]);
   });
 
+  it("cuts a long detail before a row's path and label", async () => {
+    const guides: LocalSearchSource = {
+      id: "guides",
+      label: "Guides",
+      search: () => [
+        {
+          id: "dialog",
+          label: "Dialog",
+          path: ["Overlays"],
+          detail:
+            "A modal dialog that dims the page, traps focus and hands it back to what opened it when it closes.",
+          href: "#dialog",
+        },
+      ],
+    };
+    render(<Search sources={[guides]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("dialog");
+    const row = within(group("Guides")).getByRole("option");
+    const label = row.querySelector<HTMLElement>(
+      '[data-bt-part="command-search-label"]',
+    );
+    const detail = row.querySelector<HTMLElement>(
+      '[data-bt-part="command-search-detail"]',
+    );
+    if (!label || !detail) throw new Error("No label or detail.");
+    expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth + 1);
+    expect(detail.scrollWidth).toBeGreaterThan(detail.clientWidth);
+  });
+
   it("moves through the rows across groups with the arrow keys, and Enter opens the one it's on", async () => {
     const onSelect = vi.fn();
     const pick: LocalSearchSource = {
