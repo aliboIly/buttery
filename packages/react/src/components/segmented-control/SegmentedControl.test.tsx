@@ -113,6 +113,33 @@ describe("SegmentedControl", () => {
     expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth);
   });
 
+  it("truncates a label that doesn't fit its segment, keeping it whole in its title", () => {
+    render(
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          inlineSize: "240px",
+        }}
+      >
+        <SegmentedControl
+          label="Accept"
+          options={["image/*", ".png,.jpg", "application/pdf,image/*"]}
+        />
+      </div>,
+    );
+    const segment = screen.getByRole("radio", {
+      name: "application/pdf,image/*",
+    });
+    const label = screen.getByText("application/pdf,image/*");
+    expect(segment.scrollWidth).toBeLessThanOrEqual(segment.clientWidth);
+    expect(label.getBoundingClientRect().right).toBeLessThanOrEqual(
+      segment.getBoundingClientRect().right,
+    );
+    expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+    expect(label.getAttribute("title")).toBe("application/pdf,image/*");
+  });
+
   it("draws the sliding selection inside the chosen segment", () => {
     render(<SegmentedControl label="Fill" options={["Blend", "Color"]} />);
     const indicator = document.querySelector('[data-bt-part="indicator"]');
