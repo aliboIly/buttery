@@ -173,7 +173,7 @@ function SearchPreview({
     : snippet;
   return (
     <Stack gap={3}>
-      <Stack gap={1}>
+      <Stack gap={2}>
         <Text variant="caption" tone="secondary">
           {entry.path.join(" › ")}
         </Text>
