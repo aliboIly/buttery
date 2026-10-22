@@ -62,7 +62,7 @@ const ROOTS = [
 ];
 
 /**
- * A page's URL with `settings` added to its query. `route` is a path (`foundations/tokens`), a demo's own path
+ * A page's URL with `settings` added to its query. `route` is a path (`foundations/colors`), a demo's own path
  * (`roastery/search?q=decaf`, under `/demos/`) or a component's name in kebab case (`fit-box`).
  */
 export function url(route: string, settings = ""): string {

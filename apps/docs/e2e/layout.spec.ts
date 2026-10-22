@@ -557,7 +557,7 @@ test("the landing page is buttery with its menu and a toast open", async ({
 test("the playground chrome is buttery with its menus open", async ({
   page,
 }) => {
-  await page.goto("/foundations/tokens");
+  await page.goto("/foundations/colors");
   await expectButtery(page, {
     ...matrix,
     name: "chrome",

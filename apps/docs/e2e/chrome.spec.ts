@@ -146,6 +146,9 @@ test("the skip link takes Tab past the top bar and the sidebar to the page", asy
     "WebKit leaves links out of the tab order unless the system's keyboard setting puts them in.",
   );
   await page.goto("/components/button");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Button" }),
+  ).toBeVisible();
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Skip to content" });
   await expect(skip).toBeFocused();
