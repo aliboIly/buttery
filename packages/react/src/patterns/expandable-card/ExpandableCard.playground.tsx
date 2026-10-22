@@ -1,8 +1,10 @@
 import type { ReactElement, ReactNode } from "react";
 import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Bento, Button, ExpandableCard, Page, Section } from "@buttery/react";
+import type { BentoSpan } from "@buttery/react";
 
 export const page: DocsPage = {
   section: "components/overlays",
@@ -63,6 +65,72 @@ function Chip({
     </Surface>
   );
 }
+
+function spanOf(value: unknown): BentoSpan {
+  switch (demoChoice(value, ["4", "6", "8", "12"])) {
+    case "4":
+      return 4;
+    case "6":
+      return 6;
+    case "8":
+      return 8;
+    case "12":
+      return 12;
+  }
+}
+
+export const live: LiveDemo = {
+  controls: {
+    title: { kind: "text", initial: "Lean it in 3D" },
+    span: { kind: "choice", options: ["4", "6", "8", "12"], initial: "8" },
+  },
+  render: ({ title, span }) => (
+    <Bento>
+      <ExpandableCard
+        title={String(title)}
+        span={spanOf(span)}
+        detail={
+          <Text variant="body-lg">
+            Steer the lean pad and the card tips toward you, up to 20 degrees
+            each way.
+          </Text>
+        }
+      >
+        <Picture backdrop="lilac">
+          <Chip label="Launch card" tilt={-6} />
+        </Picture>
+      </ExpandableCard>
+      <ExpandableCard
+        title="Any size"
+        span={4}
+        detail={
+          <Text variant="body-lg">
+            Square, classic, photo, wide or tall, or a size of your own.
+          </Text>
+        }
+      >
+        <Picture backdrop="cream">
+          <Chip label="16:9" />
+        </Picture>
+      </ExpandableCard>
+    </Bento>
+  ),
+  code: ({ title, span }) =>
+    [
+      "<Bento>",
+      "  <ExpandableCard",
+      `    title="${String(title)}"`,
+      `    span={${String(span)}}`,
+      '    detail={<Text variant="body-lg">Steer the lean pad and the card tips toward you, up to 20 degrees each way.</Text>}',
+      "  >",
+      "    <LeanPreview />",
+      "  </ExpandableCard>",
+      '  <ExpandableCard title="Any size" span={4} detail={<SizesDetail />}>',
+      "    <SizesPreview />",
+      "  </ExpandableCard>",
+      "</Bento>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {
