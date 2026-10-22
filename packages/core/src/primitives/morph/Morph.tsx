@@ -239,6 +239,10 @@ export function Morph({
       cancelAnimationFrame(following);
       following = requestAnimationFrame(() => {
         if (running !== null || held) settle();
+        else if (busy.current.growing) {
+          busy.current.growing = false;
+          syncClip(box, busy.current);
+        }
       });
     };
     const observer = new ResizeObserver(([entry]) => {

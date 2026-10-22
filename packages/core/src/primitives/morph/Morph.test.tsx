@@ -492,8 +492,44 @@ describe("Morph", () => {
       expect(outer.getBoundingClientRect().height).toBe(180);
     });
     await nextFrames(2);
+    expect(outer.hasAttribute("data-animating")).toBe(false);
     observer.disconnect();
     window.removeEventListener("error", listen);
     expect(loops).toEqual([]);
+  });
+
+  it("doesn't stay clipped after following a Morph inside it while its own content held it still", async () => {
+    function Held({
+      tone,
+      open,
+    }: {
+      readonly tone: string;
+      readonly open: boolean;
+    }): ReactElement {
+      return (
+        <Morph data-testid="outer">
+          <p data-tone={tone} style={{ margin: 0, blockSize: "20px" }}>
+            Roast plan
+          </p>
+          <Morph disclosure>
+            {open ? <div style={{ blockSize: "60px" }} /> : null}
+          </Morph>
+        </Morph>
+      );
+    }
+    const { rerender } = render(<Held tone="a" open={false} />);
+    const outer = screen.getByTestId("outer");
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(20);
+    });
+    await nextFrames(3);
+    rerender(<Held tone="b" open={false} />);
+    await nextFrames(1);
+    rerender(<Held tone="b" open />);
+    await waitFor(() => {
+      expect(outer.getBoundingClientRect().height).toBe(80);
+    });
+    await nextFrames(3);
+    expect(outer.hasAttribute("data-animating")).toBe(false);
   });
 });
