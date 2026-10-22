@@ -237,6 +237,7 @@ export function CardStudioSite(): ReactElement {
   return (
     <Page>
       <NavBar
+        skipTo="main"
         behavior="auto-hide"
         brand={<Brand />}
         actions={
@@ -261,174 +262,176 @@ export function CardStudioSite(): ReactElement {
           </Button>
         }
       />
-      <SplitHero
-        id="site-overview"
-        eyebrow="Card Studio"
-        title="Cards for launch days."
-        titleMore="Write a title, pick a finish, and send it out at any size."
-        actions={
-          <>
+      <main id="main">
+        <SplitHero
+          id="site-overview"
+          eyebrow="Card Studio"
+          title="Cards for launch days."
+          titleMore="Write a title, pick a finish, and send it out at any size."
+          actions={
+            <>
+              <Button variant="primary" arrow="forward" asChild>
+                <a href={STUDIO}>Open the studio</a>
+              </Button>
+              <Button variant="soft" asChild>
+                <a href="/patterns/onboarding">Take the tour</a>
+              </Button>
+            </>
+          }
+          visual={<HeroVisual />}
+        />
+        <Section size="sm">
+          <LogoStrip label="Teams that make their cards here">
+            {TEAMS.map((team) => (
+              <LogoStrip.Mark key={team}>
+                <Text variant="title" tone="tertiary">
+                  {team}
+                </Text>
+              </LogoStrip.Mark>
+            ))}
+          </LogoStrip>
+        </Section>
+        <Section
+          id="site-features"
+          tone="muted"
+          title="Everything a card needs"
+          body="Open a card to see how it works."
+        >
+          <Bento>
+            <ExpandableCard
+              title="Lean it in 3D"
+              span={8}
+              detail={
+                <Text variant="body-lg">
+                  Steer the lean pad and the card tips toward you, up to 20
+                  degrees each way. The export draws the same turn.
+                </Text>
+              }
+            >
+              <Picture backdrop="lilac">
+                <Chip label="Launch card" tilt={-6} />
+              </Picture>
+            </ExpandableCard>
+            <ExpandableCard
+              title="Any size"
+              span={4}
+              detail={
+                <Text variant="body-lg">
+                  Square, classic, photo, wide or tall, or a size of your own.
+                </Text>
+              }
+            >
+              <Picture backdrop="cream">
+                <Chip label="16:9" />
+              </Picture>
+            </ExpandableCard>
+            <ExpandableCard
+              title="Three finishes"
+              span={4}
+              detail={
+                <Text variant="body-lg">
+                  Clear lets the backdrop through, Paper is a soft white and Ink
+                  a deep near-black.
+                </Text>
+              }
+            >
+              <Picture backdrop="sky">
+                <Chip label="Ink" />
+              </Picture>
+            </ExpandableCard>
+            <ExpandableCard
+              title="Every change kept"
+              span={8}
+              detail={
+                <Text variant="body-lg">
+                  Undo and Redo remember every change, so trying an idea costs
+                  nothing.
+                </Text>
+              }
+            >
+              <Picture backdrop="mint">
+                <Chip label="Undo · Redo" />
+              </Picture>
+            </ExpandableCard>
+          </Bento>
+        </Section>
+        <Section
+          id="site-backdrops"
+          title="A backdrop for every mood"
+          body="Blends, solid colors, or a picture of your own behind the card."
+        >
+          <Grid columns={{ base: 2, md: 3, lg: 6 }} gap={4}>
+            {BACKDROPS.map((id) => {
+              const preset = gradients.find((candidate) => candidate.id === id);
+              return (
+                <Stack key={id} gap={2}>
+                  <Surface
+                    level="card"
+                    padY={12}
+                    style={{ background: fill(id) }}
+                    aria-hidden="true"
+                  />
+                  <Text variant="label">{preset?.name ?? id}</Text>
+                </Stack>
+              );
+            })}
+          </Grid>
+        </Section>
+        <Section id="site-numbers" size="sm" tone="muted">
+          <StatStrip>
+            <Stat value={3} label="finishes" />
+            <Stat value={24} label="blends" />
+            <Stat value={6} label="canvas shapes" />
+            <Stat value={100} label="steps of undo" />
+          </StatStrip>
+        </Section>
+        <Section
+          id="site-pricing"
+          title="One price for the rest"
+          body="Free while you make a card a day."
+        >
+          <Grid columns={{ base: 1, md: 2 }} gap={4}>
+            <Plan
+              name="Free"
+              price="$0"
+              lines={[
+                "A card a day",
+                "Every finish and blend",
+                "PNG at the canvas's size",
+              ]}
+              action={
+                <Button variant="soft" asChild>
+                  <a href={STUDIO}>Start free</a>
+                </Button>
+              }
+            />
+            <Plan
+              name="Studio"
+              price="$6 a month"
+              lines={[
+                "As many cards as you like",
+                "Your own pictures behind them",
+                "PNG and JPG, and Copy",
+              ]}
+              action={
+                <Button variant="primary" arrow="forward" asChild>
+                  <a href={STUDIO}>Try Studio</a>
+                </Button>
+              }
+            />
+          </Grid>
+        </Section>
+        <CenteredHero
+          titleAs="h2"
+          title="Make your first card."
+          titleMore="It takes a minute."
+          actions={
             <Button variant="primary" arrow="forward" asChild>
               <a href={STUDIO}>Open the studio</a>
             </Button>
-            <Button variant="soft" asChild>
-              <a href="/patterns/onboarding">Take the tour</a>
-            </Button>
-          </>
-        }
-        visual={<HeroVisual />}
-      />
-      <Section size="sm">
-        <LogoStrip label="Teams that make their cards here">
-          {TEAMS.map((team) => (
-            <LogoStrip.Mark key={team}>
-              <Text variant="title" tone="tertiary">
-                {team}
-              </Text>
-            </LogoStrip.Mark>
-          ))}
-        </LogoStrip>
-      </Section>
-      <Section
-        id="site-features"
-        tone="muted"
-        title="Everything a card needs"
-        body="Open a card to see how it works."
-      >
-        <Bento>
-          <ExpandableCard
-            title="Lean it in 3D"
-            span={8}
-            detail={
-              <Text variant="body-lg">
-                Steer the lean pad and the card tips toward you, up to 20
-                degrees each way. The export draws the same turn.
-              </Text>
-            }
-          >
-            <Picture backdrop="lilac">
-              <Chip label="Launch card" tilt={-6} />
-            </Picture>
-          </ExpandableCard>
-          <ExpandableCard
-            title="Any size"
-            span={4}
-            detail={
-              <Text variant="body-lg">
-                Square, classic, photo, wide or tall, or a size of your own.
-              </Text>
-            }
-          >
-            <Picture backdrop="cream">
-              <Chip label="16:9" />
-            </Picture>
-          </ExpandableCard>
-          <ExpandableCard
-            title="Three finishes"
-            span={4}
-            detail={
-              <Text variant="body-lg">
-                Clear lets the backdrop through, Paper is a soft white and Ink a
-                deep near-black.
-              </Text>
-            }
-          >
-            <Picture backdrop="sky">
-              <Chip label="Ink" />
-            </Picture>
-          </ExpandableCard>
-          <ExpandableCard
-            title="Every change kept"
-            span={8}
-            detail={
-              <Text variant="body-lg">
-                Undo and Redo remember every change, so trying an idea costs
-                nothing.
-              </Text>
-            }
-          >
-            <Picture backdrop="mint">
-              <Chip label="Undo · Redo" />
-            </Picture>
-          </ExpandableCard>
-        </Bento>
-      </Section>
-      <Section
-        id="site-backdrops"
-        title="A backdrop for every mood"
-        body="Blends, solid colors, or a picture of your own behind the card."
-      >
-        <Grid columns={{ base: 2, md: 3, lg: 6 }} gap={4}>
-          {BACKDROPS.map((id) => {
-            const preset = gradients.find((candidate) => candidate.id === id);
-            return (
-              <Stack key={id} gap={2}>
-                <Surface
-                  level="card"
-                  padY={12}
-                  style={{ background: fill(id) }}
-                  aria-hidden="true"
-                />
-                <Text variant="label">{preset?.name ?? id}</Text>
-              </Stack>
-            );
-          })}
-        </Grid>
-      </Section>
-      <Section id="site-numbers" size="sm" tone="muted">
-        <StatStrip>
-          <Stat value={3} label="finishes" />
-          <Stat value={24} label="blends" />
-          <Stat value={6} label="canvas shapes" />
-          <Stat value={100} label="steps of undo" />
-        </StatStrip>
-      </Section>
-      <Section
-        id="site-pricing"
-        title="One price for the rest"
-        body="Free while you make a card a day."
-      >
-        <Grid columns={{ base: 1, md: 2 }} gap={4}>
-          <Plan
-            name="Free"
-            price="$0"
-            lines={[
-              "A card a day",
-              "Every finish and blend",
-              "PNG at the canvas's size",
-            ]}
-            action={
-              <Button variant="soft" asChild>
-                <a href={STUDIO}>Start free</a>
-              </Button>
-            }
-          />
-          <Plan
-            name="Studio"
-            price="$6 a month"
-            lines={[
-              "As many cards as you like",
-              "Your own pictures behind them",
-              "PNG and JPG, and Copy",
-            ]}
-            action={
-              <Button variant="primary" arrow="forward" asChild>
-                <a href={STUDIO}>Try Studio</a>
-              </Button>
-            }
-          />
-        </Grid>
-      </Section>
-      <CenteredHero
-        titleAs="h2"
-        title="Make your first card."
-        titleMore="It takes a minute."
-        actions={
-          <Button variant="primary" arrow="forward" asChild>
-            <a href={STUDIO}>Open the studio</a>
-          </Button>
-        }
-      />
+          }
+        />
+      </main>
       <Footer
         brand={
           <Stack gap={2}>
