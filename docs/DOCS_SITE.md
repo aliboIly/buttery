@@ -20,7 +20,7 @@ The sidebar's sections and their pages, in this order.
 2. Foundations, in dependency order: Colors · Typography · Spacing and sizing · Radius · Elevation · Layers · Icons · Palettes · Theming (`createTheme`, dark mode, density).
 3. Layout: The layout contract (the rules) · Stack, Inline and Grid · Surface and nesting · Page grid and containers · FitBox · OverflowCluster · Responsive (container queries).
 4. Motion: Principles (the ten rules) · Tokens · Presets (`Presence`, `Morph`, `SharedIndicator`, `Reveal`, `Stagger`, `Loop`) · Choreography (the morph menu, card to modal, the staggered entrance) · Reduced motion.
-5. Components, grouped by job and alphabetical inside each group: Actions · Inputs · Selection · Navigation · Overlays · Data display · Feedback and status. The table below assigns each one.
+5. Components: All components (`components/overview`, every component under its group with the line its page starts with, listed from the pages by `<ComponentList group="…" />` under a heading per group), then the components grouped by job and alphabetical inside each group: Actions · Inputs · Selection · Navigation · Overlays · Data display · Feedback and status. The table below assigns each one.
 6. Patterns, smallest to largest: Page header · Forms · Settings pages · Detail page · Catalog page · Plans · Search and results · Data table page · Overview · Onboarding · Inspector · App shell · Marketing page.
 7. Templates: a page each for `blank`, `dashboard`, `editor` and `marketing`, with a live preview, `create-buttery --template <name>` (with `pnpm new-app my-app --template <name>`, the command that works until `create-buttery` is published) and what's inside: its files and the patterns it's made from. The preview is the template's own app in a frame, served full-window at `/templates/<name>/preview`, a route the nav leaves out.
 8. Guides, by task: Build an app in 15 minutes · Build your own buttery component · Make an existing app buttery · Bring your brand (theming) · Check your layout (`buttery check`, `LayoutGuard`) · Accessibility.
@@ -50,11 +50,11 @@ The Data table page and Overview patterns are compositions of the parts above an
 
 ## Landing page (`/`)
 
-- A hero: the 🧈 `BrandMark`, "Make anything buttery", a one-line description, "Get started" as the primary button with a forward arrow, "Browse components", and a copyable `npx create-buttery my-app` (`pnpm new-app my-app` until `create-buttery` is published).
+- A hero: the 🧈 `BrandMark`, "Make anything buttery", a one-line description, "Get started" as the primary button with a forward arrow, "Browse components" (All components), and a copyable `npx create-buttery my-app` (`pnpm new-app my-app` until `create-buttery` is published).
 - Where to start: three cards, each with a forward-arrow link: a new app (`create-buttery`), an existing app (`buttery init`), building with a coding agent (`AGENTS.md` and the MCP server). Until the CLI and the MCP server exist, the cards name `pnpm new-app`, the existing-app guide, and `AGENTS.md` with the make-it-buttery skill.
 - What's new: the latest three releases, each with its version, date and two or three highlights, from Changesets plus a short `content/whats-new/` entry per release, and a link to the full changelog. Each entry is `content/whats-new/<version>.md`, with `version`, `date` and `title` in its frontmatter and its highlights as `- ` lines; Resources › What's new lists every entry with the changes each package's `CHANGELOG.md` gives its version. The docs check fails on an entry without two or three highlights and on a changelog version without an entry.
 - A live strip of real components the visitor can touch (a segmented control, a slider, a menu, a toast) that shows the feel instead of describing it.
-- Explore tiles with counts: Foundations, Layout, Motion, Components, Patterns, Templates, each counted from the nav and opening the section's first page. A section with no pages yet has no tile.
+- Explore tiles with counts: Foundations, Layout, Motion, Components, Patterns, Templates, each counted from the nav and opening the section's first page; Components counts its components, not the overview. A section with no pages yet has no tile.
 - A footer: the version, GitHub, the roadmap and the brand page.
 - Motion per `docs/MOTION_SPEC.md`: sections reveal once as they scroll in, the tiles stagger, and nothing plays by itself to distract.
 
@@ -79,7 +79,7 @@ Guides and foundations pages use the same shell without the component-only parts
 ## The shell
 
 - Three columns: the nav on the left (240 wide, groups that fold, the current page highlighted and scrolled into view, scrolling on its own), the content (prose at most 720 wide, demos wider when they need it), and an "On this page" list with scroll-spy on the right from 1280px. Under 1100 the list hides; under 768 the nav becomes a sheet.
-- A top bar: the `BrandMark`, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group; Patterns and Templates; Guides and Tools; Resources), the docs search (below), the version, a theme toggle and GitHub.
+- A top bar: the `BrandMark`, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group, each group opening its heading on All components, with "Every component" at the menu's foot; Patterns and Templates; Guides and Tools; Resources), the docs search (below), the version, a theme toggle and GitHub. A component page's group crumb opens the same heading.
 - Anchors on headings, copy buttons on code, and syntax highlighting done at build time.
 - An address with no page shows "Page not found" under that address: its own title, a docs search holding the address's last words (`/get-started/instalation` holds "instalation") and a link to each section and the demos. A section's own address, such as `/foundations`, opens the section's first page and puts that page's address in the bar. Only a demo or a template's preview draws the paths under its address, with its own router.
 - Every docs page passes `expectButtery` across the full matrix, like the rest of buttery. The docs site is buttery's biggest dogfood test.

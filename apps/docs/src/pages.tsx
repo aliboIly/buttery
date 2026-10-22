@@ -10,7 +10,7 @@ import type { ExploreSection } from "./LandingPage.tsx";
 import { contentPages, labPages } from "./content.ts";
 import type { Heading } from "./content.ts";
 import type { Neighbor } from "./PageFooter.tsx";
-import { buildNav, rootOf } from "./nav.ts";
+import { buildNav, groupHref, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 import type { SectionLink } from "./NotFoundPage.tsx";
@@ -162,7 +162,7 @@ function neighbors(route: string): {
   };
 }
 
-/** A page's section and, under Components, its group, each linking to the first page in it. */
+/** A page's section, linking to its first page, and under Components its group, linking to its part of the overview. */
 function crumbsFor(
   section: DocsSection,
 ): readonly { readonly label: string; readonly href: string }[] {
@@ -174,9 +174,7 @@ function crumbsFor(
   const first = found.pages[0] ?? found.groups[0]?.pages[0];
   return [
     ...(first ? [{ label: found.title, href: `/${first.route}` }] : []),
-    ...(group?.pages[0]
-      ? [{ label: group.title, href: `/${group.pages[0].route}` }]
-      : []),
+    ...(group ? [{ label: group.title, href: groupHref(group.title) }] : []),
   ];
 }
 
@@ -258,17 +256,17 @@ const exploreSections: readonly ExploreSection[] = EXPLORE.flatMap(
   ({ root, unit }) => {
     const section = nav.find((candidate) => candidate.root === root);
     if (!section) return [];
-    const routes = [
-      ...section.pages,
-      ...section.groups.flatMap((group) => group.pages),
-    ];
-    const first = routes[0];
+    const first = section.pages[0] ?? section.groups[0]?.pages[0];
+    const counted =
+      section.groups.length > 0
+        ? section.groups.flatMap((group) => group.pages)
+        : section.pages;
     return first
       ? [
           {
             title: section.title,
             href: `/${first.route}`,
-            count: routes.length,
+            count: counted.length,
             unit,
           },
         ]

@@ -3,6 +3,7 @@ import type { ReactElement, ReactNode } from "react";
 import { Code } from "lucide-react";
 import { Sticky, Text, useFloatingObstacle } from "@buttery/core";
 import {
+  ArrowLink,
   BrandMark,
   IconButton,
   MorphMenu,
@@ -14,6 +15,7 @@ import { DocsSearch } from "./search/DocsSearch.tsx";
 import { OnThisPage } from "./OnThisPage.tsx";
 import type { Heading } from "./content.ts";
 import type { Settings } from "./location.ts";
+import { COMPONENTS_OVERVIEW, groupHref } from "./nav.ts";
 import { demoLinks, nav } from "./pages.tsx";
 import { DOCS_VERSION, SOURCE_URL } from "./routes.ts";
 import { ThemeToggle } from "./ThemeToggle.tsx";
@@ -29,14 +31,20 @@ function columns<T>(items: readonly T[], size: number): T[][] {
 
 /**
  * The top bar's menus, each holding whole sections of the nav, so the site's ten sections fit the bar as
- * five menus; the sidebar still lists every page.
+ * five menus, with a link at the foot of a menu whose section has a page about all of it; the sidebar still
+ * lists every page.
  */
 const TOP_MENUS: readonly {
   readonly label: string;
   readonly roots: readonly string[];
+  readonly footer?: { readonly label: string; readonly href: string };
 }[] = [
   { label: "Learn", roots: ["get-started", "foundations", "layout", "motion"] },
-  { label: "Components", roots: ["components"] },
+  {
+    label: "Components",
+    roots: ["components"],
+    footer: { label: "Every component", href: `/${COMPONENTS_OVERVIEW}` },
+  },
   { label: "Patterns", roots: ["patterns", "templates"] },
   { label: "Guides", roots: ["guides", "tools"] },
   { label: "Resources", roots: ["resources"] },
@@ -152,7 +160,17 @@ export function DocsShell({
             (root) => nav.find((section) => section.root === root) ?? [],
           );
           return (
-            <MorphMenu.Item key={menu.label} label={menu.label}>
+            <MorphMenu.Item
+              key={menu.label}
+              label={menu.label}
+              footer={
+                menu.footer ? (
+                  <ArrowLink href={menu.footer.href} arrow="forward">
+                    {menu.footer.label}
+                  </ArrowLink>
+                ) : undefined
+              }
+            >
               {sections.flatMap((section) =>
                 section.groups.length > 0
                   ? columns(section.groups, 4).map((column) => (
@@ -160,7 +178,7 @@ export function DocsShell({
                         {column.map((group) => (
                           <MorphMenu.Entry
                             key={group.title}
-                            href={`/${group.pages[0]?.route ?? section.root}`}
+                            href={groupHref(group.title)}
                             title={group.title}
                             caption={group.summary}
                           />

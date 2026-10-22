@@ -25,6 +25,7 @@
     "apps/demos/*/e2e/**/*.ts",
     "packages/*/e2e/**/*.ts",
     "apps/docs/src/routes.ts",
+    "apps/docs/src/nav.ts",
     "apps/docs/src/slug.ts",
     "apps/docs/src/release-id.ts",
     "apps/docs/src/demo-sentence.ts",

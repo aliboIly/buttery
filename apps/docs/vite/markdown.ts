@@ -25,6 +25,11 @@ export interface ComponentSource {
   /** `@buttery/core` or `@buttery/react`. */
   readonly packageName: string;
   readonly section: string;
+  /** Its place in its section, lowest first, and its title there, which the nav orders it by. */
+  readonly order: number;
+  readonly title: string;
+  /** The line its page starts with. */
+  readonly description: string;
   readonly home: string | undefined;
   readonly meta: Readonly<Record<string, MetaValue>>;
 }
@@ -54,7 +59,10 @@ function textOf(value: MetaValue | undefined): string {
   return typeof value === "string" ? value : "";
 }
 
-/** The string, string-list and record-list fields of the object literal a meta or playground file exports. */
+/**
+ * The string, number, string-list and record-list fields of the object literal a meta or playground file
+ * exports, a number as its digits.
+ */
 function literalFields(
   file: string,
   variable: string,
@@ -81,7 +89,8 @@ function literalFields(
         if (!ts.isPropertyAssignment(property)) continue;
         const key = property.name.getText(source);
         const init = property.initializer;
-        if (ts.isStringLiteralLike(init)) fields[key] = init.text;
+        if (ts.isStringLiteralLike(init) || ts.isNumericLiteral(init))
+          fields[key] = init.text;
         else if (ts.isArrayLiteralExpression(init)) {
           const records = init.elements.flatMap((element) => {
             if (!ts.isObjectLiteralExpression(element)) return [];
@@ -129,6 +138,9 @@ export function componentSources(root: string): ComponentSource[] {
             ? "@buttery/core"
             : "@buttery/react",
           section,
+          order: Number(textOf(page["order"])),
+          title: textOf(page["title"]) || name,
+          description: textOf(page["description"]),
           home: home === "" ? undefined : home,
           meta: literalFields(join(root, meta), "meta"),
         },
@@ -340,6 +352,31 @@ export function componentMarkdown(
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+/** The components with a page in `section`, in the nav's order: by their `order`, then their titles. */
+export function componentsIn(
+  section: string,
+  components: readonly ComponentSource[],
+): ComponentSource[] {
+  return components
+    .filter((component) => component.section === section)
+    .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+}
+
+/** A `<ComponentList group="…" />`: the group's components, each linking to its Markdown, with its page's line. */
+function componentListOf(
+  jsx: string,
+  components: readonly ComponentSource[],
+): string {
+  const group = /group="([^"]+)"/.exec(jsx)?.[1] ?? "";
+  return table(
+    ["Component", "What it's for"],
+    componentsIn(`components/${group}`, components).map((component) => [
+      `[${component.name}](${markdownHref(componentHref(component))})`,
+      component.description || textOf(component.meta["purpose"]),
+    ]),
+  );
 }
 
 /** The `columns` and `rows` a `<DocsTable … />` was written with, read from its JSX. */
@@ -559,6 +596,8 @@ function bodyMarkdown(
       }
     } else if (name === "DocsTable") {
       out.push(docsTableOf(jsx));
+    } else if (name === "ComponentList") {
+      out.push(componentListOf(jsx, components));
     } else if (name === "WhatsNew") {
       out.push(releasesMarkdown(releasesIn(root)));
     } else if (name === "TemplatePreview") {

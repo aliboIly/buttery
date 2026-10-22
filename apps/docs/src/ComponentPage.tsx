@@ -428,7 +428,7 @@ export function ComponentPage({
   next,
 }: {
   readonly entry: ComponentEntry;
-  /** Its section and group, each linking to its first page. */
+  /** Its section, linking to the section's first page, and its group, linking to its part of the overview. */
   readonly crumbs: readonly { readonly label: string; readonly href: string }[];
   readonly previous: Neighbor | undefined;
   readonly next: Neighbor | undefined;

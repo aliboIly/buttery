@@ -28,6 +28,7 @@ import {
 import { releases } from "virtual:buttery-whats-new";
 import { CopyLine } from "./CopyLine.tsx";
 import { withInlineCode } from "./inline-code.tsx";
+import { COMPONENTS_OVERVIEW } from "./nav.ts";
 import { DOCS_VERSION, SOURCE_URL } from "./routes.ts";
 import { ReleaseCard } from "./WhatsNew.tsx";
 
@@ -189,7 +190,7 @@ export function LandingPage({
               <a href="/get-started/introduction">Get started</a>
             </Button>
             <Button variant="secondary" size="cta" asChild>
-              <a href="/components/button">Browse components</a>
+              <a href={`/${COMPONENTS_OVERVIEW}`}>Browse components</a>
             </Button>
             <div className="docs-landing-command">
               <CopyLine text={NEW_APP} label="Copy the command" />
@@ -290,7 +291,7 @@ export function LandingPage({
           <Footer.Link href="/get-started/introduction">
             Get started
           </Footer.Link>
-          <Footer.Link href="/components/button">Components</Footer.Link>
+          <Footer.Link href={`/${COMPONENTS_OVERVIEW}`}>Components</Footer.Link>
           <Footer.Link href="/patterns/overview">Patterns</Footer.Link>
         </Footer.Column>
       </Footer>

@@ -23,6 +23,7 @@ const SECTIONS = [
   "foundations",
   "layout",
   "motion",
+  "components",
   "components/actions",
   "components/inputs",
   "components/selection",

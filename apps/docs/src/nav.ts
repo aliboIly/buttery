@@ -1,4 +1,5 @@
 import type { DocsPage, DocsSection } from "@buttery/core";
+import { slugify } from "./slug.ts";
 
 /** The site's sections in nav order, each with its title, and the component groups under Components. */
 export const SECTIONS: readonly {
@@ -62,6 +63,14 @@ export const SECTIONS: readonly {
   { root: "tools", title: "Tools" },
   { root: "resources", title: "Resources" },
 ];
+
+/** The written page that lists every component under its group, which the site's ways to the components open. */
+export const COMPONENTS_OVERVIEW = "components/overview";
+
+/** Where a group of the Components section is listed: its heading on the overview, such as `#data-display`. */
+export function groupHref(title: string): string {
+  return `/${COMPONENTS_OVERVIEW}#${slugify(title)}`;
+}
 
 /** The first part of a page's section: `components` for `components/actions`. */
 export function rootOf(section: DocsSection): string {

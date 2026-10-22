@@ -66,13 +66,15 @@ export type DemoFrame = "section" | "page";
 
 /**
  * Where a page sits on the docs site (`docs/DOCS_SITE.md`): its section, and for a component the group
- * that says what it's for.
+ * that says what it's for. `"components"` alone is for a written page about the components as a whole,
+ * such as the overview that lists them.
  */
 export type DocsSection =
   | "get-started"
   | "foundations"
   | "layout"
   | "motion"
+  | "components"
   | "components/actions"
   | "components/inputs"
   | "components/selection"

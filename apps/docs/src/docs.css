@@ -106,12 +106,21 @@
   outline-offset: calc(-1 * var(--bt-focus-width));
 }
 
-/* A link that stands on its own, such as "Edit this page" or a related page, takes a 28px target. */
+/*
+ * A link that stands on its own, such as "Edit this page", a related page or a component in the overview's
+ * tables, takes a 28px target.
+ */
 .docs-page-footer .docs-link,
-.docs-related .docs-link {
+.docs-related .docs-link,
+.docs-component-list .docs-link {
   display: inline-flex;
   align-items: center;
   min-block-size: var(--bt-h-sm);
+}
+
+/* A component's name, in its taller target, stays on the line of its description's first words. */
+.tk-table.docs-component-list td {
+  vertical-align: baseline;
 }
 
 .docs-code-block {

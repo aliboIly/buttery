@@ -13,6 +13,7 @@ import {
   pageMarkdown,
 } from "./markdown.ts";
 import type { MarkdownMiddleware } from "./markdown.ts";
+import { SECTIONS } from "../src/nav.ts";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const components = componentSources(root);
@@ -122,6 +123,28 @@ describe("the site as Markdown", () => {
     expect(text.indexOf("## Foundations")).toBeLessThan(
       text.indexOf("## Components"),
     );
+  });
+
+  it("lists every component on the components overview under its group, in the nav's order", () => {
+    const markdown =
+      pageMarkdown(root, "components/overview", components) ?? "";
+    const groups = SECTIONS.flatMap((section) => section.groups ?? []);
+    expect(groups).not.toEqual([]);
+    for (const group of groups) {
+      const start = markdown.indexOf(`\n## ${group.title}\n`);
+      expect(start, group.title).toBeGreaterThan(-1);
+      const end = markdown.indexOf("\n## ", start + 1);
+      const listed = [
+        ...markdown
+          .slice(start, end === -1 ? undefined : end)
+          .matchAll(/^\| \[([A-Za-z]+)\]\((\/[^)]+)\) \|/gm),
+      ].map(([, name, href]) => `${name ?? ""} ${href ?? ""}`);
+      const wanted = components
+        .filter((component) => component.section === group.section)
+        .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title))
+        .map((component) => `${component.name} ${componentHref(component)}.md`);
+      expect(listed, group.title).toEqual(wanted);
+    }
   });
 
   it("links a template's page to its live preview", () => {

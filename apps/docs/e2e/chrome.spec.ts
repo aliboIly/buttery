@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import type { Locator, Page } from "@playwright/test";
 import { fileURLToPath } from "node:url";
 import { releasesIn } from "../vite/whats-new.ts";
+import { componentRoutes } from "./routes.ts";
 
 test.use({ viewport: { width: 1280, height: 720 } });
 
@@ -281,6 +282,44 @@ test("a section's own address opens the section's first page", async ({
   ).toBeVisible();
   await page.goto("/get-started/");
   await expect(page).toHaveURL(/\/get-started\/introduction$/);
+  await page.goto("/components");
+  await expect(page).toHaveURL(/\/components\/overview$/);
+});
+
+test("the components overview lists every component by group, and the site's ways to it open it", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(
+    page
+      .getByRole("region", { name: "Explore" })
+      .getByText(
+        `${String(componentRoutes.filter(({ route }) => route.startsWith("components/")).length)} components`,
+      ),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Browse components" }).click();
+  await expect(page).toHaveURL(/\/components\/overview$/);
+  const main = page.getByRole("main");
+  await expect(
+    main.getByRole("heading", { level: 1, name: "All components" }),
+  ).toBeVisible();
+  const tables = main.getByRole("table");
+  for (const { name, route } of componentRoutes.filter((entry) =>
+    entry.route.startsWith("components/"),
+  ))
+    await expect(
+      tables.getByRole("link", { name, exact: true }),
+    ).toHaveAttribute("href", `/${route}`);
+  await page.getByRole("button", { name: "Components", exact: true }).click();
+  const menu = page.locator('[data-bt-part="panel"]');
+  await expect(
+    menu.getByRole("link", { name: "Every component" }),
+  ).toHaveAttribute("href", "/components/overview");
+  await menu.getByRole("link", { name: /^Inputs/ }).click();
+  await expect(page).toHaveURL(/\/components\/overview#inputs$/);
+  await expect(
+    main.getByRole("heading", { level: 2, name: "Inputs" }),
+  ).toBeInViewport();
 });
 
 test("a Markdown address with no page answers 404", async ({ request }) => {
