@@ -3,7 +3,6 @@ import { Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ArticleLayout } from "@buttery/react";
 
-/** A link to a section of the article, a 24px target in `body-sm`. */
 function SectionLink({
   href,
   children,
