@@ -1,5 +1,10 @@
 import type { DemoSection, DocsPage } from "@buttery/core";
-import { CommandSearch, matchesSearch, pageSource } from "@buttery/react";
+import {
+  CommandSearch,
+  formatSearch,
+  matchesSearch,
+  pageSource,
+} from "@buttery/react";
 import type { LocalSearchSource, RemoteSearchSource } from "@buttery/react";
 import { CircleHelp, Package, Settings, Users } from "lucide-react";
 
@@ -15,18 +20,18 @@ export const page: DocsPage = {
 
 const PAGES = pageSource({
   pages: [
-    { label: "Orders", href: "#command-search", icon: Package },
-    { label: "Customers", href: "#command-search", icon: Users },
+    { label: "Orders", href: "#/command-search/orders", icon: Package },
+    { label: "Customers", href: "#/command-search/customers", icon: Users },
     {
       label: "Team notifications",
       path: ["Settings"],
-      href: "#command-search",
+      href: "#/command-search/team-notifications",
       icon: Settings,
     },
     {
       label: "Plans and billing",
       path: ["Settings"],
-      href: "#command-search",
+      href: "#/command-search/plans",
       icon: Settings,
     },
   ],
@@ -48,7 +53,7 @@ const CUSTOMERS: LocalSearchSource = {
         id: customer.email,
         label: customer.name,
         detail: customer.email,
-        href: "#command-search",
+        href: `#/command-search/customers/${encodeURIComponent(customer.email)}`,
       })),
 };
 
@@ -72,7 +77,7 @@ const HELP: RemoteSearchSource = {
               id: title,
               label: title,
               icon: CircleHelp,
-              href: "#command-search",
+              href: `#/command-search/help/${encodeURIComponent(title)}`,
             }),
           ),
         );
@@ -105,9 +110,9 @@ export const demos: readonly DemoSection[] = [
             description: "a customer's email",
           },
         ]}
-        filtersHref="#command-search"
+        filtersHref="#/command-search/filters"
         resultsHref={(query) =>
-          `#command-search?q=${encodeURIComponent(query.text)}`
+          `#/command-search/results?q=${encodeURIComponent(formatSearch(query))}`
         }
         emptyHint="Try another word, or a filter such as status:shipped."
         storageKey="playground-command-search"

@@ -242,7 +242,10 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "search for something nothing matches",
       run: async (page: Page) => {
         await page.keyboard.type("zzz");
-        await page.getByText('No results for "ineszzz"').waitFor();
+        await page
+          .locator(".bt-command-search-panel")
+          .getByText('No results for "ineszzz"')
+          .waitFor();
       },
       acrossMatrix: true,
     },

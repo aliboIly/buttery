@@ -239,16 +239,18 @@ export function pageSource({
     search: (query) =>
       query.filters.length > 0
         ? []
-        : pages
-            .filter((page) =>
-              matchesSearch(query.text, page.label, ...(page.path ?? [])),
-            )
-            .map((page) => ({
-              id: page.href,
-              label: page.label,
-              path: page.path,
-              icon: page.icon,
-              href: page.href,
-            })),
+        : pages.flatMap((page, index) =>
+            matchesSearch(query.text, page.label, ...(page.path ?? []))
+              ? [
+                  {
+                    id: String(index),
+                    label: page.label,
+                    path: page.path,
+                    icon: page.icon,
+                    href: page.href,
+                  },
+                ]
+              : [],
+          ),
   };
 }

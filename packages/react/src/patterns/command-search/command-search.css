@@ -129,11 +129,20 @@
     appearance: none;
   }
 
-  /* The panel takes the field's width from the component and scrolls inside, never shorter than a steady minimum. */
+  /*
+   * The panel takes the field's width from the component and scrolls inside, never shorter than a steady
+   * minimum, nor taller than the room left under the field.
+   */
   .bt-command-search-panel.bt-popover {
     display: flex;
     flex-direction: column;
-    max-block-size: var(--bt-command-search-max);
+    max-block-size: min(
+      var(--bt-command-search-max),
+      var(
+        --radix-popover-content-available-height,
+        var(--bt-command-search-max)
+      )
+    );
     padding: 0;
     overflow: hidden;
   }

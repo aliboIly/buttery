@@ -1,8 +1,9 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { isApplePlatform, publishSettled } from "@buttery/core";
 import {
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -147,7 +148,7 @@ describe("CommandSearch", () => {
     );
     expect(
       screen
-        .getByRole("link", { name: "View more filters" })
+        .getByRole("option", { name: "View more filters" })
         .getAttribute("href"),
     ).toBe("#filters");
   });
@@ -327,21 +328,263 @@ describe("CommandSearch", () => {
     if (!scroll) throw new Error("No panel.");
     const height = scroll.getBoundingClientRect().height;
     await userEvent.keyboard("zzz");
-    expect(screen.getByText('No results for "szzz"')).toBeTruthy();
+    expect(within(scroll).getByText('No results for "szzz"')).toBeTruthy();
     expect(scroll.getBoundingClientRect().height).toBe(height);
     await userEvent.keyboard("{Escape}");
     expect(options("Suggested filters")).toHaveLength(2);
   });
 
-  it("takes focus from / and ⌘K anywhere", async () => {
+  it("takes focus from / anywhere", async () => {
     render(<Search />);
+    await userEvent.click(screen.getByRole("button", { name: "Elsewhere" }));
     await userEvent.keyboard("/");
     expect(document.activeElement).toBe(field());
     expect(field()).toHaveProperty("value", "");
+  });
+
+  it("takes focus from ⌘K on Apple platforms and Ctrl K elsewhere, and reopens its panel when already focused", async () => {
+    render(<Search />);
+    const mod = isApplePlatform() ? "Meta" : "Control";
+    const other = isApplePlatform() ? "Control" : "Meta";
     await userEvent.click(screen.getByRole("button", { name: "Elsewhere" }));
-    await userEvent.keyboard("{Control>}k{/Control}");
-    await userEvent.keyboard("{Meta>}k{/Meta}");
+    await userEvent.keyboard(`{${other}>}k{/${other}}`);
+    expect(document.activeElement).not.toBe(field());
+    await userEvent.keyboard(`{${mod}>}k{/${mod}}`);
     expect(document.activeElement).toBe(field());
+    await userEvent.keyboard("{Escape}");
+    expect(field().getAttribute("aria-expanded")).toBe("false");
+    await userEvent.keyboard(`{${mod}>}k{/${mod}}`);
+    expect(field().getAttribute("aria-expanded")).toBe("true");
+    await userEvent.keyboard("{Escape}");
+    await userEvent.click(field());
+    expect(field().getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("gives every row its own id, so the arrows reach each one even when pages share an href", async () => {
+    const twins = pageSource({
+      pages: [
+        { label: "Shop settings", href: "#same" },
+        { label: "Shipping", href: "#same" },
+        { label: "Stock", href: "#same" },
+      ],
+    });
+    render(<Search sources={[twins]} filters={[]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("s");
+    const rows = within(group("Go to")).getAllByRole("option");
+    expect(new Set(rows.map((row) => row.id)).size).toBe(3);
+    for (const row of rows) {
+      await userEvent.keyboard("{ArrowDown}");
+      expect(field().getAttribute("aria-activedescendant")).toBe(row.id);
+    }
+  });
+
+  it("finishes a filter left at the end when the search is sent, and brings a chip-only search back as a chip", async () => {
+    const onSearch = vi.fn();
+    const asked: string[] = [];
+    render(
+      <Search
+        storageKey="test-search"
+        onSearch={onSearch}
+        resultsHref={(query) => {
+          asked.push(query.filters.map((token) => token.key).join());
+          return "#search";
+        }}
+      />,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("status:shipped");
+    expect(asked.at(-1)).toBe("status");
+    await userEvent.keyboard("{Enter}");
+    expect(onSearch).toHaveBeenCalledWith({
+      text: "",
+      filters: [{ key: "status", value: "shipped" }],
+    });
+    await userEvent.click(field());
+    await userEvent.click(
+      screen.getByRole("option", { name: "status:shipped" }),
+    );
+    expect(
+      [...document.querySelectorAll('[data-bt-part="chip"]')].map(
+        (chip) => chip.textContent,
+      ),
+    ).toEqual(["status:shipped"]);
+    expect(field()).toHaveProperty("value", "");
+  });
+
+  it("keeps focus in the field when a press lands on it outside the input, and takes it at rest", async () => {
+    render(<Search />);
+    const icon = box().querySelector('[data-bt-part="icon"]');
+    if (!icon) throw new Error("No icon.");
+    await userEvent.click(icon);
+    expect(document.activeElement).toBe(field());
+    await userEvent.keyboard("ines");
+    await userEvent.click(icon);
+    expect(document.activeElement).toBe(field());
+    expect(field().getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("keeps focus in the field after choosing a row that stays on the page", async () => {
+    const onSelect = vi.fn();
+    const actions: LocalSearchSource = {
+      id: "actions",
+      label: "Actions",
+      search: () => [{ id: "export", label: "Export orders", onSelect }],
+    };
+    render(<Search sources={[actions]} filters={[]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("exp{ArrowDown}{Enter}");
+    expect(onSelect).toHaveBeenCalledOnce();
+    expect(document.activeElement).toBe(field());
+    expect(field().getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("leaves the keys an input method composes with alone", async () => {
+    const onSelect = vi.fn();
+    const actions: LocalSearchSource = {
+      id: "actions",
+      label: "Actions",
+      search: () => [{ id: "export", label: "Export orders", onSelect }],
+    };
+    render(<Search sources={[actions]} filters={[]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("e");
+    fireEvent.compositionStart(field());
+    fireEvent.keyDown(field(), { key: "ArrowDown", isComposing: true });
+    expect(field().hasAttribute("aria-activedescendant")).toBe(false);
+    fireEvent.compositionEnd(field());
+    fireEvent.keyDown(field(), { key: "Escape" });
+    expect(field()).toHaveProperty("value", "e");
+    fireEvent.keyUp(field(), { key: "Escape" });
+    await userEvent.keyboard("{ArrowDown}{Enter}");
+    expect(onSelect).toHaveBeenCalledOnce();
+  });
+
+  it("is a listbox in a plain panel: its filters described, what it found announced, every row reachable", async () => {
+    render(<Search filtersHref="#filters" onSearch={() => undefined} />);
+    await userEvent.click(field());
+    const listbox = screen.getByRole("listbox");
+    expect(listbox.closest('[role="dialog"]')).toBeNull();
+    const rows = screen.getAllByRole("option");
+    await userEvent.keyboard("{ArrowDown}".repeat(rows.length));
+    const more = screen.getByRole("option", { name: "View more filters" });
+    expect(field().getAttribute("aria-activedescendant")).toBe(more.id);
+    await userEvent.keyboard("status:paid ines");
+    const chip = screen.getByRole("button", { name: "Remove status:paid" });
+    expect(chip.tabIndex).toBe(0);
+    const described = field().getAttribute("aria-describedby") ?? "";
+    expect(document.getElementById(described)?.textContent).toBe(
+      "Filtered by status:paid",
+    );
+    await waitFor(() => {
+      expect(within(box()).getByRole("status").textContent).toBe(
+        "Filtered by status:paid. 1 result",
+      );
+    });
+    await userEvent.keyboard("zz");
+    await waitFor(() => {
+      expect(within(box()).getByRole("status").textContent).toBe(
+        'Filtered by status:paid. No results for "ineszz"',
+      );
+    });
+  });
+
+  it("forgets a remote source's answers once the field is emptied", async () => {
+    const help: RemoteSearchSource = {
+      id: "help",
+      label: "Help",
+      remote: true,
+      search: async (query) => {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        return [{ id: query.text, label: `Help: ${query.text}` }];
+      },
+    };
+    render(<Search sources={[help]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("payout");
+    await waitFor(() => {
+      expect(options("Help")).toEqual(["Help: payout"]);
+    });
+    await userEvent.keyboard("{Escape}decaf");
+    expect(options("Help")).toEqual(["Searching help"]);
+  });
+
+  it("keeps an answer that comes late from replacing a newer one", async () => {
+    const help: RemoteSearchSource = {
+      id: "help",
+      label: "Help",
+      remote: true,
+      search: (query) =>
+        new Promise((resolve) => {
+          window.setTimeout(
+            () => {
+              resolve([{ id: query.text, label: `Help: ${query.text}` }]);
+            },
+            query.text === "os" ? 600 : 20,
+          );
+        }),
+    };
+    render(<Search sources={[help]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("os");
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await userEvent.keyboard("k");
+    await waitFor(() => {
+      expect(options("Help")).toEqual(["Help: osk"]);
+    });
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expect(options("Help")).toEqual(["Help: osk"]);
+  });
+
+  it("keeps its panel inside a short window", async () => {
+    await page.viewport(1280, 360);
+    const many: LocalSearchSource = {
+      id: "many",
+      label: "Many",
+      limit: 20,
+      search: () =>
+        Array.from({ length: 20 }, (_, index) => ({
+          id: String(index),
+          label: `Result ${String(index)}`,
+        })),
+    };
+    render(<Search sources={[many]} onSearch={() => undefined} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("r");
+    const panel = document.querySelector(".bt-command-search-panel");
+    if (!panel) throw new Error("No panel.");
+    await waitFor(() => {
+      expect(panel.getBoundingClientRect().bottom).toBeLessThanOrEqual(360);
+    });
+  });
+
+  it("opens its first empty answer no shorter than its steady minimum", async () => {
+    render(<Search sources={[CUSTOMERS]} filters={[]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("zzz");
+    const scroll = document.querySelector<HTMLElement>(
+      '.bt-command-search-panel [data-bt-part="scroll"]',
+    );
+    expect(scroll?.getBoundingClientRect().height).toBeGreaterThanOrEqual(160);
+  });
+
+  it("keeps what's typed on Enter with nowhere to send it, and is inert while disabled", async () => {
+    render(<Search />);
+    await userEvent.click(field());
+    await userEvent.keyboard("ines{Enter}");
+    expect(field()).toHaveProperty("value", "ines");
+    cleanup();
+    render(<Search disabled defaultValue="status:paid ines" />);
+    expect(
+      screen
+        .getByRole("button", { name: "Remove status:paid" })
+        .hasAttribute("disabled"),
+    ).toBe(true);
+    expect(
+      screen
+        .getByRole("button", { name: "Clear search" })
+        .hasAttribute("disabled"),
+    ).toBe(true);
   });
 
   it("searches everything on Enter with no row chosen, remembering the search under its storage key", async () => {
@@ -357,7 +600,7 @@ describe("CommandSearch", () => {
     await userEvent.keyboard("ines");
     expect(
       screen
-        .getByRole("link", { name: "View all results" })
+        .getByRole("option", { name: "View all results" })
         .getAttribute("href"),
     ).toBe("#search?q=ines");
     await userEvent.keyboard("{Enter}");

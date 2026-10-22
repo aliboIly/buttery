@@ -17,6 +17,7 @@ import {
 } from "@buttery/core";
 import { ChevronRight, Clock, Search, X } from "lucide-react";
 import { motion } from "motion/react";
+import { VisuallyHidden } from "radix-ui";
 import type { MotionStyle } from "motion/react";
 import {
   useEffect,
@@ -65,6 +66,10 @@ export interface CommandSearchLabels {
   readonly clear: string;
   /** Names a chip's remove button, such as "Remove status:shipped". */
   readonly removeFilter: (token: string) => string;
+  /** Describes the field while it holds finished filters, such as "Filtered by status:shipped". */
+  readonly filtering: (tokens: readonly string[]) => string;
+  /** Announces how many results the groups show, such as "5 results". */
+  readonly resultCount: (count: number) => string;
 }
 
 /** Props for `CommandSearch`. `ref` and other input props go to the input; `className` and `style` to the field. */
@@ -112,6 +117,9 @@ const LABELS: CommandSearchLabels = {
   searching: (source) => `Searching ${source.toLowerCase()}`,
   clear: "Clear search",
   removeFilter: (token) => `Remove ${token}`,
+  filtering: (tokens) => `Filtered by ${tokens.join(", ")}`,
+  resultCount: (count) =>
+    count === 1 ? "1 result" : `${String(count)} results`,
 };
 
 const NO_FILTERS: readonly SearchFilter[] = [];
@@ -157,23 +165,6 @@ function isSearches(value: unknown): value is readonly string[] {
   return (
     Array.isArray(value) && value.every((entry) => typeof entry === "string")
   );
-}
-
-function keyOf(option: PanelOption): string {
-  switch (option.kind) {
-    case "filter":
-      return `filter:${option.filter.key}`;
-    case "value":
-      return `value:${option.filter.key}:${option.value}`;
-    case "recent":
-      return `recent:${option.search}`;
-    case "item":
-      return `item:${option.item.id}`;
-    default: {
-      const unknown: never = option;
-      return unknown;
-    }
-  }
 }
 
 function suggestFilters(
@@ -280,6 +271,7 @@ export function CommandSearch({
   onFocus,
   onBlur,
   disabled,
+  "aria-describedby": describedBy,
   ...rest
 }: CommandSearchProps): ReactElement {
   const words = { ...LABELS, ...labels };
@@ -290,6 +282,10 @@ export function CommandSearch({
   });
   const query = useMemo(
     () => parseSearch(current, filters),
+    [current, filters],
+  );
+  const submitted = useMemo(
+    () => parseSearch(current, filters, { sent: true }),
     [current, filters],
   );
   const queryKey = formatSearch(query);
@@ -312,6 +308,8 @@ export function CommandSearch({
     isSearches,
   );
   const input = useRef<HTMLInputElement>(null);
+  const composing = useRef(false);
+  const composed = useRef(false);
   const field = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const allResults = useRef<HTMLAnchorElement>(null);
@@ -320,6 +318,8 @@ export function CommandSearch({
   const refs = useMergedRefs(ref, input);
   const baseId = useId();
   const listboxId = `${baseId}-listbox`;
+  const footerId = `${baseId}-footer`;
+  const tokensId = `${baseId}-filters`;
   const apple = useApplePlatform();
   const widen = useLayoutAnimation("smooth");
   const tracking = useAnimationTracking();
@@ -331,6 +331,7 @@ export function CommandSearch({
 
   const focusField = (event: globalThis.KeyboardEvent): void => {
     event.preventDefault();
+    setDismissed(false);
     input.current?.focus();
   };
   useShortcut("/", focusField, { enabled: shortcut && disabled !== true });
@@ -419,11 +420,23 @@ export function CommandSearch({
       });
     }
   }
-  const optionId = (group: PanelGroup, option: PanelOption): string =>
-    `${baseId}-${encodeURIComponent(group.id)}-${encodeURIComponent(keyOf(option))}`;
-  const rows = groups.flatMap((group) =>
-    group.options.map((option) => ({ id: optionId(group, option), option })),
-  );
+  const optionId = (group: number, option: number): string =>
+    `${baseId}-option-${String(group)}-${String(option)}`;
+  const footerLink = empty
+    ? filtersHref !== undefined
+    : resultsHref !== undefined || onSearch !== undefined;
+  const rows: readonly {
+    readonly id: string;
+    readonly option?: PanelOption;
+  }[] = [
+    ...groups.flatMap((group, groupIndex) =>
+      group.options.map((option, optionIndex) => ({
+        id: optionId(groupIndex, optionIndex),
+        option,
+      })),
+    ),
+    ...(footerLink ? [{ id: footerId }] : []),
+  ];
   const activeId =
     active !== null &&
     active.value === current &&
@@ -431,14 +444,28 @@ export function CommandSearch({
       ? active.id
       : undefined;
   const noResults = !empty && groups.length === 0;
-  const footer = empty
-    ? filtersHref
-    : resultsHref !== undefined || onSearch !== undefined;
   const panelOpen =
     focused &&
     !dismissed &&
     disabled !== true &&
-    (groups.length > 0 || !empty || footer !== undefined);
+    (groups.length > 0 || !empty || footerLink);
+  const tokens = query.filters.map((token) => `${token.key}:${token.value}`);
+  const found = groups.reduce(
+    (count, group) =>
+      count + group.options.filter((option) => option.kind === "item").length,
+    0,
+  );
+  const status =
+    !panelOpen || empty || groups.some((group) => group.loading)
+      ? ""
+      : [
+          ...(tokens.length > 0 ? [words.filtering(tokens)] : []),
+          noResults
+            ? words.noResults(
+                query.text.trim() === "" ? tokens.join(" ") : query.text.trim(),
+              )
+            : words.resultCount(found),
+        ].join(". ");
 
   // The panel takes the field's width before it first paints, and follows it as the window resizes. Radix's
   // own width variable is set while the browser is delivering ResizeObserver notifications, which would
@@ -466,7 +493,8 @@ export function CommandSearch({
     const element = scroller.current;
     if (!element) return;
     if (noResults) {
-      element.style.minBlockSize = `${String(heldHeight.current)}px`;
+      element.style.minBlockSize =
+        heldHeight.current > 0 ? `${String(heldHeight.current)}px` : "";
       return;
     }
     element.style.minBlockSize = "";
@@ -476,6 +504,7 @@ export function CommandSearch({
   const update = (next: string): void => {
     setDismissed(false);
     setCurrent(next);
+    if (next === "") setRemote({});
   };
   const replaceTyping = (next: string): void => {
     update(
@@ -485,20 +514,21 @@ export function CommandSearch({
       }),
     );
   };
-  const remember = (search: string): void => {
-    const trimmed = search.trim();
-    if (trimmed === "" || storageKey === undefined) return;
+  const remember = (): void => {
+    const search = formatSearch(submitted).trim();
+    if (search === "" || storageKey === undefined) return;
     setRecent((list) =>
-      [trimmed, ...list.filter((entry) => entry !== trimmed)].slice(
+      [search, ...list.filter((entry) => entry !== search)].slice(
         0,
         RECENT_LIMIT,
       ),
     );
   };
-  const finish = (): void => {
+  const finish = (leaving: boolean): void => {
     setCurrent("");
+    setRemote({});
     setDismissed(true);
-    input.current?.blur();
+    if (leaving) input.current?.blur();
   };
   const choose = (option: PanelOption): void => {
     switch (option.kind) {
@@ -509,12 +539,14 @@ export function CommandSearch({
         replaceTyping(`${option.filter.key}:${option.value} `);
         return;
       case "recent":
-        update(option.search);
+        update(
+          formatSearch(parseSearch(option.search, filters, { sent: true })),
+        );
         return;
       case "item":
-        remember(current);
+        remember();
         option.item.onSelect?.();
-        finish();
+        finish(option.item.href !== undefined);
         return;
       default: {
         const unknown: never = option;
@@ -524,9 +556,9 @@ export function CommandSearch({
   };
   const searchAll = (): void => {
     if (empty) return;
-    remember(current);
-    onSearch?.(query);
-    finish();
+    remember();
+    onSearch?.(submitted);
+    finish(true);
   };
   const move = (step: 1 | -1): void => {
     if (rows.length === 0) return;
@@ -543,7 +575,13 @@ export function CommandSearch({
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     onKeyDown?.(event);
-    if (event.defaultPrevented) return;
+    if (
+      event.defaultPrevented ||
+      event.nativeEvent.isComposing ||
+      composing.current ||
+      composed.current
+    )
+      return;
     const activeRow = rows.find((row) => row.id === activeId);
     switch (event.key) {
       case "ArrowDown":
@@ -559,14 +597,13 @@ export function CommandSearch({
           document.getElementById(activeRow.id)?.click();
           return;
         }
-        if (allResults.current) allResults.current.click();
-        else searchAll();
+        allResults.current?.click();
         return;
       case "Tab": {
         if (!panelOpen || event.shiftKey) return;
         if (
-          activeRow?.option.kind === "filter" ||
-          activeRow?.option.kind === "value"
+          activeRow?.option?.kind === "filter" ||
+          activeRow?.option?.kind === "value"
         ) {
           event.preventDefault();
           choose(activeRow.option);
@@ -609,8 +646,7 @@ export function CommandSearch({
     }
   };
 
-  const renderOption = (group: PanelGroup, option: PanelOption): ReactNode => {
-    const id = optionId(group, option);
+  const renderOption = (option: PanelOption, id: string): ReactNode => {
     const selected = id === activeId;
     const common = {
       id,
@@ -732,7 +768,20 @@ export function CommandSearch({
     }
   };
 
-  const tokens = query.filters.map((token) => `${token.key}:${token.value}`);
+  const footerProps = (selected: boolean) =>
+    ({
+      id: footerId,
+      role: "option",
+      "aria-selected": selected,
+      "data-active": selected ? "" : undefined,
+      tabIndex: -1,
+      className: "bt-text",
+      "data-role": "label",
+      "data-bt-part": "footer-link",
+      onPointerMove: () => {
+        if (!selected) setActive({ value: current, id: footerId });
+      },
+    }) as const;
 
   return (
     <Popover
@@ -754,6 +803,17 @@ export function CommandSearch({
           data-focused={focused ? "" : undefined}
           data-disabled={disabled ? "" : undefined}
           data-bt-control=""
+          onMouseDown={(event) => {
+            if (
+              disabled === true ||
+              (event.target instanceof Element &&
+                event.target.closest("input, button") !== null)
+            )
+              return;
+            event.preventDefault();
+            setDismissed(false);
+            input.current?.focus();
+          }}
         >
           <motion.span {...keepSize} data-bt-part="icon">
             <Icon icon={Search} />
@@ -772,7 +832,7 @@ export function CommandSearch({
                   </span>
                   <button
                     type="button"
-                    tabIndex={-1}
+                    disabled={disabled}
                     aria-label={words.removeFilter(token)}
                     className="bt-focus"
                     data-bt-part="chip-remove"
@@ -813,6 +873,11 @@ export function CommandSearch({
               aria-controls={listboxId}
               aria-autocomplete="list"
               aria-activedescendant={panelOpen ? activeId : undefined}
+              aria-describedby={
+                [describedBy, tokens.length > 0 ? tokensId : undefined]
+                  .filter(Boolean)
+                  .join(" ") || undefined
+              }
               aria-keyshortcuts={
                 shortcut
                   ? `${ariaKeyShortcuts("/", apple)} ${ariaKeyShortcuts("mod+k", apple)}`
@@ -833,6 +898,19 @@ export function CommandSearch({
                 );
               }}
               onKeyDown={handleKeyDown}
+              onKeyUp={() => {
+                composed.current = false;
+              }}
+              onCompositionStart={() => {
+                composing.current = true;
+              }}
+              onCompositionEnd={() => {
+                composing.current = false;
+                composed.current = true;
+              }}
+              onClick={() => {
+                setDismissed(false);
+              }}
               onFocus={(event) => {
                 onFocus?.(event);
                 setFocused(true);
@@ -841,6 +919,7 @@ export function CommandSearch({
               onBlur={(event) => {
                 onBlur?.(event);
                 setFocused(false);
+                composed.current = false;
               }}
               data-bt-part="command-search-input"
             />
@@ -860,6 +939,7 @@ export function CommandSearch({
                 label={words.clear}
                 size="sm"
                 tooltip={false}
+                disabled={disabled}
                 onMouseDown={(event) => {
                   event.preventDefault();
                 }}
@@ -870,10 +950,15 @@ export function CommandSearch({
               />
             )}
           </motion.span>
+          <VisuallyHidden.Root id={tokensId}>
+            {tokens.length > 0 ? words.filtering(tokens) : null}
+          </VisuallyHidden.Root>
+          <VisuallyHidden.Root role="status">{status}</VisuallyHidden.Root>
         </motion.div>
       </Popover.Anchor>
       <Popover.Content
         align="start"
+        role="presentation"
         className="bt-command-search-panel"
         style={panelWidth > 0 ? { inlineSize: `${String(panelWidth)}px` } : {}}
         onOpenAutoFocus={(event) => {
@@ -890,6 +975,10 @@ export function CommandSearch({
             event.preventDefault();
         }}
         onEscapeKeyDown={(event) => {
+          if (event.isComposing || composing.current || composed.current) {
+            event.preventDefault();
+            return;
+          }
           if (current === "") return;
           event.preventDefault();
           update("");
@@ -903,9 +992,10 @@ export function CommandSearch({
             role="listbox"
             id={listboxId}
             aria-label={words.results}
+            aria-owns={footerLink ? footerId : undefined}
             data-bt-part="groups"
           >
-            {groups.map((group) => (
+            {groups.map((group, groupIndex) => (
               <div
                 key={group.id}
                 role="group"
@@ -920,7 +1010,9 @@ export function CommandSearch({
                 >
                   {group.label}
                 </div>
-                {group.options.map((option) => renderOption(group, option))}
+                {group.options.map((option, optionIndex) =>
+                  renderOption(option, optionId(groupIndex, optionIndex)),
+                )}
                 {group.loading ? (
                   <div
                     role="option"
@@ -968,13 +1060,7 @@ export function CommandSearch({
         {empty ? (
           filtersHref === undefined ? null : (
             <div data-bt-part="command-search-footer">
-              <a
-                href={filtersHref}
-                tabIndex={-1}
-                className="bt-text"
-                data-role="label"
-                data-bt-part="footer-link"
-              >
+              <a href={filtersHref} {...footerProps(activeId === footerId)}>
                 {words.moreFilters}
               </a>
             </div>
@@ -983,11 +1069,8 @@ export function CommandSearch({
           <div data-bt-part="command-search-footer">
             <a
               ref={allResults}
-              href={resultsHref?.(query) ?? "#"}
-              tabIndex={-1}
-              className="bt-text"
-              data-role="label"
-              data-bt-part="footer-link"
+              href={resultsHref?.(submitted) ?? "#"}
+              {...footerProps(activeId === footerId)}
               onClick={(event) => {
                 if (resultsHref === undefined) event.preventDefault();
                 searchAll();
