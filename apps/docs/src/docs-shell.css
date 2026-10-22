@@ -29,10 +29,14 @@
   box-shadow: none;
 }
 
-/* In the bar the display settings button shows only its icon; in the phone sheet it says what it is. */
+/*
+ * In the bar the display settings button shows only its icon; in the phone sheet it says what it is. With
+ * its words hidden it drops the gap after its icon, which would set the icon 3px off its center.
+ */
 .docs-top .pg-display {
   inline-size: var(--bt-h-button);
   padding-inline: 0;
+  gap: 0;
 }
 
 .docs-top .pg-display-text {
