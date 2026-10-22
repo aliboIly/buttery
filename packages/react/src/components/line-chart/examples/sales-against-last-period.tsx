@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { LineChart } from "@buttery/react";
 
 const dollars = new Intl.NumberFormat("en-US", {
@@ -11,7 +12,7 @@ const shortDollars = new Intl.NumberFormat("en-US", {
   notation: "compact",
 });
 
-/** A week of sales against the week before, in dollars. */
+/** A week of sales against the week before, in dollars; Tab to the chart, then the arrow keys step through the days. */
 export function SalesAgainstLastPeriod(): ReactElement {
   return (
     <LineChart
@@ -45,3 +46,12 @@ export function SalesAgainstLastPeriod(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ key, see }) => {
+  await key("Tab");
+  await see("+11.4%");
+  await key("ArrowLeft");
+  await see("+14.3%");
+};
