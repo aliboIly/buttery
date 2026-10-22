@@ -17,8 +17,20 @@ import { FloatingEntranceContext } from "../floating-motion.tsx";
 import { Popover } from "../popover/Popover.tsx";
 import { Menu } from "./Menu.tsx";
 
-beforeEach(() => {
+// The real pointer stays where an earlier test left it, and a menu drawn under it gets pointer events from the
+// browser on top of the ones a test fires, so each test starts with it in the window's bottom-left corner.
+async function parkPointer(): Promise<void> {
+  const spot = document.createElement("div");
+  spot.style.cssText =
+    "position: fixed; left: 0; bottom: 0; width: 4px; height: 4px";
+  document.body.append(spot);
+  await browser.hover(spot, { force: true });
+  spot.remove();
+}
+
+beforeEach(async () => {
   publishSettled();
+  await parkPointer();
 });
 
 afterEach(() => {
