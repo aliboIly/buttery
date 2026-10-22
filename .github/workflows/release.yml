@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Publish the release with its notes from What's new
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DOCS_URL: https://aliboily.github.io/buttery
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          node scripts/release-notes.mjs "$version" > notes.md
+          title="$(node scripts/release-notes.mjs "$version" --title)"
+          latest="$(node scripts/release-notes.mjs "$version" --newest)"
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$title" --notes-file notes.md --latest="$latest"

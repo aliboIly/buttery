@@ -10,7 +10,7 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import { TagChip } from "@buttery/react";
+import { ArrowLink, TagChip } from "@buttery/react";
 import { ChevronDown, Link2 } from "lucide-react";
 import { roadmap } from "virtual:buttery-roadmap";
 import { releases } from "virtual:buttery-whats-new";
@@ -20,6 +20,7 @@ import { withInlineCode } from "./inline-code.tsx";
 import { siteHref } from "./location.ts";
 import { components, docsRouteOf } from "./registry.ts";
 import { releaseDate, releaseId } from "./release.ts";
+import { SOURCE_URL } from "./routes.ts";
 import "./releases.css";
 
 /** The tag beside a release's number: the release being built, or the newest one out. */
@@ -193,9 +194,19 @@ function ReleaseNotes({
               </a>
             </h2>
           </Text>
-          <Text variant="body-sm" tone="secondary" asChild>
-            <time dateTime={release.date}>{releaseDate(release.date)}</time>
-          </Text>
+          <Inline gap={4} align="center" wrap>
+            <Text variant="body-sm" tone="secondary" asChild>
+              <time dateTime={release.date}>{releaseDate(release.date)}</time>
+            </Text>
+            {stageOf(release) === "building" ? null : (
+              <ArrowLink
+                href={`${SOURCE_URL}/releases/tag/v${release.version}`}
+                arrow="external"
+              >
+                {`v${release.version} on GitHub`}
+              </ArrowLink>
+            )}
+          </Inline>
         </Stack>
         {release.summary === "" ? null : (
           <Text variant="body-lg">{withInlineCode(release.summary)}</Text>
