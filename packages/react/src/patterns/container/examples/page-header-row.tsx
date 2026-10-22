@@ -9,8 +9,8 @@ export function PageHeaderRow(): ReactElement {
     <Container asChild>
       <header>
         <Inline gap={4} align="center" justify="between">
-          <Text variant="title">Card Studio</Text>
-          <ArrowLink href="#start">Open the studio</ArrowLink>
+          <Text variant="title">Deckhand</Text>
+          <ArrowLink href="#start">Start a deck</ArrowLink>
         </Inline>
       </header>
     </Container>
@@ -20,6 +20,6 @@ export function PageHeaderRow(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Card Studio");
-  await see("Open the studio");
+  await see("Deckhand");
+  await see("Start a deck");
 };

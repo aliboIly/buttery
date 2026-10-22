@@ -4,29 +4,29 @@ import { Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, CenteredHero, Page } from "@buttery/react";
 
-const SAMPLES = ["Spring launch", "Summer menu", "Open studio night"];
+const SAMPLES = ["Spring launch", "Quarterly review", "Team offsite"];
 
-/** A launch page's opening band: a link to start, and a button that swaps the sample card in the visual. */
+/** A launch page's opening band: a link to start, and a button that swaps the sample deck in the visual. */
 export function LaunchHero(): ReactElement {
   const [sample, setSample] = useState(0);
   return (
     <Page>
       <CenteredHero
-        eyebrow="Card studio"
-        title="One card."
-        titleMore="Every size it needs."
-        body="Make a launch card once, then export it for posts, stories and slides."
+        eyebrow="Deckhand"
+        title="One deck."
+        titleMore="Ready for the room and the inbox."
+        body="Write the slides once, then present them full screen or send them as a PDF."
         actions={
           <>
             <Button asChild variant="primary" arrow="forward">
-              <a href="#new-card">Start a card</a>
+              <a href="#new-deck">Start a deck</a>
             </Button>
             <Button
               onClick={() => {
                 setSample((sample + 1) % SAMPLES.length);
               }}
             >
-              See another card
+              See another deck
             </Button>
           </>
         }
@@ -44,6 +44,6 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Spring launch");
-  await press("button", "See another card");
-  await see("Summer menu");
+  await press("button", "See another deck");
+  await see("Quarterly review");
 };

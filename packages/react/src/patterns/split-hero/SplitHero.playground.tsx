@@ -27,13 +27,13 @@ function Preview(): ReactElement {
           style={{ background: LILAC ? gradientCss(LILAC) : undefined }}
         >
           <Surface level="card" padX={6} padY={4}>
-            <Text variant="title">Launch card</Text>
+            <Text variant="title">Quarterly review</Text>
           </Surface>
         </Surface>
       </Stagger.Item>
       <Stagger.Item>
         <Surface level="section" padX={4} padY={3}>
-          <Text variant="label">Finish · Ink</Text>
+          <Text variant="label">Theme · Lilac</Text>
         </Surface>
       </Stagger.Item>
     </Stack>
@@ -48,13 +48,13 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Page>
         <SplitHero
-          eyebrow="Card Studio"
-          title="Cards that look finished."
-          titleMore="Write a title, pick a finish, and send it out at any size."
+          eyebrow="Deckhand"
+          title="Decks that look designed."
+          titleMore="Write the slides, pick a theme, and present from any screen."
           actions={
             <>
               <Button variant="primary" arrow="forward">
-                Open the studio
+                Start a deck
               </Button>
               <Button variant="soft">See examples</Button>
             </>
