@@ -25,7 +25,7 @@ export const meta: ComponentMeta = {
     { keys: "Tab", does: "Closes the popover and moves on" },
   ],
   layout:
-    "A 28px circle (--bt-h-sm) around a 16px info icon that never shrinks; the whole circle is the hit area. Its popover is at most 320px wide (--bt-w-aside), or the room the window leaves, padded 12px, and its words wrap.",
+    "A 28px circle (--bt-h-sm) around a 16px info icon, which never shrinks; the whole circle is the hit area. Its popover is at most 320px wide (--bt-w-aside), or the room the window leaves, padded 12px, and its words wrap.",
   reducedMotion:
     "It presses in at once, and its popover fades in and out over 100ms without growing.",
 };

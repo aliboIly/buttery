@@ -30,5 +30,5 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'It fills its container. Its box is 34px tall (--bt-h-control) at size="md", the default, and 48px (--bt-h-cta) with 16px text at "lg", with the 28px reveal button inside its end. The label, hint, error and requirements stack 8px apart and wrap, each rule 6px from the next.',
+    'It fills its container. Its box is 34px tall (--bt-h-control) at size="md", the default, and 48px (--bt-h-cta) with 16px text at "lg", with the 28px reveal button inside its end. The label, with its hint 6px under it, sits 8px above the box, and the error and the requirements follow 8px apart under it, the rules 6px from one another; all of them wrap.',
 };
