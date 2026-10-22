@@ -84,7 +84,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "A checklist in the lane",
     description:
-      "Unfold it to see every task in groups that fold, the next one's group open and its action ready. Dismiss it and it fades away.",
+      "Unfold it to see every task in groups that fold, the next one's group open and its action ready. Finish them all and it says you're all set. Dismiss it and it fades away.",
     render: () => <GuideDemo />,
   },
 ];
