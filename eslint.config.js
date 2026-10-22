@@ -18,6 +18,7 @@ export default defineConfig(
     "test-results/",
     "apps/*/src-tauri/",
     "reference/",
+    "notes/",
   ]),
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
