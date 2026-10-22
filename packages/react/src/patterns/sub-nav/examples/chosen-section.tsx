@@ -11,6 +11,12 @@ const RELEASES = [
   },
   { id: "notes-2-3", label: "2.3", body: "Export straight to the clipboard." },
   { id: "notes-2-2", label: "2.2", body: "Four new backdrop blends." },
+  {
+    id: "notes-2-1",
+    label: "2.1",
+    body: "Undo and redo reach back fifty steps.",
+  },
+  { id: "notes-2-0", label: "2.0", body: "Cards lean in 3D as you tilt them." },
 ] as const;
 
 /** A sub nav told which section is current, such as by the app's router, rather than following the scroll. */
