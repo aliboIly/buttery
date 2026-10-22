@@ -20,7 +20,11 @@ import { createTheme } from "@buttery/core";
 import { ButteryProvider } from "@buttery/react";
 import { App } from "./App.tsx";
 
-const brand = createTheme({ accent: "#c2410c", neutral: "warm", radius: "soft" });
+const brand = createTheme({
+  accent: "#c2410c",
+  neutral: "warm",
+  radius: "soft",
+});
 
 export function Root(): ReactElement {
   return (

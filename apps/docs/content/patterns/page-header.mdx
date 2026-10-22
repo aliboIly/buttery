@@ -27,7 +27,11 @@ export function OrdersHeader(): ReactElement {
       valueInfo="Orders placed in the last 30 days."
       actions={
         <>
-          <PageHeader.Action icon={Download} label="Export" onSelect={() => undefined} />
+          <PageHeader.Action
+            icon={Download}
+            label="Export"
+            onSelect={() => undefined}
+          />
           <PageHeader.Action
             variant="primary"
             icon={Plus}

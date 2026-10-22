@@ -18,16 +18,26 @@ A settings page is a detail page for one area of settings, such as pickup or the
 
 ```tsx
 import type { ReactElement } from "react";
-import { Breadcrumbs, SettingsPage, SettingsSection, Switch } from "@buttery/react";
+import {
+  Breadcrumbs,
+  SettingsPage,
+  SettingsSection,
+  Switch,
+} from "@buttery/react";
 
 export function PickupSettings(): ReactElement {
   return (
     <SettingsPage
       title="Pickup"
-      breadcrumbs={<Breadcrumbs items={[{ label: "Settings", href: "/settings" }]} />}
+      breadcrumbs={
+        <Breadcrumbs items={[{ label: "Settings", href: "/settings" }]} />
+      }
       description="When and where customers collect their orders."
     >
-      <SettingsSection title="Pickup" description="Let customers collect at the roastery.">
+      <SettingsSection
+        title="Pickup"
+        description="Let customers collect at the roastery."
+      >
         <Switch label="Offer pickup" defaultChecked />
       </SettingsSection>
     </SettingsPage>

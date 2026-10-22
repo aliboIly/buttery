@@ -27,7 +27,10 @@ export function ResultsPage({
   readonly sources: readonly SearchSource[];
 }): ReactElement {
   return (
-    <SearchResults query={parseSearch(search, filters, { sent: true })} sources={sources} />
+    <SearchResults
+      query={parseSearch(search, filters, { sent: true })}
+      sources={sources}
+    />
   );
 }
 ```

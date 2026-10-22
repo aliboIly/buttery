@@ -143,11 +143,7 @@ export type ExamplePlay = (play: ExamplePlayContext) => Promise<void>;
  * sizes), `"states"` (disabled, loading, error or empty) and `"composition"` (it in a real piece of UI).
  */
 export type ExampleKind =
-  | "basic"
-  | "controlled"
-  | "variants"
-  | "states"
-  | "composition";
+  "basic" | "controlled" | "variants" | "states" | "composition";
 
 /** One control on a component page's live demo, for one prop. */
 export type DemoControl =
