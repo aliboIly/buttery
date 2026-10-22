@@ -1,5 +1,6 @@
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Tabs } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -19,6 +20,65 @@ const SECTIONS = [
   "Payments",
   "Notes",
 ] as const;
+
+const LIVE_SECTIONS: readonly string[] = [
+  "Overview",
+  "Orders",
+  "Notes",
+  "Subscriptions",
+  "Payments",
+  "Activity",
+  "Files",
+];
+
+export const live: LiveDemo = {
+  controls: {
+    defaultValue: {
+      kind: "choice",
+      options: ["Overview", "Orders", "Notes"],
+      initial: "Overview",
+    },
+    tabs: { kind: "number", initial: 3, min: 3, max: 7, step: 1 },
+  },
+  render: ({ defaultValue, tabs }) => {
+    const shown = LIVE_SECTIONS.slice(0, typeof tabs === "number" ? tabs : 3);
+    return (
+      <Tabs
+        key={String(defaultValue)}
+        defaultValue={demoChoice(defaultValue, ["Overview", "Orders", "Notes"])}
+      >
+        <Tabs.List label="Customer">
+          {shown.map((section) => (
+            <Tabs.Tab key={section} value={section}>
+              {section}
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+        {shown.map((section) => (
+          <Tabs.Panel key={section} value={section}>
+            <Text variant="body">{`${section} for Ines Vale.`}</Text>
+          </Tabs.Panel>
+        ))}
+      </Tabs>
+    );
+  },
+  code: ({ defaultValue, tabs }) => {
+    const shown = LIVE_SECTIONS.slice(0, typeof tabs === "number" ? tabs : 3);
+    return [
+      `<Tabs defaultValue="${demoChoice(defaultValue, ["Overview", "Orders", "Notes"])}">`,
+      '  <Tabs.List label="Customer">',
+      ...shown.map(
+        (section) => `    <Tabs.Tab value="${section}">${section}</Tabs.Tab>`,
+      ),
+      "  </Tabs.List>",
+      ...shown.map(
+        (section) =>
+          `  <Tabs.Panel value="${section}">${section} for Ines Vale.</Tabs.Panel>`,
+      ),
+      "</Tabs>",
+    ].join("\n");
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {

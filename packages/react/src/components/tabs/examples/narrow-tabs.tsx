@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Tabs } from "@buttery/react";
 
 const SECTIONS = [
@@ -32,3 +33,11 @@ export function NarrowTabs(): ReactElement {
     </div>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "More tabs");
+  await press("menuitemradio", "Notifications");
+  await see("Notifications settings");
+};

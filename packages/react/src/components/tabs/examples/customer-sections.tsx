@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Tabs } from "@buttery/react";
 
 /** A customer's page split into sections, one panel at a time. */
@@ -27,3 +28,13 @@ export function CustomerSections(): ReactElement {
     </Tabs>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, key, see }) => {
+  await key("Tab");
+  await key("ArrowRight");
+  await see("The last order shipped on Tuesday.");
+  await press("tab", "Notes");
+  await see("Prefers a lighter roast.");
+};
