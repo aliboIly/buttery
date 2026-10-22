@@ -1,6 +1,7 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { MotionPreferenceContext, publishSettled } from "@buttery/core";
+import { layoutCheckTokens, runLayoutChecks } from "@buttery/core/layout";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
@@ -73,6 +74,34 @@ describe("ExpandableCard", () => {
     await waitFor(() => {
       expect(getComputedStyle(screen.getByTestId("other")).opacity).toBe("0");
     });
+  });
+
+  it("leaves nothing overflowing a one-row grid once it has opened, with full motion", async () => {
+    render(
+      <MotionPreferenceContext value="full">
+        <Bento>
+          <ExpandableCard
+            title="Lean it in 3D"
+            span={8}
+            detail={<p>Steer the lean pad.</p>}
+          >
+            <div>Picture</div>
+          </ExpandableCard>
+        </Bento>
+      </MotionPreferenceContext>,
+    );
+    const card = screen.getByRole("article");
+    await userEvent.click(
+      screen.getByRole("button", { name: "Open Lean it in 3D" }),
+    );
+    await screen.findByRole("dialog", { name: "Lean it in 3D" });
+    await settled();
+    await waitFor(() => {
+      expect(getComputedStyle(card).opacity).toBe("0");
+    });
+    expect(
+      runLayoutChecks({ tokens: layoutCheckTokens(), rules: ["overflow"] }),
+    ).toEqual([]);
   });
 
   it("opens from a press anywhere on the card", async () => {

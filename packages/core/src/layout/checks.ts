@@ -549,6 +549,9 @@ export function createLayoutToolkit(): LayoutToolkit {
         "EMBED",
         "PICTURE",
       ]);
+      /** A box with opacity 0 draws nothing, nor does anything inside it, so it can't overflow. */
+      const transparent = (style: CSSStyleDeclaration): boolean =>
+        Number(style.opacity) === 0;
       const hiddenWithin = (node: Element, container: Element): boolean => {
         for (
           let current: Element | null = node;
@@ -560,6 +563,7 @@ export function createLayoutToolkit(): LayoutToolkit {
             style.overflowX !== "visible" ||
             style.overflowY !== "visible" ||
             style.position === "fixed" ||
+            transparent(style) ||
             current.hasAttribute("data-bt-hit") ||
             current.hasAttribute("data-bt-allow-overlap")
           ) {
@@ -597,8 +601,13 @@ export function createLayoutToolkit(): LayoutToolkit {
               continue;
             }
             const style = styleOf(child);
-            if (style.display === "none" || style.position === "fixed")
+            if (
+              style.display === "none" ||
+              style.position === "fixed" ||
+              transparent(style)
+            ) {
               continue;
+            }
             const box = child.getBoundingClientRect();
             if (box.width > 0 || box.height > 0) {
               right = Math.max(right, box.right);

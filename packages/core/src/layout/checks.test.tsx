@@ -221,6 +221,19 @@ describe("runLayoutChecks", () => {
     ).toEqual([]);
   });
 
+  it("doesn't flag a box with opacity 0 or the text in it, such as a card a shared layout has handed to a dialog", () => {
+    const grid = (opacity: string): string =>
+      `<div data-bt="Grid" data-testid="grid" style="inline-size: 300px; block-size: 100px">
+         <article style="block-size: 100px; opacity: ${opacity}; transform: translateY(180px)">
+           <h3 style="margin: 0">Lean it in 3D</h3>
+         </article>
+       </div>`;
+    expect(check(grid("0"), ["overflow"])).toEqual([]);
+    expect(
+      check(grid("1"), ["overflow"]).map((violation) => violation.a),
+    ).toEqual(['[data-testid="grid"]']);
+  });
+
   it("doesn't flag text trimmed to its cap height as overflow", () => {
     expect(
       check(
