@@ -17,7 +17,6 @@ import * as cardStudio from "demo-card-studio";
 import * as cardStudioSite from "demo-card-studio-site";
 import * as roastery from "demo-roastery";
 import { App as Starter } from "starter/src/App.tsx";
-import "starter/src/main.css";
 import * as dashboardTemplate from "template-dashboard";
 import * as editorTemplate from "template-editor";
 import * as marketingTemplate from "template-marketing";

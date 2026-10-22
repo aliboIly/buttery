@@ -1,7 +1,0 @@
-.starter {
-  display: grid;
-  place-items: center;
-  min-block-size: 100dvh;
-  -webkit-user-select: none;
-  user-select: none;
-}
