@@ -103,6 +103,16 @@ describe("AppShell", () => {
     expect(Math.round(inspector.bottom)).toBe(Math.round(stage.bottom));
   });
 
+  it("makes the stage the page's main landmark, with the header and the inspector beside it", () => {
+    render(<Editor width="1100px" />);
+    const main = screen.getByRole("main");
+    expect(main.contains(screen.getByTestId("stage"))).toBe(true);
+    expect(within(main).queryByText("Launch card")).toBeNull();
+    expect(
+      within(main).queryByRole("region", { name: "Card settings" }),
+    ).toBeNull();
+  });
+
   it("keeps its work at most 1380px wide, centered", () => {
     render(<Editor width="1700px" />);
     const header = document

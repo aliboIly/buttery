@@ -14,7 +14,7 @@ export const meta: ComponentMeta = {
     "A settings screen with no canvas: an Inspector alone, or a form",
   ],
   related: ["HeaderBar", "Stage", "Inspector", "Sidebar", "TopBar", "AppPage"],
-  a11y: "The parts keep their own semantics (the header, the stage's image, the inspector's region). On a narrow screen the inspector opens as a modal sheet named by inspectorLabel, from a button under the stage; Escape or a press on the scrim closes it and focus goes back to the button. In the sidebar layout the sidebar is a rail of named icons under 1100px and, under 640, a modal sheet named by sidebarLabel that the top bar's menu button opens (aria-haspopup, aria-expanded); it closes on a link, Escape or the scrim, with focus back on that button, or on the sidebar's current page if the shell widened.",
+  a11y: "In the editor layout the stage is the page's main landmark; in the sidebar layout the AppPage inside is. The parts keep their own semantics (the header, the stage's image, the inspector's region). On a narrow screen the inspector opens as a modal sheet named by inspectorLabel, from a button under the stage; Escape or a press on the scrim closes it and focus goes back to the button. In the sidebar layout the sidebar is a rail of named icons under 1100px and, under 640, a modal sheet named by sidebarLabel that the top bar's menu button opens (aria-haspopup, aria-expanded); it closes on a link, Escape or the scrim, with focus back on that button, or on the sidebar's current page if the shell widened.",
   motion: "presence",
   keyboard: [
     {

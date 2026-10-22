@@ -238,7 +238,7 @@ function InspectorShell({
       <div ref={obstacle} data-bt-part="header">
         {header}
       </div>
-      <div data-bt-part="stage">{children}</div>
+      <main data-bt-part="stage">{children}</main>
       {narrow ? (
         <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
           <div ref={obstacle} data-bt-part="sheet-bar">
