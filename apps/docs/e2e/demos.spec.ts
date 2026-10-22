@@ -197,7 +197,7 @@ const CHROME: Readonly<Record<(typeof demoPages)[number]["route"], string>> = {
   ].join(", "),
   "card-studio-site": '[data-bt="NavBar"], [data-bt="SubNav"]',
   roastery: '[data-bt="Sidebar"], [data-bt="TopBar"], [data-bt="SetupGuide"]',
-  "roastery-shop": '[data-bt="NavBar"]',
+  "roastery-shop": '[data-bt="NavBar"], [data-bt="SubNav"]',
   deckhand: [
     '[data-bt="HeaderBar"]',
     '[data-bt="AppShell"] > [data-bt-part="inspector"]',
@@ -238,12 +238,12 @@ test("the marketing demo's last line scrolls clear of the pill", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/demos/card-studio-site");
+  await page.goto("/demos/roastery-shop");
   await expect(pill(page)).toBeVisible();
   await page.evaluate(() => {
     window.scrollTo(0, document.documentElement.scrollHeight);
   });
-  const legal = page.getByText("© 2026 Card Studio. A buttery demo.");
+  const legal = page.getByText("© 2026 Halfmoon Roastery. A buttery demo.");
   await expect(legal).toBeInViewport();
   expect(await overlap(pill(page), legal)).toBe(false);
 });

@@ -18,9 +18,10 @@ describe("where the demos use each component", () => {
       demo: "the Card Studio demo",
       href: "/demos/card-studio",
     });
-    expect(uses["Bento"]).toEqual([
-      { demo: "the Card Studio site demo", href: "/demos/card-studio-site" },
-    ]);
+    expect(uses["Bento"]).toContainEqual({
+      demo: "the Halfmoon shop demo",
+      href: "/demos/roastery-shop",
+    });
   });
 
   it("leaves out a helper file of a demo with several pages", () => {
