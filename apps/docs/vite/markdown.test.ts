@@ -233,6 +233,16 @@ describe("the site as Markdown", () => {
     expect(markdown).not.toContain("[Introduction](/get-started/introduction)");
   });
 
+  it("writes the layout contract's rules numbered and its do and don't labelled, without their components' tags", () => {
+    const markdown =
+      pageMarkdown(root, "layout/the-layout-contract", components) ?? "";
+    expect(markdown).toContain("**1. Flow layout**");
+    expect(markdown).toContain("**13. Nothing moves after a press**");
+    expect(markdown).toContain("**Do:**");
+    expect(markdown).toContain("**Don't:**");
+    expect(markdown).not.toMatch(/<\/?(?:Rules|Rule|DoDont|Do|Dont)\b/);
+  });
+
   it("writes the Roadmap out from ROADMAP.md: the release being built with its boxes, and the shipped ones linking to their notes", () => {
     const markdown = pageMarkdown(root, "resources/roadmap", components) ?? "";
     expect(markdown).toMatch(/^## Now: 1\.0\.0, /m);

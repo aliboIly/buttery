@@ -673,6 +673,7 @@ function bodyMarkdown(
   const out: string[] = [];
   const lines = withoutModuleBlocks(body).split("\n");
   let fenced = false;
+  let rule = 0;
   let place = { title: page.title, href: sitePath(`/${page.route}`, base) };
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
@@ -688,9 +689,20 @@ function bodyMarkdown(
       continue;
     }
     if (/^<\/[A-Z][A-Za-z]*>\s*$/.test(line)) continue;
-    if (/^<[A-Z][A-Za-z]*(?:\s[^>]*[^/])?>\s*$/.test(line)) {
+    const wrapper = /^<([A-Z][A-Za-z]*)(?:\s[^>]*[^/])?>\s*$/.exec(line)?.[1];
+    if (wrapper !== undefined) {
       const title = /\btitle="([^"]+)"/.exec(line)?.[1];
-      if (title !== undefined) out.push(`**${title}**`, "");
+      if (wrapper === "Rules") rule = 0;
+      if (wrapper === "Rule") rule += 1;
+      if (wrapper === "Do" || wrapper === "Dont")
+        out.push(`**${wrapper === "Do" ? "Do" : "Don't"}:**`, "");
+      if (title !== undefined)
+        out.push(
+          wrapper === "Rule"
+            ? `**${String(rule)}. ${title}**`
+            : `**${title}**`,
+          "",
+        );
       continue;
     }
     if (!/^<[A-Z]/.test(line)) {

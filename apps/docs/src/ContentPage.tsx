@@ -4,7 +4,9 @@ import { Grid, Icon, Inline, Stack, Surface, Text } from "@buttery/core";
 import { ArrowLink, Breadcrumbs, Callout } from "@buttery/react";
 import { Link2 } from "lucide-react";
 import { Card, Cards } from "./blocks/Cards.tsx";
+import { Do, DoDont, Dont } from "./blocks/DoDont.tsx";
 import { QuickStartCode, QuickStartPreview } from "./blocks/QuickStart.tsx";
+import { Rule, Rules } from "./blocks/Rules.tsx";
 import { StarterEntry } from "./blocks/StarterEntry.tsx";
 import { Step, Steps } from "./blocks/Steps.tsx";
 import { TemplateCards } from "./blocks/TemplateCards.tsx";
@@ -114,6 +116,11 @@ export const markdown = {
   StarterEntry,
   QuickStartPreview,
   QuickStartCode,
+  Rules,
+  Rule,
+  DoDont,
+  Do,
+  Dont,
 };
 
 /** A page a written page names as related, with what it's about. */
