@@ -44,11 +44,20 @@ const packages = readdirSync("packages", { withFileTypes: true })
 
 const ci = Boolean(process.env["CI"]);
 
+/**
+ * The specs that time motion frame by frame, which a busy machine throws off: `BUTTERY_E2E=timing` runs only
+ * them, two at a time, and `BUTTERY_E2E=rest` everything else, so `pnpm check` runs them on a quiet machine.
+ */
+const TIMING_SPECS = /(?:motion|arrow|toaster)\.spec\.ts$/;
+const group = process.env["BUTTERY_E2E"];
+
 function testPort(app: App): number {
   return app.port + 1000;
 }
 
 export default defineConfig({
+  ...(group === "timing" ? { testMatch: TIMING_SPECS, workers: 2 } : {}),
+  ...(group === "rest" ? { testIgnore: TIMING_SPECS } : {}),
   forbidOnly: ci,
   reporter: ci ? "github" : "list",
   projects: [
