@@ -43,6 +43,12 @@ export interface SignUpLabels {
   readonly email: string;
   /** The password field's label. */
   readonly password: string;
+  /** Names the button that shows the password. */
+  readonly showPassword: string;
+  /** Read beside a password rule that's met. */
+  readonly met: string;
+  /** Read beside a password rule that isn't met yet. */
+  readonly unmet: string;
   /** The terms box, before the link to `termsHref`. */
   readonly terms: string;
   /** The link to the terms. */
@@ -76,6 +82,9 @@ const LABELS: SignUpLabels = {
   name: "Name",
   email: "Email",
   password: "Password",
+  showPassword: "Show password",
+  met: "Met",
+  unmet: "Not met",
   terms: "I agree to the",
   termsLink: "terms",
   submit: "Create account",
@@ -224,6 +233,9 @@ export function SignUpForm({
           id={passwordId}
           name="password"
           label={words.password}
+          revealLabel={words.showPassword}
+          metLabel={words.met}
+          unmetLabel={words.unmet}
           autoComplete="new-password"
           size="lg"
           value={password}

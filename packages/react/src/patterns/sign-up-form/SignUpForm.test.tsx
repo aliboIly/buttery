@@ -45,6 +45,31 @@ describe("SignUpForm", () => {
     expect(met()).toEqual([true, true]);
   });
 
+  it("takes its words from labels, the password's show button and its rules' met and not met included", async () => {
+    render(
+      <SignUpForm
+        labels={{
+          password: "Passwort",
+          showPassword: "Passwort anzeigen",
+          met: "Erfüllt",
+          unmet: "Nicht erfüllt",
+        }}
+        onSubmit={() => undefined}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Passwort anzeigen" }),
+    ).toBeTruthy();
+    expect(screen.getAllByRole("img", { name: "Nicht erfüllt" })).toHaveLength(
+      2,
+    );
+    await userEvent.type(field("Passwort"), "butter-2026");
+    expect(screen.getAllByRole("img", { name: "Erfüllt" })).toHaveLength(2);
+    expect(
+      screen.queryAllByRole("img", { name: /^(Met|Not met)$/ }),
+    ).toHaveLength(0);
+  });
+
   it("sums up everything to fix, the terms included, and hands over the values once it's all done", async () => {
     const submit = vi.fn();
     render(<SignUpForm termsHref="/terms" onSubmit={submit} />);

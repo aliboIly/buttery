@@ -42,6 +42,19 @@ describe("SignInForm", () => {
     expect(field("Password").name).toBe("password");
   });
 
+  it("takes its words from labels, the password's show button included", () => {
+    render(
+      <SignInForm
+        labels={{ password: "Passwort", showPassword: "Passwort anzeigen" }}
+        onSubmit={() => undefined}
+      />,
+    );
+    expect(field("Passwort").type).toBe("password");
+    expect(
+      screen.getByRole("button", { name: "Passwort anzeigen" }),
+    ).toBeTruthy();
+  });
+
   it("shows what to fix beside each field and in a summary that takes focus, without submitting", async () => {
     const submit = vi.fn();
     render(<SignInForm onSubmit={submit} />);

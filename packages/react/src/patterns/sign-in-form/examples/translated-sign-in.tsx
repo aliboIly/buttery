@@ -14,6 +14,7 @@ export function TranslatedSignIn(): ReactElement {
           title: "Anmelden",
           email: "E-Mail",
           password: "Passwort",
+          showPassword: "Passwort anzeigen",
           remember: "Angemeldet bleiben",
           submit: "Anmelden",
           problem: "Bitte prüfen",
@@ -40,6 +41,7 @@ export const play: ExamplePlay = async ({ press, type, see }) => {
   await see("Gib deine E-Mail-Adresse ein");
   await type("E-Mail", "lena@beispiel.de");
   await type("Passwort", "röstzeit");
+  await press("button", "Passwort anzeigen");
   await press("button", "Anmelden");
   await see("Angemeldet als lena@beispiel.de.");
 };
