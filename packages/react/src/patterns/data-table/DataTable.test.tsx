@@ -384,6 +384,23 @@ describe("DataTable", () => {
     expect(screen.getByText("No orders yet")).toBeTruthy();
   });
 
+  it("lines its no-results row up with the columns, its text over the first one's and Clear all ending with the last one's", () => {
+    render(<Orders rows={[]} onClearAll={() => undefined} />);
+    const headers = screen.getAllByRole("columnheader");
+    const label = (header: HTMLElement | undefined): DOMRect => {
+      const text = header?.querySelector(".bt-truncate");
+      if (!text) throw new Error("No header text.");
+      return text.getBoundingClientRect();
+    };
+    const words = document.createRange();
+    words.selectNodeContents(screen.getByText("No results"));
+    expect(words.getBoundingClientRect().left).toBe(label(headers[0]).left);
+    expect(
+      screen.getByRole("button", { name: "Clear all" }).getBoundingClientRect()
+        .right,
+    ).toBe(label(headers.at(-1)).right);
+  });
+
   it("drops selection and pagination when compact", () => {
     render(
       <Orders
