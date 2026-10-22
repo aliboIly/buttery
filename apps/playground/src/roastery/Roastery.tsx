@@ -276,7 +276,7 @@ function RoasteryTopBar({
             label="Help"
             icon={CircleHelp}
             priority={2}
-            expanded={helping}
+            aria-expanded={helping}
             onSelect={onHelp}
           />
           <OverflowCluster.Item

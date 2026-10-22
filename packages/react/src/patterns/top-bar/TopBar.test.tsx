@@ -220,7 +220,7 @@ describe("TopBar", () => {
             <TopBar.Action
               label="Help"
               icon={CircleHelp}
-              expanded
+              aria-expanded
               onSelect={() => undefined}
             />
             <TopBar.Action

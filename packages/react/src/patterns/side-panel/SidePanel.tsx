@@ -129,7 +129,7 @@ function PanelParts({
  * <AppShell
  *   layout="sidebar"
  *   sidebar={<Sidebar label="Main">…</Sidebar>}
- *   topBar={<TopBar actions={<TopBar.Action icon={CircleHelp} label="Help" expanded={help} onSelect={() => setHelp(!help)} />} />}
+ *   topBar={<TopBar actions={<TopBar.Action icon={CircleHelp} label="Help" aria-expanded={help} onSelect={() => setHelp(!help)} />} />}
  *   panel={<SidePanel title="Help" open={help} onOpenChange={setHelp}>…</SidePanel>}
  * >
  *   <AppPage header={<PageHeader title="Orders" />}>…</AppPage>

@@ -92,8 +92,12 @@ export interface TopBarActionProps {
   readonly dot?: boolean | undefined;
   /** Higher stays in the bar longer. Defaults to 0. */
   readonly priority?: number | undefined;
-  /** Whether what it opens is open, such as the side panel it toggles, read out as the button's state. Leave it out for an action that opens nothing. */
-  readonly expanded?: boolean | undefined;
+  /**
+   * Whether what it opens is open, such as the side panel it toggles, read out as the button's state. Leave it
+   * out for an action that opens nothing. Folded into "…" it's a plain item, since an expanded menu item reads
+   * as an open submenu.
+   */
+  readonly "aria-expanded"?: boolean | undefined;
 }
 
 /** One icon action: an `IconButton` in the bar, and an item in the "…" menu once it doesn't fit. */
@@ -103,7 +107,7 @@ export function TopBarAction({
   onSelect,
   dot = false,
   priority = 0,
-  expanded,
+  "aria-expanded": ariaExpanded,
 }: TopBarActionProps): ReactElement {
   return (
     <OverflowCluster.Item
@@ -114,7 +118,7 @@ export function TopBarAction({
         icon={icon}
         label={label}
         dot={dot}
-        aria-expanded={expanded}
+        aria-expanded={ariaExpanded}
         onClick={onSelect}
       />
     </OverflowCluster.Item>

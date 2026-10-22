@@ -52,7 +52,7 @@ function NarrowShell(): ReactElement {
               <TopBar.Action
                 label="Help"
                 icon={CircleHelp}
-                expanded={open}
+                aria-expanded={open}
                 onSelect={() => {
                   setOpen(!open);
                 }}
