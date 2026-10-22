@@ -43,8 +43,9 @@
   font: inherit;
 }
 
+/* A 2px side leaves punctuation after a chip closer than a space, so "`Stack`," doesn't read as "Stack ,". */
 .docs-code {
-  padding-inline: var(--bt-space-1);
+  padding-inline: var(--bt-space-0_5);
   border-radius: var(--bt-r-xs);
   background-color: var(--bt-bg-control);
   font-family: var(--bt-font-mono);
