@@ -35,9 +35,11 @@ function write(file, contents) {
 
 /**
  * Builds the docs site into `apps/docs/dist`: the app, then every public route prerendered with React's own
- * server renderer into its own `index.html`, each page's Markdown at its path plus `.md`, `llms.txt` and a
- * `sitemap.xml`. Development-only routes under `/lab` aren't written. It runs the docs check first and
- * builds nothing while that finds a problem, such as an export with no page or a broken link.
+ * server renderer into its own `index.html`, the demos and the template previews with the pages inside them
+ * among them, each page's Markdown at its path plus `.md`, `llms.txt`, a `sitemap.xml` and a `404.html` for
+ * addresses nothing was written for, such as a demo's customer. Development-only routes under `/lab` aren't
+ * written. It runs the docs check first and builds nothing while that finds a problem, such as an export
+ * with no page or a broken link.
  */
 export async function buildDocs({
   out = join(app, "dist"),
@@ -89,6 +91,8 @@ export async function buildDocs({
     if (markdown !== null) write(join(out, `${route}.md`), markdown);
   }
   write(join(out, "llms.txt"), llmsText(root, components));
+  // A static host serves 404.html for any address it has no file for, and the app draws that address itself.
+  write(join(out, "404.html"), template);
   write(
     join(out, "sitemap.xml"),
     [
@@ -107,6 +111,6 @@ const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
   const routes = await buildDocs();
   process.stdout.write(
-    `Wrote ${String(routes.length)} pages, their Markdown, llms.txt and sitemap.xml to apps/docs/dist.\n`,
+    `Wrote ${String(routes.length)} pages, their Markdown, llms.txt, sitemap.xml and 404.html to apps/docs/dist.\n`,
   );
 }

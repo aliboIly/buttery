@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { renderToString } from "react-dom/server";
 import { App } from "./App.tsx";
 import { setServerHref } from "./location.ts";
-import { pageAt, pages } from "./pages.tsx";
+import { hostedRoutes, pageAt, pages } from "./pages.tsx";
 
 /** One page as the static build writes it: its markup, and its title and description for the head. */
 export interface PrerenderedPage {
@@ -12,11 +12,17 @@ export interface PrerenderedPage {
   readonly description: string;
 }
 
-/** Every route the static build writes: each page but the lab's, which only development serves. */
+/**
+ * Every route the static build writes: each page but the lab's, which only development serves, and the
+ * pages inside each demo and template preview, so a deep link to one works on a static host.
+ */
 export function publicRoutes(): readonly string[] {
-  return pages
-    .filter((page) => page.route !== "lab" && !page.route.startsWith("lab/"))
-    .map((page) => page.route);
+  return [
+    ...pages
+      .filter((page) => page.route !== "lab" && !page.route.startsWith("lab/"))
+      .map((page) => page.route),
+    ...hostedRoutes,
+  ];
 }
 
 /** The page at `route`, rendered to markup the way the site first draws it. */

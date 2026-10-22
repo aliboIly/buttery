@@ -14,6 +14,7 @@ import {
   componentSources,
   contentRoutesIn,
 } from "../apps/docs/vite/markdown.ts";
+import { demoPages, templates } from "../apps/docs/src/routes.ts";
 import { buildDocs } from "./docs-build.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -78,6 +79,51 @@ describe("pnpm docs:build", () => {
         `# ${component.name}\n`,
       );
     }
+  });
+
+  it("prerenders the demos page, each demo and the pages inside it, and each template's preview", () => {
+    expect(readFileSync(join(out, "demos/index.html"), "utf8")).toMatch(
+      /<h1[^>]*>Demos<\/h1>/,
+    );
+    for (const demo of demoPages) {
+      const html = readFileSync(
+        join(out, "demos", demo.route, "index.html"),
+        "utf8",
+      );
+      expect(html, demo.route).toContain(
+        `<title>${demo.title} · buttery</title>`,
+      );
+    }
+    expect(
+      readFileSync(
+        join(out, "demos/roastery/settings/notifications/index.html"),
+        "utf8",
+      ),
+    ).toMatch(/<h1[^>]*>Notifications<\/h1>/);
+    expect(
+      readFileSync(
+        join(out, "demos/roastery/settings/notifications/index.html"),
+        "utf8",
+      ),
+    ).toContain('href="/demos/roastery/orders"');
+    for (const template of templates) {
+      expect(
+        existsSync(join(out, "templates", template.name, "preview/index.html")),
+        template.name,
+      ).toBe(true);
+    }
+    expect(
+      readFileSync(
+        join(out, "templates/dashboard/preview/orders/index.html"),
+        "utf8",
+      ),
+    ).toMatch(/<h1[^>]*>Orders<\/h1>/);
+  });
+
+  it("writes a 404.html that draws whatever address it's opened at", () => {
+    expect(readFileSync(join(out, "404.html"), "utf8")).toContain(
+      '<div id="root"></div>',
+    );
   });
 
   it("lists every route it wrote in the sitemap, and leaves the lab out", () => {

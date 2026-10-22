@@ -49,21 +49,39 @@ export interface PageGroup {
   readonly pages: readonly Page[];
 }
 
-/** Each template's root, served under `base`; the blank template is the starter, which has no router. */
+/**
+ * Each template's root, served under `base`, and the paths under it that have a page; the blank template is
+ * the starter, which has one page and no router.
+ */
 const TEMPLATE_APPS: Readonly<
-  Record<TemplateName, (base: string) => ReactElement>
+  Record<
+    TemplateName,
+    {
+      readonly render: (base: string) => ReactElement;
+      readonly routes: readonly string[];
+    }
+  >
 > = {
-  blank: () => <Starter />,
-  dashboard: (base) => <HostedApp App={dashboardTemplate.App} base={base} />,
-  editor: (base) => <HostedApp App={editorTemplate.App} base={base} />,
-  marketing: (base) => <HostedApp App={marketingTemplate.App} base={base} />,
+  blank: { render: () => <Starter />, routes: ["/"] },
+  dashboard: {
+    render: (base) => <HostedApp App={dashboardTemplate.App} base={base} />,
+    routes: dashboardTemplate.routes,
+  },
+  editor: {
+    render: (base) => <HostedApp App={editorTemplate.App} base={base} />,
+    routes: editorTemplate.routes,
+  },
+  marketing: {
+    render: (base) => <HostedApp App={marketingTemplate.App} base={base} />,
+    routes: marketingTemplate.routes,
+  },
 };
 
 /** Each template's live preview, filling the window, which its page shows in a frame; the nav leaves them out. */
 const templatePreviews: readonly Page[] = templates.map(({ name, title }) => ({
   route: `templates/${name}/preview`,
   title: `${title} template`,
-  render: () => TEMPLATE_APPS[name](`/templates/${name}/preview`),
+  render: () => TEMPLATE_APPS[name].render(`/templates/${name}/preview`),
   fullWindow: true,
 }));
 
@@ -284,6 +302,23 @@ const searchPage: Page = {
   title: "Search",
   render: () => <SearchPage />,
 };
+
+/**
+ * The paths under each demo and each template's preview that have pages of their own, such as
+ * `demos/roastery/settings/notifications`, which the static build writes out beside the pages.
+ */
+export const hostedRoutes: readonly string[] = [
+  ...demoPages.flatMap(({ route }) =>
+    DEMO_APPS[route].routes.flatMap((path) =>
+      path === "/" ? [] : [`demos/${route}${path}`],
+    ),
+  ),
+  ...templates.flatMap(({ name }) =>
+    TEMPLATE_APPS[name].routes.flatMap((path) =>
+      path === "/" ? [] : [`templates/${name}/preview${path}`],
+    ),
+  ),
+];
 
 export const pages: readonly Page[] = [
   landingPage,

@@ -23,9 +23,11 @@ export interface HostedAppProps {
   readonly serverHref?: string | undefined;
 }
 
-/** What a demo's package gives the docs site: its root and the way to forget what it saved. */
+/** What a demo's package gives the docs site: its root, its pages' paths and the way to forget what it saved. */
 export interface DemoApp {
   readonly App: ComponentType<HostedAppProps>;
+  /** The paths under the demo that have a page, such as `/orders`, which the static build writes out. */
+  readonly routes: readonly string[];
   readonly clearSavedState: () => void;
 }
 
