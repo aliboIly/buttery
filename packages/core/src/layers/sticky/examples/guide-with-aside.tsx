@@ -46,7 +46,7 @@ export function GuideWithAside(): ReactElement {
         </Surface>
       </Sticky>
       <Inline gap={4} align="start" padX={4}>
-        <Sticky variant="aside">
+        <Sticky variant="aside" style={{ flexShrink: 0 }}>
           <Stack gap={1} padY={3}>
             {STEPS.map(({ name }, index) => (
               <Surface
