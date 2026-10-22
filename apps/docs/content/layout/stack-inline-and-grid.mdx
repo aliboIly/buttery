@@ -12,11 +12,31 @@ related: [layout/the-layout-contract, foundations/spacing-and-sizing]
 
 ## Choosing one
 
-- `Stack` for a column: a form's fields, a card's title over its text.
-- `Inline` for a row: a button group, an icon beside its label. `wrap` lets it wrap, and `uniform` makes every child as wide as the widest, for a row of equal buttons.
-- `Grid` for columns that change with the room: `columns={{ base: 1, md: 2, lg: 3 }}` steps at 640px and 1024px of the container it's in.
+<Cards columns={3}>
+<Card title="Stack">
 
-All three take `align` and `justify`, and render a `div` unless you pass `asChild` to lay out an element of your own, such as a `ul`. Give a list you lay out `role="list"`: it drops the bullets and the indent, and keeps the list announced as a list in Safari, which drops that along with the bullets.
+For a column: a form's fields, a card's title over its text.
+
+</Card>
+<Card title="Inline">
+
+For a row: a button group, an icon beside its label. `wrap` lets it wrap, and `uniform` makes every child as wide as the widest, for a row of equal buttons.
+
+</Card>
+<Card title="Grid">
+
+For columns that change with the room, stepping at 640px and 1024px of the container it's in.
+
+</Card>
+</Cards>
+
+`columns={{ base: 1, md: 2, lg: 3 }}` gives a `Grid` one column below 640px of its container, two from 640px and three from 1024px.
+
+All three take `align` and `justify`, and render a `div` unless you pass `asChild` to lay out an element of your own, such as a `ul`.
+
+> **Lists.** When you lay out a `ul` or `ol` with `asChild`, give it `role="list"`. The role drops the bullets and the indent, and keeps the list announced as a list in Safari, which drops that along with the bullets.
+
+`Stack`, `Inline` and `Grid` together in a plan picker:
 
 ```tsx
 import type { ReactElement } from "react";
@@ -41,7 +61,7 @@ export function PlanPicker(): ReactElement {
 }
 ```
 
-`Divider` draws a hairline between children, across a stack or down a row, and is decorative unless it separates groups a screen reader should know about.
+`Divider` draws a hairline between children, across a stack or down a row. It's decorative unless it separates groups a screen reader should know about.
 
 ## Stack
 

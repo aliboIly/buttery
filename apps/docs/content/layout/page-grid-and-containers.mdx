@@ -21,14 +21,36 @@ The page grid is the set of columns, gutters and side padding a marketing or con
   ]}
 />
 
-Content stays at most 1200px wide (`--bt-w-page`), centered. Visuals may run past the content column to the window's edge; text never does. In development, ⌥⇧G shows the columns over the page.
+Content stays at most 1200px wide (`--bt-w-page`), centered. Visuals may run past the content column to the window's edge; text never does.
+
+> **Seeing the columns.** In development, ⌥⇧G shows the columns over the page.
 
 ## The parts
 
-- `Page` is the page itself: a column of sections, and the container the grid, the side padding and the display type follow. A page reads the same in a window and in a panel as wide.
-- `Section` is a band of the page: room above and below, an optional title and body, and its content in a `Container`. Its room steps down a size on a phone, so padding never outweighs content.
-- `Container` is the content column: at most 1200px wide, centered with padding rather than margins.
-- `Center` centers its content on both axes in the space it's given, such as an empty state on a stage.
+<Cards columns={2}>
+<Card title="Page">
+
+The page itself: a column of sections, and the container the grid, the side padding and the display type follow. A page reads the same in a window and in a panel as wide.
+
+</Card>
+<Card title="Section">
+
+A band of the page: room above and below, an optional title and body, and its content in a `Container`. Its room steps down a size on a phone, so padding never outweighs content.
+
+</Card>
+<Card title="Container">
+
+The content column: at most 1200px wide, centered with padding rather than margins.
+
+</Card>
+<Card title="Center">
+
+Centers its content on both axes in the space it's given, such as an empty state on a stage.
+
+</Card>
+</Cards>
+
+An about page with one large section:
 
 ```tsx
 import type { ReactElement } from "react";
@@ -50,7 +72,7 @@ export function About(): ReactElement {
 }
 ```
 
-App screens use `AppShell` and `AppPage` instead, with the same side padding.
+> **App screens.** Use `AppShell` and `AppPage` instead, with the same side padding.
 
 ## Page
 

@@ -13,7 +13,12 @@ A responsive buttery component changes its layout by the width of the container 
 
 ## Containers
 
-`Page`, `AppShell`'s column and the patterns that change their own layout, such as `SplitHero` or `Bento`, are size containers. `Grid`'s `columns` and the display type step at 640px and 1024px of the nearest one. Your own component can query them too:
+`Page`, `AppShell`'s column and the patterns that change their own layout, such as `SplitHero` or `Bento`, are size containers. `Grid`'s `columns` and the display type step at 640px and 1024px of the nearest one.
+
+Your own component can query them too:
+
+<DoDont>
+<Do>
 
 ```css
 .order-summary {
@@ -29,8 +34,12 @@ A responsive buttery component changes its layout by the width of the container 
 }
 ```
 
+The summary takes two columns once its container is 640px wide, whether that's a page or a wide panel.
+
+</Do>
+<Dont>
+
 ```css
-/* Don't: a viewport query, which is wrong as soon as the component sits in a panel. */
 @media (width >= 640px) {
   .order-summary {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -38,13 +47,34 @@ A responsive buttery component changes its layout by the width of the container 
 }
 ```
 
+A viewport query is wrong as soon as the component sits in a panel.
+
+</Dont>
+</DoDont>
+
 ## When things don't fit
 
-A row that runs out of room moves its least important items into a "More" menu with `OverflowCluster`, rather than wrapping or shrinking its text. Text that doesn't fit on one line truncates with `Text truncate` and keeps its whole text in a tooltip. `FitBox` scales content of a fixed aspect, such as a canvas, into whatever space it has.
+<Cards columns={3}>
+<Card title="A row runs out of room">
+
+`OverflowCluster` moves the row's least important items into a "More" menu, rather than wrapping the row or shrinking its text.
+
+</Card>
+<Card title="Text runs long">
+
+`Text truncate` cuts a line that doesn't fit short with an ellipsis, and keeps the whole text in a tooltip.
+
+</Card>
+<Card title="Content has a fixed aspect">
+
+`FitBox` scales content of a fixed aspect, such as a canvas, into whatever space it has.
+
+</Card>
+</Cards>
 
 ## Media queries in code
 
-Lay out with container queries in CSS first. When code has to know about the device itself, such as whether it has a fine pointer, `useMediaQuery(query)` returns whether a media query matches and stays current as that changes. It's `false` when rendered on a server.
+Lay out with container queries in CSS first. When code has to know about the device itself, such as whether it has a fine pointer, `useMediaQuery(query)` returns whether a media query matches, and stays current as that changes.
 
 ```tsx
 import type { ReactElement } from "react";
@@ -63,6 +93,8 @@ export function DragHint(): ReactElement {
 }
 ```
 
+> **On a server.** `useMediaQuery` returns `false` when it's rendered on a server.
+
 ## Checking it
 
-`expectButtery` checks a page at the widths you give it, from a 390px phone to a 1728px desktop, so a layout that only works at one width fails its test.
+`expectButtery` checks a page at the widths you give it, from a 390px phone to a 1728px desktop, so a layout that only works at one width fails its test. [Check your layout](/guides/check-your-layout#in-your-tests) shows how to run it.

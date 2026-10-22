@@ -14,7 +14,30 @@ A surface is a region with a background, an edge and a radius, such as a panel, 
 
 ## The nesting recipe
 
-buttery's screens nest a few levels deep: a `panel` on the app background, a `section` well inside it, and `card`s inside the well, each with rows inside. A child's radius is its parent's radius less the parent's padding, which `radius="auto"` works out; the one deliberate exception is a section, which is sized from the card inside it. A nested surface sits evenly inside its parent, with the same inset on every open side, and a section's title starts on the same edge as the rows inside it.
+<Rules>
+<Rule title="Panel, section, card">
+
+buttery's screens nest a few levels deep: a `panel` on the app background, a `section` well inside it, and `card`s inside the well, each with rows inside.
+
+</Rule>
+<Rule title="Corners are concentric">
+
+A child's radius is its parent's radius less the parent's padding, which `radius="auto"` works out. The one deliberate exception is a section, which is sized from the card inside it.
+
+</Rule>
+<Rule title="Insets are even">
+
+A nested surface sits evenly inside its parent, with the same inset on every open side.
+
+</Rule>
+<Rule title="Titles line up">
+
+A section's title starts on the same edge as the rows inside it.
+
+</Rule>
+</Rules>
+
+In code, each level is a `Surface`, and the card takes `radius="auto"`:
 
 ```tsx
 import type { ReactElement } from "react";
