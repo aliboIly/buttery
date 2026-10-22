@@ -10,7 +10,7 @@ export const page: DocsPage = {
   section: "components/feedback",
   title: "Toaster",
   description:
-    "Shows short messages from toast() at the bottom of the window, three at most, each leaving on its own after a few seconds.",
+    "Shows short messages from toast() at the bottom of the window, three at most, each leaving on its own after a few seconds; ButteryProvider mounts one, so an app only calls toast().",
   order: 110,
   status: "stable",
   since: "0.4.0",
