@@ -398,6 +398,34 @@ describe.each([
       }
     }, 60_000);
 
+    it("loads the search's index from under the base, and opens every result, then one, within the page", async () => {
+      const { page, problems, close } = await open();
+      try {
+        await page.goto("/buttery/foundations/colors");
+        await heading(page, "Colors");
+        await mark(page);
+        await page.getByRole("combobox", { name: "Search the docs" }).click();
+        await page.keyboard.type("dialog");
+        await page
+          .locator('[data-bt-part="command-search-preview"]')
+          .getByText('import { Dialog } from "@buttery/react";')
+          .waitFor({ state: "visible" });
+        await page.keyboard.press("Enter");
+        await page.waitForURL(`${site.origin}/buttery/search?q=dialog`);
+        await page
+          .getByRole("main")
+          .locator('a[href="/buttery/components/dialog"]')
+          .first()
+          .click();
+        await page.waitForURL(`${site.origin}/buttery/components/dialog`);
+        await heading(page, "Dialog");
+        expect(await stayed(page)).toBe(true);
+        expect(problems()).toEqual([]);
+      } finally {
+        await close();
+      }
+    }, 60_000);
+
     it("opens a demo, moves between its pages, and draws a customer's page from 404.html on a reload", async () => {
       const { page, problems, close } = await open();
       try {
