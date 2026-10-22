@@ -98,7 +98,7 @@ const MOTION: Readonly<Record<MotionClass, string>> = {
 /** What each motion class does with reduced motion, unless a component's meta says more. */
 const REDUCED: Readonly<Record<MotionClass, string>> = {
   none: "Nothing changes.",
-  press: "It presses at once, without scaling.",
+  press: "It presses in at once, without easing.",
   hover: "The change happens at once.",
   indicator: "The indicator moves at once.",
   presence: "It fades in and out in 100ms, without moving.",
