@@ -10,6 +10,11 @@ import {
 import { demoPages } from "../apps/docs/src/routes.ts";
 import { slugify } from "../apps/docs/src/slug.ts";
 import { exportsOf, propsTablesIn } from "../apps/docs/vite/props.ts";
+import {
+  changelogFiles,
+  changelogVersions,
+  entryOf,
+} from "../apps/docs/vite/whats-new.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 
@@ -125,7 +130,8 @@ function homesIn(docsSite) {
  * every internal link reaches a page (and heading) that exists, and every component has a home in
  * `docs/DOCS_SITE.md`, the examples its page asks for, a live demo on a page of its own, and the keyboard,
  * layout and reduced-motion notes its meta gives the page; and every other export of `@buttery/react` is
- * described on a page that lists it in its `exports`. Returns the problems, each saying how to fix it.
+ * described on a page that lists it in its `exports`; and every release a package's changelog lists has a
+ * What's new entry with two or three highlights. Returns the problems, each saying how to fix it.
  */
 export function checkDocs({
   contentDir = join(root, "apps/docs/content"),
@@ -137,6 +143,8 @@ export function checkDocs({
   demos = demoPages.map((page) => page.route),
   examples = true,
   packageIndex = join(root, "packages/react/src/index.ts"),
+  whatsNew = join(contentDir, "whats-new"),
+  changelogs = changelogFiles(root),
 } = {}) {
   const problems = [];
   const pages = [];
@@ -434,6 +442,41 @@ export function checkDocs({
       } else if (!new RegExp(`\`${name}[\`(]`).test(prose(page.body))) {
         problems.push(
           `${say(page.file)} lists ${name} in its exports but doesn't describe it. Fix: write about \`${name}\` on the page, with its name in backticks, alone or called, as in \`${name}()\`.`,
+        );
+      }
+    }
+  }
+
+  const entries = existsSync(whatsNew)
+    ? globSync("*.md", { cwd: whatsNew })
+        .sort()
+        .map((file) => ({
+          file: join(whatsNew, file),
+          ...entryOf(join(whatsNew, file)),
+        }))
+    : [];
+  for (const entry of entries) {
+    const missing = ["version", "date", "title"].filter(
+      (key) => entry[key] === "",
+    );
+    if (missing.length > 0) {
+      problems.push(
+        `${say(entry.file)} has no ${missing.join(" or ")}. Fix: give its frontmatter version, date (YYYY-MM-DD) and title.`,
+      );
+    }
+    if (entry.highlights.length < 2 || entry.highlights.length > 3) {
+      problems.push(
+        `${say(entry.file)} has ${String(entry.highlights.length)} highlight${entry.highlights.length === 1 ? "" : "s"}. Fix: list two or three, each a "- " line on what the release brought.`,
+      );
+    }
+  }
+  for (const changelog of changelogs) {
+    for (const version of changelogVersions(
+      readFileSync(changelog, "utf8"),
+    ).keys()) {
+      if (!entries.some((entry) => entry.version === version)) {
+        problems.push(
+          `${say(changelog)} has ${version}, but What's new has no entry for it. Fix: add ${say(join(whatsNew, `${version}.md`))} with its version, date and title in the frontmatter and two or three highlights.`,
         );
       }
     }

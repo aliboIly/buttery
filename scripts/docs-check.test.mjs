@@ -13,6 +13,7 @@ function fixture(name, options = {}) {
     metaFiles: [],
     references: [],
     packageIndex: null,
+    changelogs: [],
     ...options,
   });
 }
@@ -20,6 +21,17 @@ function fixture(name, options = {}) {
 describe("docs check", () => {
   it("passes the site as it is", () => {
     expect(checkDocs()).toEqual([]);
+  });
+
+  it("fails a release a changelog lists without a What's new entry, and an entry without two or three highlights", () => {
+    expect(
+      fixture("missing-release", {
+        changelogs: [join(fixtures, "missing-release/react/CHANGELOG.md")],
+      }),
+    ).toEqual([
+      'apps/docs/lab/docs-check/missing-release/content/whats-new/0.10.0.md has 1 highlight. Fix: list two or three, each a "- " line on what the release brought.',
+      "apps/docs/lab/docs-check/missing-release/react/CHANGELOG.md has 0.11.0, but What's new has no entry for it. Fix: add apps/docs/lab/docs-check/missing-release/content/whats-new/0.11.0.md with its version, date and title in the frontmatter and two or three highlights.",
+    ]);
   });
 
   it("fails a page without metadata, saying what to add", () => {

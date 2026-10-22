@@ -52,7 +52,7 @@ The Data table page and Overview patterns are compositions of the parts above an
 
 - A hero: the 🧈 `BrandMark`, "Make anything buttery", a one-line description, "Get started" as the primary button with a forward arrow, "Browse components", and a copyable `npx create-buttery my-app`.
 - Where to start: three cards, each with a forward-arrow link: a new app (`create-buttery`), an existing app (`buttery init`), building with a coding agent (`AGENTS.md` and the MCP server).
-- What's new: the latest three releases, each with its version, date and two or three highlights, from Changesets plus a short `content/whats-new/` entry per release, and a link to the full changelog.
+- What's new: the latest three releases, each with its version, date and two or three highlights, from Changesets plus a short `content/whats-new/` entry per release, and a link to the full changelog. Each entry is `content/whats-new/<version>.md`, with `version`, `date` and `title` in its frontmatter and its highlights as `- ` lines; Resources › What's new lists every entry with the changes each package's `CHANGELOG.md` gives its version. The docs check fails on an entry without two or three highlights and on a changelog version without an entry.
 - A live strip of real components the visitor can touch (a segmented control, a slider, a menu, a toast) that shows the feel instead of describing it.
 - Explore tiles with counts: Foundations, Layout, Motion, Components, Patterns, Templates.
 - A footer: the version, GitHub, the roadmap and the brand page.

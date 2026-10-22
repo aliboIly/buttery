@@ -59,6 +59,15 @@ describe("the site as Markdown", () => {
     expect(markdown).toMatch(/\| `--bt-r-lg` \| \d+px \|/);
   });
 
+  it("writes What's new out with every release, newest first", () => {
+    const markdown =
+      pageMarkdown(root, "resources/whats-new", components) ?? "";
+    expect(markdown).toContain("## 0.9.0: Docs site");
+    expect(markdown.indexOf("## 0.9.0")).toBeLessThan(
+      markdown.indexOf("## 0.1.0: Foundation"),
+    );
+  });
+
   it("lists every page in llms.txt with a link to its Markdown, by section in the site's order", () => {
     const text = llmsText(root, components);
     for (const route of contentRoutesIn(root))

@@ -16,6 +16,7 @@ import { frontmatter } from "./vite/frontmatter.ts";
 import { butteryProps } from "./vite/props.ts";
 import { butterySearch } from "./vite/search.ts";
 import { butteryMarkdown } from "./vite/markdown.ts";
+import { butteryWhatsNew } from "./vite/whats-new.ts";
 import { rehypeHighlight } from "./vite/highlight.ts";
 
 const { port } = manifest.config;
@@ -51,6 +52,7 @@ export default defineConfig({
     butteryDates(fileURLToPath(new URL("../..", import.meta.url))),
     butterySearch(fileURLToPath(new URL("../..", import.meta.url))),
     butteryMarkdown(fileURLToPath(new URL("../..", import.meta.url))),
+    butteryWhatsNew(fileURLToPath(new URL("../..", import.meta.url))),
     exampleCode(),
     frontmatter(),
     {

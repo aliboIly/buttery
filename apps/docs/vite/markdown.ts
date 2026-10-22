@@ -9,6 +9,7 @@ import { captionOf } from "./code.ts";
 import { shownSource } from "./example-source.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
 import { propsTablesIn } from "./props.ts";
+import { releasesIn, releasesMarkdown } from "./whats-new.ts";
 
 /** A value a meta file's object literal holds: a string, a list of strings, or a list of string records. */
 type MetaValue =
@@ -509,6 +510,8 @@ function bodyMarkdown(
       }
     } else if (name === "DocsTable") {
       out.push(docsTableOf(jsx));
+    } else if (name === "WhatsNew") {
+      out.push(releasesMarkdown(releasesIn(root)));
     } else {
       const block = tokenBlock(root, name, jsx);
       if (block !== null) out.push(block);
