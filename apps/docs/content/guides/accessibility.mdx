@@ -1,0 +1,29 @@
+---
+title: Accessibility
+description: What buttery's components do for keyboard, screen reader and low-vision users, and what's left to you.
+section: guides
+order: 60
+status: stable
+since: 0.4.0
+related: [motion/reduced-motion, foundations/colors]
+---
+
+Every buttery component works with a keyboard and a screen reader, keeps text readable, and gives every target room to press. This guide lists what that covers and the few things an app still has to do itself.
+
+## What the components do
+
+- Keyboard: every control can be reached with Tab and used with the keys people expect; menus, dialogs and selects follow Radix's patterns. Each component page has a keyboard table.
+- Focus: a visible ring on `:focus-visible`, focus moved into a dialog or panel as it opens and back to what opened it as it closes.
+- Names: icon-only controls require a `label`; dialogs warn in development when they have no name.
+- Contrast: text and icons meet WCAG AA on the surfaces they're meant for, in light and dark.
+- Targets: every press target is at least 24 by 24, and standalone buttons at least 28 tall.
+- Motion: everything follows the reduced motion setting.
+- Forced colors: switches and checkboxes draw themselves in system colors when Windows' high contrast is on, so their state stays visible.
+
+## What's left to you
+
+- Give every page one `h1` and headings in order, and every form field a label.
+- Write link and button text that makes sense on its own: "Download the invoice", not "Click here".
+- Give images that carry meaning alternative text, and an icon that stands alone a `label`.
+- Don't disable a button the person just pressed: use `aria-disabled`, which keeps focus on it.
+- Check with a keyboard and a screen reader as you build. `expectButtery` runs axe's rules on every check, but no automated check finds everything.

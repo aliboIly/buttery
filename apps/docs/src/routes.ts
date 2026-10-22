@@ -1,5 +1,5 @@
 /** The version the site documents. */
-export const DOCS_VERSION = "0.8.0";
+export const DOCS_VERSION = "0.9.0";
 
 /** Where buttery's source lives. */
 export const SOURCE_URL = "https://github.com/aliboIly/buttery";

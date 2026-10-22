@@ -6,7 +6,7 @@ export const page: DocsPage = {
   description: "A component with a prop its JSDoc leaves out.",
   order: 990,
   status: "new",
-  since: "0.8.0",
+  since: "0.9.0",
 };
 
 export const demos: readonly DemoSection[] = [];

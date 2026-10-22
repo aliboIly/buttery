@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A labelled box for a line of text, with a hint, an error and optional icons.",
   order: 110,
   status: "stable",
-  since: "0.4.0",
+  since: "0.4.5",
 };
 
 export const demos: readonly DemoSection[] = [

@@ -8,7 +8,7 @@ export const page: DocsPage = {
     "A title with body text and a caption under it, spaced by the gaps between trimmed text: for dialogs, empty states and page sections.",
   order: 170,
   status: "stable",
-  since: "0.4.0",
+  since: "0.4.5",
   home: "foundations/typography",
 };
 

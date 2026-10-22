@@ -1,0 +1,33 @@
+---
+title: Make an existing app buttery
+description: Bringing buttery into an app that already has its own styles and components, a screen at a time.
+section: guides
+order: 30
+status: beta
+since: 0.9.0
+related: [get-started/make-anything-buttery, guides/check-your-layout]
+---
+
+This guide moves an existing React app onto buttery without a rewrite: wire up the provider, check the layout, then convert a screen at a time from the top down. Follow it when an app already works and you want it to look, move and lay out like buttery.
+
+## 1. Wire it up
+
+Import `@buttery/core/styles.css` and `@buttery/react/styles.css` at the app's entry and wrap it in `ButteryProvider`. The app keeps its look; it gains buttery's tokens, focus rings, layers and `LayoutGuard` in development.
+
+## 2. See where it stands
+
+Run the app in development and narrow the window from wide to a phone's width. `LayoutGuard` outlines what overlaps, overflows or truncates without saying so. Add one Playwright test per main page with `expectButtery(page, quickMatrix)`, and keep its report as the list of what to fix.
+
+## 3. Convert a screen, top down
+
+For one screen at a time:
+
+- Match the whole screen to a pattern if one fits: `AppShell` with `AppPage`, a settings page, a detail page.
+- Give each region a `Surface` level and lay out siblings with `Stack`, `Inline` and `Grid`, dropping margins for gaps.
+- Swap each control for its buttery component: `Button`, `TextField`, `Select`, `Switch`.
+- Wrap what has no buttery match in `buttery(Component, { surface: "card" })`, so it takes the surface and motion recipes.
+- Replace raw colors, sizes, radii and durations with tokens. buttery's stylelint config lists the ones left.
+
+## 4. Keep it there
+
+Add `@buttery/lint`'s configs and the `expectButtery` tests to the app's checks, so a screen stays buttery once it's converted.

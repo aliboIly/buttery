@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "buttery's mark, a soft pat of butter, and where the 🧈 character goes instead.",
   order: 110,
   status: "new",
-  since: "0.8.0",
+  since: "0.9.0",
   home: "resources/brand",
 };
 

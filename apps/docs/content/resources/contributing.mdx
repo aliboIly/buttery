@@ -1,0 +1,37 @@
+---
+title: Contributing
+description: How to work on buttery itself: the commands, the checks a change has to pass, and the rules it follows.
+section: resources
+order: 40
+status: stable
+since: 0.9.0
+related: [resources/roadmap, layout/the-layout-contract]
+---
+
+buttery is a pnpm monorepo: the packages under `packages/`, this site and the starter under `apps/`. This page covers what a change needs before it's ready; `AGENTS.md` in the repository has the full rules, for people and coding agents alike.
+
+## Commands
+
+<DocsTable
+  columns={["Command", "What it does"]}
+  rows={[
+    ["pnpm dev", "Runs this site, with a page for every component"],
+    ["pnpm check", "Everything a change has to pass: authorship and private-path checks, types, lint, formatting, unit and browser tests, the docs check and the layout checks at two widths"],
+    ["pnpm test:layout", "The layout checks across every width, theme and density, in Chromium and WebKit"],
+    ["pnpm new-component Name", "A new component folder that already follows the component contract"],
+    ["pnpm new-app name", "A new app copied from the starter"],
+    ["pnpm brand:assets", "The favicons, app icons and README hero, from the mark"],
+  ]}
+/>
+
+## The rules a change follows
+
+- Tokens only: no raw colors, sizes, radii, shadows, durations or z-indexes outside the token source.
+- The layout contract: flow layout with gaps, no outer margins, sizes from tokens, container queries.
+- The component contract: `ref` as a prop, controlled and uncontrolled, one prop vocabulary, JSDoc on every export and prop, keyboard and screen reader support, works with motion off.
+- The motion rules: direct manipulation is instant, discrete changes spring, exits are faster than entrances.
+- Docs in the same change: a component's page, examples and metadata change with it, and the docs check fails when they don't.
+
+## Commits
+
+One focused change per commit, with a conventional prefix such as `feat(react):` or `fix(core):` and a subject of 72 characters at most, in the imperative.

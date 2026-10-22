@@ -76,7 +76,7 @@ export const labPages: readonly ContentEntry[] = Object.entries(labModules).map(
         description: "A page without frontmatter.",
         order: 0,
         status: "beta",
-        since: "0.8.0",
+        since: "0.9.0",
       },
       headings: module.headings,
       Content: module.default,

@@ -1,0 +1,61 @@
+---
+title: Testing
+description: expectButtery, the Playwright check that fails a page that overlaps, overflows or shifts, at every size you ask for.
+section: tools
+order: 40
+status: stable
+since: 0.2.0
+related: [guides/check-your-layout, layout/the-layout-contract]
+---
+
+`expectButtery` from `@buttery/test` checks a page in Playwright against buttery's layout contract, at each viewport, theme and density you give it, and fails with every problem it finds and how to fix it. Use it in an app's end-to-end tests, so a layout that breaks at one size can't ship.
+
+## A first test
+
+```ts
+import { test } from "@playwright/test";
+import { expectButtery, quickMatrix } from "@buttery/test";
+
+test("the orders page is buttery", async ({ page }) => {
+  await page.goto("/orders");
+  await expectButtery(page, { ...quickMatrix, name: "orders" });
+});
+```
+
+`quickMatrix` checks a 390px phone and a 1280px desktop, in light and dark. `fullMatrix` adds tablets and wide screens and the compact density; buttery runs it before each release.
+
+## What it checks
+
+Each check has a name you can pass to `rules` to run only some of them:
+
+- `overlap`: two elements that cover each other, outside the layers they belong in.
+- `overflow`: content wider than its box, or a page that scrolls sideways.
+- `clipping`: text cut off without an ellipsis.
+- `viewport-fit`: a floating surface that runs off the screen.
+- `target-size`: a press target smaller than 24 by 24, or a standalone button under 28 tall.
+- `scale`: a space or a control height that isn't on buttery's scale.
+- `reach`: content no one can scroll to, such as a fixed box that runs past the window.
+- `layering`: a `z-index` that isn't one of the layer bands.
+- `emphasis`: more than one primary button in one region.
+- `stability`: something that moves after an interaction when it shouldn't.
+- `accessibility`: axe's accessibility rules.
+
+## Interactions
+
+A page's open menus and toasts count too. Pass `interactions`: each one drives the page, then every check runs on the state it leaves, and the stability check compares what moved.
+
+```ts
+await expectButtery(page, {
+  ...quickMatrix,
+  interactions: [
+    {
+      name: "open the export menu",
+      run: async (current) => {
+        await current.getByRole("button", { name: "Export" }).click();
+      },
+    },
+  ],
+});
+```
+
+A failed run prints each problem with the element, the rule, what it measured and a fix, and saves an annotated screenshot with the test's results.

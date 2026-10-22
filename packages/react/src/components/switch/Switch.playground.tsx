@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A switch that turns a setting on or off at once, with its label beside it.",
   order: 110,
   status: "stable",
-  since: "0.4.0",
+  since: "0.4.5",
 };
 
 export const demos: readonly DemoSection[] = [

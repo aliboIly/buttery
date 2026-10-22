@@ -1,0 +1,42 @@
+---
+title: Bring your brand
+description: Your accent, grays, corners and type on top of buttery, without losing its contrast or its rules.
+section: guides
+order: 40
+status: beta
+since: 0.9.0
+related: [foundations/theming, foundations/colors]
+---
+
+buttery's defaults are neutral on purpose, so an app's own brand shows. This guide puts yours on top: an accent and a primary color, warmer or cooler grays, rounder or tighter corners, and your own mark.
+
+## Colors and corners
+
+`createTheme` takes your brand's accent as hex and works out the shades buttery needs, in light and dark, including a text shade that keeps AA contrast. `neutral` tints the grays and `radius` changes how round corners are, keeping nested surfaces concentric.
+
+```tsx
+import type { ReactElement } from "react";
+import { createTheme } from "@buttery/core";
+import { ButteryProvider } from "@buttery/react";
+import { App } from "./App.tsx";
+
+const brand = createTheme({ accent: "#c2410c", neutral: "warm", radius: "soft" });
+
+export function Root(): ReactElement {
+  return (
+    <ButteryProvider theme={brand}>
+      <App />
+    </ButteryProvider>
+  );
+}
+```
+
+For a color the options don't reach, `overrides` sets any color token per scheme. Change roles, not values: set `accent`, not the color of one button.
+
+## Your mark
+
+Put your own logo in the places buttery puts its own: a `NavBar`'s `brand`, an `AppShell`'s sidebar switcher, a `HeaderBar`'s `mark`. Keep buttery's mark for buttery itself.
+
+## Type
+
+buttery sets text in Inter. To use your own typeface, load it locally (no network fonts, so desktop apps work offline) and set `--bt-font-sans` on `:root` after buttery's stylesheet. The type roles keep their sizes, so check long words in narrow places with `expectButtery`.

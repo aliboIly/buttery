@@ -1,0 +1,25 @@
+---
+title: Check your layout
+description: Catching overlaps, overflow and layout shift while you work and in your tests.
+section: guides
+order: 50
+status: stable
+since: 0.2.0
+related: [tools/testing, layout/the-layout-contract]
+---
+
+buttery checks layout in two places: `LayoutGuard` while you work, and `expectButtery` in your tests. Use both, so a layout problem shows up the moment you make it and can't come back once it's fixed.
+
+## While you work
+
+In a Vite development build, `ButteryProvider` turns on `LayoutGuard`. It outlines in red anything that overlaps, overflows or truncates without saying so, and logs each one to the console as `[buttery:LayoutGuard]` with how to fix it. ⌥⇧L hides and shows the outlines, and ⌥⇧G draws the page grid. Production builds never include it.
+
+Resize the window from wide to a phone's width as you go: most layout problems only show at some widths.
+
+## In your tests
+
+`expectButtery` runs the same checks and more in Playwright, at every width, theme and density you give it. Start with `quickMatrix` in every test, and run `fullMatrix` before a release. See [Testing](/tools/testing) for its options.
+
+## Reading a report
+
+Each problem names the rule, the element (as a selector), what it measured and a fix, such as "the page scrolls sideways by 51px: something is wider than the viewport; let the widest element shrink". With `--reporter=json`, buttery's own runner prints the problems as JSON, for a script or a coding agent to work through. Fix the cause, not the symptom: a component that overflows needs `min-width: 0` or room, not a hidden overflow.

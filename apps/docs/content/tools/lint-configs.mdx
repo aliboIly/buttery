@@ -1,0 +1,33 @@
+---
+title: Lint configs
+description: buttery's stylelint and ESLint configs, which fail raw values, owned positioning and other breaks from the rules.
+section: tools
+order: 30
+status: stable
+since: 0.2.0
+related: [layout/the-layout-contract, foundations/colors]
+---
+
+`@buttery/lint` holds buttery's stylelint and ESLint configs, which catch breaks from its rules while you write: a hand-written color, a length off the scale, a `z-index` that isn't a layer, a margin on a component. Add both to an app, and its own code keeps to the same rules as buttery's.
+
+## stylelint
+
+```js
+// stylelint.config.mjs
+import { butteryStylelintConfig } from "@buttery/lint/stylelint";
+
+export default butteryStylelintConfig();
+```
+
+It fails raw colors and lengths outside the tokens, a `z-index` that isn't a layer band, negative margins, `position: absolute`, `fixed` or `sticky` outside layers and a component's own parts, `!important` and `transition: all`. Each message names the token or primitive to use instead. A component may hold raw values in variables named after it, declared at the top of its own stylesheet.
+
+## ESLint
+
+```js
+// eslint.config.js
+import { butteryEslintConfig } from "@buttery/lint/eslint";
+
+export default [...butteryEslintConfig()];
+```
+
+It fails literal margins, `z-index`, positions and sizes in inline styles, layout animations that skip reduced motion, Tailwind classes that bypass the tokens, and components that take DOM props without passing the rest to their root element.

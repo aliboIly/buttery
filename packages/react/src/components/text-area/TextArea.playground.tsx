@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A labelled box for longer text that grows with what's typed up to a limit, then scrolls.",
   order: 100,
   status: "stable",
-  since: "0.4.0",
+  since: "0.4.5",
 };
 
 const LONG = Array.from(

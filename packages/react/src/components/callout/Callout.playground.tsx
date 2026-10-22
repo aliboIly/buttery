@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A tinted box for a message in place: information, success, a warning or an error.",
   order: 20,
   status: "stable",
-  since: "0.4.0",
+  since: "0.4.5",
 };
 
 export const demos: readonly DemoSection[] = [

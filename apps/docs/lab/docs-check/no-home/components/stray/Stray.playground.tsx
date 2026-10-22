@@ -6,7 +6,7 @@ export const page: DocsPage = {
   description: "A component the docs site's table of exports doesn't list.",
   order: 990,
   status: "new",
-  since: "0.8.0",
+  since: "0.9.0",
 };
 
 export const demos: readonly DemoSection[] = [];
