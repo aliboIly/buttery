@@ -61,6 +61,13 @@ async function pressInMiddle(target: Locator): Promise<void> {
   await target.click();
 }
 
+/** The Halfmoon shop's bag: a link among the bar's actions, or a button beside its brand once it folds. */
+function shopBag(page: Page): Locator {
+  return page
+    .getByRole("link", { name: /^Bag, / })
+    .or(page.getByRole("button", { name: /^Bag, / }));
+}
+
 /** What a change to the Halfmoon shop's coffees moves: the cards, everything after them and the pill. */
 const SHOP_BELOW_COFFEES = [
   "#coffees",
@@ -242,10 +249,10 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       allowMove: [PILL],
       run: async (page: Page) => {
         await page
-          .getByRole("button", { name: "Add to bag", exact: true })
+          .getByRole("button", { name: "Add to bag · $19.00", exact: true })
           .click();
         await page
-          .getByText("Added Guji, 12 oz.", { exact: true })
+          .getByText("Added a 12 oz bag of Guji.", { exact: true })
           .first()
           .waitFor();
       },
@@ -256,21 +263,22 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
         await page.evaluate(() => {
           window.scrollTo(0, 0);
         });
-        await page.getByRole("button", { name: /^Bag, / }).click();
+        await shopBag(page).click();
         await page.getByRole("dialog", { name: "Your bag" }).waitFor();
       },
       acrossMatrix: true,
     },
     {
-      name: "check out without an email, which asks for one",
+      name: "check out with the delivery form empty, which says what it needs",
       allowMove: ['[role="dialog"]'],
       run: async (page: Page) => {
         await page.getByRole("button", { name: "Check out" }).click();
-        await page.getByRole("button", { name: "Place order" }).click();
+        await page.getByRole("button", { name: "Payment" }).click();
         await page
           .getByText("Enter your email address, so we can send your receipt.", {
             exact: true,
           })
+          .first()
           .waitFor();
       },
       acrossMatrix: true,
@@ -305,6 +313,19 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
         await pressInMiddle(
           page.getByRole("radio", { name: "As a gift", exact: true }),
         );
+      },
+    },
+    {
+      name: "add the gift with nobody to send it to, which asks who it's for",
+      allowMove: ["#subscribe", "#subscribe ~ *", '[data-bt="Footer"]', PILL],
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Add the gift to your bag" })
+          .click();
+        await page
+          .getByText("Enter the name of the person it's for.", { exact: true })
+          .first()
+          .waitFor();
       },
     },
     {
@@ -1095,7 +1116,7 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
         name: "open the sign-in dialog",
         run: async (target: Page) => {
           await target
-            .getByRole("button", { name: "Sign in", exact: true })
+            .getByRole("link", { name: "Sign in", exact: true })
             .click();
           await target.getByRole("dialog", { name: "Sign in" }).waitFor();
         },
@@ -1141,7 +1162,7 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
       {
         name: "open the empty bag",
         run: async (target: Page) => {
-          await target.getByRole("button", { name: /^Bag, / }).click();
+          await shopBag(target).click();
           await target
             .getByRole("dialog", { name: "Your bag is empty" })
             .waitFor();
@@ -1165,22 +1186,46 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
           await pressInMiddle(
             target.getByRole("radio", { name: "As a gift", exact: true }),
           );
+          await target.getByLabel("Their name").fill("Sam Okafor");
+          await target.getByLabel("Their email").fill("sam@example.com");
           await target
-            .getByRole("button", { name: /subscription to your bag/ })
+            .getByRole("button", { name: "Add the gift to your bag" })
             .click();
-          await target.getByRole("button", { name: /^Bag, / }).click();
+          await shopBag(target).click();
           await target.getByRole("dialog", { name: "Your bag" }).waitFor();
         },
       },
       {
-        name: "check out and place the order",
+        name: "go on to the delivery form",
         allowMove: ['[role="dialog"]'],
         run: async (target: Page) => {
           await target.getByRole("button", { name: "Check out" }).click();
-          await target
-            .getByRole("dialog", { name: "Check out" })
-            .getByRole("button", { name: "Place order" })
-            .click();
+          await target.getByRole("dialog", { name: "Delivery" }).waitFor();
+        },
+      },
+      {
+        name: "fill in the delivery form and go on to payment",
+        allowMove: ['[role="dialog"]'],
+        run: async (target: Page) => {
+          const form = target.getByRole("dialog", { name: "Delivery" });
+          await form.getByLabel("Full name").fill("Ines Vale");
+          await form.getByLabel("Street address").fill("2210 SE Ankeny St");
+          await form.getByLabel("City").fill("Portland");
+          await form.getByLabel("State").fill("OR");
+          await form.getByLabel("ZIP code").fill("97214");
+          await form.getByRole("button", { name: "Payment" }).click();
+          await target.getByRole("dialog", { name: "Payment" }).waitFor();
+        },
+      },
+      {
+        name: "pay, which places the order",
+        allowMove: ['[role="dialog"]'],
+        run: async (target: Page) => {
+          const form = target.getByRole("dialog", { name: "Payment" });
+          await form.getByLabel("Card number").fill("4111 1111 1111 1111");
+          await form.getByLabel("Expiry").fill("08/28");
+          await form.getByLabel("Security code").fill("123");
+          await form.getByRole("button", { name: /^Pay / }).click();
           await target
             .getByRole("dialog", { name: "Thanks, your order is in" })
             .waitFor();
