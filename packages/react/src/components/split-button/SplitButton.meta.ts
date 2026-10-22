@@ -16,4 +16,32 @@ export const meta: ComponentMeta = {
   related: ["Button", "Menu"],
   a11y: "A group of two buttons, each a tab stop: the main half is named by its label, the chevron half by menuLabel. The chevron opens a menu: arrow keys move, Enter chooses, Escape closes and returns focus.",
   motion: "press",
+  keyboard: [
+    {
+      keys: "Tab",
+      does: "Moves between the main half and the chevron half, each its own stop",
+    },
+    {
+      keys: "Enter or Space",
+      does: "Runs the main action on the main half, or the focused entry in the menu, which then closes",
+    },
+    {
+      keys: "Enter, Space or Arrow Down",
+      does: "Opens the menu from the chevron half, with focus on its first entry",
+    },
+    {
+      keys: "Arrow Down or Arrow Up",
+      does: "Moves between the menu's entries, skipping disabled ones",
+    },
+    { keys: "Home or End", does: "Moves to the first or last entry" },
+    { keys: "Letters", does: "Jumps to the entry that starts with them" },
+    {
+      keys: "Escape",
+      does: "Closes the menu and puts focus back on the chevron half",
+    },
+  ],
+  layout:
+    "One pill --bt-h-button (36px) tall: the main half as wide as its label and padding, then a 1px divider half the pill's height, then the chevron half, a 36px square. It's never wider than its container, where a long label truncates with an ellipsis and shows in full as its title. Each half is a hit area the pill's full height, and the menu is at least --bt-w-menu-min (200px) wide.",
+  reducedMotion:
+    "Each half presses in at once, and the menu fades in and out over 100ms without growing.",
 };

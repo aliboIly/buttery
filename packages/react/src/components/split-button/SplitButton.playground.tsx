@@ -2,7 +2,7 @@ import { Clipboard, FileImage } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { SplitButton } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -47,6 +47,68 @@ function ExportDemo(): ReactElement {
     </Stack>
   );
 }
+
+function LiveExport({
+  label,
+  disabled,
+}: {
+  readonly label: string;
+  readonly disabled: boolean;
+}): ReactElement {
+  const [last, setLast] = useState("Nothing exported yet");
+  return (
+    <Stack gap={3} align="start">
+      <SplitButton
+        menuLabel="More export options"
+        disabled={disabled}
+        onClick={() => {
+          setLast("Exported a PNG");
+        }}
+        items={[
+          {
+            label: "Export as JPG",
+            onSelect: () => {
+              setLast("Exported a JPG");
+            },
+          },
+          {
+            label: "Copy to clipboard",
+            onSelect: () => {
+              setLast("Copied the image");
+            },
+          },
+        ]}
+      >
+        {label}
+      </SplitButton>
+      <Text variant="body-sm">{last}</Text>
+    </Stack>
+  );
+}
+
+export const live: LiveDemo = {
+  controls: {
+    children: { kind: "text", initial: "Export PNG" },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ children, disabled }) => (
+    <LiveExport label={String(children)} disabled={disabled === true} />
+  ),
+  code: ({ children, disabled }) =>
+    [
+      "<SplitButton",
+      '  menuLabel="More export options"',
+      ...(disabled === true ? ["  disabled"] : []),
+      "  onClick={exportPng}",
+      "  items={[",
+      '    { label: "Export as JPG", onSelect: exportJpg },',
+      '    { label: "Copy to clipboard", onSelect: copyImage },',
+      "  ]}",
+      ">",
+      `  ${String(children)}`,
+      "</SplitButton>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {
