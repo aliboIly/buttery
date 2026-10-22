@@ -23,7 +23,7 @@ import type { SelectOption } from "../../components/select/Select.tsx";
 export interface PlanComparisonPlan {
   /** Identifies the plan. */
   readonly id: string;
-  /** Its name, an `h3` in `title-md`, such as "Plus". */
+  /** Its name, an `h2` in `title-md`, such as "Plus". */
   readonly name: string;
   /** What it's for, in a line or two. */
   readonly description: string;
@@ -180,7 +180,7 @@ function Plan({ plan }: { readonly plan: PlanComparisonPlan }): ReactElement {
       >
         <div data-bt-part="plan-comparison-intro">
           <Text id={nameId} variant="title-md" asChild>
-            <h3>{plan.name}</h3>
+            <h2>{plan.name}</h2>
           </Text>
           <Text variant="body-sm" data-bt-part="plan-comparison-description">
             {plan.description}
@@ -208,7 +208,7 @@ function Plan({ plan }: { readonly plan: PlanComparisonPlan }): ReactElement {
         <div data-bt-part="plan-comparison-action">{plan.action}</div>
         <div data-bt-part="features">
           <Text variant="title-sm" asChild>
-            <h4>{plan.featuresTitle}</h4>
+            <h3>{plan.featuresTitle}</h3>
           </Text>
           <ul data-bt-part="feature-list">
             {plan.features.map((feature) => (

@@ -20,7 +20,7 @@ export const meta: ComponentMeta = {
     "Button",
     "ConsequenceDialog",
   ],
-  a11y: "The control group is a group named Plan options: the periods a radio group named by periodLabel, the volume a select named by volumeLabel. Each plan card is a region named by its h3, its checklist a list under an h4; the ribbon is text above the card. Other plans are a region named by its h2.",
+  a11y: "The control group is a group named Plan options: the periods a radio group named by periodLabel, the volume a select named by volumeLabel. Each plan card is a region named by its h2, its checklist a list under an h3; the ribbon is text above the card. Other plans are a region named by its h2, each option an h3, so the comparison can follow a page's h1.",
   motion: "indicator",
   keyboard: [
     {
