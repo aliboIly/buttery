@@ -1,7 +1,8 @@
+import { Columns3, LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { SegmentedControl } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -28,6 +29,34 @@ function FillDemo(): ReactElement {
     </Stack>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "View" },
+    iconOnly: { kind: "toggle", initial: false },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ label, iconOnly, disabled }) => (
+    <SegmentedControl
+      label={String(label)}
+      options={[
+        { value: "list", label: "List", icon: List },
+        { value: "grid", label: "Grid", icon: LayoutGrid },
+        { value: "board", label: "Board", icon: Columns3 },
+      ]}
+      iconOnly={iconOnly === true}
+      disabled={disabled === true}
+    />
+  ),
+  code: ({ label, iconOnly, disabled }) => `<SegmentedControl
+  label="${String(label)}"
+  options={[
+    { value: "list", label: "List", icon: List },
+    { value: "grid", label: "Grid", icon: LayoutGrid },
+    { value: "board", label: "Board", icon: Columns3 },
+  ]}${iconOnly === true ? "\n  iconOnly" : ""}${disabled === true ? "\n  disabled" : ""}
+/>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {
