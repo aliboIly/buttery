@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { DateRangeBar } from "@buttery/react";
 
 /** The bar in Spanish, with its own words for every part. */
@@ -34,3 +35,12 @@ export function SpanishLabels(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, key }) => {
+  await press("button", "Intervalo, Diario");
+  await press("option", "Mensual");
+  await press("button", "Intervalo, Mensual");
+  await key("Escape");
+};
