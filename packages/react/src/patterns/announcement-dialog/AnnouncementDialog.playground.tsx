@@ -1,4 +1,4 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { AnnouncementDialog, Button } from "@buttery/react";
 import type { ReactElement } from "react";
 
@@ -51,6 +51,43 @@ function WeekPlan(): ReactElement {
     </svg>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    trigger: { kind: "text", initial: "See what's new" },
+  },
+  render: ({ trigger }) => (
+    <AnnouncementDialog
+      trigger={<Button>{String(trigger)}</Button>}
+      title="Roasts plan themselves now"
+      sections={[
+        {
+          title: "A week ahead",
+          body: "Orders and subscriptions fill next week's roasts as they come in, by coffee and by day.",
+        },
+        { body: "Roasts you planned by hand stay as they are." },
+      ]}
+      media={<WeekPlan />}
+      learnMore={{
+        label: "How roast planning works",
+        href: "#docs-roast-planning",
+      }}
+    />
+  ),
+  code: ({ trigger }) =>
+    [
+      "<AnnouncementDialog",
+      `  trigger={<Button>${String(trigger)}</Button>}`,
+      '  title="Roasts plan themselves now"',
+      "  sections={[",
+      '    { title: "A week ahead", body: "Orders and subscriptions fill next week\'s roasts as they come in, by coffee and by day." },',
+      '    { body: "Roasts you planned by hand stay as they are." },',
+      "  ]}",
+      "  media={<WeekPlan />}",
+      '  learnMore={{ label: "How roast planning works", href: "/docs/roast-planning" }}',
+      "/>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {
