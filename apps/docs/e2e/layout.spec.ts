@@ -367,6 +367,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       run: async (page: Page) => {
         await page
           .getByRole("button", { name: "Take the tour", exact: true })
+          .first()
           .click();
         await page.getByRole("dialog").waitFor();
       },
@@ -381,7 +382,17 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
   ],
-  "page-dots": [{ name: "move on a step", run: press("Next") }],
+  "page-dots": [
+    {
+      name: "move on a step",
+      run: async (page: Page) => {
+        await page
+          .getByRole("region", { name: "PageDots variants and states" })
+          .getByRole("button", { name: "Next", exact: true })
+          .click();
+      },
+    },
+  ],
   "number-field": [
     {
       name: "focus a field, which shows its stepper",
