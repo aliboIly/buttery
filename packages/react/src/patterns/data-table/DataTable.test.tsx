@@ -418,6 +418,19 @@ describe("DataTable", () => {
     expect(screen.queryByRole("button", { name: "Next" })).toBeNull();
   });
 
+  it("takes compact density's shorter rows when compact, in a comfortable app", () => {
+    render(<Orders />);
+    expect(rows()[0]?.getBoundingClientRect().height).toBe(36);
+    cleanup();
+    render(<Orders size="compact" />);
+    expect(rows()[0]?.getBoundingClientRect().height).toBe(32);
+    expect(
+      screen
+        .getAllByRole("columnheader")[0]
+        ?.parentElement?.getBoundingClientRect().height,
+    ).toBe(32);
+  });
+
   it("keeps the floating lanes above its pagination in a filled page, and its end clear of them", async () => {
     render(
       <>

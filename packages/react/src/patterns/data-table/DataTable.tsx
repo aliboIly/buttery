@@ -155,7 +155,10 @@ export interface DataTableProps<Row> extends Omit<
   readonly empty?: ReactNode;
   /** When filters leave no rows: a row across the table with "Clear all", which calls this. */
   readonly onClearAll?: (() => void) | undefined;
-  /** `"default"` or `"compact"`, without selection and pagination, for short lists such as recent activity. */
+  /**
+   * `"default"`, or `"compact"` for short lists such as recent activity: the table takes compact density's
+   * heights, so its rows are 32px whatever the app's density, and has no selection or pagination.
+   */
   readonly size?: "default" | "compact" | undefined;
   /** Words to use instead of the English ones. */
   readonly labels?: Partial<DataTableLabels> | undefined;
@@ -361,6 +364,7 @@ function DataTableRoot<Row>({
       className={cx("bt-data-table", className)}
       data-bt="DataTable"
       data-size={size}
+      data-bt-density={compact ? "compact" : undefined}
     >
       <div
         ref={watchScroll}

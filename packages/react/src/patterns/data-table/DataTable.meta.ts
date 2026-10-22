@@ -42,7 +42,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "It fills its container's width. Each column keeps its least width (minWidth: xs 64, sm 96 by default, md 144, lg 192 or xl 256px) and a share of the rest, and when those don't fit the table scrolls sideways inside itself while the page doesn't, its end edge fading while more lies past it; rows are 36px (--bt-h-table-row) with 1px dividers, cells never wrap but truncate with their full text on hover, and the header and first column stick as it scrolls. Give an amount or a date column minWidth md, so its values fit whole on a phone.",
+    "It fills its container's width. Each column keeps its least width (minWidth: xs 64, sm 96 by default, md 144, lg 192 or xl 256px) and a share of the rest, and when those don't fit the table scrolls sideways inside itself while the page doesn't, its end edge fading while more lies past it; rows are 36px (--bt-h-table-row; 32 in a compact table) with 1px dividers, cells never wrap but truncate with their full text on hover, and the header and first column stick as it scrolls. Give an amount or a date column minWidth md, so its values fit whole on a phone.",
   reducedMotion:
     "Skeleton rows don't shimmer, and the rows that replace them fade in over 100ms.",
 };

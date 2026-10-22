@@ -18,7 +18,7 @@ const ACTIVITY: readonly Activity[] = [
 
 type Size = "compact" | "default";
 
-/** Both sizes: compact for a short list in an overview, without selection or pagination, and the default with them. */
+/** Both sizes: compact for a short list in an overview, with 32px rows and no selection or pagination, and the default with them. */
 export function RecentActivity(): ReactElement {
   const [size, setSize] = useState<Size>("compact");
   return (
