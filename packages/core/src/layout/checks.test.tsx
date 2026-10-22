@@ -497,6 +497,15 @@ describe("scaled previews", () => {
     ).toEqual([]);
   });
 
+  it("measures a control drawn at 97% while it's pressed at the height it lays out at", () => {
+    expect(
+      check(
+        `<div data-bt="Control" data-bt-control style="block-size: var(--bt-h-control); scale: 0.97"></div>`,
+        ["scale"],
+      ),
+    ).toEqual([]);
+  });
+
   it("measures the same drawing at its drawn size without the preview's mark", () => {
     expect(
       rulesOf(check(SCALED(""), ["target-size", "scale", "overlap"])),

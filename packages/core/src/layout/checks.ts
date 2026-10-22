@@ -929,8 +929,13 @@ export function createLayoutToolkit(): LayoutToolkit {
           });
         }
         if (element.hasAttribute("data-bt-control")) {
-          const height =
+          const drawn =
             element.getBoundingClientRect().height / drawnScale(element);
+          const laidOut =
+            element instanceof HTMLElement ? element.offsetHeight : drawn;
+          // A control being pressed is drawn at 97%, so within 5% it's measured at the height it lays out at.
+          const height =
+            Math.abs(drawn - laidOut) <= laidOut * 0.05 ? laidOut : drawn;
           const allowed = tokens.heightVars
             .map((name) => Number.parseFloat(style.getPropertyValue(name)))
             .filter((value) => !Number.isNaN(value));
