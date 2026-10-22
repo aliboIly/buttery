@@ -97,6 +97,8 @@ for (const { route, name } of componentRoutes) {
 const demos = [
   { route: "card-studio", ready: '[data-testid="card-studio"]' },
   { route: "card-studio-site", ready: '[data-bt="NavBar"]' },
+  { route: "roastery-shop", ready: '[data-bt="NavBar"]' },
+  { route: "deckhand", ready: '[data-bt="Stage"]' },
   ...[
     "roastery",
     "roastery/orders",

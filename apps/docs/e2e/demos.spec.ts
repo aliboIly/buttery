@@ -197,6 +197,12 @@ const CHROME: Readonly<Record<(typeof demoPages)[number]["route"], string>> = {
   ].join(", "),
   "card-studio-site": '[data-bt="NavBar"], [data-bt="SubNav"]',
   roastery: '[data-bt="Sidebar"], [data-bt="TopBar"], [data-bt="SetupGuide"]',
+  "roastery-shop": '[data-bt="NavBar"]',
+  deckhand: [
+    '[data-bt="HeaderBar"]',
+    '[data-bt="AppShell"] > [data-bt-part="inspector"]',
+    '[data-bt="AppShell"] > [data-bt-part="sheet-bar"]',
+  ].join(", "),
 };
 
 for (const demo of demoPages) {

@@ -42,6 +42,12 @@
     },
     {
       "path": "./apps/demos/card-studio-site"
+    },
+    {
+      "path": "./apps/demos/deckhand"
+    },
+    {
+      "path": "./apps/demos/roastery-shop"
     }
   ]
 }

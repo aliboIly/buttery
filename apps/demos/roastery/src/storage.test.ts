@@ -36,7 +36,8 @@ describe("isSavedKey", () => {
 
   it("leaves other apps' keys alone, even when they start alike", () => {
     for (const key of [
-      "buttery:onboarding:card-studio",
+      "buttery:onboarding:deckhand",
+      "halfmoon-shop:bag",
       "buttery:sidebar:roasteryish",
       "roasting:pickup",
       "buttery-docs:demo-pill",
@@ -50,10 +51,10 @@ describe("clearSavedState", () => {
     const storage = memoryStorage({
       "roastery:invites": '["june@example.com"]',
       "buttery:nudge:roastery-delivery-questions": "true",
-      "buttery:onboarding:card-studio": "done",
+      "buttery:onboarding:deckhand": "done",
     });
     clearSavedState(storage);
     expect(storage.length).toBe(1);
-    expect(storage.getItem("buttery:onboarding:card-studio")).toBe("done");
+    expect(storage.getItem("buttery:onboarding:deckhand")).toBe("done");
   });
 });

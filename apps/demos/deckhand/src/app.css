@@ -1,0 +1,38 @@
+.app {
+  block-size: 100dvh;
+}
+
+/* The canvas's own box, so the card's sizes follow the canvas the way an export draws them. */
+.editor-artwork {
+  container-type: size;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.editor-card {
+  --editor-card-width: min(64cqi, 64cqb * 1.6);
+
+  display: grid;
+  place-items: center;
+  overflow: clip;
+  inline-size: var(--editor-card-width);
+  aspect-ratio: 1.6;
+  padding: 4cqmin;
+  border-radius: calc(
+    var(--editor-corners) * 100cqi / var(--editor-canvas-width)
+  );
+  background-color: var(--bt-bg-raised);
+  box-shadow: var(--bt-shadow-floating);
+  color: var(--bt-text);
+}
+
+.editor-title {
+  overflow-wrap: anywhere;
+  font-size: calc(var(--editor-card-width) * 0.09);
+  font-weight: var(--bt-text-title-weight);
+  line-height: 1.15;
+  letter-spacing: var(--bt-text-title-tracking);
+  text-align: center;
+}

@@ -80,6 +80,40 @@ export const demoPages = [
       "SetupGuide",
     ],
   },
+  {
+    route: "roastery-shop",
+    title: "Halfmoon shop",
+    template: "marketing",
+    description:
+      "Halfmoon Roastery's online shop: its coffees, a subscription and a bag to check out from.",
+    uses: [
+      "NavBar",
+      "MorphMenu",
+      "SubNav",
+      "SplitHero",
+      "Bento",
+      "ExpandableCard",
+      "StatStrip",
+      "Footer",
+    ],
+  },
+  {
+    route: "deckhand",
+    title: "Deckhand",
+    template: "editor",
+    description:
+      "A slide editor: write a deck, lay out and style each slide, then present it.",
+    uses: [
+      "AppShell",
+      "HeaderBar",
+      "Stage",
+      "Inspector",
+      "SwatchGrid",
+      "FloatingToolbar",
+      "Onboarding",
+      "SegmentedControl",
+    ],
+  },
 ] as const satisfies readonly DemoInfo[];
 
 /** The playground route for a component: `fit-box` for FitBox. */

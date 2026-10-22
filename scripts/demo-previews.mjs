@@ -18,6 +18,7 @@ const SCALE = 0.75;
 /** What a returning visitor has seen, so each demo is pictured at rest, without its first-visit tour or news. */
 const SEEN = {
   "buttery:onboarding:card-studio": "done",
+  "buttery:onboarding:deckhand": "done",
   "buttery:announcement:roastery-roast-planning": "true",
   "buttery:nudge:roastery-delivery-questions": "true",
 };
