@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, PageDots } from "@buttery/react";
 
 const TITLES = ["Write a title", "Pick a finish", "Send it out"] as const;
@@ -37,3 +38,12 @@ export function TourProgress(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Next");
+  await see("Pick a finish");
+  await press("button", "Back");
+  await see("Write a title");
+};

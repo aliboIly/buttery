@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, PageDots } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -44,6 +44,16 @@ function Steps(): ReactElement {
     </Inline>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    count: { kind: "number", initial: 4, min: 2, max: 6, step: 1 },
+    value: { kind: "number", initial: 1, min: 0, max: 5, step: 1 },
+  },
+  render: ({ count, value }) => (
+    <PageDots count={Number(count)} value={Number(value)} />
+  ),
+};
 
 export const demos: readonly DemoSection[] = [
   {
