@@ -1,3 +1,6 @@
+import { BookOpen, DoorOpen, Leaf, Wheat } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 /** How dark a coffee is roasted. */
 export type Roast = "Light" | "Medium" | "Dark";
 
@@ -16,6 +19,8 @@ export interface Coffee {
   /** What a 12 oz bag costs, in whole dollars. */
   readonly price: number;
   readonly notes: readonly [string, string, string];
+  /** Who grows it, as a list names them. */
+  readonly grower: string;
   readonly altitude: string;
   readonly varieties: string;
   readonly story: string;
@@ -35,6 +40,7 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Light",
     price: 19,
     notes: ["Peach", "Jasmine", "Bergamot"],
+    grower: "Guji smallholders",
     altitude: "1,950–2,200 m",
     varieties: "Local landraces",
     story:
@@ -51,6 +57,7 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Light",
     price: 21,
     notes: ["Blackcurrant", "Grapefruit", "Honey"],
+    grower: "Nyeri cooperative",
     altitude: "1,700–1,900 m",
     varieties: "SL28, SL34, Ruiru 11",
     story:
@@ -67,10 +74,11 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Medium",
     price: 17,
     notes: ["Red apple", "Caramel", "Cocoa"],
+    grower: "Rosales family",
     altitude: "1,600–1,800 m",
     varieties: "Caturra, Castillo",
     story:
-      "Twelve family farms that share one wet mill. Sweet and round, easy to like black or with milk.",
+      "The Rosales family and eleven neighbors share one wet mill, and we've bought from them for seven harvests. Sweet and round, easy to like black or with milk.",
     label: "rose",
   },
   {
@@ -82,10 +90,11 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Medium",
     price: 18,
     notes: ["Plum", "Milk chocolate", "Almond"],
+    grower: "Velásquez family",
     altitude: "1,500–1,900 m",
     varieties: "Bourbon, Catuai",
     story:
-      "Grown high, where dry winds off the plains let the cherries ripen slowly. A steady cup that holds up well in a drip machine.",
+      "The Velásquez family grows it high, where dry winds off the plains let the cherries ripen slowly. A steady cup that holds up well in a drip machine.",
     label: "sea",
   },
   {
@@ -97,10 +106,11 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Medium",
     price: 15,
     notes: ["Hazelnut", "Dark chocolate", "Molasses"],
+    grower: "Moreira estate",
     altitude: "1,000–1,200 m",
     varieties: "Yellow Catuai, Mundo Novo",
     story:
-      "Dried whole in the cherry on open patios for three weeks, which gives it a heavy body and low acidity. Our pick for espresso.",
+      "The Moreira estate dries it whole in the cherry on open patios for three weeks, which gives it a heavy body and low acidity. Our pick for espresso.",
     label: "honey",
   },
   {
@@ -112,6 +122,7 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Dark",
     price: 14,
     notes: ["Cocoa", "Toffee", "Toasted walnut"],
+    grower: "Moreira and Rosales",
     altitude: "1,000–1,800 m",
     varieties: "Catuai, Caturra",
     story:
@@ -201,12 +212,15 @@ export function isGrindId(value: unknown): value is GrindId {
   return GRINDS.some((grind) => grind.value === value);
 }
 
-/** Cafés around Portland that pour the roastery's coffee. */
-export const CAFES: readonly string[] = [
-  "Blue Door Café",
-  "Little Fern",
-  "Reading Room",
-  "Juniper & Rye",
+/** Cafés around Portland that pour the roastery's coffee, each with the mark on its sign. */
+export const CAFES: readonly {
+  readonly name: string;
+  readonly icon: LucideIcon;
+}[] = [
+  { name: "Blue Door", icon: DoorOpen },
+  { name: "Little Fern", icon: Leaf },
+  { name: "Reading Room", icon: BookOpen },
+  { name: "Juniper & Rye", icon: Wheat },
 ];
 
 /** A way to brew at home, with the recipe the roastery uses for one cup. */
@@ -218,7 +232,8 @@ export interface Guide {
   /** Grams of water for one cup. */
   readonly water: number;
   readonly grind: string;
-  readonly time: string;
+  /** How long it takes for one, two, three and four cups. */
+  readonly time: readonly [string, string, string, string];
   readonly steps: readonly string[];
   /** The coffee that suits it best. */
   readonly pairing: CoffeeId;
@@ -233,12 +248,12 @@ export const GUIDES: readonly Guide[] = [
     coffee: 15,
     water: 250,
     grind: "Medium-fine, like table salt",
-    time: "3 to 3½ min",
+    time: ["3 to 3½ min", "3½ to 4 min", "4 to 4½ min", "4½ to 5 min"],
     steps: [
       "Rinse the filter with hot water and pour that water away.",
       "Add the coffee and pour twice its weight of water just off the boil. Wait 30 seconds while it blooms.",
       "Pour the rest in slow circles, keeping the bed about half full.",
-      "Let it drain. If it takes much longer than 3½ minutes, grind a little coarser next time.",
+      "Let it drain. If it runs much past the time on the left, grind a little coarser next time.",
     ],
     pairing: "guji",
   },
@@ -248,7 +263,7 @@ export const GUIDES: readonly Guide[] = [
     coffee: 18,
     water: 300,
     grind: "Coarse, like sea salt",
-    time: "4 min",
+    time: ["4 min", "4 min", "4 min", "4 min"],
     steps: [
       "Warm the press with hot water and pour it out.",
       "Add the coffee, then all the water just off the boil, and stir once.",
@@ -263,7 +278,7 @@ export const GUIDES: readonly Guide[] = [
     coffee: 16,
     water: 160,
     grind: "Fine, a little coarser than espresso",
-    time: "4 to 5 min",
+    time: ["4 to 5 min", "4 to 5 min", "5 to 6 min", "5 to 6 min"],
     steps: [
       "Fill the bottom chamber with hot water up to the valve.",
       "Fill the basket with coffee and level it without pressing down.",
@@ -278,7 +293,12 @@ export const GUIDES: readonly Guide[] = [
     coffee: 30,
     water: 250,
     grind: "Extra coarse, like cracked pepper",
-    time: "14 to 16 hours",
+    time: [
+      "14 to 16 hours",
+      "14 to 16 hours",
+      "14 to 16 hours",
+      "14 to 16 hours",
+    ],
     steps: [
       "Stir the coffee into cold water in a jar until it's all wet.",
       "Cover it and leave it in the fridge overnight, 14 to 16 hours.",
@@ -336,6 +356,12 @@ export const QUESTIONS: readonly Question[] = [
     question: "How should I store my coffee?",
     answer:
       "Keep the bag sealed in a cupboard, away from heat and light, and skip the fridge. Coffee tastes best from about four days to four weeks after its roast date.",
+  },
+  {
+    id: "returns",
+    question: "What if I don't like a coffee?",
+    answer:
+      "Tell us within 30 days, however much is left in the bag, and we'll send you a different coffee or give your money back.",
   },
   {
     id: "wholesale",

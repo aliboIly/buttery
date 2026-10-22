@@ -1,7 +1,7 @@
 :root {
   --bt-roastery-shop-thumb: 56px;
   --bt-roastery-shop-bag-thumb: 44px;
-  --bt-roastery-shop-bag-card: 136px;
+  --bt-roastery-shop-bag-card: 112px;
   --bt-roastery-shop-bag-feature: 176px;
   --bt-roastery-shop-bag-detail: 216px;
   --bt-roastery-shop-bag-story: 112px;
@@ -13,34 +13,32 @@
   --bt-roastery-shop-bag-plan: 76px;
   --bt-roastery-shop-menu-feature: 240px;
   --bt-roastery-shop-bag-menu: 96px;
-  --bt-roastery-shop-tint: 100%;
-}
-
-/* Backdrops are pale palette blends; on the dark surface they step back toward it. */
-[data-bt-theme="dark"] {
-  --bt-roastery-shop-tint: 76%;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-bt-theme="light"]) {
-    --bt-roastery-shop-tint: 76%;
-  }
 }
 
 .shop-backdrop {
   background-image: linear-gradient(
     135deg in oklab,
-    color-mix(
-      in oklab,
-      var(--bt-roastery-shop-from) var(--bt-roastery-shop-tint),
-      var(--bt-bg-surface)
-    ),
-    color-mix(
-      in oklab,
-      var(--bt-roastery-shop-to) var(--bt-roastery-shop-tint),
-      var(--bt-bg-surface)
-    )
+    var(--bt-roastery-shop-from),
+    var(--bt-roastery-shop-to)
   );
+}
+
+[data-bt-theme="dark"] .shop-backdrop {
+  background-image: linear-gradient(
+    135deg in oklab,
+    var(--bt-roastery-shop-dark-from),
+    var(--bt-roastery-shop-dark-to)
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-bt-theme="light"]) .shop-backdrop {
+    background-image: linear-gradient(
+      135deg in oklab,
+      var(--bt-roastery-shop-dark-from),
+      var(--bt-roastery-shop-dark-to)
+    );
+  }
 }
 
 /* A bag keeps the 3:4 shape it's drawn in, sized by its height. */
@@ -60,12 +58,20 @@
   border-radius: var(--bt-r-lg);
 }
 
-/* Only the bar shows a bag beside the brand, once it's too narrow for its actions. */
+/*
+ * Under 640px of bar the actions fold into the menu sheet. The bag stays: the brand's row then reaches
+ * the menu button (its width and the bar's gap short of the bar), with the bag at its end.
+ */
 .shop-brand-bag {
   display: none;
 }
 
 @container (width < 640px) {
+  .shop-brand {
+    justify-content: space-between;
+    min-inline-size: calc(100cqi - var(--bt-h-button) - var(--bt-space-6));
+  }
+
   .shop-brand-bag {
     display: contents;
   }
@@ -101,12 +107,32 @@
   max-inline-size: var(--bt-roastery-shop-menu-feature);
 }
 
+/* In the bar's sheet a menu is its own narrow container, and its feature takes the sheet's width. */
+@container (width < 640px) {
+  .shop-menu-feature {
+    max-inline-size: none;
+  }
+}
+
 .shop-menu-shelf > .shop-bag-art {
   block-size: var(--bt-roastery-shop-bag-menu);
 }
 
 .shop-cafes-caption {
   text-align: center;
+}
+
+/*
+ * A dialog taller than the window keeps 16px inside it and scrolls its body: as a scroll container it no
+ * longer asks its frame's row for its content's whole height.
+ */
+.shop-dialog {
+  overflow: hidden;
+}
+
+/* Paragraphs keep at least two words on their last line. */
+:is(.shop-page, .shop-dialog) :is(p, li, dd) {
+  text-wrap: pretty;
 }
 
 .shop-filters {
@@ -161,6 +187,40 @@
   padding-block-end: var(--bt-space-2);
   border-end-start-radius: 0;
   border-end-end-radius: 0;
+}
+
+/* A coffee's details: its bag, then what to buy, then the facts; beside each other once there's room. */
+.shop-detail {
+  display: grid;
+  grid-template-areas:
+    "shelf"
+    "buy"
+    "facts";
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--bt-space-6);
+}
+
+@container (width >= 640px) {
+  .shop-detail {
+    grid-template-areas:
+      "shelf buy"
+      "facts buy";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    gap: var(--bt-space-6) var(--bt-space-8);
+  }
+}
+
+.shop-detail > .shop-detail-shelf {
+  grid-area: shelf;
+}
+
+.shop-detail > .shop-detail-buy {
+  grid-area: buy;
+}
+
+.shop-detail > .shop-facts {
+  grid-area: facts;
 }
 
 .shop-detail-shelf > .shop-bag-art {
@@ -277,7 +337,7 @@
 }
 
 /* An icon in a box as tall as the line beside it, so it sits on that line however the text wraps. */
-.shop-promise {
+.shop-perk {
   display: flex;
   align-items: flex-start;
   gap: var(--bt-space-2);
@@ -305,6 +365,12 @@
   border-start-end-radius: var(--bt-r-lg);
 }
 
+@container bt-page (width < 640px) {
+  .shop-picture-panel {
+    padding: var(--bt-space-4);
+  }
+}
+
 .shop-roast-plan {
   inline-size: 100%;
   max-inline-size: var(--bt-roastery-shop-plan);
@@ -319,6 +385,13 @@
 
 .shop-harvests {
   inline-size: 100%;
+}
+
+.shop-harvest {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--bt-space-3);
 }
 
 .shop-story-bag {

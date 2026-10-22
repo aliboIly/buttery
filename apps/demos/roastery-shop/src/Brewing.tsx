@@ -75,7 +75,7 @@ function Recipe({ guide }: { readonly guide: Guide }): ReactElement {
                 <dt>Time</dt>
               </Text>
               <Text variant="body-sm" asChild>
-                <dd>{guide.time}</dd>
+                <dd>{guide.time[CUPS.indexOf(cups)]}</dd>
               </Text>
             </div>
           </dl>

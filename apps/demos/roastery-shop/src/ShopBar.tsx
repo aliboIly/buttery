@@ -13,6 +13,10 @@ import { jump } from "./jump.ts";
 import { useLink } from "./router.tsx";
 import type { PlanFor } from "./Subscribe.tsx";
 
+/**
+ * The bag, its count in tabular figures. In the actions it's a link, so the bar's sheet closes before the
+ * bag opens; compact, beside the brand of a folded bar, it's a button, which keeps its own colors there.
+ */
 function BagButton({
   count,
   compact = false,
@@ -23,22 +27,38 @@ function BagButton({
   readonly compact?: boolean;
   readonly onOpen: () => void;
 }): ReactElement {
+  const name = `Bag, ${bags(count)}`;
+  const amount = <span className="shop-count">{count}</span>;
+  if (compact)
+    return (
+      <Button
+        variant="primary"
+        iconStart={ShoppingBag}
+        aria-label={name}
+        onClick={onOpen}
+      >
+        {amount}
+      </Button>
+    );
   return (
-    <Button
-      variant="primary"
-      iconStart={ShoppingBag}
-      aria-label={`Bag, ${bags(count)}`}
-      onClick={onOpen}
-    >
-      {compact ? null : "Bag "}
-      <span className="shop-count">{count}</span>
+    <Button variant="primary" iconStart={ShoppingBag} asChild>
+      <a
+        href="#bag"
+        aria-label={name}
+        onClick={(event) => {
+          event.preventDefault();
+          onOpen();
+        }}
+      >
+        Bag {amount}
+      </a>
     </Button>
   );
 }
 
 /**
- * The shop's bar: the brand, the Shop and Learn menus, Subscribe, and the account and bag actions. Folded
- * on a phone, the bag stays beside the brand while the rest moves into the menu sheet.
+ * The shop's bar: the brand, the Shop and Learn menus, and the account and bag actions. Folded on a phone,
+ * the bag stays in the bar, at its end beside the menu button, while the rest moves into the menu sheet.
  */
 export function ShopBar({
   count,
@@ -47,6 +67,7 @@ export function ShopBar({
   onCoffees,
   onPlan,
   onGuide,
+  onQuestion,
 }: {
   /** How many bags of coffee the bag holds. */
   readonly count: number;
@@ -57,6 +78,8 @@ export function ShopBar({
   /** Sets the subscription builder up for the customer or for a gift. */
   readonly onPlan: (planFor: PlanFor) => void;
   readonly onGuide: (guide: GuideId) => void;
+  /** Opens one of the questions customers ask, by id. */
+  readonly onQuestion: (question: string) => void;
 }): ReactElement {
   const link = useLink();
   const thisWeek = coffeeOf(THIS_WEEK);
@@ -65,7 +88,7 @@ export function ShopBar({
       skipTo="main"
       behavior="sticky"
       brand={
-        <Inline gap={2}>
+        <Inline gap={2} className="shop-brand">
           <a href={link("/")}>
             <HalfmoonMark />
             Halfmoon
@@ -114,7 +137,7 @@ export function ShopBar({
               onCoffees("all");
             })}
           >
-            Shop every coffee
+            See all six coffees
           </ArrowLink>
         }
       >
@@ -150,7 +173,7 @@ export function ShopBar({
             onClick={jump("subscribe", () => {
               onPlan("me");
             })}
-            title="A subscription"
+            title="Start a subscription"
             caption="10% off, shipped free"
           />
           <MorphMenu.Entry
@@ -167,7 +190,7 @@ export function ShopBar({
         label="Learn"
         footer={
           <ArrowLink href="#brewing" onClick={jump("brewing")}>
-            Every brew guide
+            All brew guides
           </ArrowLink>
         }
       >
@@ -189,30 +212,39 @@ export function ShopBar({
             href="#story"
             onClick={jump("story")}
             title="How we roast"
-            caption="Five mornings a week"
+            caption="Small batches, to order"
           />
           <MorphMenu.Entry
             href="#story"
             onClick={jump("story")}
-            title="Where it grows"
-            caption="The farms behind each coffee"
+            title="Our growers"
+            caption="The people behind each coffee"
+          />
+        </MorphMenu.Column>
+        <MorphMenu.Column title="Help">
+          <MorphMenu.Entry
+            href="#questions"
+            onClick={jump("questions", () => {
+              onQuestion("arrival");
+            })}
+            title="Shipping"
+            caption="When your coffee arrives"
           />
           <MorphMenu.Entry
             href="#questions"
-            onClick={jump("questions")}
-            title="Questions"
-            caption="Shipping, grinding, storing"
+            onClick={jump("questions", () => {
+              onQuestion("returns");
+            })}
+            title="Returns"
+            caption="If a coffee isn't for you"
+          />
+          <MorphMenu.Entry
+            href="mailto:hello@halfmoon.example"
+            title="Write to us"
+            caption="hello@halfmoon.example"
           />
         </MorphMenu.Column>
       </MorphMenu.Item>
-      <MorphMenu.Link
-        href="#subscribe"
-        onClick={jump("subscribe", () => {
-          onPlan("me");
-        })}
-      >
-        Subscribe
-      </MorphMenu.Link>
     </NavBar>
   );
 }

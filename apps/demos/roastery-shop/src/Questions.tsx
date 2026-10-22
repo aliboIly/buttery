@@ -1,8 +1,8 @@
 import { useId } from "react";
 import type { ReactElement } from "react";
 import { Icon, Morph, Stack, Surface, Text } from "@buttery/core";
-import { ArrowLink, Section, buttery } from "@buttery/react";
-import { ChevronDown } from "lucide-react";
+import { Button, Section, buttery } from "@buttery/react";
+import { ChevronDown, Mail } from "lucide-react";
 import { QUESTIONS } from "./data.ts";
 import type { Question } from "./data.ts";
 
@@ -85,13 +85,13 @@ export function Questions({
                 <h3>Still wondering about something?</h3>
               </Text>
               <Text variant="body-sm" tone="secondary">
-                Write to us and Rosa or Theo will answer within a day, Monday to
-                Friday.
+                Write to hello@halfmoon.example and Rosa or Theo will answer
+                within a day, Monday to Friday.
               </Text>
             </Stack>
-            <ArrowLink href="mailto:hello@halfmoon.example" arrow="external">
-              hello@halfmoon.example
-            </ArrowLink>
+            <Button iconStart={Mail} asChild>
+              <a href="mailto:hello@halfmoon.example">Email the roastery</a>
+            </Button>
           </Stack>
         </Surface>
       </div>

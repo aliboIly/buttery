@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text, scrollToSection } from "@buttery/core";
+import { Icon, Inline, Stack, Text, scrollToSection } from "@buttery/core";
 import {
   Button,
   Footer,
@@ -9,8 +9,10 @@ import {
   Section,
   SplitHero,
   SubNav,
+  toast,
 } from "@buttery/react";
 import { SignInDialog, useAccount } from "./Account.tsx";
+import { BAG_TOAST } from "./add-to-bag.ts";
 import { BagPanel } from "./BagPanel.tsx";
 import { bagCount, useBag } from "./bag.ts";
 import { Brewing } from "./Brewing.tsx";
@@ -28,6 +30,9 @@ import { Story } from "./Story.tsx";
 import { Subscribe } from "./Subscribe.tsx";
 import type { PlanFor } from "./Subscribe.tsx";
 import { ThisWeek } from "./ThisWeek.tsx";
+
+/** The roastery's street address, kept on one line. */
+const ADDRESS = "1180\u00a0SE\u00a0Water\u00a0Ave";
 
 const SECTIONS = [
   { id: "this-week", label: "This week" },
@@ -59,8 +64,12 @@ export function Shop(): ReactElement {
     setOrigin("all");
   };
   const openBag = (): void => {
+    toast.dismiss(BAG_TOAST);
     setOpenCoffee(null);
     setBagOpen(true);
+  };
+  const openQuestion = (id: string): void => {
+    setQuestions((open) => (open.includes(id) ? open : [...open, id]));
   };
   const showCoffee = (coffee: CoffeeId): void => {
     showRoast("all");
@@ -70,7 +79,7 @@ export function Shop(): ReactElement {
 
   return (
     <ShopContext value={{ openBag, showCoffee }}>
-      <Page data-testid="roastery-shop">
+      <Page className="shop-page" data-testid="roastery-shop">
         <ShopBar
           count={bagCount(bag)}
           onOpenBag={openBag}
@@ -80,6 +89,7 @@ export function Shop(): ReactElement {
           onCoffees={showRoast}
           onPlan={setPlanFor}
           onGuide={setGuide}
+          onQuestion={openQuestion}
         />
         <SubNav items={SECTIONS} />
         <main id="main">
@@ -87,7 +97,7 @@ export function Shop(): ReactElement {
             id="this-week"
             eyebrow="Halfmoon Roastery, Portland"
             title="Coffee roasted the morning it ships."
-            titleMore="Six farms, one roaster."
+            titleMore="Six coffees, one roaster."
             body="Order by noon and we roast your bag the next morning, then send it out that afternoon. Shipping is free from $40."
             actions={
               <>
@@ -126,10 +136,13 @@ export function Shop(): ReactElement {
               </Text>
               <LogoStrip label="Cafés that pour Halfmoon coffee">
                 {CAFES.map((cafe) => (
-                  <LogoStrip.Mark key={cafe}>
-                    <Text variant="title" tone="tertiary">
-                      {cafe}
-                    </Text>
+                  <LogoStrip.Mark key={cafe.name}>
+                    <Inline gap="1.5">
+                      <Icon icon={cafe.icon} />
+                      <Text variant="control" tone="tertiary">
+                        {cafe.name}
+                      </Text>
+                    </Inline>
                   </LogoStrip.Mark>
                 ))}
               </LogoStrip>
@@ -157,8 +170,7 @@ export function Shop(): ReactElement {
                 <Text variant="title">Halfmoon Roastery</Text>
               </Inline>
               <Text variant="body-sm" tone="secondary">
-                Small-batch coffee, roasted five mornings a week at 1180 SE
-                Water Ave, Portland, Oregon.
+                {`Small-batch coffee, roasted to order at ${ADDRESS}, Portland, Oregon.`}
               </Text>
             </Stack>
           }
@@ -201,23 +213,37 @@ export function Shop(): ReactElement {
             <Footer.Link href="#story" onClick={jump("story")}>
               How we roast
             </Footer.Link>
-            <Footer.Link href="#letter" onClick={jump("letter")}>
-              The letter
+            <Footer.Link href="#story" onClick={jump("story")}>
+              Our growers
             </Footer.Link>
           </Footer.Column>
           <Footer.Column title="Help">
             <Footer.Link
               href="#questions"
               onClick={jump("questions", () => {
-                setQuestions((open) =>
-                  open.includes("shipping") ? open : [...open, "shipping"],
-                );
+                openQuestion("arrival");
               })}
             >
               Shipping
             </Footer.Link>
+            <Footer.Link
+              href="#questions"
+              onClick={jump("questions", () => {
+                openQuestion("returns");
+              })}
+            >
+              Returns
+            </Footer.Link>
             <Footer.Link href="#questions" onClick={jump("questions")}>
               Questions
+            </Footer.Link>
+          </Footer.Column>
+          <Footer.Column title="Roastery">
+            <Footer.Link href="#letter" onClick={jump("letter")}>
+              The letter
+            </Footer.Link>
+            <Footer.Link href="mailto:wholesale@halfmoon.example">
+              Wholesale
             </Footer.Link>
             <Footer.Link href="mailto:hello@halfmoon.example">
               Contact us

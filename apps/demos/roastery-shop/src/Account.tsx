@@ -32,7 +32,7 @@ export function SignInDialog({
   const [, setAccount] = useAccount();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Dialog.Content label="Sign in">
+      <Dialog.Content label="Sign in" className="shop-dialog">
         <Dialog.Body>
           <SignInForm
             titleAs="h2"
@@ -54,7 +54,10 @@ export function SignInDialog({
   );
 }
 
-/** The bar's account action: Sign in, or once signed in, a menu with the subscription and Sign out. */
+/**
+ * The bar's account action: a Sign in link, which in the bar's sheet closes the sheet before the dialog
+ * opens, or once signed in, a menu with the subscription and Sign out.
+ */
 export function AccountAction({
   onSignIn,
   onSubscription,
@@ -65,15 +68,23 @@ export function AccountAction({
   const [account, setAccount] = useAccount();
   if (account === null) {
     return (
-      <Button variant="secondary" onClick={onSignIn}>
-        Sign in
+      <Button variant="ghost" asChild>
+        <a
+          href="#sign-in"
+          onClick={(event) => {
+            event.preventDefault();
+            onSignIn();
+          }}
+        >
+          Sign in
+        </a>
       </Button>
     );
   }
   return (
     <Menu>
       <Menu.Trigger asChild>
-        <Button variant="secondary" iconStart={UserRound}>
+        <Button variant="ghost" iconStart={UserRound}>
           Account
         </Button>
       </Menu.Trigger>
