@@ -1,1 +1,4 @@
-{ "name": "@buttery/fixture-react", "private": true }
+{
+  "name": "@buttery/fixture-react",
+  "private": true
+}
