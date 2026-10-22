@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, toast } from "@buttery/react";
 
 /** A delete that confirms itself with a toast, with Undo in the toast and on Command or Control Z. */
@@ -55,3 +56,12 @@ export function UndoToast(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Delete a card");
+  await see("2 cards");
+  await press("button", "Undo");
+  await see("3 cards");
+};

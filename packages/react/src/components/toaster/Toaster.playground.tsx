@@ -1,8 +1,10 @@
 import { useRef } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { Inline, Text } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, toast } from "@buttery/react";
+import type { ToastTone } from "@buttery/react";
 
 export const page: DocsPage = {
   section: "components/feedback",
@@ -106,6 +108,54 @@ function TonesDemo(): ReactElement {
     </Inline>
   );
 }
+
+const TONES: readonly [ToastTone, ...ToastTone[]] = [
+  "neutral",
+  "success",
+  "warning",
+  "danger",
+];
+
+function callFor(tone: ToastTone, message: string): string {
+  return tone === "neutral"
+    ? `toast("${message}")`
+    : `toast.${tone}("${message}")`;
+}
+
+function LiveToast({
+  tone,
+  message,
+}: {
+  readonly tone: ToastTone;
+  readonly message: string;
+}): ReactElement {
+  return (
+    <Inline gap={3}>
+      <Button
+        onClick={() => {
+          toast(message, { tone });
+        }}
+      >
+        Show the toast
+      </Button>
+      <Text variant="body" tone="secondary" truncate>
+        {callFor(tone, message)}
+      </Text>
+    </Inline>
+  );
+}
+
+export const live: LiveDemo = {
+  controls: {
+    tone: { kind: "choice", options: TONES, initial: "success" },
+    message: { kind: "text", initial: "Order shipped" },
+  },
+  render: ({ tone, message }) => (
+    <LiveToast tone={demoChoice(tone, TONES)} message={String(message)} />
+  ),
+  code: ({ tone, message }) =>
+    `<Button onClick={() => ${callFor(demoChoice(tone, TONES), String(message))}}>Show the toast</Button>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, toast } from "@buttery/react";
 
 /** A save that confirms with a success toast or explains a failure with a danger one, under one id. */
@@ -20,3 +21,12 @@ export function SaveResultToast(): ReactElement {
     </Button>
   );
 }
+
+export const kind: ExampleKind = "states";
+
+export const play: ExamplePlay = async ({ press, key, see }) => {
+  await press("button", "Save roast");
+  await see(/^(Roast saved|Couldn't save the roast)$/);
+  await key("F8");
+  await key("Escape");
+};
