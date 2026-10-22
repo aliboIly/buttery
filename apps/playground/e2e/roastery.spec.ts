@@ -288,9 +288,12 @@ test("the search finds a customer by name and opens their page", async ({
   await page.keyboard.type("reading room");
   const option = page.getByRole("option", { name: new RegExp(`^${name}`) });
   await expect(option).toBeVisible();
-  await page.keyboard.press("ArrowDown");
-  while ((await option.getAttribute("aria-selected")) !== "true")
+  const rows = await page.getByRole("option").count();
+  for (let step = 0; step < rows; step += 1) {
     await page.keyboard.press("ArrowDown");
+    if ((await option.getAttribute("aria-selected")) === "true") break;
+  }
+  await expect(option).toHaveAttribute("aria-selected", "true");
   await page.keyboard.press("Enter");
   await expect(page.locator("h1").first()).toHaveText(name);
   await expect(search).toHaveValue("");

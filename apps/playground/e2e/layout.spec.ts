@@ -737,6 +737,7 @@ const roasteryPages = [
   "roastery/settings/team-notifications",
   "roastery/settings/plans",
   "roastery/search?q=decaf",
+  "roastery/search?q=status%3Arefunded",
 ];
 
 for (const route of roasteryPages) {

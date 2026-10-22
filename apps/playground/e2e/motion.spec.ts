@@ -2342,6 +2342,12 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     );
     for (const { reading } of readingsOf(run, iconId))
       expect(Math.abs(reading.width - 16)).toBeLessThanOrEqual(0.5);
+    const opened = framesFrom(run, "keydown").findIndex(({ elements }) =>
+      elements.some(({ id }) => id === panelId),
+    );
+    report(`search panel: shows ${String(opened)} frames after the key`);
+    expect(opened).toBeGreaterThanOrEqual(0);
+    expect(opened).toBeLessThanOrEqual(1);
     const shown = readingsOf(run, panelId);
     expect(shown.length).toBeGreaterThan(0);
     for (const { reading } of shown) {

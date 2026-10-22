@@ -93,6 +93,7 @@ const demos = [
     "roastery/settings/team-notifications",
     "roastery/settings/plans",
     "roastery/search?q=decaf",
+    "roastery/search?q=status%3Arefunded",
   ].map((route) => ({ route, ready: '[data-testid="roastery"] h1' })),
 ] as const;
 
