@@ -125,6 +125,7 @@ export type {
   DocsStatus,
   ExamplePlay,
   ExamplePlayContext,
+  KeyboardRow,
   MotionClass,
 } from "./meta.ts";
 export {

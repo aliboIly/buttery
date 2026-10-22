@@ -27,6 +27,8 @@ export interface ContentEntry {
   readonly page: DocsPage;
   readonly headings: readonly Heading[];
   readonly Content: ContentModule["default"];
+  /** Its source file from the repository's root, for "Edit this page". */
+  readonly source: string;
 }
 
 function routeOf(path: string): string {
@@ -43,6 +45,7 @@ export const contentPages: readonly ContentEntry[] = Object.entries(modules)
             page: module.page,
             headings: module.headings,
             Content: module.default,
+            source: `apps/docs/content/${routeOf(path)}.mdx`,
           },
         ]
       : [],
@@ -77,6 +80,7 @@ export const labPages: readonly ContentEntry[] = Object.entries(labModules).map(
       },
       headings: module.headings,
       Content: module.default,
+      source: path.replace(/^\.\.\//, "apps/docs/"),
     };
   },
 );

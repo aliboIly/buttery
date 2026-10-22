@@ -54,6 +54,8 @@ export interface ComponentEntry {
   readonly route: string;
   /** Where its page sits on the site, from its `*.playground.tsx`; undefined until it has one. */
   readonly page: DocsPage | undefined;
+  /** Its folder from the repository's root, such as `packages/react/src/components/button`. */
+  readonly folder: string;
   readonly meta: ComponentMeta;
   readonly demos: readonly DemoSection[];
   readonly frame: DemoFrame;
@@ -105,6 +107,7 @@ export const components: readonly ComponentEntry[] = Object.entries(metaModules)
     return {
       route: componentRoute(meta.name),
       page: page?.page,
+      folder: folder.replace(/^(\.\.\/)+/, ""),
       meta,
       demos: page?.demos ?? [],
       frame: page?.frame ?? "section",

@@ -7,6 +7,7 @@ import { defaultClientConditions, defineConfig } from "vite";
 import type { Plugin } from "vite";
 import manifest from "./package.json" with { type: "json" };
 import { exampleCode } from "./vite/code.ts";
+import { butteryDates } from "./vite/dates.ts";
 import { frontmatter } from "./vite/frontmatter.ts";
 import { butteryProps } from "./vite/props.ts";
 import { rehypeHighlight } from "./vite/highlight.ts";
@@ -41,6 +42,7 @@ function referenceCaptures(): Plugin {
 export default defineConfig({
   plugins: [
     butteryProps(fileURLToPath(new URL("../..", import.meta.url))),
+    butteryDates(fileURLToPath(new URL("../..", import.meta.url))),
     exampleCode(),
     frontmatter(),
     {

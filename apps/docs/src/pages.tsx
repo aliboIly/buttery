@@ -1,11 +1,12 @@
 import { lazy, Suspense } from "react";
 import type { ReactElement } from "react";
-import type { DocsPage } from "@buttery/core";
+import type { DocsPage, DocsSection } from "@buttery/core";
 import { referenceRoot } from "virtual:buttery-reference";
 import { ComponentPage, componentHeadings } from "./ComponentPage.tsx";
 import { ContentPage } from "./ContentPage.tsx";
 import { contentPages, labPages } from "./content.ts";
 import type { Heading } from "./content.ts";
+import type { Neighbor } from "./PageFooter.tsx";
 import { buildNav, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
 import { MotionPage } from "./pages/MotionPage.tsx";
@@ -52,29 +53,79 @@ const ComparePage =
       })
     : null;
 
-const componentDocs: readonly Page[] = components.flatMap((entry) =>
-  entry.page && entry.page.home === undefined
-    ? [
-        {
-          route: `${rootOf(entry.page.section)}/${entry.route}`,
-          title: entry.page.title,
-          render: () => <ComponentPage entry={entry} />,
-          docs: entry.page,
-          headings: componentHeadings(entry),
-        },
-      ]
-    : [],
-);
+const componentDocs: readonly Page[] = components.flatMap((entry) => {
+  const { page } = entry;
+  if (!page || page.home !== undefined) return [];
+  const route = `${rootOf(page.section)}/${entry.route}`;
+  return [
+    {
+      route,
+      title: page.title,
+      render: () => (
+        <ComponentPage
+          entry={entry}
+          crumbs={crumbsFor(page.section)}
+          {...neighbors(route)}
+        />
+      ),
+      docs: page,
+      headings: componentHeadings(entry),
+    },
+  ];
+});
 
 const contentDocs: readonly Page[] = contentPages.map((entry) => ({
   route: entry.route,
   title: entry.page.title,
-  render: () => <ContentPage entry={entry} />,
+  render: () => <ContentPage entry={entry} {...neighbors(entry.route)} />,
   docs: entry.page,
   headings: entry.headings,
 }));
 
 const docsPages = [...contentDocs, ...componentDocs];
+
+/** Every page in the nav's order, for the pages before and after each one. */
+function navOrder(): readonly {
+  readonly route: string;
+  readonly title: string;
+}[] {
+  return nav.flatMap((section) =>
+    [...section.pages, ...section.groups.flatMap((group) => group.pages)].map(
+      ({ route, page }) => ({ route, title: page.title }),
+    ),
+  );
+}
+
+/** The pages before and after `route` in the nav. */
+function neighbors(route: string): {
+  readonly previous: Neighbor | undefined;
+  readonly next: Neighbor | undefined;
+} {
+  const order = navOrder();
+  const index = order.findIndex((page) => page.route === route);
+  return {
+    previous: index > 0 ? order[index - 1] : undefined,
+    next: index >= 0 ? order[index + 1] : undefined,
+  };
+}
+
+/** A page's section and, under Components, its group, each linking to the first page in it. */
+function crumbsFor(
+  section: DocsSection,
+): readonly { readonly label: string; readonly href: string }[] {
+  const found = nav.find(({ root }) => root === rootOf(section));
+  if (!found) return [];
+  const group = found.groups.find(({ pages }) =>
+    pages.some(({ page }) => page.section === section),
+  );
+  const first = found.pages[0] ?? found.groups[0]?.pages[0];
+  return [
+    ...(first ? [{ label: found.title, href: `/${first.route}` }] : []),
+    ...(group?.pages[0]
+      ? [{ label: group.title, href: `/${group.pages[0].route}` }]
+      : []),
+  ];
+}
 
 /** The demos, each its own app, for the sidebar's last section. */
 export const demoLinks: readonly {

@@ -38,6 +38,24 @@ export interface ComponentMeta {
   readonly a11y: string;
   /** Its motion class, from MOTION_SPEC. */
   readonly motion: MotionClass;
+  /**
+   * What each key does while it has focus, for its page's keyboard table, such as
+   * `{ keys: "Enter or Space", does: "Presses it" }`. Empty for a component that takes no keyboard input of
+   * its own; the docs check asks every component to say which.
+   */
+  readonly keyboard?: readonly KeyboardRow[] | undefined;
+  /** How it sizes itself, what it truncates and how large its hit areas are, for its page's Layout part. */
+  readonly layout?: string | undefined;
+  /** What it does with reduced motion, for its page's Motion part. Leave it out for motion `"none"`. */
+  readonly reducedMotion?: string | undefined;
+}
+
+/** One row of a component's keyboard table. */
+export interface KeyboardRow {
+  /** The keys, as a person reads them, such as `"Arrow keys"` or `"Escape"`. */
+  readonly keys: string;
+  /** What they do, as a sentence that starts with a verb, such as `"Moves to the next option"`. */
+  readonly does: string;
 }
 
 /**

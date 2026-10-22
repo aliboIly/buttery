@@ -3,7 +3,8 @@
  * shiki's theme writes.
  */
 .docs-prose,
-.docs-code-block {
+.docs-code-block,
+.docs-page-footer {
   --bt-docs-line: 1px;
   --docs-code-foreground: var(--bt-text);
   --docs-code-background: var(--bt-bg-section);
@@ -126,4 +127,24 @@
 /* A props table's types can be long unions; they wrap at their separators rather than widening the table. */
 .docs-type {
   overflow-wrap: anywhere;
+}
+
+.docs-kbd {
+  display: inline-flex;
+  padding-inline: var(--bt-space-1_5);
+  border-radius: var(--bt-r-kbd);
+  background-color: var(--bt-bg-control);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-kbd-size);
+  line-height: var(--bt-text-kbd-line);
+  white-space: nowrap;
+}
+
+.docs-import {
+  min-inline-size: 0;
+}
+
+.docs-page-footer {
+  padding-block-start: var(--bt-space-8);
+  border-block-start: var(--bt-docs-line) solid var(--bt-border);
 }

@@ -8,6 +8,8 @@ import { DocsTable } from "./DocsTable.tsx";
 import { Example } from "./Example.tsx";
 import "./foundations/blocks.css";
 import type { ContentEntry } from "./content.ts";
+import { PageFooter } from "./PageFooter.tsx";
+import type { Neighbor } from "./PageFooter.tsx";
 import { slugify } from "./slug.ts";
 
 function textOf(node: ReactNode): string {
@@ -85,8 +87,12 @@ export const markdown = {
 /** A page written in MDX: its title and description from its frontmatter, then its content. */
 export function ContentPage({
   entry,
+  previous,
+  next,
 }: {
   readonly entry: ContentEntry;
+  readonly previous?: Neighbor | undefined;
+  readonly next?: Neighbor | undefined;
 }): ReactElement {
   const { page, Content } = entry;
   return (
@@ -101,6 +107,11 @@ export function ContentPage({
         <Stack gap={5}>
           <Content components={markdown} />
         </Stack>
+        <PageFooter
+          previous={previous}
+          next={next}
+          source={entry.source}
+        />
       </article>
     </Stack>
   );
