@@ -16,6 +16,12 @@ function thumb(): HTMLElement {
   return screen.getByRole("slider");
 }
 
+/** The thumb has focus after a pointer press, without the ring keyboard focus shows. */
+function expectPressFocus(): void {
+  expect(document.activeElement).toBe(thumb());
+  expect(thumb().matches(":focus-visible")).toBe(false);
+}
+
 function trackOf(container: HTMLElement): HTMLElement {
   const track = container.querySelector<HTMLElement>('[data-bt-part="track"]');
   if (!track) throw new Error("no track");
@@ -85,6 +91,53 @@ describe("Slider", () => {
     const track = trackOf(container);
     await browser.click(track, { position: along(track, 0.75) });
     expect(change).toHaveBeenLastCalledWith(expect.closeTo(75, -1));
+    expectPressFocus();
+  });
+
+  it("focuses the thumb when a track press lands on the value it has", async () => {
+    const change = vi.fn();
+    const { container } = render(
+      <Slider
+        label="Scale"
+        defaultValue={50}
+        step={50}
+        onValueChange={change}
+      />,
+    );
+    const track = trackOf(container);
+    await browser.click(track, { position: along(track, 0.3) });
+    expect(change).not.toHaveBeenCalled();
+    expectPressFocus();
+  });
+
+  it("keeps its value and focuses the thumb when the thumb is pressed, anywhere in its hit area", async () => {
+    const change = vi.fn();
+    render(<Slider label="Scale" onValueChange={change} />);
+    await browser.click(thumb());
+    expect(change).not.toHaveBeenCalled();
+    expectPressFocus();
+    thumb().blur();
+    await browser.click(thumb(), { position: { x: 28, y: 12 } });
+    expect(change).not.toHaveBeenCalled();
+    expectPressFocus();
+    cleanup();
+
+    render(<Slider label="Scale" defaultValue={50} onValueChange={change} />);
+    await browser.click(thumb());
+    expect(change).not.toHaveBeenCalled();
+    expectPressFocus();
+  });
+
+  it("moves with a drag that starts on the thumb", async () => {
+    const change = vi.fn();
+    const { container } = render(
+      <Slider label="Scale" onValueChange={change} />,
+    );
+    const track = trackOf(container);
+    await browser.dragAndDrop(thumb(), track, {
+      targetPosition: along(track, 0.6),
+    });
+    expect(change).toHaveBeenLastCalledWith(expect.closeTo(60, -1));
   });
 
   it("catches a drag within 2% of a detent, but lets keys pass it", async () => {

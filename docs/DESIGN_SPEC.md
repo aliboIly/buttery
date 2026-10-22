@@ -285,7 +285,7 @@ Track `bg-control`, 34h, `r-full`, padding 2. Items 30h, `r-full`, padding-x 12,
 - Value badge: 20h, r6, bg `bg-control`, padding-x 6, `badge` role, min-width reserved for the longest formatted value (e.g. `-180°`) so it never jitters.
 - Track: 160w × 14h (measured 162–164), r7, 1px `border-strong`, fill `bg-surface`, 8 after the caption. **No filled range** (reference). Optional `showRange`.
 - Thumb: 24×24, r7, knob gradient + border + highlight, two 1.5×8 grip lines 3px apart, shadow-knob. Hit area 36×36 via a `[data-bt-hit]` element.
-- Behaviors: click/drag anywhere on the track · arrows step, Shift = ×10 · double-click label or badge, or Backspace/Delete on the thumb = reset to default · optional `detents` (soft snap within ±2% to e.g. 0°, while dragging only, so keyboard steps pass through) · value formatter (`%`, `°`, px), also read to screen readers as the thumb's value text. The badge reserves the formatted min and max.
+- Behaviors: a press on the track jumps there and a press on the thumb (anywhere in its hit area) keeps the value, both focusing the thumb; a drag from either follows the pointer · arrows step, Shift = ×10 · double-click label or badge, or Backspace/Delete on the thumb = reset to default · optional `detents` (soft snap within ±2% to e.g. 0°, while dragging only, so keyboard steps pass through) · value formatter (`%`, `°`, px), also read to screen readers as the thumb's value text. The badge reserves the formatted min and max.
 
 ### Chip (a small reset action next to a control)
 20h, r6, `badge` role, hit area 24. Disabled: bg `bg-control-subtle`, text `text-disabled-subtle`. Enabled: bg `bg-control`, text `text-secondary`, hover text `text`.

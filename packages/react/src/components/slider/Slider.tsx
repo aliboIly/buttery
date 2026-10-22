@@ -86,6 +86,7 @@ export function Slider({
     defaultValue: defaultValue ?? min,
     onChange: onValueChange,
   });
+  const thumbRef = useRef<HTMLSpanElement>(null);
   const dragging = useRef(false);
   const latest = useRef(current);
   const keyCommit = useRef<number | null>(null);
@@ -131,10 +132,24 @@ export function Slider({
         max={max}
         step={step}
         disabled={disabled}
-        onPointerDown={() => {
+        onPointerDown={(event) => {
           if (disabled) return;
           dragging.current = true;
           latest.current = current;
+          const thumb = thumbRef.current;
+          if (!thumb) return;
+          // Radix focuses the thumb only when a press changes the value.
+          thumb.focus({ preventScroll: true, focusVisible: false });
+          const { target } = event;
+          if (
+            target !== thumb &&
+            target instanceof Node &&
+            thumb.contains(target)
+          ) {
+            // Radix would take a press on the grip or hit area for one on the track; a prevented press skips its handler.
+            event.preventDefault();
+            thumb.setPointerCapture(event.pointerId);
+          }
         }}
         onLostPointerCapture={() => {
           if (disabled || !dragging.current) return;
@@ -165,6 +180,7 @@ export function Slider({
           {showRange ? <RadixSlider.Range data-bt-part="range" /> : null}
         </RadixSlider.Track>
         <RadixSlider.Thumb
+          ref={thumbRef}
           aria-labelledby={labelId}
           aria-valuetext={write(current)}
           onKeyDown={(event) => {

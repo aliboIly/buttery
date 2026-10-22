@@ -14,7 +14,7 @@ export const meta: ComponentMeta = {
     "A few named levels: use SegmentedControl",
   ],
   related: ["ValueBadge", "NumberField", "Chip"],
-  a11y: "Radix's slider: the thumb is role=slider, named by the label, with the formatted value as aria-valuetext. Arrow keys step, Shift and an arrow or Page Up and Page Down step ten, Home and End go to the ends, and Backspace or Delete resets, like a double-click on the label or badge. Dragging updates the value every frame with no easing.",
+  a11y: "Radix's slider: the thumb is role=slider, named by the label, with the formatted value as aria-valuetext. Arrow keys step, Shift and an arrow or Page Up and Page Down step ten, Home and End go to the ends, and Backspace or Delete resets, like a double-click on the label or badge. A press on the thumb focuses it and keeps the value; a press on the track moves the value there and focuses the thumb. Dragging updates the value every frame with no easing.",
   motion: "none",
   keyboard: [
     { keys: "Arrow Right or Arrow Up", does: "Moves the value up one step" },
