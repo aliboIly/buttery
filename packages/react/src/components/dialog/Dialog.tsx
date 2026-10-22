@@ -164,6 +164,11 @@ export function DialogContent({
   const body = useRef<HTMLDivElement>(null);
   const focusOnSettle = useRef(false);
   const closeFocus = useCloseFocus(open, element, trigger ?? undefined);
+
+  // A dialog closed before it settles never hands focus to its own fields as it fades out.
+  useLayoutEffect(() => {
+    if (!open) focusOnSettle.current = false;
+  }, [open]);
   const registry = useMemo<ContentRegistry>(
     () => ({
       register: (withBody) => {
@@ -231,8 +236,9 @@ export function DialogContent({
               onOpenAutoFocus={(event) => {
                 onOpenAutoFocus?.(event);
                 if (event.defaultPrevented) return;
-                // Focus waits in the dialog until it has settled, then goes to its first tab stop, so a ring
-                // never grows with it. Radix would skip links for the close button, whose tooltip would open.
+                // Focus waits in the dialog until it has settled, then goes to its first field to type in, else
+                // its first tab stop, so a ring never grows with it. Radix would skip links for the close button,
+                // whose tooltip would open.
                 event.preventDefault();
                 element.current?.focus({ preventScroll: true });
                 focusOnSettle.current = true;

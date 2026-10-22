@@ -110,7 +110,7 @@ describe("Dialog", () => {
     );
   });
 
-  it("waits in the dialog until it has settled, then focuses its first tab stop", async () => {
+  it("waits in the dialog until it has settled, then focuses its first tab stop when it has no field", async () => {
     render(<Confirm />);
     await userEvent.click(screen.getByRole("button", { name: "Delete card" }));
     const dialog = await screen.findByRole("dialog");
@@ -147,6 +147,36 @@ describe("Dialog", () => {
         screen.getByLabelText("Backup email"),
       );
     });
+  });
+
+  it("leaves a closing dialog's fields alone when it closes before it has settled", async () => {
+    render(
+      <Dialog>
+        <Dialog.Trigger asChild>
+          <Button>Add an email</Button>
+        </Dialog.Trigger>
+        <Dialog.Content label="Add a backup email">
+          <Dialog.Body>
+            <label>
+              Backup email
+              <input type="email" />
+            </label>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Add an email" }));
+    const field = await screen.findByLabelText("Backup email");
+    const focused = vi.fn();
+    field.addEventListener("focus", focused);
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(focused).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Add an email" }),
+    );
   });
 
   it("closes on Escape and hands focus back to its trigger", async () => {
