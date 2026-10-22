@@ -12,7 +12,14 @@ This guide moves an existing React app onto buttery without a rewrite: wire up t
 
 ## 1. Wire it up
 
-Import `@buttery/core/styles.css` and `@buttery/react/styles.css` at the app's entry and wrap it in `ButteryProvider`. The app keeps its look; it gains buttery's tokens, focus rings, layers and `LayoutGuard` in development.
+Import `@buttery/core/styles.css` and `@buttery/react/styles.css` at the app's entry and wrap it in `ButteryProvider`. buttery's styles sit in CSS cascade layers, so a style the app sets itself still wins, but what the app leaves to the browser changes:
+
+- The page's font becomes Inter, with `body` text at 14px on a 20px line, and the page's background and text take buttery's colors.
+- A small reset applies: `box-sizing: border-box` on every element, no default margins on headings, paragraphs and lists, images and SVGs as blocks no wider than their container, and form controls that take their font from the page.
+- Selected text takes buttery's selection color, whatever has keyboard focus shows buttery's focus ring, and scrollbars turn thin, in the border color.
+- `ButteryProvider` follows the system's light or dark setting, which switches those colors. Pass `colorScheme="light"` until the app's own styles are ready for dark.
+
+The app also gains buttery's tokens, the layers that menus, dialogs and toasts open into, and `LayoutGuard` in development.
 
 ## 2. See where it stands
 
