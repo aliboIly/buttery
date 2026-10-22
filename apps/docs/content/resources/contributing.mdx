@@ -17,6 +17,10 @@ buttery is a pnpm monorepo: the packages under `packages/`, this site and the st
   rows={[
     ["pnpm dev", "Runs this site, with a page for every component"],
     [
+      "pnpm docs:build",
+      "Builds this site as static files in apps/docs/dist, which each push to main deploys to GitHub Pages",
+    ],
+    [
       "pnpm check",
       "Everything a change has to pass: authorship and private-path checks, types, lint, formatting, unit and browser tests, the docs check and the layout checks at two widths",
     ],
