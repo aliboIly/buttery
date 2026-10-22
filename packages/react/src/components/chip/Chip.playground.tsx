@@ -10,7 +10,7 @@ function ResetDemo(): ReactElement {
     <Inline gap={2} align="center">
       <Text variant="label">Rotation {angle}°</Text>
       <Chip
-        disabled={angle === 0}
+        aria-disabled={angle === 0 || undefined}
         onClick={() => {
           setAngle(0);
         }}

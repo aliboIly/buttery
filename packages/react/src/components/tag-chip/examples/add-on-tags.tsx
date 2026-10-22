@@ -23,7 +23,7 @@ export function AddOnTags(): ReactElement {
       <Inline gap={2}>
         <Button
           size="sm"
-          disabled={trying}
+          aria-disabled={trying || undefined}
           onClick={() => {
             setTrying(true);
           }}

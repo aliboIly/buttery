@@ -12,7 +12,7 @@ export function StepperRoot(): ReactElement {
         <Control size="sm" asChild>
           <Pressable
             aria-label="One cup fewer"
-            disabled={cups === 1}
+            aria-disabled={cups === 1 || undefined}
             onClick={() => {
               setCups(cups - 1);
             }}

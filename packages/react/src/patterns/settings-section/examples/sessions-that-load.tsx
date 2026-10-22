@@ -24,7 +24,9 @@ export function SessionsThatLoad(): ReactElement {
       action={
         <Button
           size="sm"
-          disabled={sessions === undefined || sessions.length < 2}
+          aria-disabled={
+            sessions === undefined || sessions.length < 2 || undefined
+          }
           onClick={() => {
             const others = (sessions?.length ?? 1) - 1;
             setSessions(sessions?.slice(0, 1));

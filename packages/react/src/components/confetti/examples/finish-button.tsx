@@ -10,7 +10,7 @@ export function FinishButton(): ReactElement {
     <Stack gap={3} align="start">
       <Surface asChild level="raised" padX={4} padY={2} radius="full">
         <Pressable
-          disabled={done}
+          aria-disabled={done || undefined}
           onClick={(event) => {
             setDone(true);
             celebrate(event.currentTarget);

@@ -23,7 +23,12 @@ function isComponent(value: unknown): value is ComponentType {
 
 const context: ExamplePlayContext = {
   press: async (role, name) => {
-    await userEvent.click(await screen.findByRole(role, { name }));
+    const target = await screen.findByRole(role, { name });
+    await userEvent.click(target);
+    expect(
+      target.matches(":disabled"),
+      `Pressing the ${role} "${String(name)}" disabled it, which drops focus from it. Fix: mark it aria-disabled instead, which keeps it focusable and ignores presses.`,
+    ).toBe(false);
   },
   type: async (label, text) => {
     await userEvent.type(await screen.findByLabelText(label), text);

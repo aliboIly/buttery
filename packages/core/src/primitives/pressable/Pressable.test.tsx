@@ -2,6 +2,7 @@ import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { Surface } from "../surface/Surface.tsx";
 import { Pressable } from "./Pressable.tsx";
 
@@ -39,6 +40,31 @@ describe("Pressable", () => {
     await userEvent.keyboard("{Enter}");
     await userEvent.keyboard(" ");
     expect(onClick).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps focus and ignores presses while aria-disabled, as a button or with a link child", async () => {
+    const onClick = vi.fn();
+    render(
+      <>
+        <Pressable aria-disabled onClick={onClick}>
+          Finish
+        </Pressable>
+        <Pressable asChild aria-disabled onClick={onClick}>
+          <a href="#finished">Finished</a>
+        </Pressable>
+      </>,
+    );
+    const button = screen.getByRole("button", { name: "Finish" });
+    button.focus();
+    await browser.keyboard("{Enter}");
+    await browser.keyboard(" ");
+    expect(document.activeElement).toBe(button);
+    await browser.click(button, { force: true });
+    await browser.click(screen.getByRole("link", { name: "Finished" }), {
+      force: true,
+    });
+    expect(onClick).not.toHaveBeenCalled();
+    expect(window.location.hash).not.toBe("#finished");
   });
 
   it("carries the press and focus recipes onto its child with asChild", () => {

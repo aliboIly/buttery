@@ -1,6 +1,11 @@
 import { Slot } from "../../utils/slot.tsx";
 import { isValidElement, useLayoutEffect, useRef } from "react";
-import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
+import type {
+  ComponentPropsWithRef,
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+} from "react";
 import { cx } from "../../utils/cx.ts";
 import { isDevelopment, warnOnce } from "../../utils/dev.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
@@ -23,7 +28,8 @@ export interface PressableProps extends ComponentPropsWithRef<"button"> {
 /**
  * An unstyled button with buttery's press feedback (scale 0.97 while pressed) and focus ring. Defaults to
  * `type="button"`, so it never submits a form by accident. To make a surface pressable, put the Pressable
- * inside it with `asChild`, so the button is the surface.
+ * inside it with `asChild`, so the button is the surface. Use `aria-disabled` instead of `disabled` to keep
+ * it focusable while it can't act, such as once pressing it is done: it then ignores presses.
  *
  * @example
  * <Surface asChild level="card" pad={4}>
@@ -35,12 +41,22 @@ export function Pressable({
   className,
   type,
   ref,
+  onClick,
   children,
   ...rest
 }: PressableProps): ReactElement {
   const element = useRef<HTMLButtonElement>(null);
   const merged = useMergedRefs(ref, element);
   const classes = cx("bt-pressable bt-press bt-focus", className);
+  const unavailable =
+    rest["aria-disabled"] === true || rest["aria-disabled"] === "true";
+  const press = (event: MouseEvent<HTMLButtonElement>): void => {
+    if (unavailable) {
+      event.preventDefault();
+      return;
+    }
+    onClick?.(event);
+  };
 
   useLayoutEffect(() => {
     if (!isDevelopment || !asChild || !element.current) return;
@@ -57,6 +73,7 @@ export function Pressable({
       <Slot
         {...rest}
         {...(childType === undefined ? {} : { type: childType })}
+        onClick={press}
         ref={merged}
         className={classes}
         data-bt="Pressable"
@@ -69,6 +86,7 @@ export function Pressable({
     <button
       {...rest}
       type={type ?? "button"}
+      onClick={press}
       ref={merged}
       className={classes}
       data-bt="Pressable"

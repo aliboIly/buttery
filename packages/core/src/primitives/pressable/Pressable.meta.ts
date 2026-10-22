@@ -10,6 +10,6 @@ export const meta: ComponentMeta = {
     "Navigation: render a link with asChild instead of a button",
   ],
   related: ["Surface", "Icon"],
-  a11y: 'A native button (type="button" by default) or its child with asChild; Enter and Space activate it.',
+  a11y: 'A native button (type="button" by default) or its child with asChild; Enter and Space activate it. With aria-disabled it keeps focus and ignores presses.',
   motion: "press",
 };

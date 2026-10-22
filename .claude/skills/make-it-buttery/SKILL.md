@@ -65,6 +65,6 @@ New components start from `pnpm new-component <Name> --purpose "…"`; `pnpm che
 - [ ] Peers are uniform (equal buttons, equal cards, one left edge).
 - [ ] Nothing overlaps, overflows, wraps unexpectedly or jitters at any matrix size.
 - [ ] Every interaction has the right motion class from the table above, and nothing waits on an animation.
-- [ ] Keyboard, focus ring, labels, AA contrast, hit areas ≥ 24 (buttons ≥ 28 tall).
+- [ ] Keyboard, focus ring, labels, AA contrast, hit areas ≥ 24 (buttons ≥ 28 tall). A button that can't act once it's pressed takes `aria-disabled`, not `disabled`, so focus stays on it.
 - [ ] Works in light, dark, comfortable, compact, and reduced motion.
 - [ ] Nothing copied from reference products' branding or copy.

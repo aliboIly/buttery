@@ -18,7 +18,7 @@
 }
 
 @layer bt.primitives {
-  .bt-pressable:disabled {
+  .bt-pressable:is(:disabled, [aria-disabled="true"]) {
     cursor: default;
   }
 }
