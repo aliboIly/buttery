@@ -106,34 +106,11 @@
   box-shadow: inset var(--bt-space-0_5) 0 0 var(--bt-accent);
 }
 
-.pg-menu {
-  min-inline-size: var(--bt-w-menu-min);
-  padding: var(--bt-space-3);
-}
-
-.pg-toggle {
-  display: inline-flex;
-  gap: var(--bt-space-0_5);
-  padding: var(--bt-space-0_5);
-  border-radius: var(--bt-r-full);
-  background-color: var(--bt-bg-control);
-}
-
-.pg-toggle-option {
-  display: inline-flex;
-  align-items: center;
-  block-size: var(--bt-h-sm);
-  padding-inline: var(--bt-space-3);
-  border-radius: var(--bt-r-full);
-}
-
-.pg-toggle-option[aria-checked="true"] {
-  background-color: var(--bt-bg-raised);
-  box-shadow: var(--bt-shadow-selected);
-}
-
-.pg-toggle-option[aria-checked="true"] > * {
-  color: var(--bt-text);
+/* The display settings take an aside's width, room for every option's full label. */
+.docs-display-panel {
+  inline-size: var(--bt-w-aside);
+  max-inline-size: 100%;
+  padding: var(--bt-space-4);
 }
 
 /* A wide page brings its own containers, so it takes the whole width under the bar. */

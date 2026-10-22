@@ -635,7 +635,7 @@ test("the playground chrome is buttery with its menus open", async ({
         name: "open the display settings",
         run: pressIfShown("button", "Display settings"),
       },
-      { name: "switch to dark", run: pressIfShown("radio", "dark") },
+      { name: "switch to dark", run: pressIfShown("radio", "Dark") },
     ],
   });
 });

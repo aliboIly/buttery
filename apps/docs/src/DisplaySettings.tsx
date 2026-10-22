@@ -1,83 +1,53 @@
-import { useId } from "react";
 import type { ReactElement } from "react";
-import { Settings2 } from "lucide-react";
-import { RadioGroup } from "radix-ui";
-import { Popover, Pressable, Stack, Text } from "@buttery/core";
-import { Button } from "@buttery/react";
+import { Monitor, Moon, Settings2, Sun } from "lucide-react";
+import { Popover, Stack, Text } from "@buttery/core";
+import { Button, Field, SegmentedControl } from "@buttery/react";
+import type { SegmentedControlOption } from "@buttery/react";
 import { setSetting } from "./location.ts";
 import type { Settings } from "./location.ts";
 
-interface ToggleProps {
-  readonly label: string;
-  readonly options: readonly string[];
-  readonly value: string;
-  readonly onChange: (value: string) => void;
-}
+const THEMES = [
+  { value: "system", label: "System", icon: Monitor },
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+] as const;
 
-/** One setting: its name over its options, which it names. */
-function Toggle({
+const DENSITIES = [
+  { value: "comfortable", label: "Comfortable" },
+  { value: "compact", label: "Compact" },
+] as const;
+
+const MOTIONS = [
+  { value: "system", label: "System" },
+  { value: "full", label: "Full" },
+  { value: "reduced", label: "Reduced" },
+] as const;
+
+/** One setting: its name over a segmented control as wide as the panel, so the three rows line up. */
+function Setting<Value extends string>({
   label,
   options,
   value,
   onChange,
-}: ToggleProps): ReactElement {
-  const labelId = useId();
-  return (
-    <Stack gap={1.5} align="start">
-      <Text id={labelId} variant="caption" tone="secondary">
-        {label}
-      </Text>
-      <RadioGroup.Root
-        className="pg-toggle"
-        aria-labelledby={labelId}
-        orientation="horizontal"
-        value={value}
-        onValueChange={onChange}
-      >
-        {options.map((option) => (
-          <RadioGroup.Item key={option} value={option} asChild>
-            <Pressable className="pg-toggle-option">
-              <Text variant="control">{option}</Text>
-            </Pressable>
-          </RadioGroup.Item>
-        ))}
-      </RadioGroup.Root>
-    </Stack>
-  );
-}
-
-function SettingsControls({
-  settings,
 }: {
-  readonly settings: Settings;
+  readonly label: string;
+  readonly options: readonly SegmentedControlOption<Value>[];
+  readonly value: string;
+  readonly onChange: (value: Value) => void;
 }): ReactElement {
+  const chosen = options.find((option) => option.value === value)?.value;
   return (
-    <Stack gap={4} align="start">
-      <Toggle
-        label="Theme"
-        options={["system", "light", "dark"]}
-        value={settings.theme}
-        onChange={(value) => {
-          setSetting("theme", value);
-        }}
-      />
-      <Toggle
-        label="Density"
-        options={["comfortable", "compact"]}
-        value={settings.density}
-        onChange={(value) => {
-          setSetting("density", value);
-        }}
-      />
-      <Toggle
-        label="Motion"
-        options={["system", "full", "reduced"]}
-        value={settings.motion}
-        onChange={(value) => {
-          setSetting("motion", value);
-        }}
-      />
-    </Stack>
+    <Field label={label}>
+      {(control) => (
+        <SegmentedControl
+          label={label}
+          aria-labelledby={control["aria-labelledby"]}
+          options={options}
+          value={chosen ?? options[0]?.value}
+          onValueChange={onChange}
+        />
+      )}
+    </Field>
   );
 }
 
@@ -102,9 +72,35 @@ export function DisplaySettings({
       <Popover.Content
         align="end"
         aria-label="Display settings"
-        className="pg-menu"
+        className="docs-display-panel"
       >
-        <SettingsControls settings={settings} />
+        <Stack gap={5}>
+          <Text variant="title-sm">Display</Text>
+          <Setting
+            label="Theme"
+            options={THEMES}
+            value={settings.theme}
+            onChange={(value) => {
+              setSetting("theme", value);
+            }}
+          />
+          <Setting
+            label="Density"
+            options={DENSITIES}
+            value={settings.density}
+            onChange={(value) => {
+              setSetting("density", value);
+            }}
+          />
+          <Setting
+            label="Motion"
+            options={MOTIONS}
+            value={settings.motion}
+            onChange={(value) => {
+              setSetting("motion", value);
+            }}
+          />
+        </Stack>
       </Popover.Content>
     </Popover>
   );
