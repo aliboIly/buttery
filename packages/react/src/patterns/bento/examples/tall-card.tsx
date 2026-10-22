@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Center, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Bento } from "@buttery/react";
 
 /** A tall card two rows high beside two short ones. */
@@ -26,3 +27,10 @@ export function TallCard(): ReactElement {
     </Bento>
   );
 }
+
+export const kind: ExampleKind = "variants";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Made for stories");
+  await see("9:16");
+};
