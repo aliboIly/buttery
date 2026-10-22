@@ -3,6 +3,8 @@ import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import playgroundFavicon from "../../../../../apps/playground/public/favicon.svg?raw";
+import starterFavicon from "../../../../../apps/starter/public/favicon.svg?raw";
 import { BrandMark } from "./BrandMark.tsx";
 
 afterEach(cleanup);
@@ -117,5 +119,31 @@ describe("BrandMark", () => {
       cleanup();
     }
     delete document.documentElement.dataset["btTheme"];
+  });
+
+  it("matches the favicons drawn from it, so pnpm brand:assets has run since the drawing changed", () => {
+    render(<BrandMark size={16} />);
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) throw new Error("No canvas.");
+    const hex = (color: string): string => {
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = color;
+      context.fillRect(0, 0, 1, 1);
+      return `#${[...context.getImageData(0, 0, 1, 1).data.slice(0, 3)]
+        .map((part) => part.toString(16).padStart(2, "0"))
+        .join("")}`;
+    };
+    const faces = [...(marks()[0]?.querySelectorAll("path") ?? [])];
+    expect(faces).toHaveLength(3);
+    for (const face of faces) {
+      const fill = hex(getComputedStyle(face).fill);
+      expect(starterFavicon).toContain(
+        `d="${face.getAttribute("d") ?? ""}" fill="${fill}" stroke="${fill}"`,
+      );
+    }
+    expect(playgroundFavicon).toBe(starterFavicon);
   });
 });

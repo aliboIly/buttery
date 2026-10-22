@@ -1,8 +1,9 @@
 <div align="center">
 
-# 🧈 buttery
-
-**Make anything buttery.**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/buttery-dark.png">
+  <img src="docs/assets/buttery-light.png" alt="🧈 buttery: Make anything buttery." width="440">
+</picture>
 
 A React design system, with layout and motion rules to match, for web apps and Tauri desktop apps.
 
