@@ -415,6 +415,37 @@ describe("Dialog", () => {
     expect(title.right).toBeLessThanOrEqual(close.left);
   });
 
+  it("sets its close button on a raised disc over media, whose colors aren't the theme's, and leaves it bare otherwise", async () => {
+    const probe = document.createElement("div");
+    probe.style.backgroundColor = "var(--bt-bg-raised)";
+    document.body.append(probe);
+    const raised = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    render(
+      <Confirm>
+        <Dialog.Media aria-hidden="true">
+          <div style={{ blockSize: "120px" }} />
+        </Dialog.Media>
+        <Dialog.Text
+          title="Plans you can share"
+          body="Send a plan with a link."
+        />
+      </Confirm>,
+    );
+    await openConfirm();
+    expect(
+      getComputedStyle(screen.getByRole("button", { name: "Close" }))
+        .backgroundColor,
+    ).toBe(raised);
+    cleanup();
+    render(<Confirm />);
+    await openConfirm();
+    expect(
+      getComputedStyle(screen.getByRole("button", { name: "Close" }))
+        .backgroundColor,
+    ).toBe("rgba(0, 0, 0, 0)");
+  });
+
   it("keeps a full-size dialog's long title clear of its close button once the button moves in", async () => {
     await page.viewport(1200, 800);
     render(

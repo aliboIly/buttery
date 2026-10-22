@@ -69,6 +69,20 @@
     inset-inline-end: calc(var(--bt-dialog-close-center) - var(--bt-h-sm) / 2);
   }
 
+  /* Over media it sits on a picture whose colors don't follow the theme, so it brings a raised disc to read on. */
+  .bt-dialog:has(.bt-dialog-media) > [data-bt-part="close"] {
+    --bt-icon-button-bg: var(--bt-bg-raised);
+
+    box-shadow: var(--bt-shadow-raised);
+  }
+
+  @media (hover: hover) {
+    .bt-dialog:has(.bt-dialog-media)
+      > [data-bt-part="close"]:not(:disabled, [aria-disabled="true"]):hover {
+      --bt-icon-button-bg: var(--bt-bg-control);
+    }
+  }
+
   /* The parts work directly in the dialog or inside a form that wraps them. */
   .bt-dialog-media {
     flex: none;
