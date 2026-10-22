@@ -1,8 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Menu, Pressable, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A card's less common actions behind one trigger, with the destructive one set apart. */
+/** A card's less common actions behind one trigger, with the destructive one set apart in danger. */
 export function CardActions(): ReactElement {
   const [last, setLast] = useState("Nothing chosen yet");
   return (
@@ -18,29 +19,40 @@ export function CardActions(): ReactElement {
         <Menu.Content>
           <Menu.Item
             onSelect={() => {
-              setLast("Duplicated");
+              setLast("Duplicated the card");
             }}
           >
             Duplicate
           </Menu.Item>
           <Menu.Item
             onSelect={() => {
-              setLast("Renamed");
+              setLast("Moved the card to Drafts");
             }}
           >
-            Rename
+            Move to Drafts
           </Menu.Item>
           <Menu.Separator />
           <Menu.Item
+            tone="danger"
             onSelect={() => {
-              setLast("Deleted");
+              setLast("Deleted the card");
             }}
           >
             Delete
           </Menu.Item>
         </Menu.Content>
       </Menu>
-      <Text variant="caption">{last}</Text>
+      <Text variant="body" tone="secondary">
+        {last}
+      </Text>
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Card actions");
+  await press("menuitem", "Duplicate");
+  await see("Duplicated the card");
+};

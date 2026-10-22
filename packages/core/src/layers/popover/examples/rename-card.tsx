@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import type { ReactElement } from "react";
 import {
+  Control,
   Inline,
   Popover,
   Pressable,
@@ -8,8 +9,9 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A controlled popover holding a small form. */
+/** A popover whose open state lives in the example, so the form inside can close it once the card is renamed. */
 export function RenameCard(): ReactElement {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("Spring launch");
@@ -38,7 +40,11 @@ export function RenameCard(): ReactElement {
               <Text variant="label" asChild>
                 <label htmlFor={inputId}>Title</label>
               </Text>
-              <input id={inputId} name="title" defaultValue={title} />
+              <Surface asChild level="inset">
+                <Control asChild>
+                  <input id={inputId} name="title" defaultValue={title} />
+                </Control>
+              </Surface>
             </Stack>
             <Inline justify="end">
               <Surface asChild level="raised" padX={4} padY={2} radius="full">
@@ -53,3 +59,12 @@ export function RenameCard(): ReactElement {
     </Popover>
   );
 }
+
+export const kind: ExampleKind = "controlled";
+
+export const play: ExamplePlay = async ({ press, type, see }) => {
+  await press("button", "Rename Spring launch");
+  await type("Title", "{selectall}Summer menu");
+  await press("button", "Save");
+  await see("Summer menu");
+};

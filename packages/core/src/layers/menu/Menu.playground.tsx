@@ -1,6 +1,13 @@
 import type { ReactElement } from "react";
-import { Inline, Menu, Pressable, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import {
+  demoChoice,
+  Inline,
+  Menu,
+  Pressable,
+  Surface,
+  Text,
+} from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 
 export const page: DocsPage = {
   section: "components/overlays",
@@ -23,6 +30,60 @@ function Trigger({ label }: { readonly label: string }): ReactElement {
     </Surface>
   );
 }
+
+const ALIGNS = ["end", "start", "center"] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    align: { kind: "choice", options: ALIGNS, initial: "end" },
+    disabled: { kind: "toggle", initial: false },
+    children: { kind: "text", initial: "Card actions" },
+  },
+  render: ({ align, disabled, children }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return (
+      <Inline justify={edge}>
+        <Menu>
+          <Surface asChild level="raised" padX={4} padY={2} radius="full">
+            <Menu.Trigger asChild disabled={disabled === true}>
+              <Pressable>
+                <Text variant="button">{String(children)}</Text>
+              </Pressable>
+            </Menu.Trigger>
+          </Surface>
+          <Menu.Content align={edge}>
+            <Menu.Item>Duplicate</Menu.Item>
+            <Menu.Item>Move to Drafts</Menu.Item>
+            <Menu.Separator />
+            <Menu.Item tone="danger">Delete</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      </Inline>
+    );
+  },
+  code: ({ align, disabled, children }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return [
+      `<Inline justify="${edge}">`,
+      "  <Menu>",
+      '    <Surface asChild level="raised" padX={4} padY={2} radius="full">',
+      `      <Menu.Trigger asChild${disabled === true ? " disabled" : ""}>`,
+      "        <Pressable>",
+      `          <Text variant="button">${String(children)}</Text>`,
+      "        </Pressable>",
+      "      </Menu.Trigger>",
+      "    </Surface>",
+      `    <Menu.Content align="${edge}">`,
+      "      <Menu.Item>Duplicate</Menu.Item>",
+      "      <Menu.Item>Move to Drafts</Menu.Item>",
+      "      <Menu.Separator />",
+      '      <Menu.Item tone="danger">Delete</Menu.Item>',
+      "    </Menu.Content>",
+      "  </Menu>",
+      "</Inline>",
+    ].join("\n");
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {

@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import {
+  demoChoice,
   Inline,
   Popover,
   Pressable,
@@ -7,7 +8,7 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 
 export const page: DocsPage = {
   section: "components/overlays",
@@ -30,6 +31,60 @@ function Trigger({ label }: { readonly label: string }): ReactElement {
     </Surface>
   );
 }
+
+const ALIGNS = ["center", "start", "end"] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    align: { kind: "choice", options: ALIGNS, initial: "center" },
+    disabled: { kind: "toggle", initial: false },
+    children: { kind: "text", initial: "Canvas size" },
+  },
+  render: ({ align, disabled, children }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return (
+      <Inline justify={edge}>
+        <Popover>
+          <Surface asChild level="raised" padX={4} padY={2} radius="full">
+            <Popover.Trigger asChild disabled={disabled === true}>
+              <Pressable>
+                <Text variant="button">{String(children)}</Text>
+              </Pressable>
+            </Popover.Trigger>
+          </Surface>
+          <Popover.Content align={edge} aria-label="Canvas size">
+            <Stack gap={1} padX={2} padY={1}>
+              <Text variant="label">1080 × 1080</Text>
+              <Text variant="caption">Square, for a feed post</Text>
+            </Stack>
+          </Popover.Content>
+        </Popover>
+      </Inline>
+    );
+  },
+  code: ({ align, disabled, children }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return [
+      `<Inline justify="${edge}">`,
+      "  <Popover>",
+      '    <Surface asChild level="raised" padX={4} padY={2} radius="full">',
+      `      <Popover.Trigger asChild${disabled === true ? " disabled" : ""}>`,
+      "        <Pressable>",
+      `          <Text variant="button">${String(children)}</Text>`,
+      "        </Pressable>",
+      "      </Popover.Trigger>",
+      "    </Surface>",
+      `    <Popover.Content align="${edge}" aria-label="Canvas size">`,
+      "      <Stack gap={1} padX={2} padY={1}>",
+      '        <Text variant="label">1080 × 1080</Text>',
+      '        <Text variant="caption">Square, for a feed post</Text>',
+      "      </Stack>",
+      "    </Popover.Content>",
+      "  </Popover>",
+      "</Inline>",
+    ].join("\n");
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {
