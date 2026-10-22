@@ -73,7 +73,9 @@ describe("takesText", () => {
         '<input aria-label="Name" />',
         '<input type="email" aria-label="Email" />',
         '<textarea aria-label="Note"></textarea>',
-        '<div role="combobox" tabindex="0" aria-label="Country"></div>',
+        '<input role="combobox" aria-label="Country" />',
+        '<button role="combobox" aria-label="Plan">Starter</button>',
+        '<input readonly aria-label="Order number" />',
         '<div contenteditable="true" aria-label="Draft"></div>',
         '<input type="checkbox" aria-label="Agree" />',
         '<input type="range" aria-label="Volume" />',
@@ -88,5 +90,21 @@ describe("takesText", () => {
         .filter(takesText)
         .map((field) => field.getAttribute("aria-label")),
     ).toEqual(["Name", "Email", "Note", "Country", "Draft"]);
+  });
+
+  it("finds the first field to type in among the tab stops, editable text included", () => {
+    const element = holding(
+      [
+        '<button role="combobox" aria-label="Plan">Starter</button>',
+        '<input readonly aria-label="Order number" />',
+        '<div contenteditable="true" aria-label="Note to the roaster"></div>',
+        '<input aria-label="Name" />',
+      ].join(""),
+    );
+    expect(
+      tabbables(element)
+        .filter(takesText)
+        .map((field) => field.getAttribute("aria-label")),
+    ).toEqual(["Note to the roaster", "Name"]);
   });
 });
