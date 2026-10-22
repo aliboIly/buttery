@@ -29,7 +29,7 @@ export function DeleteFromList(): ReactElement {
         </h3>
       </Text>
       <Stack gap={2} asChild>
-        <ul>
+        <ul role="list">
           {roasts.map((roast) => (
             <li key={roast}>
               <Inline gap={3} align="center" justify="between">
