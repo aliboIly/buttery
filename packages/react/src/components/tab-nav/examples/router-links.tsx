@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { TabNav } from "@buttery/react";
 
 /** A router's own links as tabs, with asChild and a label for the overflow menu. */
@@ -17,3 +18,10 @@ export function RouterLinks(): ReactElement {
     </TabNav>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("General");
+  await see("Billing");
+};
