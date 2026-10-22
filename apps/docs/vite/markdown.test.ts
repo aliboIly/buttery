@@ -118,6 +118,14 @@ describe("the site as Markdown", () => {
     );
   });
 
+  it("lists what a component's folder also exports, with its signature and JSDoc, after the props", () => {
+    const markdown = pageMarkdown(root, "components/toaster", components) ?? "";
+    const also = markdown.indexOf("### Also exported\n");
+    expect(also).toBeGreaterThan(markdown.indexOf("### Toaster\n"));
+    expect(markdown.indexOf("## Accessibility")).toBeGreaterThan(also);
+    expect(markdown.slice(also)).toMatch(/\| `toast\(/);
+  });
+
   it("skips a page's imports whole, however many lines one takes", () => {
     const markdown =
       pageMarkdown(root, "foundations/spacing-and-sizing", components) ?? "";

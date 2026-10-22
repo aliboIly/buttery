@@ -16,7 +16,7 @@ import { listed, screensByDemo } from "../src/demo-sentence.ts";
 import { SECTIONS } from "../src/nav.ts";
 import { demoPages } from "../src/routes.ts";
 import { demoUsesIn } from "./demo-uses.ts";
-import { propsTablesIn, typeTablesIn } from "./props.ts";
+import { exportDocsFor, propsTablesIn, typeTablesIn } from "./props.ts";
 import type { PropDoc } from "./props.ts";
 import { releasesIn, releasesMarkdown } from "./whats-new.ts";
 
@@ -348,7 +348,8 @@ export function componentMarkdown(
   const sourceFile = join(folder, `${name}.tsx`);
   const tables = existsSync(sourceFile) ? propsTablesIn(name, sourceFile) : [];
   const types = existsSync(sourceFile) ? typeTablesIn(name, sourceFile) : [];
-  if (tables.length > 0 || types.length > 0) {
+  const exported = exportDocsFor(root, name, folder, tables);
+  if (tables.length > 0 || types.length > 0 || exported.length > 0) {
     lines.push(heading(part, "Props"), "");
     for (const props of tables) {
       lines.push(
@@ -365,6 +366,16 @@ export function componentMarkdown(
         ...propsBlock("Field", type),
       );
     }
+    if (exported.length > 0)
+      lines.push(
+        heading(part + 1, "Also exported"),
+        "",
+        table(
+          ["Export", "Description"],
+          exported.map((doc) => [`\`${doc.signature}\``, doc.description]),
+        ),
+        "",
+      );
   }
 
   lines.push(heading(part, "Accessibility"), "", textOf(meta["a11y"]), "");

@@ -866,23 +866,52 @@ export function exportDocsIn(
   root: string,
   tables: Readonly<Record<string, readonly PropsTable[]>>,
 ): Record<string, ExportDoc[]> {
+  const exported = exportedIn(root);
   const docs: Record<string, ExportDoc[]> = {};
-  for (const index of globSync("packages/*/src/index.ts", { cwd: root })) {
-    for (const { name, file } of exportsOf(join(root, index))) {
-      const folder = dirname(file);
-      const meta = globSync("*.meta.ts", { cwd: folder })[0];
-      if (meta === undefined) continue;
-      const owner = basename(meta, ".meta.ts");
-      if (name === owner) continue;
-      const parts = (tables[owner] ?? []).map((table) => table.interfaceName);
-      if (parts.includes(`${name}Props`)) continue;
-      const doc = existsSync(file)
-        ? exportDocOf(name, readFileSync(file, "utf8"))
-        : null;
-      if (doc) (docs[owner] ??= []).push(doc);
-    }
+  for (const meta of globSync("packages/*/src/**/*.meta.ts", { cwd: root })) {
+    const owner = basename(meta, ".meta.ts");
+    const found = folderExportDocs(
+      exported,
+      owner,
+      join(root, dirname(meta)),
+      tables[owner] ?? [],
+    );
+    if (found.length > 0) docs[owner] = found;
   }
   return docs;
+}
+
+/** What the component `owner`'s `folder` exports beside it and its parts, for its page alone. */
+export function exportDocsFor(
+  root: string,
+  owner: string,
+  folder: string,
+  tables: readonly PropsTable[],
+): ExportDoc[] {
+  return folderExportDocs(exportedIn(root), owner, folder, tables);
+}
+
+function exportedIn(root: string): IndexExport[] {
+  return globSync("packages/*/src/index.ts", { cwd: root }).flatMap((index) =>
+    exportsOf(join(root, index)),
+  );
+}
+
+function folderExportDocs(
+  exported: readonly IndexExport[],
+  owner: string,
+  folder: string,
+  tables: readonly PropsTable[],
+): ExportDoc[] {
+  const parts = tables.map((table) => table.interfaceName);
+  return exported.flatMap(({ name, file }) => {
+    if (dirname(file) !== folder || name === owner) return [];
+    if (parts.includes(`${name}Props`)) return [];
+    const doc = existsSync(file)
+      ? exportDocOf(name, readFileSync(file, "utf8"))
+      : null;
+    return doc ? [doc] : [];
+  });
 }
 
 const PROPS_MODULE = "virtual:buttery-props";
