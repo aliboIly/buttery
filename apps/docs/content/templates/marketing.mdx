@@ -16,18 +16,36 @@ The marketing template is a one-page site: a sticky bar whose links scroll to th
 
 ## Start from it
 
-Inside the buttery repository, this is the command that works today. It copies `apps/templates/marketing` to `apps/my-app`, gives the copy its name, which also replaces "buttery site" in the bar and the footer, and the next free port, then installs it.
+<Steps>
+<Step>
+
+### Copy the template
 
 ```bash
 pnpm new-app my-app --template marketing
-pnpm --filter my-app dev
 ```
 
-Once `create-buttery` is published, the same app starts in any folder:
+This works inside the buttery repository today. It copies `apps/templates/marketing` to `apps/my-app`, gives the copy its name, which also replaces "buttery site" in the bar and the footer, and the next free port, then installs it.
+
+Once `create-buttery` is published, this starts the same app in any folder:
 
 ```bash
 npx create-buttery my-app --template marketing
 ```
+
+</Step>
+<Step>
+
+### Start it
+
+```bash
+pnpm --filter my-app dev
+```
+
+Open the address it prints.
+
+</Step>
+</Steps>
 
 ## What's inside
 
@@ -35,37 +53,39 @@ npx create-buttery my-app --template marketing
   columns={["File", "What it does"]}
   rows={[
     [
-      "src/App.tsx",
-      "The site: a Page with a sticky NavBar, a CenteredHero, Sections of features, a StatStrip and plans, a closing hero and a Footer",
+      "`src/App.tsx`",
+      "The site: a `Page` with a sticky `NavBar`, a `CenteredHero`, `Section`s of features, a `StatStrip` and plans, a closing hero and a `Footer`",
     ],
     [
-      "src/app.css",
+      "`src/app.css`",
       "Room at the page's end as tall as the floating lanes, so the last line can scroll clear of a toast",
     ],
     [
-      "src/router.tsx",
+      "`src/router.tsx`",
       "The router every template has; the dashboard's page explains it",
     ],
     [
-      "src/main.tsx",
-      "Follows links, then renders the app inside ButteryProvider",
+      "`src/main.tsx`",
+      "Follows links, then renders the app inside `ButteryProvider`",
     ],
     [
-      "src/index.ts",
+      "`src/index.ts`",
       "What another app imports to show this one, as the docs site does for the preview",
     ],
     [
-      "e2e/smoke.spec.ts",
+      "`e2e/smoke.spec.ts`",
       "Renders with no console errors, scrolls to a section from the bar, and shows a plan's toast",
     ],
     [
-      "e2e/layout.spec.ts",
-      "Runs expectButtery on the site with the bar's sheet open on a phone and a toast showing",
+      "`e2e/layout.spec.ts`",
+      "Runs `expectButtery` on the site with the bar's sheet open on a phone and a toast showing",
     ],
   ]}
 />
 
-The bar's links and buttons go to sections of the page with `scrollToSection`, which stops each section below the sticky bar and leaves the address alone. It's made from the [marketing page](/patterns/marketing-page) patterns, and its router is explained under [routing](/templates/dashboard#routing) on the dashboard's page.
+> **Links to sections.** The bar's links and buttons go to sections of the page with `scrollToSection`, which stops each section below the sticky bar and leaves the address alone.
+
+It's made from the [marketing page](/patterns/marketing-page) patterns, and its router is explained under [routing](/templates/dashboard#routing) on the dashboard's page.
 
 ## A demo made from it
 

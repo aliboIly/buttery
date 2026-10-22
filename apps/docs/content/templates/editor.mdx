@@ -16,20 +16,36 @@ The editor template is a small web app for making one thing: a header bar with u
 
 ## Start from it
 
-Inside the buttery repository, this is the command that works today. It copies `apps/templates/editor` to `apps/my-app`, gives the copy its name and the next free port, and installs it.
+<Steps>
+<Step>
+
+### Copy the template
 
 ```bash
 pnpm new-app my-app --template editor
-pnpm --filter my-app dev
 ```
 
-Once `create-buttery` is published, the same app starts in any folder:
+This works inside the buttery repository today. It copies `apps/templates/editor` to `apps/my-app`, gives the copy its name and the next free port, and installs it.
+
+Once `create-buttery` is published, this starts the same app in any folder:
 
 ```bash
 npx create-buttery my-app --template editor
 ```
 
-The template is a web app. For a desktop app, start from [blank](/templates/blank), which has the Tauri shell.
+</Step>
+<Step>
+
+### Start it
+
+```bash
+pnpm --filter my-app dev
+```
+
+Open the address it prints. The template is a web app: for a desktop app, start from [blank](/templates/blank), which has the Tauri shell.
+
+</Step>
+</Steps>
 
 ## What's inside
 
@@ -37,40 +53,40 @@ The template is a web app. For a desktop app, start from [blank](/templates/blan
   columns={["File", "What it does"]}
   rows={[
     [
-      "src/App.tsx",
-      "The editor: AppShell with a HeaderBar holding Start over, Undo and Redo, the design on a Stage, and the inspector; Command or Control Z undoes",
+      "`src/App.tsx`",
+      "The editor: `AppShell` with a `HeaderBar` holding Start over, Undo and Redo, the design on a `Stage`, and the inspector; Command or Control Z undoes",
     ],
     [
-      "src/DesignInspector.tsx",
-      "An Inspector of two sections, each with Reset: the card's title and corners, then the canvas's shape and backdrop",
+      "`src/DesignInspector.tsx`",
+      "An `Inspector` of two sections, each with Reset: the card's title and corners, then the canvas's shape and backdrop",
     ],
     [
-      "src/document.ts",
+      "`src/document.ts`",
       "The design, its defaults and canvas sizes, and the undo history, where typing or a drag is one step",
     ],
     [
-      "src/app.css",
+      "`src/app.css`",
       "Sizes the card to the canvas with container units, so it scales the way an export would draw it",
     ],
     [
-      "src/router.tsx",
+      "`src/router.tsx`",
       "The router every template has; the dashboard's page explains it",
     ],
     [
-      "src/main.tsx",
-      "Follows links, then renders the app inside ButteryProvider",
+      "`src/main.tsx`",
+      "Follows links, then renders the app inside `ButteryProvider`",
     ],
     [
-      "src/index.ts",
+      "`src/index.ts`",
       "What another app imports to show this one, as the docs site does for the preview",
     ],
     [
-      "e2e/smoke.spec.ts",
+      "`e2e/smoke.spec.ts`",
       "Renders with no console errors, changes the design and walks Undo and Redo, and opens the sheet on a phone",
     ],
     [
-      "e2e/layout.spec.ts",
-      "Runs expectButtery on the editor with the sheet open, a new shape and a long title",
+      "`e2e/layout.spec.ts`",
+      "Runs `expectButtery` on the editor with the sheet open, a new shape and a long title",
     ],
   ]}
 />
