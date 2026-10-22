@@ -69,16 +69,29 @@ for (const { name, route } of componentRoutes) {
     page,
   }) => {
     await page.goto(`/${route}`);
-    const controls = page.locator(".docs-controls > *");
-    const count = await controls.count();
-    test.skip(count === 0, `${name} has no live demo controls yet`);
-    for (let index = 0; index < count; index += 1) {
+    // In the order the demo declares them, which puts a control that opens an overlay before those that change it.
+    const found = await page
+      .locator(".docs-controls [data-docs-control]")
+      .all();
+    const controls = (
+      await Promise.all(
+        found.map(async (control) => ({
+          control,
+          order: Number(await control.getAttribute("data-order")),
+        })),
+      )
+    )
+      .sort((a, b) => a.order - b.order)
+      .map(({ control }) => control);
+    test.skip(controls.length === 0, `${name} has no live demo controls yet`);
+    for (const control of controls) {
+      const prop = (await control.getAttribute("data-docs-control")) ?? "";
       await settled(page);
       const before = await shown(page);
-      await change(controls.nth(index));
+      await change(control);
       await expect
         .poll(() => shown(page), {
-          message: `${name}'s control ${String(index + 1)} didn't change the demo`,
+          message: `${name}'s ${prop} control didn't change the demo`,
         })
         .not.toBe(before);
     }

@@ -178,15 +178,20 @@ export function LiveControls({
     list.length === 0 ? null : (
       <Grid columns={{ base: 1, md: 2 }} gap={4}>
         {list.map(([name, control]) => (
-          <Control
+          <div
             key={name}
-            name={name}
-            control={control}
-            value={values[name] ?? control.initial}
-            onChange={(value) => {
-              onChange(name, value);
-            }}
-          />
+            data-docs-control={name}
+            data-order={entries.findIndex(([other]) => other === name)}
+          >
+            <Control
+              name={name}
+              control={control}
+              value={values[name] ?? control.initial}
+              onChange={(value) => {
+                onChange(name, value);
+              }}
+            />
+          </div>
         ))}
       </Grid>
     );
