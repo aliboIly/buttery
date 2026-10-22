@@ -121,9 +121,9 @@ export interface TopBarComponent {
 
 /**
  * The bar over a dashboard's page, 56px tall with no edge, padded like the page under it: a search at its
- * start, at most 360px, then icon actions 4px apart at its end (one can carry a dot) that fold into "…",
- * and a round create button. In an `AppShell layout="sidebar"` on a phone, a menu button at its start opens
- * the sidebar.
+ * start (a `CommandSearch`, 360px at rest and 600 with focus, or a `SearchField`, at most 360px), then icon
+ * actions 4px apart at its end (one can carry a dot) that fold into "…", and a round create button. In an
+ * `AppShell layout="sidebar"` on a phone, a menu button at its start opens the sidebar.
  *
  * @example
  * <TopBar
