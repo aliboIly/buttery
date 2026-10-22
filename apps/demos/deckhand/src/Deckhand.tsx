@@ -254,12 +254,13 @@ export function Deckhand(): ReactElement {
       });
   };
 
-  const present = (): void => {
+  const present = (trigger?: HTMLElement): void => {
     if (!slide) return;
     opener.current =
-      document.activeElement instanceof HTMLElement
+      trigger ??
+      (document.activeElement instanceof HTMLElement
         ? document.activeElement
-        : null;
+        : null);
     setArrange(null);
     setPresenting(Math.max(index, 0));
   };
@@ -363,7 +364,6 @@ export function Deckhand(): ReactElement {
         y: event.clientY,
         frame: 0,
       };
-      event.currentTarget.setPointerCapture(event.pointerId);
     },
     onPointerMove: (event: PointerEvent<HTMLDivElement>): void => {
       const current = wordsDrag.current;
@@ -377,6 +377,7 @@ export function Deckhand(): ReactElement {
         )
           return;
         current.started = true;
+        event.currentTarget.setPointerCapture(event.pointerId);
         setDragging(true);
       }
       cancelAnimationFrame(current.frame);

@@ -52,7 +52,8 @@ export function DeckHeader({
   readonly arranging: boolean;
   readonly canUndo: boolean;
   readonly canRedo: boolean;
-  readonly onPresent: () => void;
+  /** Starts the presentation, from the button that started it, which focus goes back to after. */
+  readonly onPresent: (trigger?: HTMLElement) => void;
   readonly onSize: (size: SlideSize) => void;
   readonly onArrange: () => void;
   readonly onExport: () => void;
@@ -135,15 +136,17 @@ export function DeckHeader({
             label: "Present",
             icon: Play,
             disabled: !hasSlide,
-            onSelect: onPresent,
+            onSelect: () => {
+              onPresent();
+            },
           }}
         >
           <Button
             variant="primary"
             iconStart={Play}
             aria-disabled={!hasSlide || undefined}
-            onClick={() => {
-              if (hasSlide) onPresent();
+            onClick={(event) => {
+              if (hasSlide) onPresent(event.currentTarget);
             }}
           >
             Present

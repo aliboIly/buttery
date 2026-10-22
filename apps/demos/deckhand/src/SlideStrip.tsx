@@ -147,9 +147,7 @@ export function SlideStrip({
     }
   };
 
-  const follow = (): void => {
-    const current = drag.current;
-    if (!current) return;
+  const follow = (current: Drag): void => {
     const left =
       (current.slots[current.startIndex] ?? 0) + current.x - current.startX;
     const target = nearestSlot(current.slots, left);
@@ -167,7 +165,8 @@ export function SlideStrip({
     slide: Slide,
     index: number,
   ): void => {
-    if (event.button !== 0 || drag.current) return;
+    if (event.button !== 0) return;
+    if (drag.current) cancelAnimationFrame(drag.current.frame);
     const options = list.current?.querySelectorAll<HTMLElement>("[data-slide]");
     drag.current = {
       id: slide.id,
@@ -181,7 +180,6 @@ export function SlideStrip({
       x: event.clientX,
       frame: 0,
     };
-    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const movePress = (event: PointerEvent<HTMLDivElement>): void => {
@@ -191,11 +189,14 @@ export function SlideStrip({
     if (!current.started) {
       if (Math.abs(current.x - current.startX) < DRAG_FROM) return;
       current.started = true;
+      current.element.setPointerCapture(event.pointerId);
       onSelect(current.id);
       setDragging(current.id);
     }
     cancelAnimationFrame(current.frame);
-    current.frame = requestAnimationFrame(follow);
+    current.frame = requestAnimationFrame(() => {
+      follow(current);
+    });
   };
 
   const endPress = (event: PointerEvent<HTMLDivElement>): void => {
@@ -207,7 +208,7 @@ export function SlideStrip({
       if (event.type === "pointerup") onSelect(current.id);
       return;
     }
-    follow();
+    follow(current);
     setDragging(null);
     setDrops((count) => count + 1);
     onMoveEnd();
