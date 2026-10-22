@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice, Inline } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { ColorDot, IconButton } from "@buttery/react";
 import { ArrowLeftRight } from "lucide-react";
 
@@ -34,6 +34,28 @@ function GradientColors(): ReactElement {
     </Inline>
   );
 }
+
+const COLORS = ["#a5b4fc", "#f0abfc", "#fcd34d", "#86efac"] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    defaultValue: { kind: "choice", options: COLORS, initial: "#a5b4fc" },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ defaultValue, disabled }) => {
+    const color = demoChoice(defaultValue, COLORS);
+    return (
+      <ColorDot
+        key={color}
+        label="Fill"
+        defaultValue={color}
+        disabled={disabled === true}
+      />
+    );
+  },
+  code: ({ defaultValue, disabled }) =>
+    `<ColorDot label="Fill" defaultValue="${demoChoice(defaultValue, COLORS)}"${disabled === true ? " disabled" : ""} />`,
+};
 
 export const demos: readonly DemoSection[] = [
   {
