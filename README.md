@@ -184,8 +184,8 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 
 ## Requirements
 
-- Node 22.18+ or 24.11+
-- pnpm 12 (`corepack enable` picks up the pinned version)
+- Node 22.18+, 24.11+ or 26+
+- pnpm 12.14, the version `packageManager` pins. On Node 22 and 24, `corepack enable` installs it; Node 25 and later don't ship Corepack, so run `npm install -g pnpm@12.14.0` there.
 - For the desktop app: Rust (`rustup`) and Xcode Command Line Tools (`xcode-select --install`)
 
 ## Commands
