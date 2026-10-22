@@ -1,29 +1,51 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Chip, FloatingToolbar } from "@buttery/react";
 
-const CARDS = ["Launch", "Recap", "Roadmap"] as const;
+interface Card {
+  readonly id: number;
+  readonly title: string;
+}
 
-/** Actions for the cards picked, shown while any are. */
+const CARDS: readonly Card[] = [
+  { id: 1, title: "Launch" },
+  { id: 2, title: "Recap" },
+  { id: 3, title: "Roadmap" },
+];
+
+/** Actions for the cards picked, shown while any are: how many, then Clear and Duplicate. */
 export function SelectionActions(): ReactElement {
   const row = useRef<HTMLDivElement>(null);
-  const [picked, setPicked] = useState<ReadonlySet<string>>(new Set());
+  const [cards, setCards] = useState<readonly Card[]>(CARDS);
+  const [picked, setPicked] = useState<ReadonlySet<number>>(new Set());
+  const duplicate = (): void => {
+    const next = Math.max(...cards.map((card) => card.id)) + 1;
+    const copies = cards
+      .filter((card) => picked.has(card.id))
+      .map((card, index) => ({
+        id: next + index,
+        title: `${card.title} copy`,
+      }));
+    setCards([...cards, ...copies]);
+    setPicked(new Set());
+  };
   return (
     <>
-      <Inline ref={row} gap={2}>
-        {CARDS.map((card) => (
+      <Inline ref={row} gap={2} wrap>
+        {cards.map((card) => (
           <Chip
-            key={card}
-            aria-pressed={picked.has(card)}
+            key={card.id}
+            aria-pressed={picked.has(card.id)}
             onClick={() => {
               const next = new Set(picked);
-              if (next.has(card)) next.delete(card);
-              else next.add(card);
+              if (next.has(card.id)) next.delete(card.id);
+              else next.add(card.id);
               setPicked(next);
             }}
           >
-            {card}
+            {card.title}
           </Chip>
         ))}
       </Inline>
@@ -41,8 +63,19 @@ export function SelectionActions(): ReactElement {
         >
           Clear
         </FloatingToolbar.Button>
-        <FloatingToolbar.Button>Duplicate</FloatingToolbar.Button>
+        <FloatingToolbar.Button onClick={duplicate}>
+          Duplicate
+        </FloatingToolbar.Button>
       </FloatingToolbar>
     </>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Recap");
+  await see("1 selected");
+  await press("button", "Duplicate");
+  await see("Recap copy");
+};
