@@ -1,6 +1,18 @@
 import { Menu, Stack, Text } from "@buttery/core";
 import type { DemoSection, DocsPage } from "@buttery/core";
-import { ArrowLink, SidePanel, TextArea } from "@buttery/react";
+import {
+  AppPage,
+  AppShell,
+  ArrowLink,
+  PageHeader,
+  SidePanel,
+  Sidebar,
+  TextArea,
+  TopBar,
+} from "@buttery/react";
+import { CircleHelp, Package } from "lucide-react";
+import { useState } from "react";
+import type { ReactElement } from "react";
 
 export const page: DocsPage = {
   section: "components/overlays",
@@ -11,6 +23,67 @@ export const page: DocsPage = {
   status: "new",
   since: "0.7.0",
 };
+
+function NarrowShell(): ReactElement {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      style={{
+        inlineSize: "100%",
+        maxInlineSize: "var(--bt-w-app-page-md)",
+        blockSize: "calc(var(--bt-bento-row) * 2)",
+      }}
+    >
+      <AppShell
+        layout="sidebar"
+        sidebar={
+          <Sidebar label="Main">
+            <Sidebar.Item
+              label="Orders"
+              href="#side-panel"
+              icon={Package}
+              current
+            />
+          </Sidebar>
+        }
+        topBar={
+          <TopBar
+            actions={
+              <TopBar.Action
+                label="Help"
+                icon={CircleHelp}
+                expanded={open}
+                onSelect={() => {
+                  setOpen(!open);
+                }}
+              />
+            }
+          />
+        }
+        panel={
+          <SidePanel
+            title="Roasting help"
+            open={open}
+            onOpenChange={setOpen}
+            footer={<TextArea label="Ask a question" rows={2} />}
+          >
+            <Stack gap={3}>
+              <Text variant="title-sm">Popular this week</Text>
+              <ArrowLink href="#side-panel">Change a roast profile</ArrowLink>
+              <ArrowLink href="#side-panel">When payouts arrive</ArrowLink>
+            </Stack>
+          </SidePanel>
+        }
+      >
+        <AppPage width="full" header={<PageHeader title="Orders" />}>
+          <AppPage.Section>
+            <Text>Help opens over this page as a sheet.</Text>
+          </AppPage.Section>
+        </AppPage>
+      </AppShell>
+    </div>
+  );
+}
 
 export const demos: readonly DemoSection[] = [
   {
@@ -46,5 +119,11 @@ export const demos: readonly DemoSection[] = [
         </SidePanel>
       </div>
     ),
+  },
+  {
+    title: "As a sheet",
+    description:
+      "In a shell under 1280px wide, Help opens it as a sheet at the window's end over a dim scrim, and the page keeps its width.",
+    render: () => <NarrowShell />,
   },
 ];
