@@ -16,4 +16,7 @@ export const meta: ComponentMeta = {
   related: ["Section", "Page", "Sticky", "SubNav"],
   a11y: "The aside is a complementary landmark named by `asideLabel`. It comes after the article in reading order, and it still does when the two stack.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It's its own size container. From 1024px of room the article takes 8 of 12 columns and the aside the last 3, a column apart, and the aside sticks under the sticky bars with 24px of padding, fitting between them and stopping at the article's end; with less room the aside follows the article as a plain block, 48px under it, and the text wraps.",
 };
