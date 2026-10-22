@@ -89,6 +89,7 @@ function Site(): ReactElement {
   return (
     <Page>
       <NavBar
+        skipTo="main"
         behavior="sticky"
         brand={<a href={link("/")}>{NAME}</a>}
         actions={
@@ -106,104 +107,108 @@ function Site(): ReactElement {
           Pricing
         </MorphMenu.Link>
       </NavBar>
-      <CenteredHero
-        title="Plan the week in ten minutes."
-        body="Lay out the week's work, see who's free, and move a task with one drag."
-        actions={
-          <>
-            <Button variant="primary" size="cta" arrow="forward" asChild>
+      <main id="main">
+        <CenteredHero
+          title="Plan the week in ten minutes."
+          body="Lay out the week's work, see who's free, and move a task with one drag."
+          actions={
+            <>
+              <Button variant="primary" size="cta" arrow="forward" asChild>
+                <a href="#pricing" onClick={jumpTo("pricing")}>
+                  Start planning
+                </a>
+              </Button>
+              <Button variant="secondary" size="cta" asChild>
+                <a href="#features" onClick={jumpTo("features")}>
+                  See how it works
+                </a>
+              </Button>
+            </>
+          }
+        />
+        <Section
+          id="features"
+          tone="muted"
+          title="Everything a week needs"
+          body="Three things it does well, and nothing to set up first."
+        >
+          <Grid columns={{ base: 1, md: 3 }} gap={4}>
+            {FEATURES.map((feature) => (
+              <Surface key={feature.title} level="card" pad={6}>
+                <Stack gap={3}>
+                  <Icon icon={feature.icon} />
+                  <Text variant="title" asChild>
+                    <h3>{feature.title}</h3>
+                  </Text>
+                  <Text variant="body" tone="secondary">
+                    {feature.body}
+                  </Text>
+                </Stack>
+              </Surface>
+            ))}
+          </Grid>
+        </Section>
+        <Section size="sm">
+          <StatStrip>
+            <Stat value={10} label="minutes to plan a week" />
+            <Stat value={3} label="views: day, week and team" />
+            <Stat value={7} label="days on one page" />
+          </StatStrip>
+        </Section>
+        <Section
+          id="pricing"
+          title="Free for one, simple for a team"
+          body="Start on your own and bring the team when you're ready."
+        >
+          <Grid columns={{ base: 1, md: 2 }} gap={4}>
+            {PLANS.map((plan) => (
+              <Surface key={plan.name} level="card" pad={6}>
+                <Stack gap={4}>
+                  <Stack gap={2}>
+                    <Text variant="title" asChild>
+                      <h3>{plan.name}</h3>
+                    </Text>
+                    <Text variant="heading-2">{plan.price}</Text>
+                  </Stack>
+                  <Stack gap={2}>
+                    {plan.lines.map((line) => (
+                      <Text key={line} variant="body" tone="secondary">
+                        {line}
+                      </Text>
+                    ))}
+                  </Stack>
+                  <Inline>
+                    <Button
+                      variant={plan.primary ? "primary" : "soft"}
+                      onClick={() => {
+                        toast(
+                          `${plan.name} goes to the sign-up page once there is one.`,
+                        );
+                      }}
+                    >
+                      {plan.primary
+                        ? "Try it with your team"
+                        : "Start for free"}
+                    </Button>
+                  </Inline>
+                </Stack>
+              </Surface>
+            ))}
+          </Grid>
+        </Section>
+        <CenteredHero
+          titleAs="h2"
+          title="Your next week, planned."
+          titleMore="It takes ten minutes."
+          actions={
+            <Button variant="primary" arrow="forward" asChild>
               <a href="#pricing" onClick={jumpTo("pricing")}>
                 Start planning
               </a>
             </Button>
-            <Button variant="secondary" size="cta" asChild>
-              <a href="#features" onClick={jumpTo("features")}>
-                See how it works
-              </a>
-            </Button>
-          </>
-        }
-      />
-      <Section
-        id="features"
-        tone="muted"
-        title="Everything a week needs"
-        body="Three things it does well, and nothing to set up first."
-      >
-        <Grid columns={{ base: 1, md: 3 }} gap={4}>
-          {FEATURES.map((feature) => (
-            <Surface key={feature.title} level="card" pad={6}>
-              <Stack gap={3}>
-                <Icon icon={feature.icon} />
-                <Text variant="title" asChild>
-                  <h3>{feature.title}</h3>
-                </Text>
-                <Text variant="body" tone="secondary">
-                  {feature.body}
-                </Text>
-              </Stack>
-            </Surface>
-          ))}
-        </Grid>
-      </Section>
-      <Section size="sm">
-        <StatStrip>
-          <Stat value={10} label="minutes to plan a week" />
-          <Stat value={3} label="views: day, week and team" />
-          <Stat value={7} label="days on one page" />
-        </StatStrip>
-      </Section>
-      <Section
-        id="pricing"
-        title="Free for one, simple for a team"
-        body="Start on your own and bring the team when you're ready."
-      >
-        <Grid columns={{ base: 1, md: 2 }} gap={4}>
-          {PLANS.map((plan) => (
-            <Surface key={plan.name} level="card" pad={6}>
-              <Stack gap={4}>
-                <Stack gap={2}>
-                  <Text variant="title" asChild>
-                    <h3>{plan.name}</h3>
-                  </Text>
-                  <Text variant="heading-2">{plan.price}</Text>
-                </Stack>
-                <Stack gap={2}>
-                  {plan.lines.map((line) => (
-                    <Text key={line} variant="body" tone="secondary">
-                      {line}
-                    </Text>
-                  ))}
-                </Stack>
-                <Inline>
-                  <Button
-                    variant={plan.primary ? "primary" : "soft"}
-                    onClick={() => {
-                      toast(
-                        `${plan.name} goes to the sign-up page once there is one.`,
-                      );
-                    }}
-                  >
-                    {plan.primary ? "Try it with your team" : "Start for free"}
-                  </Button>
-                </Inline>
-              </Stack>
-            </Surface>
-          ))}
-        </Grid>
-      </Section>
-      <CenteredHero
-        titleAs="h2"
-        title="Your next week, planned."
-        titleMore="It takes ten minutes."
-        actions={
-          <Button variant="primary" arrow="forward" asChild>
-            <a href="#pricing" onClick={jumpTo("pricing")}>
-              Start planning
-            </a>
-          </Button>
-        }
-      />
+          }
+        />
+      </main>
       <Footer
         brand={
           <Stack gap={2}>

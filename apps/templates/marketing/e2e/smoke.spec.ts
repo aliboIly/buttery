@@ -52,3 +52,30 @@ test("a plan's button says where it goes", async ({ page }) => {
     }),
   ).toBeVisible();
 });
+
+test("puts the page between the bar and the footer in a main landmark, which the bar's skip link reaches", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName === "webkit",
+    "WebKit leaves links out of the tab order unless the system's keyboard setting puts them in.",
+  );
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  const main = page.getByRole("main");
+  await expect(main.getByRole("heading", { level: 1 })).toHaveText(
+    "Plan the week in ten minutes.",
+  );
+  await expect(main.getByRole("navigation")).toHaveCount(0);
+  await expect(page.getByRole("contentinfo")).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("link", { name: "Skip to content" }),
+  ).toBeFocused();
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Tab");
+  await expect(
+    main.getByRole("link", { name: "Start planning" }).first(),
+  ).toBeFocused();
+});

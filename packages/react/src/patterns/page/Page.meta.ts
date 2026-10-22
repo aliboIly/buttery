@@ -11,7 +11,7 @@ export const meta: ComponentMeta = {
   ],
   avoidWhen: ["App screens: use AppShell"],
   related: ["Section", "Container", "SplitHero", "NavBar"],
-  a11y: "No role of its own; pass asChild with a main element to make it the page's main landmark.",
+  a11y: "No role of its own. Put what sits between the NavBar and the Footer in a main element and give the bar skipTo with its id, as the marketing template does; on a page with no bar or footer, pass asChild with a main instead.",
   motion: "none",
   keyboard: [],
   layout:
