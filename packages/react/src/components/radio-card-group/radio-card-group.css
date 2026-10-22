@@ -17,7 +17,6 @@
   .bt-radio-card-group > [data-bt-part="option"] {
     display: flex;
     flex-direction: column;
-    gap: var(--bt-space-1);
     min-inline-size: 0;
   }
 
@@ -77,6 +76,7 @@
 
   .bt-radio-card-group [data-bt-part="radio-card-group-description"] {
     margin: 0;
+    padding-block-start: var(--bt-space-1);
     padding-inline-start: var(--bt-radio-card-group-indent);
     color: var(--bt-text-secondary);
   }

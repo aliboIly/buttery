@@ -98,6 +98,11 @@ describe("RadioCardGroup", () => {
     });
     expect(document.activeElement).toBe(some);
     expect(some.getAttribute("aria-checked")).toBe("true");
+    await userEvent.keyboard("{ArrowDown>}");
+    await userEvent.keyboard("{/ArrowDown}");
+    const all = screen.getByRole("radio", { name: "Screen every renewal" });
+    expect(document.activeElement).toBe(all);
+    expect(all.getAttribute("aria-checked")).toBe("true");
   });
 
   it("gives each radio a 24px target", () => {
@@ -106,5 +111,52 @@ describe("RadioCardGroup", () => {
       .getByRole("radio", { name: "Screen every renewal" })
       .querySelector('[data-bt-part="radio-card-group-hit"]');
     expect(hit?.getBoundingClientRect().width).toBe(24);
+    expect(hit?.getBoundingClientRect().height).toBe(24);
+  });
+
+  it("keeps options 12 apart whether or not they hold a detail, and opens a detail 8 under its line", async () => {
+    render(
+      <div style={{ inlineSize: "480px" }}>
+        <RadioCardGroup label="Renewal screening" options={OPTIONS} />
+      </div>,
+    );
+    const options = [
+      ...document.querySelectorAll<HTMLElement>(
+        '.bt-radio-card-group > [data-bt-part="option"]',
+      ),
+    ];
+    const [first, second, third] = options.map((option) =>
+      option.getBoundingClientRect(),
+    );
+    if (!first || !second || !third) throw new Error("No options.");
+    expect(second.top - first.bottom).toBe(12);
+    expect(third.top - second.bottom).toBe(12);
+    await userEvent.click(screen.getByText("Screen the first renewals only"));
+    const field = await screen.findByLabelText("Renewals to screen");
+    await waitFor(() => {
+      expect(document.documentElement.hasAttribute("data-bt-settled")).toBe(
+        true,
+      );
+    });
+    const line = screen
+      .getByText("Renewals after that go through without a check.")
+      .getBoundingClientRect();
+    expect(field.getBoundingClientRect().top - line.bottom).toBe(8);
+  });
+
+  it("fades a detail out as another option is chosen, rather than dropping it at once", async () => {
+    render(
+      <RadioCardGroup
+        label="Renewal screening"
+        options={OPTIONS}
+        defaultValue="some"
+      />,
+    );
+    await screen.findByLabelText("Renewals to screen");
+    await userEvent.click(screen.getByText("Screen every renewal"));
+    expect(screen.getByLabelText("Renewals to screen")).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.queryByLabelText("Renewals to screen")).toBeNull();
+    });
   });
 });

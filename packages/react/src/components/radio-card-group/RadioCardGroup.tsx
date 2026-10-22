@@ -131,7 +131,11 @@ export function RadioCardGroup<Value extends string = string>({
               </p>
             )}
             {option.detail === undefined ? null : (
-              <Morph disclosure data-bt-part="detail-frame">
+              <Morph
+                disclosure
+                contentKey={isChosen ? "open" : "closed"}
+                data-bt-part="detail-frame"
+              >
                 {isChosen ? (
                   <div data-bt-part="radio-card-group-detail">
                     {option.detail}
