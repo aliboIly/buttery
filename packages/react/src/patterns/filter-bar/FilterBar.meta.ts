@@ -27,7 +27,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'It takes its container\'s width: the pills sit 8px apart and wrap onto more lines as filters are applied, the actions stay at the end of the first line, and under 640px of its own width the pills fold into one "Filters · 2" button. Each pill is 28px tall (--bt-h-sm) and truncates its "Field | value" with the full text in its title, and its 16px remove button has a 24px press area.',
+    'It takes its container\'s width: the pills sit 8px apart and wrap onto more lines as filters are applied, the actions stay at the end of the first line, centered level with the pills while those fit on one line, and under 640px of its own width the pills fold into one "Filters · 2" button. Each pill is 28px tall (--bt-h-sm) and truncates its "Field | value" with the full text in its title, and its 16px remove button has a 24px press area.',
   reducedMotion:
     "A pill's editor, and the folded pills on a phone, fade in and out in 100ms without growing.",
 };
