@@ -1,5 +1,10 @@
 import { ReflowGroup, Stack, Text, useReflow } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type {
+  DemoSection,
+  DemoValues,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { RecommendationCard } from "@buttery/react";
 import { motion } from "motion/react";
 import type { ReactElement } from "react";
@@ -59,6 +64,49 @@ function PhoneSketch(): ReactElement {
     </svg>
   );
 }
+
+function tipCode({ title, badge, estimate, media }: DemoValues): string {
+  return [
+    "<RecommendationCard",
+    `  title="${String(title)}"`,
+    ...(badge === "Tip" ? [] : [`  badge="${String(badge)}"`]),
+    '  action={{ label: "Turn on alerts", href: "/settings/alerts" }}',
+    ...(estimate === "" ? [] : [`  estimate="${String(estimate)}"`]),
+    ...(media === true
+      ? [
+          '  media={<img src={alertsPicture} alt="Alerts arriving on a phone" />}',
+        ]
+      : []),
+    '  storageKey="low-stock-alerts"',
+    ">",
+    "  Get a message when a green coffee drops under two weeks of roasting.",
+    "</RecommendationCard>",
+  ].join("\n");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    title: { kind: "text", initial: "Send low-stock alerts to the roastery" },
+    badge: { kind: "text", initial: "Tip" },
+    estimate: { kind: "text", initial: "2 min" },
+    media: { kind: "toggle", initial: true },
+  },
+  render: ({ title, badge, estimate, media }) => (
+    <Stack style={{ maxInlineSize: "var(--bt-w-aside)" }}>
+      <RecommendationCard
+        key={String(media)}
+        title={String(title)}
+        badge={String(badge)}
+        action={{ label: "Turn on alerts", href: "#settings-alerts" }}
+        estimate={estimate === "" ? undefined : String(estimate)}
+        media={media === true ? <PhoneSketch /> : undefined}
+      >
+        Get a message when a green coffee drops under two weeks of roasting.
+      </RecommendationCard>
+    </Stack>
+  ),
+  code: tipCode,
+};
 
 export const demos: readonly DemoSection[] = [
   {
