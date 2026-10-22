@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Grid } from "@buttery/core";
+import { Grid, Stack } from "@buttery/core";
 import type { DemoControl, DemoValues } from "@buttery/core";
 import {
   Field,
@@ -142,6 +142,7 @@ function Control({
       return (
         <Slider
           label={name}
+          labelPosition="top"
           min={control.min}
           max={control.max}
           step={control.step}
@@ -157,7 +158,10 @@ function Control({
   }
 }
 
-/** The controls of a live demo, one per prop, each named by the prop it sets. */
+/**
+ * The controls of a live demo, one per prop, each named by the prop it sets: the labelled fields first, two to
+ * a row, then the switches in rows of their own, so a switch never sits on the label line beside a field.
+ */
 export function LiveControls({
   controls,
   values,
@@ -167,20 +171,30 @@ export function LiveControls({
   readonly values: DemoValues;
   readonly onChange: (name: string, value: string | number | boolean) => void;
 }): ReactElement {
+  const entries = Object.entries(controls);
+  const rows = (
+    list: readonly (readonly [string, DemoControl])[],
+  ): ReactElement | null =>
+    list.length === 0 ? null : (
+      <Grid columns={{ base: 1, md: 2 }} gap={4}>
+        {list.map(([name, control]) => (
+          <Control
+            key={name}
+            name={name}
+            control={control}
+            value={values[name] ?? control.initial}
+            onChange={(value) => {
+              onChange(name, value);
+            }}
+          />
+        ))}
+      </Grid>
+    );
   return (
-    <Grid columns={{ base: 1, md: 2 }} gap={4} className="docs-controls">
-      {Object.entries(controls).map(([name, control]) => (
-        <Control
-          key={name}
-          name={name}
-          control={control}
-          value={values[name] ?? control.initial}
-          onChange={(value) => {
-            onChange(name, value);
-          }}
-        />
-      ))}
-    </Grid>
+    <Stack gap={4}>
+      {rows(entries.filter(([, control]) => control.kind !== "toggle"))}
+      {rows(entries.filter(([, control]) => control.kind === "toggle"))}
+    </Stack>
   );
 }
 
