@@ -10,6 +10,7 @@ import { shownSource } from "./example-source.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
 import { listed, screensByDemo } from "../src/demo-sentence.ts";
 import { SECTIONS } from "../src/nav.ts";
+import { demoPages } from "../src/routes.ts";
 import { demoUsesIn } from "./demo-uses.ts";
 import { propsTablesIn, typeTablesIn } from "./props.ts";
 import type { PropDoc } from "./props.ts";
@@ -656,7 +657,8 @@ interface ListedPage {
 
 /**
  * `llms.txt`: what buttery is, and every page of the site with a link to its Markdown, under the nav's
- * sections in the nav's order, and the components under their groups' names, such as "Components › Actions".
+ * sections in the nav's order, and the components under their groups' names, such as "Components › Actions";
+ * then the demos, which are apps, by their own addresses.
  */
 export function llmsText(
   root: string,
@@ -706,6 +708,13 @@ export function llmsText(
         listing(`${section.title} › ${group.title}`, group.section),
       ),
     ]),
+    "## Demos",
+    "",
+    "- [Demos](/demos): Small apps made only from buttery's components, each one a template with its own content, that open as sites of their own.",
+    ...demoPages.map(
+      (demo) =>
+        `- [${demo.title}](/demos/${demo.route}): ${demo.description} It's built on the ${demo.template} template, and its source is in \`apps/demos/${demo.route}\`.`,
+    ),
   ]
     .join("\n")
     .trim()}\n`;

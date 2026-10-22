@@ -21,6 +21,7 @@ import {
 import type { MarkdownMiddleware } from "./markdown.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
 import { SECTIONS } from "../src/nav.ts";
+import { demoPages } from "../src/routes.ts";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const components = componentSources(root);
@@ -209,6 +210,13 @@ describe("the site as Markdown", () => {
     expect(listedUnder(text, "Get started")[0]).toBe(
       "/get-started/introduction.md",
     );
+  });
+
+  it("lists the demos page and each demo in llms.txt", () => {
+    expect(listedUnder(llmsText(root, components), "Demos")).toEqual([
+      "/demos",
+      ...demoPages.map((demo) => `/demos/${demo.route}`),
+    ]);
   });
 
   it("links a template's page to its live preview", () => {

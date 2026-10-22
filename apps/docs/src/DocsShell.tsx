@@ -31,13 +31,14 @@ function columns<T>(items: readonly T[], size: number): T[][] {
 
 /**
  * The top bar's menus, each holding whole sections of the nav, so the site's ten sections fit the bar as
- * five menus, with a link at the foot of a menu whose section has a page about all of it; the sidebar still
- * lists every page.
+ * five menus, with a link at the foot of a menu whose section has a page about all of it; Resources holds
+ * the demos too. The sidebar still lists every page.
  */
 const TOP_MENUS: readonly {
   readonly label: string;
   readonly roots: readonly string[];
   readonly footer?: { readonly label: string; readonly href: string };
+  readonly demos?: boolean;
 }[] = [
   { label: "Learn", roots: ["get-started", "foundations", "layout", "motion"] },
   {
@@ -47,7 +48,7 @@ const TOP_MENUS: readonly {
   },
   { label: "Patterns", roots: ["patterns", "templates"] },
   { label: "Guides", roots: ["guides", "tools"] },
-  { label: "Resources", roots: ["resources"] },
+  { label: "Resources", roots: ["resources"], demos: true },
 ];
 
 /** Every page of the site in its sections, the current one marked, for the sidebar. */
@@ -159,6 +160,7 @@ export function DocsShell({
           const sections = menu.roots.flatMap(
             (root) => nav.find((section) => section.root === root) ?? [],
           );
+          const titled = sections.length + (menu.demos === true ? 1 : 0) > 1;
           return (
             <MorphMenu.Item
               key={menu.label}
@@ -188,11 +190,7 @@ export function DocsShell({
                   : columns(section.pages, 10).map((column, at) => (
                       <MorphMenu.Column
                         key={column[0]?.route}
-                        title={
-                          sections.length > 1 && at === 0
-                            ? section.title
-                            : undefined
-                        }
+                        title={titled && at === 0 ? section.title : undefined}
                       >
                         {column.map(({ route, page }) => (
                           <MorphMenu.Entry
@@ -207,6 +205,18 @@ export function DocsShell({
                       </MorphMenu.Column>
                     )),
               )}
+              {menu.demos === true ? (
+                <MorphMenu.Column title="Demos">
+                  {demoLinks.map(({ route, title }) => (
+                    <MorphMenu.Entry
+                      key={route}
+                      href={`/${route}`}
+                      title={title}
+                      aria-current={route === current ? "page" : undefined}
+                    />
+                  ))}
+                </MorphMenu.Column>
+              ) : null}
             </MorphMenu.Item>
           );
         })}

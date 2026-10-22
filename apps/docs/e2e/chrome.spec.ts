@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import type { Locator, Page } from "@playwright/test";
 import { fileURLToPath } from "node:url";
 import { releasesIn } from "../vite/whats-new.ts";
+import { demoPages } from "../src/routes.ts";
 import { componentRoutes } from "./routes.ts";
 
 test.use({ viewport: { width: 1280, height: 720 } });
@@ -320,6 +321,32 @@ test("the components overview lists every component by group, and the site's way
   await expect(
     main.getByRole("heading", { level: 2, name: "Inputs" }),
   ).toBeInViewport();
+});
+
+test("the demos have a tile among the landing page's Explore tiles and a column in the Resources menu", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const explore = page.getByRole("region", { name: "Explore" });
+  await expect(
+    explore.getByRole("heading", { level: 3, name: "Templates" }),
+  ).toBeVisible();
+  await expect(
+    explore.getByText(`${String(demoPages.length)} demos`),
+  ).toBeVisible();
+  await expect(
+    explore.getByRole("link", { name: "Open Demos" }),
+  ).toHaveAttribute("href", "/demos");
+  await page.getByRole("button", { name: "Resources", exact: true }).click();
+  const menu = page.locator('[data-bt-part="panel"]');
+  await expect(menu.getByRole("link", { name: "All demos" })).toHaveAttribute(
+    "href",
+    "/demos",
+  );
+  for (const demo of demoPages)
+    await expect(
+      menu.getByRole("link", { name: demo.title, exact: true }),
+    ).toHaveAttribute("href", `/demos/${demo.route}`);
 });
 
 test("a Markdown address with no page answers 404", async ({ request }) => {

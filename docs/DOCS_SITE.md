@@ -54,7 +54,7 @@ The Data table page and Overview patterns are compositions of the parts above an
 - Where to start: three cards, each with a forward-arrow link: a new app (`create-buttery`), an existing app (`buttery init`), building with a coding agent (`AGENTS.md` and the MCP server). Until the CLI and the MCP server exist, the cards name `pnpm new-app`, the existing-app guide, and `AGENTS.md` with the make-it-buttery skill.
 - What's new: the latest three releases, each with its version, date and two or three highlights, from Changesets plus a short `content/whats-new/` entry per release, and a link to the full changelog. Each entry is `content/whats-new/<version>.md`, with `version`, `date` and `title` in its frontmatter and its highlights as `- ` lines; Resources › What's new lists every entry with the changes each package's `CHANGELOG.md` gives its version. The docs check fails on an entry without two or three highlights and on a changelog version without an entry.
 - A live strip of real components the visitor can touch (a segmented control, a slider, a menu, a toast) that shows the feel instead of describing it.
-- Explore tiles with counts: Foundations, Layout, Motion, Components, Patterns, Templates, each counted from the nav and opening the section's first page; Components counts its components, not the overview. A section with no pages yet has no tile.
+- Explore tiles with counts: Foundations, Layout, Motion, Components, Patterns, Templates, each counted from the nav and opening the section's first page, and Demos, counting the demos and opening `/demos`. Components counts its components, not the overview. A section with no pages yet has no tile.
 - A footer: the version, GitHub, the roadmap and the brand page.
 - Motion per `docs/MOTION_SPEC.md`: sections reveal once as they scroll in, the tiles stagger, and nothing plays by itself to distract.
 
@@ -79,7 +79,7 @@ Guides and foundations pages use the same shell without the component-only parts
 ## The shell
 
 - Three columns: the nav on the left (240 wide, groups that fold, the current page highlighted and scrolled into view, scrolling on its own), the content (prose at most 720 wide, demos wider when they need it), and an "On this page" list with scroll-spy on the right from 1280px. Under 1100 the list hides; under 768 the nav becomes a sheet.
-- A top bar: the `BrandMark`, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group, each group opening its heading on All components, with "Every component" at the menu's foot; Patterns and Templates; Guides and Tools; Resources), the docs search (below), the version, a theme toggle and GitHub. A component page's group crumb opens the same heading.
+- A top bar: the `BrandMark`, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group, each group opening its heading on All components, with "Every component" at the menu's foot; Patterns and Templates; Guides and Tools; Resources, with a Demos column holding the demos page and each demo), the docs search (below), the version, a theme toggle and GitHub. A component page's group crumb opens the same heading.
 - Anchors on headings, copy buttons on code, and syntax highlighting done at build time.
 - An address with no page shows "Page not found" under that address: its own title, a docs search holding the address's last words (`/get-started/instalation` holds "instalation") and a link to each section and the demos. A section's own address, such as `/foundations`, opens the section's first page and puts that page's address in the bar. Only a demo or a template's preview draws the paths under its address, with its own router.
 - Every docs page passes `expectButtery` across the full matrix, like the rest of buttery. The docs site is buttery's biggest dogfood test.
@@ -123,7 +123,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 - The same headings in the same order on every page (the anatomy above), so people and coding agents know where to look.
 - Nothing lives only in a picture or a demo: whatever a demo shows is also said in text or code. Tables are real tables. Code blocks carry a language tag and full imports.
 - Do and don't pairs are code, each with a one-line reason.
-- Every page is also served as clean Markdown at its path plus `.md`, with a "Copy page as Markdown" button, and `llms.txt` links to those versions, under the nav's sections in the nav's order, each component group a section of its own, such as `## Components › Actions`.
+- Every page is also served as clean Markdown at its path plus `.md`, with a "Copy page as Markdown" button, and `llms.txt` links to those versions, under the nav's sections in the nav's order, each component group a section of its own, such as `## Components › Actions`, and last the demos page and each demo, with its template and its folder.
 - A comprehension gate per group of pages: a reviewer who hasn't seen the code reads the rendered page cold and answers three questions about it, and the page is fixed if any answer is wrong. Then a fresh agent gets only a component's `.md` page and builds a small feature with that component; its code has to typecheck and pass `expectButtery`. If it fails, the page is unclear: the page gets fixed, not the test.
 
 ## Demos

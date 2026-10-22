@@ -242,7 +242,7 @@ export const pageGroups: readonly PageGroup[] = [
   },
 ];
 
-/** The sections the landing page's Explore tiles open, with what each counts. */
+/** The sections the landing page's Explore tiles open, with what each counts; the demos have the last tile. */
 const EXPLORE: readonly { readonly root: string; readonly unit: string }[] = [
   { root: "foundations", unit: "pages" },
   { root: "layout", unit: "pages" },
@@ -252,8 +252,8 @@ const EXPLORE: readonly { readonly root: string; readonly unit: string }[] = [
   { root: "templates", unit: "templates" },
 ];
 
-const exploreSections: readonly ExploreSection[] = EXPLORE.flatMap(
-  ({ root, unit }) => {
+const exploreSections: readonly ExploreSection[] = [
+  ...EXPLORE.flatMap(({ root, unit }) => {
     const section = nav.find((candidate) => candidate.root === root);
     if (!section) return [];
     const first = section.pages[0] ?? section.groups[0]?.pages[0];
@@ -271,8 +271,9 @@ const exploreSections: readonly ExploreSection[] = EXPLORE.flatMap(
           },
         ]
       : [];
-  },
-);
+  }),
+  { title: "Demos", href: "/demos", count: demoPages.length, unit: "demos" },
+];
 
 /** The site's front page, at `/`. */
 const landingPage: Page = {
