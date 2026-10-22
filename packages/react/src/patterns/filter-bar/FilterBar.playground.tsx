@@ -1,7 +1,12 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { Stack, demoChoice } from "@buttery/core";
+import type {
+  DemoSection,
+  DemoValues,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { Button, FilterBar, FilterPill } from "@buttery/react";
 import { Download } from "lucide-react";
 
@@ -77,6 +82,115 @@ function Filters(): ReactElement {
     </FilterBar>
   );
 }
+
+const STATUSES = ["Paid", "Unpaid", "Refunded"] as const;
+
+type Status = (typeof STATUSES)[number];
+
+function LiveFilters({
+  initial,
+  exporting,
+  clearLabel,
+}: {
+  readonly initial: Status | undefined;
+  readonly exporting: boolean;
+  readonly clearLabel: string;
+}): ReactElement {
+  const [status, setStatus] = useState(initial);
+  const [open, setOpen] = useState(false);
+  return (
+    <FilterBar
+      clearLabel={clearLabel}
+      onClearAll={() => {
+        setStatus(undefined);
+      }}
+      actions={
+        exporting ? (
+          <Button size="sm" iconStart={Download}>
+            Export
+          </Button>
+        ) : undefined
+      }
+    >
+      <FilterPill
+        label="Status"
+        value={status}
+        open={open}
+        onOpenChange={setOpen}
+        onRemove={() => {
+          setStatus(undefined);
+        }}
+      >
+        <Stack gap={1}>
+          {STATUSES.map((choice) => (
+            <Button
+              key={choice}
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setStatus(choice);
+                setOpen(false);
+              }}
+            >
+              {choice}
+            </Button>
+          ))}
+        </Stack>
+      </FilterPill>
+    </FilterBar>
+  );
+}
+
+function filtersCode({ status, actions, clearLabel }: DemoValues): string {
+  const value = demoChoice(status, ["None", ...STATUSES]);
+  return [
+    "<FilterBar",
+    "  onClearAll={clearFilters}",
+    ...(clearLabel === "Clear filters"
+      ? []
+      : [`  clearLabel="${String(clearLabel)}"`]),
+    ...(actions === true
+      ? [
+          "  actions={",
+          '    <Button size="sm" iconStart={Download}>',
+          "      Export",
+          "    </Button>",
+          "  }",
+        ]
+      : []),
+    ">",
+    value === "None"
+      ? '  <FilterPill label="Status">'
+      : `  <FilterPill label="Status" value="${value}" onRemove={removeStatus}>`,
+    "    <StatusPicker onValueChange={setStatus} />",
+    "  </FilterPill>",
+    "</FilterBar>",
+  ].join("\n");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    status: {
+      kind: "choice",
+      options: ["None", "Paid", "Unpaid", "Refunded"],
+      initial: "Unpaid",
+    },
+    actions: { kind: "toggle", initial: true },
+    clearLabel: { kind: "text", initial: "Clear filters" },
+  },
+  render: ({ status, actions, clearLabel }) => {
+    const value = demoChoice(status, ["None", ...STATUSES]);
+    return (
+      <LiveFilters
+        key={value}
+        initial={value === "None" ? undefined : value}
+        exporting={actions === true}
+        clearLabel={String(clearLabel)}
+      />
+    );
+  },
+  code: filtersCode,
+};
 
 export const demos: readonly DemoSection[] = [
   {
