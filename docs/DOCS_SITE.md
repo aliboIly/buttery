@@ -109,6 +109,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 - A live demo's prop controls really change the component.
 - Each example exports `play`, a small script that drives it, such as pressing Next and seeing the step change, or moving a slider with the arrow keys. It's an async function given a few role-and-name actions (`press`, `type`, `key` and `see`), typed `ExamplePlay` in `@buttery/core`, so example files need no testing library.
 - The Phase 7 gate checks every example: typecheck and lint; it renders in Chromium and WebKit with no console errors or warnings; its play script runs; axe passes; `expectButtery` passes on its frame in light, dark, compact and reduced motion; each prop control changes what renders; and a copy test pastes it into a fresh starter app and builds it.
+- `packages/core/src/examples.test.tsx` and `packages/react/src/examples.test.tsx` run the plays, one test per example named for its folder and file, such as `slider/opacity-row`, so `pnpm vitest run --project browser packages/react/src/examples.test.tsx -t "slider/"` runs one folder's.
 - Coverage checks fail the build when an export from `@buttery/react` has no docs page, an exported prop has no JSDoc, a page links to a route or heading that doesn't exist, or a component page has fewer than the required examples.
 
 ## Writing

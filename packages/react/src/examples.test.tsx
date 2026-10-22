@@ -51,11 +51,16 @@ const context: ExamplePlayContext = {
   },
 };
 
+/** `slider/opacity-row` for `./components/slider/examples/opacity-row.tsx`: whole, so `-t` can pick out a folder. */
+function testName(path: string): string {
+  return path.replace(/^.*\/([^/]+)\/examples\/([^/]+)\.tsx$/, "$1/$2");
+}
+
 const played = Object.entries(modules).flatMap(([path, module]) => {
   const { play, ...rest } = module;
   if (!isPlay(play)) return [];
   const Example = Object.values(rest).find(isComponent);
-  return Example === undefined ? [] : [{ path, play, Example }];
+  return Example === undefined ? [] : [{ name: testName(path), play, Example }];
 });
 
 beforeEach(() => {
@@ -72,9 +77,21 @@ describe("examples", () => {
     expect(Object.keys(modules).length).toBeGreaterThan(0);
   });
 
-  it.each(played)(
-    "$path plays through with nothing logged",
-    async ({ play, Example }) => {
+  it("names each example's test after its folder and file, whole", ({
+    task,
+  }) => {
+    const names = task.suite?.tasks.map((test) => test.name) ?? [];
+    const expected = Object.entries(modules)
+      .filter(([, module]) => isPlay(module["play"]))
+      .map(([path]) =>
+        path.replace(/^.*\/([^/]+)\/examples\/([^/]+)\.tsx$/, "$1/$2"),
+      );
+    expect(new Set(expected).size).toBe(expected.length);
+    expect(names).toEqual(expect.arrayContaining(expected));
+  });
+
+  for (const { name, play, Example } of played) {
+    it(name, async () => {
       const logged = [vi.spyOn(console, "error"), vi.spyOn(console, "warn")];
       render(
         <ButteryProvider>
@@ -83,6 +100,6 @@ describe("examples", () => {
       );
       await play(context);
       for (const spy of logged) expect(spy).not.toHaveBeenCalled();
-    },
-  );
+    });
+  }
 });
