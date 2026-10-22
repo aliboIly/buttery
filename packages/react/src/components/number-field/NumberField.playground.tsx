@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { NumberField } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -38,6 +39,31 @@ function SizeDemo(): ReactElement {
     </Inline>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "W" },
+    unit: { kind: "text", initial: "px" },
+    labelPosition: {
+      kind: "choice",
+      options: ["side", "top"],
+      initial: "side",
+    },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ label, unit, labelPosition, disabled }) => (
+    <NumberField
+      label={String(label)}
+      unit={String(unit)}
+      labelPosition={demoChoice(labelPosition, ["side", "top"])}
+      disabled={disabled === true}
+      min={1}
+      defaultValue={1080}
+    />
+  ),
+  code: ({ label, unit, labelPosition, disabled }) =>
+    `<NumberField label="${String(label)}" unit="${String(unit)}" labelPosition="${String(labelPosition)}"${disabled === true ? " disabled" : ""} min={1} defaultValue={1080} />`,
+};
 
 export const demos: readonly DemoSection[] = [
   {
