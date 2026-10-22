@@ -11,7 +11,7 @@ import {
   Text,
   useFloatingObstacle,
 } from "@buttery/core";
-import { Button, MorphMenu, NavBar } from "@buttery/react";
+import { BrandMark, Button, MorphMenu, NavBar } from "@buttery/react";
 import { setSetting } from "./location.ts";
 import type { Settings } from "./location.ts";
 import { pageGroups } from "./pages.tsx";
@@ -184,7 +184,12 @@ export function Chrome({
         contained={false}
         label="Playground"
         className="pg-top"
-        brand={<a href="#/tokens">🧈 buttery playground</a>}
+        brand={
+          <a href="#/tokens">
+            <BrandMark size={24} />
+            buttery
+          </a>
+        }
         actions={<DisplaySettings settings={settings} />}
       >
         {pageGroups.map((group) => (
