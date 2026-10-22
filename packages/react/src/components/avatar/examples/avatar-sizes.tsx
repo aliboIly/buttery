@@ -1,0 +1,32 @@
+import type { ReactElement } from "react";
+import { Inline, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Avatar } from "@buttery/react";
+
+const SIZES = [
+  { size: "xs", pixels: "20px" },
+  { size: "sm", pixels: "24px" },
+  { size: "md", pixels: "32px" },
+  { size: "lg", pixels: "40px" },
+] as const;
+
+/** The four sizes, from a 20px avatar in a dense table to a 40px one in a profile header. */
+export function AvatarSizes(): ReactElement {
+  return (
+    <Inline gap={6} align="end" wrap>
+      {SIZES.map(({ size, pixels }) => (
+        <Stack key={size} gap={2} align="center">
+          <Avatar name="Tomas Reyes" size={size} />
+          <Text variant="caption">{`${size}, ${pixels}`}</Text>
+        </Stack>
+      ))}
+    </Inline>
+  );
+}
+
+export const kind: ExampleKind = "variants";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("xs, 20px");
+  await see("lg, 40px");
+};

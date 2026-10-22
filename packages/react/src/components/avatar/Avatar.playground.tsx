@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice, Inline } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Avatar } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -32,6 +32,19 @@ function Sizes({ src }: { readonly src?: string }): ReactElement {
     </Inline>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    size: { kind: "choice", options: ["xs", "sm", "md", "lg"], initial: "sm" },
+    name: { kind: "text", initial: "Mira Okafor" },
+  },
+  render: ({ size, name }) => (
+    <Avatar
+      name={String(name)}
+      size={demoChoice(size, ["sm", "xs", "md", "lg"])}
+    />
+  ),
+};
 
 export const demos: readonly DemoSection[] = [
   {

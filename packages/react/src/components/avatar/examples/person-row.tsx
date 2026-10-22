@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Avatar } from "@buttery/react";
 
 const PORTRAIT = `data:image/svg+xml,${encodeURIComponent(
@@ -18,3 +19,10 @@ export function PersonRow(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Mira Okafor");
+  await see("Head roaster");
+};
