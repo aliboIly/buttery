@@ -234,6 +234,17 @@ export function createLayoutToolkit(): LayoutToolkit {
     return false;
   }
 
+  /**
+   * How far a preview draws `element` from its own size: the factor a `[data-bt-preview]` around it gives,
+   * such as a docs page's scaled-down desktop example, or 1. Sizes it lays out at are measured drawn / factor.
+   */
+  function drawnScale(element: Element): number {
+    const factor = Number(
+      element.closest("[data-bt-preview]")?.getAttribute("data-bt-preview"),
+    );
+    return factor > 0 ? factor : 1;
+  }
+
   function isTooling(element: Element): boolean {
     return (
       element.closest('[data-bt-layer="dev"], [data-bt-annotations]') !== null
@@ -280,7 +291,8 @@ export function createLayoutToolkit(): LayoutToolkit {
   function lineBoxes({ node, parent }: TextRun): Box[] {
     const range = document.createRange();
     range.selectNodeContents(node);
-    const lineHeight = Number.parseFloat(styleOf(parent).lineHeight);
+    const factor = drawnScale(parent);
+    const lineHeight = Number.parseFloat(styleOf(parent).lineHeight) * factor;
     const trimmed = trimmedBoxOf(parent);
     const boxes: Box[] = [];
     for (const rect of range.getClientRects()) {
@@ -297,7 +309,7 @@ export function createLayoutToolkit(): LayoutToolkit {
         if (lastLine) {
           bottom = Math.max(
             bottom,
-            trimmed.bottom + inkDescent(node.data, parent),
+            trimmed.bottom + inkDescent(node.data, parent) * factor,
           );
         }
       }
@@ -851,7 +863,8 @@ export function createLayoutToolkit(): LayoutToolkit {
           });
         }
         if (element.hasAttribute("data-bt-control")) {
-          const height = element.getBoundingClientRect().height;
+          const height =
+            element.getBoundingClientRect().height / drawnScale(element);
           const allowed = tokens.heightVars
             .map((name) => Number.parseFloat(style.getPropertyValue(name)))
             .filter((value) => !Number.isNaN(value));
@@ -898,20 +911,21 @@ export function createLayoutToolkit(): LayoutToolkit {
         ) {
           continue;
         }
+        const factor = drawnScale(element);
         const rect = element.getBoundingClientRect();
-        let width = rect.width;
-        let height = rect.height;
+        let width = rect.width / factor;
+        let height = rect.height / factor;
         const hit = element.querySelector("[data-bt-hit]");
         if (hit) {
           const area = hit.getBoundingClientRect();
-          width = Math.max(width, area.width);
-          height = Math.max(height, area.height);
+          width = Math.max(width, area.width / factor);
+          height = Math.max(height, area.height / factor);
         }
         if (element instanceof HTMLInputElement && element.labels) {
           for (const label of element.labels) {
             const area = label.getBoundingClientRect();
-            width = Math.max(width, area.width);
-            height = Math.max(height, area.height);
+            width = Math.max(width, area.width / factor);
+            height = Math.max(height, area.height / factor);
           }
         }
         if (width < 23.5 || height < 23.5) {
@@ -929,12 +943,12 @@ export function createLayoutToolkit(): LayoutToolkit {
         const isButton =
           role === "button" ||
           (element.tagName === "BUTTON" && !ITEM_ROLES.has(role ?? ""));
-        if (isButton && !hit && rect.height < 27.5) {
+        if (isButton && !hit && rect.height / factor < 27.5) {
           report({
             rule: "target-size",
             a: selectorFor(element),
-            px: Math.round(rect.height),
-            message: `standalone button is ${px(rect.height)} tall, under 28`,
+            px: Math.round(rect.height / factor),
+            message: `standalone button is ${px(rect.height / factor)} tall, under 28`,
             fix: 'Standalone buttons are at least 28 tall: use size "sm" (28) or larger. Small inline actions like chips get a [data-bt-hit] child instead.',
           });
         }

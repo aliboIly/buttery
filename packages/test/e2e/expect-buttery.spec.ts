@@ -268,3 +268,31 @@ test("says how to fix a page that never reports settled", async ({ page }) => {
     /didn't report settled.*Fix: wrap the app in <ButteryProvider>/,
   );
 });
+
+/** A row of square buttons laid out at full size and drawn at half, marked as a preview or not. */
+function scaledButtons(mark: string): string {
+  return fixture(`
+    <main style="display: block; padding: 16px">
+      <div ${mark} style="inline-size: 200px; block-size: 40px; overflow: clip">
+        <div style="display: flex; gap: 4px; inline-size: 400px; transform-origin: 0 0; scale: 0.5">
+          <button type="button" aria-label="Undo" style="inline-size: var(--bt-h-sm); block-size: var(--bt-h-sm)"></button>
+          <button type="button" aria-label="Redo" style="inline-size: var(--bt-h-sm); block-size: var(--bt-h-sm)"></button>
+          <button type="button" aria-label="Share" style="inline-size: var(--bt-h-sm); block-size: var(--bt-h-sm)"></button>
+        </div>
+      </div>
+    </main>`);
+}
+
+test("measures a preview drawn scaled down at the size it lays out at, axe's target size too", async ({
+  page,
+}) => {
+  await page.setContent(scaledButtons('data-bt-preview="0.5"'));
+  await expectButtery(page, { name: "preview" });
+  await page.setContent(scaledButtons(""));
+  await failure(expectButtery(page, { name: "drawn small" }));
+  const rules = reportedViolations().map(({ rule, message }) =>
+    rule === "accessibility" ? message : rule,
+  );
+  expect(rules).toContain("target-size");
+  expect(rules.some((rule) => rule.includes("(target-size)"))).toBe(true);
+});

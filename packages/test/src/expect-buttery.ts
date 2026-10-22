@@ -167,24 +167,63 @@ async function waitForSettled(page: Page, timeout: number): Promise<void> {
   });
 }
 
+/**
+ * Which of `selectors` name an element inside a scaled-down preview (`[data-bt-preview]`), whose targets axe
+ * measures drawn small; the layout checks measure them at their own size instead.
+ */
+async function inPreview(
+  page: Page,
+  selectors: readonly string[],
+): Promise<ReadonlySet<string>> {
+  if (selectors.length === 0) return new Set();
+  const inside: unknown = await page.evaluate(
+    (candidates) =>
+      candidates.filter((selector) => {
+        try {
+          return Boolean(
+            document.querySelector(selector)?.closest("[data-bt-preview]"),
+          );
+        } catch {
+          return false;
+        }
+      }),
+    [...selectors],
+  );
+  return new Set(
+    Array.isArray(inside)
+      ? inside.filter((item): item is string => typeof item === "string")
+      : [],
+  );
+}
+
 async function accessibility(page: Page): Promise<LayoutViolation[]> {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .exclude('[data-bt-layer="dev"]')
     .analyze();
-  return results.violations
-    .filter(
-      (violation) =>
-        violation.impact === "serious" || violation.impact === "critical",
-    )
-    .flatMap((violation) =>
-      violation.nodes.map((node) => ({
+  const serious = results.violations.filter(
+    (violation) =>
+      violation.impact === "serious" || violation.impact === "critical",
+  );
+  const drawnSmall = await inPreview(
+    page,
+    serious
+      .filter((violation) => violation.id === "target-size")
+      .flatMap((violation) =>
+        violation.nodes.map((node) => node.target.map(String).join(" ")),
+      ),
+  );
+  return serious.flatMap((violation) =>
+    violation.nodes
+      .map((node) => ({ node, a: node.target.map(String).join(" ") }))
+      .filter(({ a }) => !(violation.id === "target-size" && drawnSmall.has(a)))
+      .map(({ node, a }) => ({
         rule: "accessibility" as const,
-        a: node.target.map(String).join(" "),
+        a,
         message: `${violation.help} (${violation.id})`,
         fix: `${node.failureSummary ?? violation.help} See ${violation.helpUrl}`,
       })),
-    );
+  );
 }
 
 async function annotate(

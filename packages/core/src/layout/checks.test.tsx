@@ -453,6 +453,34 @@ describe("target size", () => {
   });
 });
 
+describe("scaled previews", () => {
+  const SCALED = (preview: string): string => `
+    <div ${preview} style="inline-size: 200px; block-size: 120px; overflow: clip">
+      <div style="inline-size: 400px; transform-origin: 0 0; scale: 0.5">
+        <button type="button" style="inline-size: 80px; block-size: var(--bt-h-sm)">Save</button>
+        <div data-bt="Control" data-bt-control style="block-size: var(--bt-h-control)"></div>
+        <p data-bt="Text" style="font-size: 13px; line-height: 20px">Roasted today</p>
+        <p data-bt="Text" style="font-size: 13px; line-height: 20px">Shipped tomorrow</p>
+      </div>
+    </div>`;
+
+  it("measures what a preview draws scaled down at the size it lays out at", () => {
+    expect(
+      check(SCALED('data-bt-preview="0.5"'), [
+        "target-size",
+        "scale",
+        "overlap",
+      ]),
+    ).toEqual([]);
+  });
+
+  it("measures the same drawing at its drawn size without the preview's mark", () => {
+    expect(
+      rulesOf(check(SCALED(""), ["target-size", "scale", "overlap"])),
+    ).toEqual(["overlap", "scale", "target-size"]);
+  });
+});
+
 describe("reach", () => {
   it("reports a sticky box taller than the space where it sticks", () => {
     const violations = check(
