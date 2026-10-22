@@ -1,5 +1,5 @@
 import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, ConsequenceDialog } from "@buttery/react";
 import { PackageX, Users } from "lucide-react";
 import { useState } from "react";
@@ -50,6 +50,8 @@ export function CloseAShop(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Close the Pier Street shop");
