@@ -122,3 +122,8 @@
   line-height: var(--bt-text-body-line);
   tab-size: 2;
 }
+
+/* A props table's types can be long unions; they wrap at their separators rather than widening the table. */
+.docs-type {
+  overflow-wrap: anywhere;
+}

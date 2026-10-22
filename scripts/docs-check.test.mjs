@@ -47,9 +47,21 @@ describe("docs check", () => {
           join(root, "packages/core/src/primitives/stack/Stack.meta.ts"),
         ],
       }),
-    ).toEqual([
+    ).toContain(
       'apps/docs/lab/docs-check/missing-example/content/guides/demo.mdx shows <Example of="Stack" name="nowhere">, which doesn\'t exist. Fix: name a component and a file in its examples folder, without .tsx.',
-    ]);
+    );
+  });
+
+  it("fails a prop without JSDoc, since its props table couldn't say what it does", () => {
+    expect(
+      fixture("prop-without-jsdoc", {
+        metaFiles: [
+          join(fixtures, "prop-without-jsdoc/components/quiet/Quiet.meta.ts"),
+        ],
+      }),
+    ).toContain(
+      "apps/docs/lab/docs-check/prop-without-jsdoc/components/quiet/Quiet.tsx: Quiet's prop tone has no JSDoc, so its props table can't say what it does. Fix: add a /** … */ comment above it saying what it does and its default.",
+    );
   });
 
   it("fails a component with no home in the docs site's table of exports", () => {

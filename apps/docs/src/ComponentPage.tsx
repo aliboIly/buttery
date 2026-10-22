@@ -2,6 +2,7 @@ import { createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Grid, Stack, Surface, Text } from "@buttery/core";
 import { ExampleFrame } from "./ExampleFrame.tsx";
+import { PropsTables } from "./PropsTables.tsx";
 import type { Heading } from "./content.ts";
 import type { ComponentEntry } from "./registry.ts";
 import { slugify } from "./slug.ts";
@@ -75,6 +76,7 @@ export function componentHeadings(entry: ComponentEntry): Heading[] {
           })),
         ]
       : []),
+    { depth: 2 as const, text: "Props", id: "props" },
   ];
 }
 
@@ -138,6 +140,14 @@ export function ComponentBody({
           </section>
         </Stack>
       ) : null}
+      <Stack gap={4} asChild>
+        <section aria-label={`${meta.name} props`}>
+          <HeadingAt depth={depth} id={idFor(entry, depth, "Props")}>
+            Props
+          </HeadingAt>
+          <PropsTables name={meta.name} headingLevel={inner} />
+        </section>
+      </Stack>
     </Stack>
   );
 }

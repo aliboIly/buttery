@@ -9,6 +9,7 @@ import {
 } from "../apps/docs/vite/frontmatter.ts";
 import { demoPages } from "../apps/docs/src/routes.ts";
 import { slugify } from "../apps/docs/src/slug.ts";
+import { propsTablesIn } from "../apps/docs/vite/props.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 
@@ -297,6 +298,21 @@ export function checkDocs({
       if (anchor !== undefined && target && !target.headings.has(anchor)) {
         problems.push(
           `${say(page.file)} links to ${href}, but ${target.route} has no heading with the id ${anchor}. Fix: link to one of its headings: ${[...target.headings].join(", ") || "it has none"}.`,
+        );
+      }
+    }
+  }
+
+  for (const meta of metaFiles) {
+    const name = basename(meta, ".meta.ts");
+    const source = join(dirname(meta), `${name}.tsx`);
+    if (!existsSync(source)) continue;
+    for (const table of propsTablesIn(name, source)) {
+      for (const prop of table.props) {
+        if (prop.description !== "") continue;
+        const owner = table.part === "" ? name : `${name}.${table.part}`;
+        problems.push(
+          `${say(source)}: ${owner}'s prop ${prop.name} has no JSDoc, so its props table can't say what it does. Fix: add a /** … */ comment above it saying what it does and its default.`,
         );
       }
     }
