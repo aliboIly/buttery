@@ -75,14 +75,14 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] 🧈 Original BrandMark (3 directions → pick one) + favicon + app icons + README hero
 - [x] Docs site shell (`docs/DOCS_SITE.md`): `apps/docs` with `/lab`, the nav generated from frontmatter, the docs check in `pnpm check`
 - [x] Existing pages moved in (Get started, Foundations, Layout, Motion first); component pages with the full anatomy and working examples (each with a `play` script), and the example and coverage checks
-- [ ] Patterns, Templates, Guides, Tools and Resources pages
+- [x] Patterns, Templates, Guides, Tools and Resources pages
 - [x] Demos as their own sites in `apps/demos/<name>/`, served at `/demos/<name>/`, with a `/demos` page
 - [x] Docs search: an offline index built from the content, synonyms, a preview pane, `/search`, and the golden-query gate
-- [ ] `docs/WRITING.md`, every page as Markdown (`.md`), the comprehension and agent tests
+- [x] `docs/WRITING.md`, every page as Markdown (`.md`), the comprehension and agent tests
 - [x] Docs landing page (What's new from Changesets)
 - [x] `pnpm docs:build`: prerendered routes and a sitemap; deploy target recommended in NEEDS-YOU
 - [ ] Accessibility audit, dark + compact passes, visual regression baselines
-- [ ] `new-app` finished; Changesets
+- [x] `new-app` finished; Changesets
 - [ ] make-it-buttery skill tested on a messy page; the site read cold by a reviewer
 
 ## v1.0 — Developer & agent experience (Phase 8)
