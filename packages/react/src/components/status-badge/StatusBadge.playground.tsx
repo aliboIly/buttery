@@ -1,5 +1,6 @@
 import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { StatusBadge } from "@buttery/react";
 import { ArrowDownRight, ArrowUpRight, Lightbulb } from "lucide-react";
 
@@ -11,6 +12,30 @@ export const page: DocsPage = {
   order: 100,
   status: "new",
   since: "0.7.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    tone: {
+      kind: "choice",
+      options: ["neutral", "info", "success", "warning", "danger"],
+      initial: "success",
+    },
+    children: { kind: "text", initial: "Paid" },
+  },
+  render: ({ tone, children }) => (
+    <StatusBadge
+      tone={demoChoice(tone, [
+        "neutral",
+        "info",
+        "success",
+        "warning",
+        "danger",
+      ])}
+    >
+      {String(children)}
+    </StatusBadge>
+  ),
 };
 
 export const demos: readonly DemoSection[] = [
