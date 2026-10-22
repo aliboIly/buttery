@@ -11,7 +11,7 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
-import { Menu } from "@buttery/core";
+import { FloatingLanes, Menu } from "@buttery/core";
 import {
   afterEach,
   beforeEach,
@@ -21,7 +21,7 @@ import {
   onTestFinished,
   vi,
 } from "vitest";
-import { userEvent as browser } from "vitest/browser";
+import { userEvent as browser, page } from "vitest/browser";
 import { HeaderBar } from "../header-bar/HeaderBar.tsx";
 import { Inspector } from "../inspector/Inspector.tsx";
 import { Sidebar } from "../sidebar/Sidebar.tsx";
@@ -152,6 +152,51 @@ describe("AppShell", () => {
     await screen.findByRole("button", { name: "Edit" });
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("keeps the floating lanes clear of the inspector beside the stage, and of the button under it when narrow", async () => {
+    const [width, height] = [window.innerWidth, window.innerHeight];
+    onTestFinished(async () => {
+      await page.viewport(width, height);
+    });
+    const { rerender } = render(
+      <>
+        <FloatingLanes />
+        <div style={{ inlineSize: "1200px", blockSize: "100vh" }}>
+          <Editor width="1200px" />
+        </div>
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "120px", blockSize: "36px" }}>Guide</div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await page.viewport(1200, 700);
+    const inspector = document.querySelector('[data-bt-part="inspector"]');
+    await waitFor(() => {
+      const guide = screen.getByText("Guide").getBoundingClientRect();
+      expect(guide.right).toBeLessThanOrEqual(
+        inspector?.getBoundingClientRect().left ?? 0,
+      );
+    });
+    await page.viewport(600, 700);
+    rerender(
+      <>
+        <FloatingLanes />
+        <div style={{ inlineSize: "600px", blockSize: "100vh" }}>
+          <Editor width="600px" />
+        </div>
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "120px", blockSize: "36px" }}>Guide</div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await waitFor(() => {
+      const bar = document
+        .querySelector('[data-bt-part="sheet-bar"]')
+        ?.getBoundingClientRect();
+      const guide = screen.getByText("Guide").getBoundingClientRect();
+      expect(guide.bottom).toBeLessThanOrEqual(bar?.top ?? 0);
+    });
   });
 
   it("can be controlled", async () => {

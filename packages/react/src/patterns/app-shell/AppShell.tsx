@@ -11,6 +11,7 @@ import {
   useAnimationTracking,
   useCloseFocus,
   useControllableState,
+  useFloatingObstacle,
   useMergedRefs,
   useMotionPreference,
   warnOnce,
@@ -179,6 +180,8 @@ function InspectorShell({
   const refs = useMergedRefs(ref, root);
   const sheet = useRef<HTMLDivElement>(null);
   const inline = useRef<HTMLDivElement>(null);
+  const obstacle = useFloatingObstacle();
+  const inspectorRefs = useMergedRefs(inline, obstacle);
   const refocus = useRef(false);
   const [narrow, setNarrow] = useState(false);
   const [sheetOpen, setSheetOpen] = useControllableState({
@@ -232,11 +235,13 @@ function InspectorShell({
       data-layout={layout}
       data-narrow={narrow ? "" : undefined}
     >
-      <div data-bt-part="header">{header}</div>
+      <div ref={obstacle} data-bt-part="header">
+        {header}
+      </div>
       <div data-bt-part="stage">{children}</div>
       {narrow ? (
         <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
-          <div data-bt-part="sheet-bar">
+          <div ref={obstacle} data-bt-part="sheet-bar">
             <Dialog.Trigger asChild>
               <Button variant="primary" size="cta" shape="rounded">
                 {openInspectorLabel}
@@ -252,7 +257,7 @@ function InspectorShell({
           </AnimatePresence>
         </Dialog.Root>
       ) : (
-        <div ref={inline} data-bt-part="inspector">
+        <div ref={inspectorRefs} data-bt-part="inspector">
           {inspector}
         </div>
       )}
@@ -522,6 +527,7 @@ function SidebarShell({
  * A whole app screen. The default layout is an editor inside the app's background: the header and the
  * stage in one column and the inspector, full height, beside them, at most 1380px wide and centered; under
  * 840px the inspector moves into a sheet that rises from the bottom, opened by a button under the stage.
+ * Toasts and the other floating lanes keep clear of the header, the inspector and that button.
  *
  * `layout="sidebar"` is a dashboard: the sidebar beside a column holding the top bar and the page, each
  * scrolling on its own, the shell never scrolling. Measured on the shell's own width, the sidebar is full

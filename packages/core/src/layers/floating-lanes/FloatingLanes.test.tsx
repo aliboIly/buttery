@@ -1,9 +1,10 @@
 import "../../styles/index.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import type { ReactElement } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { Popover } from "../popover/Popover.tsx";
 import { FloatingLanes, useFloatingObstacle } from "./FloatingLanes.tsx";
@@ -229,6 +230,121 @@ describe("FloatingLanes", () => {
     expect(
       Math.abs((toast.left + toast.right) / 2 - panel.left / 2),
     ).toBeLessThanOrEqual(0.5);
+  });
+
+  it("moves the end lanes in past a tall obstacle in the window's end half that stops short of the edge, as a centered editor's inspector does", async () => {
+    const [width, height] = [window.innerWidth, window.innerHeight];
+    onTestFinished(async () => {
+      await page.viewport(width, height);
+    });
+    await page.viewport(1280, 800);
+    function Inspector(): ReactElement {
+      const obstacle = useFloatingObstacle();
+      return (
+        <div
+          ref={obstacle}
+          data-testid="inspector"
+          style={{
+            position: "fixed",
+            insetBlock: "8px",
+            insetInlineEnd: "120px",
+            inlineSize: "320px",
+          }}
+        />
+      );
+    }
+    render(
+      <>
+        <FloatingLanes />
+        <Inspector />
+        <FloatingLanes.Item lane="bottom-end">
+          <Toast>Setup guide</Toast>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const inspector = screen.getByTestId("inspector").getBoundingClientRect();
+    await waitFor(() => {
+      const guide = screen.getByText("Setup guide").getBoundingClientRect();
+      expect(inspector.left - guide.right).toBe(24);
+    });
+  });
+
+  it("takes in an obstacle that mounts inside a ResizeObserver callback without a ResizeObserver loop", async () => {
+    const loops: string[] = [];
+    const onError = (event: ErrorEvent): void => {
+      if (event.message.includes("ResizeObserver loop"))
+        loops.push(event.message);
+    };
+    window.addEventListener("error", onError);
+    onTestFinished(() => {
+      window.removeEventListener("error", onError);
+    });
+    function Panel(): ReactElement {
+      const obstacle = useFloatingObstacle();
+      return (
+        <div
+          ref={obstacle}
+          data-testid="panel"
+          style={{
+            position: "fixed",
+            insetBlock: 0,
+            insetInlineEnd: 0,
+            inlineSize: "320px",
+          }}
+        />
+      );
+    }
+    function Switcher(): ReactElement {
+      const box = useRef<HTMLDivElement>(null);
+      const [wide, setWide] = useState(false);
+      useLayoutEffect(() => {
+        const element = box.current;
+        if (!element) return undefined;
+        const observer = new ResizeObserver(() => {
+          flushSync(() => {
+            setWide(element.clientWidth > 300);
+          });
+        });
+        observer.observe(element);
+        return () => {
+          observer.disconnect();
+        };
+      }, []);
+      // Deep in the page, as an app shell's header is, so the lanes it sets off are shallower than it.
+      return (
+        <div>
+          <div>
+            <div>
+              <div>
+                <div
+                  ref={box}
+                  data-testid="box"
+                  style={{ inlineSize: "200px" }}
+                >
+                  {wide ? <Panel /> : null}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    render(
+      <>
+        <FloatingLanes />
+        <Switcher />
+        <FloatingLanes.Item lane="bottom-end">
+          <Toast>Setup guide</Toast>
+        </FloatingLanes.Item>
+      </>,
+    );
+    screen.getByTestId("box").style.inlineSize = "400px";
+    const panel = await screen.findByTestId("panel");
+    await waitFor(() => {
+      const guide = screen.getByText("Setup guide").getBoundingClientRect();
+      expect(panel.getBoundingClientRect().left - guide.right).toBe(24);
+    });
+    expect(loops).toEqual([]);
   });
 
   it("follows an obstacle that moves without changing size once told", async () => {

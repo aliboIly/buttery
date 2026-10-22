@@ -39,8 +39,9 @@ function laneRef(
 }
 
 /**
- * How far in from the window's end edge the lanes keep, past any obstacle that runs at least half the
- * window's height along that edge, such as a docked side panel.
+ * How far in from the window's end edge the lanes keep, past any obstacle at least half the window's
+ * height that meets that edge, such as a docked side panel, or stands in the window's end half, such as
+ * an editor's inspector in from the edge of a centered app.
  */
 function endInset(blockers: readonly HTMLElement[]): number {
   const width = document.documentElement.clientWidth;
@@ -49,8 +50,10 @@ function endInset(blockers: readonly HTMLElement[]): number {
   for (const blocker of blockers) {
     const rect = blocker.getBoundingClientRect();
     if (rect.width === 0 || rect.height < window.innerHeight / 2) continue;
-    if (rtl ? rect.left <= 1 : rect.right >= width - 1)
-      inset = Math.max(inset, rtl ? rect.right : width - rect.left);
+    const atEnd = rtl
+      ? rect.left <= 1 || rect.right <= width / 2
+      : rect.right >= width - 1 || rect.left >= width / 2;
+    if (atEnd) inset = Math.max(inset, rtl ? rect.right : width - rect.left);
   }
   return inset;
 }
@@ -159,12 +162,17 @@ function useLanePlacement(): void {
       frame = requestAnimationFrame(apply);
     };
     const observer = new ResizeObserver(schedule);
-    for (const element of [...elements, ...blockers]) observer.observe(element);
+    // This runs while an app shell's layout changes inside a ResizeObserver callback, where observing loops.
+    const watching = requestAnimationFrame(() => {
+      for (const element of [...elements, ...blockers])
+        observer.observe(element);
+    });
     window.addEventListener("resize", schedule);
     window.addEventListener("scroll", schedule, true);
     const stopFollowing = onObstacleMoved(schedule);
     apply();
     return () => {
+      cancelAnimationFrame(watching);
       cancelAnimationFrame(frame);
       stopFollowing();
       observer.disconnect();
@@ -279,7 +287,8 @@ export interface FloatingLanesComponent {
  * back under dialogs with the rest of the page.
  * Items stack with an 8px gap, never grow wider than their lane, keep clear of sticky headers and footers,
  * and move out of the way of registered obstacles: up from one at the bottom, and in from the end past one
- * that runs the window's height along its end edge, such as a docked side panel. When the bottom lanes
+ * at least half the window's height that meets the end edge or stands in the window's end half, such as
+ * a docked side panel or an editor's inspector. When the bottom lanes
  * would touch, in a narrow window,
  * the center lane moves above the end lane as one column. It publishes how far the bottom lanes reach,
  * plus 8px, as `--bt-lane-clearance` on `<html>`, for scroll areas to add at their end. `ButteryProvider`
