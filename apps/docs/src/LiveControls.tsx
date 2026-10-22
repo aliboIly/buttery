@@ -73,6 +73,7 @@ function Control({
           max={control.max}
           step={control.step}
           value={typeof value === "number" ? value : control.initial}
+          resetValue={control.initial}
           onValueChange={onChange}
         />
       );
