@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
+import { Stack, Surface } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import {
   CommandSearch,
@@ -42,9 +42,11 @@ export function TopBarSearch(): ReactElement {
   };
   return (
     <Stack gap={4}>
-      <TopBar
-        search={<CommandSearch label="Search orders" sources={[orders]} />}
-      />
+      <Surface level="card">
+        <TopBar
+          search={<CommandSearch label="Search orders" sources={[orders]} />}
+        />
+      </Surface>
       <PageHeader
         title={opened === null ? "Orders" : `Order ${opened.id}`}
         description={
