@@ -172,3 +172,11 @@
   padding-block-start: var(--bt-space-8);
   border-block-start: var(--bt-docs-line) solid var(--bt-border);
 }
+
+/* The landing hero's command takes its own line under the buttons, centered with them. */
+.docs-landing-command {
+  display: flex;
+  flex-basis: 100%;
+  justify-content: center;
+  min-inline-size: 0;
+}

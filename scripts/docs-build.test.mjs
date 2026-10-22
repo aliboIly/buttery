@@ -33,6 +33,15 @@ afterAll(() => {
 });
 
 describe("pnpm docs:build", () => {
+  it("prerenders the landing page as the site's index", () => {
+    const html = readFileSync(join(out, "index.html"), "utf8");
+    expect(html).toContain("<title>buttery</title>");
+    expect(html).toMatch(/<h1[^>]*>[^<]*Make anything buttery\.[^<]*<\/h1>/);
+    expect(html).toContain(
+      '<meta name="description" content="Make anything buttery." />',
+    );
+  });
+
   it("prerenders every written page, with its title and heading in the markup", () => {
     for (const route of contentRoutesIn(root)) {
       const html = readFileSync(join(out, route, "index.html"), "utf8");

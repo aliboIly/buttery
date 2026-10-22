@@ -107,6 +107,13 @@
   color: var(--bt-text);
 }
 
+/* A wide page brings its own containers, so it takes the whole width under the bar. */
+.docs-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
 .docs-main {
   padding-block-start: var(--bt-space-6);
   display: grid;

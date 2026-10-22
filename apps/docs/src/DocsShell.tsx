@@ -91,17 +91,21 @@ interface DocsShellProps {
   readonly current: string;
   readonly settings: Settings;
   readonly headings: readonly Heading[];
+  /** Whether the page takes the shell's whole width, without the sidebar and its headings, as the landing page does. */
+  readonly wide?: boolean;
   readonly children: ReactNode;
 }
 
 /**
  * The docs site's shell: the top bar with the mark, the sections, the version and the display settings;
- * every page in the sidebar; the page; and its headings on the right while there's room.
+ * every page in the sidebar; the page; and its headings on the right while there's room. A `wide` page
+ * takes the whole width under the bar.
  */
 export function DocsShell({
   current,
   settings,
   headings,
+  wide = false,
   children,
 }: DocsShellProps): ReactElement {
   const obstacle = useFloatingObstacle();
@@ -164,17 +168,21 @@ export function DocsShell({
           );
         })}
       </NavBar>
-      <div className="docs-body">
-        <Sticky variant="aside" className="docs-sidebar bt-scroll-fade">
-          <div ref={sidebar}>
-            <PagesNav current={current} />
-          </div>
-        </Sticky>
-        <main className="docs-main">{children}</main>
-        <Sticky variant="aside" className="docs-aside">
-          <OnThisPage headings={headings} />
-        </Sticky>
-      </div>
+      {wide ? (
+        <main className="docs-wide">{children}</main>
+      ) : (
+        <div className="docs-body">
+          <Sticky variant="aside" className="docs-sidebar bt-scroll-fade">
+            <div ref={sidebar}>
+              <PagesNav current={current} />
+            </div>
+          </Sticky>
+          <main className="docs-main">{children}</main>
+          <Sticky variant="aside" className="docs-aside">
+            <OnThisPage headings={headings} />
+          </Sticky>
+        </div>
+      )}
     </div>
   );
 }

@@ -36,6 +36,7 @@ export function App(): ReactElement {
           current={page.route}
           settings={settings}
           headings={page.headings ?? []}
+          wide={page.wide === true}
         >
           {content}
         </DocsShell>

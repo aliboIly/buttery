@@ -5,6 +5,8 @@ import { referenceRoot } from "virtual:buttery-reference";
 import { ComponentPage, componentHeadings } from "./ComponentPage.tsx";
 import { ContentPage } from "./ContentPage.tsx";
 import { LabExamples } from "./LabExamples.tsx";
+import { LandingPage } from "./LandingPage.tsx";
+import type { ExploreSection } from "./LandingPage.tsx";
 import { contentPages, labPages } from "./content.ts";
 import type { Heading } from "./content.ts";
 import type { Neighbor } from "./PageFooter.tsx";
@@ -25,6 +27,8 @@ export interface Page {
   readonly render: () => ReactElement;
   /** A whole app that brings its own landmarks, shown without the site's chrome. */
   readonly fullWindow?: boolean;
+  /** Shown across the shell's whole width, without the sidebar and the page's headings. */
+  readonly wide?: boolean;
   /** Where it sits on the site, for the nav; demos and lab pages have none. */
   readonly docs?: DocsPage;
   /** Its headings, for its "On this page" list. */
@@ -166,6 +170,46 @@ export const pageGroups: readonly PageGroup[] = [
   },
 ];
 
+/** The sections the landing page's Explore tiles open, with what each counts. */
+const EXPLORE: readonly { readonly root: string; readonly unit: string }[] = [
+  { root: "foundations", unit: "pages" },
+  { root: "layout", unit: "pages" },
+  { root: "motion", unit: "pages" },
+  { root: "components", unit: "components" },
+  { root: "patterns", unit: "pages" },
+  { root: "templates", unit: "templates" },
+];
+
+const exploreSections: readonly ExploreSection[] = EXPLORE.flatMap(
+  ({ root, unit }) => {
+    const section = nav.find((candidate) => candidate.root === root);
+    if (!section) return [];
+    const routes = [
+      ...section.pages,
+      ...section.groups.flatMap((group) => group.pages),
+    ];
+    const first = routes[0];
+    return first
+      ? [
+          {
+            title: section.title,
+            href: `/${first.route}`,
+            count: routes.length,
+            unit,
+          },
+        ]
+      : [];
+  },
+);
+
+/** The site's front page, at `/`. */
+const landingPage: Page = {
+  route: "",
+  title: "buttery",
+  render: () => <LandingPage sections={exploreSections} />,
+  wide: true,
+};
+
 /** Pages only tests and the maintainer visit, in development only; the nav never links to them. */
 const labDocs: readonly Page[] = import.meta.env.DEV
   ? [
@@ -210,6 +254,7 @@ const searchPage: Page = {
 };
 
 export const pages: readonly Page[] = [
+  landingPage,
   ...pageGroups.flatMap((group) => group.pages),
   searchPage,
   ...labDocs,

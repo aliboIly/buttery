@@ -1,7 +1,11 @@
 import { expect, test } from "@playwright/test";
 import type { Locator, Page } from "@playwright/test";
+import { fileURLToPath } from "node:url";
+import { releasesIn } from "../vite/whats-new.ts";
 
 test.use({ viewport: { width: 1280, height: 720 } });
+
+const root = fileURLToPath(new URL("../../..", import.meta.url));
 
 /** Puts the pointer in the middle of the part of the sidebar that's on screen. */
 async function pointAtSidebar(page: Page, sidebar: Locator): Promise<void> {
@@ -60,4 +64,39 @@ test("the sidebar keeps the current page in view", async ({ page }) => {
     .getByRole("link", { name: "Contributing" });
   await expect(current).toHaveAttribute("aria-current", "page");
   await expect(current).toBeInViewport({ ratio: 1 });
+});
+
+test("the landing page shows the newest three releases and opens every one", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const whatsNew = page.getByRole("region", { name: "What's new" });
+  await expect(whatsNew.getByRole("heading", { level: 3 })).toHaveText(
+    releasesIn(root)
+      .slice(0, 3)
+      .map((release) => release.title),
+  );
+  await whatsNew
+    .getByRole("link", { name: "Every release and change" })
+    .click();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "What's new" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2 }).first()).toHaveText(
+    releasesIn(root)[0]?.title ?? "",
+  );
+});
+
+test("the landing page's settings card changes its preview", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const tryIt = page.getByRole("region", { name: "Try it" });
+  await tryIt.getByRole("radio", { name: "Nothing" }).click();
+  await expect(tryIt.getByText("Reminders are off")).toBeVisible();
+  await tryIt.getByRole("radio", { name: "Everything" }).click();
+  await expect(tryIt.getByText("Starts in 15 minutes")).toBeVisible();
+  await tryIt.getByRole("button", { name: "More", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Snooze for an hour" }).click();
+  await expect(tryIt.getByText("Snoozed for an hour")).toBeVisible();
 });

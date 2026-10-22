@@ -512,6 +512,40 @@ for (const route of routes) {
   });
 }
 
+test("the landing page is buttery with its menu and a toast open", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const tryIt = page.getByRole("region", { name: "Try it" });
+  await expectButtery(page, {
+    ...matrix,
+    name: "landing",
+    interactions: [
+      {
+        name: "open the More menu",
+        run: async () => {
+          await tryIt
+            .getByRole("button", { name: "More", exact: true })
+            .click();
+          await page.getByRole("menu").waitFor();
+        },
+      },
+      escape,
+      {
+        name: "save, which shows a toast",
+        run: async () => {
+          await tryIt
+            .getByRole("button", { name: "Save", exact: true })
+            .click();
+          await page
+            .getByText("Reminder settings saved", { exact: true })
+            .waitFor();
+        },
+      },
+    ],
+  });
+});
+
 test("the playground chrome is buttery with its menus open", async ({
   page,
 }) => {

@@ -31,6 +31,19 @@ async function settle(page: Page): Promise<void> {
   await page.waitForTimeout(1200);
 }
 
+test("renders the landing page with the bundled font and no console problems", async ({
+  page,
+}) => {
+  const problems = await watchConsole(page);
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Make anything buttery." }),
+  ).toBeVisible();
+  await expect(page).toHaveTitle("buttery");
+  await settle(page);
+  expect(problems).toEqual([]);
+});
+
 for (const { route, title } of contentRoutes) {
   test(`renders the ${route} page with the bundled font and no console problems`, async ({
     page,
