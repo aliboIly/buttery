@@ -70,7 +70,7 @@ export interface ChartFrameProps extends Omit<
   readonly series: readonly ChartSeries[];
   /** Where points sit: `"point"` (the default) or `"band"`, which bars need. */
   readonly layout?: ChartLayout | undefined;
-  /** Its height: `"sm"` 160, `"md"` 220 (the default) or `"lg"` 300px. */
+  /** Its height: `"sm"` 160, `"md"` 220 or `"lg"` 300px. Defaults to `"md"`. */
   readonly size?: ChartSize | undefined;
   /** Writes a value for the tooltip and the table. Defaults to the number with up to two decimals. */
   readonly formatValue?: ((value: number) => string) | undefined;

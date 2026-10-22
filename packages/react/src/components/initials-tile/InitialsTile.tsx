@@ -24,7 +24,7 @@ export interface InitialsTileProps extends Omit<
 > {
   /** The name the initials come from, such as a workspace's or a team's. */
   readonly name: string;
-  /** How big it is: `xs` 20, `sm` 24 (the default), `md` 32 or `lg` 40. */
+  /** How big it is: `xs` 20, `sm` 24, `md` 32 or `lg` 40. Defaults to `"sm"`. */
   readonly size?: AvatarSize | undefined;
   /** Names the tile for screen readers when its name isn't written beside it. Without one, it's decorative. */
   readonly label?: string | undefined;
