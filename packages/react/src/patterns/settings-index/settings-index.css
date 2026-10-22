@@ -38,7 +38,7 @@
     }
   }
 
-  .bt-settings-index-section [data-bt-part="link"] {
+  .bt-settings-index-link {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: start;
@@ -52,19 +52,18 @@
   }
 
   @media (hover: hover) {
-    .bt-settings-index-section [data-bt-part="link"]:hover {
+    .bt-settings-index-link:hover {
       background-color: var(--bt-bg-item-hover);
     }
   }
 
   /* Drawn inside the link, so its tile and text sit where a plain link's do. Keyboard focus shows the ring instead. */
-  .bt-settings-index-section
-    [data-bt-part="link"][data-more]:not(:focus-visible) {
+  .bt-settings-index-link[data-more]:not(:focus-visible) {
     outline: var(--bt-settings-index-line) dashed var(--bt-border-strong);
     outline-offset: calc(var(--bt-settings-index-line) * -1);
   }
 
-  .bt-settings-index-section [data-bt-part="tile"] {
+  .bt-settings-index-link > [data-bt-part="tile"] {
     display: grid;
     place-items: center;
     inline-size: var(--bt-settings-index-tile);
@@ -75,7 +74,7 @@
     color: var(--bt-text-secondary);
   }
 
-  .bt-settings-index-section [data-bt-part="text"] {
+  .bt-settings-index-link > [data-bt-part="text"] {
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-1);

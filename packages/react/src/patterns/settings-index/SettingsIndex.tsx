@@ -94,7 +94,7 @@ function SettingsEntry({
       <a
         {...rest}
         href={href}
-        className={cx("bt-focus", className)}
+        className={cx("bt-settings-index-link bt-focus", className)}
         data-bt-part="link"
         data-more={more ? "" : undefined}
         onClick={(event) => {

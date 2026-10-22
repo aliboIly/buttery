@@ -60,7 +60,10 @@
   }
 
   .bt-catalog-page
-    :is([data-bt-part="catalog-page-featured"], [data-bt-part="section"]) {
+    :is(
+      [data-bt-part="catalog-page-featured"],
+      [data-bt-part="catalog-page-section"]
+    ) {
     container: bt-catalog-items / inline-size;
     display: flex;
     flex-direction: column;

@@ -201,7 +201,11 @@ export function CatalogPageSection({
 }: CatalogPageSectionProps): ReactElement {
   const titleId = useId();
   return (
-    <section aria-labelledby={titleId} {...rest} data-bt-part="section">
+    <section
+      aria-labelledby={titleId}
+      {...rest}
+      data-bt-part="catalog-page-section"
+    >
       <Text id={titleId} variant="title-md" asChild>
         <h2>{title}</h2>
       </Text>

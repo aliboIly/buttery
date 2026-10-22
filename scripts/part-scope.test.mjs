@@ -34,7 +34,7 @@ function codeOf(file) {
 
 /** Which component folders use each part name, read from `data-bt-part="…"` in their sources. */
 const partUsers = new Map();
-/** Folders whose components take content, a `ReactNode` or `ReactElement` prop, that can hold any component. */
+/** Folders whose components take content, `children` or a `ReactNode` or `ReactElement` prop, that can hold any component. */
 const takesContent = new Set();
 /** The folder each exported component lives in, so a JSX tag can be traced to its stylesheet's folder. */
 const folderOf = new Map();
@@ -46,7 +46,8 @@ for (const file of sources) {
     partUsers.get(name).add(folder);
   }
   const props = code.replace(/\)\s*:\s*React(?:Element|Node)\b/g, "");
-  if (/\bReact(?:Element|Node)\b/.test(props)) takesContent.add(folder);
+  if (/\bReact(?:Element|Node)\b|\{children\}/.test(props))
+    takesContent.add(folder);
   for (const [, name] of code.matchAll(
     /^export (?:function|const) ([A-Z][A-Za-z0-9]*)/gm,
   ))
@@ -76,31 +77,79 @@ function heldBy(folder, seen = new Set()) {
   return seen;
 }
 
-/** Each selector in a stylesheet, comments and at-rule preludes left out. */
+/** A selector list split on its top-level commas, those inside `:is()`, `:where()` or `:has()` left alone. */
+function splitList(list) {
+  const found = [];
+  let depth = 0;
+  let start = 0;
+  for (let index = 0; index < list.length; index += 1) {
+    const char = list[index];
+    if (char === "(") depth += 1;
+    else if (char === ")") depth -= 1;
+    else if (char === "," && depth === 0) {
+      found.push(list.slice(start, index));
+      start = index + 1;
+    }
+  }
+  found.push(list.slice(start));
+  return found.map((part) => part.replace(/\s+/g, " ").trim()).filter(Boolean);
+}
+
+/**
+ * A selector written out without `:is()`, `:where()` or `:has()`: one selector per alternative, and for
+ * `:has()` both the selector without it and the relation it tests, `.a:has(.b)` reaching `.b` from `.a`.
+ */
+function expand(selector) {
+  const match = /:(is|where|has)\(/.exec(selector);
+  if (!match) return [selector];
+  const open = match.index + match[0].length - 1;
+  let depth = 0;
+  let close = selector.length - 1;
+  for (let index = open; index < selector.length; index += 1) {
+    if (selector[index] === "(") depth += 1;
+    else if (selector[index] === ")") {
+      depth -= 1;
+      if (depth === 0) {
+        close = index;
+        break;
+      }
+    }
+  }
+  const before = selector.slice(0, match.index);
+  const after = selector.slice(close + 1);
+  const alternatives = splitList(selector.slice(open + 1, close));
+  if (match[1] === "has")
+    return [
+      ...expand(`${before}${after}`),
+      ...alternatives.flatMap((relative) => expand(`${before} ${relative}`)),
+    ];
+  return alternatives.flatMap((alternative) =>
+    expand(`${before}${alternative}${after}`),
+  );
+}
+
+/** Each selector in a stylesheet, written out, comments and at-rule preludes left out. */
 function selectorsOf(css) {
   const text = css.replace(/\/\*[\s\S]*?\*\//g, "");
   const found = [];
   for (const [, prelude] of text.matchAll(/([^{}]+)\{/g)) {
     if (prelude.trim().startsWith("@")) continue;
-    for (const selector of prelude.split(",")) {
-      const clean = selector.replace(/\s+/g, " ").trim();
-      if (clean !== "") found.push(clean);
-    }
+    for (const selector of splitList(prelude)) found.push(...expand(selector));
   }
   return found;
 }
 
 /**
- * The parts a selector reaches through a descendant combinator, which also match same-named parts of a
- * component nested in the content: `.bt-card [data-bt-part="title"]`, but not `.bt-card > [data-bt-part="title"]`.
+ * The parts a selector reaches through a descendant combinator, or with nothing before them, which also
+ * match same-named parts of a component nested in the content: `.bt-card [data-bt-part="title"]`, but not
+ * `.bt-card > [data-bt-part="title"]`.
  */
 function descendantParts(selector) {
   const reached = [];
   for (const match of selector.matchAll(/\[data-bt-part="([a-z0-9-]+)"\]/g)) {
     const before = selector.slice(0, match.index);
-    if (before.trim() === "" || !before.endsWith(" ")) continue;
-    if (before.trimEnd().endsWith(">") || before.trimEnd().endsWith("+"))
-      continue;
+    if (before.trim() !== "" && !before.endsWith(" ")) continue;
+    if (/[>+~]\s*$/.test(before)) continue;
     reached.push(match[1]);
   }
   return reached;

@@ -177,10 +177,14 @@ describe("SettingsIndex", () => {
       </SettingsIndex>,
     );
     expect(link.current).toBe(screen.getByRole("link", { name: /Shipping/ }));
-    expect(link.current?.className).toBe("bt-focus custom");
+    expect(link.current?.className).toBe(
+      "bt-settings-index-link bt-focus custom",
+    );
     expect(link.current?.getAttribute("aria-describedby")).toBe("hint");
     expect(more.current?.getAttribute("target")).toBe("_blank");
-    expect(more.current?.className).toBe("bt-focus custom");
+    expect(more.current?.className).toBe(
+      "bt-settings-index-link bt-focus custom",
+    );
   });
 
   it("lays links in three columns with room, two from 640px and one under that", () => {
