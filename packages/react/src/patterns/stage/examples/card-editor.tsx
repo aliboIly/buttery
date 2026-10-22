@@ -14,21 +14,23 @@ const SWATCHES: readonly Swatch[] = BACKDROPS.map((preset) => ({
   fill: gradientCss(preset),
 }));
 
-/** A card editor's preview: the title field and the backdrop swatches above it change what the canvas shows. */
+/** A card editor's preview: a title field and backdrop swatches, an inspector's width, change what the canvas shows. */
 export function CardEditor(): ReactElement {
   const [title, setTitle] = useState("Spring launch");
   const [backdrop, setBackdrop] = useState("lilac");
   const preset = BACKDROPS.find((candidate) => candidate.id === backdrop);
   return (
     <Stack gap={4}>
-      <TextField label="Card title" value={title} onValueChange={setTitle} />
-      <SwatchGrid
-        label="Backdrop"
-        columns={6}
-        swatches={SWATCHES}
-        value={backdrop}
-        onValueChange={setBackdrop}
-      />
+      <Stack gap={3} style={{ maxInlineSize: "var(--bt-w-inspector)" }}>
+        <TextField label="Card title" value={title} onValueChange={setTitle} />
+        <SwatchGrid
+          label="Backdrop"
+          columns={6}
+          swatches={SWATCHES}
+          value={backdrop}
+          onValueChange={setBackdrop}
+        />
+      </Stack>
       <div style={{ blockSize: "var(--bt-bento-row)", display: "grid" }}>
         <Stage
           label="Card preview"

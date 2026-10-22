@@ -8,7 +8,7 @@ import { SignInForm, SignUpForm, Tabs } from "@buttery/react";
 export function AccountTabs(): ReactElement {
   const [note, setNote] = useState("");
   return (
-    <Stack gap={4}>
+    <Stack gap={4} style={{ maxInlineSize: "var(--bt-w-dialog)" }}>
       <Tabs defaultValue="sign-in">
         <Tabs.List label="Your account">
           <Tabs.Tab value="sign-in">Sign in</Tabs.Tab>

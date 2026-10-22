@@ -2,7 +2,13 @@ import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SearchField, TopBar, matchesSearch } from "@buttery/react";
+import {
+  AppPage,
+  PageHeader,
+  SearchField,
+  TopBar,
+  matchesSearch,
+} from "@buttery/react";
 import { Bell, CircleHelp } from "lucide-react";
 
 interface Order {
@@ -28,7 +34,7 @@ export function DashboardTopBar(): ReactElement {
       query.trim() === "" || matchesSearch(query, order.customer, order.beans),
   );
   return (
-    <Stack gap={4}>
+    <Stack>
       <TopBar
         search={
           <SearchField
@@ -75,29 +81,33 @@ export function DashboardTopBar(): ReactElement {
           },
         }}
       />
-      {help ? (
-        <Text variant="body-sm" tone="secondary">
-          Press / to search, and the plus to start an order.
-        </Text>
-      ) : null}
-      <Surface level="card" pad={4}>
-        <Stack gap={3}>
-          {shown.length === 0 ? (
-            <Text variant="body" tone="secondary">
-              No orders match.
+      <AppPage width="full" header={<PageHeader title="Orders" />}>
+        <AppPage.Section>
+          {help ? (
+            <Text variant="body-sm" tone="secondary">
+              Press / to search, and the plus to start an order.
             </Text>
-          ) : (
-            shown.map((order) => (
-              <Inline key={order.id} gap={4} justify="between">
-                <Text variant="body">{`Order ${String(order.id)}, ${order.customer}`}</Text>
+          ) : null}
+          <Surface level="card" pad={4}>
+            <Stack gap={3}>
+              {shown.length === 0 ? (
                 <Text variant="body" tone="secondary">
-                  {order.beans}
+                  No orders match.
                 </Text>
-              </Inline>
-            ))
-          )}
-        </Stack>
-      </Surface>
+              ) : (
+                shown.map((order) => (
+                  <Inline key={order.id} gap={4} justify="between">
+                    <Text variant="body">{`Order ${String(order.id)}, ${order.customer}`}</Text>
+                    <Text variant="body" tone="secondary">
+                      {order.beans}
+                    </Text>
+                  </Inline>
+                ))
+              )}
+            </Stack>
+          </Surface>
+        </AppPage.Section>
+      </AppPage>
     </Stack>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack } from "@buttery/core";
+import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Section, SegmentedControl } from "@buttery/react";
 
@@ -45,12 +45,9 @@ export function BandSizes(): ReactElement {
           onValueChange={setTone}
         />
       </Inline>
-      <Section
-        size={size}
-        tone={tone}
-        title="Roasted on Mondays"
-        body={`${ROOM[size]}, ${GROUND[tone]}.`}
-      />
+      <Section size={size} tone={tone} title="Roasted on Mondays">
+        <Text variant="body-lg">{`${ROOM[size]}, ${GROUND[tone]}.`}</Text>
+      </Section>
     </Stack>
   );
 }
