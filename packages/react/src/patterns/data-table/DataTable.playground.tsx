@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack } from "@buttery/core";
+import { Inline, Menu, Stack } from "@buttery/core";
 import { demoChoice } from "@buttery/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, DataTable, StatusBadge } from "@buttery/react";
@@ -131,17 +131,19 @@ function Orders(): ReactElement {
         });
   return (
     <Stack gap={3}>
-      <Button
-        size="sm"
-        onClick={() => {
-          setLoading(true);
-          window.setTimeout(() => {
-            setLoading(false);
-          }, 1200);
-        }}
-      >
-        Reload
-      </Button>
+      <Inline>
+        <Button
+          size="sm"
+          onClick={() => {
+            setLoading(true);
+            window.setTimeout(() => {
+              setLoading(false);
+            }, 1200);
+          }}
+        >
+          Reload
+        </Button>
+      </Inline>
       <DataTable
         label="Orders"
         columns={COLUMNS}

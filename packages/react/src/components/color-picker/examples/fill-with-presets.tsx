@@ -26,7 +26,7 @@ export function FillWithPresets(): ReactElement {
         }}
         presets={PRESETS}
       />
-      <Inline gap={3} align="center" justify="between">
+      <Inline gap={3} align="center">
         <Text variant="caption" tone="secondary">
           {history.length === 1
             ? "1 step to undo"
