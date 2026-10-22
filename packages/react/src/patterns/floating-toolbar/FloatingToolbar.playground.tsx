@@ -83,7 +83,9 @@ function LiveToolbar({
       <Surface ref={frame} level="card" padX={10} padY={8}>
         <Stack gap={1}>
           <Text variant="title">Launch card</Text>
-          <Text variant="caption">{`Canvas ${size}`}</Text>
+          <Text variant="caption">
+            {showing && meta !== "" ? `Resizing to ${meta}` : `Canvas ${size}`}
+          </Text>
         </Stack>
       </Surface>
       <FloatingToolbar
@@ -138,8 +140,8 @@ function toolbarCode({ open, meta }: DemoValues): string {
 
 export const live: LiveDemo = {
   controls: {
-    open: { kind: "toggle", initial: true },
     meta: { kind: "text", initial: "1920 × 1080" },
+    open: { kind: "toggle", initial: true },
   },
   render: ({ open, meta }) => (
     <LiveToolbar key={String(open)} open={open === true} meta={String(meta)} />

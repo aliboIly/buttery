@@ -142,7 +142,7 @@ function LiveFilters({
 }
 
 function filtersCode({ status, actions, clearLabel }: DemoValues): string {
-  const value = demoChoice(status, ["None", ...STATUSES]);
+  const value = demoChoice(status, [...STATUSES, "None"]);
   return [
     "<FilterBar",
     "  onClearAll={clearFilters}",
@@ -172,14 +172,14 @@ export const live: LiveDemo = {
   controls: {
     status: {
       kind: "choice",
-      options: ["None", "Paid", "Unpaid", "Refunded"],
+      options: ["Paid", "Unpaid", "Refunded", "None"],
       initial: "Unpaid",
     },
     actions: { kind: "toggle", initial: true },
     clearLabel: { kind: "text", initial: "Clear filters" },
   },
   render: ({ status, actions, clearLabel }) => {
-    const value = demoChoice(status, ["None", ...STATUSES]);
+    const value = demoChoice(status, [...STATUSES, "None"]);
     return (
       <LiveFilters
         key={value}
