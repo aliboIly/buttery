@@ -24,6 +24,7 @@ import type {
 } from "@buttery/core";
 import { Confetti } from "../components/confetti/Confetti.tsx";
 import { Toaster } from "../components/toaster/Toaster.tsx";
+import type { ToasterProps } from "../components/toaster/Toaster.tsx";
 import { TooltipProvider } from "../components/tooltip/Tooltip.tsx";
 import { ButteryContext } from "./context.ts";
 import type { ButteryContextValue, Platform } from "./context.ts";
@@ -54,6 +55,11 @@ export interface ButteryProviderProps {
    * production builds.
    */
   readonly layoutGuard?: boolean;
+  /**
+   * The labels of the `Toaster` it mounts, to translate what screen readers hear with each toast. Only the
+   * outermost provider mounts one, so set it there.
+   */
+  readonly toaster?: ToasterProps;
 }
 
 interface Attributes {
@@ -136,6 +142,7 @@ export function ButteryProvider({
   platform,
   reducedMotion = "user",
   layoutGuard = true,
+  toaster,
 }: ButteryProviderProps): ReactElement {
   const parent = use(ButteryContext);
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
@@ -198,7 +205,7 @@ export function ButteryProvider({
           <TooltipProvider>
             {children}
             <FloatingLanes />
-            <Toaster />
+            <Toaster {...toaster} />
             <Confetti />
             {isDevelopment && layoutGuard ? <LayoutGuard /> : null}
           </TooltipProvider>,

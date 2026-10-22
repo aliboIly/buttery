@@ -381,8 +381,8 @@ function useWindowAway(): boolean {
  * The host for `toast()` messages: a stack in the bottom-center floating lane, above dialogs, that shows
  * three toasts at most. New toasts rise in at the bottom and the others make room; a toast leaving fades
  * where it is before the others close the gap. F8 moves focus to the toasts, and focus goes back where
- * it was when the last one leaves. `ButteryProvider` mounts one; render it yourself only without the
- * provider.
+ * it was when the last one leaves. `ButteryProvider` mounts one, taking these props as its `toaster`;
+ * render it yourself only without the provider.
  *
  * @example
  * <Toaster label="Benachrichtigung" regionLabel="Benachrichtigungen ({hotkey})" />

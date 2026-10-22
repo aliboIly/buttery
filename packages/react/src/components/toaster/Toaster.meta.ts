@@ -16,7 +16,7 @@ export const meta: ComponentMeta = {
     "Anything people must read or decide on: use a Dialog",
     "Progress that runs for a while: show a notice with FloatingLanes.Item",
     "Messages longer than one line: they truncate",
-    "Rendering a Toaster of your own inside ButteryProvider, which already mounts one: call toast() instead",
+    "Rendering a Toaster of your own inside ButteryProvider, which already mounts one: call toast(), and pass the Toaster's labels as the provider's toaster to translate them",
   ],
   related: ["FloatingLanes", "Presence", "Button"],
   a11y: 'Screen readers hear each toast as it arrives or updates, as "Notification", its tone for a toned toast ("Success:", "Warning:", "Error:"), the message and the action\'s altText; background toasts wait for a pause. A tone also shows as an icon named by it, so it never rests on color alone. F8 moves focus to the toasts, Tab moves through them newest first, each followed by its action, and Escape closes the focused toast (the newest with the region focused). Escape elsewhere is left alone. When the last toast leaves, focus goes back to where it was. The timer stops while the pointer or focus is on the toasts or the window is in the background. With reduced motion they only fade.',

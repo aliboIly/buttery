@@ -1,8 +1,9 @@
 import "@buttery/core/styles.css";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { colors, createTheme, useMotionPreference } from "@buttery/core";
+import { toast } from "../components/toaster/Toaster.tsx";
 import { ButteryProvider } from "./ButteryProvider.tsx";
 import { useButtery } from "./context.ts";
 
@@ -56,6 +57,30 @@ describe("ButteryProvider", () => {
     unmount();
     expect(root.hasAttribute("data-bt-settled")).toBe(false);
     expect(document.querySelector('[data-bt="FloatingLanes"]')).toBeNull();
+  });
+
+  it("gives the toasts' region and messages the labels in toaster, so an app can translate them", async () => {
+    render(
+      <ButteryProvider
+        toaster={{
+          label: "Hinweis",
+          regionLabel: "Hinweise ({hotkey})",
+          toneLabels: { success: "Erledigt" },
+        }}
+      />,
+    );
+    toast.success("Karte gespeichert");
+    expect(
+      await screen.findByRole("region", { name: "Hinweise (F8)" }),
+    ).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        [...document.querySelectorAll('[role="status"]')].map(
+          (status) => status.textContent,
+        ),
+      ).toContain("Hinweis Erledigt: Karte gespeichert");
+    });
+    toast.dismiss();
   });
 
   it("leaves LayoutGuard out when asked", () => {
