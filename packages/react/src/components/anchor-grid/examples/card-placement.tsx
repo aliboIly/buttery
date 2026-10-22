@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Surface, Text } from "@buttery/core";
+import { Inline, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { AnchorGrid, buttery } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
 
@@ -22,28 +23,40 @@ export function CardPlacement(): ReactElement {
   return (
     <Inline gap={8} align="center">
       <AnchorGrid label="Anchor" value={anchor} onValueChange={setAnchor} />
-      <Surface
-        level="card"
-        pad={3}
-        asChild
-        style={{
-          display: "grid",
-          placeItems: PLACE[anchor],
-          inlineSize: "var(--bt-w-row-control)",
-          aspectRatio: "16 / 9",
-        }}
-      >
-        <output aria-label="Card placement">
-          <buttery.span
-            surface="section"
-            pad={2}
-            layout
-            layoutDependency={anchor}
-          >
-            <Text variant="badge">Launch card</Text>
-          </buttery.span>
-        </output>
-      </Surface>
+      <Stack gap={2}>
+        <Surface
+          level="card"
+          pad={3}
+          asChild
+          style={{
+            display: "grid",
+            placeItems: PLACE[anchor],
+            inlineSize: "var(--bt-w-row-control)",
+            aspectRatio: "16 / 9",
+          }}
+        >
+          <output aria-label="Card placement">
+            <buttery.span
+              surface="section"
+              pad={2}
+              layout
+              layoutDependency={anchor}
+            >
+              <Text variant="badge">Launch card</Text>
+            </buttery.span>
+          </output>
+        </Surface>
+        <Text variant="caption">{`Anchored ${anchor.replace("-", " ")}`}</Text>
+      </Stack>
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, key, see }) => {
+  await press("radio", "Top left");
+  await see("Anchored top left");
+  await key("ArrowRight");
+  await see("Anchored top");
+};

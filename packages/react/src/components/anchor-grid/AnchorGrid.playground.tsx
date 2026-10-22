@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice, Inline, Text } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { AnchorGrid } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
 
@@ -25,6 +25,38 @@ function Placement(): ReactElement {
     </Inline>
   );
 }
+
+const ANCHORS = [
+  "center",
+  "top-left",
+  "top",
+  "top-right",
+  "left",
+  "right",
+  "bottom-left",
+  "bottom",
+  "bottom-right",
+] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    defaultValue: { kind: "choice", options: ANCHORS, initial: "center" },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ defaultValue, disabled }) => {
+    const anchor = demoChoice(defaultValue, ANCHORS);
+    return (
+      <AnchorGrid
+        key={anchor}
+        label="Anchor"
+        defaultValue={anchor}
+        disabled={disabled === true}
+      />
+    );
+  },
+  code: ({ defaultValue, disabled }) =>
+    `<AnchorGrid label="Anchor" defaultValue="${demoChoice(defaultValue, ANCHORS)}"${disabled === true ? " disabled" : ""} />`,
+};
 
 export const demos: readonly DemoSection[] = [
   {
