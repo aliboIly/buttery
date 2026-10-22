@@ -5,6 +5,7 @@ section: foundations
 order: 90
 status: stable
 since: 0.2.0
+exports: [ButteryProvider, ButteryContext, useButtery]
 related: [foundations/colors, foundations/elevation]
 ---
 
@@ -37,6 +38,21 @@ A `ButteryProvider` inside another one sets the scheme for its part of the page 
 ## Motion
 
 `reducedMotion` is `"user"` by default, which follows the operating system's setting. `"always"` turns motion down for everyone, and `"never"` keeps it on. Every motion preset reads this setting, as the [Motion](/motion/presets) pages explain.
+
+## Reading the settings in code
+
+`useButtery()` returns what the nearest `ButteryProvider` resolved: `colorScheme` (`"light"` or `"dark"`, with `"system"` already settled), `density`, `platform` (`"web"`, or `"desktop"` in a Tauri window) and `reducedMotion` as a boolean. It throws without a provider above it, so a component that has to work with or without one reads `ButteryContext` with `use(ButteryContext)` instead, which gives `null` outside a provider.
+
+```tsx
+import type { ReactElement } from "react";
+import { Text } from "@buttery/core";
+import { useButtery } from "@buttery/react";
+
+export function SchemeNote(): ReactElement {
+  const { colorScheme } = useButtery();
+  return <Text variant="caption">Showing the {colorScheme} theme</Text>;
+}
+```
 
 ## Your own theme
 

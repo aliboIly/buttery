@@ -9,4 +9,6 @@ export const meta: ComponentMeta = {
   related: [],
   a11y: "",
   motion: "none",
+  keyboard: [],
+  layout: "It's as wide as its text.",
 };

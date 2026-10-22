@@ -5,6 +5,7 @@ section: patterns
 order: 130
 status: stable
 since: 0.6.0
+exports: [HeroText]
 related: [layout/page-grid-and-containers, components/nav-bar]
 ---
 
@@ -27,7 +28,11 @@ export function Home(): ReactElement {
       <SplitHero
         title="Coffee roasted to order."
         titleMore="Every bag ships the week it's roasted."
-        actions={<Button variant="primary" arrow="forward">Shop coffee</Button>}
+        actions={
+          <Button variant="primary" arrow="forward">
+            Shop coffee
+          </Button>
+        }
         visual={<div className="bag-photo" />}
       />
     </Page>
@@ -42,6 +47,31 @@ export function Home(): ReactElement {
 ## CenteredHero
 
 <ComponentDocs of="CenteredHero" />
+
+## HeroText
+
+`SplitHero` and `CenteredHero` both lay out `HeroText`, a hero's words, and you can use it in a hero of your own: an optional `eyebrow`, a two-tone `display` headline (`title` in the strong color, then `titleMore` in the secondary one), a `body` line at most 60 characters wide, and `actions` 24px under it. `align` is `"start"` by default or `"center"`, and `titleAs="h2"` suits a band further down the page.
+
+```tsx
+import type { ReactElement } from "react";
+import { Button, HeroText } from "@buttery/react";
+
+export function RoasteryHero(): ReactElement {
+  return (
+    <HeroText
+      eyebrow="Halfmoon Roastery"
+      title="Coffee roasted on Thursday."
+      titleMore="At your door by Saturday."
+      body="Small batches from three farms we visit every year."
+      actions={
+        <Button variant="primary" size="cta" arrow="forward">
+          Choose a coffee
+        </Button>
+      }
+    />
+  );
+}
+```
 
 ## LogoStrip
 

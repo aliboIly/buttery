@@ -5,6 +5,7 @@ section: patterns
 order: 90
 status: new
 since: 0.7.0
+exports: [TimeEstimate, useDismissible]
 related: [components/metric-card, components/stat-tabs, components/setup-guide]
 ---
 
@@ -15,3 +16,32 @@ An overview is an app's home page: headline numbers for the period, a chart behi
 `StatTabs` puts a few metrics over one chart and switches the chart between them. `MetricCard` shows one number with its change and a sparkline, and loads on its own. `RecommendationCard` and `Banner` raise what needs a decision, and a `SetupGuide` floats at the bottom end until the account is set up. Every block keeps its size while it loads, so the page doesn't shift as data arrives.
 
 See [MetricCard](/components/metric-card), [StatTabs](/components/stat-tabs) and [SetupGuide](/components/setup-guide) for each part.
+
+## Guidance of your own
+
+Two parts behind the guidance components are exported for guidance you build yourself. `TimeEstimate` says how long a task takes, with a 14px clock and the time in `caption`, read as "Takes about 1 min"; `SetupGuide` and `RecommendationCard` show it beside their tasks.
+
+`useDismissible` is the state behind a part people can dismiss for good, as `Banner` and `RecommendationCard` are. `dismiss()` fades the part where it is over `dur-fast`, then `dismissed` turns true and you render nothing. Inside an `AppPage`, what's below then slides up into its place. Focus in the part moves on to the next tab stop as it goes, and with a `storageKey` it stays gone on later visits. Spread its `motionProps` on the part's root, a `buttery.div`:
+
+```tsx
+import { X } from "lucide-react";
+import type { ReactElement } from "react";
+import { Inline, Text } from "@buttery/core";
+import { buttery, IconButton, useDismissible } from "@buttery/react";
+
+export function RoastDayTip(): ReactElement | null {
+  const { dismissed, dismiss, motionProps } = useDismissible({
+    kind: "tip",
+    storageKey: "roast-day",
+  });
+  if (dismissed) return null;
+  return (
+    <buttery.div {...motionProps}>
+      <Inline gap={2} align="center">
+        <Text variant="body">Roast days move to Thursday from next week.</Text>
+        <IconButton icon={X} label="Dismiss" onClick={dismiss} />
+      </Inline>
+    </buttery.div>
+  );
+}
+```

@@ -18,7 +18,7 @@ import { ExampleFrame } from "./ExampleFrame.tsx";
 import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
 import { PageFooter } from "./PageFooter.tsx";
 import type { Neighbor } from "./PageFooter.tsx";
-import { PropsTables } from "./PropsTables.tsx";
+import { ExportDocs, PropsTables } from "./PropsTables.tsx";
 import type { Heading } from "./content.ts";
 import { rootOf } from "./nav.ts";
 import { components } from "./registry.ts";
@@ -334,6 +334,7 @@ export function ComponentBody({
             Props
           </HeadingAt>
           <PropsTables name={meta.name} headingLevel={inner} />
+          <ExportDocs name={meta.name} headingLevel={inner} />
         </section>
       </Stack>
       <Stack gap={4} asChild>

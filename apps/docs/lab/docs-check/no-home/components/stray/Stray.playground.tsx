@@ -1,4 +1,4 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 
 export const page: DocsPage = {
   section: "components/actions",
@@ -7,6 +7,11 @@ export const page: DocsPage = {
   order: 990,
   status: "new",
   since: "0.9.0",
+};
+
+export const live: LiveDemo = {
+  controls: {},
+  render: () => <span>Stray</span>,
 };
 
 export const demos: readonly DemoSection[] = [];

@@ -18,4 +18,14 @@ declare module "virtual:buttery-props" {
 
   /** Every component's props tables, by its name. */
   export const propsTables: Readonly<Record<string, readonly PropsTable[]>>;
+
+  /** Something a component's folder exports beside it and its parts, such as a hook or a helper. */
+  export interface ExportDoc {
+    readonly name: string;
+    readonly signature: string;
+    readonly description: string;
+  }
+
+  /** What each component's folder exports beside it and its parts, by the component's name. */
+  export const exportDocs: Readonly<Record<string, readonly ExportDoc[]>>;
 }

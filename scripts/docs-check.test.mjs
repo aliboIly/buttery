@@ -12,6 +12,7 @@ function fixture(name, options = {}) {
     contentDir: join(fixtures, name, "content"),
     metaFiles: [],
     references: [],
+    packageIndex: null,
     ...options,
   });
 }
@@ -62,6 +63,32 @@ describe("docs check", () => {
     ).toContain(
       "apps/docs/lab/docs-check/prop-without-jsdoc/components/quiet/Quiet.tsx: Quiet's prop tone has no JSDoc, so its props table can't say what it does. Fix: add a /** … */ comment above it saying what it does and its default.",
     );
+  });
+
+  it("fails a component page with no live demo, keyboard table, layout note or reduced-motion note", () => {
+    const bare = join(fixtures, "missing-parts/components/bare");
+    expect(
+      fixture("missing-parts", { metaFiles: [join(bare, "Bare.meta.ts")] }),
+    ).toEqual(
+      expect.arrayContaining([
+        "apps/docs/lab/docs-check/missing-parts/components/bare/Bare.playground.tsx has no live demo. Fix: export const live: LiveDemo = { controls, render }, with a control for each prop a reader most wants to try.",
+        'apps/docs/lab/docs-check/missing-parts/components/bare/Bare.meta.ts has no keyboard table. Fix: add keyboard: [{ keys: "Enter or Space", does: "Presses it" }], a row for each key it answers while it has focus, or keyboard: [] when it takes no keyboard input of its own.',
+        'apps/docs/lab/docs-check/missing-parts/components/bare/Bare.meta.ts doesn\'t say how Bare lays out. Fix: add layout: "…", on how it sizes itself (its height token and width), what it truncates or wraps, and its hit areas.',
+        'apps/docs/lab/docs-check/missing-parts/components/bare/Bare.meta.ts doesn\'t say what Bare does with reduced motion. Fix: add reducedMotion: "…", one sentence on how it moves when motion is reduced.',
+      ]),
+    );
+  });
+
+  it("fails an export outside a component's folder that no page describes", () => {
+    const folder = join(fixtures, "export-without-page");
+    expect(
+      fixture("export-without-page", {
+        packageIndex: join(folder, "package/index.ts"),
+      }),
+    ).toEqual([
+      "apps/docs/lab/docs-check/export-without-page/content/guides/helpers.mdx lists mutedHelper in its exports but doesn't describe it. Fix: write about `mutedHelper` on the page, with its name in backticks, alone or called, as in `mutedHelper()`.",
+      "quietHelper, exported from apps/docs/lab/docs-check/export-without-page/package/index.ts, has no docs page. Fix: add it to exports: [...] in the frontmatter of the page that documents it, and describe it there.",
+    ]);
   });
 
   it("fails a component with no home in the docs site's table of exports", () => {

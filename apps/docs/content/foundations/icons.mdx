@@ -5,6 +5,7 @@ section: foundations
 order: 70
 status: stable
 since: 0.2.0
+exports: [Arrow, Spinner]
 related: [components/icon-button, foundations/typography]
 ---
 
@@ -55,6 +56,10 @@ export function Shipping(): ReactElement {
 ```
 
 A button that's only an icon is an `IconButton`, which takes a required `label` and shows it as a tooltip.
+
+## The arrow and the spinner
+
+Two drawn parts sit beside the icon set. `Arrow` is the navigation arrow that `Button` and `ArrowLink` draw beside their label: a chevron, `direction="forward"` or `"back"`, that grows a stem into an arrow while the control holding it, marked `data-arrow`, is hovered or focused. Only transforms change, so the control never changes size. `Spinner` is the small turning ring a busy control shows over its label, and it holds still with reduced motion. Reach for them through `Button`'s `arrow` and `loading` props first, and on their own only inside a control of your own.
 
 ## Icon
 

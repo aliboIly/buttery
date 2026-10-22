@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { propsTables } from "virtual:buttery-props";
+import { exportDocs, propsTables } from "virtual:buttery-props";
 import { Stack, Text } from "@buttery/core";
 
 /**
@@ -66,6 +66,43 @@ export function PropsTables({
           </Stack>
         );
       })}
+    </Stack>
+  );
+}
+
+/** What a component's folder exports beside it and its parts, such as a hook or a helper, with its JSDoc. */
+export function ExportDocs({
+  name,
+  headingLevel,
+}: {
+  readonly name: string;
+  readonly headingLevel: 3 | 4;
+}): ReactElement | null {
+  const docs = exportDocs[name] ?? [];
+  if (docs.length === 0) return null;
+  return (
+    <Stack gap={3}>
+      <Text variant="label" asChild>
+        {headingLevel === 3 ? <h3>Also exported</h3> : <h4>Also exported</h4>}
+      </Text>
+      <div className="tk-table-scroll">
+        <table className="tk-table">
+          <thead>
+            <tr>
+              <th scope="col">Export</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {docs.map((doc) => (
+              <tr key={doc.name}>
+                <td className="pg-mono docs-type">{doc.signature}</td>
+                <td>{doc.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Stack>
   );
 }

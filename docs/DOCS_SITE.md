@@ -46,7 +46,7 @@ Every component, primitive and layer has one home. Component-scale parts get a c
 | Resources › Brand | `BrandMark` |
 | Patterns | `PageHeader` (Page header); `SignInForm`, `SignUpForm` (Forms); `SettingRow`†, `SettingsPage`†, `SettingsSection`† (Settings pages); `DetailPage`† (Detail page); `CatalogPage`† (Catalog page); `PlanComparison`† (Plans); `SearchResults`† (Search and results); `Onboarding` (Onboarding); `HeaderBar`, `Inspector`, `Stage` (Inspector); `AppPage`, `AppShell` (App shell); `ArticleLayout`, `Bento`, `CenteredHero`, `Footer`, `LogoStrip`, `SplitHero`, `StatStrip` (Marketing page) |
 
-The Data table page and Overview patterns are compositions of the parts above and add no export of their own. A new export gets a row here in the change that adds it, and the docs check fails on an export that has none.
+The Data table page and Overview patterns are compositions of the parts above and add no export of their own. A new export gets a row here in the change that adds it, and the docs check fails on an export that has none. An export of `@buttery/react` from outside a component's folder, such as `ButteryProvider` or the shared form parts, is listed in the `exports` frontmatter of the written page that describes it.
 
 ## Landing page (`/`)
 
@@ -67,7 +67,7 @@ Every component page has the same parts in the same order.
 3. When to use it, when not to, and what to use instead.
 4. Examples, from `examples/`.
 5. Anatomy, variants, sizes and states.
-6. A props table generated from the types and their JSDoc.
+6. A props table generated from the types and their JSDoc, one per part, and under "Also exported" the hooks and helpers its folder exports, with their signatures and JSDoc.
 7. Accessibility: a keyboard table and ARIA notes.
 8. Motion: the preset it uses and what reduced motion does.
 9. Layout: its sizing rules, truncation and hit areas.

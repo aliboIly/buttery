@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, globSync, readFileSync } from "node:fs";
+import { existsSync, globSync, readdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, relative } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -9,7 +9,7 @@ import {
 } from "../apps/docs/vite/frontmatter.ts";
 import { demoPages } from "../apps/docs/src/routes.ts";
 import { slugify } from "../apps/docs/src/slug.ts";
-import { propsTablesIn } from "../apps/docs/vite/props.ts";
+import { exportsOf, propsTablesIn } from "../apps/docs/vite/props.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 
@@ -123,7 +123,9 @@ function homesIn(docsSite) {
 /**
  * Checks the docs site's pages: every page has its metadata, no two pages in a section share an order,
  * every internal link reaches a page (and heading) that exists, and every component has a home in
- * `docs/DOCS_SITE.md`. Returns the problems, each saying how to fix it.
+ * `docs/DOCS_SITE.md`, the examples its page asks for, a live demo on a page of its own, and the keyboard,
+ * layout and reduced-motion notes its meta gives the page; and every other export of `@buttery/react` is
+ * described on a page that lists it in its `exports`. Returns the problems, each saying how to fix it.
  */
 export function checkDocs({
   contentDir = join(root, "apps/docs/content"),
@@ -134,10 +136,12 @@ export function checkDocs({
   references = [],
   demos = demoPages.map((page) => page.route),
   examples = true,
+  packageIndex = join(root, "packages/react/src/index.ts"),
 } = {}) {
   const problems = [];
   const pages = [];
   const homed = [];
+  const documents = new Map();
   const say = (file) => relative(root, file);
 
   const contentFiles = existsSync(contentDir)
@@ -184,6 +188,9 @@ export function checkDocs({
       title: data.title,
       order: data.order,
     });
+    const listed = data.exports ?? [];
+    for (const name of Array.isArray(listed) ? listed : [listed])
+      documents.set(String(name), { file, body });
     const related = data.related ?? [];
     page.links.push(
       ...(Array.isArray(related) ? related : [related]).map(
@@ -205,6 +212,11 @@ export function checkDocs({
     if (page.home !== undefined) {
       homed.push({ name, home: page.home, file: playground });
       continue;
+    }
+    if (!/^export const live\b/m.test(readFileSync(playground, "utf8"))) {
+      problems.push(
+        `${say(playground)} has no live demo. Fix: export const live: LiveDemo = { controls, render }, with a control for each prop a reader most wants to try.`,
+      );
     }
     const route = `${(page.section ?? "").split("/")[0]}/${kebab(name)}`;
     pages.push({
@@ -380,6 +392,49 @@ export function checkDocs({
             `${name} has no ${kind} example. Fix: add one to ${say(join(folder, "examples"))} with export const kind: ExampleKind = "${kind}".`,
           );
         }
+      }
+    }
+  }
+
+  for (const meta of metaFiles) {
+    const name = basename(meta, ".meta.ts");
+    const text = readFileSync(meta, "utf8");
+    if (!/^\s+keyboard:/m.test(text)) {
+      problems.push(
+        `${say(meta)} has no keyboard table. Fix: add keyboard: [{ keys: "Enter or Space", does: "Presses it" }], a row for each key it answers while it has focus, or keyboard: [] when it takes no keyboard input of its own.`,
+      );
+    }
+    if (!/^\s+layout:/m.test(text)) {
+      problems.push(
+        `${say(meta)} doesn't say how ${name} lays out. Fix: add layout: "…", on how it sizes itself (its height token and width), what it truncates or wraps, and its hit areas.`,
+      );
+    }
+    if (
+      !/^\s+motion: "none"/m.test(text) &&
+      !/^\s+reducedMotion:/m.test(text)
+    ) {
+      problems.push(
+        `${say(meta)} doesn't say what ${name} does with reduced motion. Fix: add reducedMotion: "…", one sentence on how it moves when motion is reduced.`,
+      );
+    }
+  }
+
+  if (packageIndex !== null && existsSync(packageIndex)) {
+    for (const { name, file } of exportsOf(packageIndex)) {
+      const folder = dirname(file);
+      const inComponent =
+        existsSync(folder) &&
+        readdirSync(folder).some((entry) => entry.endsWith(".meta.ts"));
+      if (inComponent) continue;
+      const page = documents.get(name);
+      if (!page) {
+        problems.push(
+          `${name}, exported from ${say(packageIndex)}, has no docs page. Fix: add it to exports: [...] in the frontmatter of the page that documents it, and describe it there.`,
+        );
+      } else if (!new RegExp(`\`${name}[\`(]`).test(prose(page.body))) {
+        problems.push(
+          `${say(page.file)} lists ${name} in its exports but doesn't describe it. Fix: write about \`${name}\` on the page, with its name in backticks, alone or called, as in \`${name}()\`.`,
+        );
       }
     }
   }

@@ -145,6 +145,109 @@ export function propsTablesIn(name: string, file: string): PropsTable[] {
   return propsTablesOf(name, readFileSync(file, "utf8"));
 }
 
+/** A runtime export of a package's index and the file it comes from. */
+export interface IndexExport {
+  readonly name: string;
+  readonly file: string;
+}
+
+/** The runtime exports a package's `index.ts` names, each with the file it comes from. */
+export function exportsOf(index: string): IndexExport[] {
+  const text = readFileSync(index, "utf8");
+  return [...text.matchAll(/^export \{([^}]*)\} from "([^"]+)";/gm)].flatMap(
+    ([, names = "", from = ""]) =>
+      names
+        .split(",")
+        .map((part) => part.trim())
+        .filter((part) => part !== "" && !part.startsWith("type "))
+        .map((part) => ({
+          name: part.split(/\s+as\s+/).at(-1) ?? part,
+          file: join(dirname(index), from),
+        })),
+  );
+}
+
+/** Something a component's folder exports beside the component and its parts, such as a hook or a helper. */
+export interface ExportDoc {
+  readonly name: string;
+  /** How it's declared, such as `parseSearch(text: string): ParsedSearch`. */
+  readonly signature: string;
+  /** Its JSDoc, as written. */
+  readonly description: string;
+}
+
+function flat(text: string): string {
+  return text.replace(/\s+/g, " ").replace(/\(\s/g, "(").replace(/,\s\)/g, ")");
+}
+
+/** How `source` declares the export `name`, with its JSDoc, or `null` when it doesn't declare it itself. */
+export function exportDocOf(name: string, source: string): ExportDoc | null {
+  const file = ts.createSourceFile(
+    "export.tsx",
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  for (const statement of file.statements) {
+    if (ts.isFunctionDeclaration(statement) && statement.name?.text === name) {
+      const parameters = statement.parameters
+        .map((parameter) => parameter.getText(file))
+        .join(", ");
+      const returns = statement.type ? `: ${statement.type.getText(file)}` : "";
+      return {
+        name,
+        signature: flat(`${name}(${parameters})${returns}`),
+        description: jsDocOf(statement),
+      };
+    }
+    if (ts.isVariableStatement(statement)) {
+      const declaration = statement.declarationList.declarations.find(
+        (candidate) =>
+          ts.isIdentifier(candidate.name) && candidate.name.text === name,
+      );
+      if (!declaration) continue;
+      return {
+        name,
+        signature: flat(
+          declaration.type
+            ? `${name}: ${declaration.type.getText(file)}`
+            : name,
+        ),
+        description: jsDocOf(statement),
+      };
+    }
+  }
+  return null;
+}
+
+/**
+ * What each component's folder exports beside the component and the parts its props tables show, read from
+ * the packages' indexes: its hooks, helpers and constants, by the component's name.
+ */
+export function exportDocsIn(
+  root: string,
+  tables: Readonly<Record<string, readonly PropsTable[]>>,
+): Record<string, ExportDoc[]> {
+  const docs: Record<string, ExportDoc[]> = {};
+  for (const index of globSync("packages/*/src/index.ts", { cwd: root })) {
+    for (const { name, file } of exportsOf(join(root, index))) {
+      const folder = dirname(file);
+      const meta = globSync("*.meta.ts", { cwd: folder })[0];
+      if (meta === undefined) continue;
+      const owner = basename(meta, ".meta.ts");
+      if (name === owner) continue;
+      const parts = (tables[owner] ?? []).map((table) => table.interfaceName);
+      if (parts.includes(`${name}Props`)) continue;
+      const doc = existsSync(file)
+        ? exportDocOf(name, readFileSync(file, "utf8"))
+        : null;
+      if (doc) (docs[owner] ??= []).push(doc);
+    }
+  }
+  return docs;
+}
+
 const PROPS_MODULE = "virtual:buttery-props";
 
 /**
@@ -160,6 +263,8 @@ export function butteryProps(root: string): Plugin {
     load(id) {
       if (id !== `\0${PROPS_MODULE}`) return undefined;
       const tables: Record<string, PropsTable[]> = {};
+      for (const index of globSync("packages/*/src/index.ts", { cwd: root }))
+        this.addWatchFile(join(root, index));
       for (const meta of globSync("packages/*/src/*/*/*.meta.ts", {
         cwd: root,
       })) {
@@ -169,7 +274,7 @@ export function butteryProps(root: string): Plugin {
         this.addWatchFile(file);
         tables[name] = propsTablesIn(name, file);
       }
-      return `export const propsTables = ${JSON.stringify(tables)};`;
+      return `export const propsTables = ${JSON.stringify(tables)};\nexport const exportDocs = ${JSON.stringify(exportDocsIn(root, tables))};`;
     },
   };
 }

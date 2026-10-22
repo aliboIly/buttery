@@ -5,6 +5,7 @@ section: layout
 order: 70
 status: stable
 since: 0.2.0
+exports: [useMediaQuery]
 related: [layout/the-layout-contract, layout/page-grid-and-containers]
 ---
 
@@ -40,6 +41,27 @@ A responsive buttery component changes its layout by the width of the container 
 ## When things don't fit
 
 A row that runs out of room moves its least important items into a "More" menu with `OverflowCluster`, rather than wrapping or shrinking its text. Text that doesn't fit on one line truncates with `Text truncate` and keeps its whole text in a tooltip. `FitBox` scales content of a fixed aspect, such as a canvas, into whatever space it has.
+
+## Media queries in code
+
+Lay out with container queries in CSS first. When code has to know about the device itself, such as whether it has a fine pointer, `useMediaQuery(query)` returns whether a media query matches and stays current as that changes. It's `false` when rendered on a server.
+
+```tsx
+import type { ReactElement } from "react";
+import { Text } from "@buttery/core";
+import { useMediaQuery } from "@buttery/react";
+
+export function DragHint(): ReactElement {
+  const finePointer = useMediaQuery("(pointer: fine)");
+  return (
+    <Text variant="caption">
+      {finePointer
+        ? "Drag a card to reorder it"
+        : "Press and hold a card to reorder it"}
+    </Text>
+  );
+}
+```
 
 ## Checking it
 
