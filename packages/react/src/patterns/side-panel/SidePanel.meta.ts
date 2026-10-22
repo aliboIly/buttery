@@ -17,4 +17,23 @@ export const meta: ComponentMeta = {
   related: ["AppShell", "Dialog", "Menu", "AppPage"],
   a11y: "Docked, it's a complementary landmark named by its title: opening it moves focus to its first field to type in, else to the panel itself, and Escape or its close button closes it and hands focus back to what opened it. As a sheet it's a modal dialog named by its title that keeps focus inside. The expand button is a toggle (aria-pressed); a menu item that deletes or resets something is drawn in danger and says so in its words.",
   motion: "presence",
+  keyboard: [
+    {
+      keys: "Escape",
+      does: "Closes the panel and hands focus back to what opened it",
+    },
+    {
+      keys: "Enter or Space",
+      does: "Presses the focused header button: expand, which a docked panel has, or close",
+    },
+    {
+      keys: "Enter, Space or Down",
+      does: "Opens the More actions menu from its button, where Up and Down move, Enter runs an item and Escape closes just the menu",
+    },
+    { keys: "Tab", does: "Stays inside the panel while it's a sheet" },
+  ],
+  layout:
+    "Docked, it's 360px wide (560 expanded) and its parent's height, with a 1px edge on its start side and a --bt-h-header (56px) header whose title truncates and shows in full on hover; its body scrolls on its own above the pinned footer. As a sheet it sits 8px in from the window's end, up to 360px wide, and its header buttons are 28px.",
+  reducedMotion:
+    "Docked, its content fades in over 100ms instead of 120; as a sheet it fades in and out over 100ms without rising, its scrim fading with it.",
 };
