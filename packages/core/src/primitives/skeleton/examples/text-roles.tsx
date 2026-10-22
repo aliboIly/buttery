@@ -1,6 +1,5 @@
 import type { ReactElement } from "react";
 import { Skeleton, Stack, Text } from "@buttery/core";
-import type { TextVariant } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const LINES = [
@@ -8,7 +7,7 @@ const LINES = [
   { variant: "label", text: "Wholesale orders" },
   { variant: "body", text: "Roasted on Tuesday, shipped the same afternoon" },
   { variant: "caption", text: "Updated 4 min ago" },
-] as const satisfies readonly { variant: TextVariant; text: string }[];
+] as const;
 
 /** A line for each of a few text roles, as tall as the role's trimmed line and as wide as its text, and a block the CSS sizes. */
 export function TextRoles(): ReactElement {

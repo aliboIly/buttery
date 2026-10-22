@@ -1,6 +1,5 @@
 import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
-import type { TextTone, TextVariant } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const ROLES = [
@@ -14,14 +13,9 @@ const ROLES = [
     sample: "Start a fresh card, or open one from your library.",
   },
   { role: "caption", sample: "Updated 4 min ago" },
-] as const satisfies readonly { role: TextVariant; sample: string }[];
+] as const;
 
-const TONES = [
-  "strong",
-  "default",
-  "secondary",
-  "tertiary",
-] as const satisfies readonly TextTone[];
+const TONES = ["strong", "default", "secondary", "tertiary"] as const;
 
 /** The app's roles from a page title down to a caption, each in its own color, and the tones that override it. */
 export function TypeScale(): ReactElement {

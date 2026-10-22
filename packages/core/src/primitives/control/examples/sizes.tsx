@@ -1,6 +1,5 @@
 import type { ReactElement } from "react";
 import { Control, Inline, Surface, Text } from "@buttery/core";
-import type { ControlSize } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const SIZES = [
@@ -9,7 +8,7 @@ const SIZES = [
   { size: "control", height: "34px" },
   { size: "button", height: "36px" },
   { size: "cta", height: "48px" },
-] as const satisfies readonly { size: ControlSize; height: string }[];
+] as const;
 
 /** Every height, each with the inline padding that goes with it, so a control you build lines up with buttery's own. */
 export function Sizes(): ReactElement {
