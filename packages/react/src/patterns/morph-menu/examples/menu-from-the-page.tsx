@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
+import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, MorphMenu } from "@buttery/react";
 
@@ -14,7 +14,7 @@ export function MenuFromThePage(): ReactElement {
   const [open, setOpen] = useState("");
   const openLabel = MENUS.find((menu) => menu.value === open)?.label;
   return (
-    <Stack gap={4} align="start">
+    <Stack gap={4}>
       <MorphMenu label="Help" value={open} onValueChange={setOpen}>
         <MorphMenu.Item label="Guides" value="guides">
           <MorphMenu.Column title="Start here">
@@ -40,17 +40,19 @@ export function MenuFromThePage(): ReactElement {
           </MorphMenu.Column>
         </MorphMenu.Item>
       </MorphMenu>
-      <Text variant="caption">
-        {openLabel === undefined ? "No menu open" : `${openLabel} menu open`}
-      </Text>
-      <Button
-        variant="soft"
-        onClick={() => {
-          setOpen("guides");
-        }}
-      >
-        Browse the guides
-      </Button>
+      <Inline gap={3} align="center">
+        <Text variant="caption">
+          {openLabel === undefined ? "No menu open" : `${openLabel} menu open`}
+        </Text>
+        <Button
+          variant="soft"
+          onClick={() => {
+            setOpen("guides");
+          }}
+        >
+          Browse the guides
+        </Button>
+      </Inline>
     </Stack>
   );
 }

@@ -40,7 +40,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "In a row, each trigger is a 36px pill (--bt-h-button) whose press area runs the row's full height, and a row too narrow for its triggers scrolls sideways; a menu opens in one floating card 8px under the row, the menu's size, centered under its trigger and kept inside the row, and scrolls inside when the window has less room below. In a stack each section's trigger is 48px tall and full width, and entry captions truncate to one line.",
+    "In a row, each trigger is a 36px pill (--bt-h-button) whose press area runs the row's full height, and a row too narrow for its triggers scrolls sideways; a menu opens in one floating card 8px under the row, the menu's size, centered under its trigger and kept inside the row, and scrolls inside when the window has less room below. In a stack each section's trigger is 48px tall and full width, and entry captions truncate to one line. It's its own size container, so it takes the width its parent gives it: in a parent that sizes it to its content, such as a Stack with align=\"start\", it has none, so give it a row of its own.",
   reducedMotion:
     "The card appears and leaves with a 100ms fade, a switch swaps the columns without sliding while the card takes its new size and place at once, and the chevron turns at once.",
 };
