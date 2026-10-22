@@ -1,15 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import type { ReactElement, ReactNode, SubmitEvent } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { Inline, Morph, Stack, Text, useStoredState } from "@buttery/core";
 import type { StoredStateSetter } from "@buttery/core";
-import {
-  Button,
-  Dialog,
-  IconButton,
-  RadioCardGroup,
-  TextField,
-  looksLikeEmail,
-} from "@buttery/react";
+import { Button, Dialog, IconButton } from "@buttery/react";
 import { Minus, Plus } from "lucide-react";
 import {
   EMPTY_BAG,
@@ -20,33 +13,32 @@ import {
   removeLine,
   setPlan,
   setQuantity,
-  shippingFor,
   subtotal,
-  totalFor,
   useBag,
 } from "./bag.ts";
 import type { Bag, CoffeeLine, Plan } from "./bag.ts";
 import { Shelf } from "./BagArt.tsx";
 import { coffeeOf, grindLabel, sizeLabel } from "./data.ts";
+import { DeliveryStep, PaymentStep, Totals, orderTotals } from "./Checkout.tsx";
+import { EMPTY_ADDRESS, EMPTY_CARD } from "./order-details.ts";
+import type { Address, Card } from "./order-details.ts";
 import { bags, money } from "./format.ts";
-import { planName, planSchedule } from "./plan.ts";
+import { firstName, planName, planSchedule } from "./plan.ts";
 import {
   FREE_SHIPPING_FROM,
-  NEXT_DAY_SHIPPING,
   bagPrice,
   freeShippingLeft,
   planPrice,
-  shippingCost,
 } from "./pricing.ts";
 import type { Delivery } from "./pricing.ts";
 import { STORAGE_PREFIX } from "./storage.ts";
 
-type Step = "bag" | "checkout" | "placed";
+type Step = "bag" | "delivery" | "payment" | "placed";
 
 /** An order once it's placed, for the step that thanks the customer. */
 interface PlacedOrder {
   readonly number: string;
-  readonly email: string;
+  readonly address: Address;
   readonly plan: Plan | null;
 }
 
@@ -230,36 +222,6 @@ function FreeShipping({ bag }: { readonly bag: Bag }): ReactElement {
   );
 }
 
-function Totals({
-  rows,
-}: {
-  readonly rows: readonly (readonly [string, string])[];
-}): ReactElement {
-  const last = rows.length - 1;
-  return (
-    <dl className="shop-totals">
-      {rows.map(([term, value], index) => (
-        <div
-          key={term}
-          className="shop-total"
-          data-grand={index === last ? "" : undefined}
-        >
-          <Text variant={index === last ? "label" : "body-sm"} asChild>
-            <dt>{term}</dt>
-          </Text>
-          <Text variant={index === last ? "label" : "body-sm"} tabular asChild>
-            <dd>{value}</dd>
-          </Text>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-function shippingText(cost: number): string {
-  return cost === 0 ? "Free" : money(cost);
-}
-
 function BagStep({
   bag,
   onBagChange,
@@ -319,13 +281,7 @@ function BagStep({
           )}
         </ul>
         <FreeShipping bag={bag} />
-        <Totals
-          rows={[
-            ["Subtotal", money(subtotal(bag))],
-            ["Shipping", shippingText(shippingFor(bag, "standard"))],
-            ["Total", money(totalFor(bag, "standard"))],
-          ]}
-        />
+        <Totals rows={orderTotals(bag, "standard")} />
       </Dialog.Body>
       <Dialog.Actions>
         <Button
@@ -342,122 +298,23 @@ function BagStep({
   );
 }
 
-function CheckoutStep({
-  bag,
-  email,
-  onBack,
-  onPlace,
-}: {
-  readonly bag: Bag;
-  readonly email: string;
-  readonly onBack: () => void;
-  readonly onPlace: (email: string) => void;
-}): ReactElement {
-  const [address, setAddress] = useState(email);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [delivery, setDelivery] = useState<Delivery>("standard");
-  const field = useRef<HTMLInputElement>(null);
-  const standard = shippingCost(subtotal(bag), "standard", bag.plan !== null);
-
-  useEffect(() => {
-    field.current?.focus();
-  }, []);
-
-  const place = (event: SubmitEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    const value = address.trim();
-    if (value === "") {
-      setError("Enter your email address, so we can send your receipt.");
-      field.current?.focus();
-      return;
-    }
-    if (!looksLikeEmail(value)) {
-      setError("Enter an email address like name@example.com.");
-      field.current?.focus();
-      return;
-    }
-    onPlace(value);
-  };
-
-  return (
-    <form onSubmit={place} noValidate>
-      <Dialog.Text
-        title="Check out"
-        body="We roast your coffee the morning after you order, and email you when it ships."
-      />
-      <Dialog.Body>
-        <TextField
-          ref={field}
-          label="Email"
-          type="email"
-          autoComplete="email"
-          inputMode="email"
-          value={address}
-          error={error}
-          onValueChange={(next) => {
-            setAddress(next);
-            setError(undefined);
-          }}
-        />
-        <Stack gap={3}>
-          <Text variant="label">Delivery</Text>
-          <RadioCardGroup<Delivery>
-            label="Delivery"
-            value={delivery}
-            onValueChange={setDelivery}
-            options={[
-              {
-                value: "standard",
-                label: "Standard, 2 to 4 days",
-                description:
-                  standard === 0
-                    ? "Free"
-                    : `${money(standard)}, free from ${money(FREE_SHIPPING_FROM)}`,
-              },
-              {
-                value: "next-day",
-                label: "Next day",
-                description: `${money(NEXT_DAY_SHIPPING)}, the day after it's roasted`,
-              },
-            ]}
-          />
-        </Stack>
-        <Totals
-          rows={[
-            ["Subtotal", money(subtotal(bag))],
-            ["Shipping", shippingText(shippingFor(bag, delivery))],
-            ["Total", money(totalFor(bag, delivery))],
-          ]}
-        />
-      </Dialog.Body>
-      <Dialog.Actions>
-        <Button size="cta" shape="rounded" arrow="back" onClick={onBack}>
-          Back
-        </Button>
-        <Button type="submit" variant="primary" size="cta" shape="rounded">
-          Place order
-        </Button>
-      </Dialog.Actions>
-    </form>
-  );
-}
-
 function PlacedStep({ order }: { readonly order: PlacedOrder }): ReactElement {
   const done = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     done.current?.focus();
   }, []);
+  const { address, plan } = order;
   return (
     <>
       <Dialog.Text
         title="Thanks, your order is in"
-        body={`Order ${order.number} goes into tomorrow morning's roast. We'll email ${order.email} when it ships.`}
+        body={`Order ${order.number} goes into tomorrow morning's roast and ships to ${firstName(address.name)} in ${address.city.trim()}. We'll email ${address.email.trim()} when it's on its way.`}
         caption={
-          order.plan === null
+          plan === null
             ? undefined
-            : order.plan.gift === null
-              ? `Your subscription starts with this order: ${planSchedule(order.plan)}.`
-              : `Your gift covers ${String(order.plan.gift)} deliveries, the first with this order.`
+            : plan.recipient === null
+              ? `Your subscription starts with this order: ${planSchedule(plan)}.`
+              : `${firstName(plan.recipient.name)}'s gift starts with this order: ${String(plan.gift ?? 1)} deliveries, ${planSchedule(plan)}.`
         }
       />
       <Dialog.Actions>
@@ -496,11 +353,17 @@ export function BagPanel({
     isCount,
   );
   const [step, setStep] = useState<Step>("bag");
+  const [address, setAddress] = useState<Address>(EMPTY_ADDRESS);
+  const [delivery, setDelivery] = useState<Delivery>("standard");
+  const [card, setCard] = useState<Card>(EMPTY_CARD);
   const [placed, setPlaced] = useState<PlacedOrder | null>(null);
   const [wasOpen, setWasOpen] = useState(open);
   if (open !== wasOpen) {
     setWasOpen(open);
-    if (open) setStep("bag");
+    if (open) {
+      setStep("bag");
+      if (address.email === "") setAddress({ ...address, email });
+    }
   }
 
   let content: ReactNode;
@@ -511,29 +374,49 @@ export function BagPanel({
           bag={bag}
           onBagChange={setBag}
           onCheckout={() => {
-            setStep("checkout");
+            setStep("delivery");
           }}
           onShop={onShop}
           onChangePlan={onChangePlan}
         />
       );
       break;
-    case "checkout":
+    case "delivery":
       content = (
-        <CheckoutStep
+        <DeliveryStep
           bag={bag}
-          email={email}
+          address={address}
+          onAddressChange={setAddress}
+          delivery={delivery}
+          onDeliveryChange={setDelivery}
           onBack={() => {
             setStep("bag");
           }}
-          onPlace={(address) => {
+          onContinue={() => {
+            setStep("payment");
+          }}
+        />
+      );
+      break;
+    case "payment":
+      content = (
+        <PaymentStep
+          bag={bag}
+          delivery={delivery}
+          card={card}
+          onCardChange={setCard}
+          onBack={() => {
+            setStep("delivery");
+          }}
+          onPay={() => {
             setPlaced({
               number: `HM-${String(FIRST_ORDER + orders)}`,
-              email: address,
+              address,
               plan: bag.plan,
             });
             setOrders(orders + 1);
             setBag(EMPTY_BAG);
+            setCard(EMPTY_CARD);
             setStep("placed");
           }}
         />
@@ -550,7 +433,7 @@ export function BagPanel({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Dialog.Content size="md">
+      <Dialog.Content size="md" className="shop-dialog">
         <Morph contentKey={step}>{content}</Morph>
       </Dialog.Content>
     </Dialog>
