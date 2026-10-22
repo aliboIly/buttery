@@ -120,10 +120,10 @@ test("the pill folds away to one button and stays folded, and its source link na
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/demos/card-studio");
+  await page.goto("/demos/deckhand");
   await expect(
     pill(page).getByRole("link", { name: "View source", exact: true }),
-  ).toHaveAttribute("href", /\/apps\/demos\/card-studio$/);
+  ).toHaveAttribute("href", /\/apps\/demos\/deckhand$/);
   await pill(page)
     .getByRole("button", { name: "Hide the demo controls", exact: true })
     .click();
@@ -183,7 +183,7 @@ test("Reset demo forgets what the demo saved and nothing else, and it opens as o
   const stored = await page.evaluate(() => ({
     pickup: localStorage.getItem("roastery:pickup"),
     other: localStorage.getItem("someone-else"),
-    tour: localStorage.getItem("buttery:onboarding:card-studio"),
+    tour: localStorage.getItem("buttery:onboarding:deckhand"),
   }));
   expect(stored).toEqual({ pickup: null, other: "kept", tour: "done" });
 });
@@ -202,6 +202,7 @@ const CHROME: Readonly<Record<(typeof demoPages)[number]["route"], string>> = {
     '[data-bt="HeaderBar"]',
     '[data-bt="AppShell"] > [data-bt-part="inspector"]',
     '[data-bt="AppShell"] > [data-bt-part="sheet-bar"]',
+    '[data-testid="slide-strip"]',
   ].join(", "),
 };
 
