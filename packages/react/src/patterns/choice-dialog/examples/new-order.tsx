@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, ChoiceDialog } from "@buttery/react";
 import { ShoppingBag, Store } from "lucide-react";
 
@@ -28,3 +29,11 @@ export function NewOrder(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "New order");
+  await see("Each kind has its own form.");
+  await see("Cases for a café, invoiced on terms.");
+};
