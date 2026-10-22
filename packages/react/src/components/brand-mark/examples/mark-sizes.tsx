@@ -1,15 +1,23 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { BrandMark, SegmentedControl } from "@buttery/react";
-import type { BrandMarkSize } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { BrandMark, SegmentedControl } from "@buttery/react";
+import type { BrandMarkSize } from "@buttery/react";
 
 const SIZES = ["16", "24", "32", "64", "128"] as const;
 
 type SizeName = (typeof SIZES)[number];
 
-const NOTES: Record<SizeName, string> = {
+const PIXELS: Readonly<Record<SizeName, BrandMarkSize>> = {
+  "16": 16,
+  "24": 24,
+  "32": 32,
+  "64": 64,
+  "128": 128,
+};
+
+const NOTES: Readonly<Record<SizeName, string>> = {
   "16": "16px, the favicon's drawing: three flat faces.",
   "24": "24px, in a header beside the name.",
   "32": "32px, the default.",
@@ -28,13 +36,15 @@ export function MarkSizes(): ReactElement {
         value={size}
         onValueChange={setSize}
       />
-      <BrandMark size={Number(size) as BrandMarkSize} label="buttery" />
+      <BrandMark size={PIXELS[size]} label="buttery" />
       <Text variant="body-sm" tone="secondary">
         {NOTES[size]}
       </Text>
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "16");

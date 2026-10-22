@@ -1,6 +1,6 @@
-import type { ExamplePlay } from "@buttery/core";
-import { BrandMark, Button, MorphMenu, NavBar } from "@buttery/react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { BrandMark, Button, MorphMenu, NavBar } from "@buttery/react";
 
 /** A docs header whose home link is the mark beside buttery's name, the name saying what the mark shows. */
 export function DocsHeader(): ReactElement {
@@ -24,7 +24,8 @@ export function DocsHeader(): ReactElement {
   );
 }
 
-export const play: ExamplePlay = async ({ press, see }) => {
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ see }) => {
   await see("buttery");
-  await press("link", "buttery");
 };

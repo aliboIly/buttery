@@ -16,4 +16,7 @@ export const meta: ComponentMeta = {
   related: ["NavBar", "Icon"],
   a11y: "Hidden from screen readers by default, since the name is usually written beside it; give it a label when it stands alone, and it becomes an image named by it.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "A square drawn at its size in px: 16, 24, 32 (the default), 64, 128 or 512, which shrinks to fit a narrower container instead of overflowing it. It takes no presses of its own; a link around it, such as a header's home link, is the hit area.",
 };
