@@ -606,6 +606,21 @@ test("the playground chrome is buttery with its menus open", async ({
       },
       escape,
       {
+        name: "open the Resources menu with its demos, where the bar isn't folded",
+        run: async (page: Page) => {
+          const resources = page
+            .getByRole("button", { name: "Resources", exact: true })
+            .first();
+          if (!(await resources.isVisible())) return;
+          await resources.click();
+          await page
+            .locator('[data-bt-part="panel"]')
+            .getByRole("link", { name: "All demos" })
+            .waitFor();
+        },
+      },
+      escape,
+      {
         name: "open the display settings",
         run: pressIfShown("button", "Display settings"),
       },
