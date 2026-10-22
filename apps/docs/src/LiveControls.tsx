@@ -191,7 +191,7 @@ export function LiveControls({
       </Grid>
     );
   return (
-    <Stack gap={4}>
+    <Stack gap={4} className="docs-controls">
       {rows(entries.filter(([, control]) => control.kind !== "toggle"))}
       {rows(entries.filter(([, control]) => control.kind === "toggle"))}
     </Stack>
