@@ -20,19 +20,12 @@ import {
 import {
   ArrowLeft,
   Bell,
-  CalendarDays,
   CircleHelp,
-  Ellipsis,
-  House,
-  Landmark,
-  Package,
-  Receipt,
   Repeat,
   Settings,
   ShoppingBag,
   Sparkles,
   Store,
-  Users,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ReactElement } from "react";
@@ -50,6 +43,8 @@ import { StockPage } from "./StockPage.tsx";
 import { SubscriptionsPage } from "./SubscriptionsPage.tsx";
 import { WholesalePage } from "./WholesalePage.tsx";
 import { WeekPlan } from "./WeekPlan.tsx";
+import { NAV } from "./nav.ts";
+import type { NavBlock, Place } from "./nav.ts";
 import { go } from "./navigation.ts";
 import {
   CUSTOMER_SOURCE,
@@ -60,20 +55,6 @@ import {
 } from "./search.ts";
 import { useInvites, usePickup } from "./shop-state.ts";
 import "./roastery.css";
-
-type Place =
-  | { readonly page: "overview" }
-  | { readonly page: "orders" }
-  | { readonly page: "customers" }
-  | { readonly page: "customer"; readonly id: string }
-  | { readonly page: "subscriptions" }
-  | { readonly page: "payouts" }
-  | { readonly page: "roasts" }
-  | { readonly page: "stock" }
-  | { readonly page: "wholesale"; readonly tab: "accounts" | "prices" }
-  | { readonly page: "settings" }
-  | { readonly page: "setting"; readonly id: string }
-  | { readonly page: "search"; readonly search: string };
 
 function placeOf(route: string): Place {
   const [path = "", query = ""] = route.split("?");
@@ -173,6 +154,62 @@ const ORDER_KINDS = [
   },
 ];
 
+function NavBlocks({
+  blocks,
+  place,
+}: {
+  readonly blocks: readonly NavBlock[];
+  readonly place: Place;
+}): ReactElement {
+  return (
+    <>
+      {blocks.map((block) => {
+        switch (block.kind) {
+          case "page":
+            return (
+              <Sidebar.Item
+                key={block.page.href}
+                icon={block.page.icon}
+                label={block.page.label}
+                href={block.page.href}
+                current={block.page.current?.(place) ?? false}
+              />
+            );
+          case "recent":
+            return <Sidebar.Recent key="recent" />;
+          case "section":
+            return (
+              <Sidebar.Section key={block.title} title={block.title}>
+                <NavBlocks blocks={block.blocks} place={place} />
+              </Sidebar.Section>
+            );
+          case "group":
+            return (
+              <Sidebar.Group
+                key={block.label}
+                icon={block.icon}
+                label={block.label}
+              >
+                {block.pages.map((page) => (
+                  <Sidebar.Item
+                    key={page.href}
+                    label={page.label}
+                    href={page.href}
+                    current={page.current?.(place) ?? false}
+                  />
+                ))}
+              </Sidebar.Group>
+            );
+          default: {
+            const unknown: never = block;
+            return unknown;
+          }
+        }
+      })}
+    </>
+  );
+}
+
 function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
   return (
     <Sidebar
@@ -202,71 +239,7 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
         </AccountMenu>
       }
     >
-      <Sidebar.Item
-        icon={House}
-        label="Home"
-        href="#/roastery"
-        current={place.page === "overview"}
-      />
-      <Sidebar.Item
-        icon={Receipt}
-        label="Orders"
-        href="#/roastery/orders"
-        current={place.page === "orders"}
-      />
-      <Sidebar.Item
-        icon={Repeat}
-        label="Subscriptions"
-        href="#/roastery/subscriptions"
-        current={place.page === "subscriptions"}
-      />
-      <Sidebar.Item
-        icon={Users}
-        label="Customers"
-        href="#/roastery/customers"
-        current={place.page === "customers" || place.page === "customer"}
-      />
-      <Sidebar.Item
-        icon={Landmark}
-        label="Payouts"
-        href="#/roastery/payouts"
-        current={place.page === "payouts"}
-      />
-      <Sidebar.Recent />
-      <Sidebar.Section title="Roastery">
-        <Sidebar.Item
-          icon={CalendarDays}
-          label="Roast plan"
-          href="#/roastery/roasts"
-          current={place.page === "roasts"}
-        />
-        <Sidebar.Item
-          icon={Package}
-          label="Green coffee"
-          href="#/roastery/stock"
-          current={place.page === "stock"}
-        />
-        <Sidebar.Group icon={Store} label="Wholesale">
-          <Sidebar.Item
-            label="Accounts"
-            href="#/roastery/wholesale"
-            current={place.page === "wholesale" && place.tab === "accounts"}
-          />
-          <Sidebar.Item
-            label="Price lists"
-            href="#/roastery/wholesale/prices"
-            current={place.page === "wholesale" && place.tab === "prices"}
-          />
-        </Sidebar.Group>
-      </Sidebar.Section>
-      <Sidebar.Group icon={Ellipsis} label="More">
-        <Sidebar.Item
-          label="Settings"
-          href="#/roastery/settings"
-          current={place.page === "settings" || place.page === "setting"}
-        />
-        <Sidebar.Item label="Back to the playground" href="#/tokens" />
-      </Sidebar.Group>
+      <NavBlocks blocks={NAV} place={place} />
     </Sidebar>
   );
 }

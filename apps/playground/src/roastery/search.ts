@@ -6,46 +6,16 @@ import type {
   SearchPage,
   SearchQuery,
 } from "@buttery/react";
-import {
-  CalendarDays,
-  CircleHelp,
-  House,
-  Landmark,
-  Package,
-  Receipt,
-  Repeat,
-  Settings,
-  Store,
-  User,
-  Users,
-} from "lucide-react";
+import { CircleHelp, Receipt, User } from "lucide-react";
 import { CUSTOMERS, ORDERS } from "./data.ts";
 import type { Customer } from "./data.ts";
 import { money } from "./format.ts";
+import { navPages } from "./nav.ts";
 import { SETTINGS, settingHref } from "./settings-list.ts";
 
-/** Every page of the demo, as the sidebar and the settings index reach them. */
+/** Every page of the demo: the sidebar's, from its navigation, and each setting the settings index reaches. */
 export const PAGES: readonly SearchPage[] = [
-  { label: "Home", href: "#/roastery", icon: House },
-  { label: "Orders", href: "#/roastery/orders", icon: Receipt },
-  { label: "Subscriptions", href: "#/roastery/subscriptions", icon: Repeat },
-  { label: "Customers", href: "#/roastery/customers", icon: Users },
-  { label: "Payouts", href: "#/roastery/payouts", icon: Landmark },
-  { label: "Roast plan", href: "#/roastery/roasts", icon: CalendarDays },
-  { label: "Green coffee", href: "#/roastery/stock", icon: Package },
-  {
-    label: "Accounts",
-    path: ["Wholesale"],
-    href: "#/roastery/wholesale",
-    icon: Store,
-  },
-  {
-    label: "Price lists",
-    path: ["Wholesale"],
-    href: "#/roastery/wholesale/prices",
-    icon: Store,
-  },
-  { label: "Settings", href: "#/roastery/settings", icon: Settings },
+  ...navPages().filter((page) => page.href.startsWith("#/roastery")),
   ...SETTINGS.filter((setting) => setting.href === undefined).map(
     (setting) => ({
       label: setting.title,
@@ -79,7 +49,6 @@ export const FILTERS: readonly SearchFilter[] = [
 ];
 
 const BY_ID = new Map(CUSTOMERS.map((customer) => [customer.id, customer]));
-const MOST = 30;
 
 function filterOf(query: SearchQuery, key: string): string | undefined {
   return query.filters.find((token) => token.key === key)?.value.toLowerCase();
@@ -112,15 +81,13 @@ export const ORDER_SOURCE: LocalSearchSource = {
         cityMatches(customer, city) &&
         wordsMatch(query, order.id, customer?.name ?? "")
       );
-    })
-      .slice(0, MOST)
-      .map((order) => ({
-        id: order.id,
-        label: order.id,
-        detail: `${BY_ID.get(order.customerId)?.name ?? "Someone"}, ${money(order.amount)}, ${order.status}`,
-        icon: Receipt,
-        href: `#/roastery/customers/${order.customerId}`,
-      }));
+    }).map((order) => ({
+      id: order.id,
+      label: order.id,
+      detail: `${BY_ID.get(order.customerId)?.name ?? "Someone"}, ${money(order.amount)}, ${order.status}`,
+      icon: Receipt,
+      href: `#/roastery/customers/${order.customerId}`,
+    }));
   },
 };
 
@@ -135,15 +102,13 @@ export const CUSTOMER_SOURCE: LocalSearchSource = {
       (customer) =>
         cityMatches(customer, city) &&
         wordsMatch(query, customer.name, customer.email, customer.city),
-    )
-      .slice(0, MOST)
-      .map((customer) => ({
-        id: customer.id,
-        label: customer.name,
-        detail: `${customer.city}, ${customer.email}`,
-        icon: User,
-        href: `#/roastery/customers/${customer.id}`,
-      }));
+    ).map((customer) => ({
+      id: customer.id,
+      label: customer.name,
+      detail: `${customer.city}, ${customer.email}`,
+      icon: User,
+      href: `#/roastery/customers/${customer.id}`,
+    }));
   },
 };
 
