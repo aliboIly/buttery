@@ -19,19 +19,26 @@ function valueOf(raw: string): FrontmatterValue {
 
 /**
  * Reads a flat YAML block, one `key: value` per line, where a value is a string (quoted or not), a number
- * or a `[a, b]` list. Throws, naming the file and line, on anything else.
+ * or a `[a, b]` list, which may go on over indented lines as Prettier breaks a long one. Throws, naming the
+ * file and line, on anything else.
  */
 export function parseFrontmatter(
   block: string,
   file: string,
 ): Record<string, FrontmatterValue> {
-  const data: Record<string, FrontmatterValue> = {};
+  const entries: { readonly line: number; text: string }[] = [];
   for (const [index, line] of block.split("\n").entries()) {
     if (line.trim() === "") continue;
-    const match = /^([a-zA-Z][\w-]*):\s*(.*)$/.exec(line);
+    const last = entries.at(-1);
+    if (/^\s/.test(line) && last) last.text = `${last.text} ${line.trim()}`;
+    else entries.push({ line: index + 2, text: line });
+  }
+  const data: Record<string, FrontmatterValue> = {};
+  for (const { line, text } of entries) {
+    const match = /^([a-zA-Z][\w-]*):\s*(.*)$/.exec(text);
     if (!match?.[1] || match[2] === undefined) {
       throw new Error(
-        `${file}: frontmatter line ${String(index + 2)} isn't "key: value". Fix: one key per line, such as title: Button.`,
+        `${file}: frontmatter line ${String(line)} isn't "key: value". Fix: one key per line, such as title: Button.`,
       );
     }
     data[match[1]] = valueOf(match[2]);

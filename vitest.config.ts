@@ -25,6 +25,7 @@ export default defineConfig({
           include: [
             "packages/*/src/**/*.test.ts",
             "apps/*/src/**/*.test.ts",
+            "apps/*/vite/**/*.test.ts",
             "scripts/**/*.test.mjs",
           ],
         },
