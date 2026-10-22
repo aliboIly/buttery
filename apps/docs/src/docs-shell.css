@@ -1,6 +1,7 @@
 :root {
   --bt-docs-shell-tile: 220px;
   --bt-docs-shell-toc: 200px;
+  --bt-docs-shell-line: 1px;
 }
 
 /* A content site sits on the surface, as Page does, so fills made for a surface, such as bg-control, show. */
@@ -8,23 +9,24 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-block-size: 100dvh;
-  padding-inline: var(--bt-space-4);
   container: docs-shell / inline-size;
   background-color: var(--bt-bg-surface);
 }
 
 /*
- * The shell's nav bar stays over whatever a demo stacks, nav bars and their menus included. Pinned and
- * scrolled it takes the panel surface; inside the shell's side padding it reads as a card, so it keeps a
- * card's corners and inset.
+ * The shell's header spans the window's whole width, square, on the surface with a hairline under it,
+ * scrolled or not, and stays over whatever a demo stacks, nav bars and their menus included. Its brand lines
+ * up with the sidebar's items under it.
  */
 .docs-top {
   z-index: var(--bt-z-dropdown);
-  padding-inline: var(--bt-space-3);
+  padding-inline: var(--bt-space-6);
+  border-block-end: var(--bt-docs-shell-line) solid var(--bt-border);
+  background-color: var(--bt-bg-surface);
 }
 
 .docs-top[data-scrolled] {
-  border-radius: var(--bt-r-3xl);
+  box-shadow: none;
 }
 
 /* In the bar the display settings button shows only its icon; in the phone sheet it says what it is. */
@@ -58,6 +60,7 @@
 }
 
 .docs-body {
+  padding-inline: var(--bt-space-3);
   display: grid;
   grid-template-columns:
     var(--bt-w-sidebar) minmax(0, 1fr)
