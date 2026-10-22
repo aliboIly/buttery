@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Surface, Text } from "@buttery/core";
-import { Button, Onboarding } from "@buttery/react";
+import { Inline, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Button, Onboarding, hasSeenOnboarding } from "@buttery/react";
 
 function Card({ title }: { readonly title: string }): ReactElement {
   return (
@@ -17,27 +18,39 @@ function Card({ title }: { readonly title: string }): ReactElement {
  */
 export function FirstRunTour(): ReactElement {
   const [runs, setRuns] = useState(0);
+  const [seen, setSeen] = useState(() => hasSeenOnboarding("example-app"));
   return (
-    <Inline gap={2}>
-      <Button
-        onClick={() => {
-          setRuns(runs + 1);
-        }}
-      >
-        Start the app
-      </Button>
-      <Button
-        variant="ghost"
-        onClick={() => {
-          window.localStorage.removeItem("buttery:onboarding:example-app");
-        }}
-      >
-        Forget
-      </Button>
+    <Stack gap={3} align="start">
+      <Inline gap={2}>
+        <Button
+          onClick={() => {
+            setRuns(runs + 1);
+          }}
+        >
+          Start the app
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            window.localStorage.removeItem("buttery:onboarding:example-app");
+            setSeen(false);
+          }}
+        >
+          Forget
+        </Button>
+      </Inline>
+      <Text variant="caption">
+        {seen
+          ? "Seen, so it stays shut on the next start"
+          : "Not seen yet, so it opens on the next start"}
+      </Text>
       {runs > 0 ? (
         <Onboarding
           key={runs}
           storageKey="example-app"
+          onOpenChange={(open) => {
+            if (!open) setSeen(true);
+          }}
           steps={[
             {
               title: "Welcome in",
@@ -60,6 +73,18 @@ export function FirstRunTour(): ReactElement {
           ]}
         />
       ) : null}
-    </Inline>
+    </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Not seen yet, so it opens on the next start");
+  await press("button", "Start the app");
+  await see("Welcome in");
+  await press("button", "Next");
+  await see("Everything saves itself");
+  await press("button", "Done");
+  await see("Seen, so it stays shut on the next start");
+};
