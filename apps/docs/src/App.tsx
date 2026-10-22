@@ -35,6 +35,7 @@ export function App(): ReactElement {
           settings={settings}
           headings={page.headings ?? []}
           wide={page.wide === true}
+          ownMain={page.ownMain === true}
         >
           {content}
         </DocsShell>

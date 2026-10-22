@@ -41,6 +41,8 @@ export interface Page {
   readonly hosted?: boolean;
   /** Shown across the shell's whole width, without the sidebar and the page's headings. */
   readonly wide?: boolean;
+  /** Renders its own `main`, as an `AppPage` does, so the shell doesn't put it in one of its own. */
+  readonly ownMain?: boolean;
   /** Where it sits on the site, for the nav; demos and lab pages have none. */
   readonly docs?: DocsPage;
   /** Its headings, for its "On this page" list. */
@@ -324,6 +326,8 @@ const searchPage: Page = {
   route: "search",
   title: "Search",
   render: () => <SearchPage />,
+  wide: true,
+  ownMain: true,
 };
 
 /**

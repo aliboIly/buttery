@@ -103,6 +103,8 @@ interface DocsShellProps {
   readonly headings: readonly Heading[];
   /** Whether the page takes the shell's whole width, without the sidebar and its headings, as the landing page does. */
   readonly wide?: boolean;
+  /** Whether the page renders its own `main`, as the search results' `AppPage` does, so the shell holds it in a plain element. */
+  readonly ownMain?: boolean;
   readonly children: ReactNode;
 }
 
@@ -116,10 +118,12 @@ export function DocsShell({
   settings,
   headings,
   wide = false,
+  ownMain = false,
   children,
 }: DocsShellProps): ReactElement {
   const obstacle = useFloatingObstacle();
   const sidebar = useRef<HTMLDivElement>(null);
+  const Main = ownMain ? "div" : "main";
 
   useEffect(() => {
     sidebar.current
@@ -222,9 +226,9 @@ export function DocsShell({
         })}
       </NavBar>
       {wide ? (
-        <main id="content" className="docs-wide">
+        <Main id="content" className="docs-wide">
           {children}
-        </main>
+        </Main>
       ) : (
         <div className="docs-body">
           <Sticky variant="aside" className="docs-sidebar bt-scroll-fade">
@@ -232,9 +236,9 @@ export function DocsShell({
               <PagesNav current={current} />
             </div>
           </Sticky>
-          <main id="content" className="docs-main">
+          <Main id="content" className="docs-main">
             {children}
-          </main>
+          </Main>
           <Sticky variant="aside" className="docs-aside">
             <OnThisPage headings={headings} />
           </Sticky>

@@ -29,6 +29,7 @@
     "template-marketing": "workspace:*"
   },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
     "@babel/core": "catalog:",
     "@buttery/test": "workspace:*",
     "@mdx-js/rollup": "catalog:",
