@@ -1,8 +1,9 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack, Text } from "@buttery/core";
+import { Grid } from "@buttery/core";
 import type { DemoControl, DemoValues } from "@buttery/core";
 import {
+  Field,
   SegmentedControl,
   Select,
   Slider,
@@ -35,7 +36,8 @@ function wholeWidth(track: Element): number {
 
 /**
  * A choice's control: a segmented control while every option's label fits whole side by side, a select
- * when there are more than four options or the labels would truncate, such as long file types.
+ * when there are more than four options or the labels would truncate, such as long file types. It's labelled
+ * as a field, as the text field and the slider are, so the controls in a row start at one height.
  */
 function ChoiceControl({
   name,
@@ -70,27 +72,31 @@ function ChoiceControl({
   }, [few]);
 
   return (
-    <Stack ref={cell} gap={1.5}>
-      <Text variant="caption" tone="secondary" aria-hidden="true">
-        {name}
-      </Text>
-      {few && fits ? (
-        <SegmentedControl
-          label={name}
-          options={options}
-          value={value}
-          onValueChange={onChange}
-        />
-      ) : (
-        <Select
-          variant="outline"
-          label={name}
-          options={options.map((option) => ({ value: option, label: option }))}
-          value={value}
-          onValueChange={onChange}
-        />
-      )}
-    </Stack>
+    <Field ref={cell} label={name}>
+      {(control) =>
+        few && fits ? (
+          <SegmentedControl
+            label={name}
+            aria-labelledby={control["aria-labelledby"]}
+            options={options}
+            value={value}
+            onValueChange={onChange}
+          />
+        ) : (
+          <Select
+            variant="outline"
+            label={name}
+            aria-labelledby={control["aria-labelledby"]}
+            options={options.map((option) => ({
+              value: option,
+              label: option,
+            }))}
+            value={value}
+            onValueChange={onChange}
+          />
+        )
+      }
+    </Field>
   );
 }
 
