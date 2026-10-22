@@ -23,4 +23,12 @@ export const meta: ComponentMeta = {
   ],
   a11y: 'A named region; each section is a region named by its heading (an h2). Reset in a header is named with the section ("Reset Background") and stays focusable while dimmed. The sections scroll inside the panel, so the footer\'s actions are always in reach.',
   motion: "none",
+  keyboard: [
+    {
+      keys: "Enter or Space",
+      does: "Presses a section's Reset, which puts its rows back to their defaults; dimmed, it keeps focus and does nothing",
+    },
+  ],
+  layout:
+    "It's 340px wide (--bt-w-inspector), never wider than its container, and as tall as its container lets it be: the sections scroll inside with faded edges while the footer stays at the bottom. Rows are 50px tall (--bt-h-row), split rows 64px (--bt-h-row-split) and block rows grow to fit; row labels and section titles truncate with their full text in their title, and each section's Reset is 28px tall.",
 };
