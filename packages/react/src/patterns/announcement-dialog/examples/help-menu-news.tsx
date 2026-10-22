@@ -23,7 +23,7 @@ export function HelpMenuNews(): ReactElement {
           >
             What's new
           </Menu.Item>
-          <Menu.Item>Keyboard shortcuts</Menu.Item>
+          <Menu.Link href="#keyboard-shortcuts">Keyboard shortcuts</Menu.Link>
         </Menu.Content>
       </Menu>
       <AnnouncementDialog

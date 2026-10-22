@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack, Text } from "@buttery/core";
+import { Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { AccountMenu, Button } from "@buttery/react";
 
@@ -25,8 +25,6 @@ export function OpenedFromANote(): ReactElement {
             current={current}
             onSwitch={setCurrent}
           />
-          <Menu.Separator />
-          <AccountMenu.User name="Mira Okafor" />
         </AccountMenu>
       </div>
       <Text variant="body" tone="secondary">

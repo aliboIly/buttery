@@ -7,23 +7,28 @@ import { LogOut } from "lucide-react";
 
 /** One workspace and nothing to switch to: just the person and Sign out. */
 export function SingleWorkspace(): ReactElement {
-  const [signedIn, setSignedIn] = useState(true);
+  const [status, setStatus] = useState("Signed in as Tomas Reyes");
   return (
     <Stack gap={3} style={{ maxInlineSize: "var(--bt-w-sidebar)" }}>
       <AccountMenu workspace="Tidewater Coffee">
-        <AccountMenu.User name="Tomas Reyes" />
+        <AccountMenu.User
+          name="Tomas Reyes"
+          onSelect={() => {
+            setStatus("Opened your profile");
+          }}
+        />
         <Menu.Separator />
         <Menu.Item
           icon={LogOut}
           onSelect={() => {
-            setSignedIn(false);
+            setStatus("Signed out");
           }}
         >
           Sign out
         </Menu.Item>
       </AccountMenu>
       <Text variant="body" tone="secondary">
-        {signedIn ? "Signed in as Tomas Reyes" : "Signed out"}
+        {status}
       </Text>
     </Stack>
   );
