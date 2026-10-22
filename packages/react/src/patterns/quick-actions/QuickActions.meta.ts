@@ -31,6 +31,6 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "It takes its container's width as one row of 28px soft buttons (--bt-h-sm), 8px apart, that never wraps: as the row narrows the lowest-priority actions fold into More quick actions, and they come back as it grows. Each button keeps its whole label and its 28px height as its hit area.",
+    "It takes its container's width as one row of 28px soft buttons (--bt-h-sm), 8px apart, that never wraps: as the row narrows the lowest-priority actions fold into More quick actions, and they come back as it grows. Each button keeps its label whole, and its 28px height is its hit area.",
   reducedMotion: "Its buttons press in at once.",
 };

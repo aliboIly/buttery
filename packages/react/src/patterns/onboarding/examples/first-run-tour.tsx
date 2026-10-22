@@ -12,10 +12,7 @@ function Card({ title }: { readonly title: string }): ReactElement {
   );
 }
 
-/**
- * A tour with a `storageKey`: it opens by itself the first time it's mounted and never again once it's
- * finished or closed. Here each press of the button mounts it afresh, and Forget clears what it remembered.
- */
+/** A tour with a storageKey opens by itself until it's finished or closed; Start the app mounts it afresh, and Forget clears what it remembered. */
 export function FirstRunTour(): ReactElement {
   const [runs, setRuns] = useState(0);
   const [seen, setSeen] = useState(() => hasSeenOnboarding("example-app"));
