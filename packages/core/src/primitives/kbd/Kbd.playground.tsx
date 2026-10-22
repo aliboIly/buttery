@@ -23,10 +23,12 @@ export const live: LiveDemo = {
     keys: { kind: "choice", options: SHORTCUTS, initial: "mod K" },
   },
   render: ({ keys }) => <Kbd keys={keysOf(keys)} />,
-  code: ({ keys }) =>
-    `<Kbd keys={[${keysOf(keys)
+  code: ({ keys }) => {
+    const list = keysOf(keys)
       .map((key) => `"${key}"`)
-      .join(", ")}]} />`,
+      .join(", ");
+    return `<Kbd keys={[${list}]} />`;
+  },
 };
 
 export const demos: readonly DemoSection[] = [

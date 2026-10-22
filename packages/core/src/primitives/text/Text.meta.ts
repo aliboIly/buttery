@@ -16,5 +16,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [],
   layout:
-    "Block roles (the titles, body, caption and the display roles) are paragraphs trimmed to their text, with body text wrapping at 60 characters and display headings at 22; the other roles are inline spans. With truncate it keeps to one line and ends in an ellipsis, with its full text in its title. It has no hit area.",
+    "Block roles (title-lg, title-md, title, dialog-title, body, body-sm, caption and the display roles) are paragraphs trimmed to their text, with body text wrapping at 60 characters and display headings at 22; the other roles are inline spans. With truncate it keeps to one line and ends in an ellipsis, with its full text in its title. It has no hit area.",
 };

@@ -19,6 +19,6 @@ export const meta: ComponentMeta = {
   motion: "loop",
   keyboard: [],
   layout:
-    "It renders a div as wide as its parent and as tall as the step it shows, which can shrink below its content's width. It has no hit area of its own.",
+    "It renders a div as wide as its parent, which can shrink below its content's width, and as tall as the step it shows. It has no hit area of its own.",
   reducedMotion: "It stays on its first step and doesn't cycle.",
 };

@@ -18,6 +18,6 @@ export const meta: ComponentMeta = {
   motion: "loop",
   keyboard: [],
   layout:
-    "With a variant it's one line of that text role, trimmed the same way, so the text that replaces it lands in its place: as wide as its text, or the whole row without one. Without a variant it's a block that fills its row and takes its height from your CSS. It has no hit area.",
+    "With a variant it's one line of that text role, trimmed the same way, so the text that replaces it lands in its place: as wide as its placeholder text, or the whole row when it has none. Without a variant it's a block that fills its row and takes its height from your CSS. It has no hit area.",
   reducedMotion: "It holds still: the shimmer no longer sweeps across it.",
 };
