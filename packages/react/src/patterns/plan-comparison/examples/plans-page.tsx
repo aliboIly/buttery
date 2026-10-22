@@ -47,7 +47,7 @@ export function PlansPage(): ReactElement {
   return (
     <Stack gap={6}>
       <PageHeader
-        title="Plans"
+        title="Plans and billing"
         description="Pick what the roastery pays for. You can change it any time."
       />
       <PlanComparison

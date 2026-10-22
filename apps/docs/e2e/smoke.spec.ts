@@ -68,7 +68,7 @@ for (const { route, title } of contentRoutes) {
     const problems = await watchConsole(page);
     await page.goto(url(route, "theme=light"));
     await expect(
-      page.getByRole("heading", { level: 1, name: title }),
+      page.getByRole("heading", { level: 1, name: title, exact: true }),
     ).toBeVisible();
     const interLoaded = await page.evaluate(async () => {
       await document.fonts.ready;
