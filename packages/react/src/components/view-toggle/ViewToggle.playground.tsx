@@ -1,4 +1,5 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { ViewToggle } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -9,6 +10,23 @@ export const page: DocsPage = {
   order: 120,
   status: "new",
   since: "0.7.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    defaultValue: {
+      kind: "choice",
+      options: ["grid", "list"],
+      initial: "grid",
+    },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ defaultValue, disabled }) => {
+    const view = demoChoice(defaultValue, ["grid", "list"]);
+    return (
+      <ViewToggle key={view} defaultValue={view} disabled={disabled === true} />
+    );
+  },
 };
 
 export const demos: readonly DemoSection[] = [
