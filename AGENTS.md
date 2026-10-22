@@ -62,7 +62,7 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 - Commits: small and focused, conventional prefixes (`feat(core):`, `fix(react):`, `docs:`), one phase item per commit where practical, following "Authorship and no AI tells" above.
 
 ## Commands
-- `pnpm dev` — playground
+- `pnpm dev` — the docs site (`apps/docs`), where every component has its page
 - `pnpm build` — all packages and apps
 - `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, unit and browser tests, app smoke tests, and `expectButtery` on every playground page and the starter at 390 and 1280
 - `pnpm test:layout` — `expectButtery` across the full matrix (from Phase 2)

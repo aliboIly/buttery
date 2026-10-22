@@ -20,7 +20,7 @@
       "path": "./packages/lint"
     },
     {
-      "path": "./apps/playground"
+      "path": "./apps/docs"
     },
     {
       "path": "./apps/starter"

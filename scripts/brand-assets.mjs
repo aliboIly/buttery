@@ -18,7 +18,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createServer, defaultServerConditions } from "vite";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
-const APPS = ["apps/playground", "apps/starter"];
+const APPS = ["apps/docs", "apps/starter"];
 const HERO = "docs/assets";
 
 /** The mark's markup at each size, rendered by the component itself. */

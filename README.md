@@ -211,7 +211,7 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 | `packages/test` | `expectButtery()`: layout, accessibility and stability checks for Playwright |
 | `packages/lint` | ESLint and stylelint rules that keep values on tokens and positioning owned |
 | `packages/cli`, `packages/mcp` | The command line and the MCP server (not started) |
-| `apps/playground` | A page for every component with its demos and examples; the layout checks run against it |
+| `apps/docs` | The docs site: a page for every component with its demos and examples; the layout checks run against it |
 | `apps/starter` | The template for new apps, with a Tauri v2 shell |
 | `docs/` | Architecture, design, motion and layout specs |
 

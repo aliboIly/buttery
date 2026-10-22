@@ -7,7 +7,7 @@
     "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
   },
   "scripts": {
-    "dev": "pnpm --filter playground dev",
+    "dev": "pnpm --filter docs dev",
     "build": "pnpm -r build",
     "tokens": "pnpm --filter @buttery/core tokens",
     "typecheck": "node node_modules/typescript-native/bin/tsc -b",

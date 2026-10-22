@@ -3,7 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import playgroundFavicon from "../../../../../apps/playground/public/favicon.svg?raw";
+import docsFavicon from "../../../../../apps/docs/public/favicon.svg?raw";
 import starterFavicon from "../../../../../apps/starter/public/favicon.svg?raw";
 import { BrandMark } from "./BrandMark.tsx";
 
@@ -144,6 +144,6 @@ describe("BrandMark", () => {
         `d="${face.getAttribute("d") ?? ""}" fill="${fill}" stroke="${fill}"`,
       );
     }
-    expect(playgroundFavicon).toBe(starterFavicon);
+    expect(docsFavicon).toBe(starterFavicon);
   });
 });

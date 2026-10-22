@@ -51,7 +51,7 @@ buttery/
 │  ├─ cli/     buttery CLI       # `npx create-buttery`, `buttery init | add | create | doctor | check`
 │  └─ mcp/     @buttery/mcp      # MCP server so any agent can query components, tokens and run layout checks
 ├─ apps/
-│  ├─ playground/                # every component × state × theme × density; demo screens; docs pages; Playwright target
+│  ├─ docs/                      # the docs site: every component × state × theme × density; demo screens; Playwright target
 │  └─ starter/                   # template for new apps: Vite + React + Tauri v2, wired up, with agent files + skill
 ├─ scripts/
 │  ├─ check-ai-tells.mjs         # authorship checks (pnpm check + commit-msg hook)
