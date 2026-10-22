@@ -247,10 +247,12 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
 function RoasteryTopBar({
   sources,
   onNewOrder,
+  helping,
   onHelp,
 }: {
   readonly sources: readonly SearchSource[];
   readonly onNewOrder: () => void;
+  readonly helping: boolean;
   readonly onHelp: () => void;
 }): ReactElement {
   const [whatsNew, setWhatsNew] = useState<boolean | undefined>(undefined);
@@ -274,6 +276,7 @@ function RoasteryTopBar({
             label="Help"
             icon={CircleHelp}
             priority={2}
+            expanded={helping}
             onSelect={onHelp}
           />
           <OverflowCluster.Item
@@ -381,6 +384,7 @@ export function Roastery(): ReactElement {
           <RoasteryTopBar
             sources={sources}
             onNewOrder={newOrder}
+            helping={helping}
             onHelp={() => {
               setHelping((open) => !open);
             }}

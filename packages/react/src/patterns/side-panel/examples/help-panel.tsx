@@ -35,6 +35,7 @@ export function HelpPanel(): ReactElement {
               <TopBar.Action
                 label="Help"
                 icon={CircleHelp}
+                expanded={open}
                 onSelect={() => {
                   setOpen(!open);
                 }}

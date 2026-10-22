@@ -92,6 +92,8 @@ export interface TopBarActionProps {
   readonly dot?: boolean | undefined;
   /** Higher stays in the bar longer. Defaults to 0. */
   readonly priority?: number | undefined;
+  /** Whether what it opens is open, such as the side panel it toggles, read out as the button's state. Leave it out for an action that opens nothing. */
+  readonly expanded?: boolean | undefined;
 }
 
 /** One icon action: an `IconButton` in the bar, and an item in the "…" menu once it doesn't fit. */
@@ -101,13 +103,20 @@ export function TopBarAction({
   onSelect,
   dot = false,
   priority = 0,
+  expanded,
 }: TopBarActionProps): ReactElement {
   return (
     <OverflowCluster.Item
       priority={priority}
       menuItem={{ label, icon, onSelect, dot }}
     >
-      <IconButton icon={icon} label={label} dot={dot} onClick={onSelect} />
+      <IconButton
+        icon={icon}
+        label={label}
+        dot={dot}
+        aria-expanded={expanded}
+        onClick={onSelect}
+      />
     </OverflowCluster.Item>
   );
 }

@@ -211,4 +211,36 @@ describe("TopBar", () => {
       expect(screen.getByRole("dialog", { name: "Navigation" })).toBeTruthy();
     });
   });
+
+  it("tells whether what an action opens is open", () => {
+    render(
+      <TopBar
+        actions={
+          <>
+            <TopBar.Action
+              label="Help"
+              icon={CircleHelp}
+              expanded
+              onSelect={() => undefined}
+            />
+            <TopBar.Action
+              label="Settings"
+              icon={Settings}
+              onSelect={() => undefined}
+            />
+          </>
+        }
+      />,
+    );
+    expect(
+      screen
+        .getByRole("button", { name: "Help" })
+        .getAttribute("aria-expanded"),
+    ).toBe("true");
+    expect(
+      screen
+        .getByRole("button", { name: "Settings" })
+        .hasAttribute("aria-expanded"),
+    ).toBe(false);
+  });
 });
