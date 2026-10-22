@@ -1,53 +1,79 @@
 ---
 title: Introduction
-description: What buttery is, what it gives an app, and how this site is laid out.
+description: What buttery is, what it does for an app, what's new in it, and where to go from here.
 section: get-started
 order: 10
 status: stable
 since: 0.9.0
-related: [get-started/installation]
+related: [get-started/installation, get-started/quick-start]
 ---
 
-buttery is a React design system with layout and motion rules for web apps and Tauri desktop apps. Use it when you want an app's spacing, type, surfaces and motion to agree with each other without reviewing every screen by hand.
+import { Feature, FeatureGrid } from "../../src/intro/Features.tsx";
+import { LatestRelease } from "../../src/intro/LatestRelease.tsx";
+import { NextSteps } from "../../src/intro/NextSteps.tsx";
+import { Showcase } from "../../src/intro/Showcase.tsx";
 
-## What it gives an app
+buttery is a React design system for web apps and Tauri desktop apps: tokens, layout primitives, components and motion that agree with each other, and checks that hold every screen to them. Use it when you want an app's spacing, type, surfaces and motion to agree without reviewing every screen by hand.
 
-- Tokens for color, type, spacing, heights, radii, shadows, layers and motion, as CSS variables and typed TypeScript, in light and dark and two densities.
-- Primitives that lay pages out with gaps instead of margins, such as `Stack`, `Inline`, `Grid` and `Surface`.
-- Components and page patterns built from those primitives, from `Button` to `AppShell`.
-- Motion presets that pick the right spring or tween for each kind of change, and turn themselves off for people who ask for less motion.
-- Checks that fail when something overlaps, overflows, truncates without saying so or moves after a press: `LayoutGuard` while you work and `expectButtery` in Playwright tests.
+## Try it
 
-## How this site is laid out
+The card is made of buttery's components, `Surface`, `SegmentedControl`, `Checkbox`, `Avatar`, `Switch` and `Button`, and every color, size, corner and gap in it is a token, so a new theme changes all of them at once. Pick a theme, a density, a brand color (the theme's `accent` and `primary`) and a corner style, then tick the tasks and press Launch. A nested `ButteryProvider` applies the picks to the card alone.
 
-The sections in the sidebar go from first steps to reference. Get started takes you to a first screen. Foundations, Layout and Motion explain the rules the components follow. Components and Patterns have a page for every part, with live examples you can copy. Templates, Guides and Tools cover whole apps, common tasks and the command line.
+<Showcase />
 
-Every page is also available as Markdown at its address plus `.md`, for reading in an editor or handing to a coding agent.
+## What buttery gives an app
 
-## Status badges
+<FeatureGrid>
+<Feature visual="tokens">
 
-Every component page has a badge under its title that says how settled the component is:
+### Tokens and themes
 
-<DocsTable
-  columns={["Badge", "What it means"]}
-  rows={[
-    [
-      "Stable",
-      "It has been in buttery for several releases, and its props aren't expected to change.",
-    ],
-    [
-      "New",
-      "It arrived in a recent release. It's tested like the rest, but its props may still change as apps use it.",
-    ],
-    [
-      "Beta",
-      "It works, but it's still being shaped, and its props are likely to change.",
-    ],
-    [
-      "Deprecated",
-      "It's on its way out, and its page says what to use instead.",
-    ],
-  ]}
-/>
+Every color, size, corner, shadow, duration and layer is a token, a CSS variable with a typed name, with values for light and dark and for comfortable and compact density. A theme from `createTheme` sets the accent, the grays and the corners, and every component follows. [Foundations](/foundations/colors)
 
-Beside the badge, "Since" gives the release a component arrived in, and a "New in" tag marks one from the current release. Until the first npm release, those are the releases on the [roadmap](/resources/roadmap).
+</Feature>
+<Feature visual="layout">
+
+### Layout that holds
+
+Pages lay out with gaps instead of margins, controls take their heights from tokens, and long text truncates on purpose. A toolbar that runs out of room folds its last actions into More instead of wrapping, as the one on this card does when you narrow it. [The layout contract](/layout/the-layout-contract)
+
+</Feature>
+<Feature visual="motion">
+
+### Motion with rules
+
+Each kind of change has its own motion: a drag follows the pointer, a toggle springs, an indicator slides to its new place and a swapped value crossfades. With reduced motion, things fade or change at once. [Motion principles](/motion/principles)
+
+</Feature>
+<Feature visual="components">
+
+### Components for whole apps
+
+From `Button`, `Switch` and `Avatar` to `DataTable`, `CommandSearch` and `AppShell`, each with keyboard support, names for screen readers, examples and a page of its own. [All components](/components/overview)
+
+</Feature>
+<Feature visual="checks">
+
+### Checks that say how to fix
+
+`expectButtery` fails a Playwright test when anything overlaps, overflows, truncates without saying so, crowds the line under it or moves after a press, and says what to change. `LayoutGuard` outlines the same problems while you work. [Testing](/tools/testing)
+
+</Feature>
+<Feature visual="agents">
+
+### Made for coding agents
+
+Every page is Markdown at its address plus `.md`, and `llms.txt` lists them all. `AGENTS.md` and the make-it-buttery skill give a coding agent the rules, and every check's message says what to change. [Using coding agents](/get-started/using-coding-agents)
+
+</Feature>
+</FeatureGrid>
+
+<LatestRelease />
+
+## Where to go next
+
+Get started is a path to read in order, from installing buttery to a first screen and on to an app you already have.
+
+<NextSteps />
+
+The rest of the sidebar is reference. Foundations, Layout and Motion explain the rules the components follow. Components and Patterns have a page for every part, with examples to copy. Templates, Guides and Tools cover whole apps, common tasks and the command line.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseFrontmatter } from "./frontmatter.ts";
+import { headingsOf, parseFrontmatter } from "./frontmatter.ts";
 
 describe("parseFrontmatter", () => {
   it("reads strings, numbers and lists, one key a line", () => {
@@ -34,5 +34,39 @@ describe("parseFrontmatter", () => {
     ).toThrow(
       'forms.mdx: frontmatter line 3 isn\'t "key: value". Fix: one key per line, such as title: Button.',
     );
+  });
+});
+
+describe("headingsOf", () => {
+  it("lists a page's ## and ### headings outside its code blocks", () => {
+    expect(
+      headingsOf(
+        [
+          "## Install",
+          "",
+          "```md",
+          "## Not a heading",
+          "```",
+          "### With `pnpm`",
+        ].join("\n"),
+      ),
+    ).toEqual([
+      { depth: 2, text: "Install", id: "install" },
+      { depth: 3, text: "With pnpm", id: "with-pnpm" },
+    ]);
+  });
+
+  it("puts the headings a component writes where the component sits", () => {
+    expect(
+      headingsOf(["## Before", "", "<WhatsNew />", "", "## After"].join("\n"), {
+        WhatsNew: () => [
+          { depth: 2, text: "0.9.0 Docs site", id: "release-0-9-0" },
+        ],
+      }),
+    ).toEqual([
+      { depth: 2, text: "Before", id: "before" },
+      { depth: 2, text: "0.9.0 Docs site", id: "release-0-9-0" },
+      { depth: 2, text: "After", id: "after" },
+    ]);
   });
 });

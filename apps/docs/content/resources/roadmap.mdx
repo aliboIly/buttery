@@ -1,71 +1,15 @@
 ---
 title: Roadmap
-description: Where buttery is, what each release brought, and what's next.
+description: What's being built now, what's planned after it, the ideas for later, and every release so far.
 section: resources
 order: 20
 status: stable
 since: 0.9.0
-related: [resources/contributing, resources/brand]
+related: [resources/whats-new, resources/contributing]
 ---
 
-buttery is built in phases, each a release with its own acceptance checks. This page sums them up; `ROADMAP.md` in the repository ticks each item as it lands, and `docs/BUILD_PLAN.md` holds every phase's acceptance criteria.
+import { Roadmap } from "../../src/Roadmap.tsx";
 
-<DocsTable
-  columns={["Release", "Phase", "What it brought"]}
-  rows={[
-    [
-      "0.1",
-      "Foundation",
-      "The monorepo, the tokens in light, dark and compact, the recipes, ButteryProvider, createTheme and the palettes",
-    ],
-    [
-      "0.2",
-      "Guardrails",
-      "The layout primitives and layers, expectButtery, LayoutGuard, the lint configs and the component generator",
-    ],
-    [
-      "0.3",
-      "Motion",
-      "The motion tokens and presets, the buttery factory, and settle times measured against the spec",
-    ],
-    [
-      "0.4",
-      "Controls",
-      "Buttons and their arrows, segmented controls, sliders, number fields, tooltips and keycaps",
-    ],
-    [
-      "0.4.5",
-      "Forms and text",
-      "Form fields, checkboxes and switches, callouts, the sign-in and sign-up forms, and TextStack",
-    ],
-    [
-      "0.5",
-      "App patterns",
-      "Swatches and pickers, toasts, menus and selects, AppShell, the inspector and stage, and the Card Studio demo",
-    ],
-    [
-      "0.6",
-      "Choreography",
-      "Dialogs and onboarding, the nav bar and its morphing menu, bento cards that open into dialogs, and the marketing patterns",
-    ],
-    [
-      "0.7",
-      "App kit",
-      "The dashboard shell, data tables and charts, page templates, settings, search and side panels, and the roastery demo",
-    ],
-    [
-      "0.9",
-      "Hardening and the docs site",
-      "The brand mark, this site, its search and Markdown, and the demos as their own apps",
-    ],
-    [
-      "1.0",
-      "Developer and agent experience",
-      "The command line tool, the MCP server, templates and the agent evaluation",
-    ],
-  ]}
-/>
+buttery is built in phases, and each phase is a release. This page is read from `ROADMAP.md` in the repository, which ticks each item as it lands, so it's never behind the work. `docs/BUILD_PLAN.md` has every phase's acceptance checks.
 
-## Now
-
-Release 0.9 is in progress: the site you're reading, with a page for every component, examples you can copy and checks that keep them working.
+<Roadmap />

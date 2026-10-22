@@ -1,7 +1,10 @@
 import { existsSync, globSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type { Plugin } from "vite";
+import { minorOf, releaseId } from "../src/release.ts";
+import { slugify } from "../src/slug.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
+import type { Heading } from "./frontmatter.ts";
 
 /** What one package's changelog says changed in a release. */
 export interface ReleaseChanges {
@@ -10,12 +13,22 @@ export interface ReleaseChanges {
   readonly lines: readonly string[];
 }
 
-/** One release as What's new shows it: its version, date and name, two or three highlights, and every change. */
+/**
+ * One release as What's new shows it: its version, date and name, what it's for, the examples that show it,
+ * two or three highlights, and every change.
+ */
 export interface Release {
   readonly version: string;
   /** As `YYYY-MM-DD`. */
   readonly date: string;
   readonly title: string;
+  /** What the release is for, in a sentence of Markdown. */
+  readonly summary: string;
+  /**
+   * The examples that show what it brought, each a component's name and an example's file name, such as
+   * `"OverflowCluster/text-toolbar"`; empty for a release with nothing to try.
+   */
+  readonly examples: readonly string[];
   /** Each a sentence of Markdown, such as "`Button` with four variants". */
   readonly highlights: readonly string[];
   /** The changes the packages' changelogs list for this version, once Changesets has written them. */
@@ -81,7 +94,10 @@ function packageNameOf(changelog: string): string {
     : dirname(changelog);
 }
 
-/** What's new entry `file`'s fields: its frontmatter's version, date and title, and its body's bullets. */
+/**
+ * What's new entry `file`'s fields: its frontmatter's version, date, title, summary and examples, and its
+ * body's bullets.
+ */
 export function entryOf(file: string): Omit<Release, "changes"> {
   const { block, body } = splitFrontmatter(readFileSync(file, "utf8"));
   const data = block === null ? {} : parseFrontmatter(block, file);
@@ -89,10 +105,13 @@ export function entryOf(file: string): Omit<Release, "changes"> {
     const value = data[key];
     return typeof value === "string" ? value : String(value ?? "");
   };
+  const examples = data["examples"] ?? [];
   return {
     version: text("version"),
     date: text("date"),
     title: text("title"),
+    summary: text("summary"),
+    examples: (Array.isArray(examples) ? examples : [examples]).map(String),
     highlights: [...body.matchAll(/^- (.+)$/gm)].map(([, line]) => line ?? ""),
   };
 }
@@ -128,7 +147,7 @@ export function releasesIn(root: string): Release[] {
   );
 }
 
-/** What's new as Markdown: each release's version, name and date, its highlights, and every change. */
+/** What's new as Markdown: each release's version, name and date, what it's for, its highlights, and every change. */
 export function releasesMarkdown(releases: readonly Release[]): string {
   return releases
     .map((release) =>
@@ -137,6 +156,7 @@ export function releasesMarkdown(releases: readonly Release[]): string {
         "",
         release.date,
         "",
+        ...(release.summary === "" ? [] : [release.summary, ""]),
         ...release.highlights.map((highlight) => `- ${highlight}`),
         ...release.changes.flatMap(({ packageName, lines }) => [
           "",
@@ -147,6 +167,38 @@ export function releasesMarkdown(releases: readonly Release[]): string {
       ].join("\n"),
     )
     .join("\n\n");
+}
+
+/** The heading each release's notes open with on What's new: its number and name, linking to `releaseId`. */
+export function releaseHeadings(releases: readonly Release[]): Heading[] {
+  return releases.map((release) => ({
+    depth: 2,
+    text: `${release.version} ${release.title}`,
+    id: releaseId(release.version),
+  }));
+}
+
+/** The heading the newest release opens with on the Introduction: "New in" and its minor number. */
+export function latestReleaseHeadings(releases: readonly Release[]): Heading[] {
+  const latest = releases[0];
+  if (!latest) return [];
+  const text = `New in ${minorOf(latest.version)}`;
+  return [{ depth: 2, text, id: slugify(text) }];
+}
+
+/**
+ * The newest release as the Introduction's Markdown writes it: "New in" and its number, what it's for, its
+ * highlights, and links to its release notes and the roadmap.
+ */
+export function latestReleaseMarkdown(release: Release): string {
+  return [
+    `## New in ${minorOf(release.version)}`,
+    "",
+    ...(release.summary === "" ? [] : [release.summary, ""]),
+    ...release.highlights.map((highlight) => `- ${highlight}`),
+    "",
+    `[Release notes for ${release.version}](/resources/whats-new#${releaseId(release.version)}) and [what comes next](/resources/roadmap).`,
+  ].join("\n");
 }
 
 const WHATS_NEW_MODULE = "virtual:buttery-whats-new";

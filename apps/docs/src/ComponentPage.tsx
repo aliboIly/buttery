@@ -5,6 +5,7 @@ import type { ColorScheme, DemoValues, Density } from "@buttery/core";
 import {
   Breadcrumbs,
   ButteryProvider,
+  InfoButton,
   SegmentedControl,
   StatusBadge,
   TagChip,
@@ -30,6 +31,7 @@ import { MOTION_TEXT, REDUCED_TEXT } from "./motion-text.ts";
 import { rootOf } from "./nav.ts";
 import { components, docsRouteOf, packageOf } from "./registry.ts";
 import type { ComponentEntry } from "./registry.ts";
+import { minorOf, releaseId } from "./release.ts";
 import { DOCS_VERSION } from "./routes.ts";
 import { slugify } from "./slug.ts";
 
@@ -84,21 +86,34 @@ function idFor(entry: ComponentEntry, depth: Depth, title: string): string {
   return depth === 2 ? slugify(title) : slugify(`${entry.meta.name} ${title}`);
 }
 
+/** Each status's badge: its tone, its word, and what it means, which its info button says. */
 const STATUS: Readonly<
   Record<
     "new" | "beta" | "stable" | "deprecated",
-    readonly [StatusTone, string]
+    readonly [StatusTone, string, string]
   >
 > = {
-  new: ["info", "New"],
-  beta: ["warning", "Beta"],
-  stable: ["success", "Stable"],
-  deprecated: ["danger", "Deprecated"],
+  new: [
+    "info",
+    "New",
+    "New: it arrived in a recent release. It's tested like the rest, but its props may still change as apps use it.",
+  ],
+  beta: [
+    "warning",
+    "Beta",
+    "Beta: it works, but it's still being shaped, and its props are likely to change.",
+  ],
+  stable: [
+    "success",
+    "Stable",
+    "Stable: it has been in buttery for several releases, and its props aren't expected to change.",
+  ],
+  deprecated: [
+    "danger",
+    "Deprecated",
+    "Deprecated: it's on its way out, and this page says what to use instead.",
+  ],
 };
-
-function minorOf(version: string): string {
-  return version.split(".").slice(0, 2).join(".");
-}
 
 /** A demo in its stage, drawn at a desktop's width and scaled down to fit when its component is page-scale. */
 function DemoDrawing({
@@ -462,7 +477,7 @@ export function ComponentPage({
   readonly next: Neighbor | undefined;
 }): ReactElement {
   const { meta, page } = entry;
-  const [tone, status] = STATUS[page?.status ?? "stable"];
+  const [tone, status, meaning] = STATUS[page?.status ?? "stable"];
   const isNew =
     page !== undefined &&
     page.status !== "new" &&
@@ -477,15 +492,22 @@ export function ComponentPage({
           </Text>
           <Text variant="body-lg">{page?.description ?? meta.purpose}</Text>
           <Inline gap={2} align="center" wrap>
-            <StatusBadge tone={tone}>{status}</StatusBadge>
+            <Inline gap={1} align="center">
+              <StatusBadge tone={tone}>{status}</StatusBadge>
+              <InfoButton info={meaning} />
+            </Inline>
             {isNew ? (
               <TagChip tone="info">{`New in ${minorOf(DOCS_VERSION)}`}</TagChip>
             ) : null}
             {page ? (
-              <Text
-                variant="caption"
-                tone="secondary"
-              >{`Since ${page.since}`}</Text>
+              <Text variant="caption" asChild>
+                <a
+                  href={siteHref(
+                    `/resources/whats-new#${releaseId(page.since)}`,
+                  )}
+                  className="docs-link docs-since bt-focus"
+                >{`Since ${page.since}`}</a>
+              </Text>
             ) : null}
           </Inline>
           <Inline gap={2} align="center" wrap>

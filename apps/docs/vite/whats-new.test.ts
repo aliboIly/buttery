@@ -5,11 +5,25 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   changelogVersions,
+  latestReleaseHeadings,
+  latestReleaseMarkdown,
   newestFirst,
   readReleases,
+  releaseHeadings,
   releasesIn,
   releasesMarkdown,
 } from "./whats-new.ts";
+import type { Release } from "./whats-new.ts";
+
+const STEPPERS: Release = {
+  version: "0.10.0",
+  date: "2026-11-02",
+  title: "Steppers",
+  summary: "Short flows, one step at a time.",
+  examples: ["Stepper/checkout"],
+  highlights: ["A `Stepper`.", "Button shapes."],
+  changes: [],
+};
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 
@@ -83,7 +97,7 @@ describe("What's new", () => {
     mkdirSync(join(folder, "whats-new"));
     writeFileSync(
       join(folder, "whats-new", "0.10.0.md"),
-      "---\nversion: 0.10.0\ndate: 2026-11-02\ntitle: Steppers\n---\n\n- A `Stepper`.\n- Button shapes.\n",
+      "---\nversion: 0.10.0\ndate: 2026-11-02\ntitle: Steppers\nsummary: Short flows, one step at a time.\nexamples: [Stepper/checkout, Button/shapes]\n---\n\n- A `Stepper`.\n- Button shapes.\n",
     );
     mkdirSync(join(folder, "react"));
     writeFileSync(
@@ -98,6 +112,8 @@ describe("What's new", () => {
       version: "0.10.0",
       date: "2026-11-02",
       title: "Steppers",
+      summary: "Short flows, one step at a time.",
+      examples: ["Stepper/checkout", "Button/shapes"],
       highlights: ["A `Stepper`.", "Button shapes."],
       changes: [
         {
@@ -108,13 +124,15 @@ describe("What's new", () => {
     });
   });
 
-  it("writes each release as Markdown: its version and name, date, highlights and changes", () => {
+  it("writes each release as Markdown: its version and name, date, summary, highlights and changes", () => {
     expect(
       releasesMarkdown([
         {
           version: "0.10.0",
           date: "2026-11-02",
           title: "Steppers",
+          summary: "Short flows, one step at a time.",
+          examples: ["Stepper/checkout"],
           highlights: ["A `Stepper`."],
           changes: [
             {
@@ -125,7 +143,35 @@ describe("What's new", () => {
         },
       ]),
     ).toBe(
-      "## 0.10.0: Steppers\n\n2026-11-02\n\n- A `Stepper`.\n\n### @buttery/react\n\n- Add the Stepper component.",
+      "## 0.10.0: Steppers\n\n2026-11-02\n\nShort flows, one step at a time.\n\n- A `Stepper`.\n\n### @buttery/react\n\n- Add the Stepper component.",
+    );
+  });
+
+  it("heads each release's notes with its number and name, linking to its id", () => {
+    expect(releaseHeadings([STEPPERS])).toEqual([
+      { depth: 2, text: "0.10.0 Steppers", id: "release-0-10-0" },
+    ]);
+  });
+
+  it("heads the Introduction's newest release with its minor number", () => {
+    expect(latestReleaseHeadings([STEPPERS])).toEqual([
+      { depth: 2, text: "New in 0.10", id: "new-in-0-10" },
+    ]);
+    expect(latestReleaseHeadings([])).toEqual([]);
+  });
+
+  it("writes the newest release for the Introduction's Markdown, with links to its notes and the roadmap", () => {
+    expect(latestReleaseMarkdown(STEPPERS)).toBe(
+      [
+        "## New in 0.10",
+        "",
+        "Short flows, one step at a time.",
+        "",
+        "- A `Stepper`.",
+        "- Button shapes.",
+        "",
+        "[Release notes for 0.10.0](/resources/whats-new#release-0-10-0) and [what comes next](/resources/roadmap).",
+      ].join("\n"),
     );
   });
 });

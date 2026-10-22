@@ -212,9 +212,33 @@ describe("the site as Markdown", () => {
   it("writes What's new out with every release, newest first", () => {
     const markdown =
       pageMarkdown(root, "resources/whats-new", components) ?? "";
-    expect(markdown).toContain("## 0.9.0: Docs site");
+    expect(markdown).toContain("## 0.9.0: The docs site");
     expect(markdown.indexOf("## 0.9.0")).toBeLessThan(
       markdown.indexOf("## 0.1.0: Foundation"),
+    );
+  });
+
+  it("writes the Introduction's cards as their headings and words, its newest release and the path on from it", () => {
+    const markdown =
+      pageMarkdown(root, "get-started/introduction", components) ?? "";
+    expect(markdown).not.toMatch(/<\/?(?:Feature|FeatureGrid)\b/);
+    expect(markdown).toContain("### Tokens and themes");
+    expect(markdown).toContain("## New in 0.9");
+    expect(markdown).toContain(
+      "[Release notes for 0.9.0](/resources/whats-new#release-0-9-0)",
+    );
+    expect(markdown).toMatch(
+      /^1\. \[Installation\]\(\/get-started\/installation\): /m,
+    );
+    expect(markdown).not.toContain("[Introduction](/get-started/introduction)");
+  });
+
+  it("writes the Roadmap out from ROADMAP.md: the release being built with its boxes, and the shipped ones linking to their notes", () => {
+    const markdown = pageMarkdown(root, "resources/roadmap", components) ?? "";
+    expect(markdown).toMatch(/^## Now: 1\.0\.0, /m);
+    expect(markdown).toMatch(/^- \[[ x]\] /m);
+    expect(markdown).toContain(
+      "- [0.9.0: The docs site](/resources/whats-new#release-0-9-0)",
     );
   });
 

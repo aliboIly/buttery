@@ -29,7 +29,7 @@
     "apps/docs/src/nav.ts",
     "apps/docs/src/slug.ts",
     "apps/docs/src/anatomy.ts",
-    "apps/docs/src/release-id.ts",
+    "apps/docs/src/release.ts",
     "apps/docs/src/demo-sentence.ts",
     "apps/docs/src/search/search.ts",
     "apps/docs/src/search/synonyms.ts",

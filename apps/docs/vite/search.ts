@@ -4,7 +4,7 @@ import ts from "typescript";
 import type { Plugin } from "vite";
 import { buildSearchIndexes } from "../src/search/search.ts";
 import type { SearchDoc } from "../src/search/search.ts";
-import { releaseId } from "../src/release-id.ts";
+import { releaseId } from "../src/release.ts";
 import { slugify } from "../src/slug.ts";
 import { captionOf } from "./code.ts";
 import {

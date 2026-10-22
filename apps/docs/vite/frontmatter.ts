@@ -82,31 +82,69 @@ export interface Heading {
   readonly id: string;
 }
 
-/** The `##` and `###` headings of a page's Markdown, outside its code blocks, with their anchor ids. */
-export function headingsOf(body: string): Heading[] {
-  return [
-    ...body.replace(/^```[\s\S]*?^```/gm, "").matchAll(/^(#{2,3})\s+(.+)$/gm),
-  ].map(([, hashes = "", text = ""]) => ({
-    depth: hashes.length === 2 ? 2 : 3,
-    text: text.replace(/[`*_]/g, ""),
-    id: slugify(text),
-  }));
+/**
+ * The headings a component on a page writes itself, by the component's name, such as a heading for each
+ * release where What's new has `<WhatsNew />`.
+ */
+export type GeneratedHeadings = Readonly<
+  Record<string, () => readonly Heading[]>
+>;
+
+/**
+ * The `##` and `###` headings of a page's Markdown, outside its code blocks, with their anchor ids, and
+ * where a component named in `generated` sits on a line of its own, the headings it writes.
+ */
+export function headingsOf(
+  body: string,
+  generated: GeneratedHeadings = {},
+): Heading[] {
+  const headings: Heading[] = [];
+  let fenced = false;
+  for (const line of body.split("\n")) {
+    if (line.startsWith("```")) {
+      fenced = !fenced;
+      continue;
+    }
+    if (fenced) continue;
+    const heading = /^(#{2,3})\s+(.+)$/.exec(line);
+    if (heading) {
+      const [, hashes = "", text = ""] = heading;
+      headings.push({
+        depth: hashes.length === 2 ? 2 : 3,
+        text: text.replace(/[`*_]/g, ""),
+        id: slugify(text),
+      });
+      continue;
+    }
+    const name = /^<([A-Z][A-Za-z]*)\b[^>]*\/>\s*$/.exec(line)?.[1];
+    const written = name === undefined ? undefined : generated[name];
+    if (written) headings.push(...written());
+  }
+  return headings;
 }
 
 /**
  * Turns an MDX page's frontmatter into `export const page = {…}`, so the nav reads it as a module export,
- * and lists its headings as `export const headings`.
+ * and lists its headings as `export const headings`, with those its components write from `generated`.
+ * `watch` names the files those headings come from, so the dev server reloads the page when one changes.
  */
-export function frontmatter(): Plugin {
+export function frontmatter({
+  generated = {},
+  watch = () => [],
+}: {
+  readonly generated?: GeneratedHeadings;
+  readonly watch?: () => readonly string[];
+} = {}): Plugin {
   return {
     name: "buttery-docs-frontmatter",
     enforce: "pre",
     transform(code, id) {
       if (!id.endsWith(".mdx")) return null;
+      for (const file of watch()) this.addWatchFile(file);
       const { block, body } = splitFrontmatter(code);
       const page = block === null ? undefined : parseFrontmatter(block, id);
       return {
-        code: `export const page = ${JSON.stringify(page)};\nexport const headings = ${JSON.stringify(headingsOf(body))};\n\n${body}`,
+        code: `export const page = ${JSON.stringify(page)};\nexport const headings = ${JSON.stringify(headingsOf(body, generated))};\n\n${body}`,
         map: null,
       };
     },

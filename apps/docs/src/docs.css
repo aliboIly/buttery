@@ -85,6 +85,11 @@
   padding-block-start: var(--bt-space-3);
 }
 
+/* A smaller heading's link reaches 24px tall through padding, which leaves its line where it is. */
+.docs-h3 > .docs-anchor {
+  padding-block: var(--bt-space-1);
+}
+
 /*
  * A heading links to itself: its text keeps the heading's look, and a link icon shows while it's pointed at
  * or focused. Both stay inline, inside the heading's trimmed text box.
@@ -123,7 +128,9 @@
  */
 .docs-page-footer .docs-link,
 .docs-related .docs-link,
-.docs-component-list .docs-link {
+.docs-component-list .docs-link,
+.docs-release-arrivals .docs-link,
+.docs-link.docs-since {
   display: inline-flex;
   align-items: center;
   min-block-size: var(--bt-h-sm);
@@ -267,8 +274,12 @@
   min-inline-size: 0;
 }
 
-/* Plain text on the column's edge, its chevron after it: a padded button's label would sit 12px in from the content above. */
-.docs-code-toggle {
+/*
+ * Plain text on the column's edge, its chevron after it: a padded button's label would sit 12px in from the
+ * content above. "Show code" and other toggles that unfold what's under them.
+ */
+.docs-code-toggle,
+.docs-disclosure {
   display: inline-flex;
   align-items: center;
   gap: var(--bt-space-1);
@@ -278,20 +289,43 @@
     var(--bt-ease-standard);
 }
 
-.docs-code-toggle:hover {
+.docs-code-toggle:hover,
+.docs-disclosure:hover {
   color: var(--bt-text);
 }
 
-.docs-code-toggle > svg {
+.docs-code-toggle > svg,
+.docs-disclosure > svg {
   transition: transform calc(var(--bt-dur-fast) * var(--bt-motion))
     var(--bt-ease-standard);
 }
 
-.docs-code-toggle > svg[data-open] {
+.docs-code-toggle > svg[data-open],
+.docs-disclosure > svg[data-open] {
   transform: rotate(180deg);
 }
 
 /* A caption's last line keeps a few words rather than one. */
 .docs-caption {
   text-wrap: pretty;
+}
+
+/* A bar that fills from the start as something gets done, such as a checklist or a release's items. */
+.docs-progress {
+  overflow: hidden;
+  block-size: var(--bt-space-1_5);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-control);
+}
+
+.docs-progress-fill {
+  display: block;
+  block-size: 100%;
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-accent);
+  transform-origin: left center;
+}
+
+.docs-progress-fill:dir(rtl) {
+  transform-origin: right center;
 }

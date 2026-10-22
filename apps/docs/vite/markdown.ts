@@ -19,7 +19,12 @@ import { demoPages } from "../src/routes.ts";
 import { demoUsesIn } from "./demo-uses.ts";
 import { exportDocsFor, propsTablesIn, typeTablesIn } from "./props.ts";
 import type { PropDoc } from "./props.ts";
-import { releasesIn, releasesMarkdown } from "./whats-new.ts";
+import { roadmapIn, roadmapMarkdown } from "./roadmap.ts";
+import {
+  latestReleaseMarkdown,
+  releasesIn,
+  releasesMarkdown,
+} from "./whats-new.ts";
 
 /** A value a meta file's object literal holds: a string, a list of strings, or a list of string records. */
 type MetaValue =
@@ -682,6 +687,11 @@ function bodyMarkdown(
       out.push(line);
       continue;
     }
+    if (
+      /^<\/[A-Z][A-Za-z]*>\s*$/.test(line) ||
+      /^<[A-Z][A-Za-z]*(?:\s[^>]*[^/])?>\s*$/.test(line)
+    )
+      continue;
     if (!/^<[A-Z]/.test(line)) {
       out.push(linksUnder(line, base));
       continue;
@@ -720,6 +730,17 @@ function bodyMarkdown(
       out.push(componentListOf(jsx, components, base));
     } else if (name === "WhatsNew") {
       out.push(releasesMarkdown(releasesIn(root)));
+    } else if (name === "LatestRelease") {
+      const latest = releasesIn(root)[0];
+      if (latest) out.push(linksUnder(latestReleaseMarkdown(latest), base));
+    } else if (name === "Roadmap") {
+      out.push(
+        linksUnder(roadmapMarkdown(roadmapIn(root), releasesIn(root)), base),
+      );
+    } else if (name === "NextSteps") {
+      const after =
+        /after="([^"]+)"/.exec(jsx)?.[1] ?? "get-started/introduction";
+      out.push(nextStepsMarkdown(root, after, base));
     } else if (name === "TemplatePreview") {
       const template = /name="([^"]+)"/.exec(jsx)?.[1] ?? "";
       const preview = sitePath(`/templates/${template}/preview`, base);
@@ -735,6 +756,35 @@ function bodyMarkdown(
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+/**
+ * The pages of Get started after `after`, in the sidebar's order, as a numbered list of links with each
+ * page's description, under `base`.
+ */
+function nextStepsMarkdown(root: string, after: string, base: string): string {
+  return globSync("get-started/*.mdx", { cwd: join(root, "apps/docs/content") })
+    .map((file) => {
+      const route = file.replace(/\.mdx$/, "");
+      const { block } = splitFrontmatter(
+        readFileSync(join(root, "apps/docs/content", file), "utf8"),
+      );
+      const data = block === null ? {} : parseFrontmatter(block, route);
+      return {
+        route,
+        title: typeof data["title"] === "string" ? data["title"] : route,
+        description:
+          typeof data["description"] === "string" ? data["description"] : "",
+        order: typeof data["order"] === "number" ? data["order"] : 0,
+      };
+    })
+    .filter((page) => page.route !== after)
+    .sort((a, b) => a.order - b.order)
+    .map(
+      (page, index) =>
+        `${String(index + 1)}. [${page.title}](${sitePath(`/${page.route}`, base)}): ${page.description}`,
+    )
+    .join("\n");
 }
 
 /** Every written page's route, read from `apps/docs/content`. */

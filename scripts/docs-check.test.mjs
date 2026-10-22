@@ -41,6 +41,22 @@ describe("docs check", () => {
     ]);
   });
 
+  it("fails release notes without a summary, or showing an example that doesn't exist", () => {
+    expect(
+      fixture("release-notes", {
+        metaFiles: [
+          join(root, "packages/react/src/components/slider/Slider.meta.ts"),
+        ],
+        docsSite: join(root, "docs/DOCS_SITE.md"),
+        examples: false,
+      }).filter((problem) => problem.includes("whats-new")),
+    ).toEqual([
+      "apps/docs/lab/docs-check/release-notes/content/whats-new/0.9.0.md has no summary. Fix: give its frontmatter version, date (YYYY-MM-DD), title and summary, a sentence on what the release is for.",
+      "apps/docs/lab/docs-check/release-notes/content/whats-new/0.9.0.md shows the example Slider/no-such-example, which doesn't exist. Fix: name a component and one of its examples' files, such as examples: [Slider/opacity-row].",
+      "apps/docs/lab/docs-check/release-notes/content/whats-new/0.9.0.md shows the example Stepper/checkout, which doesn't exist. Fix: name a component and one of its examples' files, such as examples: [Slider/opacity-row].",
+    ]);
+  });
+
   it("fails a page without metadata, saying what to add", () => {
     expect(fixture("missing-metadata")).toEqual([
       "apps/docs/lab/docs-check/missing-metadata/content/guides/untitled.mdx has no frontmatter. Fix: start it with a --- block holding title, description, section, order, status, since.",

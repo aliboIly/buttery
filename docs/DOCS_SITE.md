@@ -52,17 +52,31 @@ The Data table page and Overview patterns are compositions of the parts above an
 
 - A hero: the 🧈 `BrandMark`, "Make anything buttery", a one-line description, "Get started" as the primary button with a forward arrow, "Browse components" (All components), and a copyable `npx create-buttery my-app` (`pnpm new-app my-app` until `create-buttery` is published, with a line under it saying it runs in a clone of the repository and linking Installation).
 - Where to start: three cards, each with a forward-arrow link: a new app (`create-buttery`), an existing app (`buttery init`), building with a coding agent (`AGENTS.md` and the MCP server). Until the CLI and the MCP server exist, the cards name `pnpm new-app`, the existing-app guide, and `AGENTS.md` with the make-it-buttery skill.
-- What's new: the latest three releases, each with its version, date and two or three highlights, from Changesets plus a short `content/whats-new/` entry per release, and a link to the full changelog. Each entry is `content/whats-new/<version>.md`, with `version`, `date` and `title` in its frontmatter and its highlights as `- ` lines; Resources › What's new lists every entry with the changes each package's `CHANGELOG.md` gives its version. The docs check fails on an entry without two or three highlights and on a changelog version without an entry.
+- What's new: the latest three releases, each with its number, its tag (Latest, or In progress for the release being built), its date and two or three highlights, from Changesets plus a short `content/whats-new/` entry per release, and a link to the full release notes. Each entry is `content/whats-new/<version>.md`, with `version`, `date`, `title`, `summary` (a sentence on what the release is for) and, for a release with something to try, `examples` (`[Component/example-file, …]`) in its frontmatter, and its highlights as `- ` lines. The docs check fails on an entry without a summary or two or three highlights, on an example that doesn't exist, on a changelog version without an entry, and on a page whose `since` names a release with no entry. Releases are numbered one minor version per phase, 0.1 to 0.9, and 1.0 is the first on npm.
 - A live strip of real components the visitor can touch (a segmented control, a slider, a menu, a toast) that shows the feel instead of describing it.
 - Explore tiles with counts: Foundations, Layout, Motion, Components, Patterns, Templates, each counted from the nav and opening the section's first page, and Demos, counting the demos and opening `/demos`. Components counts its components, not the overview. A section with no pages yet has no tile.
 - A footer: the version, GitHub, the roadmap and the brand page.
 - Motion per `docs/MOTION_SPEC.md`: sections reveal once as they scroll in, the tiles stagger, and nothing plays by itself to distract.
 
+## The Introduction (`/get-started/introduction`)
+
+The first page of Get started says what buttery is by showing it.
+
+- Try it: a theme playground. A launch checklist made of buttery's components sits on a stage, a gradient from the palettes in the brand color's hue family, and a nested `ButteryProvider` applies the scheme, density, brand color (the theme's `accent` and `primary`) and corners picked beside it, to the card alone. It follows the page's scheme and density until one is picked. Ticking every task and pressing Launch celebrates.
+- What buttery gives an app: a card for each of tokens and themes, layout, motion, components, checks and coding agents, each with a small live part on top (a toolbar that folds into More as its slider narrows it, an indicator that slides and a total that crossfades) and its heading, words and link written in the page's Markdown inside `<Feature>`, so the `.md` and the search have them.
+- New in and the newest release's minor number: its summary, its `examples` live, its highlights, and links to its release notes and the roadmap, written from the newest What's new entry, so it changes with each release.
+- Where to go next: the rest of Get started as a numbered path, from the pages' own titles and descriptions.
+
+## Release notes and the roadmap
+
+- Resources › What's new is the release notes, newest first, on a timeline: each release's number and tag, its name as a heading that links to itself, its date, its summary, its `examples` live, its highlights, the components whose `since` is its version (the first dozen, then Show all) and every change its packages' changelogs list. The page's "On this page" list has a line for each release, and a component page's "Since" opens its release.
+- Resources › Roadmap is read from `ROADMAP.md` at build time, so it can't fall behind the boxes ticked there: how many releases have shipped, how much of the one being built has landed, then Now (the first release with boxes left: its number, phase, summary, a bar for its progress and every item, ticked or not), Next (releases planned after it), Later (the ideas not yet landed) and Shipped (each finished release with its date, summary and a link to its notes). A release's summary is the quoted line under its heading in `ROADMAP.md`; a shipped release takes its name, date and summary from its What's new entry.
+
 ## A component page
 
 Every component page has the same parts in the same order.
 
-1. Breadcrumbs, the title, a one-line description, the status badge, a "New" badge while `since` is the current minor, and a copyable import line.
+1. Breadcrumbs, the title, a one-line description, the status badge with an info button saying what the status means, a "New" badge while `since` is the current minor, "Since" and the release, linking to that release's notes, and a copyable import line.
 2. A live demo with prop controls, theme and density toggles, and "Show code".
 3. When to use it, when not to, and what to use instead.
 4. Examples, from `examples/`.
@@ -124,7 +138,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 - The same headings in the same order on every page (the anatomy above), so people and coding agents know where to look.
 - Nothing lives only in a picture or a demo: whatever a demo shows is also said in text or code. Tables are real tables. Code blocks carry a language tag and full imports.
 - Do and don't pairs are code, each with a one-line reason.
-- Every page is also served as clean Markdown at its path plus `.md`, with a "Copy page as Markdown" button, and `llms.txt` links to those versions, under the nav's sections in the nav's order, each component group a section of its own, such as `## Components › Actions`, and last the demos page and each demo, with its template and its folder. A block the Markdown can't write out, such as the surface levels drawn in light and dark, becomes a line linking to it on the live page, under its heading's anchor, and a component's Markdown says where its live demo and its variants and states are, listing each section of the gallery with its description.
+- Every page is also served as clean Markdown at its path plus `.md`, with a "Copy page as Markdown" button, and `llms.txt` links to those versions, under the nav's sections in the nav's order, each component group a section of its own, such as `## Components › Actions`, and last the demos page and each demo, with its template and its folder. A block the Markdown can't write out, such as the surface levels drawn in light and dark, becomes a line linking to it on the live page, under its heading's anchor; a component that only lays out the Markdown inside it, such as `<Feature>`, leaves that Markdown as it is; the release notes, the roadmap, the newest release and the Get started path are written out as Markdown; and a component's Markdown says where its live demo and its variants and states are, listing each section of the gallery with its description.
 - A comprehension gate per group of pages: a reviewer who hasn't seen the code reads the rendered page cold and answers three questions about it, and the page is fixed if any answer is wrong. Then a fresh agent gets only a component's `.md` page and builds a small feature with that component; its code has to typecheck and pass `expectButtery`. If it fails, the page is unclear: the page gets fixed, not the test.
 
 ## Demos

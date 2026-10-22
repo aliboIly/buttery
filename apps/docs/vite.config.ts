@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs";
+import { existsSync, globSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import mdx from "@mdx-js/rollup";
 import babel from "@rolldown/plugin-babel";
@@ -17,11 +18,19 @@ import { frontmatter } from "./vite/frontmatter.ts";
 import { butteryProps } from "./vite/props.ts";
 import { butterySearch } from "./vite/search.ts";
 import { butteryMarkdown } from "./vite/markdown.ts";
-import { butteryWhatsNew } from "./vite/whats-new.ts";
+import { butteryRoadmap, roadmapHeadings, roadmapIn } from "./vite/roadmap.ts";
+import {
+  butteryWhatsNew,
+  latestReleaseHeadings,
+  releaseHeadings,
+  releasesIn,
+} from "./vite/whats-new.ts";
 import { butteryDemoUses } from "./vite/demo-uses.ts";
 import { rehypeHighlight } from "./vite/highlight.ts";
 
 const { port } = manifest.config;
+
+const root = fileURLToPath(new URL("../..", import.meta.url));
 
 const REFERENCE_MODULE = "virtual:buttery-reference";
 
@@ -58,9 +67,22 @@ export default defineConfig({
     butterySearch(fileURLToPath(new URL("../..", import.meta.url))),
     butteryMarkdown(fileURLToPath(new URL("../..", import.meta.url))),
     butteryWhatsNew(fileURLToPath(new URL("../..", import.meta.url))),
+    butteryRoadmap(root),
     butteryDemoUses(fileURLToPath(new URL("../..", import.meta.url))),
     exampleCode(),
-    frontmatter(),
+    frontmatter({
+      generated: {
+        WhatsNew: () => releaseHeadings(releasesIn(root)),
+        LatestRelease: () => latestReleaseHeadings(releasesIn(root)),
+        Roadmap: () => roadmapHeadings(roadmapIn(root)),
+      },
+      watch: () => [
+        join(root, "ROADMAP.md"),
+        ...globSync("apps/docs/content/whats-new/*.md", { cwd: root }).map(
+          (file) => join(root, file),
+        ),
+      ],
+    }),
     {
       enforce: "pre",
       ...mdx({ jsxImportSource: "react", rehypePlugins: [rehypeHighlight] }),

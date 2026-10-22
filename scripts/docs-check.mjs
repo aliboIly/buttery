@@ -487,14 +487,29 @@ export function checkDocs({
           ...entryOf(join(whatsNew, file)),
         }))
     : [];
+  const exampleFile = (reference) => {
+    const [name = "", file = ""] = reference.split("/");
+    const meta = metaFiles.find((path) => basename(path, ".meta.ts") === name);
+    return meta === undefined
+      ? undefined
+      : join(dirname(meta), "examples", `${file}.tsx`);
+  };
   for (const entry of entries) {
-    const missing = ["version", "date", "title"].filter(
+    const missing = ["version", "date", "title", "summary"].filter(
       (key) => entry[key] === "",
     );
     if (missing.length > 0) {
       problems.push(
-        `${say(entry.file)} has no ${missing.join(" or ")}. Fix: give its frontmatter version, date (YYYY-MM-DD) and title.`,
+        `${say(entry.file)} has no ${missing.join(" or ")}. Fix: give its frontmatter version, date (YYYY-MM-DD), title and summary, a sentence on what the release is for.`,
       );
+    }
+    for (const reference of entry.examples) {
+      const file = exampleFile(reference);
+      if (file === undefined || !existsSync(file)) {
+        problems.push(
+          `${say(entry.file)} shows the example ${reference}, which doesn't exist. Fix: name a component and one of its examples' files, such as examples: [Slider/opacity-row].`,
+        );
+      }
     }
     if (entry.highlights.length < 2 || entry.highlights.length > 3) {
       problems.push(

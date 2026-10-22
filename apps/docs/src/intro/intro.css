@@ -1,0 +1,182 @@
+:root {
+  --bt-intro-showcase-controls: 240px;
+  --bt-intro-showcase-card: 420px;
+  --bt-intro-feature-visual: 176px;
+  --bt-intro-feature-dot: 24px;
+  --bt-intro-path-step: 28px;
+  --bt-intro-path-line: 1px;
+}
+
+/*
+ * The theme playground: the stage, then its controls, beside it from 640px of room and under it below that.
+ * The stage is a gradient from the palettes in the brand color's hue family, with the card centered on it.
+ */
+.docs-showcase {
+  min-inline-size: 0;
+  container-type: inline-size;
+}
+
+.docs-showcase-layout {
+  display: grid;
+  gap: var(--bt-space-6);
+}
+
+@container (width >= 640px) {
+  .docs-showcase-layout {
+    grid-template-columns: minmax(0, 1fr) var(--bt-intro-showcase-controls);
+    align-items: start;
+  }
+}
+
+.docs-showcase-controls {
+  min-inline-size: 0;
+}
+
+.docs-showcase-stage {
+  display: grid;
+  place-items: center;
+  min-inline-size: 0;
+  padding: var(--bt-space-8) var(--bt-space-5);
+  border-radius: var(--bt-r-2xl);
+  background-color: var(--bt-bg-app);
+}
+
+.docs-showcase-card {
+  inline-size: 100%;
+  max-inline-size: var(--bt-intro-showcase-card);
+}
+
+.docs-showcase-grow {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* A feature's card: a live part on top, all the cards' parts one height so their headings line up. */
+.docs-feature {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  gap: var(--bt-space-2);
+}
+
+.docs-feature-visual {
+  display: grid;
+  place-items: center;
+  block-size: var(--bt-intro-feature-visual);
+  min-inline-size: 0;
+  padding: var(--bt-space-4);
+}
+
+.docs-feature-text {
+  padding: var(--bt-space-3) var(--bt-space-3) var(--bt-space-4);
+}
+
+/* A heading at the top of its card has nothing above it to stand apart from. */
+.docs-feature .docs-h3 {
+  padding-block-start: 0;
+}
+
+.docs-feature-fill {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.docs-feature-box {
+  min-inline-size: 0;
+}
+
+.docs-feature-dot {
+  inline-size: var(--bt-intro-feature-dot);
+  block-size: var(--bt-intro-feature-dot);
+  border-radius: var(--bt-r-full);
+}
+
+.docs-feature-tool {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--bt-h-sm);
+  padding-inline: var(--bt-space-3);
+  border-radius: var(--bt-r-full);
+  color: var(--bt-text-secondary);
+  transition:
+    background-color calc(var(--bt-dur-fast) * var(--bt-motion))
+      var(--bt-ease-standard),
+    color calc(var(--bt-dur-fast) * var(--bt-motion)) var(--bt-ease-standard);
+}
+
+.docs-feature-tool:hover {
+  background-color: var(--bt-bg-item-hover);
+  color: var(--bt-text);
+}
+
+.docs-feature-tool[aria-pressed="true"] {
+  background-color: var(--bt-accent-subtle);
+  color: var(--bt-accent-text);
+}
+
+.docs-feature-mono {
+  inline-size: 100%;
+  min-inline-size: 0;
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-body-sm-size);
+  line-height: var(--bt-text-body-sm-line);
+  color: var(--bt-text);
+}
+
+.docs-feature-pass {
+  color: var(--bt-success);
+}
+
+.docs-feature-muted {
+  color: var(--bt-text-secondary);
+}
+
+/* The rest of Get started as a numbered path: each step's number on a line that runs down to the next. */
+.docs-path {
+  display: grid;
+  margin: 0;
+  padding: 0;
+}
+
+.docs-path-step {
+  display: grid;
+  grid-template-columns: var(--bt-intro-path-step) minmax(0, 1fr);
+  column-gap: var(--bt-space-4);
+}
+
+.docs-path-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.docs-path-number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: var(--bt-intro-path-step);
+  block-size: var(--bt-intro-path-step);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-section);
+  color: var(--bt-text-secondary);
+}
+
+.docs-path-line {
+  flex: 1 1 auto;
+  inline-size: var(--bt-intro-path-line);
+  min-block-size: var(--bt-space-4);
+  background-color: var(--bt-border);
+}
+
+.docs-path-step:last-child .docs-path-line {
+  visibility: hidden;
+}
+
+.docs-path-body {
+  min-inline-size: 0;
+  padding-block-end: var(--bt-space-6);
+}
+
+.docs-path-step:last-child .docs-path-body {
+  padding-block-end: 0;
+}
