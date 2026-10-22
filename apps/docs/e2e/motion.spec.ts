@@ -507,6 +507,7 @@ test.describe("full motion", () => {
     await page.goto("/patterns/onboarding?chrome=0&motion=full");
     await page
       .getByRole("button", { name: "Take the tour", exact: true })
+      .first()
       .click();
     await page.getByRole("dialog").waitFor();
     await page.waitForTimeout(400);
