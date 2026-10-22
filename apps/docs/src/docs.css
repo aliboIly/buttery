@@ -52,6 +52,13 @@
   font-size: var(--bt-text-body-sm-size);
 }
 
+/* A line of code on its own, such as an import, sits in a padded box; inside a sentence a chip keeps to 2px. */
+.docs-code-line {
+  display: inline-block;
+  padding: var(--bt-space-1) var(--bt-space-2);
+  border-radius: var(--bt-r-sm);
+}
+
 .docs-list {
   margin: 0;
   padding-inline-start: var(--bt-space-5);

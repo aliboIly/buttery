@@ -185,7 +185,7 @@ function SearchPreview({
         </Text>
       )}
       {component ? (
-        <code className="docs-code">{`import { ${component.meta.name} } from "${packageOf(component)}";`}</code>
+        <code className="docs-code docs-code-line">{`import { ${component.meta.name} } from "${packageOf(component)}";`}</code>
       ) : null}
       {component?.live && component.frame !== "page" ? (
         <PreviewDemo key={component.meta.name}>

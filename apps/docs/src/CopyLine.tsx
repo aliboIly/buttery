@@ -16,7 +16,7 @@ export function CopyLine({
   const [copied, setCopied] = useState(false);
   return (
     <Inline gap={2} align="center" className="docs-copy-line">
-      <code className="docs-code">{text}</code>
+      <code className="docs-code docs-code-line">{text}</code>
       <IconButton
         icon={copied ? Check : Copy}
         label={copied ? "Copied" : label}
