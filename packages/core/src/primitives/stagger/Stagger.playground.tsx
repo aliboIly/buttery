@@ -27,7 +27,7 @@ export const demos: readonly DemoSection[] = [
     description:
       "The cards rise in 50ms apart the first time the grid is in view; the whole entrance stays under 900ms.",
     render: () => (
-      <Grid columns={3} gap={4} asChild>
+      <Grid columns={{ base: 2, md: 3 }} gap={4} asChild>
         <Stagger>
           {CARDS.map((card) => (
             <Stagger.Item key={card}>
