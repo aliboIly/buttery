@@ -11,9 +11,9 @@ function leanOf({ x, y }: TiltValue): string {
   const amount = (value: number): string =>
     `${String(Math.round(Math.abs(value) * 100))}%`;
   const parts: string[] = [];
-  if (x !== 0) parts.push(`${amount(x)} ${x < 0 ? "left" : "right"}`);
-  if (y !== 0) parts.push(`${amount(y)} ${y < 0 ? "up" : "down"}`);
-  return parts.length === 0 ? "Level" : parts.join(", ");
+  if (x !== 0) parts.push(`${x < 0 ? "←" : "→"} ${amount(x)}`);
+  if (y !== 0) parts.push(`${y < 0 ? "↑" : "↓"} ${amount(y)}`);
+  return parts.length === 0 ? "Level" : parts.join(" ");
 }
 
 /** An inspector's placement section: a lean row with its value and a chip that lays it flat, over a turn slider, and Reset for both. */
@@ -35,9 +35,7 @@ export function PlacementSection(): ReactElement {
           label="Lean"
           extra={
             <Inline gap={2}>
-              <ValueBadge reserve={["71% right, 71% down"]}>
-                {leanOf(lean)}
-              </ValueBadge>
+              <ValueBadge reserve={["→ 71% ↓ 71%"]}>{leanOf(lean)}</ValueBadge>
               <Chip
                 aria-disabled={level}
                 onClick={() => {
@@ -75,7 +73,7 @@ export const play: ExamplePlay = async ({ press, key, see }) => {
   await key("ArrowDown");
   await key("ArrowDown");
   await key("ArrowDown");
-  await see("30% down");
+  await see("↓ 30%");
   await press("button", "Reset Placement");
   await see("Level");
 };
