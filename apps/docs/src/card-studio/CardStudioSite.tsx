@@ -179,7 +179,7 @@ function Menus(): ReactElement[] {
     <MorphMenu.Item key="guides" label="Guides">
       <MorphMenu.Column title="Learn">
         <MorphMenu.Entry
-          href="/components/onboarding"
+          href="/patterns/onboarding"
           title="The tour"
           caption="Four steps, one minute"
         />
@@ -271,7 +271,7 @@ export function CardStudioSite(): ReactElement {
               <a href={STUDIO}>Open the studio</a>
             </Button>
             <Button variant="soft" asChild>
-              <a href="/components/onboarding">Take the tour</a>
+              <a href="/patterns/onboarding">Take the tour</a>
             </Button>
           </>
         }
@@ -453,7 +453,7 @@ export function CardStudioSite(): ReactElement {
         </Footer.Column>
         <Footer.Column title="Studio">
           <Footer.Link href={STUDIO}>Open the studio</Footer.Link>
-          <Footer.Link href="/components/onboarding">The tour</Footer.Link>
+          <Footer.Link href="/patterns/onboarding">The tour</Footer.Link>
         </Footer.Column>
       </Footer>
     </Page>

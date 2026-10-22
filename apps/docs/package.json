@@ -15,6 +15,7 @@
     "@buttery/core": "workspace:*",
     "@buttery/react": "workspace:*",
     "lucide-react": "catalog:",
+    "minisearch": "catalog:",
     "motion": "catalog:",
     "radix-ui": "catalog:",
     "react": "catalog:",
@@ -23,11 +24,13 @@
   "devDependencies": {
     "@babel/core": "catalog:",
     "@buttery/test": "workspace:*",
+    "@mdx-js/rollup": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
+    "shiki": "catalog:",
     "vite": "catalog:"
   }
 }

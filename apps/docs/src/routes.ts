@@ -1,11 +1,36 @@
-/** Pages that aren't components: the token, surface and type references. */
-export const foundationPages = [
-  { route: "tokens", title: "Tokens" },
-  { route: "surfaces", title: "Surfaces" },
-  { route: "levels", title: "Levels" },
-  { route: "palettes", title: "Palettes" },
-  { route: "text-stacks", title: "Text stacks" },
-  { route: "motion", title: "Motion" },
+/** Pages that aren't a component's: the token, surface and type references, and the motion presets. */
+export const referencePages = [
+  {
+    route: "foundations/tokens",
+    title: "Tokens",
+    section: "foundations",
+    order: 10,
+  },
+  {
+    route: "foundations/surfaces",
+    title: "Surfaces",
+    section: "foundations",
+    order: 20,
+  },
+  {
+    route: "foundations/levels",
+    title: "Levels",
+    section: "foundations",
+    order: 30,
+  },
+  {
+    route: "foundations/palettes",
+    title: "Palettes",
+    section: "foundations",
+    order: 40,
+  },
+  {
+    route: "foundations/text-stacks",
+    title: "Text stacks",
+    section: "foundations",
+    order: 50,
+  },
+  { route: "motion/presets", title: "Presets", section: "motion", order: 10 },
 ] as const;
 
 /** Original demo apps built from buttery's components. */

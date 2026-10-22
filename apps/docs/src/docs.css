@@ -1,0 +1,67 @@
+/*
+ * A content page: prose at most 720 wide, and code colored from buttery's tokens through the variables
+ * shiki's theme writes.
+ */
+.docs-prose {
+  --docs-code-foreground: var(--bt-text);
+  --docs-code-background: var(--bt-bg-section);
+  --docs-code-token-comment: var(--bt-text-tertiary);
+  --docs-code-token-keyword: var(--bt-accent-text);
+  --docs-code-token-string: var(--bt-success);
+  --docs-code-token-string-expression: var(--bt-success);
+  --docs-code-token-constant: var(--bt-warning);
+  --docs-code-token-function: var(--bt-text-strong);
+  --docs-code-token-parameter: var(--bt-text);
+  --docs-code-token-punctuation: var(--bt-text-secondary);
+  --docs-code-token-link: var(--bt-accent-text);
+
+  min-inline-size: 0;
+  max-inline-size: var(--bt-w-prose);
+}
+
+.docs-pre {
+  margin: 0;
+  padding: var(--bt-space-4) var(--bt-space-5);
+  overflow-x: auto;
+  border-radius: var(--bt-r-lg);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-body-sm-size);
+  line-height: var(--bt-text-body-line);
+  tab-size: 2;
+}
+
+/* A block's code is shiki's, inside the block: it takes none of inline code's look. */
+.docs-pre code {
+  padding: 0;
+  border-radius: 0;
+  background-color: transparent;
+  font: inherit;
+}
+
+.docs-code {
+  padding-inline: var(--bt-space-1);
+  border-radius: var(--bt-r-xs);
+  background-color: var(--bt-bg-control);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-body-sm-size);
+}
+
+.docs-list {
+  margin: 0;
+  padding-inline-start: var(--bt-space-5);
+}
+
+.docs-link {
+  color: var(--bt-accent-text);
+  text-decoration: underline;
+  text-underline-offset: var(--bt-space-1);
+}
+
+/* A heading opens a part of the page, so it sits further from what's above it than paragraphs do. */
+.docs-prose h2 {
+  padding-block-start: var(--bt-space-6);
+}
+
+.docs-prose h3 {
+  padding-block-start: var(--bt-space-3);
+}

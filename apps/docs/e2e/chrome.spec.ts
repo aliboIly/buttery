@@ -54,7 +54,7 @@ test("at the bottom of a long page, scrolling up over the sidebar reaches its fi
 });
 
 test("the sidebar keeps the current page in view", async ({ page }) => {
-  await page.goto("/components/sticky");
+  await page.goto("/foundations/sticky");
   const current = page
     .getByRole("navigation", { name: "Pages" })
     .getByRole("link", { name: "Sticky" });

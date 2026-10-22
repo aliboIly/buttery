@@ -498,11 +498,12 @@ test.beforeEach(async ({ page }) => {
 
 for (const route of routes) {
   test(`${route} is buttery`, async ({ page }) => {
+    const short = route.slice(route.indexOf("/") + 1);
     await page.goto(url(route));
     await expectButtery(page, {
       ...matrix,
       name: route,
-      interactions: interactions[route] ?? roasteryInteractions[route],
+      interactions: interactions[short] ?? roasteryInteractions[short],
     });
   });
 }

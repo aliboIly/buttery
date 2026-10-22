@@ -1,10 +1,13 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import mdx from "@mdx-js/rollup";
 import babel from "@rolldown/plugin-babel";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defaultClientConditions, defineConfig } from "vite";
 import type { Plugin } from "vite";
 import manifest from "./package.json" with { type: "json" };
+import { frontmatter } from "./vite/frontmatter.ts";
+import { rehypeHighlight } from "./vite/highlight.ts";
 
 const { port } = manifest.config;
 
@@ -35,6 +38,11 @@ function referenceCaptures(): Plugin {
 
 export default defineConfig({
   plugins: [
+    frontmatter(),
+    {
+      enforce: "pre",
+      ...mdx({ jsxImportSource: "react", rehypePlugins: [rehypeHighlight] }),
+    },
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     referenceCaptures(),

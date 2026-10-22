@@ -1,0 +1,25 @@
+---
+title: Introduction
+description: What buttery is, what it gives an app, and how this site is laid out.
+section: get-started
+order: 10
+status: stable
+since: 0.8.0
+related: [get-started/installation]
+---
+
+buttery is a React design system with layout and motion rules for web apps and Tauri desktop apps. Use it when you want an app's spacing, type, surfaces and motion to agree with each other without reviewing every screen by hand.
+
+## What it gives an app
+
+- Tokens for color, type, spacing, heights, radii, shadows, layers and motion, as CSS variables and typed TypeScript, in light and dark and two densities.
+- Primitives that lay pages out with gaps instead of margins, such as `Stack`, `Inline`, `Grid` and `Surface`.
+- Components and page patterns built from those primitives, from `Button` to `AppShell`.
+- Motion presets that pick the right spring or tween for each kind of change, and turn themselves off for people who ask for less motion.
+- Checks that fail when something overlaps, overflows, truncates without saying so or moves after a press: `LayoutGuard` while you work and `expectButtery` in Playwright tests.
+
+## How this site is laid out
+
+The sections in the sidebar go from first steps to reference. Get started takes you to a first screen. Foundations, Layout and Motion explain the rules the components follow. Components and Patterns have a page for every part, with live examples you can copy. Templates, Guides and Tools cover whole apps, common tasks and the command line.
+
+Every page is also available as Markdown at its address plus `.md`, for reading in an editor or handing to a coding agent.

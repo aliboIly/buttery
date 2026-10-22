@@ -1,0 +1,68 @@
+import type { Plugin } from "vite";
+
+/** A frontmatter value: a string, a number or a list of strings. */
+export type FrontmatterValue = string | number | readonly string[];
+
+function valueOf(raw: string): FrontmatterValue {
+  const text = raw.trim();
+  if (text.startsWith("[") && text.endsWith("]")) {
+    return text
+      .slice(1, -1)
+      .split(",")
+      .map((item) => item.trim().replace(/^["']|["']$/g, ""))
+      .filter((item) => item !== "");
+  }
+  if (/^-?\d+(\.\d+)?$/.test(text)) return Number(text);
+  return text.replace(/^"(.*)"$/s, "$1").replace(/^'(.*)'$/s, "$1");
+}
+
+/**
+ * Reads a flat YAML block, one `key: value` per line, where a value is a string (quoted or not), a number
+ * or a `[a, b]` list. Throws, naming the file and line, on anything else.
+ */
+export function parseFrontmatter(
+  block: string,
+  file: string,
+): Record<string, FrontmatterValue> {
+  const data: Record<string, FrontmatterValue> = {};
+  for (const [index, line] of block.split("\n").entries()) {
+    if (line.trim() === "") continue;
+    const match = /^([a-zA-Z][\w-]*):\s*(.*)$/.exec(line);
+    if (!match?.[1] || match[2] === undefined) {
+      throw new Error(
+        `${file}: frontmatter line ${String(index + 2)} isn't "key: value". Fix: one key per line, such as title: Button.`,
+      );
+    }
+    data[match[1]] = valueOf(match[2]);
+  }
+  return data;
+}
+
+/** The frontmatter block at the start of an MDX page, if it has one, and the page after it. */
+export function splitFrontmatter(source: string): {
+  readonly block: string | null;
+  readonly body: string;
+} {
+  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(source);
+  return match
+    ? { block: match[1] ?? "", body: source.slice(match[0].length) }
+    : { block: null, body: source };
+}
+
+/** Turns an MDX page's frontmatter into `export const page = {…}`, so the nav reads it as a module export. */
+export function frontmatter(): Plugin {
+  return {
+    name: "buttery-docs-frontmatter",
+    enforce: "pre",
+    transform(code, id) {
+      if (!id.endsWith(".mdx")) return null;
+      const { block, body } = splitFrontmatter(code);
+      if (block === null) return null;
+      const page = parseFrontmatter(block, id);
+      return {
+        code: `export const page = ${JSON.stringify(page)};\n\n${body}`,
+        map: null,
+      };
+    },
+  };
+}

@@ -105,7 +105,7 @@ async function open(
 ): Promise<void> {
   await installSampler(page, startOnLoad);
   const setting = motion === "system" ? "" : `&motion=${motion}`;
-  await page.goto(`/foundations/motion?chrome=0${setting}`);
+  await page.goto(`/motion/presets?chrome=0${setting}`);
   await page.getByRole("heading", { name: "Motion", level: 1 }).waitFor();
   await page.evaluate(async () => {
     await document.fonts.ready;
@@ -504,7 +504,7 @@ test.describe("full motion", () => {
   test("an onboarding's shared card travels to its next place on spring.smooth", async ({
     page,
   }) => {
-    await page.goto("/components/onboarding?chrome=0&motion=full");
+    await page.goto("/patterns/onboarding?chrome=0&motion=full");
     await page
       .getByRole("button", { name: "Take the tour", exact: true })
       .click();

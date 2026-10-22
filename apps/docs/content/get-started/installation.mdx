@@ -1,0 +1,56 @@
+---
+title: Installation
+description: How to start an app on buttery today, and what it adds to an existing one.
+section: get-started
+order: 20
+status: beta
+since: 0.8.0
+related: [get-started/introduction]
+---
+
+buttery isn't on npm yet, so a new app starts as a copy of the starter in the buttery repository. Use this page to get an app running on the web and as a desktop app.
+
+## Start a new app
+
+From the repository's root, copy the starter under a new name and start it:
+
+```bash
+pnpm new-app my-app
+pnpm --filter my-app dev
+```
+
+The copy lives in `apps/my-app`. It already loads buttery's styles, wraps the app in `ButteryProvider` and runs the layout checks in its Playwright tests.
+
+## Run it as a desktop app
+
+The starter is also a Tauri v2 app. With Rust installed, open it in a desktop window:
+
+```bash
+pnpm --filter my-app tauri dev
+```
+
+## What an app needs
+
+An app on buttery imports two stylesheets once, at its entry, and renders inside `ButteryProvider`:
+
+```tsx
+import "@buttery/core/styles.css";
+import "@buttery/react/styles.css";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { ButteryProvider } from "@buttery/react";
+import { App } from "./App.tsx";
+
+const container = document.getElementById("root");
+if (!container) throw new Error("index.html needs a #root element.");
+
+createRoot(container).render(
+  <StrictMode>
+    <ButteryProvider>
+      <App />
+    </ButteryProvider>
+  </StrictMode>,
+);
+```
+
+`ButteryProvider` sets the color scheme, density and motion preference for everything inside it, and mounts the layers that menus, dialogs and toasts open into.

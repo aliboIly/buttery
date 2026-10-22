@@ -1,5 +1,10 @@
 import type { ComponentType } from "react";
-import type { ComponentMeta, DemoFrame, DemoSection } from "@buttery/core";
+import type {
+  ComponentMeta,
+  DemoFrame,
+  DemoSection,
+  DocsPage,
+} from "@buttery/core";
 import { componentRoute } from "./routes.ts";
 
 interface MetaModule {
@@ -9,6 +14,7 @@ interface MetaModule {
 interface DemoModule {
   readonly demos: readonly DemoSection[];
   readonly frame?: DemoFrame;
+  readonly page?: DocsPage;
 }
 
 const metaModules = import.meta.glob<MetaModule>(
@@ -30,7 +36,10 @@ export interface Example {
 }
 
 export interface ComponentEntry {
+  /** Its name in kebab case, such as `fit-box`; its page's path adds its section in front. */
   readonly route: string;
+  /** Where its page sits on the site, from its `*.playground.tsx`; undefined until it has one. */
+  readonly page: DocsPage | undefined;
   readonly meta: ComponentMeta;
   readonly demos: readonly DemoSection[];
   readonly frame: DemoFrame;
@@ -73,6 +82,7 @@ export const components: readonly ComponentEntry[] = Object.entries(metaModules)
     )?.[1];
     return {
       route: componentRoute(meta.name),
+      page: page?.page,
       meta,
       demos: page?.demos ?? [],
       frame: page?.frame ?? "section",

@@ -3,11 +3,11 @@ import type { Page } from "@playwright/test";
 import { componentRoutes, url } from "./routes.ts";
 
 const foundations = [
-  { route: "tokens", landmark: "Text roles" },
-  { route: "surfaces", landmark: "Inspector" },
-  { route: "levels", landmark: "dark surfaces" },
-  { route: "palettes", landmark: "Gradients" },
-  { route: "text-stacks", landmark: "Make it yours" },
+  { route: "foundations/tokens", landmark: "Text roles" },
+  { route: "foundations/surfaces", landmark: "Inspector" },
+  { route: "foundations/levels", landmark: "dark surfaces" },
+  { route: "foundations/palettes", landmark: "Gradients" },
+  { route: "foundations/text-stacks", landmark: "Make it yours" },
 ] as const;
 
 /**

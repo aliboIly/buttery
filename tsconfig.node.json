@@ -14,6 +14,7 @@
     "packages/*/*.config.ts",
     "packages/*/scripts/**/*.ts",
     "apps/*/*.config.ts",
+    "apps/*/vite/**/*.ts",
     "apps/*/package.json",
     "apps/*/e2e/**/*.ts",
     "packages/*/e2e/**/*.ts",

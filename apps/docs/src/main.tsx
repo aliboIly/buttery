@@ -1,6 +1,7 @@
 import "@buttery/core/styles.css";
 import "@buttery/react/styles.css";
 import "./playground.css";
+import "./docs.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App.tsx";

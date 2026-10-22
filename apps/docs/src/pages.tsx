@@ -1,8 +1,12 @@
 import { lazy, Suspense } from "react";
 import type { ReactElement } from "react";
-import type { ComponentKind } from "@buttery/core";
+import type { DocsPage } from "@buttery/core";
 import { referenceRoot } from "virtual:buttery-reference";
 import { ComponentPage } from "./ComponentPage.tsx";
+import { ContentPage } from "./ContentPage.tsx";
+import { contentPages, labPages } from "./content.ts";
+import { buildNav, rootOf } from "./nav.ts";
+import type { NavSection } from "./nav.ts";
 import { LevelsPage } from "./pages/LevelsPage.tsx";
 import { MotionPage } from "./pages/MotionPage.tsx";
 import { PalettesPage } from "./pages/PalettesPage.tsx";
@@ -13,15 +17,17 @@ import { CardStudio } from "./card-studio/CardStudio.tsx";
 import { CardStudioSite } from "./card-studio/CardStudioSite.tsx";
 import { Roastery } from "./roastery/Roastery.tsx";
 import { components } from "./registry.ts";
-import { demoPages, foundationPages } from "./routes.ts";
+import { demoPages, referencePages } from "./routes.ts";
 
 export interface Page {
   /** Its path without the leading slash, such as `components/button`. */
   readonly route: string;
   readonly title: string;
   readonly render: () => ReactElement;
-  /** A whole app that brings its own landmarks, shown without the playground's chrome. */
+  /** A whole app that brings its own landmarks, shown without the site's chrome. */
   readonly fullWindow?: boolean;
+  /** Where it sits on the site, for the nav; demos and lab pages have none. */
+  readonly docs?: DocsPage;
 }
 
 export interface PageGroup {
@@ -40,15 +46,15 @@ const DEMOS: Readonly<
   roastery: { render: () => <Roastery />, fullWindow: true },
 };
 
-const FOUNDATIONS: Readonly<
-  Record<(typeof foundationPages)[number]["route"], () => ReactElement>
+const REFERENCES: Readonly<
+  Record<(typeof referencePages)[number]["route"], () => ReactElement>
 > = {
-  tokens: () => <TokensPage />,
-  surfaces: () => <SurfacesPage />,
-  levels: () => <LevelsPage />,
-  palettes: () => <PalettesPage />,
-  "text-stacks": () => <TextStacksPage />,
-  motion: () => <MotionPage />,
+  "foundations/tokens": () => <TokensPage />,
+  "foundations/surfaces": () => <SurfacesPage />,
+  "foundations/levels": () => <LevelsPage />,
+  "foundations/palettes": () => <PalettesPage />,
+  "foundations/text-stacks": () => <TextStacksPage />,
+  "motion/presets": () => <MotionPage />,
 };
 
 const ComparePage =
@@ -59,23 +65,65 @@ const ComparePage =
       })
     : null;
 
-const KINDS: readonly (readonly [ComponentKind, string])[] = [
-  ["primitive", "Primitives"],
-  ["layer", "Layers"],
-  ["component", "Components"],
-  ["pattern", "Patterns"],
-];
-
-/** Every playground page, grouped the way the sidebar shows them. */
-export const pageGroups: readonly PageGroup[] = [
-  {
-    title: "Foundations",
-    pages: foundationPages.map(({ route, title }) => ({
-      route: `foundations/${route}`,
+const referenceDocs: readonly Page[] = referencePages.map(
+  ({ route, title, section, order }) => ({
+    route,
+    title,
+    render: REFERENCES[route],
+    docs: {
+      section,
       title,
-      render: FOUNDATIONS[route],
-    })),
-  },
+      description: `buttery's ${title.toLowerCase()}.`,
+      order,
+      status: "stable",
+      since: "0.2.0",
+    },
+  }),
+);
+
+const componentDocs: readonly Page[] = components.flatMap((entry) =>
+  entry.page
+    ? [
+        {
+          route: `${rootOf(entry.page.section)}/${entry.route}`,
+          title: entry.page.title,
+          render: () => <ComponentPage entry={entry} />,
+          docs: entry.page,
+        },
+      ]
+    : [],
+);
+
+const contentDocs: readonly Page[] = contentPages.map((entry) => ({
+  route: entry.route,
+  title: entry.page.title,
+  render: () => <ContentPage entry={entry} />,
+  docs: entry.page,
+}));
+
+const docsPages = [...contentDocs, ...referenceDocs, ...componentDocs];
+
+/** The site's nav, generated from every page's metadata. */
+export const nav: readonly NavSection[] = buildNav(
+  docsPages.flatMap((page) =>
+    page.docs ? [{ route: page.route, page: page.docs }] : [],
+  ),
+);
+
+/** The pages the site's menus show, grouped: the nav's sections, then the demos. */
+export const pageGroups: readonly PageGroup[] = [
+  ...nav.map((section) => {
+    const routes = [
+      ...section.pages,
+      ...section.groups.flatMap((group) => group.pages),
+    ].map(({ route }) => route);
+    return {
+      title: section.title,
+      pages: routes.flatMap(
+        (route) => docsPages.find((page) => page.route === route) ?? [],
+      ),
+    };
+  }),
   {
     title: "Demos",
     pages: demoPages.map(({ route, title }) => ({
@@ -84,21 +132,13 @@ export const pageGroups: readonly PageGroup[] = [
       ...DEMOS[route],
     })),
   },
-  ...KINDS.map(([kind, title]) => ({
-    title,
-    pages: components
-      .filter((entry) => entry.meta.kind === kind)
-      .map((entry) => ({
-        route: `components/${entry.route}`,
-        title: entry.meta.name,
-        render: () => <ComponentPage entry={entry} />,
-      })),
-  })).filter((group) => group.pages.length > 0),
-  ...(ComparePage
-    ? [
-        {
-          title: "Local",
-          pages: [
+];
+
+/** Pages only tests and the maintainer visit, in development only; the nav never links to them. */
+const labDocs: readonly Page[] = import.meta.env.DEV
+  ? [
+      ...(ComparePage
+        ? [
             {
               route: "lab/compare",
               title: "Compare",
@@ -108,15 +148,20 @@ export const pageGroups: readonly PageGroup[] = [
                 </Suspense>
               ),
             },
-          ],
-        },
-      ]
-    : []),
-];
+          ]
+        : []),
+      ...labPages.map((entry) => ({
+        route: entry.route,
+        title: entry.page.title,
+        render: () => <ContentPage entry={entry} />,
+      })),
+    ]
+  : [];
 
-export const pages: readonly Page[] = pageGroups.flatMap(
-  (group) => group.pages,
-);
+export const pages: readonly Page[] = [
+  ...pageGroups.flatMap((group) => group.pages),
+  ...labDocs,
+];
 
 const duplicate = pages.find(
   (page, index) =>
@@ -124,6 +169,6 @@ const duplicate = pages.find(
 );
 if (duplicate) {
   throw new Error(
-    `Two docs pages use the route "${duplicate.route}". Fix: rename the foundation page in routes.ts.`,
+    `Two docs pages use the route "${duplicate.route}". Fix: give one of them another file name or section.`,
   );
 }
