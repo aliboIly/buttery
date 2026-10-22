@@ -1,0 +1,47 @@
+---
+title: Page header
+description: The top of an app page, with its title, an optional value and the page's actions.
+section: patterns
+order: 10
+status: new
+since: 0.7.0
+related: [patterns/app-shell, components/breadcrumbs]
+---
+
+A page header is the top of an app page: breadcrumbs when the page is nested, the title with an optional badge or value, one line about the page, and the page's actions at the end. Use `PageHeader` on every app page, so pages read the same way from one to the next.
+
+## The page grammar
+
+Every page in an app shell follows one order: breadcrumbs (only on a nested page), the title and its actions (one of them primary), a one-line description, then tabs, filters and the page's content. `PageHeader` builds the top of it; its actions fold into a "More page actions" menu when they don't fit.
+
+```tsx
+import type { ReactElement } from "react";
+import { Download, Plus } from "lucide-react";
+import { PageHeader } from "@buttery/react";
+
+export function OrdersHeader(): ReactElement {
+  return (
+    <PageHeader
+      title="Orders"
+      value="1,284"
+      valueInfo="Orders placed in the last 30 days."
+      actions={
+        <>
+          <PageHeader.Action icon={Download} label="Export" onSelect={() => undefined} />
+          <PageHeader.Action
+            variant="primary"
+            icon={Plus}
+            label="New order"
+            priority={1}
+            onSelect={() => undefined}
+          />
+        </>
+      }
+    />
+  );
+}
+```
+
+## PageHeader
+
+<ComponentDocs of="PageHeader" />

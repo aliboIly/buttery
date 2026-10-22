@@ -1,0 +1,64 @@
+---
+title: Marketing page
+description: The bands a marketing page is made of, from heroes and bento grids to the footer.
+section: patterns
+order: 130
+status: stable
+since: 0.6.0
+related: [layout/page-grid-and-containers, components/nav-bar]
+---
+
+A marketing page is a `Page` of bands on the page grid: a hero, a strip of logos or numbers, a bento grid of features, an article, and a footer. Use these patterns for a product's site, and each band lays itself out by the room it has, in a window or a narrow frame.
+
+## The bands
+
+- `SplitHero` and `CenteredHero` open the page: a two-tone headline, a line and actions beside or above a visual that assembles as it arrives.
+- `LogoStrip` lines up partner marks in equal cells, quietly, and `StatStrip` shows headline numbers that count up once.
+- `Bento` lays feature cards on a 12-column grid, each spanning 4, 6, 8 or 12 columns; a card can open into a dialog.
+- `ArticleLayout` sets an article beside a sticky aside, and `Footer` ends the page with links and small print.
+
+```tsx
+import type { ReactElement } from "react";
+import { Button, Page, SplitHero } from "@buttery/react";
+
+export function Home(): ReactElement {
+  return (
+    <Page>
+      <SplitHero
+        title="Coffee roasted to order."
+        titleMore="Every bag ships the week it's roasted."
+        actions={<Button variant="primary" arrow="forward">Shop coffee</Button>}
+        visual={<div className="bag-photo" />}
+      />
+    </Page>
+  );
+}
+```
+
+## SplitHero
+
+<ComponentDocs of="SplitHero" />
+
+## CenteredHero
+
+<ComponentDocs of="CenteredHero" />
+
+## LogoStrip
+
+<ComponentDocs of="LogoStrip" />
+
+## StatStrip
+
+<ComponentDocs of="StatStrip" />
+
+## Bento
+
+<ComponentDocs of="Bento" />
+
+## ArticleLayout
+
+<ComponentDocs of="ArticleLayout" />
+
+## Footer
+
+<ComponentDocs of="Footer" />

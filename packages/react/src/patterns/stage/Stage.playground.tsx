@@ -19,6 +19,7 @@ export const page: DocsPage = {
   order: 320,
   status: "stable",
   since: "0.5.0",
+  home: "patterns/inspector",
 };
 
 type Shape = "16:9" | "1:1" | "9:16";

@@ -4,7 +4,7 @@ import { publishSettled } from "@buttery/core";
 import type { ExamplePlay, ExamplePlayContext } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ComponentType } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { ButteryProvider } from "./provider/ButteryProvider.tsx";
 
@@ -62,19 +62,27 @@ beforeEach(() => {
   publishSettled();
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 describe("examples", () => {
   it("finds the package's examples", () => {
     expect(Object.keys(modules).length).toBeGreaterThan(0);
   });
 
-  it.each(played)("$path plays through", async ({ play, Example }) => {
-    render(
-      <ButteryProvider>
-        <Example />
-      </ButteryProvider>,
-    );
-    await play(context);
-  });
+  it.each(played)(
+    "$path plays through with nothing logged",
+    async ({ play, Example }) => {
+      const logged = [vi.spyOn(console, "error"), vi.spyOn(console, "warn")];
+      render(
+        <ButteryProvider>
+          <Example />
+        </ButteryProvider>,
+      );
+      await play(context);
+      for (const spy of logged) expect(spy).not.toHaveBeenCalled();
+    },
+  );
 });

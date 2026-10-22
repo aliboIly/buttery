@@ -1,0 +1,48 @@
+---
+title: Settings pages
+description: A settings page made of sections, each with a heading, one line about it and its one action.
+section: patterns
+order: 30
+status: new
+since: 0.7.0
+related: [components/settings-index, patterns/page-header]
+---
+
+A settings page is a detail page for one area of settings, such as pickup or the team, made of sections that each hold one kind of setting. Build it from `SettingsPage`, `SettingsSection` and `SettingRow`, and every settings page reads the same.
+
+## The parts
+
+- `SettingsPage`: breadcrumbs back to the settings index, the title with an optional scope badge, one line about the page, then its sections, at most 960px wide.
+- `SettingsSection`: a heading, one line about it and its one action, then its content. A section can load on its own while the rest of the page is ready, or be a form whose Save waits for a change.
+- `SettingRow`: one setting in a section, its current state under it and its one action at the end.
+
+```tsx
+import type { ReactElement } from "react";
+import { Breadcrumbs, SettingsPage, SettingsSection, Switch } from "@buttery/react";
+
+export function PickupSettings(): ReactElement {
+  return (
+    <SettingsPage
+      title="Pickup"
+      breadcrumbs={<Breadcrumbs items={[{ label: "Settings", href: "/settings" }]} />}
+      description="When and where customers collect their orders."
+    >
+      <SettingsSection title="Pickup" description="Let customers collect at the roastery.">
+        <Switch label="Offer pickup" defaultChecked />
+      </SettingsSection>
+    </SettingsPage>
+  );
+}
+```
+
+## SettingsPage
+
+<ComponentDocs of="SettingsPage" />
+
+## SettingsSection
+
+<ComponentDocs of="SettingsSection" />
+
+## SettingRow
+
+<ComponentDocs of="SettingRow" />

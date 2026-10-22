@@ -1,0 +1,17 @@
+---
+title: Overview
+description: An app's home page, with headline metrics, a chart, what needs attention and guidance for a new account.
+section: patterns
+order: 90
+status: new
+since: 0.7.0
+related: [components/metric-card, components/stat-tabs, components/setup-guide]
+---
+
+An overview is an app's home page: headline numbers for the period, a chart behind one of them, the few things that need attention, and guidance while an account is new. Build it from `MetricCard`, `StatTabs`, the charts and `SetupGuide`; it adds no component of its own.
+
+## How it fits together
+
+`StatTabs` puts a few metrics over one chart and switches the chart between them. `MetricCard` shows one number with its change and a sparkline, and loads on its own. `RecommendationCard` and `Banner` raise what needs a decision, and a `SetupGuide` floats at the bottom end until the account is set up. Every block keeps its size while it loads, so the page doesn't shift as data arrives.
+
+See [MetricCard](/components/metric-card), [StatTabs](/components/stat-tabs) and [SetupGuide](/components/setup-guide) for each part.

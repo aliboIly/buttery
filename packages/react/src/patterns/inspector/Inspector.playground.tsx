@@ -27,6 +27,7 @@ export const page: DocsPage = {
   order: 200,
   status: "stable",
   since: "0.5.0",
+  home: "patterns/inspector",
 };
 
 type Edge = "plain" | "outline" | "glow";

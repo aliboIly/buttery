@@ -137,6 +137,18 @@ export interface ExamplePlayContext {
  */
 export type ExamplePlay = (play: ExamplePlayContext) => Promise<void>;
 
+/**
+ * What an example shows, exported from its file as `kind`, for the kinds DOCS_SITE asks every component
+ * page to have: `"basic"`, `"controlled"` (its state kept by the example), `"variants"` (its variants and
+ * sizes), `"states"` (disabled, loading, error or empty) and `"composition"` (it in a real piece of UI).
+ */
+export type ExampleKind =
+  | "basic"
+  | "controlled"
+  | "variants"
+  | "states"
+  | "composition";
+
 /** One control on a component page's live demo, for one prop. */
 export type DemoControl =
   | {

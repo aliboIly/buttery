@@ -133,6 +133,7 @@ export function checkDocs({
   docsSite = join(root, "docs/DOCS_SITE.md"),
   references = [],
   demos = demoPages.map((page) => page.route),
+  examples = true,
 } = {}) {
   const problems = [];
   const pages = [];
@@ -314,6 +315,71 @@ export function checkDocs({
         problems.push(
           `${say(source)}: ${owner}'s prop ${prop.name} has no JSDoc, so its props table can't say what it does. Fix: add a /** … */ comment above it saying what it does and its default.`,
         );
+      }
+    }
+  }
+
+  if (examples) {
+    for (const meta of metaFiles) {
+      const name = basename(meta, ".meta.ts");
+      const folder = dirname(meta);
+      const source = join(folder, `${name}.tsx`);
+      const props = existsSync(source)
+        ? new Set(
+            (
+              propsTablesIn(name, source).find((table) => table.part === "")
+                ?.props ?? []
+            ).map((prop) => prop.name),
+          )
+        : new Set();
+      const needed = [
+        "basic",
+        ...(["value", "checked", "open", "expanded"].some((prop) =>
+          props.has(prop),
+        )
+          ? ["controlled"]
+          : []),
+        ...(props.has("variant") || props.has("size") ? ["variants"] : []),
+        ...(["disabled", "loading", "error", "pending", "invalid"].some(
+          (prop) => props.has(prop),
+        )
+          ? ["states"]
+          : []),
+        "composition",
+      ];
+      const files = existsSync(join(folder, "examples"))
+        ? globSync("*.tsx", { cwd: join(folder, "examples") }).map((file) =>
+            join(folder, "examples", file),
+          )
+        : [];
+      const kinds = new Set();
+      for (const file of files) {
+        const text = readFileSync(file, "utf8");
+        const kind = /export const kind: ExampleKind = "([a-z]+)"/.exec(
+          text,
+        )?.[1];
+        if (kind === undefined) {
+          problems.push(
+            `${say(file)} doesn't say what kind of example it is. Fix: export const kind: ExampleKind = "basic" (or "controlled", "variants", "states", "composition").`,
+          );
+        } else kinds.add(kind);
+        if (!/export const play\b/.test(text)) {
+          problems.push(
+            `${say(file)} has no play script. Fix: export const play: ExamplePlay that drives it, such as pressing a button and seeing what changes.`,
+          );
+        }
+        if (!/\/\*\*[\s\S]*?\*\/\s*export function [A-Z]/.test(text)) {
+          problems.push(
+            `${say(file)} has no caption. Fix: put a one-line /** … */ saying what it shows above its exported component.`,
+          );
+        }
+      }
+      for (const kind of needed) {
+        if (!kinds.has(kind)) {
+          problems.push(
+            `${name} has no ${kind} example. Fix: add one to ${say(join(folder, "examples"))} with export const kind: ExampleKind = "${kind}".`,
+          );
+        }
       }
     }
   }

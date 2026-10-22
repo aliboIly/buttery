@@ -10,6 +10,7 @@ export const page: DocsPage = {
   order: 170,
   status: "new",
   since: "0.7.0",
+  home: "patterns/detail-page",
 };
 
 export const frame: DemoFrame = "page";

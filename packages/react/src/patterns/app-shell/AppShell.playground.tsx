@@ -21,6 +21,7 @@ export const page: DocsPage = {
   order: 120,
   status: "stable",
   since: "0.5.0",
+  home: "patterns/app-shell",
 };
 
 const BACKDROP = gradients.find((preset) => preset.id === "mint");

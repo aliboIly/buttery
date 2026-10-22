@@ -10,6 +10,7 @@ export const page: DocsPage = {
   order: 230,
   status: "new",
   since: "0.7.0",
+  home: "patterns/page-header",
 };
 
 export const demos: readonly DemoSection[] = [

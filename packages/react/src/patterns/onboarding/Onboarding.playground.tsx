@@ -14,6 +14,7 @@ export const page: DocsPage = {
   order: 220,
   status: "stable",
   since: "0.6.0",
+  home: "patterns/onboarding",
 };
 
 function background(id: string): string | undefined {

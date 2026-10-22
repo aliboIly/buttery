@@ -16,6 +16,7 @@ export const page: DocsPage = {
   order: 270,
   status: "new",
   since: "0.7.0",
+  home: "patterns/settings-pages",
 };
 
 export const frame: DemoFrame = "page";

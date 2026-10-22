@@ -4,6 +4,7 @@ import type { DocsPage, DocsSection } from "@buttery/core";
 import { referenceRoot } from "virtual:buttery-reference";
 import { ComponentPage, componentHeadings } from "./ComponentPage.tsx";
 import { ContentPage } from "./ContentPage.tsx";
+import { LabExamples } from "./LabExamples.tsx";
 import { contentPages, labPages } from "./content.ts";
 import type { Heading } from "./content.ts";
 import type { Neighbor } from "./PageFooter.tsx";
@@ -190,6 +191,13 @@ const labDocs: readonly Page[] = import.meta.env.DEV
         title: entry.page.title,
         render: () => <ContentPage entry={entry} />,
       })),
+      ...components
+        .filter((entry) => entry.examples.length > 0)
+        .map((entry) => ({
+          route: `lab/examples/${entry.route}`,
+          title: `${entry.meta.name} examples`,
+          render: () => <LabExamples entry={entry} />,
+        })),
     ]
   : [];
 

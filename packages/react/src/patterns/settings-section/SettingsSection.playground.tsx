@@ -11,6 +11,7 @@ export const page: DocsPage = {
   order: 280,
   status: "new",
   since: "0.7.0",
+  home: "patterns/settings-pages",
 };
 
 function AddressForm(): ReactElement {

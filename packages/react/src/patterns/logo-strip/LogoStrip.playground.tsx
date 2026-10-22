@@ -10,6 +10,7 @@ export const page: DocsPage = {
   order: 210,
   status: "stable",
   since: "0.6.0",
+  home: "patterns/marketing-page",
 };
 
 function Wordmark({

@@ -126,6 +126,7 @@ export type {
   DocsPage,
   DocsSection,
   DocsStatus,
+  ExampleKind,
   ExamplePlay,
   ExamplePlayContext,
   KeyboardRow,

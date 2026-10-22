@@ -11,6 +11,7 @@ export const page: DocsPage = {
   order: 180,
   status: "stable",
   since: "0.6.0",
+  home: "patterns/marketing-page",
 };
 
 const COLUMNS = [

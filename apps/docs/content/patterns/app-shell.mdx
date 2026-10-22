@@ -1,0 +1,48 @@
+---
+title: App shell
+description: The frame of a whole app, as an editor or a dashboard, and the page that goes in it.
+section: patterns
+order: 120
+status: stable
+since: 0.5.0
+related: [patterns/page-header, components/sidebar, components/top-bar]
+---
+
+The app shell is the frame of a whole app screen: an editor, with a header and a stage beside an inspector, or, with `layout="sidebar"`, a dashboard, with a sidebar beside a top bar and the page. Use `AppShell` for the screen and `AppPage` for each page inside a dashboard.
+
+## The dashboard
+
+From 1100px of shell the sidebar shows in full; under that it becomes an icon rail, and under 640px a sheet opened from the top bar's menu button. The shell never scrolls; the sidebar and the page each scroll on their own. A `SidePanel` docks at the shell's end from 1280px and opens as a sheet under that.
+
+```tsx
+import type { ReactElement } from "react";
+import { Package, Receipt } from "lucide-react";
+import { AppPage, AppShell, PageHeader, Sidebar, TopBar } from "@buttery/react";
+
+export function Dashboard(): ReactElement {
+  return (
+    <AppShell
+      layout="sidebar"
+      sidebar={
+        <Sidebar label="Main">
+          <Sidebar.Item label="Orders" href="/orders" icon={Receipt} current />
+          <Sidebar.Item label="Stock" href="/stock" icon={Package} />
+        </Sidebar>
+      }
+      topBar={<TopBar />}
+    >
+      <AppPage header={<PageHeader title="Orders" />}>
+        <AppPage.Section>Today's orders</AppPage.Section>
+      </AppPage>
+    </AppShell>
+  );
+}
+```
+
+## AppShell
+
+<ComponentDocs of="AppShell" />
+
+## AppPage
+
+<ComponentDocs of="AppPage" />

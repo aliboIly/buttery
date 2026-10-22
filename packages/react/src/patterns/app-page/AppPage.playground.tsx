@@ -10,6 +10,7 @@ export const page: DocsPage = {
   order: 110,
   status: "new",
   since: "0.7.0",
+  home: "patterns/app-shell",
 };
 
 export const demos: readonly DemoSection[] = [

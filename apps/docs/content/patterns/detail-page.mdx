@@ -1,0 +1,41 @@
+---
+title: Detail page
+description: A page about one thing, with its main column and an aside holding its one primary action.
+section: patterns
+order: 40
+status: new
+since: 0.7.0
+related: [patterns/page-header, components/data-table]
+---
+
+A detail page is about one thing, such as a customer or a price list: its title over a hairline, the main column, and an aside with the one primary action and lists of links. Use `DetailPage` for any page that shows and acts on a single record.
+
+The aside sits beside the main column from 1100px of the page's column and drops below it under that, so the primary action is never more than a scroll away.
+
+```tsx
+import type { ReactElement } from "react";
+import { Text } from "@buttery/core";
+import { Button, DetailPage } from "@buttery/react";
+
+export function PriceList(): ReactElement {
+  return (
+    <DetailPage
+      title="Café price list"
+      description="Wholesale, by the 5 kg bag"
+      action={<Button variant="primary">Send to cafés</Button>}
+      aside={
+        <DetailPage.Links
+          title="Resources"
+          links={[{ label: "How prices are set", href: "/help/prices" }]}
+        />
+      }
+    >
+      <Text variant="body">Twelve coffees, from 42 to 58 dollars a bag.</Text>
+    </DetailPage>
+  );
+}
+```
+
+## DetailPage
+
+<ComponentDocs of="DetailPage" />

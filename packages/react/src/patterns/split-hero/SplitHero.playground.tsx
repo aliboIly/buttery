@@ -12,6 +12,7 @@ export const page: DocsPage = {
   order: 310,
   status: "stable",
   since: "0.6.0",
+  home: "patterns/marketing-page",
 };
 
 const LILAC = gradients.find((preset) => preset.id === "lilac");

@@ -1,0 +1,23 @@
+---
+title: Forms
+description: Sign-in and sign-up forms that check as you go and sum up errors where they can be fixed.
+section: patterns
+order: 20
+status: stable
+since: 0.4.0
+related: [components/text-field, components/password-field]
+---
+
+The form patterns are complete sign-in and sign-up forms: the fields at their large size, a full-width submit, other ways in, and errors summed up at the top with links to the fields that have them. Use them as they are for an app's account screens, and their parts as a model for any form.
+
+## How a buttery form behaves
+
+Fields check themselves when a person leaves them, not on every key. Submitting a form with errors puts a summary at its top, says how many there are, and moves focus to it; each item links to its field. Fields are labelled above, with a hint under the label when the format matters.
+
+## SignInForm
+
+<ComponentDocs of="SignInForm" />
+
+## SignUpForm
+
+<ComponentDocs of="SignUpForm" />

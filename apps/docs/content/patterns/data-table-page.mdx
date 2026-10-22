@@ -1,0 +1,33 @@
+---
+title: Data table page
+description: A page whose main block is a table, with filters, saved views and the table taking the rest of the height.
+section: patterns
+order: 80
+status: new
+since: 0.7.0
+related: [components/data-table, components/filter-bar, components/saved-views]
+---
+
+A data table page is an app page whose main block is a table of records, such as orders: the page header, saved views as tabs, the filters, then the table filling the rest of the height. Build it from `AppPage fill`, `SavedViews`, `FilterBar` and `DataTable`; it adds no component of its own.
+
+## How it fits together
+
+`AppPage fill` gives the page's last block the height left under the header, tabs and filters, so the table scrolls inside it with its header row sticky, and the page itself doesn't scroll. `SavedViews` keeps named filter sets as tabs; `FilterBar` holds the filters in force as pills, which wrap rather than fold, since a person has to see and remove them. `ColumnSettings` picks which columns show.
+
+```tsx
+import type { ReactElement } from "react";
+import { AppPage, PageHeader } from "@buttery/react";
+import { OrdersTable } from "./OrdersTable.tsx";
+
+export function OrdersPage(): ReactElement {
+  return (
+    <AppPage header={<PageHeader title="Orders" />} fill>
+      <AppPage.Section>
+        <OrdersTable />
+      </AppPage.Section>
+    </AppPage>
+  );
+}
+```
+
+See [DataTable](/components/data-table), [FilterBar](/components/filter-bar) and [SavedViews](/components/saved-views) for each part.

@@ -1,0 +1,27 @@
+---
+title: Inspector
+description: An editor's screen parts: the header bar, the stage it works on and the inspector of settings beside it.
+section: patterns
+order: 110
+status: stable
+since: 0.5.0
+related: [patterns/app-shell, components/slider]
+---
+
+The inspector pattern is the set of parts an editor is made of: a `HeaderBar` with the document's title and actions, the `Stage` the work sits on, and the `Inspector`, a panel of titled sections holding rows of controls. Put them in `AppShell` and an editor works from a 390px phone, where the inspector becomes a sheet, to a wide desktop.
+
+## How the parts fit
+
+Inspector rows are 50px tall, with the label at the start and the control at the end; a slider labels itself with its value badge. A section can offer Reset for its own settings. The stage fits the artwork at its shape into the space it has, and the header's actions fold into a "More" menu when they don't fit.
+
+## HeaderBar
+
+<ComponentDocs of="HeaderBar" />
+
+## Inspector
+
+<ComponentDocs of="Inspector" />
+
+## Stage
+
+<ComponentDocs of="Stage" />

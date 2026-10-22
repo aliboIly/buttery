@@ -11,6 +11,7 @@ export const page: DocsPage = {
   order: 290,
   status: "stable",
   since: "0.4.0",
+  home: "patterns/forms",
 };
 
 /** Waits a moment, as a server would, then lets sam@example.com in with any password over 7 characters. */

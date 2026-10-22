@@ -11,6 +11,7 @@ export const page: DocsPage = {
   order: 250,
   status: "new",
   since: "0.7.0",
+  home: "patterns/search-and-results",
 };
 
 const PAGES = pageSource({

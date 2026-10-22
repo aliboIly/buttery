@@ -12,6 +12,7 @@ export const page: DocsPage = {
   order: 140,
   status: "stable",
   since: "0.6.0",
+  home: "patterns/marketing-page",
 };
 
 function fill(id: string): string | undefined {
