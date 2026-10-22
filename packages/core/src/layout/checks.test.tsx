@@ -614,6 +614,34 @@ describe("moved", () => {
     expect(shifts).toEqual([]);
   });
 
+  it("measures a popover that follows its trigger from the page, and a toast from the window", () => {
+    document.body.innerHTML = `
+      <div data-bt="Stack" style="block-size: 3000px"></div>
+      <div data-radix-popper-content-wrapper data-testid="wrapper" style="position: fixed; left: 0; top: 0; transform: translate(16px, 640px)">
+        <div data-bt="Popover" data-testid="panel">Results</div>
+      </div>
+      <ol data-bt="Toaster" style="position: fixed; inset-block-end: 16px; inset-inline-start: 16px"><li>Saved</li></ol>`;
+    const wrapper = document.querySelector<HTMLElement>(
+      '[data-testid="wrapper"]',
+    );
+    const toolkit = createLayoutToolkit();
+    toolkit.snapshot();
+    window.scrollTo({ top: 150 });
+    wrapper?.style.setProperty("transform", "translate(16px, 490px)");
+    const followed = toolkit.moved({ during: "after Type" });
+    toolkit.snapshot();
+    wrapper?.style.setProperty("transform", "translate(16px, 450px)");
+    const jumped = toolkit.moved({ during: "after Type more" });
+    window.scrollTo({ top: 0 });
+    expect(followed).toEqual([]);
+    expect(jumped).toEqual([
+      expect.objectContaining({
+        a: '[data-testid="panel"]',
+        message: "moved 0px across and -40px down after Type more",
+      }),
+    ]);
+  });
+
   it("reports the layout shift, not the scroll, when both happen", () => {
     document.body.innerHTML = `
       <div data-bt="Stack" style="display: flex; flex-direction: column">

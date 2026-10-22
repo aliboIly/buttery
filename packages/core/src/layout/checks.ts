@@ -1158,6 +1158,8 @@ export function createLayoutToolkit(): LayoutToolkit {
         node && node !== html && node !== document.body && !fixed;
         node = node.parentElement
       ) {
+        // A popover's fixed wrapper follows its trigger, so a page scroll carries it along with the trigger.
+        if (node.hasAttribute("data-radix-popper-content-wrapper")) break;
         if (scrollsContent(node))
           scrolls.push({
             container: node,
