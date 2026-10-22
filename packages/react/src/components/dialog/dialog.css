@@ -33,7 +33,8 @@
 
   /* A full-size dialog's close button sits 32px in from the top and end edges once there's room for it. */
   @container bt-dialog-full (width >= 640px) {
-    .bt-dialog[data-size="full"] > [data-bt-part="close"] {
+    .bt-dialog[data-size="full"] > [data-bt-part="close"],
+    .bt-dialog[data-size="full"] .bt-dialog-text:first-child {
       --bt-dialog-close-center: calc(var(--bt-space-8) + var(--bt-h-sm) / 2);
     }
   }
@@ -88,9 +89,9 @@
     padding: var(--bt-space-6) var(--bt-space-6) 0;
   }
 
-  /* Without media the title starts in the close button's row, so it keeps clear of the button (38px in from the edge). */
+  /* Without media the title starts in the close button's row, so it keeps 10px clear of the button wherever it sits. */
   .bt-dialog[data-closable] .bt-dialog-text:first-child {
-    padding-inline-end: var(--bt-space-12);
+    padding-inline-end: calc(var(--bt-dialog-close-center) + var(--bt-space-6));
   }
 
   .bt-dialog-text:last-child,

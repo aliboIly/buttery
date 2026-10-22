@@ -370,6 +370,24 @@ describe("Dialog", () => {
     expect(title.right).toBeLessThanOrEqual(close.left);
   });
 
+  it("keeps a full-size dialog's long title clear of its close button once the button moves in", async () => {
+    await page.viewport(1200, 800);
+    render(
+      <Confirm size="full">
+        <Dialog.Text title={`Delete this card and ${"i ".repeat(160)}more?`} />
+      </Confirm>,
+    );
+    await openConfirm();
+    const close = screen
+      .getByRole("button", { name: "Close" })
+      .getBoundingClientRect();
+    const words = screen.getByText(/^Delete this card and i i/);
+    const lines = [...words.getClientRects()];
+    expect(lines.length).toBeGreaterThan(1);
+    for (const line of lines)
+      expect(line.right).toBeLessThanOrEqual(close.left);
+  });
+
   it("can be controlled", async () => {
     function Controlled(): ReactElement {
       const [open, setOpen] = useState(false);
