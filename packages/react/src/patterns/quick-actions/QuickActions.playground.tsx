@@ -1,6 +1,14 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { Stack, Text } from "@buttery/core";
+import type {
+  DemoSection,
+  DemoValues,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { QuickActions } from "@buttery/react";
 import { Download, Plus, Send, Upload } from "lucide-react";
+import { useState } from "react";
+import type { ReactElement } from "react";
 
 export const page: DocsPage = {
   section: "components/actions",
@@ -10,6 +18,77 @@ export const page: DocsPage = {
   order: 80,
   status: "new",
   since: "0.7.0",
+};
+
+function LiveQuickActions({
+  label,
+  disabled,
+  icons,
+}: {
+  readonly label: string;
+  readonly disabled: boolean;
+  readonly icons: boolean;
+}): ReactElement {
+  const [last, setLast] = useState("Nothing yet");
+  return (
+    <Stack gap={3}>
+      <QuickActions>
+        <QuickActions.Action
+          icon={icons ? Plus : undefined}
+          label={label}
+          priority={2}
+          onSelect={() => {
+            setLast(label);
+          }}
+        />
+        <QuickActions.Action
+          icon={icons ? Send : undefined}
+          label="Send invoices"
+          disabled={disabled}
+          priority={1}
+          onSelect={() => {
+            setLast("Send invoices");
+          }}
+        />
+        <QuickActions.Action
+          icon={icons ? Download : undefined}
+          label="Export"
+          onSelect={() => {
+            setLast("Export");
+          }}
+        />
+      </QuickActions>
+      <Text variant="caption">{`Last pressed: ${last}`}</Text>
+    </Stack>
+  );
+}
+
+function quickActionsCode({ label, disabled, icons }: DemoValues): string {
+  const icon = (name: string): string =>
+    icons === true ? ` icon={${name}}` : "";
+  return [
+    "<QuickActions>",
+    `  <QuickActions.Action${icon("Plus")} label="${String(label)}" priority={2} onSelect={newOrder} />`,
+    `  <QuickActions.Action${icon("Send")} label="Send invoices"${disabled === true ? " disabled" : ""} priority={1} onSelect={sendInvoices} />`,
+    `  <QuickActions.Action${icon("Download")} label="Export" onSelect={exportOrders} />`,
+    "</QuickActions>",
+  ].join("\n");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "New order" },
+    disabled: { kind: "toggle", initial: false },
+    icons: { kind: "toggle", initial: true },
+  },
+  render: ({ label, disabled, icons }) => (
+    <LiveQuickActions
+      label={String(label)}
+      disabled={disabled === true}
+      icons={icons === true}
+    />
+  ),
+  code: quickActionsCode,
 };
 
 export const demos: readonly DemoSection[] = [
