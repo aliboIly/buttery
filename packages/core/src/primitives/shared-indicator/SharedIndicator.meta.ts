@@ -17,4 +17,9 @@ export const meta: ComponentMeta = {
   related: ["Morph", "Presence", "Pressable"],
   a11y: "Decorative: the indicator is aria-hidden, so the item itself has to say it's selected (aria-checked, aria-selected or aria-current). It moves at once with reduced motion.",
   motion: "indicator",
+  keyboard: [],
+  layout:
+    "Each item keeps its own size. The indicator is drawn inside the active item, filling it under its content with the item's corners, so it adds no size and never catches presses. It crosses the space between items as it slides, so put them in one track.",
+  reducedMotion:
+    "The indicator appears on the new item at once instead of sliding.",
 };

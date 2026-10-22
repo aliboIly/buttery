@@ -1,4 +1,3 @@
-import { RadioGroup } from "radix-ui";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import {
@@ -6,60 +5,71 @@ import {
   Inline,
   Pressable,
   SharedIndicator,
+  Stack,
   Text,
 } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-const STEPS = ["1", "2", "3", "4"] as const;
+const STEPS = [
+  "Pick a size",
+  "Choose a backdrop",
+  "Add your title",
+  "Share the card",
+] as const;
 
-/** Numbered steps in one track; the highlight travels to the step you pick, and arrow keys move it. */
+/** Numbered steps in one track; the highlight travels to the step you pick, which says it's the current one. */
 export function StepPicker(): ReactElement {
-  const [step, setStep] = useState("1");
+  const [current, setCurrent] = useState(0);
   return (
-    <RadioGroup.Root
-      value={step}
-      onValueChange={setStep}
-      aria-label="Step"
-      asChild
-    >
+    <Stack gap={3} align="start">
       <Inline
         gap="0.5"
         pad="0.5"
         style={{
-          inlineSize: "fit-content",
           borderRadius: "var(--bt-r-full)",
           backgroundColor: "var(--bt-bg-control)",
         }}
       >
         <SharedIndicator.Group>
-          {STEPS.map((option) => (
-            <RadioGroup.Item
-              key={option}
-              value={option}
-              aria-label={`Step ${option}`}
-              asChild
-            >
-              <SharedIndicator active={option === step} asChild>
-                <Center asChild>
-                  <Pressable
-                    style={{
-                      inlineSize: "var(--bt-h-sm)",
-                      blockSize: "var(--bt-h-sm)",
-                      borderRadius: "var(--bt-r-full)",
-                    }}
+          {STEPS.map((step, index) => (
+            <SharedIndicator key={step} active={index === current} asChild>
+              <Center asChild>
+                <Pressable
+                  aria-label={`Step ${String(index + 1)}`}
+                  aria-current={index === current ? "step" : undefined}
+                  onClick={() => {
+                    setCurrent(index);
+                  }}
+                  style={{
+                    inlineSize: "var(--bt-h-sm)",
+                    blockSize: "var(--bt-h-sm)",
+                    borderRadius: "var(--bt-r-full)",
+                  }}
+                >
+                  <Text
+                    variant="badge"
+                    tone={index === current ? "default" : "secondary"}
                   >
-                    <Text
-                      variant="badge"
-                      tone={option === step ? "default" : "secondary"}
-                    >
-                      {option}
-                    </Text>
-                  </Pressable>
-                </Center>
-              </SharedIndicator>
-            </RadioGroup.Item>
+                    {String(index + 1)}
+                  </Text>
+                </Pressable>
+              </Center>
+            </SharedIndicator>
           ))}
         </SharedIndicator.Group>
       </Inline>
-    </RadioGroup.Root>
+      <Text variant="body-sm">
+        {`Step ${String(current + 1)} of ${String(STEPS.length)}: ${STEPS[current] ?? ""}`}
+      </Text>
+    </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Step 3");
+  await see("Step 3 of 4: Add your title");
+  await press("button", "Step 1");
+  await see("Step 1 of 4: Pick a size");
+};

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Morph, Pressable, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A panel that grows to show more details and shrinks back, with no jump. */
 export function DetailsPanel(): ReactElement {
@@ -32,3 +33,12 @@ export function DetailsPanel(): ReactElement {
     </Surface>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "More details");
+  await see("Square card, blend backdrop, soft edge. Edited today by you.");
+  await press("button", "Fewer details");
+  await see("More details");
+};

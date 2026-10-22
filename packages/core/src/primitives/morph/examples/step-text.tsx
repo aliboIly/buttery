@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Morph, Pressable, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const STEPS = [
   {
@@ -39,3 +40,12 @@ export function StepText(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Next step");
+  await see("Cream it with sugar");
+  await press("button", "Next step");
+  await see("Soften the butter");
+};

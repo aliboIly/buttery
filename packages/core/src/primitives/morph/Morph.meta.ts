@@ -17,4 +17,9 @@ export const meta: ComponentMeta = {
   related: ["Presence", "SharedIndicator", "Stack"],
   a11y: 'No role of its own. Swapped-out content takes focus with it when it leaves, so after a swap the user started, move focus to the new content. Keep a live region (role="status") outside the Morph when the swap needs announcing.',
   motion: "morph",
+  keyboard: [],
+  layout:
+    "A block as wide as its parent whose height follows its content. Between changes it sits at its natural height, so text that rewraps never spills, and it clips its content only while the height moves or taller content fades out. It has no hit area of its own.",
+  reducedMotion:
+    "Its height jumps to fit at once, and swapped content crossfades in 100ms.",
 };

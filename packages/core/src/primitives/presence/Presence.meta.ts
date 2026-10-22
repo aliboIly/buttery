@@ -18,4 +18,9 @@ export const meta: ComponentMeta = {
   related: ["Morph", "Reveal", "FloatingLanes", "Toaster"],
   a11y: 'No role of its own. When the change needs announcing, keep a live region (role="status") mounted outside the Presence: a region that mounts along with its content often goes unannounced. With reduced motion it only fades, in 100ms.',
   motion: "presence",
+  keyboard: [],
+  layout:
+    "While shown, its content renders in a div as wide as its parent. Once its exit has played it unmounts and takes no room, so what follows moves up into its place. It has no hit area of its own.",
+  reducedMotion:
+    "Every preset becomes a 100ms fade, in and out, without moving or scaling.",
 };

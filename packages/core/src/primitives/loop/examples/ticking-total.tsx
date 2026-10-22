@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Loop, Morph, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const TOTALS = ["1,204", "1,318", "1,472"] as const;
 
@@ -20,3 +21,10 @@ export function TickingTotal(): ReactElement {
     </Loop>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("1,204");
+  await see("cards made today");
+};

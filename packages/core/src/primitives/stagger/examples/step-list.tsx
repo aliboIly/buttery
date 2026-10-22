@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Stack, Stagger, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const STEPS = [
   "Soften the butter",
@@ -12,15 +13,22 @@ const STEPS = [
 export function StepList(): ReactElement {
   return (
     <Stack gap={3} asChild>
-      <Stagger>
-        {STEPS.map((step, index) => (
-          <Stagger.Item key={step}>
-            <Text variant="body">
-              {index + 1}. {step}
+      <Stagger asChild>
+        <ol style={{ paddingInlineStart: "var(--bt-space-5)" }}>
+          {STEPS.map((step) => (
+            <Text key={step} variant="body" asChild>
+              <li>{step}</li>
             </Text>
-          </Stagger.Item>
-        ))}
+          ))}
+        </ol>
       </Stagger>
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Soften the butter");
+  await see("Bake until golden");
+};
