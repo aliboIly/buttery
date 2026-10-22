@@ -3,7 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished } from "vitest";
 import { AppShell } from "../app-shell/AppShell.tsx";
 import { AppPage } from "./AppPage.tsx";
 
@@ -173,6 +173,42 @@ describe("AppPage", () => {
     );
     expect(box("frame").width).toBe(500);
     expect(box("header").left - box("frame").left).toBe(16);
+  });
+
+  it("ends as far under its content as its header starts from its top on its own, plus the lanes' clearance", () => {
+    const root = document.documentElement;
+    onTestFinished(() => {
+      root.style.removeProperty("--bt-lane-clearance");
+    });
+    render(
+      <div style={{ inlineSize: "1100px" }}>
+        <Orders />
+      </div>,
+    );
+    expect(box("header").top - box("frame").top).toBe(24);
+    expect(box("frame").bottom - box("body").bottom).toBe(24);
+    root.style.setProperty("--bt-lane-clearance", "40px");
+    expect(box("frame").bottom - box("body").bottom).toBe(64);
+    cleanup();
+    render(
+      <div style={{ display: "flex", blockSize: "520px" }}>
+        <Orders fill />
+      </div>,
+    );
+    const last = screen.getByTestId("last").closest("section");
+    if (!last) throw new Error("No section.");
+    expect(box("frame").bottom - last.getBoundingClientRect().bottom).toBe(24);
+  });
+
+  it("keeps 48px of room past its last section in a shell, plus the lanes' clearance", () => {
+    const root = document.documentElement;
+    onTestFinished(() => {
+      root.style.removeProperty("--bt-lane-clearance");
+    });
+    inShell(1440, <Orders />);
+    expect(box("frame").bottom - box("body").bottom).toBe(48);
+    root.style.setProperty("--bt-lane-clearance", "40px");
+    expect(box("frame").bottom - box("body").bottom).toBe(88);
   });
 
   it("puts its sections 24px under the header and 32px apart, each named by its title-md heading", () => {

@@ -24,13 +24,17 @@
     max-inline-size: var(--bt-w-app-page);
     min-inline-size: 0;
     padding-block: var(--bt-space-6)
-      calc(var(--bt-space-12) + var(--bt-lane-clearance, 0px));
+      calc(var(--bt-space-6) + var(--bt-lane-clearance, 0px));
     padding-inline: var(--bt-space-4);
   }
 
-  /* The shell's scroll area adds 12px of fade at each end, so the header still starts 24px under the top bar. */
+  /*
+   * The shell's scroll area adds 12px of fade at each end, so the header still starts 24px under the top bar,
+   * and the page it scrolls ends with 48px of room past its last section.
+   */
   .bt-app-shell .bt-app-page > [data-bt-part="frame"] {
-    padding-block-start: var(--bt-space-3);
+    padding-block: var(--bt-space-3)
+      calc(var(--bt-space-12) + var(--bt-lane-clearance, 0px));
   }
 
   .bt-app-page[data-width="medium"] > [data-bt-part="frame"] {
@@ -141,6 +145,10 @@
   .bt-app-page[data-fill] > [data-bt-part="frame"] {
     flex: 1 1 auto;
     min-block-size: 0;
+    padding-block-end: var(--bt-space-6);
+  }
+
+  .bt-app-shell .bt-app-page[data-fill] > [data-bt-part="frame"] {
     padding-block-end: var(--bt-space-3);
   }
 
