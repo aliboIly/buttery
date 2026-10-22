@@ -18,5 +18,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [],
   layout:
-    'Its height is its content plus its room: 96px above and below by default, 64 with size="sm" and 128 with "lg", a step less inside a Page under 640px wide. It fills its parent\'s width and puts its content in a Container, at most 1200px wide with the page\'s side padding; the heading and body wrap, 48px above the content (64 from 1024px of page), and it has no hit areas of its own.',
+    'Its height is its content plus its room: 96px above and below by default, 64 with size="sm" and 128 with "lg", and inside a Page under 640px wide the default and "lg" take a step less. It fills its parent\'s width and puts its content in a Container, at most 1200px wide with the page\'s side padding; the heading and body wrap, 48px above the content (64 from 1024px of page), and it has no hit areas of its own.',
 };

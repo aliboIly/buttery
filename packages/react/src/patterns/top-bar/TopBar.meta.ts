@@ -20,7 +20,7 @@ export const meta: ComponentMeta = {
   keyboard: [
     {
       keys: "Enter or Space",
-      does: "Runs the focused icon action or the create button",
+      does: "Runs the focused icon action or the create button, or opens the sidebar from the menu button a phone shows",
     },
     {
       keys: "Enter, Space or Down",

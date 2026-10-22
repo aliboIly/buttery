@@ -17,6 +17,7 @@ export const meta: ComponentMeta = {
   a11y: "A main landmark with the search as its h1 and the count under it. Each source is a region named by its heading, its results links in a list, read with their path first; a long section shows 50 at a time, and its Show more button hands focus to the first row it shows. A section waiting on a server shows a loading pill that says Searching. With nothing found, the empty state's heading says so.",
   motion: "none",
   keyboard: [
+    { keys: "Enter", does: "Opens the focused result" },
     {
       keys: "Enter or Space",
       does: "On Show more, shows the next results and moves focus to the first of them",

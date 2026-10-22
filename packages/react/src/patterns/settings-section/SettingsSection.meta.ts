@@ -21,9 +21,9 @@ export const meta: ComponentMeta = {
   keyboard: [
     {
       keys: "Enter",
-      does: "Saves from any field of a form section while something has changed",
+      does: "Saves, from a text field in a form section, while something has changed",
     },
   ],
   layout:
-    "It fills its column. The heading's row runs the full width: the h2 truncates and shows in full on hover, the description wraps under it, and the action, or Save and Cancel, keeps its size at the row's end. The content starts 16px under the row, a loading pill takes a 64px-tall place while it loads, and its hit areas are its buttons' own, 28px tall.",
+    "It fills its column. The heading's row runs the full width: the h2 truncates and shows in full on hover, the description wraps under it, and the action, or Save and Cancel, keeps its size at the row's end. The content starts 16px under the row and a loading pill takes a 64px-tall place while it loads; Save and Cancel are 28px tall, and the only hit areas are the buttons' own.",
 };

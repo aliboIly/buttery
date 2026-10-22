@@ -33,7 +33,7 @@ export const meta: ComponentMeta = {
     { keys: "Tab", does: "Stays inside the panel while it's a sheet" },
   ],
   layout:
-    "Docked, it's 360px wide (560 expanded) and its parent's height, with a 1px edge on its start side and a --bt-h-header (56px) header whose title truncates and shows in full on hover; its body scrolls on its own above the pinned footer. As a sheet it sits 8px in from the window's end, up to 360px wide, and its header buttons are 28px.",
+    "Docked, it's 360px wide (560 expanded) and its parent's height, with a 1px edge on its start side and a --bt-h-header (56px) header whose title truncates and shows in full on hover; its body scrolls on its own above the pinned footer. As a sheet it sits 8px in from the window's end, up to 360px wide; either way its header buttons are 28px.",
   reducedMotion:
     "Docked, its content fades in over 100ms instead of 120; as a sheet it fades in and out over 100ms without rising, its scrim fading with it.",
 };
