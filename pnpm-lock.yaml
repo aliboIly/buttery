@@ -371,6 +371,9 @@ importers:
       '@buttery/react':
         specifier: workspace:*
         version: link:../../packages/react
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.59.0(@types/react@19.3.0)(react@19.3.1)
       react:
         specifier: 'catalog:'
         version: 19.3.1
