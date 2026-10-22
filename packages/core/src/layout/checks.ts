@@ -8,7 +8,10 @@ export type LayoutRule =
   | "viewport-fit"
   | "layering"
   | "reach"
-  | "emphasis";
+  | "emphasis"
+  | "crowding"
+  | "wrapping"
+  | "alignment";
 
 /** Every rule `expectButtery` reports. */
 export type ButteryRule = LayoutRule | "accessibility" | "stability";
@@ -412,6 +415,61 @@ export function createLayoutToolkit(): LayoutToolkit {
     return `${String(Math.round(value * 10) / 10)}px`;
   }
 
+  /** The element a run of text lays out in: its nearest ancestor that isn't inline. */
+  function blockOf(element: Element): Element {
+    let block = element;
+    while (isInline(block) && block.parentElement) block = block.parentElement;
+    return block;
+  }
+
+  /** How far below the top of `element`'s glyph boxes its capitals start: its font's ascent less its cap height. */
+  function capInset(element: Element): number {
+    inkContext ??= document.createElement("canvas").getContext("2d");
+    if (!inkContext) return 0;
+    const { fontStyle, fontWeight, fontSize, fontFamily } = styleOf(element);
+    inkContext.font = `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`;
+    const metrics = inkContext.measureText("H");
+    return Math.max(
+      0,
+      metrics.fontBoundingBoxAscent - metrics.actualBoundingBoxAscent,
+    );
+  }
+
+  /** A text node's glyph boxes (its font's ascent to descent), one per line fragment, kept to what shows. */
+  function inkBoxes(run: TextRun): Box[] {
+    const range = document.createRange();
+    range.selectNodeContents(run.node);
+    const boxes: Box[] = [];
+    for (const rect of range.getClientRects()) {
+      if (rect.width < 0.5 || rect.height < 0.5) continue;
+      const box = visibleBox(run.parent, toBox(rect), true);
+      if (box) boxes.push(box);
+    }
+    return boxes;
+  }
+
+  /** Whether `a` or `b` is placed out of the flow below the element holding both: a badge, an overlay, a sticky bar. */
+  function placedApart(a: Element, b: Element): boolean {
+    let common = a.parentElement;
+    while (common && !common.contains(b)) common = common.parentElement;
+    for (const start of [a, b]) {
+      for (
+        let node: Element | null = start;
+        node && node !== common;
+        node = node.parentElement
+      ) {
+        const { position } = styleOf(node);
+        if (
+          position === "absolute" ||
+          position === "fixed" ||
+          position === "sticky"
+        )
+          return true;
+      }
+    }
+    return false;
+  }
+
   function check(options: LayoutCheckOptions): LayoutViolation[] {
     styles = new Map();
     const allRules: readonly LayoutRule[] = [
@@ -424,14 +482,22 @@ export function createLayoutToolkit(): LayoutToolkit {
       "layering",
       "reach",
       "emphasis",
+      "crowding",
+      "wrapping",
+      "alignment",
     ];
     const enabled = new Set(options.rules ?? allRules);
     const { tokens } = options;
     const violations: LayoutViolation[] = [];
     const viewportWidth = html.clientWidth;
     const viewportHeight = html.clientHeight;
-    const runs =
-      enabled.has("overlap") || enabled.has("clipping") ? textRuns() : [];
+    const textRules: readonly LayoutRule[] = [
+      "overlap",
+      "clipping",
+      "crowding",
+      "wrapping",
+    ];
+    const runs = textRules.some((rule) => enabled.has(rule)) ? textRuns() : [];
 
     function report(violation: LayoutViolation): void {
       violations.push(violation);
@@ -1150,6 +1216,196 @@ export function createLayoutToolkit(): LayoutToolkit {
           message: `${String(buttons.length)} primary buttons in one region: ${names}`,
           fix: "Keep one primary button per region (a page header, a section, a dialog, a panel, a plan); make the others secondary, ghost or a link.",
         });
+      }
+    }
+
+    if (enabled.has("crowding")) {
+      interface TextBlock {
+        box: Box;
+        capTop: number;
+      }
+      const blocks = new Map<Element, TextBlock>();
+      for (const run of runs) {
+        if (run.parent.closest("[data-bt-allow-overlap]")) continue;
+        const block = blockOf(run.parent);
+        const inset = capInset(run.parent) * drawnScale(run.parent);
+        for (const box of inkBoxes(run)) {
+          const known = blocks.get(block);
+          blocks.set(
+            block,
+            known
+              ? {
+                  box: {
+                    left: Math.min(known.box.left, box.left),
+                    top: Math.min(known.box.top, box.top),
+                    right: Math.max(known.box.right, box.right),
+                    bottom: Math.max(known.box.bottom, box.bottom),
+                  },
+                  capTop: Math.min(known.capTop, box.top + inset),
+                }
+              : { box, capTop: box.top + inset },
+          );
+        }
+      }
+      const texts = [...blocks].map(([element, { box, capTop }]) => ({
+        element,
+        box,
+        capTop,
+        layer: layerOf(element),
+      }));
+      for (const upper of texts) {
+        for (const lower of texts) {
+          if (lower === upper || lower.layer !== upper.layer) continue;
+          if (
+            upper.element.contains(lower.element) ||
+            lower.element.contains(upper.element)
+          )
+            continue;
+          if (lower.box.top <= upper.box.top) continue;
+          // From the bottom of the upper text's descenders to the top of the lower text's capitals.
+          const room =
+            (lower.capTop - upper.box.bottom) / drawnScale(upper.element);
+          if (room >= 2 || room < -12) continue;
+          const across =
+            Math.min(upper.box.right, lower.box.right) -
+            Math.max(upper.box.left, lower.box.left);
+          const narrower = Math.min(
+            upper.box.right - upper.box.left,
+            lower.box.right - lower.box.left,
+          );
+          if (across < 0.3 * narrower) continue;
+          if (placedApart(upper.element, lower.element)) continue;
+          report({
+            rule: "crowding",
+            a: selectorFor(upper.element),
+            b: selectorFor(lower.element),
+            px: Math.round((2 - room) * 10) / 10,
+            message: `text leaves ${px(room)} between its descenders and the capitals of the text under it`,
+            fix: "Put at least 8px between stacked text up to 16px, and 12px under a larger title (the Heading ↔ body relationship), or stack it with TextStack, whose gaps clear descenders.",
+          });
+        }
+      }
+    }
+
+    if (enabled.has("wrapping")) {
+      for (const run of runs) {
+        if (run.parent.closest("[data-bt-truncate]")) continue;
+        const range = document.createRange();
+        range.selectNodeContents(run.node);
+        const lines = [...range.getClientRects()].filter(
+          (rect) => rect.width > 0.5,
+        );
+        const first = lines[0];
+        if (
+          !first ||
+          lines.every((rect) => Math.abs(rect.top - first.top) <= 2)
+        )
+          continue;
+        const block = blockOf(run.parent);
+        const blockStyle = styleOf(block);
+        const room =
+          block.clientWidth -
+          Number.parseFloat(blockStyle.paddingLeft) -
+          Number.parseFloat(blockStyle.paddingRight);
+        for (const match of run.node.data.matchAll(/[\p{L}\p{N}_]{2,}/gu)) {
+          const start = match.index;
+          range.setStart(run.node, start);
+          range.setEnd(run.node, start + match[0].length);
+          const pieces = [...range.getClientRects()].filter(
+            (rect) => rect.width > 0.5,
+          );
+          const head = pieces[0];
+          if (
+            !head ||
+            pieces.every((rect) => Math.abs(rect.top - head.top) <= 2)
+          )
+            continue;
+          const width = pieces.reduce((sum, rect) => sum + rect.width, 0);
+          // A long address or hash wider than its box has to break; a short word never does, however the
+          // box was squeezed, because a column cut down to it is what's wrong.
+          if (width > room && match[0].length > 12) continue;
+          report({
+            rule: "wrapping",
+            a: selectorFor(block),
+            px: Math.round(width),
+            message:
+              width > room
+                ? `"${match[0]}" breaks across lines in a box squeezed to ${px(room)}, narrower than the word`
+                : `"${match[0]}" breaks across lines, though at ${px(width)} it fits on one`,
+            fix: "Let text wrap between words: drop word-break: break-all and overflow-wrap: anywhere, give the column room for its longest word (a min-width, or let the table scroll sideways), or truncate it with data-bt-truncate and a title.",
+          });
+          break;
+        }
+      }
+    }
+
+    if (enabled.has("alignment")) {
+      const controls = [
+        ...document.querySelectorAll("[data-bt-control]"),
+      ].filter(
+        (element) =>
+          !isTooling(element) &&
+          isVisible(element) &&
+          visibleBox(element, toBox(element.getBoundingClientRect())) !== null,
+      );
+      const outermost = controls.filter(
+        (element) =>
+          !controls.some(
+            (other) => other !== element && other.contains(element),
+          ),
+      );
+      for (let i = 0; i < outermost.length; i += 1) {
+        const first = outermost[i];
+        if (!first) continue;
+        const a = first.getBoundingClientRect();
+        for (let j = i + 1; j < outermost.length; j += 1) {
+          const second = outermost[j];
+          if (!second || layerOf(first) !== layerOf(second)) continue;
+          const b = second.getBoundingClientRect();
+          if (Math.abs(a.height - b.height) > 2) continue;
+          const shared = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (shared < 0.3 * Math.min(a.height, b.height)) continue;
+          if (Math.min(a.right, b.right) > Math.max(a.left, b.left)) continue;
+          let common = first.parentElement;
+          while (common && !common.contains(second))
+            common = common.parentElement;
+          if (!common) continue;
+          // Fields in a row sit within two levels of it; controls deeper down belong to components of their own.
+          const levels = (control: Element): number => {
+            let count = 0;
+            for (
+              let node = control.parentElement;
+              node && node !== common;
+              node = node.parentElement
+            )
+              count += 1;
+            return count;
+          };
+          if (levels(first) > 1 || levels(second) > 1) continue;
+          const { display } = styleOf(common);
+          if (!display.includes("grid") && !display.includes("flex")) continue;
+          // Controls in two cards side by side follow their cards, which line up on their own terms.
+          const inOwnSurface = (control: Element): boolean => {
+            for (
+              let node = control.parentElement;
+              node && node !== common;
+              node = node.parentElement
+            )
+              if (node.classList.contains("bt-surface")) return true;
+            return false;
+          };
+          if (inOwnSurface(first) || inOwnSurface(second)) continue;
+          const offset = (b.top - a.top) / drawnScale(first);
+          if (Math.abs(offset) <= 1) continue;
+          report({
+            rule: "alignment",
+            a: selectorFor(first),
+            b: selectorFor(second),
+            px: Math.round(Math.abs(offset) * 10) / 10,
+            message: `two controls ${px(a.height)} tall side by side start ${px(Math.abs(offset))} apart`,
+            fix: "Line up controls that share a row: label them alike (each in a Field, or none), or align the row to its controls (align-items: end).",
+          });
+        }
       }
     }
 

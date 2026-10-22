@@ -44,6 +44,15 @@ const BROKEN = `
       <button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)">Publish</button>
     </section>
     <nav data-testid="pinned" style="position: sticky; inset-block-start: 0; block-size: 3000px">Pages</nav>
+    <div data-testid="crowded" style="display: flex; flex-direction: column; gap: 2px; inline-size: 300px">
+      <p class="bt-text" data-role="title">Spring launch</p>
+      <p class="bt-text" data-role="body-sm">Goes out on Friday</p>
+    </div>
+    <p data-testid="broken" style="inline-size: 64px; word-break: break-all; margin: 0">Two variants here</p>
+    <div data-testid="misaligned" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+      <div><span style="display: block; block-size: 20px">Label</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+      <div><span style="display: block; block-size: 8px">Side</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+    </div>
   </main>`;
 
 const FIXED = `
@@ -69,6 +78,17 @@ const FIXED = `
       <button type="button" data-bt="Button" data-variant="secondary" style="block-size: var(--bt-h-sm)">Cancel</button>
       <button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)">Save</button>
     </section>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 8px; inline-size: 300px">
+        <p class="bt-text" data-role="title">Spring launch</p>
+        <p class="bt-text" data-role="body-sm">Goes out on Friday</p>
+      </div>
+      <p style="inline-size: 90px; margin: 0">Two variants here</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+        <div><span style="display: block; block-size: 20px">Label</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+        <div><span style="display: block; block-size: 20px">Side</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+      </div>
+    </div>
   </main>`;
 
 describe("runLayoutChecks", () => {
@@ -79,7 +99,9 @@ describe("runLayoutChecks", () => {
   it("fails every rule on the broken fixture, each with a message and a fix", () => {
     const violations = check(BROKEN);
     expect(rulesOf(violations)).toEqual([
+      "alignment",
       "clipping",
+      "crowding",
       "emphasis",
       "layering",
       "overflow",
@@ -88,6 +110,7 @@ describe("runLayoutChecks", () => {
       "scale",
       "target-size",
       "viewport-fit",
+      "wrapping",
     ]);
     for (const violation of violations) {
       expect(violation.message.length).toBeGreaterThan(10);
@@ -704,5 +727,105 @@ describe("moved", () => {
         message: "moved 0px across and 24px down after Load more",
       }),
     ]);
+  });
+});
+
+describe("crowding", () => {
+  it("leaves a small caption over a large heading alone, though the heading's glyph box reaches up toward it", () => {
+    expect(
+      check(
+        `<div style="display: flex; flex-direction: column; gap: 12px; inline-size: 400px">
+          <p class="bt-text" data-role="caption">display</p>
+          <p class="bt-text" data-role="heading-1">Round the corners</p>
+        </div>`,
+        ["crowding"],
+      ),
+    ).toEqual([]);
+  });
+
+  const pair = (gap: number, extra = ""): string => `
+    <div style="display: flex; flex-direction: column; gap: ${String(gap)}px; inline-size: 300px">
+      <p class="bt-text" data-role="title">Spring launch</p>
+      <p class="bt-text" data-role="body-sm" ${extra}>Goes out on Friday</p>
+    </div>`;
+
+  it("flags text stacked so close its descenders reach the next line, and passes the pair 8px apart", () => {
+    const [found] = check(pair(4), ["crowding"]);
+    expect(found?.message).toMatch(/capitals of the text under it/);
+    expect(found?.b).toBeDefined();
+    expect(check(pair(8), ["crowding"])).toEqual([]);
+  });
+
+  it("leaves text placed over other text out of flow alone, such as a badge", () => {
+    expect(
+      check(
+        `<div style="position: relative; inline-size: 300px">
+          <p class="bt-text" data-role="title">Spring launch</p>
+          <p class="bt-text" data-role="caption" style="position: absolute; inset-block-start: 14px">New</p>
+        </div>`,
+        ["crowding"],
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("wrapping", () => {
+  it("flags a word broken across lines though it fits on one", () => {
+    const [found] = check(
+      `<p style="inline-size: 64px; word-break: break-all; margin: 0">Two variants here</p>`,
+      ["wrapping"],
+    );
+    expect(found?.message).toMatch(/breaks across lines/);
+  });
+
+  it("flags a short word broken in a box squeezed narrower than it, as a table column can be", () => {
+    const [found] = check(
+      `<p style="inline-size: 30px; overflow-wrap: anywhere; margin: 0">variant</p>`,
+      ["wrapping"],
+    );
+    expect(found?.message).toMatch(/"variant" breaks across lines/);
+  });
+
+  it("lets a word longer than its line break, as a long address must", () => {
+    expect(
+      check(
+        `<p style="inline-size: 60px; overflow-wrap: anywhere; margin: 0">abcdefghijklmnopqrstuvwxyz</p>`,
+        ["wrapping"],
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("alignment", () => {
+  const row = (
+    first: number,
+    second: number,
+    height = "var(--bt-h-control)",
+  ): string => `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+      <div><span style="display: block; block-size: ${String(first)}px">Label</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+      <div><span style="display: block; block-size: ${String(second)}px">Side</span><div data-bt-control style="block-size: ${height}"></div></div>
+    </div>`;
+
+  it("flags controls of one height side by side that start at different heights", () => {
+    const [found] = check(row(20, 8), ["alignment"]);
+    expect(found?.px).toBe(12);
+    expect(check(row(20, 20), ["alignment"])).toEqual([]);
+  });
+
+  it("leaves controls in two cards side by side alone, which follow their cards", () => {
+    expect(
+      check(
+        `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+          <div class="bt-surface" style="padding: 4px"><div data-bt-control style="block-size: var(--bt-h-sm)"></div></div>
+          <div class="bt-surface" style="padding: 12px"><div data-bt-control style="block-size: var(--bt-h-sm)"></div></div>
+        </div>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
+  });
+
+  it("leaves controls of different heights alone, such as a switch beside a field", () => {
+    expect(check(row(20, 8, "var(--bt-h-sm)"), ["alignment"])).toEqual([]);
   });
 });
