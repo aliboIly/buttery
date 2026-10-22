@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Stack, Text } from "@buttery/core";
 import type { DemoControl, DemoValues } from "@buttery/core";
@@ -8,6 +9,90 @@ import {
   Switch,
   TextField,
 } from "@buttery/react";
+
+/** How wide a segmented control would be with every label whole: its segments share the widest label's width. */
+function wholeWidth(track: Element): number {
+  const segments = [...track.querySelectorAll('[data-bt-part="segment"]')];
+  const widest = Math.max(
+    0,
+    ...segments.map((segment) => {
+      const label = segment.querySelector('[data-bt-part="label"]');
+      const style = getComputedStyle(segment);
+      return (
+        (label?.scrollWidth ?? 0) +
+        Number.parseFloat(style.paddingInlineStart) +
+        Number.parseFloat(style.paddingInlineEnd)
+      );
+    }),
+  );
+  const style = getComputedStyle(track);
+  return (
+    widest * segments.length +
+    Number.parseFloat(style.paddingInlineStart) +
+    Number.parseFloat(style.paddingInlineEnd)
+  );
+}
+
+/**
+ * A choice's control: a segmented control while every option's label fits whole side by side, a select
+ * when there are more than four options or the labels would truncate, such as long file types.
+ */
+function ChoiceControl({
+  name,
+  options,
+  value,
+  onChange,
+}: {
+  readonly name: string;
+  readonly options: readonly string[];
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+}): ReactElement {
+  const few = options.length <= 4;
+  const cell = useRef<HTMLDivElement>(null);
+  const [fits, setFits] = useState(few);
+
+  useLayoutEffect(() => {
+    const element = cell.current;
+    if (!element || !few) return undefined;
+    let needed = 0;
+    const measure = (): void => {
+      const track = element.querySelector('[data-bt="SegmentedControl"]');
+      if (track) needed = wholeWidth(track);
+      setFits(needed <= element.clientWidth);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, [few]);
+
+  return (
+    <Stack ref={cell} gap={1.5}>
+      <Text variant="caption" tone="secondary" aria-hidden="true">
+        {name}
+      </Text>
+      {few && fits ? (
+        <SegmentedControl
+          label={name}
+          options={options}
+          value={value}
+          onValueChange={onChange}
+        />
+      ) : (
+        <Select
+          variant="outline"
+          label={name}
+          options={options.map((option) => ({ value: option, label: option }))}
+          value={value}
+          onValueChange={onChange}
+        />
+      )}
+    </Stack>
+  );
+}
 
 /** A prop's control on a live demo: a segmented control or a select, a switch, a text field or a slider. */
 function Control({
@@ -24,30 +109,12 @@ function Control({
   switch (control.kind) {
     case "choice":
       return (
-        <Stack gap={1.5}>
-          <Text variant="caption" tone="secondary" aria-hidden="true">
-            {name}
-          </Text>
-          {control.options.length <= 4 ? (
-            <SegmentedControl
-              label={name}
-              options={control.options}
-              value={String(value)}
-              onValueChange={onChange}
-            />
-          ) : (
-            <Select
-              variant="outline"
-              label={name}
-              options={control.options.map((option) => ({
-                value: option,
-                label: option,
-              }))}
-              value={String(value)}
-              onValueChange={onChange}
-            />
-          )}
-        </Stack>
+        <ChoiceControl
+          name={name}
+          options={control.options}
+          value={String(value)}
+          onChange={onChange}
+        />
       );
     case "toggle":
       return (

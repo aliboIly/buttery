@@ -84,3 +84,28 @@ for (const { name, route } of componentRoutes) {
     }
   });
 }
+
+test("a live demo's choice is a select where its labels can't all show whole side by side", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/components/drop-zone");
+  const controls = page.locator(".docs-controls");
+  await expect(
+    controls.getByRole("combobox", { name: "accept" }),
+  ).toBeVisible();
+  await expect(
+    controls.getByRole("radiogroup", { name: "accept" }),
+  ).toHaveCount(0);
+  await page.setViewportSize({ width: 1728, height: 1117 });
+  await expect(
+    controls.getByRole("radiogroup", { name: "accept" }),
+  ).toBeVisible();
+  await expect(
+    controls.getByRole("radio", { name: "application/pdf,image/*" }),
+  ).toBeVisible();
+  await page.goto("/components/button");
+  await expect(
+    page.locator(".docs-controls").getByRole("radiogroup", { name: "variant" }),
+  ).toBeVisible();
+});
