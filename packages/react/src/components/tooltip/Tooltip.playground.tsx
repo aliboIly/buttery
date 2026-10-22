@@ -1,6 +1,8 @@
-import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { Inline, Stack, Text } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, Tooltip } from "@buttery/react";
+import type { TooltipSide } from "@buttery/react";
 
 export const page: DocsPage = {
   section: "components/overlays",
@@ -10,6 +12,45 @@ export const page: DocsPage = {
   order: 120,
   status: "stable",
   since: "0.4.0",
+};
+
+const SIDES: readonly [TooltipSide, ...TooltipSide[]] = [
+  "top",
+  "right",
+  "bottom",
+  "left",
+];
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Saves a 2× PNG to your downloads" },
+    side: { kind: "choice", options: SIDES, initial: "top" },
+    defaultOpen: { kind: "toggle", initial: false },
+  },
+  render: ({ label, side, defaultOpen }) => {
+    const placed = demoChoice(side, SIDES);
+    return (
+      <Stack gap={3} align="start">
+        <Tooltip
+          key={`${String(defaultOpen)}-${placed}-${String(label)}`}
+          label={String(label)}
+          side={placed}
+          defaultOpen={defaultOpen === true}
+        >
+          <Button>Export</Button>
+        </Tooltip>
+        <Text variant="caption" tone="secondary">
+          {`Rest the pointer on Export, or tab to it, to see “${String(label)}” on its ${placed} side.`}
+        </Text>
+      </Stack>
+    );
+  },
+  code: ({ label, side, defaultOpen }) =>
+    [
+      `<Tooltip label="${String(label)}" side="${demoChoice(side, SIDES)}"${defaultOpen === true ? " defaultOpen" : ""}>`,
+      "  <Button>Export</Button>",
+      "</Tooltip>",
+    ].join("\n"),
 };
 
 export const demos: readonly DemoSection[] = [
