@@ -1,6 +1,11 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { Stack, Surface, Text, demoChoice } from "@buttery/core";
+import type {
+  DemoSection,
+  DemoValues,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   ArrowLink,
@@ -62,12 +67,15 @@ function Story(): ReactElement {
 
 function Bar({
   behavior,
+  contained = true,
 }: {
   readonly behavior: NavBarBehavior;
+  readonly contained?: boolean;
 }): ReactElement {
   return (
     <NavBar
       behavior={behavior}
+      contained={contained}
       brand={<Brand />}
       actions={
         <>
@@ -153,8 +161,10 @@ function Bar({
 
 function Site({
   behavior,
+  contained = true,
 }: {
   readonly behavior: NavBarBehavior;
+  readonly contained?: boolean;
 }): ReactElement {
   const hero = fill("sky") ?? "none";
   return (
@@ -173,7 +183,7 @@ function Site({
           background: `${hero} top / 100% calc(var(--bt-bento-row) * 1.25) no-repeat, var(--bt-bg-surface)`,
         }}
       >
-        <Bar behavior={behavior} />
+        <Bar behavior={behavior} contained={contained} />
         <Stack gap={4} padX={8} padY={16}>
           <Text variant="display">Cards for launch days</Text>
           <Text variant="body-lg">Made in a minute, ready for every post.</Text>
@@ -190,6 +200,48 @@ function Site({
     </Surface>
   );
 }
+
+function navBarCode({ behavior, contained }: DemoValues): string {
+  return [
+    "<NavBar",
+    `  behavior="${String(behavior)}"`,
+    ...(contained === true ? [] : ["  contained={false}"]),
+    '  brand={<a href="/">Card Studio</a>}',
+    "  actions={",
+    "    <>",
+    '      <Button variant="secondary">Sign in</Button>',
+    '      <Button variant="primary" arrow="forward">',
+    "        Get started",
+    "      </Button>",
+    "    </>",
+    "  }",
+    ">",
+    '  <MorphMenu.Item label="Product" featured={<Story />} footer={<ArrowLink href="/features">See all features</ArrowLink>}>',
+    '    <MorphMenu.Column title="Make">…</MorphMenu.Column>',
+    "  </MorphMenu.Item>",
+    '  <MorphMenu.Item label="Guides">…</MorphMenu.Item>',
+    '  <MorphMenu.Link href="/pricing">Pricing</MorphMenu.Link>',
+    "</NavBar>",
+  ].join("\n");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    behavior: {
+      kind: "choice",
+      options: ["static", "sticky", "auto-hide"],
+      initial: "sticky",
+    },
+    contained: { kind: "toggle", initial: true },
+  },
+  render: ({ behavior, contained }) => (
+    <Site
+      behavior={demoChoice(behavior, ["static", "sticky", "auto-hide"])}
+      contained={contained === true}
+    />
+  ),
+  code: navBarCode,
+};
 
 export const demos: readonly DemoSection[] = [
   {
