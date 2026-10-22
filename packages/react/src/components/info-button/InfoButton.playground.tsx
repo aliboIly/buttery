@@ -1,5 +1,6 @@
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { InfoButton } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -10,6 +11,26 @@ export const page: DocsPage = {
   order: 60,
   status: "new",
   since: "0.7.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    info: {
+      kind: "text",
+      initial: "Bags that left the roaster since Monday.",
+    },
+    side: {
+      kind: "choice",
+      options: ["top", "right", "bottom", "left"],
+      initial: "bottom",
+    },
+  },
+  render: ({ info, side }) => (
+    <InfoButton
+      info={String(info)}
+      side={demoChoice(side, ["bottom", "top", "right", "left"])}
+    />
+  ),
 };
 
 export const demos: readonly DemoSection[] = [
