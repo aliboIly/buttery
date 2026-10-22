@@ -1,5 +1,6 @@
-import { coffeeOf } from "./data.ts";
+import { SIZES, coffeeOf } from "./data.ts";
 import type { CoffeeId, SizeId } from "./data.ts";
+import { dollars } from "./format.ts";
 
 /** Standard shipping is free once an order reaches this much, in cents. */
 export const FREE_SHIPPING_FROM = 4000;
@@ -22,6 +23,13 @@ const SIZE_FACTORS: Readonly<Record<SizeId, number>> = {
 /** What one bag of `coffee` in `size` costs, in cents, rounded to whole dollars. */
 export function bagPrice(coffee: CoffeeId, size: SizeId): number {
   return Math.round(coffeeOf(coffee).price * SIZE_FACTORS[size]) * 100;
+}
+
+/** What each size of a coffee costs, as a field's hint says it, such as "12 oz $19 · 2 lb $46 · 5 lb $103". */
+export function sizePrices(coffee: CoffeeId): string {
+  return SIZES.map(
+    (size) => `${size.label} ${dollars(bagPrice(coffee, size.id))}`,
+  ).join(" · ");
 }
 
 /** How often a subscription delivers. */

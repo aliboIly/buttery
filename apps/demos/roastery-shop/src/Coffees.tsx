@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Text } from "@buttery/core";
+import { Inline, Stack, Text } from "@buttery/core";
 import {
   Bento,
   Button,
@@ -13,13 +13,13 @@ import {
   StatusBadge,
   TagChip,
 } from "@buttery/react";
-import { Coffee as CoffeeIcon } from "lucide-react";
+import { Coffee as CoffeeIcon, Plus } from "lucide-react";
 import { useAddToBag } from "./add-to-bag.ts";
 import { Shelf } from "./BagArt.tsx";
 import { COFFEES, GRINDS, ORIGINS, ROASTS, SIZES, notesOf } from "./data.ts";
 import type { Coffee, CoffeeId, GrindId, Roast, SizeId } from "./data.ts";
-import { money } from "./format.ts";
-import { bagPrice } from "./pricing.ts";
+import { dollars, money } from "./format.ts";
+import { bagPrice, sizePrices } from "./pricing.ts";
 
 /** The roast the coffees are filtered to, or every roast. */
 export type RoastFilter = Roast | "all";
@@ -54,29 +54,16 @@ function CoffeeDetail({
 }): ReactElement {
   const { addCoffee } = useAddToBag();
   const facts = [
+    ["Grown by", coffee.grower],
     ["Region", coffee.region],
     ["Process", coffee.process],
     ["Altitude", coffee.altitude],
     ["Varieties", coffee.varieties],
   ] as const;
   return (
-    <Grid columns={{ base: 1, md: 2 }} gap={8}>
-      <Stack gap={6}>
-        <Shelf label={coffee.label} className="shop-detail-shelf" />
-        <dl className="shop-facts">
-          {facts.map(([term, value]) => (
-            <div key={term} className="shop-fact">
-              <Text variant="caption" tone="secondary" asChild>
-                <dt>{term}</dt>
-              </Text>
-              <Text variant="body-sm" asChild>
-                <dd>{value}</dd>
-              </Text>
-            </div>
-          ))}
-        </dl>
-      </Stack>
-      <Stack gap={6}>
+    <div className="shop-detail">
+      <Shelf label={coffee.label} className="shop-detail-shelf" />
+      <Stack gap={6} className="shop-detail-buy">
         <Stack gap={3}>
           <Inline gap={2}>
             <TagChip>{`${coffee.roast} roast`}</TagChip>
@@ -88,7 +75,7 @@ function CoffeeDetail({
           </Text>
         </Stack>
         <Stack gap={4}>
-          <Field label="Size">
+          <Field label="Size" hint={sizePrices(coffee.id)}>
             {(control) => (
               <SegmentedControl<SizeId>
                 {...control}
@@ -126,7 +113,19 @@ function CoffeeDetail({
           {`Add to bag · ${money(bagPrice(coffee.id, size))}`}
         </Button>
       </Stack>
-    </Grid>
+      <dl className="shop-facts">
+        {facts.map(([term, value]) => (
+          <div key={term} className="shop-fact">
+            <Text variant="caption" tone="secondary" asChild>
+              <dt>{term}</dt>
+            </Text>
+            <Text variant="body-sm" asChild>
+              <dd>{value}</dd>
+            </Text>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
 
@@ -141,6 +140,7 @@ function CoffeeCard({
 }): ReactElement {
   const [size, setSize] = useState<SizeId>("12oz");
   const [grind, setGrind] = useState<GrindId>("whole");
+  const { addCoffee } = useAddToBag();
   return (
     <ExpandableCard
       title={coffee.name}
@@ -158,7 +158,7 @@ function CoffeeCard({
       }
     >
       <div className="shop-card-visual">
-        <Stack gap={2} padX={6}>
+        <Stack gap={3} padX={6}>
           <Inline gap={3} justify="between">
             <Text variant="body-sm" tone="secondary" truncate>
               {`${coffee.origin} · ${coffee.process} · ${coffee.roast} roast`}
@@ -169,13 +169,24 @@ function CoffeeCard({
               </StatusBadge>
             )}
           </Inline>
-          <Inline gap={3} justify="between" align="baseline">
-            <Text variant="label" truncate>
-              {notesOf(coffee)}
+          <Text variant="label" truncate>
+            {notesOf(coffee)}
+          </Text>
+          <Inline gap={3} justify="between">
+            <Text variant="label" tabular tone="secondary">
+              {`From ${dollars(bagPrice(coffee.id, "12oz"))}`}
             </Text>
-            <Text variant="label" tabular className="shop-price">
-              {money(bagPrice(coffee.id, "12oz"))}
-            </Text>
+            <Button
+              size="sm"
+              iconStart={Plus}
+              aria-label={`Add to bag: ${coffee.name}, 12 oz, whole bean`}
+              onClick={(event) => {
+                event.preventDefault();
+                addCoffee({ coffee: coffee.id, size: "12oz", grind: "whole" });
+              }}
+            >
+              Add to bag
+            </Button>
           </Inline>
         </Stack>
         <div className="shop-card-shelf-frame">
@@ -211,7 +222,6 @@ export function Coffees({
   return (
     <Section
       id="coffees"
-      tone="muted"
       title="The coffees"
       body="Six coffees, roasted to order. The light roasts are bright and fruity; the medium and dark ones lean toward chocolate and nuts."
     >
@@ -244,7 +254,7 @@ export function Coffees({
           <EmptyState
             icon={CoffeeIcon}
             title="No coffee matches both"
-            description="Try another roast or origin, or see every coffee."
+            description="Try another roast or origin, or see them all."
             actions={
               <Button
                 variant="primary"
@@ -253,7 +263,7 @@ export function Coffees({
                   onOriginChange(ALL_ORIGINS);
                 }}
               >
-                Show every coffee
+                Show all six coffees
               </Button>
             }
           />

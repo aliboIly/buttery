@@ -8,6 +8,7 @@ import {
   planBagPrice,
   planPrice,
   shippingCost,
+  sizePrices,
 } from "./pricing.ts";
 
 describe("bagPrice", () => {
@@ -21,6 +22,12 @@ describe("bagPrice", () => {
     expect(bagPrice("guji", "5lb")).toBe(10300);
     expect(bagPrice("nyeri", "2lb")).toBe(5000);
     expect(bagPrice("house", "5lb")).toBe(7600);
+  });
+});
+
+describe("sizePrices", () => {
+  it("lists every size with its price", () => {
+    expect(sizePrices("guji")).toBe("12 oz $19 · 2 lb $46 · 5 lb $103");
   });
 });
 

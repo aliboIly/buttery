@@ -33,7 +33,7 @@ export function ThisWeek(): ReactElement {
                 {`This week · ${coffee.flag ?? "Fresh"}`}
               </StatusBadge>
               <Text variant="caption" tone="secondary">
-                Roasted Tuesday
+                Next roast Thursday
               </Text>
             </Inline>
             <Inline gap={4} justify="between" align="baseline">
@@ -82,7 +82,7 @@ export function ThisWeek(): ReactElement {
               addCoffee({ coffee: coffee.id, size, grind });
             }}
           >
-            Add to bag
+            {`Add to bag · ${money(bagPrice(coffee.id, size))}`}
           </Button>
         </Stack>
       </Surface>
