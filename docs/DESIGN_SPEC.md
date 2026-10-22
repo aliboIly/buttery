@@ -182,6 +182,7 @@ The section well is `--bt-space-well: 4px`, on the scale (the capture shows 3px;
 | `--bt-w-menu-min` | 200 |
 | `--bt-w-row-control` | 160 (slider width in a row; measured 162–164, see DECISIONS) |
 | `--bt-w-page` | 1200 (page content max width) |
+| `--bt-w-prose` | 720 (long-form text at most, such as a docs page's prose; demos beside it may run wider) |
 | `--bt-bento-row` | 320 (bento row unit) |
 | `--bt-nav-panel-min` | 200 (the least a nav menu's panel shows below its bar in a short window) |
 | `--bt-inset-titlebar` | 84 (HeaderBar's left padding in desktop apps, measured from its own left edge: the macOS window controls span x 28–88 of the window, so content starts at 100, 12px clear) |

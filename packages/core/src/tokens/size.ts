@@ -181,6 +181,12 @@ export const widths = {
     value: 1200,
     description: "Page content max width.",
   },
+  prose: {
+    cssVar: "--bt-w-prose",
+    value: 720,
+    description:
+      "Long-form text at most, such as a docs page's prose; demos beside it may run wider.",
+  },
   "bento-row": {
     cssVar: "--bt-bento-row",
     value: 320,
