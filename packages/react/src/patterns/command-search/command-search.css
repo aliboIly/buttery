@@ -57,7 +57,7 @@
 
   /* The `/` hint is for a keyboard, which a touchscreen seldom has beside it. */
   @media not ((hover: hover) and (pointer: fine)) {
-    .bt-command-search [data-bt-part="shortcut"] {
+    .bt-command-search > [data-bt-part="end"] > [data-bt-part="shortcut"] {
       display: none;
     }
   }
