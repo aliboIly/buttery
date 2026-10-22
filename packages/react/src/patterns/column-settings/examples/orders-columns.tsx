@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ColumnSettings } from "@buttery/react";
 import type { ColumnLayout } from "@buttery/react";
 
@@ -19,12 +21,28 @@ const DEFAULTS: ColumnLayout = {
 /** Columns for an orders table, Placed hidden at first: hide some, drag the rest, and Reset hides Placed again. */
 export function OrdersColumns(): ReactElement {
   const [layout, setLayout] = useState(DEFAULTS);
+  const shown = layout.order
+    .filter((id) => layout.visible.has(id))
+    .map((id) => COLUMNS.find((column) => column.id === id)?.label ?? id);
   return (
-    <ColumnSettings
-      columns={COLUMNS}
-      defaultLayout={DEFAULTS}
-      layout={layout}
-      onLayoutChange={setLayout}
-    />
+    <Inline gap={3} align="center">
+      <ColumnSettings
+        columns={COLUMNS}
+        defaultLayout={DEFAULTS}
+        layout={layout}
+        onLayoutChange={setLayout}
+      />
+      <Text variant="body-sm">{shown.join(" · ")}</Text>
+    </Inline>
   );
 }
+
+export const kind: ExampleKind = "controlled";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Columns");
+  await press("checkbox", "Placed");
+  await see("Order · Customer · Status · Placed · Total");
+  await press("button", "Reset");
+  await see("Order · Customer · Status · Total");
+};
