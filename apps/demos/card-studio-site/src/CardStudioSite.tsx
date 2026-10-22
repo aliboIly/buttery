@@ -457,6 +457,7 @@ export function CardStudioSite(): ReactElement {
           <Footer.Link href="/patterns/onboarding">The tour</Footer.Link>
         </Footer.Column>
       </Footer>
+      <div className="lane-room" aria-hidden="true" />
     </Page>
   );
 }

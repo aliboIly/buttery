@@ -24,6 +24,7 @@ import { CalendarRange, CloudOff, MousePointerClick } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Router, useLink } from "./router.tsx";
 import type { RouterProps } from "./router.tsx";
+import "./app.css";
 
 const NAME = "buttery site";
 
@@ -227,6 +228,7 @@ function Site(): ReactElement {
           </Footer.Link>
         </Footer.Column>
       </Footer>
+      <div className="lane-room" aria-hidden="true" />
     </Page>
   );
 }
