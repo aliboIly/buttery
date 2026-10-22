@@ -8,26 +8,21 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import { gradients } from "@buttery/core/palettes";
 import { Bento, Section, Stat, StatStrip } from "@buttery/react";
 import { Flame, Package, Timer, Truck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { BagArt, backdrop } from "./BagArt.tsx";
+import { BagArt, backdrop, swatch } from "./BagArt.tsx";
+import type { Backdrop } from "./BagArt.tsx";
 import { coffeeOf } from "./data.ts";
 import type { CoffeeId } from "./data.ts";
 
-function labelColor(coffee: CoffeeId): string | undefined {
-  return gradients.find((preset) => preset.id === coffeeOf(coffee).label)
-    ?.toHex;
-}
-
-/** A picture rising from the bottom of a bento card, inset from its sides, on a pale backdrop. */
+/** A picture rising from the bottom of a bento card, inset from its sides, on a backdrop from the palettes. */
 function Picture({
   tint,
   children,
 }: {
-  /** The `@buttery/core/palettes` gradient behind it. */
-  readonly tint: string;
+  /** The palette gradients behind it, in each theme. */
+  readonly tint: Backdrop;
   readonly children: ReactNode;
 }): ReactElement {
   return (
@@ -76,25 +71,24 @@ function Dot({ coffee }: { readonly coffee: CoffeeId }): ReactElement {
   return (
     <span
       className="shop-dot"
-      style={{ backgroundColor: labelColor(coffee) }}
+      style={{ backgroundColor: swatch(coffeeOf(coffee).label) }}
       aria-hidden="true"
     />
   );
 }
 
-/** How the roastery works, in a bento: the roast days, the farms, the roast date and the day an order ships. */
+/** How the roastery works, in a bento: the roast days, the growers, the roast date and an order's day; then its numbers. */
 export function Story(): ReactElement {
   return (
     <>
       <Section
         id="story"
-        tone="muted"
         title="How we roast"
-        body="One twelve-kilo roaster in an old machine shop on SE Water Avenue, running five mornings a week. Nothing waits on a shelf."
+        body="One twelve-kilo roaster in an old machine shop on SE Water Avenue. We roast what's been ordered, so nothing waits on a shelf."
       >
         <Bento>
-          <Bento.Card title="Roasted five mornings a week" span={8}>
-            <Picture tint="cream">
+          <Bento.Card title="Roasted on weekdays" span={8}>
+            <Picture tint={{ light: "cream", dark: "espresso" }}>
               <Surface level="card" pad={4} className="shop-roast-plan">
                 <Stack gap={3}>
                   <Inline gap={3} justify="between">
@@ -127,29 +121,35 @@ export function Story(): ReactElement {
               </Surface>
             </Picture>
           </Bento.Card>
-          <Bento.Card title="The same farms, harvest after harvest" span={4}>
-            <Picture tint="mint">
+          <Bento.Card title="Growers we go back to" span={4}>
+            <Picture tint={{ light: "mint", dark: "forest" }}>
               <Stack gap={2} className="shop-harvests">
-                {HARVESTS.map((farm) => (
-                  <Surface key={farm.coffee} level="card" padX={4} padY={3}>
-                    <Inline gap={2} justify="between">
-                      <Inline gap={2}>
+                {HARVESTS.map((farm) => {
+                  const coffee = coffeeOf(farm.coffee);
+                  return (
+                    <Surface key={farm.coffee} level="card" padX={4} padY={2}>
+                      <div className="shop-harvest">
                         <Dot coffee={farm.coffee} />
-                        <Text variant="label" truncate>
-                          {`${coffeeOf(farm.coffee).name}, ${coffeeOf(farm.coffee).origin}`}
+                        <Stack gap={1}>
+                          <Text variant="label" truncate>
+                            {coffee.grower}
+                          </Text>
+                          <Text variant="caption" tone="secondary" truncate>
+                            {`${coffee.name}, ${coffee.origin}`}
+                          </Text>
+                        </Stack>
+                        <Text variant="caption" tone="secondary">
+                          {farm.harvest}
                         </Text>
-                      </Inline>
-                      <Text variant="caption" tone="secondary">
-                        {farm.harvest}
-                      </Text>
-                    </Inline>
-                  </Surface>
-                ))}
+                      </div>
+                    </Surface>
+                  );
+                })}
               </Stack>
             </Picture>
           </Bento.Card>
-          <Bento.Card title="A roast date on every bag" span={4}>
-            <Picture tint="peach">
+          <Bento.Card title="Every bag is dated" span={4}>
+            <Picture tint={{ light: "peach", dark: "rust" }}>
               <Inline gap={4}>
                 <BagArt label="apricot" className="shop-story-bag" />
                 <Surface level="card" padX={4} padY={3}>
@@ -165,8 +165,8 @@ export function Story(): ReactElement {
               </Inline>
             </Picture>
           </Bento.Card>
-          <Bento.Card title="Packed by two, on its way by four" span={8}>
-            <Picture tint="mist">
+          <Bento.Card title="Out the door by four" span={8}>
+            <Picture tint={{ light: "mist", dark: "navy" }}>
               <Grid columns={{ base: 2, md: 4 }} gap={3} className="shop-day">
                 {DAY.map((moment) => (
                   <Surface key={moment.step} level="card" pad={3}>
@@ -186,12 +186,21 @@ export function Story(): ReactElement {
           </Bento.Card>
         </Bento>
       </Section>
-      <Section id="numbers" size="sm" aria-label="Halfmoon in numbers">
+      <Section
+        id="numbers"
+        size="sm"
+        tone="muted"
+        aria-label="Halfmoon in numbers"
+      >
         <StatStrip>
-          <Stat value={5} label="roast days a week" />
-          <Stat value={12} suffix=" kg" label="in every batch we roast" />
-          <Stat value={6} label="farms we buy from every year" />
-          <Stat value={1850} label="bags sent out last month" />
+          <Stat value={1850} label="bags of coffee sent last month" />
+          <Stat value={5} label="countries we buy from" />
+          <Stat
+            value={8}
+            suffix=" hours"
+            label="from the roaster to the post office"
+          />
+          <Stat value={12} suffix=" kg" label="in our biggest batch" />
         </StatStrip>
       </Section>
     </>

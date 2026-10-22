@@ -6,10 +6,14 @@ import type { GradientPreset } from "@buttery/core/palettes";
 
 declare module "react" {
   interface CSSProperties {
-    /** A backdrop's first stop, which `roastery-shop.css` blends toward the surface in the dark theme. */
+    /** A backdrop's first stop in the light theme, which `roastery-shop.css` draws. */
     readonly "--bt-roastery-shop-from"?: string;
-    /** A backdrop's second stop. */
+    /** A backdrop's second stop in the light theme. */
     readonly "--bt-roastery-shop-to"?: string;
+    /** A backdrop's first stop in the dark theme. */
+    readonly "--bt-roastery-shop-dark-from"?: string;
+    /** A backdrop's second stop in the dark theme. */
+    readonly "--bt-roastery-shop-dark-to"?: string;
   }
 }
 
@@ -26,15 +30,15 @@ const GRAPHITE = preset("graphite");
 /** The three colors a roaster's choice label is printed in, one for each coffee it might be. */
 const CHOICE = ["apricot", "rose", "sea"].map(preset);
 
-/** The pale backdrop each label color is shown on. */
-const BACKDROPS: Readonly<Record<string, string>> = {
-  apricot: "peach",
-  violet: "lilac",
-  rose: "blush",
-  sea: "mint",
-  honey: "cream",
-  espresso: "stone",
-  choice: "paper",
+/** The backdrop each label color is shown on: a pale one in the light theme, a deep one in the dark. */
+const BACKDROPS: Readonly<Record<string, Backdrop>> = {
+  apricot: { light: "peach", dark: "rust" },
+  violet: { light: "lilac", dark: "ink" },
+  rose: { light: "blush", dark: "plum" },
+  sea: { light: "mint", dark: "forest" },
+  honey: { light: "cream", dark: "espresso" },
+  espresso: { light: "stone", dark: "graphite" },
+  choice: { light: "paper", dark: "slate" },
 };
 
 /** The print on a label: dark on a pale label, paper on a deep one. */
@@ -145,19 +149,30 @@ export function BagArt({
   );
 }
 
-/**
- * The stops of a `@buttery/core/palettes` gradient for an element with the `shop-backdrop` class, which
- * draws them at 135° and dims them in the dark theme.
- */
-export function backdrop(id: string): CSSProperties {
-  const stops = preset(id);
+/** Two `@buttery/core/palettes` gradients for a backdrop: one for each theme. */
+export interface Backdrop {
+  readonly light: string;
+  readonly dark: string;
+}
+
+/** The stops of a backdrop for an element with the `shop-backdrop` class, which draws the theme's at 135°. */
+export function backdrop({ light, dark }: Backdrop): CSSProperties {
+  const day = preset(light);
+  const night = preset(dark);
   return {
-    "--bt-roastery-shop-from": stops.fromHex,
-    "--bt-roastery-shop-to": stops.toHex,
+    "--bt-roastery-shop-from": day.fromHex,
+    "--bt-roastery-shop-to": day.toHex,
+    "--bt-roastery-shop-dark-from": night.fromHex,
+    "--bt-roastery-shop-dark-to": night.toHex,
   };
 }
 
-/** A pale backdrop for a bag of coffee, in the palette family of its label. */
+/** A label's color as a small swatch, light enough to read as that coffee on either theme. */
+export function swatch(label: string): string {
+  return label === "espresso" ? KRAFT.fromHex : preset(label).fromHex;
+}
+
+/** A bag of coffee on a backdrop in its label's palette family: pale in the light theme, deep in the dark. */
 export function Shelf({
   label,
   className,
@@ -170,7 +185,7 @@ export function Shelf({
   return (
     <div
       className={cx("shop-shelf shop-backdrop", className)}
-      style={backdrop(BACKDROPS[label] ?? "paper")}
+      style={backdrop(BACKDROPS[label] ?? { light: "paper", dark: "slate" })}
     >
       <BagArt label={label} />
       {children}
