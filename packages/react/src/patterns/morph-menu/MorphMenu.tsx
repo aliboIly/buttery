@@ -654,6 +654,12 @@ export function MorphMenuItem({
           menu.leave(id, event);
         }}
         onKeyDown={(event) => {
+          // Radix moves focus into an open menu on ArrowDown but leaves a closed one shut; it opens here.
+          if (event.key === "ArrowDown" && !open) {
+            event.preventDefault();
+            event.currentTarget.click();
+            return;
+          }
           if (event.key !== "Tab" || event.shiftKey || !open) return;
           // Focusing the sentinel runs Radix's own way in, which puts the menu's links back in the tab
           // order (Radix takes them out whenever focus leaves the menu) and focuses the first.

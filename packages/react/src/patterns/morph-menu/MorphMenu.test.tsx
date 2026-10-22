@@ -160,6 +160,21 @@ describe("MorphMenu", () => {
     );
   });
 
+  it("opens a closed menu with the Down arrow, and the next Down arrow goes into it", async () => {
+    menu();
+    trigger("Guides").focus();
+    await userEvent.keyboard("{ArrowDown}");
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("true");
+    expect(document.activeElement).toBe(trigger("Guides"));
+    await screen.findByRole("link", { name: /Your first card/ });
+    await userEvent.keyboard("{ArrowDown}");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("link", { name: /Your first card/ }),
+      );
+    });
+  });
+
   it("opens once the pointer has rested on a trigger for 150ms", () => {
     menu();
     fakeTime();

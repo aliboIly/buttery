@@ -29,7 +29,10 @@ export const meta: ComponentMeta = {
       keys: "Arrow keys",
       does: "Move between the triggers and links in the bar, or between the sections in the sheet",
     },
-    { keys: "Down arrow", does: "Moves from a trigger into its open menu" },
+    {
+      keys: "Down arrow",
+      does: "Opens the focused trigger's menu, or moves into it once it's open",
+    },
     {
       keys: "Escape",
       does: "Closes the open menu, or the sheet, and puts focus back on its trigger or on Menu",
