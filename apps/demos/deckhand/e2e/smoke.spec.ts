@@ -5,15 +5,7 @@ function headerTitle(page: Page): Locator {
   return page.locator('[data-bt="HeaderBar"] [data-bt-part="title"]');
 }
 
-/** The canvas size the inspector shows beside Size. */
-function size(page: Page): Locator {
-  return page
-    .locator('[data-bt-part="row"]')
-    .filter({ hasText: "Size" })
-    .locator('[data-bt-part="value"]');
-}
-
-test("renders with the bundled font and no console errors", async ({
+test("opens on the sample deck with the bundled font and no console errors", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -24,7 +16,11 @@ test("renders with the bundled font and no console errors", async ({
 
   await page.goto("/");
 
-  await expect(headerTitle(page)).toHaveText("Opening night");
+  await expect(page.getByTestId("stage-slide")).toContainText(
+    "Halfmoon Roastery for your café",
+  );
+  await expect(headerTitle(page)).toHaveText("Halfmoon for cafés");
+  await expect(page.getByRole("option")).toHaveCount(6);
   const interLoaded = await page.evaluate(async () => {
     await document.fonts.ready;
     return document.fonts.check('16px "Inter Variable"');
@@ -33,33 +29,41 @@ test("renders with the bundled font and no console errors", async ({
   expect(errors).toEqual([]);
 });
 
-test("the inspector changes the design, and Undo and Redo walk the changes back and forth", async ({
+test("a title written in the inspector reaches the stage and the strip, and a new slide undoes away", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
-  const title = page.getByRole("textbox", { name: "Title" });
-  const canvas = page.getByRole("img", { name: /^Design preview/ });
-  await title.fill("Spring fair");
+  const title = page.getByRole("textbox", { name: "Title", exact: true });
+  await title.fill("Halfmoon for your counter");
   await title.blur();
-  await expect(headerTitle(page)).toHaveText("Spring fair");
-  await page.getByRole("radio", { name: "Square", exact: true }).click();
-  await expect(size(page)).toHaveText("1440 × 1440");
-  await expect(canvas).toHaveAccessibleName("Design preview: Spring fair");
+  await expect(page.getByTestId("stage-slide")).toContainText(
+    "Halfmoon for your counter",
+  );
+  await expect(
+    page.getByRole("option", { name: "Slide 1: Halfmoon for your counter" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "New slide", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Big numbers" }).click();
+  await expect(page.getByRole("option")).toHaveCount(7);
+  await expect(
+    page.getByRole("option", { name: "Slide 2: By the numbers" }),
+  ).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByTestId("stage-slide")).toContainText("40%");
 
   await page.getByRole("button", { name: "Undo", exact: true }).click();
-  await expect(size(page)).toHaveText("1920 × 1080");
-  await page.getByRole("button", { name: "Undo", exact: true }).click();
-  await expect(headerTitle(page)).toHaveText("Opening night");
-  await page.getByRole("button", { name: "Redo", exact: true }).click();
-  await expect(headerTitle(page)).toHaveText("Spring fair");
+  await expect(page.getByRole("option")).toHaveCount(6);
+  await expect(
+    page.getByRole("option", { name: "Slide 1: Halfmoon for your counter" }),
+  ).toHaveAttribute("aria-selected", "true");
 });
 
 test("on a phone the inspector opens as a sheet", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Edit design", exact: true }).click();
+  await page.getByRole("button", { name: "Edit slide", exact: true }).click();
   await expect(
-    page.getByRole("dialog", { name: "Design settings" }),
+    page.getByRole("dialog", { name: "Slide settings" }),
   ).toBeVisible();
 });
