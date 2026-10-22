@@ -18,7 +18,7 @@ import { CodeToggle } from "./CodeToggle.tsx";
 import { CopyLine } from "./CopyLine.tsx";
 import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { DesktopPreview } from "./DesktopPreview.tsx";
-import { ExampleFrame } from "./ExampleFrame.tsx";
+import { DemoHeading, ExampleFrame } from "./ExampleFrame.tsx";
 import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
 import { PageFooter } from "./PageFooter.tsx";
 import { TableScroll } from "./TableScroll.tsx";
@@ -267,14 +267,12 @@ export function ComponentBody({
             </HeadingAt>
             {demos.map((demo) => (
               <Stack key={demo.title} gap={3}>
-                <Stack gap={2}>
-                  <HeadingAt depth={inner} id={idFor(entry, depth, demo.title)}>
-                    {demo.title}
-                  </HeadingAt>
-                  {demo.description === undefined ? null : (
-                    <Text variant="body">{demo.description}</Text>
-                  )}
-                </Stack>
+                <DemoHeading
+                  title={demo.title}
+                  caption={demo.description}
+                  level={inner}
+                  id={idFor(entry, depth, demo.title)}
+                />
                 <Surface level={stage} pad={6} radius="lg" className="pg-stage">
                   <DemoDrawing entry={entry}>{demo.render()}</DemoDrawing>
                 </Surface>

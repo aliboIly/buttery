@@ -290,3 +290,8 @@
 .docs-code-toggle > svg[data-open] {
   transform: rotate(180deg);
 }
+
+/* A caption's last line keeps a few words rather than one. */
+.docs-caption {
+  text-wrap: pretty;
+}
