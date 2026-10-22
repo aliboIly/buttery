@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "vite";
+import { checkDocs } from "./docs-check.mjs";
 import {
   componentSources,
   llmsText,
@@ -35,12 +36,20 @@ function write(file, contents) {
 /**
  * Builds the docs site into `apps/docs/dist`: the app, then every public route prerendered with React's own
  * server renderer into its own `index.html`, each page's Markdown at its path plus `.md`, `llms.txt` and a
- * `sitemap.xml`. Development-only routes under `/lab` aren't written.
+ * `sitemap.xml`. Development-only routes under `/lab` aren't written. It runs the docs check first and
+ * builds nothing while that finds a problem, such as an export with no page or a broken link.
  */
 export async function buildDocs({
   out = join(app, "dist"),
   server = join(app, "dist-server"),
+  check = checkDocs,
 } = {}) {
+  const problems = check();
+  if (problems.length > 0) {
+    throw new Error(
+      `The docs check found ${String(problems.length)} problem${problems.length === 1 ? "" : "s"}, so the site wasn't built:\n${problems.map((problem) => `  ${problem}`).join("\n")}`,
+    );
+  }
   rmSync(out, { recursive: true, force: true });
   rmSync(server, { recursive: true, force: true });
   await build({

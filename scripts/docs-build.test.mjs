@@ -33,6 +33,22 @@ afterAll(() => {
 });
 
 describe("pnpm docs:build", () => {
+  it("builds nothing while the docs check finds a problem", async () => {
+    const elsewhere = join(scratch, "unbuilt");
+    await expect(
+      buildDocs({
+        out: elsewhere,
+        server,
+        check: () => [
+          "apps/docs/content/guides/x.mdx links to /nowhere, which isn't a page on the site.",
+        ],
+      }),
+    ).rejects.toThrow(
+      /found 1 problem, so the site wasn't built:\n {2}apps\/docs\/content\/guides\/x\.mdx/,
+    );
+    expect(existsSync(elsewhere)).toBe(false);
+  });
+
   it("prerenders the landing page as the site's index", () => {
     const html = readFileSync(join(out, "index.html"), "utf8");
     expect(html).toContain("<title>buttery</title>");
