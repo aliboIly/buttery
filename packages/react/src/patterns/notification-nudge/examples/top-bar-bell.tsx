@@ -20,23 +20,21 @@ export function TopBarBell(): ReactElement {
   const [read, setRead] = useState(false);
   return (
     <Stack gap={4}>
-      <Inline gap={3} align="center" justify="between">
+      <Inline gap={2} align="center">
         <SearchField label="Search orders" variant="soft" />
-        <Inline gap={2} align="center">
-          <NotificationNudge
-            title="2 customers asked about delivery"
-            description="Reply before Tuesday's roast ships."
-            action={{
-              label: "Read messages",
-              onClick: () => {
-                setRead(true);
-              },
-            }}
-          >
-            <IconButton icon={Bell} label="Notifications" dot={!read} />
-          </NotificationNudge>
-          <Avatar name="Rosa Alvarez" size="md" />
-        </Inline>
+        <NotificationNudge
+          title="2 customers asked about delivery"
+          description="Reply before Tuesday's roast ships."
+          action={{
+            label: "Read messages",
+            onClick: () => {
+              setRead(true);
+            },
+          }}
+        >
+          <IconButton icon={Bell} label="Notifications" dot={!read} />
+        </NotificationNudge>
+        <Avatar name="Rosa Alvarez" size="md" />
       </Inline>
       {read ? (
         <Stack gap={2}>
