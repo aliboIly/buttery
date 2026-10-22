@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A sticky bar of links to the sections of a long page, under the nav bar, marking the section the reader is in.",
   order: 110,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 const SECTIONS = [

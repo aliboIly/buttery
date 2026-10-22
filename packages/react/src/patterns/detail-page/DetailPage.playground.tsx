@@ -14,7 +14,7 @@ export const page: DocsPage = {
     "A page about one thing: the main column and an aside with its action and links.",
   order: 170,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
   home: "patterns/detail-page",
 };
 

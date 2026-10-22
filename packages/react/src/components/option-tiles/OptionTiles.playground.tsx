@@ -9,7 +9,7 @@ export const page: DocsPage = {
   description: "Several choices at once, as tiles that take a press anywhere.",
   order: 50,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const SETS = ["words only", "with lines", "one disabled"] as const;

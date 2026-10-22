@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A dialog that spells out what saying yes will do before anyone confirms.",
   order: 30,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const TRIAL = [

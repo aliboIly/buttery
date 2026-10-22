@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A shimmering placeholder for something still loading, shaped like the text or block it stands in for.",
   order: 90,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const VARIANTS = [

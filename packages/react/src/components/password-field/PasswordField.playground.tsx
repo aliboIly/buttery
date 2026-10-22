@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A labelled password box with a button that shows or hides what's typed, and optional requirements.",
   order: 70,
   status: "stable",
-  since: "0.4.5",
+  since: "0.5.0",
 };
 
 export const live: LiveDemo = {

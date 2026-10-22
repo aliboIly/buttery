@@ -16,7 +16,7 @@ export const page: DocsPage = {
     "A floating pill of actions anchored under an element, such as crop mode's size, Reset, Cancel and Apply.",
   order: 40,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 function CropDemo(): ReactElement {

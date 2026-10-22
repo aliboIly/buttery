@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A badge after a settings page's title that says what its settings apply to.",
   order: 130,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

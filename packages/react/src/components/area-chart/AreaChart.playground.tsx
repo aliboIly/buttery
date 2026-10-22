@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "Values over time as lines with their area filled in faintly, for totals that build up, with a crosshair and tooltip.",
   order: 10,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const MONTHS = [

@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "On and off choices in groups, against channels such as email and push.",
   order: 60,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const CHANNEL_SETS = ["email and push", "email, text and push"] as const;

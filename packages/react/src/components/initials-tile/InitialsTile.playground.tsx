@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A square tile with up to two initials, standing in for a workspace or team that has no picture.",
   order: 90,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

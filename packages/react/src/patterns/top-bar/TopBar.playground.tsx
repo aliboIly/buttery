@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "The bar over a dashboard's page: search at its start, icon actions and a round create button at its end.",
   order: 140,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

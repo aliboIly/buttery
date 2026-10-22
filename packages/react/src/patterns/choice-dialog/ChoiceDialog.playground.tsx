@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A dialog that offers a few ways to go: each a row with an icon, a title, a line and an arrow, choosing one closes it.",
   order: 20,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const CHOICES = [

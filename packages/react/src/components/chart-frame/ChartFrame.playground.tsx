@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "The frame buttery's charts are drawn in: gridlines and axis labels, a crosshair or column with a tooltip, keyboard steps, a screen-reader table, and no-data and loading states.",
   order: 40,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const DAYS = [

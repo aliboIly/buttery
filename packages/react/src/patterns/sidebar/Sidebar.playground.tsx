@@ -21,7 +21,7 @@ export const page: DocsPage = {
     "An app's navigation down the side: a workspace switcher, items, titled sections, groups that fold, and the pages visited lately.",
   order: 90,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function Nav(): ReactElement {

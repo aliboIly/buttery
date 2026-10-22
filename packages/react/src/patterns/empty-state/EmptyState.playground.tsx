@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "What shows where content will be: a title, a line about how to add some, and the actions that do.",
   order: 40,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 export const live: LiveDemo = {

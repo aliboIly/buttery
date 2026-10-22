@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "A table of records: columns with minimum widths and shares, selection, sorting, row actions, a sticky header and first column, skeleton rows and pagination.",
   order: 60,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 interface Order {

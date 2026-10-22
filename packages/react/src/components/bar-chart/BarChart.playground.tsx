@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "Values per period or category as bars, side by side for each series, with a column that highlights on hover.",
   order: 30,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

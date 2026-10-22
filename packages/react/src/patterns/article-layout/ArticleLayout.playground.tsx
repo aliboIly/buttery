@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "An article beside a sticky aside on the page grid: 8 columns for the article, the last 3 for the aside.",
   order: 130,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "patterns/marketing-page",
 };
 

@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "A modal dialog that dims the page, traps focus and hands it back when it closes.",
   order: 40,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 const LILAC = gradients.find((preset) => preset.id === "lilac");

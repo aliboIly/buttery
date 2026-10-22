@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "A page's opening band: a two-tone headline, a line and actions beside a visual that assembles as it arrives.",
   order: 310,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "patterns/marketing-page",
 };
 

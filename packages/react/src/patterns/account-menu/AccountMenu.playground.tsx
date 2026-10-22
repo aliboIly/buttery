@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "The workspace switcher at the top of a sidebar and its menu: the workspace, switching to another, the person signed in, and signing out.",
   order: 10,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const WORKSPACES = [

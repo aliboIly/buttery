@@ -8,7 +8,7 @@ export const page: DocsPage = {
     "A small pill with a spinner that says something is loading, shown only once loading has lasted 300ms.",
   order: 60,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

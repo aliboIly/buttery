@@ -20,7 +20,7 @@ export const page: DocsPage = {
     "A page of things to browse: filters beside a featured block and grids of cards.",
   order: 150,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
   home: "patterns/catalog-page",
 };
 

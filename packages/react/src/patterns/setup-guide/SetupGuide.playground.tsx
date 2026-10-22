@@ -12,7 +12,7 @@ export const page: DocsPage = {
     "A floating checklist in the bottom-end lane: progress, the next task, and every task when unfolded, remembered across visits.",
   order: 80,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const TASKS: readonly Omit<SetupTask, "done">[] = [

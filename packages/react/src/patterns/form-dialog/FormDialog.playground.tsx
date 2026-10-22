@@ -16,7 +16,7 @@ export const page: DocsPage = {
     "A dialog that asks for a value or two, Submit waiting until the form is valid.",
   order: 60,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function BackupEmail(): ReactElement {

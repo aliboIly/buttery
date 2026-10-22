@@ -16,7 +16,7 @@ export const page: DocsPage = {
     "A tip on a card: what to try, why, a link to do it and how long it takes, with optional media, dismissed for good once closed.",
   order: 70,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function RailNote(): ReactElement {

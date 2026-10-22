@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "A trend at a glance: one small line, no axes, its last point marked, for a table row or beside a number.",
   order: 140,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const ROWS: readonly {

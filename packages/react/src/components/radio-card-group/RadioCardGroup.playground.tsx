@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "One choice among a few explained options, one of which can reveal its own field.",
   order: 70,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const SETS = ["with lines", "with a detail", "one disabled"] as const;

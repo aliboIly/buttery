@@ -8,7 +8,7 @@ export const page: DocsPage = {
     "Equal columns of headline numbers, each with a hairline and a label, the numbers counting up once as they come into view.",
   order: 330,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "patterns/marketing-page",
 };
 

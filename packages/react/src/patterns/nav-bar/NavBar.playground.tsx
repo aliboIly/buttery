@@ -24,7 +24,7 @@ export const page: DocsPage = {
     "The bar across the top of a page: the brand, menus that open in one morphing panel, and the calls to action, static, sticky or auto-hiding.",
   order: 50,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 function fill(id: string): string | undefined {

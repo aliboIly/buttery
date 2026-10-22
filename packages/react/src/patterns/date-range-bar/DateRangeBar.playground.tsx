@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "The period a report covers: a range with presets or two dates, the interval its charts group by, and what it's compared with.",
   order: 30,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

@@ -22,7 +22,7 @@ export const page: DocsPage = {
     "A panel beside the page, such as help, that narrows the page instead of covering it.",
   order: 110,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function LivePanel({

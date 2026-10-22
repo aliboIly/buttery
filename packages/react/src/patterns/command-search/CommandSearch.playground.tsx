@@ -15,7 +15,7 @@ export const page: DocsPage = {
     "The top bar's search: grouped results from typed sources, filters and recent searches.",
   order: 30,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const PAGES = pageSource({

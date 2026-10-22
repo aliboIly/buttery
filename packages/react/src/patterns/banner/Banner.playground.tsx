@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "A one-line suggestion across a page: an icon, the message, an action and how long it takes, dismissed for good once closed.",
   order: 10,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function Below(): ReactElement {

@@ -12,7 +12,7 @@ export const page: DocsPage = {
     "A 3\u00d73 grid of dots for picking where something sits: a corner, an edge or the center.",
   order: 10,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 function Placement(): ReactElement {

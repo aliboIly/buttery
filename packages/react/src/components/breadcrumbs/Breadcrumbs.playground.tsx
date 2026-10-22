@@ -8,7 +8,7 @@ export const page: DocsPage = {
     "The trail of pages above a nested page, as links above its title.",
   order: 20,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const TRAIL = [

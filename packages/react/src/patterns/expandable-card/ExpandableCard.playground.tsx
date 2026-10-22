@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "A bento card that opens into a dialog by turning into it, its title travelling along, and closes back into the card.",
   order: 50,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 function fill(id: string): string | undefined {

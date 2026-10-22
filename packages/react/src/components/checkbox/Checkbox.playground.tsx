@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A box to tick for one yes-or-no choice, with its label beside it.",
   order: 20,
   status: "stable",
-  since: "0.4.5",
+  since: "0.5.0",
 };
 
 const STARTS = ["false", "true", "indeterminate"] as const;

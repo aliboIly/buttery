@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "Values over time as smooth lines, the comparison in gray beneath, with a crosshair and tooltip that follow the pointer.",
   order: 110,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const DAYS = Array.from({ length: 14 }, (_, day) => `Oct ${String(day + 1)}`);

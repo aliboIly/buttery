@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   changelogVersions,
+  newestFirst,
   readReleases,
   releasesIn,
   releasesMarkdown,
@@ -47,11 +48,16 @@ function scratch(): string {
 }
 
 describe("What's new", () => {
-  it("reads every release on the site newest first, a patch release between its neighbours", () => {
+  it("reads every release on the site newest first", () => {
     const versions = releasesIn(root).map((release) => release.version);
+    expect(versions).toEqual([...versions].sort((a, b) => newestFirst(a, b)));
     expect(versions[0]).toBe("0.9.0");
-    expect(versions.indexOf("0.4.5")).toBe(versions.indexOf("0.5.0") + 1);
-    expect(versions.indexOf("0.4.0")).toBe(versions.indexOf("0.4.5") + 1);
+  });
+
+  it("orders versions part by part, so 0.10.0 is newer than 0.9.0 and a patch sits between its neighbours", () => {
+    expect(
+      ["0.4.0", "0.10.0", "0.4.5", "0.9.0", "0.5.0"].sort(newestFirst),
+    ).toEqual(["0.10.0", "0.9.0", "0.5.0", "0.4.5", "0.4.0"]);
   });
 
   it("gives every release on the site a date, a title and two or three highlights", () => {

@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "A short label for a record's state, such as Paid or Overdue, in a tone that repeats what it says.",
   order: 100,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

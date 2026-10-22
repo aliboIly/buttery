@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A person's round picture, or their initials when there's none or it fails to load.",
   order: 20,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const PORTRAIT = `data:image/svg+xml,${encodeURIComponent(

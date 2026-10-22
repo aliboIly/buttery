@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "A row whose actions show on hover and keyboard focus, with an accent bar.",
   order: 80,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const ROWS = [

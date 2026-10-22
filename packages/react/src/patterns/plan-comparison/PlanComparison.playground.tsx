@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "Plans side by side under one control group, their parts lined up.",
   order: 240,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
   home: "patterns/plans",
 };
 

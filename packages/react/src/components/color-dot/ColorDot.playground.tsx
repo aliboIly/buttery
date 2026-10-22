@@ -12,7 +12,7 @@ export const page: DocsPage = {
     "A small round swatch that opens buttery's color picker in a popover to choose any color.",
   order: 30,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 function GradientColors(): ReactElement {

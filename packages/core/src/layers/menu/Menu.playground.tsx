@@ -16,7 +16,7 @@ export const page: DocsPage = {
     "A list of actions that opens from a trigger, on the floating surface in the dropdown layer.",
   order: 80,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 function Trigger({ label }: { readonly label: string }): ReactElement {

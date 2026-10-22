@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A sign-up form: name, email, a new password with its rules, the terms, and errors summed up where they can be fixed.",
   order: 300,
   status: "stable",
-  since: "0.4.5",
+  since: "0.5.0",
   home: "patterns/forms",
 };
 

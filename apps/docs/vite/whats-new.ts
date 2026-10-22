@@ -26,7 +26,7 @@ function versionParts(version: string): number[] {
   return version.split(".").map(Number);
 }
 
-/** Newest first, comparing versions part by part, so 0.4.5 comes after 0.4.0 and before 0.5.0. */
+/** Newest first, comparing versions part by part, so 0.10.0 comes before 0.9.0 and 0.4.5 between 0.5.0 and 0.4.0. */
 export function newestFirst(a: string, b: string): number {
   const left = versionParts(a);
   const right = versionParts(b);

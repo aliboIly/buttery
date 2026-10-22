@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "An info button that explains a value: on hover and focus in a tooltip, and on a press or a tap in a popover that stays.",
   order: 60,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "A trigger that shows the chosen value and opens a list to pick another, with an optional footer for custom values.",
   order: 90,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 type Shape = "match" | "16:9" | "4:3" | "1:1" | "3:2" | "9:16";

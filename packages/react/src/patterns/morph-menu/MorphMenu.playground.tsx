@@ -15,7 +15,7 @@ export const page: DocsPage = {
     "A row of menu triggers whose menus open in one floating panel that reshapes from menu to menu instead of closing and reopening.",
   order: 40,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 function Story(): ReactElement {

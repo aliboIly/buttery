@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "A small pad for tilting something in 3D: drag the knob or use the arrow keys.",
   order: 120,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 const LEVEL: TiltValue = { x: 0, y: 0 };

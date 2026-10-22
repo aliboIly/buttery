@@ -12,7 +12,7 @@ export const page: DocsPage = {
     "A color area, a hue track and a hex code for picking any color, with optional presets.",
   order: 10,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 function Backdrop(): ReactElement {

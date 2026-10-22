@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "An app page's title with an optional value and its explanation, and the page's actions at the end, folding into a menu.",
   order: 230,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
   home: "patterns/page-header",
 };
 

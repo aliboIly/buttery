@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "A row of dots showing which step of a few is current, the current one a pill that slides on spring.snappy.",
   order: 60,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 function Steps(): ReactElement {

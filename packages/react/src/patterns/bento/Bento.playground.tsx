@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "A grid of feature cards on a 12-column page grid, each spanning 4, 6, 8 or 12 columns and one or two rows.",
   order: 140,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "patterns/marketing-page",
 };
 

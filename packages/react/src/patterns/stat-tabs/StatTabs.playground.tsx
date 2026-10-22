@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "Equal tabs over a list that each show a view's count, the chosen one on a sliding raised panel, a select on a phone.",
   order: 100,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const TABS = [

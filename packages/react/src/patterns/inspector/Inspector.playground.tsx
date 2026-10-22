@@ -26,7 +26,7 @@ export const page: DocsPage = {
     "A settings panel of titled sections holding rows of controls, with a footer for its main actions.",
   order: 200,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
   home: "patterns/inspector",
 };
 

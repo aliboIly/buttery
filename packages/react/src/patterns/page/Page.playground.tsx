@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A marketing or content page: a column of sections that the page grid, side padding and headline sizes follow.",
   order: 180,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "layout/page-grid-and-containers",
 };
 

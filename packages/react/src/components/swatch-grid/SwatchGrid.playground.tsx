@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "A grid of color and gradient swatches to pick one from, like radio buttons.",
   order: 100,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 const GRADIENTS: readonly Swatch[] = gradients.map((preset) => ({

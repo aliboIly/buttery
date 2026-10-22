@@ -11,7 +11,7 @@ export const page: DocsPage = {
     "An area that takes files dropped on it, pasted or opened with a shortcut, and says so while a file is held over it.",
   order: 40,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
 };
 
 function ImageDrop({

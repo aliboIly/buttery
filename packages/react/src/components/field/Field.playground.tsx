@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A label, an optional hint and an error message wired to any form control by id.",
   order: 50,
   status: "stable",
-  since: "0.4.5",
+  since: "0.5.0",
 };
 
 type Format = "png" | "jpg" | "webp";

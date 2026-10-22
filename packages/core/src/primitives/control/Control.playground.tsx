@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "The root of a fixed-height control you build yourself: a token height, matching padding and data-bt-control.",
   order: 20,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
 };
 
 const SIZES: readonly ControlSize[] = [

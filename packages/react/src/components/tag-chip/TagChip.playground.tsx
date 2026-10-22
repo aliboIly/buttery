@@ -9,7 +9,7 @@ export const page: DocsPage = {
   description: "A small outlined tag with a colored dot.",
   order: 150,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

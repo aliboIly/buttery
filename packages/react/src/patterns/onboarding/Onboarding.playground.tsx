@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "A few steps in a dialog: a scene that morphs between steps, text that crossfades in place, page dots, Back and Next, and confetti at the end.",
   order: 220,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "patterns/onboarding",
 };
 

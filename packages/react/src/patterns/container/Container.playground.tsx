@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "The page's content column: at most 1200px wide, centered, with side padding that grows with the page.",
   order: 120,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "layout/page-grid-and-containers",
 };
 

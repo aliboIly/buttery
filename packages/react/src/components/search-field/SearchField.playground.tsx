@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A field for finding things: a search icon, a clear button once it holds text, and an optional shortcut that focuses it.",
   order: 80,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

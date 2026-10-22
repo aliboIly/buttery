@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A row of partner or customer marks in equal cells, each fitted into a 120 by 24 box and drawn in one quiet color.",
   order: 210,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "patterns/marketing-page",
 };
 

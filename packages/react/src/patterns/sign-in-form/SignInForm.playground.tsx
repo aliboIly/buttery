@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A sign-in form: email, password, keep me signed in, other ways to sign in, and errors summed up where they can be fixed.",
   order: 290,
   status: "stable",
-  since: "0.4.5",
+  since: "0.5.0",
   home: "patterns/forms",
 };
 

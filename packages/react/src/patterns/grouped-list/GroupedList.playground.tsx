@@ -17,7 +17,7 @@ export const page: DocsPage = {
     "Things grouped in one well: card rows with media, a title, a line and a value, under optional titles with a \u2026 menu, and a dashed row that adds one more.",
   order: 70,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const warehouseActions = (

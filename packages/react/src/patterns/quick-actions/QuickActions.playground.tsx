@@ -17,7 +17,7 @@ export const page: DocsPage = {
     "A row of small soft buttons for the things people do most on a page, folding into a menu when they don't fit.",
   order: 80,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function LiveQuickActions({

@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "What's new, once: a large dialog with a title, short sections and an illustration, a Got it button and a link to read more.",
   order: 10,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function WeekPlan(): ReactElement {

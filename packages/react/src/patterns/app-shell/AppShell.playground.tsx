@@ -20,7 +20,7 @@ export const page: DocsPage = {
     'A whole app screen: an editor (a header and a stage beside an inspector that becomes a sheet on narrow screens) or, with layout="sidebar", a dashboard (a sidebar beside a top bar and the page).',
   order: 120,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
   home: "patterns/app-shell",
 };
 

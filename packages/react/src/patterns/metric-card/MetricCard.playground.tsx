@@ -14,7 +14,7 @@ export const page: DocsPage = {
     "One metric on a card: its title, value and change against the previous period, a small chart of both periods, and when it was updated.",
   order: 120,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const DAYS = Array.from({ length: 14 }, (_, day) => `Oct ${String(day + 1)}`);

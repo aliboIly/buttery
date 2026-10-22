@@ -35,6 +35,12 @@ describe("docs check", () => {
     ]);
   });
 
+  it("fails a page that says it arrived in a release What's new has no entry for", () => {
+    expect(fixture("unknown-release")).toEqual([
+      "apps/docs/lab/docs-check/unknown-release/content/guides/stepper.mdx says it arrived in 0.4.5, a release What's new has no entry for. Fix: set since to the release it arrived in, one of 0.9.0.",
+    ]);
+  });
+
   it("fails a page without metadata, saying what to add", () => {
     expect(fixture("missing-metadata")).toEqual([
       "apps/docs/lab/docs-check/missing-metadata/content/guides/untitled.mdx has no frontmatter. Fix: start it with a --- block holding title, description, section, order, status, since.",

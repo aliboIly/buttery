@@ -17,7 +17,7 @@ export const page: DocsPage = {
     "A row of filter pills over a list that wrap as they're applied, with Clear filters and actions, folding into one button on a phone.",
   order: 40,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function Filters(): ReactElement {

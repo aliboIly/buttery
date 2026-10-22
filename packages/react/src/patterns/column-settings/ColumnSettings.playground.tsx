@@ -12,7 +12,7 @@ export const page: DocsPage = {
     "A button that opens a list of a table's columns to show, hide and reorder by dragging or with Alt and the arrow keys.",
   order: 50,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const COLUMNS = [

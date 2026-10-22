@@ -33,27 +33,27 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Tooltip, Kbd, ArrowLink
 - [x] Compare page vs references
 
-## v0.4.5 — Forms and text (Phase 4.5)
+## v0.5 — Forms and text (Phase 4.5)
 - [x] TextField, PasswordField, TextArea, Field
 - [x] Checkbox, Switch, Callout
 - [x] TextStack
 - [x] SignInForm and SignUpForm patterns, with an original sign-in demo page
 
-## v0.5 — App patterns (Phase 5)
+## v0.6 — App patterns (Phase 5)
 - [x] SwatchGrid, ColorDot, TiltPad, AnchorGrid
 - [x] Toast (`toast()` and `Toaster`, built early)
 - [x] Menu, Select, FloatingToolbar
 - [x] EmptyState/DropZone, Stage, Inspector, HeaderBar, AppShell
 - [x] Card Studio demo (original), passes the full matrix at every size
 
-## v0.6 — Choreography (Phase 6)
+## v0.7 — Choreography (Phase 6)
 - [x] Dialog, Onboarding (a step dialog), PageDots
 - [x] NavBar (static, sticky, auto-hide) + MorphMenu, SubNav
 - [x] Bento + ExpandableCard
 - [x] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer
 - [x] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
 
-## v0.7 — App kit (Phase 6B)
+## v0.8 — App kit (Phase 6B)
 - [x] App kit tokens (widths, table row height, `title-lg`/`title-md`, chart colors, shimmer and delays)
 - [x] Shell: `AppShell layout="sidebar"`, `Sidebar` (groups, Recent, More, rail, sheet), `TopBar`, `AppPage` (contained/full, right rail, fill)
 - [x] Page header: `PageHeader`, `Button shortcut`, underline `Tabs` (and `TabNav` for pages), `QuickActions`, `ViewToggle`

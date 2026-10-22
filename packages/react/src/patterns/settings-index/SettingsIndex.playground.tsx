@@ -26,7 +26,7 @@ export const page: DocsPage = {
     "A settings home page: titled sections of links, each with an icon, a title and a line on what's inside, in up to three columns.",
   order: 80,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const frame: DemoFrame = "page";

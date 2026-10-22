@@ -22,7 +22,7 @@ export const page: DocsPage = {
     "A small popover that points at a button with news, once: a title, a line, an action and Later, opening by itself without taking focus.",
   order: 90,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 function TopBarNudge(): ReactElement {

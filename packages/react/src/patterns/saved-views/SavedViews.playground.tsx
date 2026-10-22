@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A track of saved views of a list, the chosen one on a sliding raised pill, with every view and its actions in a menu.",
   order: 70,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const VIEWS = [

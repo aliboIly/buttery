@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "A dashboard page in its shell: contained to 1280px or full width, padded by its column, with an optional right rail.",
   order: 110,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
   home: "patterns/app-shell",
 };
 

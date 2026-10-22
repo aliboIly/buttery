@@ -13,7 +13,7 @@ export const page: DocsPage = {
     "An app's top bar: its mark and title, then actions that fold into a More menu when there isn't room.",
   order: 190,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
   home: "patterns/inspector",
 };
 

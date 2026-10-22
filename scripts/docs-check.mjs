@@ -15,6 +15,7 @@ import {
   changelogFiles,
   changelogVersions,
   entryOf,
+  newestFirst,
 } from "../apps/docs/vite/whats-new.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -134,6 +135,7 @@ function componentPage(file) {
     title: field("title", /title:\s*"([^"]+)"/),
     order: order === undefined ? undefined : Number(order),
     home: field("home", /home:\s*"([^"]+)"/),
+    since: field("since", /since:\s*"([^"]+)"/),
   };
 }
 
@@ -151,8 +153,9 @@ function homesIn(docsSite) {
  * every internal link reaches a page (and heading) that exists, and every component has a home in
  * `docs/DOCS_SITE.md`, the examples its page asks for, a live demo on a page of its own, and the keyboard,
  * layout and reduced-motion notes its meta gives the page; and every other export of `@buttery/react` is
- * described on a page that lists it in its `exports`; and every release a package's changelog lists has a
- * What's new entry with two or three highlights. Returns the problems, each saying how to fix it.
+ * described on a page that lists it in its `exports`; and every release a package's changelog lists, and every
+ * release a page says it arrived in, has a What's new entry with two or three highlights. Returns the problems,
+ * each saying how to fix it.
  */
 export function checkDocs({
   contentDir = join(root, "apps/docs/content"),
@@ -170,6 +173,7 @@ export function checkDocs({
   const problems = [];
   const pages = [];
   const homed = [];
+  const arrivals = [];
   const documents = new Map();
   const say = (file) => relative(root, file);
 
@@ -217,6 +221,8 @@ export function checkDocs({
       title: data.title,
       order: data.order,
     });
+    if (data.since !== undefined)
+      arrivals.push({ file, since: String(data.since) });
     const listed = data.exports ?? [];
     for (const name of Array.isArray(listed) ? listed : [listed])
       documents.set(String(name), { file, body });
@@ -238,6 +244,8 @@ export function checkDocs({
       );
       continue;
     }
+    if (page.since !== undefined)
+      arrivals.push({ file: playground, since: page.since });
     if (page.home !== undefined) {
       homed.push({ name, home: page.home, file: playground });
       continue;
@@ -492,6 +500,16 @@ export function checkDocs({
       problems.push(
         `${say(entry.file)} has ${String(entry.highlights.length)} highlight${entry.highlights.length === 1 ? "" : "s"}. Fix: list two or three, each a "- " line on what the release brought.`,
       );
+    }
+  }
+  if (entries.length > 0) {
+    const versions = entries.map((entry) => entry.version);
+    for (const { file, since } of arrivals) {
+      if (!versions.includes(since)) {
+        problems.push(
+          `${say(file)} says it arrived in ${since}, a release What's new has no entry for. Fix: set since to the release it arrived in, one of ${[...versions].sort(newestFirst).reverse().join(", ")}.`,
+        );
+      }
     }
   }
   for (const changelog of changelogs) {

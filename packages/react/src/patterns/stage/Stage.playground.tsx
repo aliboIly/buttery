@@ -18,7 +18,7 @@ export const page: DocsPage = {
     "The canvas an editor works on: fitted to the space at its shape, with artwork that may overlap its edges and a crop mode.",
   order: 320,
   status: "stable",
-  since: "0.5.0",
+  since: "0.6.0",
   home: "patterns/inspector",
 };
 

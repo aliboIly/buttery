@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "The foot of a page: a brand column and columns of links on the page grid, then small print under a divider.",
   order: 180,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "patterns/marketing-page",
 };
 

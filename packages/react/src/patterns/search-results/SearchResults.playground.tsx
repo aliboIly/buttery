@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "Every result for a search on one page, a section for each place it looked.",
   order: 250,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
   home: "patterns/search-and-results",
 };
 

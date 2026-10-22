@@ -9,7 +9,7 @@ export const page: DocsPage = {
     "Two icon segments that switch a collection between a grid and a list, each named by its tooltip.",
   order: 120,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const live: LiveDemo = {

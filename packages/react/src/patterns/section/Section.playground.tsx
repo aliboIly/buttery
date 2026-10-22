@@ -10,7 +10,7 @@ export const page: DocsPage = {
     "A band of a page: room above and below, an optional heading and body, and its content in a Container.",
   order: 190,
   status: "stable",
-  since: "0.6.0",
+  since: "0.7.0",
   home: "layout/page-grid-and-containers",
 };
 

@@ -16,7 +16,7 @@ export const page: DocsPage = {
     "Introduces a feature on its empty page: a title, a line, two or three benefits, a primary action and docs beside an image.",
   order: 50,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 export const frame: DemoFrame = "page";
