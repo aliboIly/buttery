@@ -1,6 +1,11 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { Stack, Surface, Text, demoChoice } from "@buttery/core";
+import type {
+  DemoSection,
+  DemoValues,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { ArrowLink, MorphMenu } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -26,6 +31,97 @@ function Story(): ReactElement {
     </Stack>
   );
 }
+
+const OPEN = { None: "", Product: "product", Guides: "guides" } as const;
+
+function LiveMenus({
+  layout,
+  open,
+}: {
+  readonly layout: "bar" | "stack";
+  readonly open: string;
+}): ReactElement {
+  return (
+    <Surface
+      level="card"
+      padX={4}
+      style={{ minBlockSize: "calc(var(--bt-bento-row) * 1.25)" }}
+    >
+      <MorphMenu label="Demo menus" layout={layout} defaultValue={open}>
+        <MorphMenu.Item
+          label="Product"
+          value="product"
+          featured={<Story />}
+          footer={<ArrowLink href="#features">See all features</ArrowLink>}
+        >
+          <MorphMenu.Column title="Make">
+            <MorphMenu.Entry
+              href="#cards"
+              title="Cards"
+              caption="Titles, finishes and leans"
+            />
+            <MorphMenu.Entry
+              href="#backdrops"
+              title="Backdrops"
+              caption="Blends, colors or your own picture"
+            />
+          </MorphMenu.Column>
+        </MorphMenu.Item>
+        <MorphMenu.Item label="Guides" value="guides">
+          <MorphMenu.Column title="Learn">
+            <MorphMenu.Entry
+              href="#first-card"
+              title="Your first card"
+              caption="Five minutes from blank to done"
+            />
+            <MorphMenu.Entry
+              href="#shortcuts"
+              title="Shortcuts"
+              caption="Every key on one page"
+            />
+          </MorphMenu.Column>
+        </MorphMenu.Item>
+        <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+      </MorphMenu>
+    </Surface>
+  );
+}
+
+function menusCode({ layout, open }: DemoValues): string {
+  const value = OPEN[demoChoice(open, ["None", "Product", "Guides"])];
+  const props = [
+    ...(layout === "stack" ? ['layout="stack"'] : []),
+    ...(value === "" ? [] : [`defaultValue="${value}"`]),
+  ];
+  return [
+    `<MorphMenu${props.length === 0 ? "" : ` ${props.join(" ")}`}>`,
+    '  <MorphMenu.Item label="Product" value="product" featured={<Story />} footer={<ArrowLink href="/features">See all features</ArrowLink>}>',
+    '    <MorphMenu.Column title="Make">',
+    '      <MorphMenu.Entry href="/cards" title="Cards" caption="Titles, finishes and leans" />',
+    "    </MorphMenu.Column>",
+    "  </MorphMenu.Item>",
+    '  <MorphMenu.Item label="Guides" value="guides">…</MorphMenu.Item>',
+    '  <MorphMenu.Link href="/pricing">Pricing</MorphMenu.Link>',
+    "</MorphMenu>",
+  ].join("\n");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    layout: { kind: "choice", options: ["bar", "stack"], initial: "bar" },
+    open: {
+      kind: "choice",
+      options: ["None", "Product", "Guides"],
+      initial: "None",
+    },
+  },
+  render: ({ layout, open }) => {
+    const shape = demoChoice(layout, ["bar", "stack"]);
+    const value = OPEN[demoChoice(open, ["None", "Product", "Guides"])];
+    return <LiveMenus key={`${shape}-${value}`} layout={shape} open={value} />;
+  },
+  code: menusCode,
+};
 
 export const demos: readonly DemoSection[] = [
   {

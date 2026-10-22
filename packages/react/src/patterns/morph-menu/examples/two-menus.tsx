@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { MorphMenu } from "@buttery/react";
 
 /** Two short menus and a plain link. */
@@ -27,3 +28,10 @@ export function TwoMenus(): ReactElement {
     </MorphMenu>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Learn");
+  await see("Five minutes from blank to done");
+};
