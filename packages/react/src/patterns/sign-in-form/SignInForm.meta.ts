@@ -15,4 +15,12 @@ export const meta: ComponentMeta = {
   related: ["SignUpForm", "TextField", "PasswordField", "Checkbox", "Callout"],
   a11y: "A named form with a real heading. Fields fill in from the password manager (username on the email field, current-password). On a failed submit, each field shows what to fix and a summary with a link to each one appears and takes focus (role alert); a message returned from onSubmit shows there too. The submit button keeps its width while busy. Other ways to sign in are buttons named by their text.",
   motion: "none",
+  keyboard: [
+    {
+      keys: "Enter",
+      does: "Submits the form from the email or password field",
+    },
+  ],
+  layout:
+    'It fills its parent\'s width up to 400px, its parts 20px apart in a column: fields --bt-h-cta (48px) tall, a full-width submit button as tall that keeps its width while busy, and the other ways in as full-width buttons under an "or" rule. Errors wrap under their fields, and the forgot-password link has a 24px target.',
 };
