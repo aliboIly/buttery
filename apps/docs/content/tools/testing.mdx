@@ -42,7 +42,7 @@ Each check has a name. Pass a list of them as `rules` to run only those, such as
 
 ## Interactions
 
-A page's open menus and toasts count too. Pass `interactions`: each one drives the page, then every check runs on the state it leaves, and the stability check compares what moved.
+A page's open menus and toasts count too. Pass `interactions`: each one drives the page, then every check runs on the state it leaves, and the stability check compares what moved. An interaction that moves something on purpose, such as filtering a list's rows, lists the selectors of what moves in its `allowMove`.
 
 ```ts
 await expectButtery(page, {
