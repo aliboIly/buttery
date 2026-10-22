@@ -1,4 +1,4 @@
-import { Icon, Text, cx } from "@buttery/core";
+import { Icon, cx } from "@buttery/core";
 import type { IconComponentProps, MotionElementProps } from "@buttery/core";
 import { Info, X } from "lucide-react";
 import { motion } from "motion/react";
@@ -72,9 +72,14 @@ export function Banner({
     >
       <div data-bt-part="row">
         <Icon icon={icon} data-bt-part="banner-icon" />
-        <Text variant="body-sm" tone="default" data-bt-part="banner-message">
+        <p
+          className="bt-text"
+          data-role="body-sm"
+          data-tone="default"
+          data-bt-part="banner-message"
+        >
           {children}
-        </Text>
+        </p>
         {action === undefined && estimate === undefined ? null : (
           <span data-bt-part="banner-actions">
             {action === undefined ? null : action.href === undefined ? (

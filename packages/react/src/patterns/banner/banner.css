@@ -1,5 +1,7 @@
 @layer bt.patterns {
   .bt-banner {
+    --bt-banner-cap: 1cap;
+
     container: bt-banner / inline-size;
     min-inline-size: 0;
     padding-block: var(--bt-space-2);
@@ -12,19 +14,23 @@
     display: grid;
     grid-template-areas: "icon message actions dismiss";
     grid-template-columns: auto minmax(0, 1fr) auto auto;
-    align-items: center;
+    align-items: start;
     column-gap: var(--bt-space-3);
     min-block-size: var(--bt-h-sm);
   }
 
+  /* As tall as the 28px first row the dismiss button sets, which centers the icon on it. */
   .bt-banner [data-bt-part="banner-icon"] {
     grid-area: icon;
+    block-size: var(--bt-h-sm);
     color: var(--bt-text-secondary);
   }
 
+  /* The message's capitals, its first line once trimmed, centered in that row however the message wraps. */
   .bt-banner [data-bt-part="banner-message"] {
     grid-area: message;
     min-inline-size: 0;
+    padding-block-start: calc((var(--bt-h-sm) - var(--bt-banner-cap)) / 2);
   }
 
   .bt-banner [data-bt-part="banner-actions"] {
