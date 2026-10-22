@@ -330,6 +330,37 @@ describe("the props reader", () => {
     ).toEqual(["", "Row"]);
   });
 
+  it("gives a compound's parts their tables when their functions are named apart from it", () => {
+    const parts = (name: string, path: string): string[][] =>
+      tablesOf(name, path).map((table) => [table.part, table.interfaceName]);
+    expect(
+      parts("ChartFrame", "components/chart-frame/ChartFrame.tsx"),
+    ).toEqual(
+      expect.arrayContaining([
+        ["Line", "ChartMarkProps"],
+        ["Area", "ChartMarkProps"],
+        ["Bars", "ChartBarsProps"],
+      ]),
+    );
+    expect(
+      parts("QuickActions", "patterns/quick-actions/QuickActions.tsx"),
+    ).toEqual(expect.arrayContaining([["Action", "QuickActionProps"]]));
+    expect(
+      parts("CatalogPage", "patterns/catalog-page/CatalogPage.tsx"),
+    ).toEqual(
+      expect.arrayContaining([["Featured", "CatalogPageSectionProps"]]),
+    );
+  });
+
+  it("gives a component its file exports beside it, with no page of its own, a table under its own name", () => {
+    const pill = tablesOf(
+      "FilterBar",
+      "patterns/filter-bar/FilterBar.tsx",
+    ).find((table) => table.component === "FilterPill");
+    expect(pill?.interfaceName).toBe("FilterPillProps");
+    expect(pill?.props.map((prop) => prop.name)).toContain("label");
+  });
+
   it("documents the exported types a component's props use, each once, with the types those use", () => {
     expect(typeTablesIn("Ledger", LEDGER, FIXTURES)).toEqual([
       {

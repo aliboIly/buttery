@@ -19,6 +19,8 @@ export interface PropDoc {
 export interface PropsTable {
   /** `""` for the component itself, else the part's name, such as `"Item"` for `Menu.Item`. */
   readonly part: string;
+  /** Another component its file exports beside it with no page of its own, such as `FilterPill`. */
+  readonly component?: string;
   /** The interface or type alias the table comes from, such as `MenuItemProps`. */
   readonly interfaceName: string;
   readonly props: readonly PropDoc[];
@@ -682,8 +684,11 @@ function componentProps(
   const consumed = new Set<Declaration>();
   const tables: PropsTable[] = [];
   const fields: Field[] = [];
-  for (const { declaration, part } of declared) {
-    if (consumed.has(declaration)) continue;
+  const add = (
+    declaration: Declaration,
+    part: string,
+    component?: string,
+  ): void => {
     const visited = new Set<Declaration>();
     const shape = declarationShape(
       { declaration, file: source },
@@ -693,17 +698,87 @@ function componentProps(
     );
     for (const followed of visited) {
       shown.add(followed);
-      if (part === "") consumed.add(followed);
+      if (part === "" && component === undefined) consumed.add(followed);
     }
     fields.push(...shape.fields);
     tables.push({
       part,
+      ...(component === undefined ? {} : { component }),
       interfaceName: declaration.name.text,
       props: shape.fields.map(propDocOf),
       inherits: shape.inherits.map(summaryText),
     });
+  };
+  for (const { declaration, part } of declared) {
+    if (!consumed.has(declaration)) add(declaration, part);
+  }
+  const partFunctions = new Set<string>();
+  for (const { part, fn } of compoundParts(source, name)) {
+    partFunctions.add(fn);
+    if (tables.some((table) => table.part === part)) continue;
+    const typeName = propsTypeOf(source, fn);
+    const declaration =
+      typeName === undefined ? undefined : declaredIn(typeName, source);
+    if (declaration) add(declaration, part);
+  }
+  for (const statement of source.statements) {
+    if (!ts.isFunctionDeclaration(statement) || !statement.name) continue;
+    const fn = statement.name.text;
+    const exported = statement.modifiers?.some(
+      (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
+    );
+    if (exported !== true || fn === name || partFunctions.has(fn)) continue;
+    if (!/^[A-Z]/.test(fn) || fn.startsWith(name)) continue;
+    if (read(join(dirname(file), `${fn}.meta.ts`)) !== undefined) continue;
+    const typeName = propsTypeOf(source, fn);
+    const declaration =
+      typeName === `${fn}Props` ? declaredIn(typeName, source) : undefined;
+    if (declaration) add(declaration, "", fn);
   }
   return { tables, fields, shown };
+}
+
+/** The name of the props type the function component `fn` in `file` takes, from its first parameter. */
+function propsTypeOf(file: ts.SourceFile, fn: string): string | undefined {
+  for (const statement of file.statements) {
+    if (ts.isFunctionDeclaration(statement) && statement.name?.text === fn) {
+      const type = statement.parameters[0]?.type;
+      return type &&
+        ts.isTypeReferenceNode(type) &&
+        ts.isIdentifier(type.typeName)
+        ? type.typeName.text
+        : undefined;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * The parts of the compound component `name` whose functions are named apart from it, read from its
+ * `<Name>Component` interface: `readonly Line: typeof ChartLine` gives the part `Line`, drawn by `ChartLine`.
+ */
+function compoundParts(
+  file: ts.SourceFile,
+  name: string,
+): { readonly part: string; readonly fn: string }[] {
+  const shape = file.statements.find(
+    (statement): statement is ts.InterfaceDeclaration =>
+      ts.isInterfaceDeclaration(statement) &&
+      statement.name.text === `${name}Component`,
+  );
+  if (!shape) return [];
+  return shape.members.flatMap((member) =>
+    ts.isPropertySignature(member) &&
+    member.type &&
+    ts.isTypeQueryNode(member.type)
+      ? [
+          {
+            part: member.name.getText(file),
+            fn: member.type.exprName.getText(file),
+          },
+        ]
+      : [],
+  );
 }
 
 /**

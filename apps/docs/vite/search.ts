@@ -235,7 +235,9 @@ export function searchDocsIn(root: string): SearchDoc[] {
     const source = join(folder, `${name}.tsx`);
     if (existsSync(source)) {
       for (const table of propsTablesIn(name, source)) {
-        const owner = table.part === "" ? name : `${name}.${table.part}`;
+        const owner =
+          table.component ??
+          (table.part === "" ? name : `${name}.${table.part}`);
         for (const prop of table.props) {
           docs.push({
             id: `prop:${owner}.${prop.name}`,

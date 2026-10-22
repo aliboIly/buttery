@@ -116,8 +116,11 @@ export function PropsTables({
     <Stack gap={8}>
       {tables.map((table) => (
         <PropsBlock
-          key={table.interfaceName}
-          title={table.part === "" ? name : `${name}.${table.part}`}
+          key={`${table.component ?? table.part}:${table.interfaceName}`}
+          title={
+            table.component ??
+            (table.part === "" ? name : `${name}.${table.part}`)
+          }
           description=""
           column="Prop"
           props={table.props}

@@ -353,7 +353,11 @@ export function componentMarkdown(
     lines.push(heading(part, "Props"), "");
     for (const props of tables) {
       lines.push(
-        heading(part + 1, props.part === "" ? name : `${name}.${props.part}`),
+        heading(
+          part + 1,
+          props.component ??
+            (props.part === "" ? name : `${name}.${props.part}`),
+        ),
         "",
         ...propsBlock("Prop", props),
       );

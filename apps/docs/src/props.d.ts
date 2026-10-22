@@ -11,6 +11,8 @@ declare module "virtual:buttery-props" {
   /** The props of a component or one of its parts. */
   export interface PropsTable {
     readonly part: string;
+    /** Another component its file exports beside it with no page of its own, such as `FilterPill`. */
+    readonly component?: string;
     readonly interfaceName: string;
     readonly props: readonly PropDoc[];
     readonly inherits: readonly string[];
