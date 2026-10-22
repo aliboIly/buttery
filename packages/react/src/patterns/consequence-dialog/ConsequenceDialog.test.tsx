@@ -157,4 +157,28 @@ describe("ConsequenceDialog", () => {
     });
     expect(onConfirm).toHaveBeenCalledTimes(2);
   });
+
+  it("stays open while its confirm is pending, whatever asks it to close", async () => {
+    let finish: (() => void) | undefined;
+    render(
+      <Trial
+        onConfirm={() =>
+          new Promise((resolve) => {
+            finish = resolve;
+          })
+        }
+      />,
+    );
+    await open();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Start the trial" }),
+    );
+    await userEvent.keyboard("{Escape}");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    finish?.();
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+  });
 });

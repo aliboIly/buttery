@@ -6,7 +6,7 @@ import {
   useMergedRefs,
 } from "@buttery/core";
 import type { IconComponentProps } from "@buttery/core";
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type {
   ComponentType,
   CSSProperties,
@@ -96,6 +96,11 @@ export function ConsequenceDialog({
     onChange: onOpenChange,
   });
   const [pending, setPending] = useState(false);
+  const session = useRef(0);
+  if (!isOpen && pending) setPending(false);
+  useLayoutEffect(() => {
+    if (!isOpen) session.current += 1;
+  }, [isOpen]);
   const dialog = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, dialog);
   const confirm = (): void => {
@@ -106,18 +111,27 @@ export function ConsequenceDialog({
       return;
     }
     setPending(true);
+    const asked = session.current;
     void result.then(
       () => {
+        if (asked !== session.current) return;
         setPending(false);
         setOpen(false);
       },
       () => {
+        if (asked !== session.current) return;
         setPending(false);
       },
     );
   };
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(next) => {
+        if (!next && pending) return;
+        setOpen(next);
+      }}
+    >
       {trigger === undefined ? null : (
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       )}

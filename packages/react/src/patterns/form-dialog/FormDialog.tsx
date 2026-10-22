@@ -1,5 +1,5 @@
 import { cx, useControllableState } from "@buttery/core";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type {
   CSSProperties,
   ReactElement,
@@ -90,6 +90,11 @@ export function FormDialog({
     onChange: onOpenChange,
   });
   const [pending, setPending] = useState(false);
+  const session = useRef(0);
+  if (!isOpen && pending) setPending(false);
+  useLayoutEffect(() => {
+    if (!isOpen) session.current += 1;
+  }, [isOpen]);
   const submit = (event: SubmitEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!valid || pending) return;
@@ -99,18 +104,27 @@ export function FormDialog({
       return;
     }
     setPending(true);
+    const asked = session.current;
     void result.then(
       () => {
+        if (asked !== session.current) return;
         setPending(false);
         setOpen(false);
       },
       () => {
+        if (asked !== session.current) return;
         setPending(false);
       },
     );
   };
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(next) => {
+        if (!next && pending) return;
+        setOpen(next);
+      }}
+    >
       {trigger === undefined ? null : (
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       )}
@@ -130,7 +144,9 @@ export function FormDialog({
             </Dialog.Body>
             <div data-bt-part="form-dialog-footer">
               <Dialog.Close asChild>
-                <Button variant="soft">{cancelLabel}</Button>
+                <Button variant="soft" aria-disabled={pending || undefined}>
+                  {cancelLabel}
+                </Button>
               </Dialog.Close>
               <Button
                 type="submit"

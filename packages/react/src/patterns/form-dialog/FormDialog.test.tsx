@@ -154,6 +154,82 @@ describe("FormDialog", () => {
     });
   });
 
+  it("stays open while a submit is pending, whatever asks it to close", async () => {
+    let finish: (() => void) | undefined;
+    render(
+      <BackupEmail
+        onSubmit={() =>
+          new Promise((resolve) => {
+            finish = resolve;
+          })
+        }
+      />,
+    );
+    await open();
+    await userEvent.fill(
+      screen.getByLabelText("Backup email"),
+      "rosa@halfmoon.example",
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Add email" }));
+    await userEvent.keyboard("{Escape}");
+    const cancel = screen.getByRole("button", { name: "Cancel" });
+    expect(cancel.getAttribute("aria-disabled")).toBe("true");
+    await userEvent.click(cancel, { force: true });
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    finish?.();
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+  });
+
+  it("starts a reopened dialog idle, and a submit cut short by its owner closing it can't close the new one", async () => {
+    let finish: (() => void) | undefined;
+    function Owned(): ReactElement {
+      const [open, setOpen] = useState(true);
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Reopen
+          </button>
+          <FormDialog
+            open={open}
+            onOpenChange={setOpen}
+            title="Rename the view"
+            onSubmit={() => {
+              window.setTimeout(() => {
+                setOpen(false);
+              }, 0);
+              return new Promise((resolve) => {
+                finish = resolve;
+              });
+            }}
+            submitLabel="Rename"
+          />
+        </>
+      );
+    }
+    render(<Owned />);
+    await screen.findByRole("dialog");
+    await userEvent.click(screen.getByRole("button", { name: "Rename" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    await userEvent.click(screen.getByRole("button", { name: "Reopen" }));
+    await screen.findByRole("dialog");
+    expect(
+      screen.getByRole("button", { name: "Rename" }).hasAttribute("aria-busy"),
+    ).toBe(false);
+    finish?.();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(screen.getByRole("dialog")).toBeTruthy();
+  });
+
   it("closes on Cancel without sending", async () => {
     const onSubmit = vi.fn();
     render(<BackupEmail onSubmit={onSubmit} />);
