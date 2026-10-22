@@ -91,7 +91,7 @@ function Pat({ id }: { readonly id: string }): ReactElement {
 /**
  * buttery's mark: a soft pat of butter seen from a gentle 3/4 angle, with a cream top, a butter front, a
  * deeper side, a highlight and a soft contact shadow, drawn in the brand tokens. Use it wherever buttery
- * itself is named in UI, such as a header's home link; the 🧈 character stays in text. It's hidden from
+ * itself is named in UI, such as a header's home link; the butter emoji stays in text. It's hidden from
  * screen readers unless it has a `label`.
  *
  * @example
