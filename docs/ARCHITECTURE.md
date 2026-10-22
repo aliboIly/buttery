@@ -59,7 +59,7 @@ buttery/
 │  ├─ new-component.mjs          # scaffolds a component that already follows every rule
 │  ├─ component-contract.test.mjs # fails until every component folder is complete
 │  ├─ test-layout.mjs            # expectButtery across the full matrix (--reporter=json)
-│  └─ new-app.mjs                # copies apps/starter → apps/<name>
+│  └─ new-app.mjs                # copies a template (apps/starter or apps/templates/<name>) → apps/<name>
 ├─ .githooks/                    # commit-msg and pre-commit, installed by pnpm install
 └─ tooling/                      # shared tsconfig presets
 ```
@@ -225,7 +225,9 @@ Inside the monorepo:
 pnpm new-app my-app              # copies apps/starter → apps/my-app, renames, installs
 pnpm --filter my-app dev         # web
 pnpm --filter my-app tauri dev   # desktop
+pnpm new-app my-shop --template dashboard   # copies apps/templates/dashboard instead: a web app
 ```
+`--template` takes `blank` (the default), `dashboard`, `editor` or `marketing`. The three besides `blank` are web apps built from the patterns, without the starter's desktop shell.
 Outside the monorepo (after publishing): `npx create-buttery my-app`, or `npx buttery init` in an existing React app (adds packages, provider, styles, lint config, agent instructions and the skill).
 
 ## Publishing (later)

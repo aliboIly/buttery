@@ -200,7 +200,7 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 | `pnpm test:layout` | Layout checks across the full viewport, theme and density matrix; `--reporter=json` prints one report |
 | `pnpm new-component <Name> --purpose "…"` | Scaffolds a component folder that passes the contract once it's filled in |
 | `pnpm --filter starter tauri dev` | Runs the starter as a desktop app |
-| `pnpm new-app <name>` | Copies `apps/starter` to `apps/<name>` |
+| `pnpm new-app <name> --template <template>` | Copies a template to `apps/<name>`: `blank` (the starter, the default), `dashboard`, `editor` or `marketing` |
 
 ## Repo layout
 
@@ -212,7 +212,9 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 | `packages/lint` | ESLint and stylelint rules that keep values on tokens and positioning owned |
 | `packages/cli`, `packages/mcp` | The command line and the MCP server (not started) |
 | `apps/docs` | The docs site: a page for every component with its demos and examples; the layout checks run against it |
-| `apps/starter` | The template for new apps, with a Tauri v2 shell |
+| `apps/starter` | The blank template for new apps, with a Tauri v2 shell |
+| `apps/templates` | The dashboard, editor and marketing templates, web apps built from the patterns |
+| `apps/demos` | The demo apps, each a template with its own content, which the docs site serves under `/demos` |
 | `docs/` | Architecture, design, motion and layout specs |
 
 ## Docs

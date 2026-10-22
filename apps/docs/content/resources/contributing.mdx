@@ -28,7 +28,10 @@ buttery is a pnpm monorepo: the packages under `packages/`, this site and the st
       "pnpm new-component Name",
       "A new component folder that already follows the component contract",
     ],
-    ["pnpm new-app name", "A new app copied from the starter"],
+    [
+      "pnpm new-app name --template dashboard",
+      "A new app copied from a template: blank (the starter, the default), dashboard, editor or marketing",
+    ],
     [
       "pnpm brand:assets",
       "The favicons, app icons and README hero, from the mark",

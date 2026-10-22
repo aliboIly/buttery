@@ -67,7 +67,7 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 - `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, the docs check (`pnpm check:docs`) and the examples build (`pnpm check:examples`), unit and browser tests, app smoke tests, and `expectButtery` on every docs page and the starter at 390 and 1280
 - `pnpm test:layout` — `expectButtery` across the full matrix (from Phase 2)
 - `pnpm new-component <Name>` — scaffold a compliant component (from Phase 2)
-- `pnpm new-app <name>` — new app from `apps/starter`
+- `pnpm new-app <name> [--template blank|dashboard|editor|marketing]` — new app from a template: `apps/starter` for `blank` (the default), `apps/templates/<template>` for the others
 - `pnpm --filter starter tauri dev` — desktop app
 
 ## Making things buttery
