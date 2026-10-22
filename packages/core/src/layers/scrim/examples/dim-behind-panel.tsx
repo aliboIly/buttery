@@ -1,5 +1,4 @@
-import { Dialog } from "radix-ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import {
   Center,
@@ -7,67 +6,60 @@ import {
   Layer,
   Pressable,
   Scrim,
-  Stack,
   Surface,
   Text,
 } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A dim scrim behind a modal panel; the dialog keeps focus inside and closes on Escape or a click outside. */
+/** A dim scrim first inside a modal layer, under a panel that holds the page while a template applies. */
 export function DimBehindPanel(): ReactElement {
-  const [open, setOpen] = useState(false);
+  const [state, setState] = useState<"idle" | "applying" | "applied">("idle");
+  useEffect(() => {
+    if (state !== "applying") return undefined;
+    const timer = window.setTimeout(() => {
+      setState("applied");
+    }, 1500);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [state]);
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Surface asChild level="raised" padX={4} padY={2} radius="full">
-        <Dialog.Trigger asChild>
-          <Pressable>
-            <Text variant="button">Show the panel</Text>
+    <>
+      <Inline gap={3} align="center">
+        <Surface asChild level="raised" padX={4} padY={2} radius="full">
+          <Pressable
+            aria-disabled={state === "applying"}
+            onClick={() => {
+              setState("applying");
+            }}
+          >
+            <Text variant="button">Apply the template</Text>
           </Pressable>
-        </Dialog.Trigger>
-      </Surface>
-      {open ? (
+        </Surface>
+        <Text variant="body" tone="secondary">
+          {state === "applied"
+            ? "Template applied to 24 cards"
+            : "24 cards in this set"}
+        </Text>
+      </Inline>
+      {state === "applying" ? (
         <Layer band="modal">
-          <Dialog.Overlay asChild>
-            <Scrim />
-          </Dialog.Overlay>
+          <Scrim />
           <Center pad={4} style={{ blockSize: "100%" }}>
-            <Dialog.Content asChild>
-              <Surface
-                level="dialog"
-                pad={6}
-                style={{ maxInlineSize: "var(--bt-w-dialog)" }}
-              >
-                <Stack gap={4}>
-                  <Dialog.Title asChild>
-                    <Text variant="dialog-title" asChild>
-                      <h2>Your card is ready</h2>
-                    </Text>
-                  </Dialog.Title>
-                  <Dialog.Description asChild>
-                    <Text variant="body">
-                      Export it as an image, or keep editing.
-                    </Text>
-                  </Dialog.Description>
-                  <Inline justify="end">
-                    <Surface
-                      asChild
-                      level="raised"
-                      padX={4}
-                      padY={2}
-                      radius="full"
-                    >
-                      <Dialog.Close asChild>
-                        <Pressable>
-                          <Text variant="button">Keep editing</Text>
-                        </Pressable>
-                      </Dialog.Close>
-                    </Surface>
-                  </Inline>
-                </Stack>
-              </Surface>
-            </Dialog.Content>
+            <Surface level="dialog" padX={6} padY={4} role="status">
+              <Text variant="label">Applying the template to 24 cards…</Text>
+            </Surface>
           </Center>
         </Layer>
       ) : null}
-    </Dialog.Root>
+    </>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Apply the template");
+  await see("Applying the template to 24 cards…");
+  await see("Template applied to 24 cards");
+};

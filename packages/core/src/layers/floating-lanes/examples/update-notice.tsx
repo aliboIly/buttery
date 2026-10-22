@@ -1,18 +1,17 @@
-import { VisuallyHidden } from "radix-ui";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { FloatingLanes, Pressable, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A notice in the top-end lane that the user can put away, announced through a status region that stays mounted. */
+/** A notice in the top-end lane that the user can put away, with a status line in the page that says the same. */
 export function UpdateNotice(): ReactElement {
   const [visible, setVisible] = useState(false);
   return (
-    <>
+    <Stack gap={3} align="start">
       <Surface asChild level="raised" padX={4} padY={2} radius="full">
         <Pressable
-          aria-pressed={visible}
           onClick={() => {
-            setVisible((current) => !current);
+            setVisible(!visible);
           }}
         >
           <Text variant="button">
@@ -20,9 +19,9 @@ export function UpdateNotice(): ReactElement {
           </Text>
         </Pressable>
       </Surface>
-      <VisuallyHidden.Root role="status">
-        {visible ? "Update ready. Restart to get the new export options." : ""}
-      </VisuallyHidden.Root>
+      <Text variant="body" tone="secondary" role="status">
+        {visible ? "An update is ready to install" : "No update waiting"}
+      </Text>
       {visible ? (
         <FloatingLanes.Item lane="top-end">
           <Surface level="floating" pad={4}>
@@ -46,6 +45,15 @@ export function UpdateNotice(): ReactElement {
           </Surface>
         </FloatingLanes.Item>
       ) : null}
-    </>
+    </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Show the update notice");
+  await see("An update is ready to install");
+  await press("button", "Hide the update notice");
+  await see("No update waiting");
+};

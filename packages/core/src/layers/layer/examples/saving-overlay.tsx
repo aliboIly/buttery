@@ -1,41 +1,64 @@
-import { Dialog } from "radix-ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Layer, Pressable, Scrim, Surface, Text } from "@buttery/core";
+import {
+  Center,
+  Inline,
+  Layer,
+  Pressable,
+  Scrim,
+  Surface,
+  Text,
+} from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A blocking "Saving…" panel in the modal layer: focus moves into it and the page waits until saving ends. */
+/** A "Saving" panel in the modal layer, over a dim scrim, that holds the page until the save is done. */
 export function SavingOverlay(): ReactElement {
-  const [saving, setSaving] = useState(false);
+  const [state, setState] = useState<"unsaved" | "saving" | "saved">("unsaved");
+  useEffect(() => {
+    if (state !== "saving") return undefined;
+    const timer = window.setTimeout(() => {
+      setState("saved");
+    }, 1500);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [state]);
   return (
-    <Dialog.Root open={saving}>
-      <Surface asChild level="raised" padX={4} padY={2} radius="full">
-        <Pressable
-          onClick={() => {
-            setSaving(true);
-            window.setTimeout(() => {
-              setSaving(false);
-            }, 1500);
-          }}
-        >
-          <Text variant="button">Save the card</Text>
-        </Pressable>
-      </Surface>
-      {saving ? (
+    <>
+      <Inline gap={3} align="center">
+        <Surface asChild level="raised" padX={4} padY={2} radius="full">
+          <Pressable
+            aria-disabled={state === "saving"}
+            onClick={() => {
+              setState("saving");
+            }}
+          >
+            <Text variant="button">Save the card</Text>
+          </Pressable>
+        </Surface>
+        <Text variant="body" tone="secondary">
+          {state === "saved" ? "Saved just now" : "Not saved yet"}
+        </Text>
+      </Inline>
+      {state === "saving" ? (
         <Layer band="modal">
-          <Dialog.Overlay asChild>
-            <Scrim />
-          </Dialog.Overlay>
+          <Scrim />
           <Center pad={4} style={{ blockSize: "100%" }}>
-            <Dialog.Content asChild aria-describedby={undefined}>
-              <Surface level="dialog" padX={6} padY={4}>
-                <Dialog.Title asChild>
-                  <Text variant="label">Saving…</Text>
-                </Dialog.Title>
-              </Surface>
-            </Dialog.Content>
+            <Surface level="dialog" padX={6} padY={4} role="status">
+              <Text variant="label">Saving the card…</Text>
+            </Surface>
           </Center>
         </Layer>
       ) : null}
-    </Dialog.Root>
+    </>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Not saved yet");
+  await press("button", "Save the card");
+  await see("Saving the card…");
+  await see("Saved just now");
+};
