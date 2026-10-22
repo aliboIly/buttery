@@ -7,7 +7,7 @@ import {
   parseFrontmatter,
   splitFrontmatter,
 } from "../apps/docs/vite/frontmatter.ts";
-import { demoPages, referencePages } from "../apps/docs/src/routes.ts";
+import { demoPages } from "../apps/docs/src/routes.ts";
 import { slugify } from "../apps/docs/src/slug.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -106,6 +106,7 @@ function componentPage(file) {
     section: field("section", /section:\s*"([^"]+)"/),
     title: field("title", /title:\s*"([^"]+)"/),
     order: order === undefined ? undefined : Number(order),
+    home: field("home", /home:\s*"([^"]+)"/),
   };
 }
 
@@ -129,11 +130,12 @@ export function checkDocs({
     (file) => join(root, file),
   ),
   docsSite = join(root, "docs/DOCS_SITE.md"),
-  references = referencePages,
+  references = [],
   demos = demoPages.map((page) => page.route),
 } = {}) {
   const problems = [];
   const pages = [];
+  const homed = [];
   const say = (file) => relative(root, file);
 
   const contentFiles = existsSync(contentDir)
@@ -180,6 +182,12 @@ export function checkDocs({
       title: data.title,
       order: data.order,
     });
+    const related = data.related ?? [];
+    page.links.push(
+      ...(Array.isArray(related) ? related : [related]).map(
+        (route) => `/${String(route)}`,
+      ),
+    );
   }
 
   for (const meta of metaFiles) {
@@ -192,6 +200,10 @@ export function checkDocs({
       );
       continue;
     }
+    if (page.home !== undefined) {
+      homed.push({ name, home: page.home, file: playground });
+      continue;
+    }
     const route = `${(page.section ?? "").split("/")[0]}/${kebab(name)}`;
     pages.push({
       route,
@@ -200,6 +212,26 @@ export function checkDocs({
       links: [],
       ...page,
     });
+  }
+
+  for (const { name, home, file } of homed) {
+    const written = pages.find(
+      (page) => page.route === home && page.file.endsWith(".mdx"),
+    );
+    if (!written) {
+      problems.push(
+        `${say(file)} gives ${name} the home ${home}, which isn't a written page. Fix: write apps/docs/content/${home}.mdx, or point home at one that exists.`,
+      );
+      continue;
+    }
+    const shown = new RegExp(`<ComponentDocs\\s+of="${name}"`).test(
+      readFileSync(written.file, "utf8"),
+    );
+    if (!shown) {
+      problems.push(
+        `${say(written.file)} is ${name}'s home but doesn't show it. Fix: add a "## ${name}" heading and <ComponentDocs of="${name}" /> under it.`,
+      );
+    }
   }
 
   for (const reference of references) {

@@ -16,7 +16,7 @@ export const page: DocsPage = {
   title: "OverflowCluster",
   description:
     'A row of actions that moves its lowest-priority items into a "More" menu instead of wrapping, overlapping or shrinking.',
-  order: 170,
+  order: 60,
   status: "stable",
   since: "0.2.0",
 };

@@ -1,0 +1,42 @@
+---
+title: Reduced motion
+description: What changes when someone asks for less motion, and how to respect it in your own code.
+section: motion
+order: 50
+status: stable
+since: 0.3.0
+related: [motion/principles, foundations/theming]
+---
+
+Reduced motion is the mode buttery switches to when a person asks their system for less motion, or an app sets it with `ButteryProvider reducedMotion="always"`. Every preset and component follows it on its own; code that animates something itself reads the same setting.
+
+## What changes
+
+- Springs become instant: things land in their new place on the next frame.
+- Reveals and appearances become plain fades of 100ms at most.
+- Loops stop, and confetti doesn't fire.
+- Hover lifts and arrow nudges are skipped.
+- Layout still updates: a panel that changes size still changes size, just without animating.
+
+## In your own code
+
+`useMotionPreference()` returns `"full"` or `"reduced"`, and `useButteryTransition(name)` returns the spring you name, or an instant one with reduced motion. CSS can read the same thing: `--bt-motion` is 1 with full motion and 0 with reduced, for durations worked out with `calc()`.
+
+```tsx
+import type { ReactElement } from "react";
+import { motion } from "motion/react";
+import { useButteryTransition } from "@buttery/core";
+
+export function Progress({ done }: { readonly done: number }): ReactElement {
+  const transition = useButteryTransition("smooth");
+  return (
+    <motion.div
+      className="progress-bar"
+      animate={{ scaleX: done }}
+      transition={transition}
+    />
+  );
+}
+```
+
+`ButteryProvider`'s `reducedMotion` is `"user"` by default, following the system. Set `"always"` or `"never"` to override it, such as from a setting of your app's own.

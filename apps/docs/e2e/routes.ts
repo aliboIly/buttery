@@ -1,26 +1,50 @@
 import { globSync, readFileSync } from "node:fs";
 import { basename } from "node:path";
-import { componentRoute, demoPages, referencePages } from "../src/routes.ts";
+import { componentRoute, demoPages } from "../src/routes.ts";
 
-/** A component's section, read from the `page` its `*.playground.tsx` exports. */
-function sectionOf(meta: string): string {
+/** A component's page metadata, read from the `page` its `*.playground.tsx` exports. */
+function pageOf(meta: string): {
+  readonly root: string;
+  readonly home?: string;
+} {
   const playground = meta.replace(/\.meta\.ts$/, ".playground.tsx");
-  const found = /section:\s*"([^"]+)"/.exec(readFileSync(playground, "utf8"));
-  if (!found?.[1]) throw new Error(`${playground} has no page section.`);
-  return found[1].split("/")[0] ?? found[1];
+  const source = readFileSync(playground, "utf8");
+  const section = /section:\s*"([^"]+)"/.exec(source)?.[1];
+  if (!section) throw new Error(`${playground} has no page section.`);
+  const home = /home:\s*"([^"]+)"/.exec(source)?.[1];
+  return {
+    root: section.split("/")[0] ?? section,
+    ...(home === undefined ? {} : { home }),
+  };
 }
 
-/** Every component with a page, read from the meta files that create the pages, with its path. */
+/**
+ * Every component with a page of its own, read from the meta files that create the pages, with its path.
+ * Components whose home is a written page show there instead.
+ */
 export const componentRoutes: readonly {
   readonly name: string;
   readonly route: string;
 }[] = globSync("packages/*/src/**/*.meta.ts")
-  .map((path) => ({ path, name: basename(path, ".meta.ts") }))
+  .map((path) => ({ name: basename(path, ".meta.ts"), page: pageOf(path) }))
+  .filter(({ page }) => page.home === undefined)
   .sort((a, b) => a.name.localeCompare(b.name))
-  .map(({ path, name }) => ({
+  .map(({ name, page }) => ({
     name,
-    route: `${sectionOf(path)}/${componentRoute(name)}`,
+    route: `${page.root}/${componentRoute(name)}`,
   }));
+
+/** Every written page's path and title, read from the MDX files under `apps/docs/content`. */
+export const contentRoutes: readonly {
+  readonly route: string;
+  readonly title: string;
+}[] = globSync("apps/docs/content/**/*.mdx")
+  .map((path) => ({
+    route: path.replace(/^apps\/docs\/content\//, "").replace(/\.mdx$/, ""),
+    title:
+      /^title:\s*(.+)$/m.exec(readFileSync(path, "utf8"))?.[1]?.trim() ?? "",
+  }))
+  .sort((a, b) => a.route.localeCompare(b.route));
 
 const ROOTS = [
   "get-started",
@@ -56,7 +80,7 @@ export function url(route: string, settings = ""): string {
 
 /** Every page's path, read from the files that create them. */
 export const routes: readonly string[] = [
-  ...referencePages.map((page) => page.route),
+  ...contentRoutes.map((page) => page.route),
   ...demoPages.map((page) => `demos/${page.route}`),
   ...componentRoutes.map(({ route }) => route),
 ];

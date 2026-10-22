@@ -1,0 +1,35 @@
+---
+title: Choreography
+description: The larger motion patterns buttery's components share, from the morphing nav menu to a card that becomes its dialog.
+section: motion
+order: 40
+status: stable
+since: 0.3.0
+related: [motion/presets, components/morph-menu, components/expandable-card]
+---
+
+Choreography is motion that involves more than one element moving together, such as a menu panel that reshapes between sections. Use the components that build it in, listed with each pattern, rather than recreating it.
+
+## The morphing menu
+
+`NavBar` and `MorphMenu` keep one floating panel open while the pointer moves between menus: the panel resizes and moves to fit each section on `spring.snappy`, and the old columns fade as the new ones slide in from the direction of travel. A menu opens after the pointer rests on its trigger for 150ms, and at once when it moves between the triggers of an open menu.
+
+## Card to dialog
+
+An `ExpandableCard` grows into its dialog on `spring.morph`, its title traveling with it, while the other cards fade back and a scrim washes in. Closing, the dialog folds back into the same card on `spring.smooth`.
+
+## Staggered entrances
+
+`Reveal` and `Stagger` bring content in once, the first time it's 15% in view: each child rises 16px and fades in on `spring.gentle`, 50ms after the one before, the whole entrance in 900ms at most. Content on screen when the page loads isn't staggered in: it shows at once, or with one short fade.
+
+## Living demos
+
+`Loop` cycles a product visual's states every few seconds, such as a number ticking up or a row appearing, and pauses when it's offscreen or motion is reduced.
+
+## Forward and back arrows
+
+A `Button` or `ArrowLink` with `arrow="forward"` turns its chevron into an arrow on hover or focus, in 120ms, without changing its width. Use it on actions that move forward or back, such as Next, never on Save or Delete.
+
+## Hover and context
+
+A pressable card lifts 2px on hover, and its shadow steps up. A menu over content blurs the page behind it, and a dialog dims it, both fading over 120ms.

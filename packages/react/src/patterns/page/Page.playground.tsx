@@ -10,6 +10,7 @@ export const page: DocsPage = {
   order: 180,
   status: "stable",
   since: "0.6.0",
+  home: "layout/page-grid-and-containers",
 };
 
 export const demos: readonly DemoSection[] = [

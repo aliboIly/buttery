@@ -1,0 +1,31 @@
+---
+title: Using coding agents
+description: How buttery helps coding agents build with it: instructions, a skill, and checks that say how to fix what fails.
+section: get-started
+order: 60
+status: beta
+since: 0.8.0
+related: [get-started/make-anything-buttery, layout/the-layout-contract]
+---
+
+buttery is built so coding agents get its rules right the first time: one vocabulary of props, types that reject wrong values, and checks whose messages say how to fix the problem. Use the files below to point an agent at the system before it writes any UI.
+
+## Instructions
+
+`AGENTS.md` at a project's root tells agents which docs to read, the rules that are never broken (tokens only, flow layout, the component contract, the motion rules) and the commands that check their work. Agents that read `CLAUDE.md` find it imported from there.
+
+## The make-it-buttery skill
+
+`.claude/skills/make-it-buttery/SKILL.md` walks an agent through building or restyling a screen: read the system, list what's on the screen, map it to buttery from the top down, apply motion by rule, then check the result. Claude Code loads it as a skill; other agents are pointed to the file by `AGENTS.md`.
+
+## Checks that explain themselves
+
+When something's wrong, the checks say what and how to fix it:
+
+- `expectButtery` reports each layout problem with the element, the rule, the measurement and a fix, and `pnpm test:layout --reporter=json` prints them as JSON for an agent to read.
+- Components warn in development with the fix in the message, such as a dialog without a name.
+- buttery's stylelint config names the token to use instead of a raw value.
+
+## Coming next
+
+A command line tool (`create-buttery`, `buttery init`, `buttery add`) and an MCP server that answers questions about components and tokens come in the next phase.

@@ -1,0 +1,73 @@
+---
+title: Spacing and sizing
+description: The 4px spacing scale, the control heights that change with density, and the widths pages and panels keep to.
+section: foundations
+order: 30
+status: stable
+since: 0.2.0
+related: [layout/the-layout-contract, foundations/radius]
+---
+
+import {
+  HeightScale,
+  SpacingScale,
+  WidthTokens,
+} from "../../src/foundations/blocks.tsx";
+
+buttery's spacing is a scale of steps on a 4px grid, from `0.5` (2px) to `32` (128px). Use a step for every gap and padding, and the space around things stays in proportion from one screen to the next.
+
+## Spacing steps
+
+Layout props take a step, not a length: `gap={3}` is 12px and `pad={4}` is 16px. Half steps are strings, such as `padX="0.5"`.
+
+```tsx
+import type { ReactElement } from "react";
+import { Inline, Stack, Surface, Text } from "@buttery/core";
+import { Button } from "@buttery/react";
+
+export function PayoutCard(): ReactElement {
+  return (
+    <Surface level="card" pad={5}>
+      <Stack gap={3}>
+        <Text variant="title-sm">Next payout</Text>
+        <Text variant="body-sm" tone="secondary">
+          $1,280.40 arrives on Friday.
+        </Text>
+        <Inline gap={2}>
+          <Button size="sm">View payouts</Button>
+        </Inline>
+      </Stack>
+    </Surface>
+  );
+}
+```
+
+In CSS the steps are variables, `--bt-space-<step>`, with an underscore for a half step: `var(--bt-space-0_5)`.
+
+```css
+/* Do: a step from the scale. */
+.toolbar {
+  gap: var(--bt-space-2);
+}
+
+/* Don't: a length off the scale, which buttery's stylelint config fails. */
+.toolbar {
+  gap: 10px;
+}
+```
+
+<SpacingScale />
+
+## Control heights
+
+Every control is one of a few heights, so buttons, fields and segmented controls line up in a row. Each height has a comfortable value and a compact one, and `ButteryProvider`'s `density` picks between them for the whole app.
+
+<HeightScale />
+
+Components take their height from these tokens on their own. In your own CSS, read them as `var(--bt-h-control)` and the like.
+
+## Widths
+
+Fixed widths for the parts that have one, such as the sidebar, a dialog or a page's content. Anything else takes its width from its container.
+
+<WidthTokens />

@@ -12,6 +12,7 @@ export const page: DocsPage = {
   order: 120,
   status: "stable",
   since: "0.3.0",
+  home: "motion/presets",
 };
 
 function FillDemo(): ReactElement {

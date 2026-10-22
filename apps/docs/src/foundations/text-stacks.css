@@ -1,7 +1,7 @@
 .ts-stage {
-  --bt-text-stacks-page-media-height: 200px;
-  --bt-text-stacks-page-page-dot: 6px;
-  --bt-text-stacks-page-page-dot-active: 18px;
+  --bt-text-stacks-media-height: 200px;
+  --bt-text-stacks-page-dot: 6px;
+  --bt-text-stacks-page-dot-active: 18px;
 
   display: grid;
   grid-template-columns: var(--bt-w-dialog) minmax(0, 1fr);
@@ -23,7 +23,7 @@
 }
 
 .ob-media {
-  block-size: var(--bt-text-stacks-page-media-height);
+  block-size: var(--bt-text-stacks-media-height);
   border-radius: var(--bt-r-md);
 }
 
@@ -47,14 +47,14 @@
 }
 
 .ob-dot {
-  inline-size: var(--bt-text-stacks-page-page-dot);
-  block-size: var(--bt-text-stacks-page-page-dot);
+  inline-size: var(--bt-text-stacks-page-dot);
+  block-size: var(--bt-text-stacks-page-dot);
   border-radius: var(--bt-r-full);
   background-color: var(--bt-dot);
 }
 
 .ob-dot[data-active] {
-  inline-size: var(--bt-text-stacks-page-page-dot-active);
+  inline-size: var(--bt-text-stacks-page-dot-active);
   background-color: var(--bt-dot-active);
 }
 

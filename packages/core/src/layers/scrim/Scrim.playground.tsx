@@ -22,6 +22,7 @@ export const page: DocsPage = {
   order: 140,
   status: "stable",
   since: "0.2.0",
+  home: "foundations/layers",
 };
 
 function DimDemo(): ReactElement {

@@ -1,0 +1,69 @@
+---
+title: Page grid and containers
+description: The page grid, the content column, sections and centered content, for marketing and content pages.
+section: layout
+order: 40
+status: stable
+since: 0.2.0
+related: [layout/responsive, patterns/app-shell]
+---
+
+The page grid is the set of columns, gutters and side padding a marketing or content page snaps to, which changes at 640px and 1024px of the page's width. Build such a page from `Page`, `Section` and `Container`, and its columns, padding and headlines follow the room it has.
+
+## The grid
+
+<DocsTable
+  columns={["Page width", "Columns", "Gutter", "Side padding"]}
+  rows={[
+    ["Under 640px", "4", "16px", "16px"],
+    ["640px to 1023px", "8", "24px", "24px"],
+    ["1024px and up", "12", "24px", "32px"],
+  ]}
+/>
+
+Content stays at most 1200px wide (`--bt-w-page`), centered. Visuals may run past the content column to the window's edge; text never does. In development, ⌥⇧G shows the columns over the page.
+
+## The parts
+
+- `Page` is the page itself: a column of sections, and the container the grid, the side padding and the display type follow. A page reads the same in a window and in a panel as wide.
+- `Section` is a band of the page: room above and below, an optional title and body, and its content in a `Container`. Its room steps down a size on a phone, so padding never outweighs content.
+- `Container` is the content column: at most 1200px wide, centered with padding rather than margins.
+- `Center` centers its content on both axes in the space it's given, such as an empty state on a stage.
+
+```tsx
+import type { ReactElement } from "react";
+import { Page, Section } from "@buttery/react";
+import { Text } from "@buttery/core";
+
+export function About(): ReactElement {
+  return (
+    <Page>
+      <Section
+        size="lg"
+        title="Roasted to order"
+        body="Every bag is roasted the week it ships."
+      >
+        <Text variant="body">Our roastery is in Portland.</Text>
+      </Section>
+    </Page>
+  );
+}
+```
+
+App screens use `AppShell` and `AppPage` instead, with the same side padding.
+
+## Page
+
+<ComponentDocs of="Page" />
+
+## Section
+
+<ComponentDocs of="Section" />
+
+## Container
+
+<ComponentDocs of="Container" />
+
+## Center
+
+<ComponentDocs of="Center" />

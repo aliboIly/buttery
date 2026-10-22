@@ -9,6 +9,7 @@ export const page: DocsPage = {
   order: 150,
   status: "stable",
   since: "0.2.0",
+  home: "layout/stack-inline-and-grid",
 };
 
 function Cell({ label }: { readonly label: string }): ReactElement {

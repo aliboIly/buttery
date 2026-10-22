@@ -1,38 +1,3 @@
-/** Pages that aren't a component's: the token, surface and type references, and the motion presets. */
-export const referencePages = [
-  {
-    route: "foundations/tokens",
-    title: "Tokens",
-    section: "foundations",
-    order: 10,
-  },
-  {
-    route: "foundations/surfaces",
-    title: "Surfaces",
-    section: "foundations",
-    order: 20,
-  },
-  {
-    route: "foundations/levels",
-    title: "Levels",
-    section: "foundations",
-    order: 30,
-  },
-  {
-    route: "foundations/palettes",
-    title: "Palettes",
-    section: "foundations",
-    order: 40,
-  },
-  {
-    route: "foundations/text-stacks",
-    title: "Text stacks",
-    section: "foundations",
-    order: 50,
-  },
-  { route: "motion/presets", title: "Presets", section: "motion", order: 10 },
-] as const;
-
 /** The version the site documents. */
 export const DOCS_VERSION = "0.8.0";
 

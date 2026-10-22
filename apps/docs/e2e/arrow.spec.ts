@@ -64,7 +64,7 @@ function partIds(run: Run): Parts {
 
 async function open(page: Page, motion: "full" | "reduced"): Promise<void> {
   await installSampler(page);
-  await page.goto(`/motion/presets?chrome=0&motion=${motion}`);
+  await page.goto(`/lab/motion?chrome=0&motion=${motion}`);
   await page.getByRole("heading", { name: "Motion", level: 1 }).waitFor();
   await page.evaluate(async () => {
     await document.fonts.ready;

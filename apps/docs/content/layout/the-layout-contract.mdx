@@ -1,0 +1,70 @@
+---
+title: The layout contract
+description: The 13 rules every buttery screen follows, so nothing overlaps, overflows or shifts, and how they're checked.
+section: layout
+order: 10
+status: stable
+since: 0.2.0
+related: [layout/stack-inline-and-grid, layout/responsive]
+---
+
+The layout contract is the set of rules buttery's components follow and its checks enforce: things sit in flow with gaps between them, take their sizes from tokens, and never overlap, overflow or move after a press. Follow it in your own screens, and the same checks keep them right at every width.
+
+## Flow, not placement
+
+Siblings are laid out by `Stack`, `Inline` or `Grid`, with a `gap` from the spacing scale. A component never sets its own outer margin, and negative margins aren't used anywhere.
+
+```tsx
+import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import { Button } from "@buttery/react";
+
+// Do: the parent sets the space between its children.
+export function Notice(): ReactElement {
+  return (
+    <Stack gap={3}>
+      <Text variant="title-sm">Payouts are paused</Text>
+      <Button size="sm">Add a bank account</Button>
+    </Stack>
+  );
+}
+```
+
+```css
+/* Don't: a margin on a child, which moves it wherever it's reused. */
+.notice-button {
+  margin-top: 12px;
+}
+```
+
+`position: absolute`, `fixed` and `sticky` belong to the layer primitives (`Layer`, `Popover`, `Scrim`, `Sticky`, `FloatingLanes`) and to a component's own internal parts, such as a slider's thumb. App code doesn't use them; it uses those primitives.
+
+## Sizes come from tokens
+
+Controls take their heights from the height tokens, and fixed widths come from the width tokens; everything else takes the width its container gives it. Every flex and grid child in buttery's primitives has `min-width: 0`, so long content shrinks instead of pushing its neighbors off the screen.
+
+## Text never overflows
+
+One-line control text truncates with an ellipsis and keeps the whole text in a tooltip; `Text truncate` does both. Content text wraps, at most 60 characters a line for body text and 22 for display headings. Numbers that change use tabular figures, so a counting number doesn't push what's beside it.
+
+## Media keeps its shape
+
+Images and canvases keep their aspect ratio. `FitBox` fits content of a given aspect into the space it has, as large as it can and centered.
+
+## Containers, not the viewport
+
+Components respond to the room they're given, through container queries, so the same component works in a 340px inspector and on a 1200px page. A row that runs out of room moves its least important items into a "More" menu with `OverflowCluster`, rather than wrapping, overlapping or shrinking its text.
+
+## Scrolling stays inside
+
+The page never scrolls sideways. Panels scroll on their own and stop the page from scrolling with them. Sticky bars publish their height, so links to a heading land below them, and floating UI such as toasts goes in `FloatingLanes`, where items stack instead of covering each other.
+
+## Nothing moves after a press
+
+Loading states, skeletons and labels that change, such as Continue becoming Finish, keep their exact size, and fonts load without moving text. The one thing that moves after a press is what the press is about.
+
+## How it's checked
+
+- `LayoutGuard` runs in development and outlines anything that overlaps, overflows, truncates without saying so or drifts off the scale. ⌥⇧L hides and shows the outlines, and ⌥⇧G shows the page grid.
+- `expectButtery(page)` from `@buttery/test` runs the same checks in Playwright, at every width, theme and density you ask for, and reports each problem with how to fix it.
+- buttery's stylelint config fails raw colors, lengths off the scale, `z-index` values that aren't a layer band, negative margins and `transition: all`.

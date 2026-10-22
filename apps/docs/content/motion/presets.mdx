@@ -1,0 +1,58 @@
+---
+title: Presets
+description: The motion primitives that apply buttery's rules for you, from presence and morphing to reveals and loops.
+section: motion
+order: 30
+status: stable
+since: 0.3.0
+related: [motion/tokens, motion/choreography]
+---
+
+The motion presets are primitives that animate one kind of change the buttery way, with the right token and reduced motion built in. Reach for a preset before writing an animation of your own, and most screens need no motion code at all.
+
+## Which one
+
+- `Presence` for something that appears and leaves, with a fade, a rise or a pop.
+- `Morph` for a container whose height follows its content.
+- `SharedIndicator` for a highlight that slides between options, such as a tab's underline.
+- `Reveal` and `Stagger` for content entering the first time it scrolls into view.
+- `Loop` for a demo that cycles its states quietly, pausing offscreen and with reduced motion.
+
+For an element of your own, `buttery.div` and the other `buttery` elements take `enter` and `layout` props that use the same presets, and turn them off with reduced motion.
+
+```tsx
+import type { ReactElement } from "react";
+import { buttery } from "@buttery/react";
+
+export function Notice(): ReactElement {
+  return (
+    <buttery.div surface="card" pad={4} enter="rise">
+      Your export is ready.
+    </buttery.div>
+  );
+}
+```
+
+## Presence
+
+<ComponentDocs of="Presence" />
+
+## Morph
+
+<ComponentDocs of="Morph" />
+
+## SharedIndicator
+
+<ComponentDocs of="SharedIndicator" />
+
+## Reveal
+
+<ComponentDocs of="Reveal" />
+
+## Stagger
+
+<ComponentDocs of="Stagger" />
+
+## Loop
+
+<ComponentDocs of="Loop" />

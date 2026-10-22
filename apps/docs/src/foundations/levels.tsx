@@ -6,7 +6,7 @@ import type {
   SurfaceLevel,
 } from "@buttery/core";
 import { ButteryProvider } from "@buttery/react";
-import "./levels-page.css";
+import "./levels.css";
 
 const SCHEMES: readonly ColorScheme[] = ["light", "dark"];
 
@@ -38,7 +38,7 @@ function LevelTile({
   );
 }
 
-export function LevelsPage(): ReactElement {
+export function SurfaceLevels(): ReactElement {
   return (
     <div className="pg-page">
       <div className="lv-columns">

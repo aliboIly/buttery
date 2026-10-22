@@ -6,7 +6,7 @@ export const page: DocsPage = {
   title: "FitBox",
   description:
     "Draws its content in the largest box of a given aspect ratio that fits, always centered.",
-  order: 140,
+  order: 50,
   status: "stable",
   since: "0.2.0",
 };

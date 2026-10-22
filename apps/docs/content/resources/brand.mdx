@@ -1,0 +1,29 @@
+---
+title: Brand
+description: buttery's name, its mark and where the 🧈 character goes instead, with the files made from the mark.
+section: resources
+order: 30
+status: new
+since: 0.8.0
+related: [get-started/introduction]
+---
+
+buttery's brand is its lowercase name, its mark (a soft pat of butter) and the 🧈 character in text. Use the mark wherever buttery itself is named in an interface, and the character in writing.
+
+## The name
+
+Always lowercase, **buttery**, even at the start of a sentence and in headings. The packages are `@buttery/core`, `@buttery/react` and the rest of the `@buttery/*` scope, the command line tool is `buttery`, and CSS variables and classes start with `--bt-` and `.bt-`. The tagline is "Make anything buttery."
+
+## The mark and the character
+
+The mark is an original drawing, `BrandMark`, in the brand colors (`--bt-brand-cream`, `--bt-brand-butter` and `--bt-brand-butter-deep`). Use it in UI, favicons and app icons, so it looks the same everywhere.
+
+The 🧈 character (U+1F9C8, butter) is for text: a README title, release notes, command line output such as `🧈 buttery check passed`. It looks different on every platform, and no platform's emoji artwork may be used as a logo or an image, so it never stands in for the mark.
+
+## Files made from the mark
+
+`pnpm brand:assets` makes the favicons (`favicon.svg` and `favicon.ico`), the desktop app's icons and the README's hero from `BrandMark` itself, so a change to the drawing reaches every one. A test fails if the favicon and the component drift apart.
+
+## BrandMark
+
+<ComponentDocs of="BrandMark" />

@@ -14,10 +14,13 @@ export function ExampleFrame({
   example,
   frame = "section",
   headingId,
+  headingLevel = 3,
 }: {
   readonly example: Example;
   readonly frame?: DemoFrame;
   readonly headingId?: string;
+  /** The level of the example's title among the page's headings. Defaults to 3. */
+  readonly headingLevel?: 3 | 4;
 }): ReactElement {
   const [showing, setShowing] = useState(false);
   const { Component, code, title } = example;
@@ -25,7 +28,11 @@ export function ExampleFrame({
     <Stack gap={3}>
       <Stack gap={1}>
         <Text variant="label" asChild>
-          <h3 id={headingId}>{title}</h3>
+          {headingLevel === 3 ? (
+            <h3 id={headingId}>{title}</h3>
+          ) : (
+            <h4 id={headingId}>{title}</h4>
+          )}
         </Text>
         {code.caption === "" ? null : (
           <Text variant="body-sm" tone="secondary">

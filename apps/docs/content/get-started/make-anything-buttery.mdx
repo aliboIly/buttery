@@ -1,0 +1,60 @@
+---
+title: Make anything buttery
+description: The four ways to bring buttery into an app, from wiring up the provider to whole-page patterns.
+section: get-started
+order: 40
+status: stable
+since: 0.8.0
+related: [get-started/quick-start, layout/the-layout-contract]
+---
+
+There are four levels of effort for making an app buttery, and each one adds to the one before. Start at the first and stop wherever the app feels right; nothing at a higher level is required.
+
+## Level 0: wire it up
+
+Import the stylesheets and wrap the app in `ButteryProvider`:
+
+```tsx
+import "@buttery/core/styles.css";
+import "@buttery/react/styles.css";
+import type { ReactElement } from "react";
+import { ButteryProvider } from "@buttery/react";
+import { App } from "./App.tsx";
+
+export function Root(): ReactElement {
+  return (
+    <ButteryProvider>
+      <App />
+    </ButteryProvider>
+  );
+}
+```
+
+That gives the whole app the tokens, Inter, focus rings, selection color and scrollbars, light and dark, the layers and lanes for menus and toasts, motion presets that follow reduced motion, and `LayoutGuard` in development.
+
+## Level 1: wrap what you have
+
+The `buttery` factory turns any element or component into a buttery one, with token-typed props for its surface, padding, gap, press feedback and entrance:
+
+```tsx
+import type { ReactElement } from "react";
+import { buttery } from "@buttery/react";
+
+export function Receipt(): ReactElement {
+  return (
+    <buttery.div surface="card" pad={4} stack gap={3} enter="rise">
+      Order 1042 is on its way.
+    </buttery.div>
+  );
+}
+```
+
+`buttery(Component, { surface: "raised", hover: "lift" })` does the same for a component from another library. Plain HTML can use the recipes as classes and attributes, such as `class="bt-surface" data-level="card"`.
+
+## Level 2: compose components
+
+Build screens from buttery's components and primitives, as the [quick start](/get-started/quick-start) does: `Stack`, `Inline` and `Grid` for layout, and controls such as `Button`, `Slider` and `SegmentedControl` that already follow the layout and motion rules.
+
+## Level 3: start from a pattern
+
+Patterns are whole screens that already obey the rules: `AppShell` with `AppPage` for an app, `Page` with heroes and a bento grid for a marketing page, and page templates for settings, details, catalogs and search results.

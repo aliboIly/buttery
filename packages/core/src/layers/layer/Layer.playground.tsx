@@ -21,6 +21,7 @@ export const page: DocsPage = {
   order: 130,
   status: "stable",
   since: "0.2.0",
+  home: "foundations/layers",
 };
 
 function NestedLayers(): ReactElement {

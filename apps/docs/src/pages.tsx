@@ -8,17 +8,12 @@ import { contentPages, labPages } from "./content.ts";
 import type { Heading } from "./content.ts";
 import { buildNav, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
-import { LevelsPage } from "./pages/LevelsPage.tsx";
 import { MotionPage } from "./pages/MotionPage.tsx";
-import { PalettesPage } from "./pages/PalettesPage.tsx";
-import { SurfacesPage } from "./pages/SurfacesPage.tsx";
-import { TextStacksPage } from "./pages/TextStacksPage.tsx";
-import { TokensPage } from "./pages/TokensPage.tsx";
 import { CardStudio } from "./card-studio/CardStudio.tsx";
 import { CardStudioSite } from "./card-studio/CardStudioSite.tsx";
 import { Roastery } from "./roastery/Roastery.tsx";
 import { components } from "./registry.ts";
-import { demoPages, referencePages } from "./routes.ts";
+import { demoPages } from "./routes.ts";
 
 export interface Page {
   /** Its path without the leading slash, such as `components/button`. */
@@ -49,17 +44,6 @@ const DEMOS: Readonly<
   roastery: { render: () => <Roastery />, fullWindow: true },
 };
 
-const REFERENCES: Readonly<
-  Record<(typeof referencePages)[number]["route"], () => ReactElement>
-> = {
-  "foundations/tokens": () => <TokensPage />,
-  "foundations/surfaces": () => <SurfacesPage />,
-  "foundations/levels": () => <LevelsPage />,
-  "foundations/palettes": () => <PalettesPage />,
-  "foundations/text-stacks": () => <TextStacksPage />,
-  "motion/presets": () => <MotionPage />,
-};
-
 const ComparePage =
   import.meta.env.DEV && referenceRoot !== null
     ? lazy(async () => {
@@ -68,24 +52,8 @@ const ComparePage =
       })
     : null;
 
-const referenceDocs: readonly Page[] = referencePages.map(
-  ({ route, title, section, order }) => ({
-    route,
-    title,
-    render: REFERENCES[route],
-    docs: {
-      section,
-      title,
-      description: `buttery's ${title.toLowerCase()}.`,
-      order,
-      status: "stable",
-      since: "0.2.0",
-    },
-  }),
-);
-
 const componentDocs: readonly Page[] = components.flatMap((entry) =>
-  entry.page
+  entry.page && entry.page.home === undefined
     ? [
         {
           route: `${rootOf(entry.page.section)}/${entry.route}`,
@@ -106,7 +74,7 @@ const contentDocs: readonly Page[] = contentPages.map((entry) => ({
   headings: entry.headings,
 }));
 
-const docsPages = [...contentDocs, ...referenceDocs, ...componentDocs];
+const docsPages = [...contentDocs, ...componentDocs];
 
 /** The demos, each its own app, for the sidebar's last section. */
 export const demoLinks: readonly {
@@ -148,6 +116,11 @@ export const pageGroups: readonly PageGroup[] = [
 /** Pages only tests and the maintainer visit, in development only; the nav never links to them. */
 const labDocs: readonly Page[] = import.meta.env.DEV
   ? [
+      {
+        route: "lab/motion",
+        title: "Motion timing",
+        render: () => <MotionPage />,
+      },
       ...(ComparePage
         ? [
             {

@@ -1,0 +1,52 @@
+---
+title: Elevation
+description: Surface levels, from the app's background to dialogs, and the shadows that set them apart.
+section: foundations
+order: 50
+status: stable
+since: 0.2.0
+related: [foundations/radius, foundations/layers]
+---
+
+import { Shadows } from "../../src/foundations/blocks.tsx";
+import { SurfaceLevels } from "../../src/foundations/levels.tsx";
+
+A surface level is a background, edge, shadow, radius and padding that together say how far something sits above the page. Use `Surface` with a level, rather than styling backgrounds and shadows by hand, so every card, menu and dialog reads at the right height in light and dark.
+
+## The levels
+
+From the lowest:
+
+- `app`: the background behind everything.
+- `panel`: a large region on the app background, such as an inspector.
+- `section`: a quiet well that groups cards.
+- `card`: content on a page or in a section.
+- `raised`: a card that's lifted, such as a selected item.
+- `floating`: menus, popovers and toolbars that float over the page.
+- `dialog`: dialogs, over a scrim.
+- `inset`: a sunken field inside a card.
+
+```tsx
+import type { ReactElement } from "react";
+import { Surface, Text } from "@buttery/core";
+
+export function MenuPanel(): ReactElement {
+  return (
+    <Surface level="floating" pad={3}>
+      <Text variant="menu">Duplicate</Text>
+    </Surface>
+  );
+}
+```
+
+<Example of="Surface" name="floating-menu" />
+
+In dark mode surfaces get lighter as they rise instead of casting stronger shadows, which can't be seen on a dark background. The same levels in both:
+
+<SurfaceLevels />
+
+## Shadows
+
+The shadows behind the levels, and the rings for selection and focus:
+
+<Shadows />

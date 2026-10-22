@@ -105,7 +105,7 @@ async function open(
 ): Promise<void> {
   await installSampler(page, startOnLoad);
   const setting = motion === "system" ? "" : `&motion=${motion}`;
-  await page.goto(`/motion/presets?chrome=0${setting}`);
+  await page.goto(`/lab/motion?chrome=0${setting}`);
   await page.getByRole("heading", { name: "Motion", level: 1 }).waitFor();
   await page.evaluate(async () => {
     await document.fonts.ready;

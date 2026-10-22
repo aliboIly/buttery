@@ -1,0 +1,51 @@
+---
+title: Layers
+description: The z bands menus, dialogs, toasts and tooltips open into, and the primitives that put things in them.
+section: foundations
+order: 60
+status: stable
+since: 0.2.0
+related: [foundations/elevation, components/menu, components/dialog]
+---
+
+import { LayerTokens } from "../../src/foundations/blocks.tsx";
+
+A layer is a band of the page's stacking order, such as `dropdown`, `modal` or `toast`, with a container that covers the window. Use the layer primitives for anything that floats over the page, rather than a `z-index` of your own, so a menu inside a dialog still opens above the dialog and a toast stays above both.
+
+## The bands
+
+From the lowest. Each band is a token, `--bt-z-<band>`, and buttery's stylelint config fails a `z-index` that isn't one.
+
+<LayerTokens />
+
+## Put something in a layer
+
+`Layer` renders its children above the page in the band you name, in a container that covers the window but lets clicks through. A layer opened from inside another one stacks above it. Menus, popovers, dialogs and tooltips open their own layers, so most code never renders `Layer` itself.
+
+## Scrims
+
+`Scrim` covers the window behind a layer's content: `dim` darkens it, as behind a dialog, and `blur` softens it, as behind a menu that opens over busy content. Put it first inside the `Layer`, so it sits under what it sets apart.
+
+## Sticky bars
+
+`Sticky` keeps a bar at the top or bottom of its scroll container while the rest scrolls, and stacks with the other sticky bars there instead of covering them. `variant="aside"` makes a sticky side column, such as this site's sidebar.
+
+## Floating lanes
+
+Toasts, notices and guides that float over the page go in a lane, so they stack instead of covering each other: toasts at the bottom center, notices at the top end, and guidance, such as a setup guide, at the bottom end. Lanes move out of the way of sticky bars and anything registered with `useFloatingObstacle`. Render into one with `FloatingLanes.Item`; for toasts, call `toast()` from `@buttery/react`.
+
+## Layer
+
+<ComponentDocs of="Layer" />
+
+## Scrim
+
+<ComponentDocs of="Scrim" />
+
+## Sticky
+
+<ComponentDocs of="Sticky" />
+
+## FloatingLanes
+
+<ComponentDocs of="FloatingLanes" />

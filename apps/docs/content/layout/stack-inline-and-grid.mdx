@@ -1,0 +1,60 @@
+---
+title: Stack, Inline and Grid
+description: The three flow primitives that lay out everything in buttery, and the divider between their children.
+section: layout
+order: 20
+status: stable
+since: 0.2.0
+related: [layout/the-layout-contract, foundations/spacing-and-sizing]
+---
+
+`Stack`, `Inline` and `Grid` lay out their children in a column, a row or a grid, with a `gap` from the spacing scale between them. Use them for every arrangement of siblings, so space belongs to the parent and a component looks the same wherever it's placed.
+
+## Choosing one
+
+- `Stack` for a column: a form's fields, a card's title over its text.
+- `Inline` for a row: a button group, an icon beside its label. `wrap` lets it wrap, and `uniform` makes every child as wide as the widest, for a row of equal buttons.
+- `Grid` for columns that change with the room: `columns={{ base: 1, md: 2, lg: 3 }}` steps at 640px and 1024px of the container it's in.
+
+All three take `align` and `justify`, and render a `div` unless you pass `asChild` to lay out an element of your own, such as a `ul`.
+
+```tsx
+import type { ReactElement } from "react";
+import { Grid, Inline, Stack, Text } from "@buttery/core";
+import { Button } from "@buttery/react";
+
+export function PlanPicker(): ReactElement {
+  return (
+    <Stack gap={4}>
+      <Text variant="title-md">Choose a plan</Text>
+      <Grid columns={{ base: 1, md: 3 }} gap={4}>
+        <Text variant="body">Starter</Text>
+        <Text variant="body">Roaster</Text>
+        <Text variant="body">Wholesale</Text>
+      </Grid>
+      <Inline gap={2} justify="end">
+        <Button variant="soft">Compare plans</Button>
+        <Button variant="primary">Continue</Button>
+      </Inline>
+    </Stack>
+  );
+}
+```
+
+`Divider` draws a hairline between children, across a stack or down a row, and is decorative unless it separates groups a screen reader should know about.
+
+## Stack
+
+<ComponentDocs of="Stack" />
+
+## Inline
+
+<ComponentDocs of="Inline" />
+
+## Grid
+
+<ComponentDocs of="Grid" />
+
+## Divider
+
+<ComponentDocs of="Divider" />

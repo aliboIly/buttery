@@ -11,6 +11,7 @@ export const page: DocsPage = {
   order: 190,
   status: "stable",
   since: "0.6.0",
+  home: "layout/page-grid-and-containers",
 };
 
 function Tile({ label }: { readonly label: string }): ReactElement {

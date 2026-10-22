@@ -1,0 +1,40 @@
+---
+title: Principles
+description: The ten rules every buttery animation follows, and the few things it never animates.
+section: motion
+order: 10
+status: stable
+since: 0.3.0
+related: [motion/tokens, motion/presets]
+---
+
+buttery's motion follows ten rules, measured from apps that feel smooth to use. Use them to decide whether something should move at all, and how, before reaching for a preset.
+
+## The ten rules
+
+1. Direct manipulation is instant. Dragging a slider or picking a swatch updates the result in the same frame; a value the person is driving is set, never tweened.
+2. Discrete changes settle in about 250ms with no overshoot, on `spring.smooth`. Small selection indicators, such as a segmented control's pill, are quicker, on `spring.snappy`.
+3. One surface morphs instead of closing and reopening: a menu that switches sections resizes, and a card that opens becomes its dialog.
+4. A container animates its height when what's inside it changes, and the content crossfades.
+5. New context dims rather than blacking out: a menu over content blurs the page behind, and a dialog darkens it.
+6. Arrivals are choreographed: a hero or a grid enters with a short rise and fade, staggered about 50ms, in 900ms at most, once.
+7. Exits are faster than entrances, about 60% as long, because the person has already decided.
+8. Hover answers within 150ms: an arrow extends, a card lifts 2px. Nothing is shown only on hover.
+9. Celebrations are rare: confetti only for a real finish, such as completing onboarding.
+10. Reduced motion is a mode of its own: springs become instant, reveals become plain fades of 100ms at most, loops stop and confetti is off. Layout still updates.
+
+## What never animates
+
+Numbers a person typed or set, layout during a drag, and anything longer than 400ms, apart from choreographed entrances and ambient loops. CSS transitions move only `opacity`, transforms, colors, shadows, `filter` and `backdrop-filter`; a change of size or position goes through Motion's `layout`.
+
+```css
+/* Do: transition the properties that change, on a token. */
+.chip {
+  transition: background-color var(--bt-dur-fast) var(--bt-ease-out);
+}
+
+/* Don't: transition: all, which animates layout too and fails buttery's stylelint config. */
+.chip {
+  transition: all 120ms;
+}
+```

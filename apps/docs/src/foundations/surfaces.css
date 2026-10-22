@@ -1,14 +1,14 @@
 .sf-app {
-  --bt-surfaces-page-knob-highlight: inset 0 1px 0 var(--bt-knob-highlight);
-  --bt-surfaces-page-dot: 22px;
-  --bt-surfaces-page-tilt: 32px;
-  --bt-surfaces-page-knob: 24px;
-  --bt-surfaces-page-anchor: 43px;
-  --bt-surfaces-page-anchor-dot: 6px;
-  --bt-surfaces-page-anchor-active: 10px;
-  --bt-surfaces-page-anchor-gap: 5.5px;
-  --bt-surfaces-page-mark: 24px;
-  --bt-surfaces-page-stage: 360px;
+  --bt-surfaces-knob-highlight: inset 0 1px 0 var(--bt-knob-highlight);
+  --bt-surfaces-dot: 22px;
+  --bt-surfaces-tilt: 32px;
+  --bt-surfaces-knob: 24px;
+  --bt-surfaces-anchor: 43px;
+  --bt-surfaces-anchor-dot: 6px;
+  --bt-surfaces-anchor-active: 10px;
+  --bt-surfaces-anchor-gap: 5.5px;
+  --bt-surfaces-mark: 24px;
+  --bt-surfaces-stage: 360px;
 
   padding: var(--bt-space-4);
   container-type: inline-size;
@@ -39,8 +39,8 @@
 
 .sf-mark {
   flex: none;
-  inline-size: var(--bt-surfaces-page-mark);
-  block-size: var(--bt-surfaces-page-mark);
+  inline-size: var(--bt-surfaces-mark);
+  block-size: var(--bt-surfaces-mark);
   border-radius: var(--bt-r-thumb);
   background: linear-gradient(
     135deg in oklab,
@@ -162,16 +162,16 @@
   display: grid;
   flex: none;
   place-items: center;
-  inline-size: var(--bt-surfaces-page-tilt);
-  block-size: var(--bt-surfaces-page-tilt);
+  inline-size: var(--bt-surfaces-tilt);
+  block-size: var(--bt-surfaces-tilt);
   border: 1px solid var(--bt-border-strong);
   border-radius: var(--bt-r-full);
   background-color: var(--bt-bg-inset);
 }
 
 .sf-knob {
-  inline-size: var(--bt-surfaces-page-knob);
-  block-size: var(--bt-surfaces-page-knob);
+  inline-size: var(--bt-surfaces-knob);
+  block-size: var(--bt-surfaces-knob);
   border: 1px solid var(--bt-knob-border);
   border-radius: var(--bt-r-full);
   background: radial-gradient(
@@ -185,11 +185,11 @@
 .sf-anchor {
   display: grid;
   flex: none;
-  grid-template-columns: repeat(3, var(--bt-surfaces-page-anchor-dot));
+  grid-template-columns: repeat(3, var(--bt-surfaces-anchor-dot));
   place-content: center;
-  gap: var(--bt-surfaces-page-anchor-gap);
-  inline-size: var(--bt-surfaces-page-anchor);
-  block-size: var(--bt-surfaces-page-anchor);
+  gap: var(--bt-surfaces-anchor-gap);
+  inline-size: var(--bt-surfaces-anchor);
+  block-size: var(--bt-surfaces-anchor);
   border: 1px solid var(--bt-border-strong);
   border-radius: var(--bt-r-md);
   background-color: var(--bt-bg-inset);
@@ -197,15 +197,15 @@
 
 .sf-anchor-dot {
   place-self: center;
-  inline-size: var(--bt-surfaces-page-anchor-dot);
-  block-size: var(--bt-surfaces-page-anchor-dot);
+  inline-size: var(--bt-surfaces-anchor-dot);
+  block-size: var(--bt-surfaces-anchor-dot);
   border-radius: var(--bt-r-full);
   background-color: var(--bt-dot);
 }
 
 .sf-anchor-dot[data-active] {
-  inline-size: var(--bt-surfaces-page-anchor-active);
-  block-size: var(--bt-surfaces-page-anchor-active);
+  inline-size: var(--bt-surfaces-anchor-active);
+  block-size: var(--bt-surfaces-anchor-active);
   background: radial-gradient(
     circle farthest-side at 50% 30%,
     var(--bt-knob-center),
@@ -230,8 +230,8 @@
 }
 
 .sf-dot {
-  inline-size: var(--bt-surfaces-page-dot);
-  block-size: var(--bt-surfaces-page-dot);
+  inline-size: var(--bt-surfaces-dot);
+  block-size: var(--bt-surfaces-dot);
   border-radius: var(--bt-r-full);
   box-shadow: var(--bt-shadow-inset);
 }
@@ -256,7 +256,7 @@
   }
 
   .sf-workspace {
-    grid-template-rows: var(--bt-h-header) var(--bt-surfaces-page-stage);
+    grid-template-rows: var(--bt-h-header) var(--bt-surfaces-stage);
   }
 
   .sf-inspector,

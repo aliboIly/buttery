@@ -9,6 +9,7 @@ export const page: DocsPage = {
   order: 150,
   status: "stable",
   since: "0.2.0",
+  home: "foundations/layers",
 };
 
 export const demos: readonly DemoSection[] = [

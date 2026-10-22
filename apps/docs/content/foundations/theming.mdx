@@ -1,0 +1,71 @@
+---
+title: Theming
+description: Light and dark, compact density, and your own accent, grays and corners with createTheme.
+section: foundations
+order: 90
+status: stable
+since: 0.2.0
+related: [foundations/colors, foundations/elevation]
+---
+
+A theme is what `ButteryProvider` applies to everything inside it: a color scheme, a density, a motion preference and, optionally, your own accent, grays and corners from `createTheme`. Use these settings, rather than overriding tokens one by one, so every component changes together.
+
+## Light and dark
+
+`colorScheme` is `"system"` by default, which follows the operating system, or `"light"` or `"dark"` to fix it. Every color token has a value for each, so components need nothing extra.
+
+```tsx
+import type { ReactElement } from "react";
+import { ButteryProvider } from "@buttery/react";
+import { App } from "./App.tsx";
+
+export function Root(): ReactElement {
+  return (
+    <ButteryProvider colorScheme="system">
+      <App />
+    </ButteryProvider>
+  );
+}
+```
+
+A `ButteryProvider` inside another one sets the scheme for its part of the page only, which is how [Elevation](/foundations/elevation) shows light and dark surfaces side by side.
+
+## Density
+
+`density="compact"` shortens every control, from 34px fields to 30px and 48px calls to action to 40px, for screens that show a lot at once. The spacing scale stays the same.
+
+## Motion
+
+`reducedMotion` is `"user"` by default, which follows the operating system's setting. `"always"` turns motion down for everyone, and `"never"` keeps it on. Every motion preset reads this setting, as the [Motion](/motion/presets) pages explain.
+
+## Your own theme
+
+`createTheme` makes a theme from a few choices and returns only the variables that differ from buttery's defaults. Pass it to `ButteryProvider`'s `theme`:
+
+```tsx
+import type { ReactElement } from "react";
+import { createTheme } from "@buttery/core";
+import { ButteryProvider } from "@buttery/react";
+import { App } from "./App.tsx";
+
+const theme = createTheme({
+  accent: "#0f8f7a",
+  neutral: "warm",
+  radius: "soft",
+});
+
+export function Root(): ReactElement {
+  return (
+    <ButteryProvider theme={theme}>
+      <App />
+    </ButteryProvider>
+  );
+}
+```
+
+- `accent` sets the focus ring, selection and links, as hex. buttery works out the shades for light and dark, and an `accent-text` that meets contrast.
+- `primary` sets the main button's color, as hex.
+- `neutral` tints every gray: `"gray"`, `"warm"` or `"cool"`.
+- `radius` makes corners rounder or tighter: `"soft"`, `"default"` or `"crisp"`. Nested surfaces stay concentric at every scale.
+- `density` is the density the provider starts in.
+- `overrides` has the final word on any color token, per scheme.

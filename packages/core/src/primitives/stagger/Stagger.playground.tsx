@@ -9,6 +9,7 @@ export const page: DocsPage = {
   order: 160,
   status: "stable",
   since: "0.3.0",
+  home: "motion/presets",
 };
 
 const CARDS = [

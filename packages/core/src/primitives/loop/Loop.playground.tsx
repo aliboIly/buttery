@@ -17,6 +17,7 @@ export const page: DocsPage = {
   order: 110,
   status: "stable",
   since: "0.3.0",
+  home: "motion/presets",
 };
 
 const TOTALS = ["1,204", "1,318", "1,472"] as const;

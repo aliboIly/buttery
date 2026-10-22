@@ -1,9 +1,9 @@
 import type { ReactElement } from "react";
 import { formatOklch } from "@buttery/core";
 import { gradientCss, gradients, solids } from "@buttery/core/palettes";
-import "./palettes-page.css";
+import "./palettes.css";
 
-export function PalettesPage(): ReactElement {
+export function PaletteGrids(): ReactElement {
   return (
     <div className="pg-page">
       <section className="pg-section">

@@ -1,0 +1,45 @@
+---
+title: Surface and nesting
+description: How surfaces nest, with concentric corners and even insets, and the Surface primitive that does it.
+section: layout
+order: 30
+status: stable
+since: 0.2.0
+related: [foundations/elevation, foundations/radius]
+---
+
+import { SurfacesDemo } from "../../src/foundations/surfaces.tsx";
+
+A surface is a region with a background, an edge and a radius, such as a panel, a section well or a card. Nest surfaces with `Surface`, and each inner one takes its corners from the one around it, so a screen of nested regions reads as one shape.
+
+## The nesting recipe
+
+buttery's screens nest a few levels deep: a `panel` on the app background, a `section` well inside it, and `card`s inside the well, each with rows inside. A child's radius is its parent's radius less the parent's padding, which `radius="auto"` works out; the one deliberate exception is a section, which is sized from the card inside it. A nested surface sits evenly inside its parent, with the same inset on every open side, and a section's title starts on the same edge as the rows inside it.
+
+```tsx
+import type { ReactElement } from "react";
+import { Stack, Surface, Text } from "@buttery/core";
+
+export function Settings(): ReactElement {
+  return (
+    <Surface level="panel">
+      <Surface level="section">
+        <Stack gap={2}>
+          <Text variant="control">Notifications</Text>
+          <Surface level="card" radius="auto">
+            <Text variant="label">Email me when an order ships</Text>
+          </Surface>
+        </Stack>
+      </Surface>
+    </Surface>
+  );
+}
+```
+
+Here is the recipe at full size, in an editor's inspector:
+
+<SurfacesDemo />
+
+## Surface
+
+<ComponentDocs of="Surface" />

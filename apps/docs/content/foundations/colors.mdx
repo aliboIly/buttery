@@ -1,0 +1,88 @@
+---
+title: Colors
+description: The color tokens every component draws with, by role, in light and dark.
+section: foundations
+order: 10
+status: stable
+since: 0.2.0
+related: [foundations/theming, foundations/elevation]
+---
+
+import { ColorTable } from "../../src/foundations/blocks.tsx";
+
+A color token is a named role, such as `--bt-text-secondary` or `--bt-bg-section`, that holds one value for the light theme and one for the dark theme. Use a token for every color an app draws, and the app follows light and dark, a theme made with `createTheme`, and the contrast rules without any code of its own.
+
+## Use a token, never a value
+
+Each token is a CSS variable that `ButteryProvider` sets on the page. Read it with `var()`:
+
+```css
+.order-total {
+  color: var(--bt-text-strong);
+  background-color: var(--bt-bg-section);
+}
+```
+
+The same tokens are in TypeScript as `colors` from `@buttery/core`, each with its light value, its dark value and what it's for, for code that needs a value rather than a variable, such as a chart drawn on a canvas.
+
+```css
+/* Do: the token changes with the theme. */
+.note {
+  color: var(--bt-text-secondary);
+}
+
+/* Don't: a hex value stays the same in dark mode, and buttery's stylelint config fails it. */
+.note {
+  color: #616161;
+}
+```
+
+With Tailwind v4, import `@buttery/core/tailwind.css` after Tailwind and keep `@buttery/core/styles.css`, which defines the variables. Utilities such as `bg-surface`, `text-fg-secondary` and `border-border` then read the same tokens.
+
+## Surfaces
+
+The backgrounds pages, panels and cards sit on. A surface's text and borders are chosen to read on it, so pair them as the components do.
+
+<ColorTable group="surfaces" />
+
+## Text and icons
+
+`text-strong` is for titles and numbers that lead, `text` for labels and body text, `text-secondary` for descriptions and inactive items, and `text-tertiary` for the quietest hints. Every one of them meets WCAG AA contrast on the surfaces above. Disabled text is exempt, as inactive UI is.
+
+<ColorTable group="text" />
+
+## Borders
+
+<ColorTable group="borders" />
+
+## Primary and accent
+
+`primary` fills the one main action on a screen. `accent` marks focus rings, selection and links; `accent-text` is the accent's shade for text, which meets contrast where `accent` itself wouldn't.
+
+<ColorTable group="emphasis" />
+
+## Status
+
+`danger`, `success` and `warning` are for text and icons that say how something went. Their `-subtle` shades are the backgrounds of callouts and badges that carry them.
+
+<ColorTable group="status" />
+
+## Inverse
+
+For the few things drawn dark on a light page and light on a dark one, such as a toast.
+
+<ColorTable group="inverse" />
+
+## Charts
+
+<ColorTable group="charts" />
+
+## Scrims and marks
+
+<ColorTable group="marks" />
+
+## Decorative
+
+Colors for illustrations and buttery's own mark. They're never used for UI that has to be read.
+
+<ColorTable group="decorative" />

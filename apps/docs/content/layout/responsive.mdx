@@ -1,0 +1,46 @@
+---
+title: Responsive
+description: Why buttery components respond to their container rather than the window, and how to do the same.
+section: layout
+order: 70
+status: stable
+since: 0.2.0
+related: [layout/the-layout-contract, layout/page-grid-and-containers]
+---
+
+A responsive buttery component changes its layout by the width of the container it's in, through CSS container queries, not by the width of the window. Build your own components the same way, so one component works in a 340px inspector, a sheet on a phone and a 1200px page.
+
+## Containers
+
+`Page`, `AppShell`'s column and the patterns that change their own layout, such as `SplitHero` or `Bento`, are size containers. `Grid`'s `columns` and the display type step at 640px and 1024px of the nearest one. Your own component can query them too:
+
+```css
+.order-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--bt-space-4);
+}
+
+@container (width >= 640px) {
+  .order-summary {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+```
+
+```css
+/* Don't: a viewport query, which is wrong as soon as the component sits in a panel. */
+@media (width >= 640px) {
+  .order-summary {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+```
+
+## When things don't fit
+
+A row that runs out of room moves its least important items into a "More" menu with `OverflowCluster`, rather than wrapping or shrinking its text. Text that doesn't fit on one line truncates with `Text truncate` and keeps its whole text in a tooltip. `FitBox` scales content of a fixed aspect, such as a canvas, into whatever space it has.
+
+## Checking it
+
+`expectButtery` checks a page at the widths you give it, from a 390px phone to a 1728px desktop, so a layout that only works at one width fails its test.

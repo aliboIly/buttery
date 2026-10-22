@@ -1,0 +1,61 @@
+---
+title: Icons
+description: How buttery draws icons, at which sizes, and when an icon needs a label.
+section: foundations
+order: 70
+status: stable
+since: 0.2.0
+related: [components/icon-button, foundations/typography]
+---
+
+`Icon` draws an icon from `lucide-react` at one of buttery's sizes, with the stroke weight and color of the text around it. Use it for every icon, and give it a `label` when nothing next to it says what it means.
+
+## Sizes
+
+`size="sm"` (16px, the default) is for icons inside controls and beside text. `size="md"` (20px) is for icons that stand on their own, such as an empty state's.
+
+```tsx
+import type { ReactElement } from "react";
+import { Icon, Inline, Text } from "@buttery/core";
+import { Truck } from "lucide-react";
+
+export function ShippingNote(): ReactElement {
+  return (
+    <Inline gap={2} align="center">
+      <Icon icon={Truck} />
+      <Text variant="body-sm">Ships in two days</Text>
+    </Inline>
+  );
+}
+```
+
+## Labels
+
+An icon is hidden from screen readers unless it has a `label`, because the text beside it usually says the same thing. When an icon stands alone and means something, give it a label and it becomes an image named by it.
+
+```tsx
+import type { ReactElement } from "react";
+import { Icon, Inline, Text } from "@buttery/core";
+import { TriangleAlert, Truck } from "lucide-react";
+
+// Do: an icon that means something on its own says what.
+export function PaymentFailed(): ReactElement {
+  return <Icon icon={TriangleAlert} label="Payment failed" />;
+}
+
+// Don't: a label that repeats the text beside it is read twice.
+export function Shipping(): ReactElement {
+  return (
+    <Inline gap={2} align="center">
+      <Icon icon={Truck} label="Shipping" />
+      <Text variant="body-sm">Shipping</Text>
+    </Inline>
+  );
+}
+```
+
+A button that's only an icon is an `IconButton`, which takes a required `label` and shows it as a tooltip.
+
+## Icon
+
+<ComponentDocs of="Icon" />

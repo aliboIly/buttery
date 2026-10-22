@@ -10,6 +10,7 @@ export const page: DocsPage = {
   order: 120,
   status: "stable",
   since: "0.2.0",
+  home: "foundations/icons",
 };
 
 export const demos: readonly DemoSection[] = [

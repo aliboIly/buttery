@@ -1,0 +1,82 @@
+---
+title: Quick start
+description: A first screen on buttery, from an empty starter to a checked layout, in about ten minutes.
+section: get-started
+order: 30
+status: beta
+since: 0.8.0
+related: [get-started/installation, get-started/make-anything-buttery]
+---
+
+This page builds a first screen, a card that turns order emails on and off, in the starter app. Follow it once to see how buttery's pieces fit: primitives for layout, components for controls, and the layout check at the end.
+
+## Start the app
+
+```bash
+pnpm new-app first-screen
+pnpm --filter first-screen dev
+```
+
+The starter opens with a title on an empty page. Everything below goes in `apps/first-screen/src/App.tsx`.
+
+## Build the screen
+
+Lay the card out with `Stack` and `Inline`, give it a surface with `Surface`, and use `Switch` and `Button` for the controls. There are no styles to write: spacing comes from `gap` and `pad`, and everything else from the components.
+
+```tsx
+import { useState } from "react";
+import type { ReactElement } from "react";
+import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
+import { Button, Switch, toast } from "@buttery/react";
+
+export function App(): ReactElement {
+  const [emails, setEmails] = useState(true);
+  return (
+    <Center>
+      <Surface level="card" pad={6}>
+        <Stack gap={5}>
+          <Stack gap={2}>
+            <Text variant="title-md" asChild>
+              <h1>Order emails</h1>
+            </Text>
+            <Text variant="body-sm" tone="secondary">
+              Tell customers when their coffee ships.
+            </Text>
+          </Stack>
+          <Switch
+            label="Send an email when an order ships"
+            checked={emails}
+            onCheckedChange={setEmails}
+          />
+          <Inline gap={2} justify="end">
+            <Button
+              variant="primary"
+              onClick={() => {
+                toast("Saved");
+              }}
+            >
+              Save
+            </Button>
+          </Inline>
+        </Stack>
+      </Surface>
+    </Center>
+  );
+}
+```
+
+Save, and the page shows the card. Press Save and a toast rises from the bottom of the window; switch the system to dark mode and the card follows.
+
+## Check the layout
+
+In development, `LayoutGuard` outlines anything on the page that overlaps, overflows or drifts off the scale. Narrow the window to a phone's width and nothing should light up.
+
+The starter's Playwright test runs the same checks at a phone's width and a desktop's, in light and dark:
+
+```bash
+pnpm test:e2e apps/first-screen
+```
+
+## Next
+
+[Make anything buttery](/get-started/make-anything-buttery) covers the other ways in, from wrapping a component you already have to whole-page patterns.

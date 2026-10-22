@@ -10,6 +10,7 @@ export const page: DocsPage = {
   order: 200,
   status: "stable",
   since: "0.2.0",
+  home: "layout/stack-inline-and-grid",
 };
 
 function Box({ label }: { readonly label: string }): ReactElement {

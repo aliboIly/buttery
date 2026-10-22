@@ -1,3 +1,40 @@
+.tk-table {
+  --bt-blocks-line: 1px;
+
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--bt-text-body-sm-size);
+  line-height: var(--bt-text-body-sm-line);
+  color: var(--bt-text);
+}
+
+.tk-table-scroll {
+  min-inline-size: 0;
+  overflow-x: auto;
+}
+
+.tk-table th {
+  padding: var(--bt-space-2) var(--bt-space-3);
+  text-align: start;
+  font-weight: var(--bt-text-label-weight);
+  color: var(--bt-text-secondary);
+  border-block-end: var(--bt-blocks-line) solid var(--bt-border);
+}
+
+.tk-table td {
+  padding: var(--bt-space-2) var(--bt-space-3);
+  vertical-align: top;
+  border-block-end: var(--bt-blocks-line) solid var(--bt-border);
+}
+
+.tk-dot {
+  display: block;
+  inline-size: var(--bt-icon-sm);
+  block-size: var(--bt-icon-sm);
+  border-radius: var(--bt-r-full);
+  box-shadow: var(--bt-shadow-inset);
+}
+
 .tk-swatch {
   display: flex;
   flex-direction: column;

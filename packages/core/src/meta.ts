@@ -88,6 +88,11 @@ export interface DocsPage {
   readonly status: DocsStatus;
   /** The version it arrived in, such as `"0.7.0"`. */
   readonly since: string;
+  /**
+   * For a component documented on a written page rather than a page of its own: that page's path, such as
+   * `"layout/stack-inline-and-grid"`, which shows it with `<ComponentDocs of="…" />`.
+   */
+  readonly home?: string | undefined;
 }
 
 /** What an example's play script drives it with: actions found by role and accessible name, as a person would. */

@@ -29,7 +29,7 @@ import {
 } from "@buttery/react";
 import type { SliderProps } from "@buttery/react";
 import { StarterEmptyState } from "../demo/StarterEmptyState.tsx";
-import "./surfaces-page.css";
+import "./surfaces.css";
 
 const SELECTED_GRADIENT = "lilac";
 
@@ -257,7 +257,7 @@ function Header(): ReactElement {
   );
 }
 
-export function SurfacesPage(): ReactElement {
+export function SurfacesDemo(): ReactElement {
   return (
     <div className="sf-app">
       <div className="sf-shell">

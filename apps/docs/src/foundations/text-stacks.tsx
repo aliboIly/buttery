@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { TextStack } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { StarterEmptyState } from "../demo/StarterEmptyState.tsx";
-import "./text-stacks-page.css";
+import "./text-stacks.css";
 
 const MEDIA = gradients.find((preset) => preset.id === "mist");
 
@@ -54,7 +54,7 @@ function OnboardingDemo(): ReactElement {
   );
 }
 
-export function TextStacksPage(): ReactElement {
+export function TextStacksDemo(): ReactElement {
   return (
     <div className="pg-page">
       <div className="ts-stage">
