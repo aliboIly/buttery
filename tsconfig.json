@@ -30,6 +30,9 @@
     },
     {
       "path": "./apps/templates/editor"
+    },
+    {
+      "path": "./apps/templates/marketing"
     }
   ]
 }
