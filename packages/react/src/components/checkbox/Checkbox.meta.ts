@@ -17,5 +17,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [{ keys: "Space", does: "Ticks or unticks it" }],
   layout:
-    "An 18px box with a 24px target, its label 8px beside it on the same row; a long label wraps under itself, and a hint or error sits under the row. The field takes the width it's given, and the label takes presses as well as the box.",
+    "An 18px box with a 24px target, its label 8px beside it on the same row; a long label wraps onto more lines, and a hint or an error sits under the row. The field takes the width it's given, and the label takes presses as well as the box.",
 };

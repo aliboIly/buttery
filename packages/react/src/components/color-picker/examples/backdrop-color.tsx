@@ -6,7 +6,7 @@ import { Chip, ColorPicker } from "@buttery/react";
 
 const DEFAULT_BACKDROP = "#7c9cf5";
 
-/** A backdrop color kept in state as `#rrggbb`, which a Reset beside it puts back, the thumbs gliding there. */
+/** A backdrop color kept in state as `#rrggbb`; Reset beside it puts the first color back, and the thumbs glide there. */
 export function BackdropColor(): ReactElement {
   const [color, setColor] = useState(DEFAULT_BACKDROP);
   return (

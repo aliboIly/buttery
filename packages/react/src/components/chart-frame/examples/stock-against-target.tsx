@@ -11,7 +11,7 @@ const HEIGHTS: Readonly<Record<ChartSize, string>> = {
   lg: "300px",
 };
 
-/** The three sizes, on green coffee on hand as a filled area against the reorder level as a gray line. */
+/** The three sizes, shown on a chart of green coffee on hand against its reorder level. */
 export function StockAgainstTarget(): ReactElement {
   const [size, setSize] = useState<ChartSize>("md");
   return (

@@ -7,7 +7,7 @@ import { buttery, IconButton } from "@buttery/react";
 
 const COFFEES = ["Harbor blend", "Guji natural", "Night shift", "Huila honey"];
 
-/** A list that keeps pinned coffees first: each row glides to its new place with layout, told when by layoutDependency. */
+/** A list that keeps pinned coffees first: each row glides to its new place through layout, with layoutDependency saying when it moved. */
 export function PinnedFirst(): ReactElement {
   const [pinned, setPinned] = useState<readonly string[]>([]);
   const order = [
