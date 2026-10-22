@@ -6,6 +6,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
+import { toast } from "./components/toaster/Toaster.tsx";
 import { ButteryProvider } from "./provider/ButteryProvider.tsx";
 
 const modules = import.meta.glob<Readonly<Record<string, unknown>>>(
@@ -67,10 +68,13 @@ beforeEach(() => {
   publishSettled();
 });
 
-afterEach(() => {
+function endExample(): void {
   cleanup();
+  toast.dismiss();
   vi.restoreAllMocks();
-});
+}
+
+afterEach(endExample);
 
 describe("examples", () => {
   it("finds the package's examples", () => {
@@ -88,6 +92,16 @@ describe("examples", () => {
       );
     expect(new Set(expected).size).toBe(expected.length);
     expect(names).toEqual(expect.arrayContaining(expected));
+  });
+
+  it("starts each example without the toasts the one before left", async () => {
+    render(<ButteryProvider />);
+    toast("Card exported");
+    await context.see("Card exported");
+    endExample();
+    render(<ButteryProvider />);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(screen.queryByText("Card exported")).toBeNull();
   });
 
   for (const { name, play, Example } of played) {
