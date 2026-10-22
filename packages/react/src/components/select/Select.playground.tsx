@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { NumberField, Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
 
@@ -62,6 +63,50 @@ function CanvasSize(): ReactElement {
     </Inline>
   );
 }
+
+const ROASTS: readonly SelectOption[] = [
+  { value: "light", label: "Light" },
+  { value: "medium", label: "Medium" },
+  { value: "dark", label: "Dark" },
+];
+
+export const live: LiveDemo = {
+  controls: {
+    variant: {
+      kind: "choice",
+      options: ["ghost", "outline"],
+      initial: "ghost",
+    },
+    size: { kind: "choice", options: ["md", "sm"], initial: "md" },
+    disabled: { kind: "toggle", initial: false },
+    placeholder: { kind: "text", initial: "Choose a roast" },
+  },
+  render: ({ variant, size, disabled, placeholder }) => (
+    <Select
+      label="Roast"
+      options={ROASTS}
+      variant={demoChoice(variant, ["ghost", "outline"])}
+      size={demoChoice(size, ["md", "sm"])}
+      disabled={disabled === true}
+      placeholder={String(placeholder)}
+    />
+  ),
+  code: ({ variant, size, disabled, placeholder }) =>
+    [
+      "<Select",
+      '  label="Roast"',
+      "  options={[",
+      ...ROASTS.map(
+        (roast) => `    { value: "${roast.value}", label: "${roast.label}" },`,
+      ),
+      "  ]}",
+      `  variant="${demoChoice(variant, ["ghost", "outline"])}"`,
+      `  size="${demoChoice(size, ["md", "sm"])}"`,
+      ...(disabled === true ? ["  disabled"] : []),
+      `  placeholder="${String(placeholder)}"`,
+      "/>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {
