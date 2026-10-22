@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Field, SegmentedControl, Select } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -46,6 +46,49 @@ function ExportFormat(): ReactElement {
     </Field>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Export as" },
+    hint: { kind: "text", initial: "PNG and WebP keep transparent corners." },
+    error: { kind: "text", initial: "" },
+  },
+  render: ({ label, hint, error }) => (
+    <Field label={String(label)} hint={String(hint)} error={String(error)}>
+      {(control) => (
+        <Select<Format>
+          {...control}
+          label={String(label)}
+          variant="outline"
+          options={FORMATS}
+          defaultValue="png"
+        />
+      )}
+    </Field>
+  ),
+  code: ({ label, hint, error }) => {
+    const props = [
+      `label="${String(label)}"`,
+      ...(hint === "" ? [] : [`hint="${String(hint)}"`]),
+      ...(error === "" ? [] : [`error="${String(error)}"`]),
+    ];
+    return `<Field ${props.join(" ")}>
+  {(control) => (
+    <Select
+      {...control}
+      label="${String(label)}"
+      variant="outline"
+      options={[
+        { value: "png", label: "PNG" },
+        { value: "jpg", label: "JPG" },
+        { value: "webp", label: "WebP" },
+      ]}
+      defaultValue="png"
+    />
+  )}
+</Field>`;
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {
