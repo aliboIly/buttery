@@ -40,6 +40,18 @@ describe("docs check", () => {
     ]);
   });
 
+  it("fails a page that shows an example that doesn't exist", () => {
+    expect(
+      fixture("missing-example", {
+        metaFiles: [
+          join(root, "packages/core/src/primitives/stack/Stack.meta.ts"),
+        ],
+      }),
+    ).toEqual([
+      'apps/docs/lab/docs-check/missing-example/content/guides/demo.mdx shows <Example of="Stack" name="nowhere">, which doesn\'t exist. Fix: name a component and a file in its examples folder, without .tsx.',
+    ]);
+  });
+
   it("fails a component with no home in the docs site's table of exports", () => {
     expect(
       fixture("no-home", {

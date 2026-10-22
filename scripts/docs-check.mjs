@@ -211,6 +211,24 @@ export function checkDocs({
     });
   }
 
+  const folders = new Map(
+    metaFiles.map((meta) => [basename(meta, ".meta.ts"), dirname(meta)]),
+  );
+  for (const page of pages) {
+    if (!page.file.endsWith(".mdx")) continue;
+    const source = readFileSync(page.file, "utf8");
+    for (const [, of, name] of prose(source).matchAll(
+      /<Example\s+of="([^"]+)"\s+name="([^"]+)"/g,
+    )) {
+      const folder = folders.get(of ?? "");
+      if (folder && existsSync(join(folder, "examples", `${name ?? ""}.tsx`)))
+        continue;
+      problems.push(
+        `${say(page.file)} shows <Example of="${of ?? ""}" name="${name ?? ""}">, which doesn't exist. Fix: name a component and a file in its examples folder, without .tsx.`,
+      );
+    }
+  }
+
   const bySection = new Map();
   for (const page of pages) {
     if (page.section === undefined || page.order === undefined) continue;

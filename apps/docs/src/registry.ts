@@ -29,10 +29,24 @@ const exampleModules = import.meta.glob<Readonly<Record<string, unknown>>>(
   "../../../packages/*/src/**/examples/*.tsx",
   { eager: true },
 );
+const exampleCode = import.meta.glob<ExampleCode>(
+  "../../../packages/*/src/**/examples/*.tsx",
+  { eager: true, query: "?code", import: "default" },
+);
+
+/** An example file's source, highlighted at build time, and the caption its JSDoc gives it. */
+export interface ExampleCode {
+  readonly source: string;
+  readonly html: string;
+  readonly caption: string;
+}
 
 export interface Example {
+  /** Its file's name without the extension, such as `basic`. */
+  readonly name: string;
   readonly title: string;
   readonly Component: ComponentType;
+  readonly code: ExampleCode;
 }
 
 export interface ComponentEntry {
@@ -67,8 +81,16 @@ function examplesIn(folder: string): Example[] {
       const Component = Object.entries(module).find(
         ([name, value]) => name !== "play" && isComponent(value),
       )?.[1];
-      return isComponent(Component)
-        ? [{ title: titleOf(path), Component }]
+      const code = exampleCode[path];
+      return isComponent(Component) && code
+        ? [
+            {
+              name: path.slice(path.lastIndexOf("/") + 1, -".tsx".length),
+              title: titleOf(path),
+              Component,
+              code,
+            },
+          ]
         : [];
     });
 }

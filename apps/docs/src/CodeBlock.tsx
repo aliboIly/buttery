@@ -7,19 +7,14 @@ import { IconButton } from "@buttery/react";
 /** How long "Copied" shows before the button offers to copy again, in ms. */
 const COPIED_FOR = 2000;
 
-/**
- * A highlighted code block with a bar above it: the language, and a button that copies the code, saying
- * "Copied" for a moment after it has.
- */
-export function CodeBlock({
-  children,
-  className,
-  style,
-  "data-language": language,
-}: ComponentPropsWithRef<"pre"> & {
-  readonly "data-language"?: string;
+/** The bar over a code block: its language, and a button that copies `text()`, saying "Copied" for a moment. */
+function CodeBar({
+  language,
+  text,
+}: {
+  readonly language: string;
+  readonly text: () => string;
 }): ReactElement {
-  const pre = useRef<HTMLPreElement>(null);
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     if (!copied) return undefined;
@@ -31,24 +26,40 @@ export function CodeBlock({
     };
   }, [copied]);
   return (
+    <div className="docs-code-bar">
+      <Text variant="caption" tone="secondary">
+        {language}
+      </Text>
+      <IconButton
+        icon={copied ? Check : Copy}
+        label={copied ? "Copied" : "Copy code"}
+        size="sm"
+        onClick={() => {
+          void navigator.clipboard.writeText(text()).then(() => {
+            setCopied(true);
+          });
+        }}
+      />
+    </div>
+  );
+}
+
+/** A code block Markdown wrote, highlighted at build time, with its bar. */
+export function CodeBlock({
+  children,
+  className,
+  style,
+  "data-language": language,
+}: ComponentPropsWithRef<"pre"> & {
+  readonly "data-language"?: string;
+}): ReactElement {
+  const pre = useRef<HTMLPreElement>(null);
+  return (
     <div className="docs-code-block">
-      <div className="docs-code-bar">
-        <Text variant="caption" tone="secondary">
-          {language ?? "text"}
-        </Text>
-        <IconButton
-          icon={copied ? Check : Copy}
-          label={copied ? "Copied" : "Copy code"}
-          size="sm"
-          onClick={() => {
-            void navigator.clipboard
-              .writeText(pre.current?.textContent ?? "")
-              .then(() => {
-                setCopied(true);
-              });
-          }}
-        />
-      </div>
+      <CodeBar
+        language={language ?? "text"}
+        text={() => pre.current?.textContent ?? ""}
+      />
       <pre
         ref={pre}
         className={["docs-pre", className].filter(Boolean).join(" ")}
@@ -56,6 +67,30 @@ export function CodeBlock({
       >
         {children}
       </pre>
+    </div>
+  );
+}
+
+/** A code block from HTML shiki highlighted at build time, such as an example's source, with its bar. */
+export function CodeHtml({
+  html,
+  language,
+}: {
+  readonly html: string;
+  readonly language: string;
+}): ReactElement {
+  const box = useRef<HTMLDivElement>(null);
+  return (
+    <div className="docs-code-block">
+      <CodeBar
+        language={language}
+        text={() => box.current?.textContent ?? ""}
+      />
+      <div
+        ref={box}
+        className="docs-code-html"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </div>
   );
 }

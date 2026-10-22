@@ -6,6 +6,7 @@ import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defaultClientConditions, defineConfig } from "vite";
 import type { Plugin } from "vite";
 import manifest from "./package.json" with { type: "json" };
+import { exampleCode } from "./vite/code.ts";
 import { frontmatter } from "./vite/frontmatter.ts";
 import { rehypeHighlight } from "./vite/highlight.ts";
 
@@ -38,6 +39,7 @@ function referenceCaptures(): Plugin {
 
 export default defineConfig({
   plugins: [
+    exampleCode(),
     frontmatter(),
     {
       enforce: "pre",

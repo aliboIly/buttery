@@ -3,6 +3,7 @@ import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { Icon, Stack, Text } from "@buttery/core";
 import { Link2 } from "lucide-react";
 import { CodeBlock } from "./CodeBlock.tsx";
+import { Example } from "./Example.tsx";
 import type { ContentEntry } from "./content.ts";
 import { slugify } from "./slug.ts";
 
@@ -73,6 +74,7 @@ export const markdown = {
     <code className={className ?? "docs-code"}>{children}</code>
   ),
   pre: CodeBlock,
+  Example,
 };
 
 /** A page written in MDX: its title and description from its frontmatter, then its content. */

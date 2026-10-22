@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Grid, Stack, Surface, Text } from "@buttery/core";
+import { ExampleFrame } from "./ExampleFrame.tsx";
 import type { Heading } from "./content.ts";
 import type { ComponentEntry } from "./registry.ts";
 import { slugify } from "./slug.ts";
@@ -102,20 +103,13 @@ export function ComponentPage({
               <Text variant="title" asChild>
                 <h2 id="examples">Examples</h2>
               </Text>
-              {examples.map(({ title, Component }) => (
-                <Stack key={title} gap={3}>
-                  <Text variant="label" asChild>
-                    <h3 id={slugify(title)}>{title}</h3>
-                  </Text>
-                  <Surface
-                    level={stage}
-                    pad={6}
-                    radius="lg"
-                    className="pg-stage"
-                  >
-                    <Component />
-                  </Surface>
-                </Stack>
+              {examples.map((example) => (
+                <ExampleFrame
+                  key={example.name}
+                  example={example}
+                  frame={frame}
+                  headingId={slugify(example.title)}
+                />
               ))}
             </section>
           </Stack>
