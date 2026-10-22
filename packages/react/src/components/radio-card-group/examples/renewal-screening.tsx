@@ -1,8 +1,8 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { RadioCardGroup, Select } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { RadioCardGroup, Select } from "@buttery/react";
 
 /** A screening choice whose second option opens a select of its own. */
 export function RenewalScreening(): ReactElement {
@@ -48,7 +48,12 @@ export function RenewalScreening(): ReactElement {
   );
 }
 
+export const kind: ExampleKind = "controlled";
+
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "Screen the first renewals only");
   await see("Screening the first renewal");
+  await press("button", /^Renewals to screen/);
+  await press("option", "The first three renewals");
+  await see("Screening the first three renewals");
 };
