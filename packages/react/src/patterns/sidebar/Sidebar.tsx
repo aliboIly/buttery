@@ -24,6 +24,8 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
+  useRef,
 } from "react";
 import type {
   ComponentPropsWithRef,
@@ -218,6 +220,37 @@ function SidebarRoot({
     visit({ label: unseenLabel, href: unseenHref });
   }, [unseenLabel, unseenHref, visit]);
 
+  // A list that holds on to the wheel while it can't scroll leaves Chromium scrolling nothing at all, so it
+  // only does while it overflows; inside a column that scrolls it, the wheel goes on to that column.
+  const list = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const element = list.current;
+    if (hidden || !element) return undefined;
+    const measure = (): void => {
+      element.toggleAttribute(
+        "data-scrolls",
+        element.scrollHeight > element.clientHeight,
+      );
+    };
+    const sizes = new ResizeObserver(measure);
+    const watch = (): void => {
+      sizes.disconnect();
+      sizes.observe(element);
+      for (const child of element.children) sizes.observe(child);
+    };
+    const items = new MutationObserver(() => {
+      watch();
+      measure();
+    });
+    watch();
+    items.observe(element, { childList: true });
+    measure();
+    return () => {
+      sizes.disconnect();
+      items.disconnect();
+    };
+  }, [hidden]);
+
   // Under 640px the shell keeps this copy mounted out of sight only so Recent sees the page change; drawn,
   // its menus and shortcuts would go on working behind the sheet.
   if (hidden) return null;
@@ -234,7 +267,7 @@ function SidebarRoot({
         {hasContent(switcher) ? (
           <div data-bt-part="switcher">{switcher}</div>
         ) : null}
-        <div data-bt-part="nav" className="bt-scroll-fade">
+        <div ref={list} data-bt-part="nav" className="bt-scroll-fade">
           {children}
         </div>
       </nav>
