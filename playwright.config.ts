@@ -1,15 +1,22 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 
 interface App {
+  /** Its package name, which `pnpm --filter` takes and its projects are named after. */
   name: string;
+  dir: string;
   port: number;
 }
 
-function readApp(name: string): App {
+function readApp(dir: string): App {
   const manifest: unknown = JSON.parse(
-    readFileSync(`apps/${name}/package.json`, "utf8"),
+    readFileSync(join(dir, "package.json"), "utf8"),
   );
+  const name =
+    typeof manifest === "object" && manifest !== null && "name" in manifest
+      ? manifest.name
+      : undefined;
   const port =
     typeof manifest === "object" &&
     manifest !== null &&
@@ -19,17 +26,29 @@ function readApp(name: string): App {
     "port" in manifest.config
       ? manifest.config.port
       : undefined;
-  if (typeof port !== "number") {
-    throw new Error(`apps/${name}/package.json needs a numeric config.port.`);
+  if (typeof name !== "string" || typeof port !== "number") {
+    throw new Error(
+      `${dir}/package.json needs a name and a numeric config.port.`,
+    );
   }
-  return { name, port };
+  return { name, dir, port };
 }
 
-const apps = readdirSync("apps", { withFileTypes: true })
-  .filter(
-    (entry) => entry.isDirectory() && existsSync(`apps/${entry.name}/e2e`),
-  )
-  .map((entry) => readApp(entry.name));
+/** The folders apps live in: `apps/<name>`, and the templates and demos a level down. */
+const APP_FOLDERS = ["apps", "apps/templates", "apps/demos"];
+
+const apps = APP_FOLDERS.flatMap((folder) =>
+  existsSync(folder)
+    ? readdirSync(folder, { withFileTypes: true })
+        .filter(
+          (entry) =>
+            entry.isDirectory() &&
+            existsSync(join(folder, entry.name, "package.json")) &&
+            existsSync(join(folder, entry.name, "e2e")),
+        )
+        .map((entry) => readApp(join(folder, entry.name)))
+    : [],
+);
 
 const browsers = [
   { name: "chromium", device: devices["Desktop Chrome"] },
@@ -75,7 +94,7 @@ export default defineConfig({
     ...apps.flatMap((app) =>
       browsers.map((browser) => ({
         name: `${app.name}-${browser.name}`,
-        testDir: `apps/${app.name}/e2e`,
+        testDir: `${app.dir}/e2e`,
         use: {
           ...browser.device,
           baseURL: `http://localhost:${String(testPort(app))}`,
