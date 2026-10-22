@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 7 (hardening, brand and the docs site), then Phase 8 (developer and agent experience). Phase 6B, the App kit with settings, search and panels, passed its gate. The public-kit rule is in place.
+**Now:** Phase 7 (hardening, brand and the docs site) is closing: the last written pages are being laid out in the new blocks, then the full gate, the push, the GitHub releases and the deploy to GitHub Pages. Phase 8 (developer and agent experience) is next.
 
 ---
 
@@ -72,7 +72,9 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame; settings (index, profile, team notifications, plans), search across the demo and a help panel
 
 ## v0.9 — Hardening, brand and docs site (Phase 7)
-- [x] 🧈 Original BrandMark (3 directions → pick one) + favicon + app icons + README hero
+> This site, built only from buttery, with a page for every component, examples to try and search that works offline, and the fixes that writing it turned up.
+
+- [x] 🧈 The logo is the 🧈 character, in the docs' header, the favicons and the README (a drawn `BrandMark` came first and was retired)
 - [x] Docs site shell (`docs/DOCS_SITE.md`): `apps/docs` with `/lab`, the nav generated from frontmatter, the docs check in `pnpm check`
 - [x] Existing pages moved in (Get started, Foundations, Layout, Motion first); component pages with the full anatomy and working examples (each with a `play` script), and the example and coverage checks
 - [x] Patterns, Templates, Guides, Tools and Resources pages
@@ -84,6 +86,13 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Accessibility audit, dark + compact passes, visual regression baselines
 - [x] `new-app` finished; Changesets
 - [x] make-it-buttery skill tested on a messy page; the site read cold by a reviewer
+- [x] Three more layout checks in `expectButtery` and `LayoutGuard`: text crowding the line under it, a word broken across lines, and controls out of line, including an icon off its button's center
+- [x] Introduction rebuilt: a theme playground, feature cards with live parts, the newest release's examples, and the Get started path
+- [x] Releases numbered one minor per phase, 0.1 to 0.9; What's new as release notes with examples to try, and the Roadmap page read from this file
+- [x] Get started rebuilt, with blocks for written pages: numbered steps, cards, rules, do and don't, notes, related pages, and previous and next as cards
+- [ ] Every written page laid out in those blocks, so none reads as a wall of text
+- [ ] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
+- [ ] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
 
 ## v1.0 — Developer and agent experience (Phase 8)
 > buttery on npm, a command line tool that starts, extends and checks apps, and an MCP server so coding agents can look components up instead of guessing.
@@ -99,7 +108,6 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] The `buttery` npm org claimed, or a scope of buttery's own chosen, and the first publish
 
 ## Later (ideas, not commitments)
-- [ ] Docs site deployed from the playground
 - [ ] More patterns: command palette (⌘K), file browser, chat
 - [ ] Next.js / SSR support
 - [ ] Figma library generated from tokens
