@@ -171,6 +171,11 @@ describe("CatalogPage", () => {
       if (shown.width === 0 || shown.top >= title.bottom) continue;
       expect(shown.left).toBeGreaterThanOrEqual(title.right);
     }
+    const folded = document.querySelectorAll(
+      '.bt-page-header [data-bt-part="item"][hidden]',
+    );
+    expect(folded.length).toBeGreaterThan(0);
+    for (const item of folded) expect(item.getClientRects()).toHaveLength(0);
     const [settings, roastery] = screen.getAllByRole("link", { hidden: true });
     expect(settings?.getClientRects()).toHaveLength(0);
     expect(roastery?.getClientRects().length).toBeGreaterThan(0);

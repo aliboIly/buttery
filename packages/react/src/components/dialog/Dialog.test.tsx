@@ -150,33 +150,29 @@ describe("Dialog", () => {
   });
 
   it("leaves a closing dialog's fields alone when it closes before it has settled", async () => {
-    render(
-      <Dialog>
-        <Dialog.Trigger asChild>
-          <Button>Add an email</Button>
-        </Dialog.Trigger>
-        <Dialog.Content label="Add a backup email">
-          <Dialog.Body>
-            <label>
-              Backup email
-              <input type="email" />
-            </label>
-          </Dialog.Body>
-        </Dialog.Content>
-      </Dialog>,
-    );
-    await userEvent.click(screen.getByRole("button", { name: "Add an email" }));
-    const field = await screen.findByLabelText("Backup email");
+    function Owned({ open }: { readonly open: boolean }): ReactElement {
+      return (
+        <Dialog open={open} onOpenChange={() => undefined}>
+          <Dialog.Content label="Add a backup email">
+            <Dialog.Body>
+              <label>
+                Backup email
+                <input type="email" />
+              </label>
+            </Dialog.Body>
+          </Dialog.Content>
+        </Dialog>
+      );
+    }
+    const { rerender } = render(<Owned open />);
+    const field = screen.getByLabelText("Backup email");
     const focused = vi.fn();
     field.addEventListener("focus", focused);
-    await userEvent.keyboard("{Escape}");
+    rerender(<Owned open={false} />);
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
     expect(focused).not.toHaveBeenCalled();
-    expect(document.activeElement).toBe(
-      screen.getByRole("button", { name: "Add an email" }),
-    );
   });
 
   it("closes on Escape and hands focus back to its trigger", async () => {
