@@ -1,5 +1,5 @@
 import { Inline, Pressable, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 
 export const page: DocsPage = {
   section: "components/actions",
@@ -9,6 +9,33 @@ export const page: DocsPage = {
   order: 70,
   status: "stable",
   since: "0.2.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    children: { kind: "text", initial: "Add to order" },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ children, disabled }) => (
+    <Surface asChild level="raised" padX={4} padY={2} radius="full">
+      <Pressable disabled={disabled === true}>
+        <Text
+          variant="button"
+          tone={disabled === true ? "disabled" : undefined}
+        >
+          {String(children)}
+        </Text>
+      </Pressable>
+    </Surface>
+  ),
+  code: ({ children, disabled }) =>
+    [
+      '<Surface asChild level="raised" padX={4} padY={2} radius="full">',
+      `  <Pressable${disabled === true ? " disabled" : ""}>`,
+      `    <Text variant="button"${disabled === true ? ' tone="disabled"' : ""}>${String(children)}</Text>`,
+      "  </Pressable>",
+      "</Surface>",
+    ].join("\n"),
 };
 
 export const demos: readonly DemoSection[] = [

@@ -1,4 +1,5 @@
-import type { DemoSection, DocsPage } from "../../meta.ts";
+import type { DemoSection, DocsPage, LiveDemo } from "../../meta.ts";
+import { demoChoice } from "../../meta-values.ts";
 import { Inline } from "../inline/Inline.tsx";
 import { Pressable } from "../pressable/Pressable.tsx";
 import { Surface } from "../surface/Surface.tsx";
@@ -22,6 +23,28 @@ const SIZES: readonly ControlSize[] = [
   "button",
   "cta",
 ];
+
+function sizeOf(value: unknown): ControlSize {
+  return demoChoice(value, ["control", "badge", "sm", "button", "cta"]);
+}
+
+export const live: LiveDemo = {
+  controls: {
+    size: { kind: "choice", options: SIZES, initial: "control" },
+    children: { kind: "text", initial: "Add a roast" },
+  },
+  render: ({ size, children }) => (
+    <Surface level="raised" radius="full" asChild>
+      <Control size={sizeOf(size)}>{String(children)}</Control>
+    </Surface>
+  ),
+  code: ({ size, children }) =>
+    [
+      '<Surface level="raised" radius="full" asChild>',
+      `  <Control size="${sizeOf(size)}">${String(children)}</Control>`,
+      "</Surface>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {

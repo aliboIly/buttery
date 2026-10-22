@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Pressable } from "@buttery/core";
+import { Inline, Pressable, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 
 const lilac = gradients.find((preset) => preset.id === "lilac");
@@ -9,19 +10,32 @@ const lilac = gradients.find((preset) => preset.id === "lilac");
 export function SwatchButton(): ReactElement {
   const [picked, setPicked] = useState(true);
   return (
-    <Pressable
-      aria-label="Lilac"
-      aria-pressed={picked}
-      onClick={() => {
-        setPicked((current) => !current);
-      }}
-      style={{
-        inlineSize: "var(--bt-h-cta)",
-        blockSize: "var(--bt-h-cta)",
-        borderRadius: "var(--bt-r-sm)",
-        backgroundImage: lilac ? gradientCss(lilac) : undefined,
-        boxShadow: picked ? "var(--bt-ring-select)" : "var(--bt-shadow-inset)",
-      }}
-    />
+    <Inline gap={3}>
+      <Pressable
+        aria-label="Lilac"
+        aria-pressed={picked}
+        onClick={() => {
+          setPicked((current) => !current);
+        }}
+        style={{
+          inlineSize: "var(--bt-h-cta)",
+          blockSize: "var(--bt-h-cta)",
+          borderRadius: "var(--bt-r-sm)",
+          backgroundImage: lilac ? gradientCss(lilac) : undefined,
+          boxShadow: picked
+            ? "var(--bt-ring-select)"
+            : "var(--bt-shadow-inset)",
+        }}
+      />
+      <Text variant="body-sm">{picked ? "Lilac backdrop" : "No backdrop"}</Text>
+    </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Lilac backdrop");
+  await press("button", "Lilac");
+  await see("No backdrop");
+};
