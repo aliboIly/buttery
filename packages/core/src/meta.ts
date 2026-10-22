@@ -119,7 +119,10 @@ export interface ExamplePlayContext {
   readonly press: (role: string, name: string | RegExp) => Promise<void>;
   /** Types into the field with this label. */
   readonly type: (label: string | RegExp, text: string) => Promise<void>;
-  /** Presses a key on whatever has focus, such as `"ArrowRight"`. */
+  /**
+   * Presses a key on whatever has focus, such as `"ArrowRight"`, holding it down for two frames as a person
+   * does, so a radio group that moves focus a moment later still sees the key and picks the option.
+   */
   readonly key: (key: string) => Promise<void>;
   /** Waits for this text to show, failing if it doesn't. */
   readonly see: (text: string | RegExp) => Promise<void>;

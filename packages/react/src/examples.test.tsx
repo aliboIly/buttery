@@ -6,6 +6,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
+import { SegmentedControl } from "./components/segmented-control/SegmentedControl.tsx";
 import { toast } from "./components/toaster/Toaster.tsx";
 import { ButteryProvider } from "./provider/ButteryProvider.tsx";
 
@@ -22,6 +23,14 @@ function isComponent(value: unknown): value is ComponentType {
   return typeof value === "function";
 }
 
+function nextFrame(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      resolve();
+    });
+  });
+}
+
 const context: ExamplePlayContext = {
   press: async (role, name) => {
     const target = await screen.findByRole(role, { name });
@@ -35,7 +44,11 @@ const context: ExamplePlayContext = {
     await userEvent.type(await screen.findByLabelText(label), text);
   },
   key: async (key) => {
-    await userEvent.keyboard(`{${key}}`);
+    // Radix picks a radio as its delayed focus lands only while the arrow key is still down.
+    await userEvent.keyboard(`{${key}>}`);
+    await nextFrame();
+    await nextFrame();
+    await userEvent.keyboard(`{/${key}}`);
   },
   see: async (text) => {
     await waitFor(
@@ -116,4 +129,15 @@ describe("examples", () => {
       for (const spy of logged) expect(spy).not.toHaveBeenCalled();
     });
   }
+});
+
+describe("the play actions", () => {
+  it("hold a key down long enough for a radio group to choose with it", async () => {
+    render(<SegmentedControl label="Fit" options={["Fit", "Fill", "Crop"]} />);
+    screen.getByRole("radio", { name: "Fit" }).focus();
+    await context.key("ArrowRight");
+    expect(
+      screen.getByRole("radio", { name: "Fill" }).getAttribute("aria-checked"),
+    ).toBe("true");
+  });
 });

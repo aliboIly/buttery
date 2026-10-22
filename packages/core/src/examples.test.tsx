@@ -2,6 +2,7 @@ import "./styles/index.css";
 import { publishSettled } from "./motion/settle.ts";
 import type { ExamplePlay, ExamplePlayContext } from "./meta.ts";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { RadioGroup } from "radix-ui";
 import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
@@ -19,6 +20,14 @@ function isComponent(value: unknown): value is ComponentType {
   return typeof value === "function";
 }
 
+function nextFrame(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      resolve();
+    });
+  });
+}
+
 const context: ExamplePlayContext = {
   press: async (role, name) => {
     await userEvent.click(await screen.findByRole(role, { name }));
@@ -27,7 +36,11 @@ const context: ExamplePlayContext = {
     await userEvent.type(await screen.findByLabelText(label), text);
   },
   key: async (key) => {
-    await userEvent.keyboard(`{${key}}`);
+    // Radix picks a radio as its delayed focus lands only while the arrow key is still down.
+    await userEvent.keyboard(`{${key}>}`);
+    await nextFrame();
+    await nextFrame();
+    await userEvent.keyboard(`{/${key}}`);
   },
   see: async (text) => {
     await waitFor(
@@ -91,4 +104,20 @@ describe("examples", () => {
       for (const spy of logged) expect(spy).not.toHaveBeenCalled();
     });
   }
+});
+
+describe("the play actions", () => {
+  it("hold a key down long enough for a radio group to choose with it", async () => {
+    render(
+      <RadioGroup.Root aria-label="Fit" defaultValue="fit">
+        <RadioGroup.Item value="fit" aria-label="Fit" />
+        <RadioGroup.Item value="fill" aria-label="Fill" />
+      </RadioGroup.Root>,
+    );
+    screen.getByRole("radio", { name: "Fit" }).focus();
+    await context.key("ArrowRight");
+    expect(
+      screen.getByRole("radio", { name: "Fill" }).getAttribute("aria-checked"),
+    ).toBe("true");
+  });
 });
