@@ -13,7 +13,7 @@ export const meta: ComponentMeta = {
     "Lists of actions: use Menu",
     "Picking one value from a list: use Select",
     "Hover hints: use Tooltip",
-    "Blocking decisions: use Dialog (Phase 6)",
+    "Blocking decisions: use Dialog",
   ],
   related: ["Menu", "Select", "Layer", "Surface", "Scrim"],
   a11y: "The trigger gets aria-expanded and aria-controls; the content is a dialog that takes focus on open, closes on Escape and returns focus to the trigger. In a field holding an unsaved edit, the first Escape puts the field back.",

@@ -9,7 +9,7 @@ export const meta: ComponentMeta = {
     "The top of an app window or editor: the document's name and the actions that apply to it",
   ],
   avoidWhen: [
-    "A marketing site's navigation: use NavBar (Phase 6)",
+    "A marketing site's navigation: use NavBar",
     "Actions for one mode: use FloatingToolbar",
   ],
   related: ["AppShell", "OverflowCluster", "Select", "IconButton"],

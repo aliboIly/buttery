@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose: "An unstyled button with buttery's press feedback and focus ring.",
   useWhen: ["Making a custom surface clickable, such as a card or a swatch"],
   avoidWhen: [
-    "Standard actions: use Button (Phase 4)",
+    "Standard actions: use Button",
     "Navigation: render a link with asChild instead of a button",
   ],
   related: ["Surface", "Icon"],

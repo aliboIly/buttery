@@ -254,6 +254,23 @@ describe("component contract", () => {
         ).toBeGreaterThan(10);
       });
 
+      it("names what to use in its meta and examples, not the phase it was built in", () => {
+        const examples = existsSync(join(folder, "examples"))
+          ? readdirSync(join(folder, "examples"))
+              .filter((file) => file.endsWith(".tsx"))
+              .map((file) => `examples/${file}`)
+          : [];
+        const phases = [`${name}.meta.ts`, ...examples].flatMap((file) =>
+          (read(file).match(/\bPhase \d[\d.]*\w*/g) ?? []).map(
+            (phase) => `${file}: ${phase}`,
+          ),
+        );
+        expect(
+          phases,
+          `${name} names a build phase: ${phases.join(", ")}. Fix: name the component to use, which exists now.`,
+        ).toEqual([]);
+      });
+
       it("uses only what a user can import", () => {
         const found = privateImports(folder);
         expect(
