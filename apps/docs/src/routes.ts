@@ -33,6 +33,12 @@ export const referencePages = [
   { route: "motion/presets", title: "Presets", section: "motion", order: 10 },
 ] as const;
 
+/** The version the site documents. */
+export const DOCS_VERSION = "0.8.0";
+
+/** Where buttery's source lives. */
+export const SOURCE_URL = "https://github.com/aliboIly/buttery";
+
 /** Original demo apps built from buttery's components. */
 export const demoPages = [
   { route: "card-studio", title: "Card Studio" },

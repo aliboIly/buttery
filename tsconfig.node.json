@@ -18,7 +18,8 @@
     "apps/*/package.json",
     "apps/*/e2e/**/*.ts",
     "packages/*/e2e/**/*.ts",
-    "apps/docs/src/routes.ts"
+    "apps/docs/src/routes.ts",
+    "apps/docs/src/slug.ts"
   ],
   "references": [
     {

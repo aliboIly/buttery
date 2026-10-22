@@ -1,8 +1,16 @@
 import type { ReactElement } from "react";
 import type { DocsPage } from "@buttery/core";
 
+/** A page's heading for its "On this page" list. */
+export interface Heading {
+  readonly depth: 2 | 3;
+  readonly text: string;
+  readonly id: string;
+}
+
 interface ContentModule {
   readonly page: DocsPage | undefined;
+  readonly headings: readonly Heading[];
   readonly default: (props: {
     readonly components?: Readonly<Record<string, unknown>>;
   }) => ReactElement;
@@ -17,6 +25,7 @@ export interface ContentEntry {
   /** Its path without the leading slash: its folder and file name, such as `get-started/installation`. */
   readonly route: string;
   readonly page: DocsPage;
+  readonly headings: readonly Heading[];
   readonly Content: ContentModule["default"];
 }
 
@@ -28,7 +37,14 @@ function routeOf(path: string): string {
 export const contentPages: readonly ContentEntry[] = Object.entries(modules)
   .flatMap(([path, module]) =>
     module.page
-      ? [{ route: routeOf(path), page: module.page, Content: module.default }]
+      ? [
+          {
+            route: routeOf(path),
+            page: module.page,
+            headings: module.headings,
+            Content: module.default,
+          },
+        ]
       : [],
   )
   .sort((a, b) => a.route.localeCompare(b.route));
@@ -59,6 +75,7 @@ export const labPages: readonly ContentEntry[] = Object.entries(labModules).map(
         status: "beta",
         since: "0.8.0",
       },
+      headings: module.headings,
       Content: module.default,
     };
   },

@@ -1,6 +1,8 @@
 import type { ReactElement } from "react";
 import { Grid, Stack, Surface, Text } from "@buttery/core";
+import type { Heading } from "./content.ts";
 import type { ComponentEntry } from "./registry.ts";
+import { slugify } from "./slug.ts";
 
 function Facts({
   title,
@@ -29,7 +31,28 @@ function Facts({
   );
 }
 
-/** A component's playground page: what it's for, its demos and its canonical examples. */
+/** The headings a component's page shows: its demos, then its examples. */
+export function componentHeadings(entry: ComponentEntry): Heading[] {
+  return [
+    ...entry.demos.map(({ title }) => ({
+      depth: 2 as const,
+      text: title,
+      id: slugify(title),
+    })),
+    ...(entry.examples.length > 0
+      ? [
+          { depth: 2 as const, text: "Examples", id: "examples" },
+          ...entry.examples.map(({ title }) => ({
+            depth: 3 as const,
+            text: title,
+            id: slugify(title),
+          })),
+        ]
+      : []),
+  ];
+}
+
+/** A component's page: what it's for, its demos and its canonical examples. */
 export function ComponentPage({
   entry,
 }: {
@@ -61,7 +84,7 @@ export function ComponentPage({
             <section aria-label={demo.title}>
               <Stack gap={3}>
                 <Text variant="title" asChild>
-                  <h2>{demo.title}</h2>
+                  <h2 id={slugify(demo.title)}>{demo.title}</h2>
                 </Text>
                 {demo.description === undefined ? null : (
                   <Text variant="body">{demo.description}</Text>
@@ -77,12 +100,12 @@ export function ComponentPage({
           <Stack gap={4} asChild>
             <section aria-label="Examples">
               <Text variant="title" asChild>
-                <h2>Examples</h2>
+                <h2 id="examples">Examples</h2>
               </Text>
               {examples.map(({ title, Component }) => (
                 <Stack key={title} gap={3}>
                   <Text variant="label" asChild>
-                    <h3>{title}</h3>
+                    <h3 id={slugify(title)}>{title}</h3>
                   </Text>
                   <Surface
                     level={stage}

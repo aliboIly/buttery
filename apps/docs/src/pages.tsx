@@ -2,9 +2,10 @@ import { lazy, Suspense } from "react";
 import type { ReactElement } from "react";
 import type { DocsPage } from "@buttery/core";
 import { referenceRoot } from "virtual:buttery-reference";
-import { ComponentPage } from "./ComponentPage.tsx";
+import { ComponentPage, componentHeadings } from "./ComponentPage.tsx";
 import { ContentPage } from "./ContentPage.tsx";
 import { contentPages, labPages } from "./content.ts";
+import type { Heading } from "./content.ts";
 import { buildNav, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
 import { LevelsPage } from "./pages/LevelsPage.tsx";
@@ -28,6 +29,8 @@ export interface Page {
   readonly fullWindow?: boolean;
   /** Where it sits on the site, for the nav; demos and lab pages have none. */
   readonly docs?: DocsPage;
+  /** Its headings, for its "On this page" list. */
+  readonly headings?: readonly Heading[];
 }
 
 export interface PageGroup {
@@ -89,6 +92,7 @@ const componentDocs: readonly Page[] = components.flatMap((entry) =>
           title: entry.page.title,
           render: () => <ComponentPage entry={entry} />,
           docs: entry.page,
+          headings: componentHeadings(entry),
         },
       ]
     : [],
@@ -99,9 +103,16 @@ const contentDocs: readonly Page[] = contentPages.map((entry) => ({
   title: entry.page.title,
   render: () => <ContentPage entry={entry} />,
   docs: entry.page,
+  headings: entry.headings,
 }));
 
 const docsPages = [...contentDocs, ...referenceDocs, ...componentDocs];
+
+/** The demos, each its own app, for the sidebar's last section. */
+export const demoLinks: readonly {
+  readonly route: string;
+  readonly title: string;
+}[] = demoPages.map(({ route, title }) => ({ route: `demos/${route}`, title }));
 
 /** The site's nav, generated from every page's metadata. */
 export const nav: readonly NavSection[] = buildNav(

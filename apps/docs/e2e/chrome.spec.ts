@@ -43,7 +43,7 @@ test("at the bottom of a long page, scrolling up over the sidebar reaches its fi
   });
   await pointAtSidebar(page, sidebar);
   for (let turn = 0; turn < 30; turn += 1) await page.mouse.wheel(0, -400);
-  const header = page.locator(".pg-top");
+  const header = page.locator(".docs-top");
   await expect(async () => {
     const first = await links.first().boundingBox();
     const band = await header.boundingBox();

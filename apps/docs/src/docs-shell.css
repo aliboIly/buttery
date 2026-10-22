@@ -1,14 +1,14 @@
 :root {
-  --bt-playground-sidebar: 220px;
-  --bt-playground-tile: 220px;
+  --bt-docs-shell-tile: 220px;
+  --bt-docs-shell-toc: 200px;
 }
 
-.pg-shell {
+.docs-shell {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-block-size: 100dvh;
   padding-inline: var(--bt-space-4);
-  container-type: inline-size;
+  container: docs-shell / inline-size;
 }
 
 /*
@@ -16,55 +16,64 @@
  * scrolled it takes the panel surface; inside the shell's side padding it reads as a card, so it keeps a
  * card's corners and inset.
  */
-.pg-top {
+.docs-top {
   z-index: var(--bt-z-dropdown);
   padding-inline: var(--bt-space-3);
 }
 
-.pg-top[data-scrolled] {
+.docs-top[data-scrolled] {
   border-radius: var(--bt-r-3xl);
 }
 
 /* In the bar the display settings button shows only its icon; in the phone sheet it says what it is. */
-.pg-top .pg-display {
+.docs-top .pg-display {
   inline-size: var(--bt-h-button);
   padding-inline: 0;
 }
 
-.pg-top .pg-display-text {
+.docs-top .pg-display-text {
   display: none;
 }
 
-.pg-body {
+.docs-body {
   display: grid;
-  grid-template-columns: var(--bt-playground-sidebar) minmax(0, 1fr);
+  grid-template-columns:
+    var(--bt-w-sidebar) minmax(0, 1fr)
+    var(--bt-docs-shell-toc);
   align-items: start;
-  gap: var(--bt-space-6);
+  gap: var(--bt-space-8);
   min-inline-size: 0;
 }
 
-.pg-nav-group {
-  padding-inline: var(--bt-space-3);
-  padding-block-end: var(--bt-space-1);
+.docs-toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.pg-nav-link {
+.docs-toc li[data-depth="3"] {
+  padding-inline-start: var(--bt-space-3);
+}
+
+.docs-toc-link {
   display: flex;
   align-items: center;
   min-inline-size: 0;
-  block-size: var(--bt-h-sm);
-  padding-inline: var(--bt-space-3);
-  border-radius: var(--bt-r-full);
+  min-block-size: var(--bt-h-badge);
+  padding-inline-start: var(--bt-space-3);
   color: var(--bt-text-secondary);
+  text-decoration: none;
+  box-shadow: inset var(--bt-space-0_5) 0 0 var(--bt-border);
 }
 
-.pg-nav-link:hover,
-.pg-nav-link[aria-current="page"] {
+.docs-toc-link:hover {
   color: var(--bt-text);
 }
 
-.pg-nav-link[aria-current="page"]:hover {
-  background-color: transparent;
+/* The heading being read: its text strong, the bar beside it in the accent. */
+.docs-toc-link[aria-current="location"] {
+  color: var(--bt-text-strong);
+  box-shadow: inset var(--bt-space-0_5) 0 0 var(--bt-accent);
 }
 
 .pg-menu {
@@ -97,7 +106,8 @@
   color: var(--bt-text);
 }
 
-.pg-main {
+.docs-main {
+  padding-block-start: var(--bt-space-6);
   display: grid;
   grid-template-columns: minmax(0, var(--bt-w-page));
   min-inline-size: 0;
@@ -125,7 +135,7 @@
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    minmax(min(100%, var(--bt-playground-tile)), 1fr)
+    minmax(min(100%, var(--bt-docs-shell-tile)), 1fr)
   );
   gap: var(--bt-space-4);
 }
@@ -138,12 +148,22 @@
   overflow-wrap: anywhere;
 }
 
-@container (width < 1024px) {
-  .pg-sidebar {
+@container docs-shell (width < 1100px) {
+  .docs-aside {
     display: none;
   }
 
-  .pg-body {
+  .docs-body {
+    grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
+  }
+}
+
+@container docs-shell (width < 768px) {
+  .docs-sidebar {
+    display: none;
+  }
+
+  .docs-body {
     grid-template-columns: minmax(0, 1fr);
   }
 }

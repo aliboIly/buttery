@@ -1,4 +1,5 @@
 import type { Plugin } from "vite";
+import { slugify } from "../src/slug.ts";
 
 /** A frontmatter value: a string, a number or a list of strings. */
 export type FrontmatterValue = string | number | readonly string[];
@@ -49,7 +50,28 @@ export function splitFrontmatter(source: string): {
     : { block: null, body: source };
 }
 
-/** Turns an MDX page's frontmatter into `export const page = {…}`, so the nav reads it as a module export. */
+/** A page's heading for its "On this page" list. */
+export interface Heading {
+  readonly depth: 2 | 3;
+  readonly text: string;
+  readonly id: string;
+}
+
+/** The `##` and `###` headings of a page's Markdown, outside its code blocks, with their anchor ids. */
+export function headingsOf(body: string): Heading[] {
+  return [
+    ...body.replace(/^```[\s\S]*?^```/gm, "").matchAll(/^(#{2,3})\s+(.+)$/gm),
+  ].map(([, hashes = "", text = ""]) => ({
+    depth: hashes.length === 2 ? 2 : 3,
+    text: text.replace(/[`*_]/g, ""),
+    id: slugify(text),
+  }));
+}
+
+/**
+ * Turns an MDX page's frontmatter into `export const page = {…}`, so the nav reads it as a module export,
+ * and lists its headings as `export const headings`.
+ */
 export function frontmatter(): Plugin {
   return {
     name: "buttery-docs-frontmatter",
@@ -57,10 +79,9 @@ export function frontmatter(): Plugin {
     transform(code, id) {
       if (!id.endsWith(".mdx")) return null;
       const { block, body } = splitFrontmatter(code);
-      if (block === null) return null;
-      const page = parseFrontmatter(block, id);
+      const page = block === null ? undefined : parseFrontmatter(block, id);
       return {
-        code: `export const page = ${JSON.stringify(page)};\n\n${body}`,
+        code: `export const page = ${JSON.stringify(page)};\nexport const headings = ${JSON.stringify(headingsOf(body))};\n\n${body}`,
         map: null,
       };
     },

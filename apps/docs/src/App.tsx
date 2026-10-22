@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import type { ReactElement } from "react";
 import { ButteryProvider } from "@buttery/react";
 import type { ReducedMotionPreference } from "@buttery/react";
-import { Chrome } from "./Chrome.tsx";
+import { DocsShell } from "./DocsShell.tsx";
 import { followLinks, useSettings } from "./location.ts";
 import type { MotionSetting } from "./location.ts";
 import { pages } from "./pages.tsx";
@@ -28,9 +28,13 @@ export function App(): ReactElement {
       reducedMotion={REDUCED_MOTION[settings.motion]}
     >
       {settings.chrome && page.fullWindow !== true ? (
-        <Chrome current={page.route} settings={settings}>
+        <DocsShell
+          current={page.route}
+          settings={settings}
+          headings={page.headings ?? []}
+        >
           {content}
-        </Chrome>
+        </DocsShell>
       ) : (
         content
       )}
