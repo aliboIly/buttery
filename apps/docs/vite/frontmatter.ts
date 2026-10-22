@@ -57,6 +57,24 @@ export function splitFrontmatter(source: string): {
     : { block: null, body: source };
 }
 
+/**
+ * An MDX page's body without its `import` and `export` blocks, outside its code blocks: each runs to the next
+ * blank line, as MDX reads it, so an import over several lines goes whole.
+ */
+export function withoutModuleBlocks(body: string): string {
+  const kept: string[] = [];
+  let fenced = false;
+  let skipping = false;
+  for (const line of body.split("\n")) {
+    if (skipping && line.trim() !== "") continue;
+    skipping = !fenced && /^(?:import|export)\s/.test(line);
+    if (skipping) continue;
+    if (line.startsWith("```")) fenced = !fenced;
+    kept.push(line);
+  }
+  return kept.join("\n");
+}
+
 /** A page's heading for its "On this page" list. */
 export interface Heading {
   readonly depth: 2 | 3;

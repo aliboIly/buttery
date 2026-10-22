@@ -118,6 +118,57 @@ describe("the site as Markdown", () => {
     );
   });
 
+  it("skips a page's imports whole, however many lines one takes", () => {
+    const markdown =
+      pageMarkdown(root, "foundations/spacing-and-sizing", components) ?? "";
+    expect(markdown).toMatch(
+      /^# Spacing and sizing\n\n[^\n]+\n\nbuttery's spacing is a scale/,
+    );
+    expect(markdown).not.toContain("HeightScale,");
+  });
+
+  it.each(contentRoutesIn(root))(
+    "leaves no sentence in %s's Markdown ending in a colon with nothing after it",
+    (route) => {
+      const lines = (pageMarkdown(root, route, components) ?? "").split("\n");
+      const dangling = lines.flatMap((line, at) => {
+        if (!/[^:]:$/.test(line) || /^\s*(?:[-*|#]|\d+\.)/.test(line))
+          return [];
+        const next = lines.slice(at + 1).find((after) => after.trim() !== "");
+        return next === undefined || next.startsWith("#") ? [line] : [];
+      });
+      expect(dangling).toEqual([]);
+    },
+  );
+
+  it("points to the live page where a block can't be written out", () => {
+    expect(pageMarkdown(root, "foundations/elevation", components)).toContain(
+      "The same levels in both:\n\nThe page draws this live: [Elevation › The levels](/foundations/elevation#the-levels).",
+    );
+    expect(
+      pageMarkdown(root, "layout/surface-and-nesting", components),
+    ).toContain(
+      "[Surface and nesting › The nesting recipe](/layout/surface-and-nesting#the-nesting-recipe)",
+    );
+  });
+
+  it("says where a component page's live demo and its variants and states are, in the page's order", () => {
+    const markdown = pageMarkdown(root, "components/button", components) ?? "";
+    const demo = markdown.indexOf(
+      "## Demo\n\nThe page has a live demo of Button, with controls for its props and the code for what it shows: [Button › Demo](/components/button#demo).",
+    );
+    const gallery = markdown.indexOf(
+      "## Variants and states\n\nThe page draws each of these live: [Button › Variants and states](/components/button#variants-and-states).\n\n- Variants: Primary for the one main action in view,",
+    );
+    expect(demo).toBeGreaterThan(-1);
+    expect(markdown.indexOf("## When to use it")).toBeGreaterThan(demo);
+    expect(gallery).toBeGreaterThan(markdown.indexOf("## Examples"));
+    expect(markdown.indexOf("## Props")).toBeGreaterThan(gallery);
+    expect(markdown).toContain(
+      "- Sizes and shapes: 28, 36 and 48px tall; rounded corners for dialog steps.",
+    );
+  });
+
   it("turns a page's token blocks into tables", () => {
     const markdown = pageMarkdown(root, "foundations/radius", components) ?? "";
     expect(markdown).toMatch(/\| `--bt-r-lg` \| \d+px \|/);

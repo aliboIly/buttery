@@ -7,7 +7,11 @@ import type { SearchDoc } from "../src/search/search.ts";
 import { releaseId } from "../src/release-id.ts";
 import { slugify } from "../src/slug.ts";
 import { captionOf } from "./code.ts";
-import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
+import {
+  parseFrontmatter,
+  splitFrontmatter,
+  withoutModuleBlocks,
+} from "./frontmatter.ts";
 import { propsTablesIn } from "./props.ts";
 import { changelogFiles, releasesIn } from "./whats-new.ts";
 
@@ -68,9 +72,8 @@ function sectionTitle(section: string): string {
 
 /** A page's prose as plain words: no code blocks, components, imports or Markdown marks. */
 export function plainText(markdown: string): string {
-  return markdown
+  return withoutModuleBlocks(markdown)
     .replace(/^```[\s\S]*?^```/gm, " ")
-    .replace(/^(?:import|export)\s.*$/gm, " ")
     .replace(/<[A-Z][\s\S]*?\/>/g, " ")
     .replace(/<\/?[A-Za-z][^>]*>/g, " ")
     .replace(/\{[^{}]*\}/g, " ")

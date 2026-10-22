@@ -7,7 +7,11 @@ import { MOTION_TEXT, REDUCED_TEXT } from "../src/motion-text.ts";
 import { slugify } from "../src/slug.ts";
 import { captionOf } from "./code.ts";
 import { shownSource } from "./example-source.ts";
-import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
+import {
+  parseFrontmatter,
+  splitFrontmatter,
+  withoutModuleBlocks,
+} from "./frontmatter.ts";
 import { listed, screensByDemo } from "../src/demo-sentence.ts";
 import { SECTIONS } from "../src/nav.ts";
 import { demoPages } from "../src/routes.ts";
@@ -216,10 +220,57 @@ function heading(depth: number, text: string): string {
   return `${"#".repeat(Math.min(depth, 6))} ${text}`;
 }
 
+/** The sections a playground file's `demos` draw under "Variants and states": each one's title and description. */
+function galleryOf(
+  file: string,
+): { readonly title: string; readonly description: string }[] {
+  if (!existsSync(file)) return [];
+  const source = ts.createSourceFile(
+    file,
+    readFileSync(file, "utf8"),
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  for (const statement of source.statements) {
+    if (!ts.isVariableStatement(statement)) continue;
+    for (const declaration of statement.declarationList.declarations) {
+      const value = declaration.initializer;
+      if (
+        !ts.isIdentifier(declaration.name) ||
+        declaration.name.text !== "demos" ||
+        !value ||
+        !ts.isArrayLiteralExpression(value)
+      )
+        continue;
+      return value.elements.flatMap((element) => {
+        if (!ts.isObjectLiteralExpression(element)) return [];
+        const text = (key: string): string => {
+          for (const property of element.properties) {
+            if (
+              ts.isPropertyAssignment(property) &&
+              property.name.getText(source) === key &&
+              ts.isStringLiteralLike(property.initializer)
+            )
+              return property.initializer.text;
+          }
+          return "";
+        };
+        const title = text("title");
+        return title === ""
+          ? []
+          : [{ title, description: text("description") }];
+      });
+    }
+  }
+  return [];
+}
+
 /**
  * A component's documentation as Markdown, its parts in the order its page shows them: what it is and its
- * import, when to use it, its examples as code, its props, accessibility, motion, layout and related pages.
- * `depth` is its title's heading level: 1 on a page of its own, 3 inside a written page.
+ * import, where its live demo is, when to use it, its examples as code, what its variants and states show,
+ * its props, accessibility, motion, layout and related pages. `depth` is its title's heading level: 1 on a
+ * page of its own, 3 inside a written page.
  */
 export function componentMarkdown(
   root: string,
@@ -238,6 +289,15 @@ export function componentMarkdown(
     "```",
     "",
   );
+  const live = (title: string): string =>
+    `[${name} › ${title}](${component.home === undefined ? componentHref(component) : `/${component.home}`}#${slugify(depth === 1 ? title : `${name} ${title}`)})`;
+  if (depth === 1)
+    lines.push(
+      heading(part, "Demo"),
+      "",
+      `The page has a live demo of ${name}, with controls for its props and the code for what it shows: ${live("Demo")}.`,
+      "",
+    );
 
   const useWhen = stringsOf(meta["useWhen"]);
   const avoidWhen = stringsOf(meta["avoidWhen"]);
@@ -271,6 +331,19 @@ export function componentMarkdown(
       );
     }
   }
+
+  const gallery = galleryOf(join(folder, `${name}.playground.tsx`));
+  if (gallery.length > 0)
+    lines.push(
+      heading(part, "Variants and states"),
+      "",
+      `The page draws each of these live: ${live("Variants and states")}.`,
+      "",
+      ...gallery.map(({ title, description }) =>
+        description === "" ? `- ${title}` : `- ${title}: ${description}`,
+      ),
+      "",
+    );
 
   const sourceFile = join(folder, `${name}.tsx`);
   const tables = existsSync(sourceFile) ? propsTablesIn(name, sourceFile) : [];
@@ -552,20 +625,31 @@ function tokenBlock(
   }
 }
 
-/** A written page's body as Markdown: its components written out as text, tables and code. */
+/**
+ * A written page's body as Markdown: its components written out as text, tables and code, and a block that
+ * only draws, such as a gallery of surfaces, as a line pointing to it on the live page.
+ */
 function bodyMarkdown(
   root: string,
+  page: { readonly route: string; readonly title: string },
   body: string,
   components: readonly ComponentSource[],
 ): string {
   const out: string[] = [];
-  const lines = body.split("\n");
+  const lines = withoutModuleBlocks(body).split("\n");
   let fenced = false;
+  let place = { title: page.title, href: `/${page.route}` };
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
     if (line.startsWith("```")) fenced = !fenced;
+    const titled = fenced ? null : /^#{2,3}\s+(.+)$/.exec(line)?.[1];
+    if (titled !== undefined && titled !== null)
+      place = {
+        title: `${page.title} › ${titled.replace(/[`*_]/g, "")}`,
+        href: `/${page.route}#${slugify(titled)}`,
+      };
     if (fenced || line.startsWith("```") || !/^<[A-Z]/.test(line)) {
-      if (!(!fenced && /^(?:import|export)\s/.test(line))) out.push(line);
+      out.push(line);
       continue;
     }
     let jsx = line;
@@ -607,8 +691,10 @@ function bodyMarkdown(
       const preview = `/templates/${template}/preview`;
       out.push(`The template runs live at [${preview}](${preview}).`);
     } else {
-      const block = tokenBlock(root, name, jsx);
-      if (block !== null) out.push(block);
+      out.push(
+        tokenBlock(root, name, jsx) ??
+          `The page draws this live: [${place.title}](${place.href}).`,
+      );
     }
   }
   return out
@@ -637,7 +723,7 @@ export function pageMarkdown(
     const title = typeof data["title"] === "string" ? data["title"] : route;
     const description =
       typeof data["description"] === "string" ? data["description"] : "";
-    return `${[heading(1, title), "", description, "", bodyMarkdown(root, body, components)].join("\n").trim()}\n`;
+    return `${[heading(1, title), "", description, "", bodyMarkdown(root, { route, title }, body, components)].join("\n").trim()}\n`;
   }
   const component = components.find(
     (candidate) => componentHref(candidate) === `/${route}`,

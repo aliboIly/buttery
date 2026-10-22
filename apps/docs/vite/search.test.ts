@@ -88,6 +88,13 @@ describe("docs search", () => {
     }
   });
 
+  it("indexes a page's text without its imports, however many lines one takes", () => {
+    const spacing = docs.find(
+      (doc) => doc.id === "page:foundations/spacing-and-sizing",
+    );
+    expect(spacing?.text).toMatch(/^buttery's spacing is a scale/);
+  });
+
   it("finds titles before the full text has loaded", () => {
     const top = searchDocs({ titles: indexes.titles, text: null }, "Dialog")
       .slice(0, 1)
