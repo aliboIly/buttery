@@ -1,8 +1,12 @@
 import { readFile } from "node:fs/promises";
 import type { Plugin } from "vite";
+import { shownSource } from "./example-source.ts";
 import { highlight } from "./highlight.ts";
 
-/** An example file's source, highlighted at build time, and the one-line caption its JSDoc gives it. */
+/**
+ * An example file's source as a reader copies it, highlighted at build time, and the one-line caption its
+ * JSDoc gives it.
+ */
 export interface ExampleCode {
   readonly source: string;
   readonly html: string;
@@ -31,9 +35,10 @@ export function exampleCode(): Plugin {
       const [file, query] = id.split("?");
       if (query !== "code" || file === undefined) return null;
       const source = await readFile(file, "utf8");
+      const shown = shownSource(source);
       const code: ExampleCode = {
-        source,
-        html: await highlight(source.trimEnd(), "tsx"),
+        source: shown,
+        html: await highlight(shown.trimEnd(), "tsx"),
         caption: captionOf(source),
       };
       return `export default ${JSON.stringify(code)};`;
