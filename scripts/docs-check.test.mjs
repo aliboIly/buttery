@@ -77,6 +77,16 @@ describe("docs check", () => {
     );
   });
 
+  it("asks a component whose props are a union for the examples its members' props call for", () => {
+    expect(
+      fixture("union-props", {
+        metaFiles: [join(fixtures, "union-props/components/pane/Pane.meta.ts")],
+      }),
+    ).toContain(
+      'Pane has no controlled example. Fix: add one to apps/docs/lab/docs-check/union-props/components/pane/examples with export const kind: ExampleKind = "controlled".',
+    );
+  });
+
   it("fails a component page with no live demo, keyboard table, layout note or reduced-motion note", () => {
     const bare = join(fixtures, "missing-parts/components/bare");
     expect(
