@@ -2,6 +2,7 @@
   /* The bar stacks at the sticky band whatever its behavior, so its menu panel stays over the blur. */
   .bt-nav-bar {
     --bt-nav-bar-search-min: 160px;
+    --bt-nav-bar-skip-hidden: 1px;
 
     z-index: var(--bt-z-sticky);
     min-inline-size: 0;
@@ -33,6 +34,36 @@
     gap: var(--bt-space-6);
     block-size: var(--bt-h-nav-bar);
     min-inline-size: 0;
+  }
+
+  /* The skip link is out of sight until Tab reaches it, then a raised pill over the start of the bar. */
+  .bt-nav-bar [data-bt-part="nav-bar-skip"] {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    z-index: var(--bt-z-raised);
+    display: inline-flex;
+    align-items: center;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-4);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-raised);
+    box-shadow: var(--bt-shadow-raised);
+    color: var(--bt-text-strong);
+    font-size: var(--bt-text-label-size);
+    font-weight: var(--bt-text-label-weight);
+    line-height: var(--bt-text-label-line);
+    text-decoration: none;
+    white-space: nowrap;
+    translate: 0 -50%;
+  }
+
+  .bt-nav-bar [data-bt-part="nav-bar-skip"]:not(:focus) {
+    inline-size: var(--bt-nav-bar-skip-hidden);
+    block-size: var(--bt-nav-bar-skip-hidden);
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
 
   .bt-nav-bar [data-bt-part="nav-bar-brand"],

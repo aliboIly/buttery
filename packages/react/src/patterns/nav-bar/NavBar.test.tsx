@@ -92,6 +92,67 @@ describe("NavBar", () => {
     }
   });
 
+  function skipPage(): {
+    readonly skip: HTMLElement;
+    readonly brand: HTMLElement;
+  } {
+    render(
+      <>
+        <NavBar
+          skipTo="content"
+          brand={<a href="#top">Card Studio</a>}
+          actions={<Button variant="secondary">Sign in</Button>}
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+        </NavBar>
+        <main id="content" tabIndex={-1}>
+          <h1>Cards</h1>
+        </main>
+      </>,
+    );
+    return {
+      skip: screen.getByRole("link", { name: "Skip to content" }),
+      brand: screen.getByRole("link", { name: "Card Studio" }),
+    };
+  }
+
+  it("shows its link to the main content over the bar's start only while it has focus", () => {
+    const { skip, brand } = skipPage();
+    expect(skip.getAttribute("href")).toBe("#content");
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+    skip.focus();
+    expect(skip.getBoundingClientRect().width).toBeGreaterThan(48);
+    expect(skip.getBoundingClientRect().left).toBeCloseTo(
+      brand.getBoundingClientRect().left,
+      0,
+    );
+    brand.focus();
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+  });
+
+  // WebKit leaves links out of the tab order unless the system's keyboard setting puts them in.
+  it.skipIf(!navigator.userAgent.includes("Chrome/"))(
+    "puts its link to the main content first in the tab order",
+    async () => {
+      const { skip, brand } = skipPage();
+      await browser.keyboard("{Tab}");
+      expect(document.activeElement).toBe(skip);
+      await browser.keyboard("{Tab}");
+      expect(document.activeElement).toBe(brand);
+    },
+  );
+
+  it("names its skip link in the words it's given, and leaves it out without skipTo", () => {
+    render(
+      <>
+        <NavBar skipTo="content" skipLabel="Zum Inhalt" brand="Karten" />
+        <NavBar brand="Ohne" />
+      </>,
+    );
+    expect(screen.getAllByRole("link", { name: "Zum Inhalt" })).toHaveLength(1);
+    expect(screen.queryByRole("link", { name: "Skip to content" })).toBeNull();
+  });
+
   it("sits on the page container unless told not to", () => {
     const { rerender } = render(
       <div style={{ inlineSize: "1600px" }}>

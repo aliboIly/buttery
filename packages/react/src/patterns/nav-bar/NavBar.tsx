@@ -71,6 +71,13 @@ export interface NavBarProps extends Omit<
   readonly menuLabel?: string | undefined;
   /** Names the button that closes it. Defaults to `"Close menu"`. */
   readonly closeLabel?: string | undefined;
+  /**
+   * The id of the page's main content. With it, the first thing Tab reaches is a link there, shown over the
+   * bar's start only while it has focus, so keyboard users can skip the bar and any navigation after it.
+   */
+  readonly skipTo?: string | undefined;
+  /** Names the link `skipTo` adds. Defaults to `"Skip to content"`. */
+  readonly skipLabel?: string | undefined;
   /** The menus and links: `MorphMenu.Item`s and `MorphMenu.Link`s. */
   readonly children?: ReactNode;
   /** Inline styles, which can include motion values. */
@@ -355,6 +362,8 @@ export function NavBar({
   label = "Main",
   menuLabel = "Menu",
   closeLabel = "Close menu",
+  skipTo,
+  skipLabel = "Skip to content",
   contained = true,
   ref,
   className,
@@ -403,6 +412,11 @@ export function NavBar({
       data-bt-part="nav-bar-bar"
       data-folded={folded ? "" : undefined}
     >
+      {skipTo === undefined ? null : (
+        <a href={`#${skipTo}`} className="bt-focus" data-bt-part="nav-bar-skip">
+          {skipLabel}
+        </a>
+      )}
       {hasContent(brand) ? (
         <div data-bt-part="nav-bar-brand">{brand}</div>
       ) : null}

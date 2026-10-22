@@ -18,6 +18,10 @@ export const meta: ComponentMeta = {
   motion: "morph",
   keyboard: [
     {
+      keys: "Tab",
+      does: "With skipTo, reaches Skip to content first; Enter on it moves on to the page's main content",
+    },
+    {
       keys: "Enter or Space",
       does: "Opens or closes the focused trigger's menu, or on a narrow page opens the sheet from Menu",
     },
