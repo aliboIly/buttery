@@ -11,16 +11,18 @@ export function SiteFooter(): ReactElement {
   const valid = email.includes("@");
   return (
     <Page>
-      <Section size="sm" title="Cards for launch days">
-        <Text variant="body-lg">Made in a minute, ready for every post.</Text>
+      <Section size="sm" title="Decks for every meeting">
+        <Text variant="body-lg">
+          Written in an afternoon, ready for any screen.
+        </Text>
       </Section>
       <Footer
         brand={
           <Stack gap={4}>
             <Stack gap={2}>
-              <Text variant="title">Card Studio</Text>
+              <Text variant="title">Deckhand</Text>
               <Text variant="body-sm" tone="secondary">
-                A letter on Fridays with new backdrops and finishes.
+                A letter on Fridays with new themes and layouts.
               </Text>
             </Stack>
             {signedUp ? (
@@ -52,7 +54,7 @@ export function SiteFooter(): ReactElement {
         legal={
           <Inline gap={4} justify="between">
             <Text variant="caption" tone="secondary">
-              © 2026 Card Studio
+              © 2026 Deckhand
             </Text>
             <Footer.Link href="#privacy">Privacy</Footer.Link>
           </Inline>
