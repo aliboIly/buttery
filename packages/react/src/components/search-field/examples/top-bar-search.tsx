@@ -37,7 +37,7 @@ export function TopBarSearch(): ReactElement {
           ? `${String(ORDERS.length)} open orders`
           : `${String(found.length)} of ${String(ORDERS.length)} orders match`}
       </Text>
-      <Stack gap={2}>
+      <Stack gap={3}>
         {found.map((order) => (
           <Inline key={order.id} gap={3} align="center" justify="between">
             <Text variant="label">{`${order.id} · ${order.customer}`}</Text>

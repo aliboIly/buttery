@@ -28,7 +28,7 @@ export function FilterList(): ReactElement {
       <Text variant="caption" tone="secondary">
         {`${String(shown.length)} of ${String(ORIGINS.length)} origins`}
       </Text>
-      <Stack gap={1}>
+      <Stack gap={3}>
         {shown.length === 0 ? (
           <Text variant="body-sm">No origins match.</Text>
         ) : (

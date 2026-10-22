@@ -66,7 +66,7 @@ export function CustomerPage(): ReactElement {
               />
             }
           >
-            <Stack gap={2}>
+            <Stack gap={3}>
               {ORDERS[filter].map((order) => (
                 <Text key={order} variant="body">
                   {order}
