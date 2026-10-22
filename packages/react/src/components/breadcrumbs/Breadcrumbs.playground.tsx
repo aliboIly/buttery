@@ -30,7 +30,7 @@ export const demos: readonly DemoSection[] = [
     description:
       "Under 480px of its own width it shows the page one level up, after a back chevron.",
     render: () => (
-      <div style={{ inlineSize: "var(--bt-w-dialog)" }}>
+      <div style={{ inlineSize: "100%", maxInlineSize: "var(--bt-w-dialog)" }}>
         <Breadcrumbs
           items={[
             { label: "Settings", href: "#breadcrumbs" },
