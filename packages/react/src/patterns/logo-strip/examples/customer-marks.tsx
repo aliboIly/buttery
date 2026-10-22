@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { LogoStrip } from "@buttery/react";
 
 const NAMES = ["Tidewater", "Bramble", "Quillwork", "Halcyon"] as const;
@@ -25,3 +26,10 @@ export function CustomerMarks(): ReactElement {
     </LogoStrip>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Tidewater");
+  await see("Halcyon");
+};
