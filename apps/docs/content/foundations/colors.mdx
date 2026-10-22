@@ -37,7 +37,14 @@ The same tokens are in TypeScript as `colors` from `@buttery/core`, each with it
 }
 ```
 
-With Tailwind v4, import `@buttery/core/tailwind.css` after Tailwind and keep `@buttery/core/styles.css`, which defines the variables. Utilities such as `bg-surface`, `text-fg-secondary` and `border-border` then read the same tokens.
+With Tailwind v4, import `@buttery/core/tailwind.css` after Tailwind in your stylesheet, and keep importing `@buttery/core/styles.css` at your app's entry, which defines the variables:
+
+```css
+@import "tailwindcss";
+@import "@buttery/core/tailwind.css";
+```
+
+Utilities such as `bg-surface`, `text-fg-secondary` and `border-border` then read the same tokens.
 
 ## Surfaces
 

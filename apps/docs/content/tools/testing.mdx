@@ -22,11 +22,11 @@ test("the orders page is buttery", async ({ page }) => {
 });
 ```
 
-`quickMatrix` checks a 390px phone and a 1280px desktop, in light and dark. `fullMatrix` adds tablets and wide screens and the compact density; buttery runs it before each release.
+`quickMatrix` checks a 390px phone and a 1280px desktop, in light and dark. `fullMatrix` adds 768, 960, 1440 and 1728px and the compact density; buttery runs it before each release.
 
 ## What it checks
 
-Each check has a name you can pass to `rules` to run only some of them:
+Each check has a name. Pass a list of them as `rules` to run only those, such as `rules: ["overflow", "overlap"]`:
 
 - `overlap`: two elements that cover each other, outside the layers they belong in.
 - `overflow`: content wider than its box, or a page that scrolls sideways.

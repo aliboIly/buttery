@@ -126,7 +126,10 @@ export interface SignUpFormProps extends Omit<
    * or a promise of one, to show it over the form, such as "There's already an account for that email".
    */
   readonly onSubmit: AuthSubmit<SignUpValues>;
-  /** The rules a password has to meet, listed under it. Defaults to 8 characters with a number. */
+  /**
+   * The rules a password has to meet, listed under it, each a `{ label, test }`. They replace the defaults, 8
+   * characters with a number: to add one, spread `defaultPasswordRules` first.
+   */
   readonly passwordRules?: readonly PasswordRule[] | undefined;
   /** Where the terms link goes. Left out, the terms box isn't shown. */
   readonly termsHref?: string | undefined;

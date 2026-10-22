@@ -24,6 +24,8 @@ The form patterns are complete sign-in and sign-up forms: the fields at their la
 
 Fields check themselves when a person leaves them, not on every key. Submitting a form with errors puts a summary at its top, says how many there are, and moves focus to it; each item links to its field. Fields are labelled above, with a hint under the label when the format matters.
 
+An error from your server, such as a wrong password, comes back from `onSubmit`: return its message, or a promise of one, and `SignInForm` and `SignUpForm` show it over the form, with the button busy until the promise settles. Return nothing when it worked.
+
 ## Parts for forms of your own
 
 The forms are built from parts you can use in a form of your own.
