@@ -29,8 +29,16 @@ import {
 } from "@buttery/react";
 import { CardStudioMark } from "./CardStudioMark.tsx";
 
+/**
+ * A page of the docs site, which serves this demo, written from the site's root, such as
+ * `/patterns/onboarding`, under the base the site is served from.
+ */
+function docsPage(path: string): string {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+}
+
 /** Where the studio is: beside the site on the docs site, which serves both. */
-const STUDIO = "/demos/card-studio";
+const STUDIO = docsPage("/demos/card-studio");
 
 const SECTIONS = [
   { id: "site-overview", label: "Overview" },
@@ -180,12 +188,12 @@ function Menus(): ReactElement[] {
     <MorphMenu.Item key="guides" label="Guides">
       <MorphMenu.Column title="Learn">
         <MorphMenu.Entry
-          href="/patterns/onboarding"
+          href={docsPage("/patterns/onboarding")}
           title="The tour"
           caption="Four steps, one minute"
         />
         <MorphMenu.Entry
-          href="/components/kbd"
+          href={docsPage("/components/kbd")}
           title="Shortcuts"
           caption="Every key on one page"
         />
@@ -274,7 +282,7 @@ export function CardStudioSite(): ReactElement {
                 <a href={STUDIO}>Open the studio</a>
               </Button>
               <Button variant="soft" asChild>
-                <a href="/patterns/onboarding">Take the tour</a>
+                <a href={docsPage("/patterns/onboarding")}>Take the tour</a>
               </Button>
             </>
           }
@@ -457,7 +465,9 @@ export function CardStudioSite(): ReactElement {
         </Footer.Column>
         <Footer.Column title="Studio">
           <Footer.Link href={STUDIO}>Open the studio</Footer.Link>
-          <Footer.Link href="/patterns/onboarding">The tour</Footer.Link>
+          <Footer.Link href={docsPage("/patterns/onboarding")}>
+            The tour
+          </Footer.Link>
         </Footer.Column>
       </Footer>
       <div className="lane-room" aria-hidden="true" />
