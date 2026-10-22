@@ -45,7 +45,6 @@ export function PanelFooter(): ReactElement {
             >
               <Inline asChild gap={3} justify="between" align="center">
                 <Pressable
-                  aria-label={setting}
                   aria-pressed={on}
                   onClick={() => {
                     setDraft(
@@ -56,7 +55,7 @@ export function PanelFooter(): ReactElement {
                   }}
                 >
                   <Text variant="menu">{setting}</Text>
-                  <Text variant="control" tone="secondary">
+                  <Text variant="control" tone="secondary" aria-hidden="true">
                     {on ? "On" : "Off"}
                   </Text>
                 </Pressable>
