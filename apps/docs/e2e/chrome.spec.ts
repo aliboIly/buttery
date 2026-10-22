@@ -249,3 +249,45 @@ test("the results page offers a nearby word and a way to ask for docs when nothi
     page.getByRole("link", { name: /Dialog/ }).first(),
   ).toBeVisible();
 });
+
+test("an address with no page says so, with a search holding its words and a link to each section", async ({
+  page,
+}) => {
+  await page.goto("/get-started/instalation");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Page not found" }),
+  ).toBeVisible();
+  await expect(page).toHaveTitle("Page not found · buttery");
+  const main = page.getByRole("main");
+  await expect(
+    main.getByRole("combobox", { name: "Search the docs" }),
+  ).toHaveValue("instalation");
+  const sections = main.getByRole("region", { name: "Sections" });
+  await expect(sections.getByRole("link", { name: "Demos" })).toHaveAttribute(
+    "href",
+    "/demos",
+  );
+  await sections.getByRole("link", { name: "Get started" }).click();
+  await expect(page).toHaveURL(/\/get-started\/introduction$/);
+});
+
+test("a section's own address opens the section's first page", async ({
+  page,
+}) => {
+  await page.goto("/foundations?theme=dark");
+  await expect(page).toHaveURL(/\/foundations\/colors\?theme=dark$/);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Colors" }),
+  ).toBeVisible();
+  await page.goto("/get-started/");
+  await expect(page).toHaveURL(/\/get-started\/introduction$/);
+});
+
+test("a Markdown address with no page answers 404", async ({ request }) => {
+  const missing = await request.get("/get-started/instalation.md");
+  expect(missing.status()).toBe(404);
+  expect(missing.headers()["content-type"]).toContain("text/plain");
+  const found = await request.get("/get-started/installation.md");
+  expect(found.status()).toBe(200);
+  expect(await found.text()).toMatch(/^# Installation\n/);
+});

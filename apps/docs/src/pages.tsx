@@ -12,6 +12,8 @@ import type { Heading } from "./content.ts";
 import type { Neighbor } from "./PageFooter.tsx";
 import { buildNav, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
+import { NotFoundPage } from "./NotFoundPage.tsx";
+import type { SectionLink } from "./NotFoundPage.tsx";
 import { MotionPage } from "./pages/MotionPage.tsx";
 import * as cardStudio from "demo-card-studio";
 import * as cardStudioSite from "demo-card-studio-site";
@@ -35,6 +37,8 @@ export interface Page {
   readonly render: () => ReactElement;
   /** A whole app that brings its own landmarks, shown without the site's chrome. */
   readonly fullWindow?: boolean;
+  /** An app with a router of its own, which draws the paths under its route too, such as a demo's settings. */
+  readonly hosted?: boolean;
   /** Shown across the shell's whole width, without the sidebar and the page's headings. */
   readonly wide?: boolean;
   /** Where it sits on the site, for the nav; demos and lab pages have none. */
@@ -82,6 +86,7 @@ const templatePreviews: readonly Page[] = templates.map(({ name, title }) => ({
   title: `${title} template`,
   render: () => TEMPLATE_APPS[name].render(`/templates/${name}/preview`),
   fullWindow: true,
+  hosted: true,
 }));
 
 /** Each demo's own package, by its route. */
@@ -191,6 +196,25 @@ export const nav: readonly NavSection[] = buildNav(
   ),
 );
 
+/** Each section's own address and the page it opens, its first, such as `foundations` and `foundations/colors`. */
+export const sectionHomes: ReadonlyMap<string, string> = new Map(
+  nav.flatMap((section) => {
+    const first = section.pages[0] ?? section.groups[0]?.pages[0];
+    return first ? [[section.root, first.route] as const] : [];
+  }),
+);
+
+/** Each section's title and first page, then the demos, for a page that links to all of them. */
+const sectionLinks: readonly SectionLink[] = [
+  ...nav.flatMap((section) => {
+    const home = sectionHomes.get(section.root);
+    return home === undefined
+      ? []
+      : [{ title: section.title, href: `/${home}` }];
+  }),
+  { title: "Demos", href: "/demos" },
+];
+
 /** The pages the site's menus show, grouped: the nav's sections, then the demos. */
 export const pageGroups: readonly PageGroup[] = [
   ...nav.map((section) => {
@@ -214,6 +238,7 @@ export const pageGroups: readonly PageGroup[] = [
         title: demo.title,
         render: () => <DemoPage demo={demo} app={DEMO_APPS[demo.route]} />,
         fullWindow: true,
+        hosted: true,
       })),
     ],
   },
@@ -327,22 +352,32 @@ export const pages: readonly Page[] = [
   ...labDocs,
 ];
 
+/** What an address with no page shows, under that address. */
+function notFoundPage(route: string): Page {
+  return {
+    route,
+    title: "Page not found",
+    render: () => <NotFoundPage route={route} sections={sectionLinks} />,
+  };
+}
+
 /**
- * The page at `route`: the page with that route, else the one whose route is the longest start of it, as a
- * demo's own path is (`demos/roastery/settings/team`), else the landing page.
+ * The page at `route`: the page with that route; for a section's own address, the section's first page; for
+ * a path under a demo or a template's preview, such as `demos/roastery/settings/team`, the app that draws it;
+ * and for any other address, the not-found page.
  */
 export function pageAt(route: string): Page {
-  const page =
-    pages.find((candidate) => candidate.route === route) ??
+  const wanted = sectionHomes.get(route) ?? route;
+  return (
+    pages.find((candidate) => candidate.route === wanted) ??
     pages
       .filter(
         (candidate) =>
-          candidate.route !== "" && route.startsWith(`${candidate.route}/`),
+          candidate.hosted === true && wanted.startsWith(`${candidate.route}/`),
       )
       .sort((a, b) => b.route.length - a.route.length)[0] ??
-    pages[0];
-  if (!page) throw new Error("The docs site needs at least one page.");
-  return page;
+    notFoundPage(wanted)
+  );
 }
 
 const duplicate = pages.find(

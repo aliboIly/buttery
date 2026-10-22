@@ -93,6 +93,14 @@ export function navigate(href: string): void {
   });
 }
 
+/** Moves the address to the page at `route` without a history entry, keeping its query and hash, as a redirect does. */
+export function redirectTo(route: string): void {
+  const url = new URL(window.location.href);
+  url.pathname = `/${route}`;
+  window.history.replaceState(null, "", url);
+  announce();
+}
+
 /** Updates one URL setting without adding a history entry. */
 export function setSetting(
   name: "theme" | "density" | "motion",

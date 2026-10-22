@@ -1,5 +1,5 @@
 import { existsSync, globSync, readFileSync } from "node:fs";
-import { basename, dirname, join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import ts from "typescript";
 import type { Plugin } from "vite";
 import { COLOR_GROUPS, isColorGroup } from "../src/foundations/color-groups.ts";
@@ -669,35 +669,110 @@ export function llmsText(
   return `${lines.join("\n").trim()}\n`;
 }
 
+/** The parts of a request the Markdown middlewares read. */
+export interface MarkdownRequest {
+  readonly url?: string | undefined;
+}
+
+/** The parts of a response the Markdown middlewares write. */
+export interface MarkdownResponse {
+  statusCode: number;
+  setHeader: (name: string, value: string) => unknown;
+  end: (body: string) => unknown;
+}
+
+/** A middleware that answers a request or hands it to `next`. */
+export type MarkdownMiddleware = (
+  request: MarkdownRequest,
+  response: MarkdownResponse,
+  next: () => void,
+) => void;
+
+function pathOf(request: MarkdownRequest): string {
+  return decodeURIComponent((request.url ?? "").split("?")[0] ?? "");
+}
+
+function notFound(response: MarkdownResponse, path: string): void {
+  response.statusCode = 404;
+  response.setHeader("Content-Type", "text/plain; charset=utf-8");
+  response.end(
+    `No page has its Markdown at ${path}. /llms.txt links to every page's.\n`,
+  );
+}
+
+/**
+ * Answers `llms.txt` and each page's Markdown at its path plus `.md`, written from the repository on each
+ * request, and 404 for a `.md` address that's no page's and isn't a file `served` says the server has.
+ * Anything else goes on to `next`.
+ */
+export function markdownRequests(
+  root: string,
+  served: (path: string) => boolean,
+): MarkdownMiddleware {
+  return (request, response, next) => {
+    const path = pathOf(request);
+    const markdown =
+      path === "/llms.txt"
+        ? llmsText(root)
+        : path.endsWith(".md")
+          ? pageMarkdown(root, path.slice(1, -3))
+          : null;
+    if (markdown !== null) {
+      response.setHeader(
+        "Content-Type",
+        path === "/llms.txt"
+          ? "text/plain; charset=utf-8"
+          : "text/markdown; charset=utf-8",
+      );
+      response.end(markdown);
+      return;
+    }
+    if (path.endsWith(".md") && !served(path)) {
+      notFound(response, path);
+      return;
+    }
+    next();
+  };
+}
+
+/** Answers 404 for a `.md` address with no file in `out`, the static build, rather than the app's HTML. */
+export function missingMarkdown(out: string): MarkdownMiddleware {
+  return (request, response, next) => {
+    const path = pathOf(request);
+    if (path.endsWith(".md") && !existsSync(join(out, path))) {
+      notFound(response, path);
+      return;
+    }
+    next();
+  };
+}
+
 /**
  * Serves every page as Markdown at its path plus `.md`, and `llms.txt`, from the dev server, written from
- * the repository on each request so they follow the pages as they change. The static build writes the same
- * files.
+ * the repository on each request so they follow the pages as they change; the static build writes the same
+ * files. Both answer 404 for a `.md` address no page has, the static build when `vite preview` serves it.
  */
 export function butteryMarkdown(root: string): Plugin {
   return {
     name: "buttery-docs-markdown",
     configureServer(server) {
-      server.middlewares.use((request, response, next) => {
-        const path = (request.url ?? "").split("?")[0] ?? "";
-        const markdown =
-          path === "/llms.txt"
-            ? llmsText(root)
-            : path.endsWith(".md")
-              ? pageMarkdown(root, decodeURIComponent(path.slice(1, -3)))
-              : null;
-        if (markdown === null) {
-          next();
-          return;
-        }
-        response.setHeader(
-          "Content-Type",
-          path === "/llms.txt"
-            ? "text/plain; charset=utf-8"
-            : "text/markdown; charset=utf-8",
-        );
-        response.end(markdown);
-      });
+      const { root: app, publicDir } = server.config;
+      server.middlewares.use(
+        markdownRequests(
+          root,
+          (path) =>
+            path.startsWith("/@") ||
+            existsSync(join(app, path)) ||
+            (publicDir !== "" && existsSync(join(publicDir, path))),
+        ),
+      );
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(
+        missingMarkdown(
+          resolve(server.config.root, server.config.build.outDir),
+        ),
+      );
     },
   };
 }

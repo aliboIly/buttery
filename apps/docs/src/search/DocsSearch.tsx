@@ -216,13 +216,21 @@ export function resultsHref(query: SearchQuery): string {
  * The docs search in the top bar: buttery's `CommandSearch` over the index the build makes, opened with
  * `/` or ⌘K. Its titles load while the browser is idle or on the first focus, and the full text after them.
  */
-export function DocsSearch(): ReactElement {
+export function DocsSearch({
+  shortcut = true,
+  defaultValue = "",
+}: {
+  /** Whether `/` and ⌘K focus it, as they do the top bar's; a second search on a page leaves them to that one. */
+  readonly shortcut?: boolean;
+  /** What it holds at first, such as the words of an address with no page. */
+  readonly defaultValue?: string;
+}): ReactElement {
   const indexes = useSyncExternalStore(
     subscribeSearch,
     loadedSearch,
     () => null,
   );
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(defaultValue);
 
   useEffect(() => {
     const prefetch = (): void => {
@@ -243,6 +251,7 @@ export function DocsSearch(): ReactElement {
   return (
     <CommandSearch
       label="Search the docs"
+      shortcut={shortcut}
       value={search}
       onValueChange={setSearch}
       sources={searchSources(indexes, parseSearch(search, SEARCH_FILTERS))}

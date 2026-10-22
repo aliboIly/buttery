@@ -81,6 +81,7 @@ Guides and foundations pages use the same shell without the component-only parts
 - Three columns: the nav on the left (240 wide, groups that fold, the current page highlighted and scrolled into view, scrolling on its own), the content (prose at most 720 wide, demos wider when they need it), and an "On this page" list with scroll-spy on the right from 1280px. Under 1100 the list hides; under 768 the nav becomes a sheet.
 - A top bar: the `BrandMark`, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group; Patterns and Templates; Guides and Tools; Resources), the docs search (below), the version, a theme toggle and GitHub.
 - Anchors on headings, copy buttons on code, and syntax highlighting done at build time.
+- An address with no page shows "Page not found" under that address: its own title, a docs search holding the address's last words (`/get-started/instalation` holds "instalation") and a link to each section and the demos. A section's own address, such as `/foundations`, opens the section's first page and puts that page's address in the bar. Only a demo or a template's preview draws the paths under its address, with its own router.
 - Every docs page passes `expectButtery` across the full matrix, like the rest of buttery. The docs site is buttery's biggest dogfood test.
 
 ## Search
@@ -139,7 +140,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 
 ## Build and deploy
 
-- `pnpm docs:build` writes prerendered HTML for every public route, the demos and a `sitemap.xml` into `apps/docs/dist`, with each page's Markdown at its path plus `.md` and `llms.txt`. The demos and the template previews come with the pages inside them, from the paths each app's package exports as `routes`, and a `404.html` lets the app draw any other address, such as a demo's customer page. It renders each route with React's own `react-dom/server` and the app takes over in the browser; `DOCS_URL` sets the site address the sitemap links to. It runs the docs check first and builds nothing while the check finds a problem.
+- `pnpm docs:build` writes prerendered HTML for every public route, the demos and a `sitemap.xml` into `apps/docs/dist`, with each page's Markdown at its path plus `.md` and `llms.txt`. The demos and the template previews come with the pages inside them, from the paths each app's package exports as `routes`, and a `404.html` lets the app draw any other address, such as a demo's customer page. It renders each route with React's own `react-dom/server` and the app takes over in the browser; `DOCS_URL` sets the site address the sitemap links to. Each section's own address is written as the page it opens, naming that page as canonical, and left out of the sitemap. A `.md` address no page has gets a 404: from the dev server's Markdown middleware, from `vite preview` serving the build, and from a static host, which serves `404.html` with that status. It runs the docs check first and builds nothing while the check finds a problem.
 - Approved if they're needed: `@mdx-js/rollup`, `shiki` and `minisearch`. For static prerendering, use the smallest maintained option and log the choice in `docs/DECISIONS.md`.
 - Where it's deployed is the maintainer's call. When Phase 7 gets there, it goes in `notes/NEEDS-YOU.md` with a recommendation.
 

@@ -520,6 +520,30 @@ for (const route of routes) {
   });
 }
 
+test("the not-found page is buttery, its search open", async ({ page }) => {
+  await page.goto("/get-started/instalation");
+  await expectButtery(page, {
+    ...matrix,
+    name: "not-found",
+    interactions: [
+      {
+        name: "open the page's search on what the address asked for",
+        run: async () => {
+          await page
+            .getByRole("main")
+            .getByRole("combobox", { name: "Search the docs" })
+            .click();
+          await page
+            .getByRole("option", { name: /Installation/ })
+            .first()
+            .waitFor();
+        },
+        acrossMatrix: true,
+      },
+    ],
+  });
+});
+
 test("the landing page is buttery with its menu and a toast open", async ({
   page,
 }) => {

@@ -3,9 +3,9 @@ import type { ReactElement } from "react";
 import { ButteryProvider } from "@buttery/react";
 import type { ReducedMotionPreference } from "@buttery/react";
 import { DocsShell } from "./DocsShell.tsx";
-import { followLinks, useSettings } from "./location.ts";
+import { followLinks, redirectTo, useSettings } from "./location.ts";
 import type { MotionSetting } from "./location.ts";
-import { pageAt } from "./pages.tsx";
+import { pageAt, sectionHomes } from "./pages.tsx";
 
 const REDUCED_MOTION: Readonly<Record<MotionSetting, ReducedMotionPreference>> =
   { system: "user", full: "never", reduced: "always" };
@@ -13,6 +13,10 @@ const REDUCED_MOTION: Readonly<Record<MotionSetting, ReducedMotionPreference>> =
 export function App(): ReactElement {
   const settings = useSettings();
   useEffect(() => followLinks(), []);
+  const home = sectionHomes.get(settings.route);
+  useEffect(() => {
+    if (home !== undefined) redirectTo(home);
+  }, [home]);
   const page = pageAt(settings.route);
   const title = page.route === "" ? "buttery" : `${page.title} · buttery`;
   useEffect(() => {

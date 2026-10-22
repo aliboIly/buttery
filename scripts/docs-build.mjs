@@ -37,9 +37,10 @@ function write(file, contents) {
  * Builds the docs site into `apps/docs/dist`: the app, then every public route prerendered with React's own
  * server renderer into its own `index.html`, the demos and the template previews with the pages inside them
  * among them, each page's Markdown at its path plus `.md`, `llms.txt`, a `sitemap.xml` and a `404.html` for
- * addresses nothing was written for, such as a demo's customer. Development-only routes under `/lab` aren't
- * written. It runs the docs check first and builds nothing while that finds a problem, such as an export
- * with no page or a broken link.
+ * addresses nothing was written for, such as a demo's customer. Each section's own address, such as
+ * `/foundations`, is written as the page it opens, naming that page as canonical, and left out of the
+ * sitemap. Development-only routes under `/lab` aren't written. It runs the docs check first and builds
+ * nothing while that finds a problem, such as an export with no page or a broken link.
  */
 export async function buildDocs({
   out = join(app, "dist"),
@@ -70,20 +71,31 @@ export async function buildDocs({
     pathToFileURL(join(server, "entry-server.js")).href
   );
   const template = readFileSync(join(out, "index.html"), "utf8");
-  const routes = entry.publicRoutes();
-  for (const route of routes) {
+  const pageHtml = (route, head = "") => {
     const page = entry.render(route);
-    const html = template
+    return template
       .replace(
         "<title>buttery</title>",
         `<title>${escapeHtml(page.title)}</title>`,
       )
       .replace(
         "</title>",
-        `</title>\n    <meta name="description" content="${escapeHtml(page.description)}" />`,
+        `</title>\n    <meta name="description" content="${escapeHtml(page.description)}" />${head}`,
       )
       .replace('<div id="root"></div>', `<div id="root">${page.html}</div>`);
-    write(join(out, route, "index.html"), html);
+  };
+  const routes = entry.publicRoutes();
+  for (const route of routes) {
+    write(join(out, route, "index.html"), pageHtml(route));
+  }
+  for (const [route, home] of entry.sectionRoutes()) {
+    write(
+      join(out, route, "index.html"),
+      pageHtml(
+        route,
+        `\n    <link rel="canonical" href="${escapeHtml(`${SITE_URL}/${home}`)}" />`,
+      ),
+    );
   }
   const components = componentSources(root);
   for (const route of routes) {

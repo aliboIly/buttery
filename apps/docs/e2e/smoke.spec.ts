@@ -49,6 +49,18 @@ test("renders the landing page with the bundled font and no console problems", a
   expect(problems).toEqual([]);
 });
 
+test("renders the not-found page for an address with no page, with no console problems", async ({
+  page,
+}) => {
+  const problems = await watchConsole(page);
+  await page.goto("/components/buton");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Page not found" }),
+  ).toBeVisible();
+  await settle(page);
+  expect(problems).toEqual([]);
+});
+
 for (const { route, title } of contentRoutes) {
   test(`renders the ${route} page with the bundled font and no console problems`, async ({
     page,

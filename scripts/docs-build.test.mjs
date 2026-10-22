@@ -8,6 +8,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { preview } from "vite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   componentHref,
@@ -118,6 +119,38 @@ describe("pnpm docs:build", () => {
         "utf8",
       ),
     ).toMatch(/<h1[^>]*>Orders<\/h1>/);
+  });
+
+  it("writes each section's own address as the page it opens, naming that page as canonical", () => {
+    const html = readFileSync(join(out, "foundations/index.html"), "utf8");
+    expect(html).toMatch(/<h1[^>]*>Colors<\/h1>/);
+    expect(html).toContain(
+      '<link rel="canonical" href="https://buttery.example/foundations/colors" />',
+    );
+    expect(routes).not.toContain("foundations");
+    expect(readFileSync(join(out, "sitemap.xml"), "utf8")).not.toContain(
+      "/foundations</loc>",
+    );
+  });
+
+  it("answers 404 for a Markdown address it has no page for, served by vite preview", async () => {
+    const server = await preview({
+      root: join(root, "apps/docs"),
+      configFile: join(root, "apps/docs/vite.config.ts"),
+      logLevel: "silent",
+      preview: { port: 0, strictPort: false },
+      build: { outDir: out },
+    });
+    try {
+      const base = server.resolvedUrls?.local[0] ?? "";
+      const missing = await fetch(new URL("get-started/instalation.md", base));
+      expect(missing.status).toBe(404);
+      const found = await fetch(new URL("get-started/installation.md", base));
+      expect(found.status).toBe(200);
+      expect(await found.text()).toMatch(/^# Installation\n/);
+    } finally {
+      await server.close();
+    }
   });
 
   it("writes a 404.html that draws whatever address it's opened at", () => {

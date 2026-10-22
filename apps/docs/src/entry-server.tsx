@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { renderToString } from "react-dom/server";
 import { App } from "./App.tsx";
 import { setServerHref } from "./location.ts";
-import { hostedRoutes, pageAt, pages } from "./pages.tsx";
+import { hostedRoutes, pageAt, pages, sectionHomes } from "./pages.tsx";
 
 /** One page as the static build writes it: its markup, and its title and description for the head. */
 export interface PrerenderedPage {
@@ -23,6 +23,11 @@ export function publicRoutes(): readonly string[] {
       .map((page) => page.route),
     ...hostedRoutes,
   ];
+}
+
+/** Each section's own address, such as `foundations`, with the page it opens, which the build writes it as. */
+export function sectionRoutes(): readonly (readonly [string, string])[] {
+  return [...sectionHomes];
 }
 
 /** The page at `route`, rendered to markup the way the site first draws it. */

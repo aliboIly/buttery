@@ -1,3 +1,6 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
@@ -5,11 +8,40 @@ import {
   componentSources,
   contentRoutesIn,
   llmsText,
+  markdownRequests,
+  missingMarkdown,
   pageMarkdown,
 } from "./markdown.ts";
+import type { MarkdownMiddleware } from "./markdown.ts";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const components = componentSources(root);
+
+/** What `handle` does with a request for `url`: the status and type it answers with, or whether it passes it on. */
+function ask(
+  handle: MarkdownMiddleware,
+  url: string,
+): {
+  readonly status: number;
+  readonly type: string | undefined;
+  readonly passed: boolean;
+} {
+  const headers = new Map<string, string>();
+  let passed = false;
+  const response = {
+    statusCode: 200,
+    setHeader: (name: string, value: string) => headers.set(name, value),
+    end: () => undefined,
+  };
+  handle({ url }, response, () => {
+    passed = true;
+  });
+  return {
+    status: response.statusCode,
+    type: headers.get("Content-Type"),
+    passed,
+  };
+}
 
 /** The lines of `markdown` outside its code blocks that still look like JSX. */
 function jsxLeftIn(markdown: string): string[] {
@@ -100,5 +132,44 @@ describe("the site as Markdown", () => {
 
   it("has nothing for a route that isn't a page", () => {
     expect(pageMarkdown(root, "nowhere/at-all", components)).toBeNull();
+  });
+});
+
+describe("the Markdown addresses", () => {
+  it("answers a page's Markdown, and 404 for a .md address that's no page's or file's", () => {
+    const handle = markdownRequests(root, (path) => path === "/notes.md");
+    expect(ask(handle, "/get-started/installation.md?theme=dark")).toEqual({
+      status: 200,
+      type: "text/markdown; charset=utf-8",
+      passed: false,
+    });
+    expect(ask(handle, "/get-started/instalation.md")).toEqual({
+      status: 404,
+      type: "text/plain; charset=utf-8",
+      passed: false,
+    });
+    expect(ask(handle, "/notes.md").passed).toBe(true);
+    expect(ask(handle, "/get-started/instalation").passed).toBe(true);
+  });
+
+  it("answers 404 for a .md address the static build has no file for", () => {
+    const out = mkdtempSync(join(tmpdir(), "buttery-markdown-"));
+    try {
+      mkdirSync(join(out, "get-started"));
+      writeFileSync(
+        join(out, "get-started/installation.md"),
+        "# Installation\n",
+      );
+      const handle = missingMarkdown(out);
+      expect(ask(handle, "/get-started/installation.md").passed).toBe(true);
+      expect(ask(handle, "/get-started/instalation.md")).toEqual({
+        status: 404,
+        type: "text/plain; charset=utf-8",
+        passed: false,
+      });
+      expect(ask(handle, "/get-started/instalation").passed).toBe(true);
+    } finally {
+      rmSync(out, { recursive: true, force: true });
+    }
   });
 });
