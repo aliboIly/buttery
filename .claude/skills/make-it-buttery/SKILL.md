@@ -58,7 +58,7 @@ Check it with reduced motion on: final states must still render correctly.
 4. Screenshot before/after (light + dark). If the repo has a local `reference/` folder (it's never committed), compare against it; `reference/README.md` says which captures show the look and which show layout and motion behavior.
 5. Report: what changed, any tokens added, any rule you had to bend and why.
 
-New components start from `pnpm new-component <Name> --purpose "…"`; `pnpm check` fails until the folder is complete (manifest entry, tests, demos, 2–4 examples).
+New components start from `pnpm new-component <Name> --purpose "…"`; `pnpm check` fails until the folder is complete (manifest entry, tests, demos, 2–6 examples).
 
 ## Buttery checklist (all must be true)
 - [ ] Every color, size, radius, shadow, duration and z-index is a token.

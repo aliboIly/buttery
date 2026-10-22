@@ -191,7 +191,7 @@ A slider labels itself, with its value badge, so its row takes no `label`; a seg
 - Keyboard complete, screen-reader labelled, `:focus-visible` ring, works with motion disabled.
 - No outer margin. Height from tokens. Text truncation declared.
 - Every exported component and prop has a short, factual JSDoc comment (what it is, when to use it, the default). No other comments unless a non-obvious *why* needs one — see the authorship section of `AGENTS.md`.
-- Ships with: playground page (variants × states × themes × densities), 2–4 canonical examples in `examples/`, Vitest behavior tests, `expectButtery` coverage, and an entry in `manifest.json` (generated).
+- Ships with: playground page (variants × states × themes × densities), 2–6 canonical examples in `examples/`, Vitest behavior tests, `expectButtery` coverage, and an entry in `manifest.json` (generated).
 
 Each component lives in its own folder, which is what the playground, the manifest generator and the contract test read:
 
@@ -202,9 +202,9 @@ Each component lives in its own folder, which is what the playground, the manife
 | `Name.test.tsx` | Behavior tests, run in Chromium and WebKit |
 | `Name.meta.ts` | What the types can't say: purpose, use and avoid lists, related components, keyboard and screen-reader behavior, motion class |
 | `Name.playground.tsx` | `export const demos`: titled demos the playground renders on the component's page |
-| `examples/*.tsx` | 2–4 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would |
+| `examples/*.tsx` | 2–6 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would |
 
-`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer` and `--package react|core`) writes that folder and wires the exports and stylesheet. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, the `bt-<name>` class behind its CSS, JSDoc on the export and on every prop, tests, demos, 2–4 examples and a filled-in manifest entry.
+`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer` and `--package react|core`) writes that folder and wires the exports and stylesheet. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, the `bt-<name>` class behind its CSS, JSDoc on the export and on every prop, tests, demos, 2–6 examples and a filled-in manifest entry.
 
 ## Theming & extension
 

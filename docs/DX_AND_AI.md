@@ -48,7 +48,7 @@ Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from th
 - `llms.txt` (index with one line per doc/component) and `llms-full.txt` (everything concatenated) — in `@buttery/core` and on the docs site.
 - `manifest.json` (generated at build from types + JSDoc): every primitive/component/pattern → purpose, use when / don't use when, props (type, default, required, allowed token values), compound parts, examples, related components, a11y notes, motion class.
 - `tokens.json` — every token with its value per theme and density and what it's for.
-- `examples/` — 2–4 canonical, copy-pasteable snippets per component. Agents copy examples more reliably than they follow prose.
+- `examples/` — 2–6 canonical, copy-pasteable snippets per component. Agents copy examples more reliably than they follow prose.
 - `docs/*.md` — the specs themselves.
 
 ### 3. `@buttery/mcp` — MCP server

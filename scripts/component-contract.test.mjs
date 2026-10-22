@@ -205,12 +205,12 @@ describe("component contract", () => {
           : [];
         expect(
           examples.length,
-          `${name} needs 2–4 examples in examples/`,
+          `${name} needs 2–6 examples in examples/`,
         ).toBeGreaterThanOrEqual(2);
         expect(
           examples.length,
-          `${name} has more than 4 examples`,
-        ).toBeLessThanOrEqual(4);
+          `${name} has more than 6 examples`,
+        ).toBeLessThanOrEqual(6);
         for (const example of examples) {
           const source = readFileSync(
             join(folder, "examples", example),
