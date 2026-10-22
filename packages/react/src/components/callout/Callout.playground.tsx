@@ -1,5 +1,5 @@
-import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice, Stack } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { ArrowLink, Callout } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -10,6 +10,29 @@ export const page: DocsPage = {
   order: 20,
   status: "stable",
   since: "0.4.5",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    tone: {
+      kind: "choice",
+      options: ["info", "success", "warning", "danger"],
+      initial: "info",
+    },
+    title: { kind: "text", initial: "Shared cards stay in sync" },
+    children: {
+      kind: "text",
+      initial: "Changes you make show up for everyone you've shared with.",
+    },
+  },
+  render: ({ tone, title, children }) => (
+    <Callout
+      tone={demoChoice(tone, ["info", "success", "warning", "danger"])}
+      title={String(title)}
+    >
+      {String(children)}
+    </Callout>
+  ),
 };
 
 export const demos: readonly DemoSection[] = [
