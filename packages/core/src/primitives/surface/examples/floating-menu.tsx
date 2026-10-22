@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** The floating level used by menus and popovers, holding a short list. */
 export function FloatingMenu(): ReactElement {
@@ -13,3 +14,9 @@ export function FloatingMenu(): ReactElement {
     </Surface>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Portrait");
+};

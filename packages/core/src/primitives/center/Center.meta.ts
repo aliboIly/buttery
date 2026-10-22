@@ -11,4 +11,7 @@ export const meta: ComponentMeta = {
   related: ["Stack", "FitBox"],
   a11y: "No role of its own.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It's as wide as its parent and as tall as its content, or as tall as the height it's given, such as 100% of a sized panel. Its content sits in the middle on both axes and is never wider than Center. It has no hit area of its own.",
 };

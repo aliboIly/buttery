@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A title and description stacked with the empty-state gap. */
 export function EmptyStateCopy(): ReactElement {
@@ -12,3 +13,9 @@ export function EmptyStateCopy(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Your canvas is empty");
+};
