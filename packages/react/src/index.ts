@@ -252,6 +252,7 @@ export {
   DialogBody,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogMedia,
   DialogText,
   DialogTrigger,
