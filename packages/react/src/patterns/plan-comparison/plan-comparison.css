@@ -76,7 +76,7 @@
   .bt-plan-comparison [data-bt-part="plan-comparison-intro"] {
     display: flex;
     flex-direction: column;
-    gap: var(--bt-space-1);
+    gap: var(--bt-space-2);
     min-inline-size: 0;
   }
 
