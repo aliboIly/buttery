@@ -49,6 +49,42 @@ export const FILTER_KEEPS: Readonly<
   guide: (entry) => entry.group === "Guides" || entry.group === "Get started",
 };
 
+/** The results' groups, in the order the panel shows those whose best results tie, as groups without any do. */
+export const SEARCH_GROUPS = [
+  "Components",
+  "Get started",
+  "Guides",
+  "Foundations",
+  "Layout",
+  "Motion",
+  "Patterns",
+  "Templates",
+  "Tools",
+  "Resources",
+  "Props",
+  "Tokens",
+  "Examples",
+  "Changelog",
+] as const;
+
+/**
+ * `SEARCH_GROUPS` in the order of each one's best result in `hits`, which are best first, so the panel opens
+ * on the query's best result whichever group it's in.
+ */
+export function groupsByBest(hits: readonly SearchHit[]): string[] {
+  const best = new Map<string, number>();
+  hits.forEach((hit, at) => {
+    if (!best.has(hit.entry.group)) best.set(hit.entry.group, at);
+  });
+  return SEARCH_GROUPS.map((group, at) => ({
+    group,
+    at,
+    best: best.get(group) ?? Number.POSITIVE_INFINITY,
+  }))
+    .sort((a, b) => a.best - b.best || a.at - b.at)
+    .map(({ group }) => group);
+}
+
 /** The two indexes: titles, keywords and places load first; the full text after them. */
 export interface SearchIndexes {
   readonly titles: MiniSearch<SearchDoc>;
@@ -174,7 +210,8 @@ export function loadIndex(
 
 /**
  * The results for `query`, best first: from the titles index, and from the full text once it has loaded,
- * with synonyms expanded and exact titles and components ranked up.
+ * with synonyms expanded and exact titles and components ranked up. A page or component whose title is the
+ * query comes first, whatever the rest score.
  */
 export function searchDocs(
   indexes: SearchIndexes,
@@ -225,12 +262,18 @@ export function searchDocs(
       });
     }
   }
+  const named = (entry: SearchEntry): boolean =>
+    (entry.kind === "page" || entry.kind === "component") &&
+    entry.title.toLowerCase() === exact;
   const seen = new Set<string>();
   return [...scores.entries()]
-    .sort(([, a], [, b]) => b.score - a.score)
-    .flatMap(([id, { score, terms, summary }]) => {
+    .flatMap(([id, found]) => {
       const entry = entryOf(id, indexes.titles.getStoredFields(id));
-      if (!entry || seen.has(entry.href)) return [];
+      return entry ? [{ entry, first: named(entry), ...found }] : [];
+    })
+    .sort((a, b) => Number(b.first) - Number(a.first) || b.score - a.score)
+    .flatMap(({ entry, score, terms, summary }) => {
+      if (seen.has(entry.href)) return [];
       seen.add(entry.href);
       return [
         {

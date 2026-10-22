@@ -32,7 +32,7 @@ export function SearchPage(): ReactElement {
     <SearchResults
       key={text}
       query={query}
-      sources={searchSources(indexes)}
+      sources={searchSources(indexes, query)}
       emptyHint={
         <>
           {correction === undefined ? (

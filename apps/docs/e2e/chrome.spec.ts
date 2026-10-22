@@ -116,6 +116,31 @@ test("the docs search previews the highlighted result, with a component's import
   await expect(preview.getByText("Dialog", { exact: true })).toBeHidden();
 });
 
+test("the docs search opens on the group with the best result, an exact title at its top", async ({
+  page,
+}) => {
+  await page.goto("/foundations/colors");
+  const field = page.getByRole("combobox", { name: "Search the docs" });
+  const first = page
+    .getByRole("listbox", { name: "Results" })
+    .getByRole("group")
+    .first();
+  for (const [query, group, title] of [
+    ["theme", "Foundations", "Theming"],
+    ["colors", "Foundations", "Colors"],
+    ["Bring your brand", "Guides", "Bring your brand"],
+  ] as const) {
+    await field.fill(query);
+    await expect(first).toHaveAttribute("aria-label", group);
+    await expect(
+      first
+        .getByRole("option")
+        .first()
+        .locator('[data-bt-part="command-search-label"]'),
+    ).toHaveText(title);
+  }
+});
+
 test("the docs search shows its / hint only where a keyboard is likely", async ({
   page,
   browser,

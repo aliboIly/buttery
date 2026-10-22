@@ -2,6 +2,8 @@
 export interface GoldenQuery {
   readonly query: string;
   readonly expect: readonly string[];
+  /** Whether it also has to be the search panel's first row, at the top of the group the panel shows first. */
+  readonly first?: boolean;
 }
 
 /**
@@ -20,7 +22,16 @@ export const searchGolden: readonly GoldenQuery[] = [
     expect: ["/components/segmented-control", "/components/switch"],
   },
   { query: "command palette", expect: ["/components/command-search"] },
-  { query: "dark mode", expect: ["/foundations/theming"] },
+  { query: "dark mode", expect: ["/foundations/theming"], first: true },
+  { query: "theme", expect: ["/foundations/theming"], first: true },
+  { query: "light and dark", expect: ["/foundations/theming"], first: true },
+  { query: "colors", expect: ["/foundations/colors"], first: true },
+  {
+    query: "Bring your brand",
+    expect: ["/guides/bring-your-brand"],
+    first: true,
+  },
+  { query: "onboarding", expect: ["/patterns/onboarding"], first: true },
   { query: "onValueChange", expect: ["/components/"] },
   { query: "--bt-r-lg", expect: ["/foundations/radius"] },
   { query: "no overlap", expect: ["/layout/the-layout-contract"] },

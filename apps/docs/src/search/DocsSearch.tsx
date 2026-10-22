@@ -7,7 +7,7 @@ import {
 } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
-import { CommandSearch, formatSearch } from "@buttery/react";
+import { CommandSearch, formatSearch, parseSearch } from "@buttery/react";
 import type {
   SearchFilter,
   SearchItem,
@@ -17,27 +17,15 @@ import type {
 import { initialValues } from "../LiveControls.tsx";
 import { components, docsRouteOf, packageOf } from "../registry.ts";
 import { SOURCE_URL } from "../routes.ts";
-import { FILTER_KEEPS, correctionFor, entryOf, searchDocs } from "./search.ts";
+import {
+  FILTER_KEEPS,
+  correctionFor,
+  entryOf,
+  groupsByBest,
+  searchDocs,
+} from "./search.ts";
 import type { SearchEntry, SearchHit, SearchIndexes } from "./search.ts";
 import { loadedSearch, loadSearch, subscribeSearch } from "./store.ts";
-
-/** The results' groups, in the order the panel shows them. */
-export const SEARCH_GROUPS = [
-  "Components",
-  "Get started",
-  "Guides",
-  "Foundations",
-  "Layout",
-  "Motion",
-  "Patterns",
-  "Templates",
-  "Tools",
-  "Resources",
-  "Props",
-  "Tokens",
-  "Examples",
-  "Changelog",
-] as const;
 
 /** The `key:value` filters the docs search takes. */
 export const SEARCH_FILTERS: readonly SearchFilter[] = [
@@ -125,16 +113,23 @@ function itemOf(hit: SearchHit): SearchItem {
   };
 }
 
-/** One source per group, answering from the loaded indexes in the frame the query changes. */
-export function searchSources(indexes: SearchIndexes | null): SearchSource[] {
-  return SEARCH_GROUPS.map((group) => ({
+/**
+ * One source per group, answering from the loaded indexes in the frame the query changes, in the order of
+ * each group's best result for `query`, so the panel and the results page open on the best one.
+ */
+export function searchSources(
+  indexes: SearchIndexes | null,
+  query: SearchQuery,
+): SearchSource[] {
+  const hits = indexes === null ? [] : hitsFor(indexes, query);
+  return groupsByBest(hits).map((group) => ({
     id: group,
     label: group,
     limit: group === "Components" ? 6 : 4,
-    search: (query: SearchQuery) =>
+    search: (asked: SearchQuery) =>
       indexes === null
         ? []
-        : hitsFor(indexes, query)
+        : hitsFor(indexes, asked)
             .filter((hit) => hit.entry.group === group)
             .map(itemOf),
   }));
@@ -250,7 +245,7 @@ export function DocsSearch(): ReactElement {
       label="Search the docs"
       value={search}
       onValueChange={setSearch}
-      sources={searchSources(indexes)}
+      sources={searchSources(indexes, parseSearch(search, SEARCH_FILTERS))}
       filters={SEARCH_FILTERS}
       resultsHref={resultsHref}
       storageKey="docs"

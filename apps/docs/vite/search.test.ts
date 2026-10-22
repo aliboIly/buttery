@@ -1,7 +1,11 @@
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
-import { buildSearchIndexes, searchDocs } from "../src/search/search.ts";
+import {
+  buildSearchIndexes,
+  groupsByBest,
+  searchDocs,
+} from "../src/search/search.ts";
 import { searchGolden } from "../tests/search-golden.ts";
 import { searchDocsIn } from "./search.ts";
 
@@ -49,6 +53,40 @@ describe("docs search", () => {
       ).toBe(true);
     },
   );
+
+  it.each(searchGolden.filter(({ first }) => first === true))(
+    "makes what $query should find the search panel's first row, before and after the full text loads",
+    ({ query, expect: wanted }) => {
+      for (const searched of [
+        { titles: indexes.titles, text: null },
+        indexes,
+      ]) {
+        const hits = searchDocs(searched, query, 500);
+        const [group] = groupsByBest(hits);
+        const row = hits.find((hit) => hit.entry.group === group);
+        expect(
+          wanted.some((start) => row?.entry.href.startsWith(start) === true),
+          `"${query}" opened the panel with ${row?.entry.href ?? "nothing"}${searched.text === null ? " before the full text loaded" : ""}`,
+        ).toBe(true);
+      }
+    },
+  );
+
+  it("ranks a page or component whose title is the query first, before and after the full text loads", () => {
+    const titled = docs.filter(
+      (doc) => doc.kind === "page" || doc.kind === "component",
+    );
+    for (const searched of [{ titles: indexes.titles, text: null }, indexes]) {
+      const misses = titled.flatMap((doc) => {
+        const [top] = searchDocs(searched, doc.title, 1);
+        return top?.entry.title === doc.title &&
+          (top.entry.kind === "page" || top.entry.kind === "component")
+          ? []
+          : [`"${doc.title}" gave ${top?.entry.id ?? "nothing"}`];
+      });
+      expect(misses).toEqual([]);
+    }
+  });
 
   it("finds titles before the full text has loaded", () => {
     const top = searchDocs({ titles: indexes.titles, text: null }, "Dialog")
