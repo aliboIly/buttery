@@ -102,16 +102,16 @@ export const demoPages = [
     title: "Deckhand",
     template: "editor",
     description:
-      "A slide editor: write a deck, lay out and style each slide, then present it.",
+      "A slide editor: write Halfmoon's pitch to cafés, lay out and style each slide, then present it.",
     uses: [
       "AppShell",
       "HeaderBar",
       "Stage",
       "Inspector",
-      "SwatchGrid",
       "FloatingToolbar",
+      "SwatchGrid",
+      "SharedIndicator",
       "Onboarding",
-      "SegmentedControl",
     ],
   },
 ] as const satisfies readonly DemoInfo[];
