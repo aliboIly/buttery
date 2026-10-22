@@ -1,4 +1,4 @@
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { CatalogPage } from "@buttery/react";
 import { useState } from "react";
 import type { MouseEvent, ReactElement } from "react";
@@ -44,6 +44,8 @@ export function Categories(): ReactElement {
     </CatalogPage>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("link", "Money");

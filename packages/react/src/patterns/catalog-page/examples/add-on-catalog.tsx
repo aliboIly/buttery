@@ -1,5 +1,11 @@
-import type { ExamplePlay } from "@buttery/core";
-import { CatalogPage, Checkbox, InitialsTile, TagChip } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import {
+  CatalogPage,
+  Checkbox,
+  InitialsTile,
+  SearchField,
+  TagChip,
+} from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 
@@ -21,24 +27,38 @@ const ADD_ONS = [
   },
 ];
 
-/** A catalog whose checkbox filter narrows its grid, with a count of what's left. */
+/** A catalog whose search and checkbox filter narrow its grid, with a count of what's left. */
 export function AddOnCatalog(): ReactElement {
+  const [query, setQuery] = useState("");
   const [trialsOnly, setTrialsOnly] = useState(false);
-  const shown = ADD_ONS.filter((addOn) => !trialsOnly || addOn.trial);
+  const words = query.trim().toLowerCase();
+  const shown = ADD_ONS.filter(
+    (addOn) =>
+      (!trialsOnly || addOn.trial) && addOn.title.toLowerCase().includes(words),
+  );
   return (
     <CatalogPage
       title="Add-ons"
-      description={`${String(shown.length)} add-ons`}
+      description={
+        shown.length === 1 ? "1 add-on" : `${String(shown.length)} add-ons`
+      }
       filters={
-        <CatalogPage.Group title="Filter">
-          <Checkbox
-            label="Free trial"
-            checked={trialsOnly}
-            onCheckedChange={(next) => {
-              setTrialsOnly(next === true);
-            }}
+        <>
+          <SearchField
+            label="Search add-ons"
+            value={query}
+            onValueChange={setQuery}
           />
-        </CatalogPage.Group>
+          <CatalogPage.Group title="Filter">
+            <Checkbox
+              label="Free trial"
+              checked={trialsOnly}
+              onCheckedChange={(next) => {
+                setTrialsOnly(next === true);
+              }}
+            />
+          </CatalogPage.Group>
+        </>
       }
     >
       <CatalogPage.Section title="All add-ons">
@@ -59,7 +79,11 @@ export function AddOnCatalog(): ReactElement {
   );
 }
 
-export const play: ExamplePlay = async ({ press, see }) => {
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("checkbox", "Free trial");
   await see("2 add-ons");
+  await type("Search add-ons", "loyal");
+  await see("1 add-on");
 };
