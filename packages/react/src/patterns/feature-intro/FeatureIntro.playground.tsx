@@ -1,4 +1,10 @@
-import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DemoValues,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { FeatureIntro } from "@buttery/react";
 import { CalendarClock, Repeat, Truck } from "lucide-react";
 import type { ReactElement } from "react";
@@ -77,6 +83,59 @@ const BENEFITS = [
   { icon: CalendarClock, text: "Each delivery is billed on its own day" },
   { icon: Truck, text: "Roasts ship the morning they're due" },
 ];
+
+function introCode({
+  title,
+  benefits,
+  media,
+  dismissible,
+}: DemoValues): string {
+  return [
+    "<FeatureIntro",
+    `  title="${String(title)}"`,
+    '  description="Ship a fresh bag on a schedule, without a new order each time."',
+    ...(benefits === true
+      ? [
+          "  benefits={[",
+          '    { icon: Repeat, text: "Customers choose every week or every two" },',
+          '    { icon: CalendarClock, text: "Each delivery is billed on its own day" },',
+          '    { icon: Truck, text: "Roasts ship the morning they\'re due" },',
+          "  ]}",
+        ]
+      : []),
+    '  action={{ label: "Create a plan", href: "/subscriptions/new" }}',
+    '  docs={{ label: "How subscriptions work", href: "/docs/subscriptions" }}',
+    ...(media === true
+      ? [
+          '  media={<img src={planPreview} alt="A weekly plan with its next three deliveries" />}',
+        ]
+      : []),
+    ...(dismissible === true ? ["  dismissible"] : []),
+    "/>",
+  ].join("\n");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    title: { kind: "text", initial: "Sell your coffee by subscription" },
+    benefits: { kind: "toggle", initial: true },
+    media: { kind: "toggle", initial: true },
+    dismissible: { kind: "toggle", initial: false },
+  },
+  render: ({ title, benefits, media, dismissible }) => (
+    <FeatureIntro
+      key={String(dismissible)}
+      title={String(title)}
+      description="Ship a fresh bag on a schedule, without a new order each time."
+      benefits={benefits === true ? BENEFITS : []}
+      action={{ label: "Create a plan", href: "#subscriptions-new" }}
+      docs={{ label: "How subscriptions work", href: "#docs-subscriptions" }}
+      media={media === true ? <PlanPreview /> : undefined}
+      dismissible={dismissible === true}
+    />
+  ),
+  code: introCode,
+};
 
 export const demos: readonly DemoSection[] = [
   {
