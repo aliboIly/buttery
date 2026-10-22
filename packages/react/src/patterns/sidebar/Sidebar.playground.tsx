@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Surface } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { Sidebar } from "@buttery/react";
+import { Menu, Surface, demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+import { AccountMenu, Sidebar } from "@buttery/react";
 import {
   ChartLine,
   Coffee,
@@ -10,6 +10,7 @@ import {
   House,
   Receipt,
   Repeat,
+  Settings,
   Users,
 } from "lucide-react";
 
@@ -89,6 +90,98 @@ function Nav(): ReactElement {
     </Sidebar>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    current: {
+      kind: "choice",
+      options: ["Home", "Orders", "Customers", "Revenue"],
+      initial: "Orders",
+    },
+    switcher: { kind: "toggle", initial: true },
+  },
+  render: ({ current, switcher }) => {
+    const shown = demoChoice(current, [
+      "Orders",
+      "Home",
+      "Customers",
+      "Revenue",
+    ]);
+    return (
+      <Surface level="card" style={{ maxInlineSize: "var(--bt-w-sidebar)" }}>
+        <Sidebar
+          label="Main"
+          switcher={
+            switcher === true ? (
+              <AccountMenu
+                workspace="Halfmoon Roasters"
+                caption="Roastery · 6 people"
+              >
+                <Menu.Item icon={Settings}>Settings</Menu.Item>
+              </AccountMenu>
+            ) : undefined
+          }
+        >
+          <Sidebar.Item
+            icon={House}
+            label="Home"
+            href="#home"
+            current={shown === "Home"}
+          />
+          <Sidebar.Item
+            icon={Receipt}
+            label="Orders"
+            href="#orders"
+            current={shown === "Orders"}
+          />
+          <Sidebar.Item
+            icon={Users}
+            label="Customers"
+            href="#customers"
+            current={shown === "Customers"}
+          />
+          <Sidebar.Recent />
+          <Sidebar.Group icon={ChartLine} label="Reports">
+            <Sidebar.Item
+              label="Revenue"
+              href="#reports-revenue"
+              current={shown === "Revenue"}
+            />
+            <Sidebar.Item label="Retention" href="#reports-retention" />
+          </Sidebar.Group>
+        </Sidebar>
+      </Surface>
+    );
+  },
+  code: ({ current, switcher }) => {
+    const shown = demoChoice(current, [
+      "Orders",
+      "Home",
+      "Customers",
+      "Revenue",
+    ]);
+    const mark = (label: string): string => (label === shown ? " current" : "");
+    return [
+      "<Sidebar",
+      '  label="Main"',
+      ...(switcher === true
+        ? [
+            '  switcher={<AccountMenu workspace="Halfmoon Roasters" caption="Roastery · 6 people">…</AccountMenu>}',
+          ]
+        : []),
+      ">",
+      `  <Sidebar.Item icon={House} label="Home" href="/"${mark("Home")} />`,
+      `  <Sidebar.Item icon={Receipt} label="Orders" href="/orders"${mark("Orders")} />`,
+      `  <Sidebar.Item icon={Users} label="Customers" href="/customers"${mark("Customers")} />`,
+      "  <Sidebar.Recent />",
+      '  <Sidebar.Group icon={ChartLine} label="Reports">',
+      `    <Sidebar.Item label="Revenue" href="/reports/revenue"${mark("Revenue")} />`,
+      '    <Sidebar.Item label="Retention" href="/reports/retention" />',
+      "  </Sidebar.Group>",
+      "</Sidebar>",
+    ].join("\n");
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {
