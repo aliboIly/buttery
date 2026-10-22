@@ -112,6 +112,17 @@ function overrun(element: HTMLElement): number {
   );
 }
 
+/** The room between a highlighted match and the text after it, in px: none while they read as one word. */
+function gapAfter(mark: HTMLElement): number {
+  const rest = mark.nextSibling;
+  if (rest?.nodeType !== Node.TEXT_NODE) throw new Error("No text after it.");
+  const range = document.createRange();
+  range.selectNodeContents(rest);
+  return (
+    range.getBoundingClientRect().left - mark.getBoundingClientRect().right
+  );
+}
+
 describe("CommandSearch", () => {
   it("is a combobox named Search that takes the ref, its class and style on the field", () => {
     const ref = createRef<HTMLInputElement>();
@@ -372,6 +383,30 @@ describe("CommandSearch", () => {
     if (!label || !detail) throw new Error("No label or detail.");
     expect(overrun(label)).toBeLessThanOrEqual(0.001);
     expect(detail.scrollWidth).toBeGreaterThan(detail.clientWidth);
+  });
+
+  it("keeps a match in a row's path joined to the rest of its word", async () => {
+    render(
+      <Search
+        sources={[
+          pageSource({
+            pages: [
+              {
+                label: "Start a new app",
+                path: ["Installation"],
+                href: "#install",
+              },
+            ],
+          }),
+        ]}
+      />,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("install");
+    const mark = within(group("Go to")).getByText("Install", {
+      selector: '[data-bt-part="command-search-path"] mark',
+    });
+    expect(gapAfter(mark)).toBeCloseTo(0, 1);
   });
 
   it("moves through the rows across groups with the arrow keys, and Enter opens the one it's on", async () => {

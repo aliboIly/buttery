@@ -96,7 +96,10 @@ function ResultRow({
         >
           {item.path?.map((part) => (
             <span key={part} data-bt-part="search-results-path">
-              <SearchHighlight text={part} query={query.text} />
+              {/* One flex item, so the path's gap can't split a match from the rest of its word. */}
+              <span>
+                <SearchHighlight text={part} query={query.text} />
+              </span>
               <Icon
                 icon={ChevronRight}
                 data-bt-part="search-results-path-chevron"
