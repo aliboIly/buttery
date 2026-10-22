@@ -67,10 +67,12 @@ Definition of done for every phase:
 
 **Accept:** Card Studio matches the measured motion table (MOTION_SPEC §3) and passes the full matrix; resizing 1728 → 960 → 390 never overlaps or overflows (header actions collapse into "…", inspector becomes a sheet).
 
+Since Phase 7 the editor demo is **Deckhand**, a slide editor, which replaced Card Studio and carries this acceptance.
+
 ## Phase 6 — Overlays & choreography
 - `Dialog`, `Onboarding` (a step dialog: morphing media scene, page dots, back and forward buttons with a last-step label, confetti, first-run persistence), `PageDots`.
 - `NavBar` + `MorphMenu` (Radix NavigationMenu; `behavior` static, sticky or auto-hide; a sheet below 640), `SubNav`, `ExpandableCard`, `Bento`, `Page`/`Section`/`Container`/`Grid`, `SplitHero` and `CenteredHero` (with the hero assembly, MOTION_SPEC §4.3), `StatStrip`, `Stat`, `LogoStrip`, `ArticleLayout`, `Footer`.
-- Demo: an original marketing page for Card Studio using the page patterns and `NavBar`; Card Studio gets a 4-step onboarding; the playground's docs shell moves onto `NavBar`.
+- Demo: an original marketing page for Card Studio using the page patterns and `NavBar`; Card Studio gets a 4-step onboarding; the playground's docs shell moves onto `NavBar`. Since Phase 7 the marketing demo is the Halfmoon shop, and the onboarding is Deckhand's.
 
 **Accept:** onboarding compared frame-by-frame with `reference/motion/`; menu morph and card → modal compared with the local choreography strips (behavior, not look); matrix green. `NavBar`: Playwright samples the panel per frame and reports open, switch and close times against MOTION_SPEC §4.1, and the panel never paints over the bar's items or overflows the viewport at 390, 960 and 1440; side-by-side frames against `reference/inspiration-nav/` with the differences listed.
 

@@ -44,14 +44,14 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Toast (`toast()` and `Toaster`, built early)
 - [x] Menu, Select, FloatingToolbar
 - [x] EmptyState/DropZone, Stage, Inspector, HeaderBar, AppShell
-- [x] Card Studio demo (original), passes the full matrix at every size
+- [x] Card Studio demo (original), passes the full matrix at every size (Deckhand replaced it in 0.9)
 
 ## v0.7 — Choreography (Phase 6)
 - [x] Dialog, Onboarding (a step dialog), PageDots
 - [x] NavBar (static, sticky, auto-hide) + MorphMenu, SubNav
 - [x] Bento + ExpandableCard
 - [x] Page patterns: SplitHero, CenteredHero (with the hero assembly), StatStrip, LogoStrip, ArticleLayout, Footer
-- [x] Card Studio marketing page + onboarding; NavBar in the playground's docs shell
+- [x] Card Studio marketing page + onboarding; NavBar in the playground's docs shell (the Halfmoon shop replaced the page in 0.9)
 
 ## v0.8 — App kit (Phase 6B)
 - [x] App kit tokens (widths, table row height, `title-lg`/`title-md`, chart colors, shimmer and delays)
@@ -86,11 +86,12 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Accessibility audit, dark + compact passes, visual regression baselines
 - [x] `new-app` finished; Changesets
 - [x] make-it-buttery skill tested on a messy page; the site read cold by a reviewer
-- [x] Three more layout checks in `expectButtery` and `LayoutGuard`: text crowding the line under it, a word broken across lines, and controls out of line, including an icon off its button's center
+- [x] Three more layout checks in `expectButtery` and `LayoutGuard`: text crowding the line under it, a word broken across lines, and controls out of line, including an icon off its button's center or off the line of text beside it
 - [x] Introduction rebuilt: a theme playground, feature cards with live parts, the newest release's examples, and the Get started path
 - [x] Releases numbered one minor per phase, 0.1 to 0.9; What's new as release notes with examples to try, and the Roadmap page read from this file
 - [x] Get started rebuilt, with blocks for written pages: numbered steps, cards, rules, do and don't, notes, related pages, and previous and next as cards
 - [x] Every written page laid out in those blocks, so none reads as a wall of text
+- [x] Deckhand, a slide editor, and the Halfmoon shop, the roastery's online store, replace Card Studio and its site as the editor and marketing demos
 - [ ] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
 - [ ] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
 

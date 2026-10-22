@@ -152,7 +152,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 ## Demos
 
 - Each demo is its own app in `apps/demos/<name>/` (package `demo-<name>`), with its own entry, routing and state, served inside the site at `/demos/<name>/` as a full-screen site without the docs' chrome. The site depends on each demo's package and renders the root it exports under that path.
-- The demos: Card Studio (an editor, `card-studio`), Halfmoon Roastery (a coffee roaster's dashboard, with settings and search, `roastery`), the Card Studio marketing site (`card-studio-site`), and any later ones.
+- The demos: Halfmoon Roastery (a coffee roaster's dashboard, with settings and search, `roastery`), the Halfmoon shop (the same roastery's online store, `roastery-shop`), Deckhand (a slide editor, `deckhand`), and any later ones. Each is a real kind of product anyone recognizes at a glance, with believable content and every control working.
 - A `/demos` page lists them as cards: a preview image, a one-line description, the components and patterns it uses, "Open demo", "View source", and "Start from this template" with its `create-buttery` command (`pnpm new-app my-app --template <name>` until `create-buttery` is published). `pnpm demos:previews` takes the pictures from each demo's own dev server, light and dark, into `apps/docs/public/previews`.
 - Inside a demo, a small floating pill in the bottom-end `FloatingLanes` lane, never over the demo's own UI, holds "Docs" (back to `/demos`), "View source", a theme toggle and "Reset demo", and it folds away to one button, staying folded from demo to demo. On a phone it starts folded, so it and a demo's own floating UI cover less of the page, until someone unfolds it. Lanes keep clear of the demo's own chrome and floating UI, and it steps back under its dialogs. Deep links work, such as `/demos/roastery/settings/notifications`. State is saved locally: each demo keeps everything it saves under one storage prefix and exports `clearSavedState`, which "Reset demo" calls before reloading. Data is fake and deterministic, and everything works offline.
 - Every app, template or demo, has a small router of its own in `src/router.tsx` (a `useSyncExternalStore` over the address and `popstate`, with links made from a base path), so it runs at `/` on its own and under `/demos/<name>` or `/templates/<name>/preview` inside the site. The site passes its own navigation, so its display settings stay in the address as a demo moves between pages.
@@ -179,7 +179,7 @@ The brand, then the docs shell and nav generation, then the existing pages moved
 | A component page (a `*.meta.ts` with its `*.playground.tsx` and `examples/`) | Its component page, in the group the table above gives it |
 | Tokens, Surfaces, Levels, Palettes, Text stacks | Foundations (Colors, Elevation, Palettes, Typography and the rest) |
 | Motion | Motion |
-| Card Studio, the Card Studio site, Halfmoon Roastery | Their own apps in `apps/demos/<name>/`, served at `/demos/<name>/`, built on the `editor`, `marketing` and `dashboard` templates, whose pages link to them |
+| Card Studio, the Card Studio site, Halfmoon Roastery | Their own apps in `apps/demos/<name>/`, served at `/demos/<name>/`, built on the `editor`, `marketing` and `dashboard` templates, whose pages link to them. Deckhand and the Halfmoon shop have since replaced Card Studio and its site. |
 | Compare, and the routes only tests visit | `/lab` |
 
 ## Phase 8

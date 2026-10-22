@@ -54,7 +54,7 @@ buttery/
 │  ├─ docs/                      # the docs site: every component × state × theme × density; serves the demos; Playwright target
 │  ├─ starter/                   # the blank template for new apps: Vite + React + Tauri v2, wired up, with agent files + skill
 │  ├─ templates/                 # the dashboard, editor and marketing templates: web apps on the starter's shell, built from the patterns
-│  └─ demos/                     # card-studio, card-studio-site, roastery: each a template plus its own content, served at /demos/<name>
+│  └─ demos/                     # roastery, roastery-shop, deckhand: each a template plus its own content, served at /demos/<name>
 ├─ scripts/
 │  ├─ check-ai-tells.mjs         # authorship checks (pnpm check + commit-msg hook)
 │  ├─ check-private-paths.mjs    # fails if reference/ or PROMPTS.md is tracked
