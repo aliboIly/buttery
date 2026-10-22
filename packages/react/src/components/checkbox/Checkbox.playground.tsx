@@ -1,5 +1,5 @@
-import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice, Stack } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Checkbox } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -10,6 +10,51 @@ export const page: DocsPage = {
   order: 20,
   status: "stable",
   since: "0.4.5",
+};
+
+const STARTS = ["false", "true", "indeterminate"] as const;
+
+const TICKED = {
+  false: false,
+  true: true,
+  indeterminate: "indeterminate",
+} as const;
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Keep me signed in" },
+    defaultChecked: { kind: "choice", options: STARTS, initial: "false" },
+    disabled: { kind: "toggle", initial: false },
+    error: { kind: "text", initial: "" },
+  },
+  render: ({ label, defaultChecked, disabled, error }) => {
+    const start = demoChoice(defaultChecked, STARTS);
+    return (
+      <Checkbox
+        key={start}
+        label={String(label)}
+        defaultChecked={TICKED[start]}
+        disabled={disabled === true}
+        error={String(error)}
+      />
+    );
+  },
+  code: ({ label, defaultChecked, disabled, error }) => {
+    const start = demoChoice(defaultChecked, STARTS);
+    const ticked =
+      start === "true"
+        ? " defaultChecked"
+        : start === "indeterminate"
+          ? ' defaultChecked="indeterminate"'
+          : "";
+    const parts = [
+      `label="${String(label)}"`,
+      ...(ticked === "" ? [] : [ticked.trim()]),
+      ...(disabled === true ? ["disabled"] : []),
+      ...(String(error) === "" ? [] : [`error="${String(error)}"`]),
+    ];
+    return `<Checkbox ${parts.join(" ")} />`;
+  },
 };
 
 export const demos: readonly DemoSection[] = [
