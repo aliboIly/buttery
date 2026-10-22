@@ -4,7 +4,6 @@ import { Code } from "lucide-react";
 import { Sticky, Text, useFloatingObstacle } from "@buttery/core";
 import {
   ArrowLink,
-  BrandMark,
   Button,
   IconButton,
   MorphMenu,
@@ -21,6 +20,7 @@ import { COMPONENTS_OVERVIEW, groupHref } from "./nav.ts";
 import { demoLinks, nav } from "./pages.tsx";
 import { DOCS_VERSION, SOURCE_URL } from "./routes.ts";
 import { ThemeToggle } from "./ThemeToggle.tsx";
+import { Logo } from "./Logo.tsx";
 
 /** Splits `items` into columns of at most `size`, so a long section reads as a grid in its menu. */
 function columns<T>(items: readonly T[], size: number): T[][] {
@@ -147,7 +147,7 @@ export function DocsShell({
         className="docs-top"
         brand={
           <a href={siteHref("/")}>
-            <BrandMark size={24} />
+            <Logo />
             buttery
           </a>
         }

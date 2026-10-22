@@ -1,11 +1,12 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/buttery-dark.png">
-  <img src="docs/assets/buttery-light.png" alt="🧈 buttery: Make anything buttery." width="440">
-</picture>
+<h1>🧈 buttery</h1>
+
+<p><b>Make anything buttery.</b></p>
 
 A React design system, with layout and motion rules to match, for web apps and Tauri desktop apps.
+
+[Docs](https://aliboily.github.io/buttery/) · [Get started](https://aliboily.github.io/buttery/get-started/introduction) · [Components](https://aliboily.github.io/buttery/components/overview) · [Roadmap](ROADMAP.md)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-e8b64a?style=flat-square)](LICENSE)
 [![Status: early](https://img.shields.io/badge/status-early-6b6b6b?style=flat-square)](ROADMAP.md)
@@ -17,7 +18,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 
 Wrap an app in buttery and it gets the tokens, type, surfaces, motion and layout rules written up in [`docs/`](docs), plus checks that fail when something overlaps, overflows or drifts off the scale. People and coding agents work from the same small vocabulary, and a wrong value fails type-checking instead of shipping.
 
-It's early. The tokens, layout primitives, layers, layout checks and motion are in place; components come next, and nothing is on npm yet. [ROADMAP.md](ROADMAP.md) shows where things stand.
+The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place. Nothing is on npm yet: 1.0, the first release there, brings the command line tool and the MCP server. [ROADMAP.md](ROADMAP.md) shows where things stand.
 
 ## What's in it
 
@@ -193,7 +194,7 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 | Command | What it does |
 | --- | --- |
 | `pnpm install` | Installs dependencies and the git hooks |
-| `pnpm dev` | Starts the playground |
+| `pnpm dev` | Runs the docs site, with a page for every component |
 | `pnpm build` | Builds every package and app |
 | `pnpm tokens` | Regenerates the CSS, JSON and Tailwind files from the token source |
 | `pnpm check` | Authorship and private-path checks, typecheck, lint, stylelint, format check, unit, browser and smoke tests, and layout checks on every playground page and the starter at 390 and 1280 |
@@ -209,10 +210,10 @@ With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/style
 | Path | Contents |
 | --- | --- |
 | `packages/core` | Tokens, recipes, themes, palettes, layout and motion primitives, layers and the layout checker |
-| `packages/react` | `ButteryProvider`, `celebrate` and the `buttery` factory; components and patterns to come |
+| `packages/react` | `ButteryProvider`, the components and patterns, `celebrate` and the `buttery` factory |
 | `packages/test` | `expectButtery()`: layout, accessibility and stability checks for Playwright |
 | `packages/lint` | ESLint and stylelint rules that keep values on tokens and positioning owned |
-| `packages/cli`, `packages/mcp` | The command line and the MCP server (not started) |
+| `packages/cli`, `packages/mcp` | The command line tool and the MCP server, coming in 1.0 |
 | `apps/docs` | The docs site: a page for every component with its demos and examples; the layout checks run against it |
 | `apps/starter` | The blank template for new apps, with a Tauri v2 shell |
 | `apps/templates` | The dashboard, editor and marketing templates, web apps built from the patterns |

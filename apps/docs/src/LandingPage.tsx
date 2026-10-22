@@ -15,7 +15,6 @@ import {
 } from "@buttery/core";
 import {
   ArrowLink,
-  BrandMark,
   Button,
   CenteredHero,
   Footer,
@@ -32,6 +31,7 @@ import { siteHref } from "./location.ts";
 import { COMPONENTS_OVERVIEW } from "./nav.ts";
 import { DOCS_VERSION, SOURCE_URL } from "./routes.ts";
 import { ReleaseCard } from "./WhatsNew.tsx";
+import { Logo } from "./Logo.tsx";
 
 /** A section of the site with how many pages it holds, for the Explore tiles. */
 export interface ExploreSection {
@@ -182,7 +182,7 @@ export function LandingPage({
   return (
     <Page>
       <CenteredHero
-        eyebrow={<BrandMark size={64} />}
+        eyebrow={<Logo size="lg" />}
         title="Make anything buttery."
         body="A React design system with the layout and motion to match, for web and desktop apps, and checks that hold every screen to it."
         actions={
@@ -285,7 +285,7 @@ export function LandingPage({
       <Footer
         brand={
           <Inline gap={2} align="center">
-            <BrandMark size={24} />
+            <Logo />
             <Text variant="title">buttery</Text>
           </Inline>
         }
@@ -303,7 +303,6 @@ export function LandingPage({
           <Footer.Link href={siteHref("/resources/whats-new")}>
             What's new
           </Footer.Link>
-          <Footer.Link href={siteHref("/resources/brand")}>Brand</Footer.Link>
         </Footer.Column>
         <Footer.Column title="Docs">
           <Footer.Link href={siteHref("/get-started/introduction")}>

@@ -106,7 +106,7 @@ Everything a dashboard-style app needs, so building one is composing parts. Spec
 
 ## Phase 7 — Hardening, brand and the docs site
 The playground becomes buttery's docs website, built only from buttery components: `docs/DOCS_SITE.md` has the structure, the nav, the page anatomy, the landing page and the shell. Work in this order:
-- Brand: original `BrandMark` per `docs/BRAND.md` (SVG component + favicon + Tauri icons + README hero). Present 3 directions first and wait for a pick.
+- Brand: per `docs/BRAND.md`. An original drawn mark, `BrandMark`, was built and then retired on 2026-10-22 at the maintainer's request: the logo is the 🧈 character set in text, in the docs' header, the favicons and the README.
 - Docs shell and nav generation: `apps/playground` renamed `apps/docs`, its internal pages moved under `/lab` (left out of production builds, still used by Playwright); content in `apps/docs/content/<section>/<page>.mdx` (or `.tsx`) with frontmatter; the nav generated from it; a docs check in `pnpm check` for missing metadata, an `order` shared within a section, broken internal links and exports with no home in `DOCS_SITE.md`.
 - Existing pages moved into the structure: Get started, Foundations, Layout and Motion first.
 - Component pages with the full anatomy and working examples (`DOCS_SITE.md` "Examples"): each a real file with its imports, real state, a caption and a `play` script, at least basic, controlled, variants and sizes, states and one real composition per page, the demo's prop controls really changing the component; their demos and code blocks rendered from the packages' `examples/`, the props table generated from the types and JSDoc; and the example and coverage checks.

@@ -25,7 +25,7 @@ The sidebar's sections and their pages, in this order.
 7. Templates: a page each for `blank`, `dashboard`, `editor` and `marketing`, with a live preview, `create-buttery --template <name>` (with `pnpm new-app my-app --template <name>`, the command that works until `create-buttery` is published) and what's inside: its files and the patterns it's made from. The preview is the template's own app in a frame, served full-window at `/templates/<name>/preview`, a route the nav leaves out.
 8. Guides, by task: Build an app in 15 minutes · Build your own buttery component · Make an existing app buttery · Bring your brand (theming) · Check your layout (`buttery check`, `LayoutGuard`) · Accessibility.
 9. Tools: CLI · MCP server · Lint configs · Testing (`expectButtery`) · VS Code.
-10. Resources: What's new · Roadmap · Brand · Contributing.
+10. Resources: What's new · Roadmap · Contributing.
 
 ## Where every export is documented
 
@@ -43,19 +43,18 @@ Every component, primitive and layer has one home. Component-scale parts get a c
 | Foundations | `Text` and `TextStack` (Typography), `Icon` (Icons), `Layer`, `Scrim`, `Sticky` and `FloatingLanes` (Layers) |
 | Layout | `Center`, `Container`, `Divider`, `FitBox`, `Grid`, `Inline`, `OverflowCluster`, `Page`, `Section`, `Stack`, `Surface` |
 | Motion | `buttery` (the motion elements), `Loop`, `Morph`, `Presence`, `Reveal`, `SharedIndicator`, `Stagger` |
-| Resources › Brand | `BrandMark` |
 | Patterns | `PageHeader` (Page header); `SignInForm`, `SignUpForm` (Forms); `SettingRow`†, `SettingsPage`†, `SettingsSection`† (Settings pages); `DetailPage`† (Detail page); `CatalogPage`† (Catalog page); `PlanComparison`† (Plans); `SearchResults`† (Search and results); `Onboarding` (Onboarding); `HeaderBar`, `Inspector`, `Stage` (Inspector); `AppPage`, `AppShell` (App shell); `ArticleLayout`, `Bento`, `CenteredHero`, `Footer`, `LogoStrip`, `SplitHero`, `StatStrip` (Marketing page) |
 
 The Data table page and Overview patterns are compositions of the parts above and add no export of their own. A new export gets a row here in the change that adds it, and the docs check fails on an export that has none. An export of `@buttery/react` from outside a component's folder, such as `ButteryProvider` or the shared form parts, is listed in the `exports` frontmatter of the written page that describes it.
 
 ## Landing page (`/`)
 
-- A hero: the 🧈 `BrandMark`, "Make anything buttery", a one-line description, "Get started" as the primary button with a forward arrow, "Browse components" (All components), and a copyable `npx create-buttery my-app` (`pnpm new-app my-app` until `create-buttery` is published, with a line under it saying it runs in a clone of the repository and linking Installation).
+- A hero: the 🧈 logo, "Make anything buttery", a one-line description, "Get started" as the primary button with a forward arrow, "Browse components" (All components), and a copyable `npx create-buttery my-app` (`pnpm new-app my-app` until `create-buttery` is published, with a line under it saying it runs in a clone of the repository and linking Installation).
 - Where to start: three cards, each with a forward-arrow link: a new app (`create-buttery`), an existing app (`buttery init`), building with a coding agent (`AGENTS.md` and the MCP server). Until the CLI and the MCP server exist, the cards name `pnpm new-app`, the existing-app guide, and `AGENTS.md` with the make-it-buttery skill.
 - What's new: the latest three releases, each with its number, its tag (Latest, or In progress for the release being built), its date and two or three highlights, from Changesets plus a short `content/whats-new/` entry per release, and a link to the full release notes. Each entry is `content/whats-new/<version>.md`, with `version`, `date`, `title`, `summary` (a sentence on what the release is for) and, for a release with something to try, `examples` (`[Component/example-file, …]`) in its frontmatter, and its highlights as `- ` lines. The docs check fails on an entry without a summary or two or three highlights, on an example that doesn't exist, on a changelog version without an entry, and on a page whose `since` names a release with no entry. Releases are numbered one minor version per phase, 0.1 to 0.9, and 1.0 is the first on npm.
 - A live strip of real components the visitor can touch (a segmented control, a slider, a menu, a toast) that shows the feel instead of describing it.
 - Explore tiles with counts: Foundations, Layout, Motion, Components, Patterns, Templates, each counted from the nav and opening the section's first page, and Demos, counting the demos and opening `/demos`. Components counts its components, not the overview. A section with no pages yet has no tile.
-- A footer: the version, GitHub, the roadmap and the brand page.
+- A footer: the version, GitHub, the roadmap and What's new.
 - Motion per `docs/MOTION_SPEC.md`: sections reveal once as they scroll in, the tiles stagger, and nothing plays by itself to distract.
 
 ## The Introduction (`/get-started/introduction`)
@@ -93,7 +92,7 @@ Guides and foundations pages use the same shell without the component-only parts
 ## The shell
 
 - Three columns: the nav on the left (240 wide, groups that fold, the current page highlighted and scrolled into view, scrolling on its own), the content (prose at most 720 wide, demos wider when they need it), and an "On this page" list with scroll-spy on the right from 1280px, marking the last heading that has reached the top bar however the page got there, scrolled or jumped. Under 1100 the list hides; under 768 the nav becomes a sheet.
-- A top bar, a header across the window's whole width, square, on the surface with a hairline under it, its brand lined up with the sidebar's items: the `BrandMark`, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group, each group opening its heading on All components, with "Every component" at the menu's foot; Patterns and Templates; Guides and Tools; Resources, with a Demos column holding the demos page and each demo), the docs search (below), the version, a theme toggle, the display settings (a popover whose rows say they set the theme, the density and the motion) and GitHub. A component page's group crumb opens the same heading. On a phone the bar folds into a menu sheet, where those tools are labelled rows under the sections, starting where the sections start, with the version under them.
+- A top bar, a header across the window's whole width, square, on the surface with a hairline under it, its brand lined up with the sidebar's items: the 🧈 logo and the name, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group, each group opening its heading on All components, with "Every component" at the menu's foot; Patterns and Templates; Guides and Tools; Resources, with a Demos column holding the demos page and each demo), the docs search (below), the version, a theme toggle, the display settings (a popover whose rows say they set the theme, the density and the motion) and GitHub. A component page's group crumb opens the same heading. On a phone the bar folds into a menu sheet, where those tools are labelled rows under the sections, starting where the sections start, with the version under them.
 - Anchors on headings, copy buttons on code, and syntax highlighting done at build time.
 - An address with no page shows "Page not found" under that address: its own title, a docs search holding the address's last words (`/get-started/instalation` holds "instalation") and a link to each section and the demos. A section's own address, such as `/foundations`, opens the section's first page and puts that page's address in the bar. Only a demo or a template's preview draws the paths under its address, with its own router.
 - Every docs page passes `expectButtery` across the full matrix, like the rest of buttery. The docs site is buttery's biggest dogfood test.
@@ -162,7 +161,7 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 
 ## Order of work in Phase 7
 
-`BrandMark`, then the docs shell and nav generation, then the existing pages moved into the structure (Get started, Foundations, Layout and Motion first), then component pages with working examples and their checks, then Patterns, Templates and Guides, then the demos split into their own sites, then search with its golden queries, then the Markdown versions with the comprehension and agent tests, then the landing page, and last the full matrix and a reviewer who reads the site cold as a new user and answers "could you build an app from this?".
+The brand, then the docs shell and nav generation, then the existing pages moved into the structure (Get started, Foundations, Layout and Motion first), then component pages with working examples and their checks, then Patterns, Templates and Guides, then the demos split into their own sites, then search with its golden queries, then the Markdown versions with the comprehension and agent tests, then the landing page, and last the full matrix and a reviewer who reads the site cold as a new user and answers "could you build an app from this?".
 
 ## Where today's playground pages go
 

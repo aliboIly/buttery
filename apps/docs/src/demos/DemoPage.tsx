@@ -8,11 +8,12 @@ import {
   useLayoutAnimation,
   useStoredState,
 } from "@buttery/core";
-import { BrandMark, Button, IconButton, buttery } from "@buttery/react";
+import { Button, IconButton, buttery } from "@buttery/react";
 import { navigate, siteHref, useSettings } from "../location.ts";
 import { SOURCE_URL } from "../routes.ts";
 import type { DemoInfo } from "../routes.ts";
 import { ThemeToggle } from "../ThemeToggle.tsx";
+import { Logo } from "../Logo.tsx";
 
 /** The props every demo's and template's root takes: the router each of them has. */
 export interface HostedAppProps {
@@ -113,13 +114,13 @@ function DemoPill({
               setFolded(false);
             }}
           >
-            <BrandMark size={16} />
+            <Logo size="xs" />
           </Button>
         ) : (
           <Inline gap={1} align="center">
             <Button variant="ghost" size="sm" asChild>
               <a href={siteHref("/demos")}>
-                <BrandMark size={16} />
+                <Logo size="xs" />
                 Docs
               </a>
             </Button>
