@@ -1,5 +1,5 @@
 import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, FullscreenDialog, RadioCardGroup } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -69,6 +69,8 @@ export function PickAStart(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "New menu");
