@@ -1,51 +1,72 @@
+import { Redo2, RectangleHorizontal, Undo2 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { HeaderBar, IconButton, toast } from "@buttery/react";
-import { Redo2, Trash2, Undo2 } from "lucide-react";
+import { Icon, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { FormDialog, HeaderBar, IconButton, TextField } from "@buttery/react";
 
-/** A document's header: actions that fold into More, then undo and redo after a separator. */
+/** An editor's header over its canvas: Rename opens a form dialog, and Undo and Redo, after a separator, walk back through the names. */
 export function DocumentHeader(): ReactElement {
-  const [past, setPast] = useState(2);
-  const [future, setFuture] = useState(0);
+  const [names, setNames] = useState<readonly string[]>(["Spring launch"]);
+  const [at, setAt] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  const name = names[at] ?? "Untitled";
   return (
-    <HeaderBar title="Spring launch" dragRegion>
-      <HeaderBar.Actions>
-        <HeaderBar.Action
-          label="Rename"
-          onSelect={() => {
-            toast("Rename isn't part of this example", { id: "rename" });
+    <Stack gap={3}>
+      <HeaderBar mark={<Icon icon={RectangleHorizontal} />} title={name}>
+        <HeaderBar.Actions>
+          <HeaderBar.Action
+            label="Rename"
+            onSelect={() => {
+              setDraft(name);
+              setOpen(true);
+            }}
+          />
+        </HeaderBar.Actions>
+        <HeaderBar.Separator />
+        <IconButton
+          icon={Undo2}
+          label="Undo"
+          aria-disabled={at === 0}
+          onClick={() => {
+            if (at > 0) setAt(at - 1);
           }}
         />
-        <HeaderBar.Action
-          label="Delete"
-          icon={Trash2}
-          iconOnly
-          onSelect={() => {
-            toast("Spring launch deleted", { id: "delete" });
+        <IconButton
+          icon={Redo2}
+          label="Redo"
+          aria-disabled={at === names.length - 1}
+          onClick={() => {
+            if (at < names.length - 1) setAt(at + 1);
           }}
         />
-      </HeaderBar.Actions>
-      <HeaderBar.Separator />
-      <IconButton
-        icon={Undo2}
-        label="Undo"
-        aria-disabled={past === 0}
-        onClick={() => {
-          if (past === 0) return;
-          setPast(past - 1);
-          setFuture(future + 1);
+      </HeaderBar>
+      <Surface level="card" padX={8} padY={10}>
+        <Text variant="title">{name}</Text>
+      </Surface>
+      <FormDialog
+        open={open}
+        onOpenChange={setOpen}
+        title="Rename the card"
+        valid={draft.trim() !== "" && draft.trim() !== name}
+        onSubmit={() => {
+          setNames([...names.slice(0, at + 1), draft.trim()]);
+          setAt(at + 1);
         }}
-      />
-      <IconButton
-        icon={Redo2}
-        label="Redo"
-        aria-disabled={future === 0}
-        onClick={() => {
-          if (future === 0) return;
-          setFuture(future - 1);
-          setPast(past + 1);
-        }}
-      />
-    </HeaderBar>
+        submitLabel="Save name"
+      >
+        <TextField label="Card name" value={draft} onValueChange={setDraft} />
+      </FormDialog>
+    </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, type, see }) => {
+  await press("button", "Rename");
+  await type("Card name", " 2026");
+  await press("button", "Save name");
+  await see("Spring launch 2026");
+};
