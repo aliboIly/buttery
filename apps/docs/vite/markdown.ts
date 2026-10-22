@@ -8,6 +8,8 @@ import { slugify } from "../src/slug.ts";
 import { captionOf } from "./code.ts";
 import { shownSource } from "./example-source.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
+import { listed, screensByDemo } from "../src/demo-sentence.ts";
+import { demoUsesIn } from "./demo-uses.ts";
 import { propsTablesIn } from "./props.ts";
 import { releasesIn, releasesMarkdown } from "./whats-new.ts";
 
@@ -285,8 +287,29 @@ export function componentMarkdown(
     const found = components.find((candidate) => candidate.name === other);
     return found ? [`- [${other}](${markdownHref(componentHref(found))})`] : [];
   });
-  if (related.length > 0)
-    lines.push(heading(part, "Related"), "", ...related, "");
+  const seen = folder.includes("/primitives/")
+    ? []
+    : (demoUsesIn(root)[name] ?? []);
+  const seenLine =
+    seen.length === 0
+      ? []
+      : [
+          screensByDemo(seen)
+            .map(
+              (group) =>
+                `See it in ${group.screens
+                  .map((screen, index) =>
+                    screen.page === undefined
+                      ? `[${screen.demo}](${screen.href})`
+                      : `${index === 0 ? `${group.demo}'s ` : listed(group.screens, index)}[${screen.page}](${screen.href})`,
+                  )
+                  .join("")}.`,
+            )
+            .join(" "),
+          "",
+        ];
+  if (related.length > 0 || seenLine.length > 0)
+    lines.push(heading(part, "Related"), "", ...related, "", ...seenLine);
   return lines
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")

@@ -1,4 +1,4 @@
-import { createElement, useState } from "react";
+import { Fragment, createElement, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
 import type { ColorScheme, DemoValues, Density } from "@buttery/core";
@@ -12,6 +12,8 @@ import {
   useButtery,
 } from "@buttery/react";
 import type { StatusTone } from "@buttery/react";
+import { demoUses } from "virtual:buttery-demo-uses";
+import { listed, screensByDemo } from "./demo-sentence.ts";
 import { CodeText } from "./CodeBlock.tsx";
 import { CopyLine } from "./CopyLine.tsx";
 import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
@@ -200,6 +202,9 @@ export function ComponentBody({
   const { meta, demos, frame, examples } = entry;
   const stage = frame === "page" ? "card" : "section";
   const inner = depth === 2 ? 3 : 4;
+  const seenIn = entry.folder.includes("/primitives/")
+    ? []
+    : (demoUses[meta.name] ?? []);
   const related = meta.related.flatMap((name) => {
     const found = components.find((candidate) => candidate.meta.name === name);
     const route = found ? docsRouteOf(found) : undefined;
@@ -339,6 +344,37 @@ export function ComponentBody({
                 </a>
               ))}
             </Inline>
+            {seenIn.length > 0 ? (
+              <Text variant="body" tone="secondary">
+                {screensByDemo(seenIn).map((group, at) => (
+                  <Fragment key={group.demo}>
+                    {at > 0 ? " " : null}
+                    {"See it in "}
+                    {group.screens.map((screen, index) =>
+                      screen.page === undefined ? (
+                        <a
+                          key={screen.href}
+                          href={screen.href}
+                          className="docs-link bt-focus"
+                        >
+                          {screen.demo}
+                        </a>
+                      ) : (
+                        <Fragment key={screen.page}>
+                          {index === 0
+                            ? `${group.demo}'s `
+                            : listed(group.screens, index)}
+                          <a href={screen.href} className="docs-link bt-focus">
+                            {screen.page}
+                          </a>
+                        </Fragment>
+                      ),
+                    )}
+                    .
+                  </Fragment>
+                ))}
+              </Text>
+            ) : null}
           </section>
         </Stack>
       ) : null}
