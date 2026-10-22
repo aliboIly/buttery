@@ -1,0 +1,82 @@
+---
+title: Editor
+description: A web app for making one thing at a time, with a header bar, the work on a stage and an inspector of its settings, made from the inspector pattern.
+section: templates
+order: 30
+status: new
+since: 0.9.0
+related: [patterns/inspector, patterns/app-shell, components/slider]
+---
+
+import { TemplatePreview } from "../../src/templates/TemplatePreview.tsx";
+
+The editor template is a small web app for making one thing: a header bar with undo and redo, the work on a stage in the middle, and an inspector of its settings beside it, which becomes a sheet on a phone. Use it for a tool where someone shapes a design, a document or a picture and sees it change as they go.
+
+<TemplatePreview name="editor" />
+
+## Start from it
+
+Inside the buttery repository, this is the command that works today. It copies `apps/templates/editor` to `apps/my-app`, gives the copy its name and the next free port, and installs it.
+
+```bash
+pnpm new-app my-app --template editor
+pnpm --filter my-app dev
+```
+
+Once `create-buttery` is published, the same app starts in any folder:
+
+```bash
+npx create-buttery my-app --template editor
+```
+
+The template is a web app. For a desktop app, start from [blank](/templates/blank), which has the Tauri shell.
+
+## What's inside
+
+<DocsTable
+  columns={["File", "What it does"]}
+  rows={[
+    [
+      "src/App.tsx",
+      "The editor: AppShell with a HeaderBar holding Start over, Undo and Redo, the design on a Stage, and the inspector; Command or Control Z undoes",
+    ],
+    [
+      "src/DesignInspector.tsx",
+      "An Inspector of two sections, each with Reset: the card's title and corners, then the canvas's shape and backdrop",
+    ],
+    [
+      "src/document.ts",
+      "The design, its defaults and canvas sizes, and the undo history, where typing or a drag is one step",
+    ],
+    [
+      "src/app.css",
+      "Sizes the card to the canvas with container units, so it scales the way an export would draw it",
+    ],
+    [
+      "src/router.tsx",
+      "The router every template has; the dashboard's page explains it",
+    ],
+    [
+      "src/main.tsx",
+      "Follows links, then renders the app inside ButteryProvider",
+    ],
+    [
+      "src/index.ts",
+      "What another app imports to show this one, as the docs site does for the preview",
+    ],
+    [
+      "e2e/smoke.spec.ts",
+      "Renders with no console errors, changes the design and walks Undo and Redo, and opens the sheet on a phone",
+    ],
+    [
+      "e2e/layout.spec.ts",
+      "Runs expectButtery on the editor with the sheet open, a new shape and a long title",
+    ],
+  ]}
+/>
+
+It's made from the [inspector](/patterns/inspector) pattern inside the [app shell](/patterns/app-shell). Its router is explained under [routing](/templates/dashboard#routing) on the dashboard's page.
+
+## A demo made from it
+
+[Card Studio](/demos/card-studio) is this template with an editor for title cards in place of the template's design: finishes, a lean in 3D, backdrops, resizing the canvas and exporting the card as an image.

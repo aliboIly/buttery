@@ -168,6 +168,18 @@
   min-inline-size: 0;
 }
 
+/* A template's live preview: the template's app in a frame as tall as two bento rows. */
+.docs-template-frame {
+  overflow: clip;
+}
+
+.docs-template-preview {
+  display: block;
+  inline-size: 100%;
+  block-size: calc(var(--bt-bento-row) * 2);
+  border: 0;
+}
+
 /* A demo's picture on the demos page, drawn from the demo by scripts/demo-previews.mjs. */
 .docs-demo-preview {
   display: block;

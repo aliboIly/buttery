@@ -1,0 +1,99 @@
+---
+title: Dashboard
+description: A web app with a sidebar, an overview of the week's numbers, a table of orders with filters, and settings, made from the App kit.
+section: templates
+order: 20
+status: new
+since: 0.9.0
+related:
+  [
+    patterns/app-shell,
+    patterns/overview,
+    patterns/data-table-page,
+    patterns/settings-pages,
+  ]
+---
+
+import { TemplatePreview } from "../../src/templates/TemplatePreview.tsx";
+
+The dashboard template is a small web app for running something: a sidebar of pages beside a top bar, an overview of metric cards and a chart, a table page with filters, and a settings page. Use it for an admin, a back office or any app whose screens are pages of numbers, lists and settings.
+
+<TemplatePreview name="dashboard" />
+
+## Start from it
+
+Inside the buttery repository, this is the command that works today. It copies `apps/templates/dashboard` to `apps/my-app`, gives the copy its name, which also replaces "buttery dashboard" in the sidebar, and the next free port, then installs it.
+
+```bash
+pnpm new-app my-app --template dashboard
+pnpm --filter my-app dev
+```
+
+Once `create-buttery` is published, the same app starts in any folder:
+
+```bash
+npx create-buttery my-app --template dashboard
+```
+
+The template is a web app. For a desktop app, start from [blank](/templates/blank), which has the Tauri shell.
+
+## What's inside
+
+<DocsTable
+  columns={["File", "What it does"]}
+  rows={[
+    [
+      "src/App.tsx",
+      "The shell: AppShell with a Sidebar, an AccountMenu and a TopBar whose New order button opens a dialog, and the page the address names",
+    ],
+    [
+      "src/pages/OverviewPage.tsx",
+      "Two MetricCards for the week and a BarChart of sales each day",
+    ],
+    [
+      "src/pages/OrdersPage.tsx",
+      "A DataTable of orders, sorted by a column, with a status filter and a search in a FilterBar",
+    ],
+    [
+      "src/pages/SettingsPage.tsx",
+      "A SettingsPage with a form section that saves and a SettingRow that turns emails on and off",
+    ],
+    [
+      "src/NewOrderDialog.tsx",
+      "A FormDialog that adds an order once its three fields are filled in",
+    ],
+    [
+      "src/data.ts",
+      "Made-up orders and numbers, and the helpers that format them",
+    ],
+    ["src/router.tsx", "The router every template has; see Routing below"],
+    [
+      "src/main.tsx",
+      "Follows links, then renders the app inside ButteryProvider",
+    ],
+    [
+      "src/index.ts",
+      "What another app imports to show this one, as the docs site does for the preview",
+    ],
+    [
+      "e2e/smoke.spec.ts",
+      "Renders every page with no console errors, and drives the sidebar, the filters and New order",
+    ],
+    [
+      "e2e/layout.spec.ts",
+      "Runs expectButtery on every page, with its menus and dialogs open",
+    ],
+  ]}
+/>
+
+It's made from these patterns: the [app shell](/patterns/app-shell), an [overview](/patterns/overview), a [data table page](/patterns/data-table-page) and a [settings page](/patterns/settings-pages).
+
+## Routing
+
+Each template has a small router of its own in `src/router.tsx`, with no dependency, so its pages have real addresses: `/orders`, `/settings`. `useRoute()` reads the path and the query from the address and follows it as it changes, `useLink()` turns a path in the app into its address, and `useNavigate()` goes to one. `followLinks()` in `src/main.tsx` makes a click on any link to the app a move within the page, so buttery's link components, which render a plain `<a href>`, work as they are.
+
+An app served under a path of its own takes it as `base`: the docs site shows this template at `/templates/dashboard/preview` with `<App base="/templates/dashboard/preview" />`, and every link and deep link keeps that start.
+
+## A demo made from it
+
+[Halfmoon Roastery](/demos/roastery) is this template with a coffee roaster's pages in place of the template's: orders, customers, wholesale, settings and a search across all of it.

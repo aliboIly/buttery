@@ -22,7 +22,11 @@
     "motion": "catalog:",
     "radix-ui": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "starter": "workspace:*",
+    "template-dashboard": "workspace:*",
+    "template-editor": "workspace:*",
+    "template-marketing": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "catalog:",

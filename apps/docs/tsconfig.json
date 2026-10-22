@@ -18,6 +18,18 @@
     },
     {
       "path": "../demos/card-studio-site"
+    },
+    {
+      "path": "../starter"
+    },
+    {
+      "path": "../templates/dashboard"
+    },
+    {
+      "path": "../templates/editor"
+    },
+    {
+      "path": "../templates/marketing"
     }
   ]
 }

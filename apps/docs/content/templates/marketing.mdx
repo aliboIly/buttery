@@ -1,0 +1,72 @@
+---
+title: Marketing
+description: A one-page site with a sticky bar, a hero, sections for what a product does and what it costs, and a footer, made from the page patterns.
+section: templates
+order: 40
+status: new
+since: 0.9.0
+related: [patterns/marketing-page, layout/page-grid-and-containers]
+---
+
+import { TemplatePreview } from "../../src/templates/TemplatePreview.tsx";
+
+The marketing template is a one-page site: a sticky bar whose links scroll to their sections, a hero, sections for what the product does, a few numbers and two plans, a closing call to action and a footer. Use it for a product's launch page or a small site that sells one thing.
+
+<TemplatePreview name="marketing" />
+
+## Start from it
+
+Inside the buttery repository, this is the command that works today. It copies `apps/templates/marketing` to `apps/my-app`, gives the copy its name, which also replaces "buttery site" in the bar and the footer, and the next free port, then installs it.
+
+```bash
+pnpm new-app my-app --template marketing
+pnpm --filter my-app dev
+```
+
+Once `create-buttery` is published, the same app starts in any folder:
+
+```bash
+npx create-buttery my-app --template marketing
+```
+
+## What's inside
+
+<DocsTable
+  columns={["File", "What it does"]}
+  rows={[
+    [
+      "src/App.tsx",
+      "The site: a Page with a sticky NavBar, a CenteredHero, Sections of features, a StatStrip and plans, a closing hero and a Footer",
+    ],
+    [
+      "src/app.css",
+      "Room at the page's end as tall as the floating lanes, so the last line can scroll clear of a toast",
+    ],
+    [
+      "src/router.tsx",
+      "The router every template has; the dashboard's page explains it",
+    ],
+    [
+      "src/main.tsx",
+      "Follows links, then renders the app inside ButteryProvider",
+    ],
+    [
+      "src/index.ts",
+      "What another app imports to show this one, as the docs site does for the preview",
+    ],
+    [
+      "e2e/smoke.spec.ts",
+      "Renders with no console errors, scrolls to a section from the bar, and shows a plan's toast",
+    ],
+    [
+      "e2e/layout.spec.ts",
+      "Runs expectButtery on the site with the bar's sheet open on a phone and a toast showing",
+    ],
+  ]}
+/>
+
+The bar's links and buttons go to sections of the page with `scrollToSection`, which stops each section below the sticky bar and leaves the address alone. It's made from the [marketing page](/patterns/marketing-page) patterns, and its router is explained under [routing](/templates/dashboard#routing) on the dashboard's page.
+
+## A demo made from it
+
+The [Card Studio site](/demos/card-studio-site) is this template with Card Studio's launch page in place of the template's: menus in the bar, a split hero, a bento of cards that open, the backdrops and two plans.

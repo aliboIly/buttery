@@ -16,12 +16,18 @@ import { MotionPage } from "./pages/MotionPage.tsx";
 import * as cardStudio from "demo-card-studio";
 import * as cardStudioSite from "demo-card-studio-site";
 import * as roastery from "demo-roastery";
-import { DemoPage } from "./demos/DemoPage.tsx";
+import { App as Starter } from "starter/src/App.tsx";
+import "starter/src/main.css";
+import * as dashboardTemplate from "template-dashboard";
+import * as editorTemplate from "template-editor";
+import * as marketingTemplate from "template-marketing";
+import { DemoPage, HostedApp } from "./demos/DemoPage.tsx";
 import type { DemoApp } from "./demos/DemoPage.tsx";
 import { DemosPage } from "./demos/DemosPage.tsx";
 import { components } from "./registry.ts";
 import { SearchPage } from "./search/SearchPage.tsx";
-import { demoPages } from "./routes.ts";
+import { demoPages, templates } from "./routes.ts";
+import type { TemplateName } from "./routes.ts";
 
 export interface Page {
   /** Its path without the leading slash, such as `components/button`. */
@@ -42,6 +48,24 @@ export interface PageGroup {
   readonly title: string;
   readonly pages: readonly Page[];
 }
+
+/** Each template's root, served under `base`; the blank template is the starter, which has no router. */
+const TEMPLATE_APPS: Readonly<
+  Record<TemplateName, (base: string) => ReactElement>
+> = {
+  blank: () => <Starter />,
+  dashboard: (base) => <HostedApp App={dashboardTemplate.App} base={base} />,
+  editor: (base) => <HostedApp App={editorTemplate.App} base={base} />,
+  marketing: (base) => <HostedApp App={marketingTemplate.App} base={base} />,
+};
+
+/** Each template's live preview, filling the window, which its page shows in a frame; the nav leaves them out. */
+const templatePreviews: readonly Page[] = templates.map(({ name, title }) => ({
+  route: `templates/${name}/preview`,
+  title: `${title} template`,
+  render: () => TEMPLATE_APPS[name](`/templates/${name}/preview`),
+  fullWindow: true,
+}));
 
 /** Each demo's own package, by its route. */
 const DEMO_APPS: Readonly<
@@ -265,6 +289,7 @@ export const pages: readonly Page[] = [
   landingPage,
   ...pageGroups.flatMap((group) => group.pages),
   searchPage,
+  ...templatePreviews,
   ...labDocs,
 ];
 

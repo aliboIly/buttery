@@ -472,6 +472,18 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.3.1(react@19.3.1)
+      starter:
+        specifier: workspace:*
+        version: link:../starter
+      template-dashboard:
+        specifier: workspace:*
+        version: link:../templates/dashboard
+      template-editor:
+        specifier: workspace:*
+        version: link:../templates/editor
+      template-marketing:
+        specifier: workspace:*
+        version: link:../templates/marketing
     devDependencies:
       '@babel/core':
         specifier: 'catalog:'

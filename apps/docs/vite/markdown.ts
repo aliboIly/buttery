@@ -512,6 +512,10 @@ function bodyMarkdown(
       out.push(docsTableOf(jsx));
     } else if (name === "WhatsNew") {
       out.push(releasesMarkdown(releasesIn(root)));
+    } else if (name === "TemplatePreview") {
+      const template = /name="([^"]+)"/.exec(jsx)?.[1] ?? "";
+      const preview = `/templates/${template}/preview`;
+      out.push(`The template runs live at [${preview}](${preview}).`);
     } else {
       const block = tokenBlock(root, name, jsx);
       if (block !== null) out.push(block);

@@ -81,6 +81,12 @@ describe("the site as Markdown", () => {
     );
   });
 
+  it("links a template's page to its live preview", () => {
+    expect(pageMarkdown(root, "templates/dashboard", components)).toContain(
+      "The template runs live at [/templates/dashboard/preview](/templates/dashboard/preview).",
+    );
+  });
+
   it("has nothing for a route that isn't a page", () => {
     expect(pageMarkdown(root, "nowhere/at-all", components)).toBeNull();
   });
