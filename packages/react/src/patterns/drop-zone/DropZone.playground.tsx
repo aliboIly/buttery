@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, DropZone, EmptyState } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -13,18 +14,28 @@ export const page: DocsPage = {
   since: "0.5.0",
 };
 
-function ImageDrop(): ReactElement {
-  const [name, setName] = useState<string | null>(null);
+function ImageDrop({
+  accept = "image/*",
+  multiple = false,
+  disabled = false,
+}: {
+  readonly accept?: string;
+  readonly multiple?: boolean;
+  readonly disabled?: boolean;
+}): ReactElement {
+  const [names, setNames] = useState<readonly string[]>([]);
   return (
     <DropZone
-      accept="image/*"
-      onFiles={([file]) => {
-        setName(file?.name ?? null);
+      accept={accept}
+      multiple={multiple}
+      disabled={disabled}
+      onFiles={(files) => {
+        setNames(files.map((file) => file.name));
       }}
       style={{ blockSize: "var(--bt-bento-row)" }}
     >
       <EmptyState
-        title={name ?? "Add a backdrop"}
+        title={names.length === 0 ? "Add a backdrop" : names.join(", ")}
         description="Drag a picture onto the canvas, paste it from your clipboard, or open one with ⌘O."
         actions={
           <DropZone.Open>
@@ -35,6 +46,44 @@ function ImageDrop(): ReactElement {
     </DropZone>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    accept: {
+      kind: "choice",
+      options: ["image/*", ".png,.jpg", "application/pdf,image/*"],
+      initial: "image/*",
+    },
+    multiple: { kind: "toggle", initial: false },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ accept, multiple, disabled }) => (
+    <ImageDrop
+      accept={demoChoice(accept, [
+        "image/*",
+        ".png,.jpg",
+        "application/pdf,image/*",
+      ])}
+      multiple={multiple === true}
+      disabled={disabled === true}
+    />
+  ),
+  code: ({ accept, multiple, disabled }) =>
+    [
+      "<DropZone",
+      `  accept="${String(accept)}"`,
+      ...(multiple === true ? ["  multiple"] : []),
+      ...(disabled === true ? ["  disabled"] : []),
+      "  onFiles={(files) => setNames(files.map((file) => file.name))}",
+      ">",
+      "  <EmptyState",
+      '    title="Add a backdrop"',
+      '    description="Drag a picture onto the canvas, paste it from your clipboard, or open one with ⌘O."',
+      '    actions={<DropZone.Open><Button variant="primary">Pick a picture</Button></DropZone.Open>}',
+      "  />",
+      "</DropZone>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {

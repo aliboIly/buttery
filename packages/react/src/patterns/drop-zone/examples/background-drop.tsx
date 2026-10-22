@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, DropZone, EmptyState } from "@buttery/react";
 
 /** An empty canvas that takes a picture for its backdrop: dropped, pasted, opened with ⌘O or picked with the button. */
@@ -24,3 +25,10 @@ export function BackgroundDrop(): ReactElement {
     </DropZone>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Add a backdrop");
+  await see("Drag a picture onto the canvas, or paste it from your clipboard.");
+};
