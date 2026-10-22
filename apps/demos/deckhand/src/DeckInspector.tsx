@@ -207,10 +207,12 @@ function TextRows({
 export function EmptyDeckInspector(): ReactElement {
   return (
     <Inspector label="Slide settings">
-      <EmptyState
-        title="No slide to style"
-        description="Add a slide, and its words, layout and look show up here."
-      />
+      <div className="dh-inspector-empty">
+        <EmptyState
+          title="No slide to style"
+          description="Add a slide, and its words, layout and look show up here."
+        />
+      </div>
     </Inspector>
   );
 }

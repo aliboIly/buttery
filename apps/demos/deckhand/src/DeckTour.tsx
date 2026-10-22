@@ -96,7 +96,8 @@ export const DECK_TOUR: readonly OnboardingStep[] = [
   {
     title: "Lay out each slide",
     body: "Pick a layout, line the words up, then drag them anywhere on the slide.",
-    caption: "They land on the nearest of nine places.",
+    caption:
+      "Drag a thumbnail, or press Alt and an arrow, to reorder the deck.",
     background: backdrop("mist"),
     media: (
       <Inline gap={4} align="center">

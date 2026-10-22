@@ -20,6 +20,18 @@
   min-block-size: 0;
 }
 
+.dh-stage[data-empty] {
+  place-items: center;
+  padding: var(--bt-space-8);
+}
+
+.dh-inspector-empty {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  padding: var(--bt-space-6);
+}
+
 /*
  * A slide, sized from its box's shorter side, which is 1080 units: everything on it is a number of units, so
  * a thumbnail, the stage, a presentation and the exported PNG all show the same slide.

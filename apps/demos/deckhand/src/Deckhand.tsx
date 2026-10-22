@@ -20,7 +20,7 @@ import {
   toast,
 } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
-import { Plus } from "lucide-react";
+import { Plus, Presentation } from "lucide-react";
 import { DeckHeader } from "./DeckHeader.tsx";
 import { DeckInspector, EmptyDeckInspector } from "./DeckInspector.tsx";
 import type { ChangeSlide } from "./DeckInspector.tsx";
@@ -487,7 +487,12 @@ export function Deckhand(): ReactElement {
         }
       >
         <div className="dh-work">
-          <div ref={stageArea} className="dh-stage" onPointerDown={leaveWords}>
+          <div
+            ref={stageArea}
+            className="dh-stage"
+            data-empty={slide ? undefined : ""}
+            onPointerDown={leaveWords}
+          >
             {slide ? (
               <Stage
                 label={`${slideName(slide, index)}, ${String(index + 1)} of ${String(deck.slides.length)}`}
@@ -510,6 +515,7 @@ export function Deckhand(): ReactElement {
               </Stage>
             ) : (
               <EmptyState
+                icon={Presentation}
                 title="No slides yet"
                 description="Add a slide to start the deck again, or undo to bring back the last one."
                 actions={
