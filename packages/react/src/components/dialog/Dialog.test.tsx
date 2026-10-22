@@ -17,6 +17,7 @@ import {
 import { page, userEvent as browser } from "vitest/browser";
 import { Button } from "../button/Button.tsx";
 import { Dialog } from "./Dialog.tsx";
+import { DeleteFromList } from "./examples/delete-from-list.tsx";
 import type { DialogSize } from "./Dialog.tsx";
 
 beforeEach(() => {
@@ -78,6 +79,22 @@ async function openConfirm(): Promise<HTMLElement> {
 }
 
 describe("Dialog", () => {
+  it("lets onCloseAutoFocus send focus on when what opened it is gone, as the list example does", async () => {
+    render(<DeleteFromList />);
+    await userEvent.click(
+      screen.getByRole("button", { name: "Delete Harbor Fog" }),
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Delete" }),
+    );
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Delete Ironwood Night" }),
+      );
+    });
+    expect(screen.getByText("2 roasts on the shelf")).toBeTruthy();
+  });
+
   it("stamps its class and data-bt on the dialog, forwards its ref and spreads props", async () => {
     const ref = createRef<HTMLDivElement>();
     render(

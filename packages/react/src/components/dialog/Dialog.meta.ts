@@ -10,12 +10,13 @@ export const meta: ComponentMeta = {
     "Something that needs full attention for a moment, such as an announcement",
   ],
   avoidWhen: [
+    "A delete or another step that can't be undone, said in full with what it takes with it: use ConsequenceDialog",
     "News that needs no answer: use a toast",
     "Settings beside the work: use a Popover or the Inspector",
     "Errors in a form: show them next to the field",
   ],
-  related: ["Popover", "Toaster", "Button", "TextStack"],
-  a11y: "A modal dialog (aria-modal) named by its Dialog.Text title, or by label without one, and described by the text's body. Focus moves to the first control in its body, or to the dialog itself when there's none so the close button's tooltip stays shut; Tab stays inside; Escape, the close button or a press outside closes it and focus goes back to what opened it. The page behind is hidden from screen readers while it's open.",
+  related: ["ConsequenceDialog", "Popover", "Toaster", "Button", "TextStack"],
+  a11y: "A modal dialog (aria-modal) named by its Dialog.Text title, or by label without one, and described by the text's body. Once it has settled, focus moves to its first field to type in, else its first control, its actions included, so a confirm with the safe choice first lands on that; with no control it stays on the dialog, so the close button's tooltip stays shut. Tab stays inside; Escape, the close button or a press outside closes it and focus goes back to what opened it, or, when that's gone, wherever onCloseAutoFocus sends it, as in the list example. The page behind is hidden from screen readers while it's open.",
   motion: "presence",
   keyboard: [
     { keys: "Enter or Space", does: "Opens it from its trigger" },
