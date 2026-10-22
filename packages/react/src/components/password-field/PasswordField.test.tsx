@@ -24,6 +24,23 @@ describe("PasswordField", () => {
     expect(ref.current).toBe(input());
   });
 
+  it("shrinks with a box that fits its content, reveal toggle and all", () => {
+    render(
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          inlineSize: "120px",
+        }}
+      >
+        <PasswordField label="Password" />
+      </div>,
+    );
+    const box = input().closest('[data-bt-part="box"]');
+    expect(box?.getBoundingClientRect().width).toBe(120);
+  });
+
   it("hides what's typed until the reveal toggle is pressed, and keeps the toggle's name", async () => {
     render(<PasswordField label="Password" defaultValue="butter-2026" />);
     await expect

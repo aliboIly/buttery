@@ -93,6 +93,28 @@ describe("TextField", () => {
     expect(document.activeElement).toBe(input());
   });
 
+  it("shrinks with a box that fits its content, and asks for 20 characters where there's room", () => {
+    const { rerender } = render(
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          inlineSize: "120px",
+        }}
+      >
+        <TextField label="Email" />
+      </div>,
+    );
+    expect(box().getBoundingClientRect().width).toBe(120);
+    rerender(
+      <div style={{ display: "flex", inlineSize: "600px" }}>
+        <TextField label="Email" />
+      </div>,
+    );
+    expect(box().getBoundingClientRect().width).toBeGreaterThan(160);
+  });
+
   it("shows nothing under the box while there's no error", () => {
     render(<TextField label="Email" />);
     expect(input().hasAttribute("aria-invalid")).toBe(false);
