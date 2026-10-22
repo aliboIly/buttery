@@ -11,7 +11,10 @@ export interface StackProps extends ComponentPropsWithRef<"div">, SpacingProps {
   readonly align?: FlowAlign | undefined;
   /** Main-axis (vertical) distribution. Defaults to `"start"`. */
   readonly justify?: FlowJustify | undefined;
-  /** Render the single child element instead of a `div`, with Stack's props merged onto it. */
+  /**
+   * Render the single child element instead of a `div`, with Stack's props merged onto it. A `ul` or `ol`
+   * laid out this way takes `role="list"`, which drops its bullets and indent.
+   */
   readonly asChild?: boolean | undefined;
 }
 

@@ -89,6 +89,11 @@ export default defineConfig(
         "error",
         { tags: [], roles: ["tabpanel", "region"] },
       ],
+      // A list that's laid out keeps role="list": Safari drops a list's role along with its markers.
+      "jsx-a11y/no-redundant-roles": [
+        "error",
+        { nav: ["navigation"], ul: ["list"], ol: ["list"] },
+      ],
     },
   },
   {

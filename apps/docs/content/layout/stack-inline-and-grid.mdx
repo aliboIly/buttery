@@ -16,7 +16,7 @@ related: [layout/the-layout-contract, foundations/spacing-and-sizing]
 - `Inline` for a row: a button group, an icon beside its label. `wrap` lets it wrap, and `uniform` makes every child as wide as the widest, for a row of equal buttons.
 - `Grid` for columns that change with the room: `columns={{ base: 1, md: 2, lg: 3 }}` steps at 640px and 1024px of the container it's in.
 
-All three take `align` and `justify`, and render a `div` unless you pass `asChild` to lay out an element of your own, such as a `ul`.
+All three take `align` and `justify`, and render a `div` unless you pass `asChild` to lay out an element of your own, such as a `ul`. Give a list you lay out `role="list"`: it drops the bullets and the indent, and keeps the list announced as a list in Safari, which drops that along with the bullets.
 
 ```tsx
 import type { ReactElement } from "react";

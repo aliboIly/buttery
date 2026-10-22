@@ -22,6 +22,26 @@ describe("Stack", () => {
     expect(style.rowGap).toBe("16px");
   });
 
+  it("lays out a list marked role=list without bullets or an indent, and leaves other lists bulleted", () => {
+    render(
+      <>
+        <Stack gap={2} asChild>
+          <ul role="list" data-testid="laid-out">
+            <li>Guji</li>
+          </ul>
+        </Stack>
+        <ul data-testid="bulleted">
+          <li>Nyeri</li>
+        </ul>
+      </>,
+    );
+    const laidOut = getComputedStyle(screen.getByTestId("laid-out"));
+    expect(laidOut.listStyleType).toBe("none");
+    expect(laidOut.paddingInlineStart).toBe("0px");
+    const bulleted = getComputedStyle(screen.getByTestId("bulleted"));
+    expect(bulleted.listStyleType).toBe("disc");
+  });
+
   it("accepts half steps as strings or numbers", () => {
     render(
       <>
