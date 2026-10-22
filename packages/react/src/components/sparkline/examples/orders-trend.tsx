@@ -1,5 +1,6 @@
-import { Inline, Text } from "@buttery/core";
 import type { ReactElement } from "react";
+import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Sparkline } from "@buttery/react";
 
 /** Two weeks of orders as a sparkline that fills the row beside the total it adds up to. */
@@ -16,3 +17,9 @@ export function OrdersTrend(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("1,284");
+};
