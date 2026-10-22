@@ -12,7 +12,7 @@ The first sentence says what the thing is. The second says when to use it. Then 
 
 - Short sentences, second person, present tense, active voice: "Use `Switch` for a setting that takes effect at once."
 - One idea per paragraph. A term is defined where it first appears.
-- No filler or marketing words ("seamless", "robust", "leverage", "powerful", "delve"), no em-dash-heavy sentences, no bold-label bullet lists, no recap of what was just said.
+- No filler or marketing words (`seamless`, `robust`, `leverage`, `powerful`, `delve` and the rest of the list in `scripts/check-ai-tells.mjs`), no em-dash-heavy sentences, no bold-label bullet lists, no recap of what was just said.
 - Original example content: a coffee roastery, a card editor, a small shop. Never a real product, company or person.
 
 ## Exact names

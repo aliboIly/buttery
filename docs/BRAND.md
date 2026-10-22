@@ -15,15 +15,15 @@
 ## The mark (logo, favicon, app icon)
 Because the emoji renders differently per platform and Apple's art isn't usable as an image, the logo is an **original drawing** that carries the same qualities you like about the iOS emoji style:
 
-- **Subject:** a soft pat of butter — a rounded block, slightly melted at the edges, seen from a gentle 3/4 angle.
-- **Finish:** glossy, dimensional, friendly. A creamy top face, a warmer side, a soft specular highlight, a soft contact shadow.
-- **Colors:** `--bt-brand-cream #fff4d6` (top), `--bt-brand-butter #f5d06f` (body), `--bt-brand-butter-deep #e8b64a` (side/shadow).
-- **Rules:** original geometry. Don't trace, copy or closely imitate any vendor's emoji (Apple, Google, Microsoft, Samsung, Twitter).
-- **Deliverables:** `BrandMark` React component (inline SVG, sizes 16/24/32/64/128/512), a simplified 16px variant that reads at favicon size, `favicon.svg` + `.ico`, Tauri app icons (generate from a 1024px PNG with `pnpm tauri icon`), and a README hero. `pnpm brand:assets` makes all of them from `BrandMark`, so a change to the drawing reaches every one.
-- **Where it goes:** the mark in UI, favicons and app icons (consistent everywhere). The 🧈 character in text.
+- Subject: a soft pat of butter — a rounded block, slightly melted at the edges, seen from a gentle 3/4 angle.
+- Finish: glossy, dimensional, friendly. A creamy top face, a warmer side, a soft specular highlight, a soft contact shadow.
+- Colors: `--bt-brand-cream #fff4d6` (top), `--bt-brand-butter #f5d06f` (body), `--bt-brand-butter-deep #e8b64a` (side/shadow).
+- Rules: original geometry. Don't trace, copy or closely imitate any vendor's emoji (Apple, Google, Microsoft, Samsung, Twitter).
+- Deliverables: `BrandMark` React component (inline SVG, sizes 16/24/32/64/128/512), a simplified 16px variant that reads at favicon size, `favicon.svg` + `.ico`, Tauri app icons (generate from a 1024px PNG with `pnpm tauri icon`), and a README hero. `pnpm brand:assets` makes all of them from `BrandMark`, so a change to the drawing reaches every one.
+- Where it goes: the mark in UI, favicons and app icons (consistent everywhere). The 🧈 character in text.
 
 ## Voice
 Short, warm, direct. Say what happens, not how clever it is.
 - ✅ "Dropped in. Looking buttery." ✅ "Two buttons overlap at 390px — here's the fix."
-- ❌ "Leveraging our revolutionary design paradigm…"
+- ❌ `Leveraging our revolutionary design paradigm…`
 CLI and dev warnings are part of the brand: friendly, specific, always with a fix.

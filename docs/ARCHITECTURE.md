@@ -2,7 +2,7 @@
 
 ## What buttery is
 
-A React design system + layout/motion framework. Its job: **anything built with it — or wrapped in it — comes out buttery** (the look in `DESIGN_SPEC.md`, the motion in `MOTION_SPEC.md`, the layout guarantees in `LAYOUT_RULES.md`) with very little effort — whether the builder is a developer or a coding agent. See `DX_AND_AI.md`.
+A React design system + layout/motion framework. Its job: anything built with it, or wrapped in it, comes out buttery (the look in `DESIGN_SPEC.md`, the motion in `MOTION_SPEC.md`, the layout guarantees in `LAYOUT_RULES.md`) with very little effort, whether a developer or a coding agent builds it. See `DX_AND_AI.md`.
 
 Targets: web apps and desktop apps (Tauri v2 wraps the same web code).
 
@@ -129,7 +129,7 @@ The generated files are committed and Prettier skips them; a unit test fails whe
 
 ## "Make anything buttery" — four levels of effort
 
-### Level 0 — zero effort
+### Level 0: zero effort
 ```tsx
 import "@buttery/core/styles.css";
 import "@buttery/react/styles.css";
@@ -139,7 +139,7 @@ import { ButteryProvider } from "@buttery/react";
 ```
 You get: tokens, Inter, base typography, focus rings, selection color, scrollbars, motion presets with reduced-motion handling, light/dark, the floating lanes with the `Toaster` and `Confetti` hosts, the layer stack, and `LayoutGuard` in dev. (`npx buttery init` does this wiring for you.)
 
-### Level 1 — wrap anything
+### Level 1: wrap anything
 The `buttery` factory (like `motion.div`) turns any element or component into a buttery one:
 ```tsx
 import { buttery } from "@buttery/react";
@@ -156,7 +156,7 @@ Same thing without React — recipes are plain classes/attributes:
 <button class="bt-press bt-focus">…</button>
 ```
 
-### Level 2 — compose components
+### Level 2: compose components
 ```tsx
 <Inspector label="Card settings">
   <Inspector.Section title="Card" resettable={changed} onReset={reset}>
@@ -171,8 +171,8 @@ Same thing without React — recipes are plain classes/attributes:
 ```
 A slider labels itself, with its value badge, so its row takes no `label`; a segmented control sits beside the row's label and still names itself for screen readers.
 
-### Level 3 — patterns
-`<AppShell header={…} inspector={…}>{stage}</AppShell>`, `<Page><SplitHero …/><Bento>…</Bento></Page>` — whole screens that already obey the layout rules.
+### Level 3: patterns
+`<AppShell header={…} inspector={…}>{stage}</AppShell>`, `<Page><SplitHero …/><Bento>…</Bento></Page>`: whole screens that already obey the layout rules.
 
 ## Component contract (every component, no exceptions)
 

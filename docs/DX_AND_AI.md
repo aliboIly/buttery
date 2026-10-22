@@ -3,13 +3,13 @@
 buttery should be **the easiest correct way to build UI** — for a developer in VS Code and for a coding agent (Claude Code, Codex, Gemini CLI, Cursor, Copilot) in a terminal. If either one has to guess, buttery failed, not them.
 
 ## Principles
-1. **Zero-config start.** One provider, two CSS imports, and it already looks and moves right.
-2. **One vocabulary.** The same prop names everywhere (`value`/`defaultValue`/`onValueChange`, `checked`/`defaultChecked`/`onCheckedChange` for something on or off, `open`/`defaultOpen`/`onOpenChange`, `size`, `variant`, `disabled`, `label`, `asChild`). No synonyms, no per-component dialects. Predictable APIs are what make agents reliable.
-3. **Wrong is a type error.** Spacing, sizes, surfaces, motion presets and variants are string/number unions of tokens, so a bad value fails `tsc` before anyone sees it.
-4. **Errors teach.** Every dev warning names the problem, the fix and a docs link, in one line:
+1. Zero-config start. One provider, two CSS imports, and it already looks and moves right.
+2. One vocabulary. The same prop names everywhere (`value`/`defaultValue`/`onValueChange`, `checked`/`defaultChecked`/`onCheckedChange` for something on or off, `open`/`defaultOpen`/`onOpenChange`, `size`, `variant`, `disabled`, `label`, `asChild`). No synonyms, no per-component dialects. Predictable APIs are what make agents reliable.
+3. Wrong is a type error. Spacing, sizes, surfaces, motion presets and variants are string/number unions of tokens, so a bad value fails `tsc` before anyone sees it.
+4. Errors teach. Every dev warning names the problem, the fix and a docs link, in one line:
    `[buttery:IconButton] needs a "label" (tooltip + screen readers). Fix: <IconButton label="Undo" …/> → docs/icon-button#label`
-5. **Machine-readable everything.** Anything a human reads in the docs, an agent can read as structured data.
-6. **Checks close the loop.** Layout/motion/a11y problems come back as JSON with a suggested fix, so an agent can fix its own work without a human pointing at screenshots.
+5. Machine-readable everything. Anything a human reads in the docs, an agent can read as structured data.
+6. Checks close the loop. Layout/motion/a11y problems come back as JSON with a suggested fix, so an agent can fix its own work without a human pointing at screenshots.
 
 ## For developers
 
