@@ -2,7 +2,7 @@ import "@buttery/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { createRef } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { Breadcrumbs } from "./Breadcrumbs.tsx";
 
@@ -56,6 +56,29 @@ describe("Breadcrumbs", () => {
     const separators = nav.querySelectorAll('[data-bt-part="separator"]');
     expect(separators).toHaveLength(1);
     expect(separators[0]?.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("keeps every crumb when two link to the same place", () => {
+    const error = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    onTestFinished(() => {
+      error.mockRestore();
+    });
+    render(
+      <div style={{ inlineSize: "600px" }}>
+        <Breadcrumbs
+          items={[
+            { label: "Shop", href: "#home" },
+            { label: "Orders", href: "#home" },
+          ]}
+        />
+      </div>,
+    );
+    expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual(
+      ["Shop", "Orders"],
+    );
+    expect(error).not.toHaveBeenCalled();
   });
 
   it("gives every link a target at least 24px tall", () => {

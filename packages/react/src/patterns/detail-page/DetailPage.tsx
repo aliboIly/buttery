@@ -124,8 +124,8 @@ export function DetailPageLinks({
         <h2>{title}</h2>
       </Text>
       <ul data-bt-part="link-list">
-        {links.map((link) => (
-          <li key={link.href}>
+        {links.map((link, index) => (
+          <li key={index}>
             <a
               href={link.href}
               className="bt-text bt-focus"

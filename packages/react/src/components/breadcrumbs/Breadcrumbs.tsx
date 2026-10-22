@@ -51,7 +51,7 @@ export function Breadcrumbs({
     >
       <ol data-bt-part="list">
         {items.map((item, index) => (
-          <li key={item.href} data-bt-part="item">
+          <li key={index} data-bt-part="item">
             {index === 0 ? null : (
               <span data-bt-part="separator" aria-hidden="true">
                 <Icon icon={ChevronRight} />

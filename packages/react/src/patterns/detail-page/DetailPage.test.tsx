@@ -3,7 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { createRef } from "react";
 import type { ReactNode } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { Button } from "../../components/button/Button.tsx";
 import { AppShell } from "../app-shell/AppShell.tsx";
@@ -140,6 +140,28 @@ describe("DetailPage", () => {
         .getByRole("complementary", { name: "Details" })
         .hasAttribute("data-bt-region"),
     ).toBe(true);
+  });
+
+  it("keeps every link in a list when two go to the same place", () => {
+    const error = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    onTestFinished(() => {
+      error.mockRestore();
+    });
+    render(
+      <DetailPage.Links
+        title="Resources"
+        links={[
+          { label: "How prices are set", href: "#help" },
+          { label: "Price lists", href: "#help" },
+        ]}
+      />,
+    );
+    expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual(
+      ["How prices are set", "Price lists"],
+    );
+    expect(error).not.toHaveBeenCalled();
   });
 
   it("passes a list of links its ref, class and other props", () => {
