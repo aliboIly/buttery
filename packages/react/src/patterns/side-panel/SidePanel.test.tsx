@@ -265,6 +265,32 @@ describe("SidePanel", () => {
     expect(document.activeElement).toBe(helpButton());
   });
 
+  it("becomes the sheet as the shell narrows when its owner keeps it open", async () => {
+    function Kept({ width }: { readonly width: number }): ReactElement {
+      return (
+        <div style={{ inlineSize: `${String(width)}px`, blockSize: "700px" }}>
+          <AppShell
+            layout="sidebar"
+            sidebar={<nav aria-label="Main">Nav</nav>}
+            panel={
+              <SidePanel title="Help" open>
+                <p>Roast profiles</p>
+              </SidePanel>
+            }
+          >
+            <p>Orders</p>
+          </AppShell>
+        </div>
+      );
+    }
+    const { rerender } = render(<Kept width={1440} />);
+    expect(
+      screen.getByRole("complementary", { name: "Help" }).dataset["mode"],
+    ).toBe("docked");
+    rerender(<Kept width={1100} />);
+    expect(await screen.findByRole("dialog", { name: "Help" })).toBeTruthy();
+  });
+
   it("leaves focus where it is when it's open from the start, and opens as a sheet in a narrow shell", async () => {
     render(<Help width={1440} startOpen />);
     expect(

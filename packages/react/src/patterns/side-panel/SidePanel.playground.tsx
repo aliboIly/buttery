@@ -62,7 +62,7 @@ function NarrowShell(): ReactElement {
         }
         panel={
           <SidePanel
-            title="Roasting help"
+            title="Help"
             open={open}
             onOpenChange={setOpen}
             footer={<TextArea label="Ask a question" rows={2} />}

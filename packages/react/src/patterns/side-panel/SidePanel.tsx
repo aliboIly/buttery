@@ -174,23 +174,33 @@ export function SidePanel({
   const dockCloseFocus = useCloseFocus(isOpen, dock);
   const sheetCloseFocus = useCloseFocus(isOpen, sheet);
 
-  // A docked panel closes when the shell narrows under it rather than turning into a modal sheet.
+  // A docked panel closes when the shell narrows under it rather than turning into a modal sheet; one whose
+  // owner keeps it open becomes the sheet after all.
   const [seenDocked, setSeenDocked] = useState<boolean | undefined>(
     shell.measured ? docked : undefined,
   );
   const [narrowed, setNarrowed] = useState(false);
+  const [asked, setAsked] = useState(false);
   if (shell.measured && seenDocked !== docked) {
     setSeenDocked(docked);
     setNarrowed(seenDocked === true && !docked && isOpen);
   }
   if (narrowed && !isOpen) setNarrowed(false);
-  const hidden = !shell.measured || narrowed;
+  if (!narrowed && asked) setAsked(false);
+  const hidden = !shell.measured || (narrowed && !asked);
   const closeNarrowed = useEffectEvent(() => {
     setOpen(false);
   });
   useEffect(() => {
-    if (narrowed && isOpen) closeNarrowed();
-  }, [narrowed, isOpen]);
+    if (!narrowed || !isOpen || asked) return undefined;
+    closeNarrowed();
+    const frame = requestAnimationFrame(() => {
+      setAsked(true);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, [narrowed, isOpen, asked]);
 
   const showing = {
     open: isOpen,
