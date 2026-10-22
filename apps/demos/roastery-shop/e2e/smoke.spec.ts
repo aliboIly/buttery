@@ -3,7 +3,7 @@ import type { Locator, Page } from "@playwright/test";
 
 /** The bar's bag button: beside the actions, or beside the brand once the bar folds. */
 function bagButton(page: Page): Locator {
-  return page.getByRole("button", { name: /^Bag, / });
+  return page.getByRole("link", { name: /^Bag, / });
 }
 
 test("opens on its own with the bundled font and no console errors", async ({
@@ -36,10 +36,12 @@ test("adding a coffee updates the bag's count and the bag, which a reload keeps"
   const bag = bagButton(page);
   await expect(bag).toHaveAccessibleName("Bag, 0 bags");
 
-  await page.getByRole("button", { name: "Add to bag", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Add to bag · $19.00", exact: true })
+    .click();
   await expect(bag).toHaveAccessibleName("Bag, 1 bag");
   await expect(
-    page.getByText("Added Guji, 12 oz.", { exact: true }),
+    page.getByText("Added a 12 oz bag of Guji.", { exact: true }),
   ).toBeVisible();
 
   await bag.click();
@@ -63,29 +65,47 @@ test("adding a coffee updates the bag's count and the bag, which a reload keeps"
   await expect(bag).toHaveAccessibleName("Bag, 2 bags");
 });
 
-test("the bag checks out in place and starts again empty", async ({ page }) => {
+test("the bag checks out in place, through delivery and payment, and starts again empty", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Add to bag", exact: true }).click();
+  await page
+    .getByRole("button", { name: /^Add to bag/ })
+    .first()
+    .click();
   await bagButton(page).click();
   await page.getByRole("button", { name: "Check out" }).click();
-  const checkout = page.getByRole("dialog", { name: "Check out" });
-  await checkout.getByRole("button", { name: "Place order" }).click();
+
+  const delivery = page.getByRole("dialog", { name: "Delivery" });
+  await delivery.getByRole("button", { name: "Payment" }).click();
   await expect(
-    checkout.getByText(
-      "Enter your email address, so we can send your receipt.",
-      { exact: true },
-    ),
+    delivery.getByText("Enter a 5-digit ZIP code.", { exact: true }),
   ).toBeVisible();
-  await checkout
-    .getByRole("textbox", { name: "Email" })
-    .fill("ines@example.com");
-  await checkout.getByRole("radio", { name: /^Next day/ }).click();
-  await expect(checkout.getByText("$33.00")).toBeVisible();
-  await checkout.getByRole("button", { name: "Place order" }).click();
+  await expect(delivery.getByLabel("Email")).toBeFocused();
+  await delivery.getByLabel("Email").fill("ines@example.com");
+  await delivery.getByLabel("Full name").fill("Ines Vale");
+  await delivery.getByLabel("Street address").fill("2210 SE Ankeny St");
+  await delivery.getByLabel("City").fill("Portland");
+  await delivery.getByLabel("State").fill("OR");
+  await delivery.getByLabel("ZIP code").fill("97214");
+  await delivery.getByRole("radio", { name: /^Next day/ }).click();
+  await delivery.getByRole("button", { name: "Payment" }).click();
+
+  const payment = page.getByRole("dialog", { name: "Payment" });
+  await payment.getByLabel("Card number").fill("4111 1111 1111 1111");
+  await payment.getByLabel("Expiry").fill("09/26");
+  await payment.getByLabel("Security code").fill("123");
+  await payment.getByRole("button", { name: "Pay $33.00" }).click();
+  await expect(
+    payment.getByText("This card has expired.", { exact: true }),
+  ).toBeVisible();
+  await payment.getByLabel("Expiry").fill("08/28");
+  await payment.getByRole("button", { name: "Pay $33.00" }).click();
+
   await expect(
     page.getByRole("dialog", { name: "Thanks, your order is in" }),
-  ).toContainText("Order HM-10482");
+  ).toContainText("Order HM-10482 goes into tomorrow morning's roast");
   await page.getByRole("button", { name: "Done" }).click();
   await expect(bagButton(page)).toHaveAccessibleName("Bag, 0 bags");
 });
