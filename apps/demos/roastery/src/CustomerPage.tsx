@@ -212,7 +212,6 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
           <AppPage.Section>
             <DataTable<Order>
               label="Orders"
-              size="compact"
               columns={ORDER_COLUMNS}
               rows={customer.orders.slice(
                 (page - 1) * ORDERS_PAGE,
