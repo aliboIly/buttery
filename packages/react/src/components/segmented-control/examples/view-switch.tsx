@@ -21,7 +21,9 @@ export function ViewSwitch(): ReactElement {
     <Stack gap={4}>
       <Inline gap={3} align="center" justify="between">
         <Stack gap={1}>
-          <Text variant="title-sm">Coffees</Text>
+          <Text variant="title-sm" asChild>
+            <h3>Coffees</h3>
+          </Text>
           <Text variant="caption" tone="secondary">
             {`Showing ${String(COFFEES.length)} coffees as a ${view}`}
           </Text>
@@ -38,20 +40,26 @@ export function ViewSwitch(): ReactElement {
         />
       </Inline>
       {view === "grid" ? (
-        <Grid columns={2} gap={2}>
-          {COFFEES.map((coffee) => (
-            <Surface key={coffee} level="card" pad={3}>
-              <Text variant="label">{coffee}</Text>
-            </Surface>
-          ))}
+        <Grid columns={2} gap={2} asChild>
+          <ul role="list">
+            {COFFEES.map((coffee) => (
+              <Surface key={coffee} level="card" pad={3} asChild>
+                <li>
+                  <Text variant="label">{coffee}</Text>
+                </li>
+              </Surface>
+            ))}
+          </ul>
         </Grid>
       ) : (
-        <Stack gap={2}>
-          {COFFEES.map((coffee) => (
-            <Text key={coffee} variant="label">
-              {coffee}
-            </Text>
-          ))}
+        <Stack gap={2} asChild>
+          <ul role="list">
+            {COFFEES.map((coffee) => (
+              <Text key={coffee} variant="label" asChild>
+                <li>{coffee}</li>
+              </Text>
+            ))}
+          </ul>
         </Stack>
       )}
     </Stack>
