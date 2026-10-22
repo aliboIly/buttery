@@ -21,13 +21,15 @@ afterEach(cleanup);
 function Help({
   width,
   withField = true,
+  startOpen = false,
   children,
 }: {
   readonly width: number;
   readonly withField?: boolean;
+  readonly startOpen?: boolean;
   readonly children?: ReactNode;
 }): ReactElement {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(startOpen);
   return (
     <div style={{ inlineSize: `${String(width)}px`, blockSize: "700px" }}>
       <AppShell
@@ -225,6 +227,59 @@ describe("SidePanel", () => {
       expect(screen.queryByRole("menu")).toBeNull();
     });
     expect(screen.getByRole("complementary", { name: "Help" })).toBeTruthy();
+  });
+
+  it("docks with focus in its field as the shell widens with its sheet open, rather than handing focus back", async () => {
+    const { rerender } = render(<Help width={1100} />);
+    await openWithKeyboard();
+    const field = await screen.findByLabelText("Ask a question");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(field);
+    });
+    rerender(<Help width={1440} />);
+    await waitFor(() => {
+      expect(
+        screen.getByRole("complementary", { name: "Help" }).dataset["mode"],
+      ).toBe("docked");
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(document.activeElement).toBe(
+      screen.getByLabelText("Ask a question"),
+    );
+  });
+
+  it("closes when the shell narrows under it while docked, handing focus back to what opened it", async () => {
+    const { rerender } = render(<Help width={1440} />);
+    await openWithKeyboard();
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByLabelText("Ask a question"),
+      );
+    });
+    rerender(<Help width={1100} />);
+    await waitFor(() => {
+      expect(helpButton().getAttribute("aria-expanded")).toBe("false");
+    });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("complementary", { name: "Help" })).toBeNull();
+    expect(document.activeElement).toBe(helpButton());
+  });
+
+  it("leaves focus where it is when it's open from the start, and opens as a sheet in a narrow shell", async () => {
+    render(<Help width={1440} startOpen />);
+    expect(
+      screen.getByRole("complementary", { name: "Help" }).dataset["mode"],
+    ).toBe("docked");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(document.activeElement).toBe(document.body);
+    cleanup();
+    render(<Help width={1100} startOpen />);
+    expect(await screen.findByRole("dialog", { name: "Help" })).toBeTruthy();
+    expect(
+      screen
+        .getByRole("button", { name: "Help", hidden: true })
+        .getAttribute("aria-expanded"),
+    ).toBe("true");
   });
 
   it("opens as a sheet under 1280px of shell, 8px in at the window's end, without the expand button or narrowing the page", async () => {

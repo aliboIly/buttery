@@ -24,6 +24,8 @@ export interface AppShellState {
   readonly sidebar: SidebarMode;
   /** How a `SidePanel` shows at the shell's width: docked from 1280px, a sheet under that. */
   readonly panel: PanelMode;
+  /** Whether the shell has measured its width. Until it has, in the commit before its first paint, its modes are the wide ones. */
+  readonly measured: boolean;
   /** Opens the sidebar's sheet, while it's in sheet mode. */
   readonly openSidebar: () => void;
   /** Whether the sidebar's sheet is open. */
@@ -37,6 +39,7 @@ export interface AppShellState {
 const OUTSIDE_A_SHELL: AppShellState = {
   sidebar: "full",
   panel: "docked",
+  measured: true,
   openSidebar: () => undefined,
   sidebarOpen: false,
   scrollPageToTop: () => undefined,

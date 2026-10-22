@@ -19,7 +19,14 @@ import type { MotionElementProps } from "@buttery/core";
 import { Ellipsis, Maximize2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog } from "radix-ui";
-import { useId, useLayoutEffect, useRef } from "react";
+import {
+  useEffect,
+  useEffectEvent,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import type { KeyboardEvent, ReactElement, ReactNode } from "react";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
 import { useAppShell } from "../app-shell/app-shell-context.ts";
@@ -109,13 +116,14 @@ function PanelParts({
 /**
  * A panel at the end of an `AppShell layout="sidebar"`, such as help: from 1280px of shell it docks beside
  * the column, full height, 360px wide (560 expanded), and the page takes the rest of the width in the same
- * frame instead of being covered; under that it opens as a sheet at the window's end over a dim scrim. Its
- * header holds its title, an overflow menu, an expand button (docked only) and a close button; its body
- * scrolls above a pinned `footer`; floating lanes, such as a setup guide's, keep to the page's side of a docked
- * panel. A docked panel appears in one frame and its content fades in over
- * `dur-fast`; the sheet rises as the sidebar's does. Opening it moves focus to its first field to type in,
- * else to the panel itself; Escape or the close button closes it and hands focus back to what opened it.
- * Outside a shell it docks where it's placed.
+ * frame instead of being covered; under that it opens as a sheet at the window's end over a dim scrim. A
+ * docked panel closes when the shell narrows under 1280px, and an open sheet docks as it widens; crossing
+ * that width mounts what it holds again, so keep state there above it. Its header holds its title, an
+ * overflow menu, an expand button (docked only) and a close button; its body scrolls above a pinned
+ * `footer`; floating lanes, such as a setup guide's, keep to the page's side of a docked panel. A docked
+ * panel appears in one frame and its content fades in over `dur-fast`; the sheet rises as the sidebar's
+ * does. Opening it moves focus to its first field to type in, else to the panel itself; Escape or the close
+ * button closes it and hands focus back to what opened it. Outside a shell it docks where it's placed.
  *
  * @example
  * <AppShell
@@ -145,7 +153,8 @@ export function SidePanel({
   ref,
   ...rest
 }: SidePanelProps): ReactElement | null {
-  const docked = useAppShell().panel === "docked";
+  const shell = useAppShell();
+  const docked = shell.panel === "docked";
   const [isOpen, setOpen] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
@@ -156,36 +165,57 @@ export function SidePanel({
     defaultValue: defaultExpanded,
     onChange: onExpandedChange,
   });
-  const surface = useRef<HTMLElement>(null);
-  const refs = useMergedRefs(ref, surface);
+  const dock = useRef<HTMLElement>(null);
+  const sheet = useRef<HTMLElement>(null);
   const obstacle = useFloatingObstacle();
-  const dockedRefs = useMergedRefs(refs, obstacle);
+  const dockedRefs = useMergedRefs(useMergedRefs(ref, dock), obstacle);
+  const sheetRefs = useMergedRefs(ref, sheet);
   const titleId = useId();
-  const closeFocus = useCloseFocus(isOpen, surface);
-  const shown = useRef({ open: isOpen, docked });
+  const dockCloseFocus = useCloseFocus(isOpen, dock);
+  const sheetCloseFocus = useCloseFocus(isOpen, sheet);
+
+  // A docked panel closes when the shell narrows under it rather than turning into a modal sheet.
+  const [seenDocked, setSeenDocked] = useState<boolean | undefined>(
+    shell.measured ? docked : undefined,
+  );
+  const [narrowed, setNarrowed] = useState(false);
+  if (shell.measured && seenDocked !== docked) {
+    setSeenDocked(docked);
+    setNarrowed(seenDocked === true && !docked && isOpen);
+  }
+  if (narrowed && !isOpen) setNarrowed(false);
+  const hidden = !shell.measured || narrowed;
+  const closeNarrowed = useEffectEvent(() => {
+    setOpen(false);
+  });
+  useEffect(() => {
+    if (narrowed && isOpen) closeNarrowed();
+  }, [narrowed, isOpen]);
+
+  const showing = {
+    open: isOpen,
+    docked: !hidden && docked && isOpen,
+    sheet: !hidden && !docked && isOpen,
+  };
+  const shown = useRef(showing);
   const reduced = useMotionPreference() === "reduced";
   const tracking = useAnimationTracking();
   const rise = reduced ? reducedPresence : presencePresets.rise;
   const fade = reduced ? reducedPresence : presencePresets.fade;
 
-  // The sheet's focus is Radix's; a docked panel moves focus in as it opens and hands it back as it closes.
+  // The sheet's focus is Radix's. A docked panel moves focus in as it opens or takes over from the sheet as
+  // the shell widens, but not when it's open from the start; it hands focus back as it closes or narrows away.
   useLayoutEffect(() => {
     const before = shown.current;
-    shown.current = { open: isOpen, docked };
-    if (!docked) return;
-    const panel = surface.current;
-    if (isOpen && !before.open) {
+    shown.current = showing;
+    if (showing.docked && !before.docked) {
+      if (before.open && !before.sheet) return;
+      const panel = dock.current;
       const [field] = tabbables(panel).filter(takesText);
       (field ?? panel)?.focus();
       return;
     }
-    if (isOpen && !before.docked) {
-      if (document.activeElement === document.body) panel?.focus();
-      return;
-    }
-    if (!isOpen && before.open && before.docked) {
-      closeFocus(new Event("close"));
-    }
+    if (!showing.docked && before.docked) dockCloseFocus(new Event("close"));
   });
 
   const close = (): void => {
@@ -198,6 +228,8 @@ export function SidePanel({
     footer,
     children,
   };
+
+  if (hidden) return null;
 
   if (docked) {
     if (!isOpen) return null;
@@ -279,15 +311,15 @@ export function SidePanel({
               aria-describedby={undefined}
               onOpenAutoFocus={(event) => {
                 event.preventDefault();
-                const [field] = tabbables(surface.current).filter(takesText);
-                (field ?? surface.current)?.focus();
+                const [field] = tabbables(sheet.current).filter(takesText);
+                (field ?? sheet.current)?.focus();
               }}
-              onCloseAutoFocus={closeFocus}
+              onCloseAutoFocus={sheetCloseFocus}
             >
               <motion.div
                 {...rest}
                 {...tracking}
-                ref={refs}
+                ref={sheetRefs}
                 initial={rise.initial}
                 animate={rise.animate}
                 exit={rise.exit}

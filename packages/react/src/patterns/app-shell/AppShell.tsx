@@ -327,6 +327,7 @@ function SidebarSheet({
 interface ShellModes {
   readonly sidebar: SidebarMode;
   readonly panel: PanelMode;
+  readonly measured: boolean;
 }
 
 function modesAt(width: number): ShellModes {
@@ -338,11 +339,16 @@ function modesAt(width: number): ShellModes {
           ? "rail"
           : "sheet",
     panel: width >= PANEL_DOCKS_FROM ? "docked" : "sheet",
+    measured: true,
   };
 }
 
 function sameModes(first: ShellModes, second: ShellModes): boolean {
-  return first.sidebar === second.sidebar && first.panel === second.panel;
+  return (
+    first.sidebar === second.sidebar &&
+    first.panel === second.panel &&
+    first.measured === second.measured
+  );
 }
 
 function SidebarShell({
@@ -365,6 +371,7 @@ function SidebarShell({
   const [modes, setModes] = useState<ShellModes>({
     sidebar: "full",
     panel: "docked",
+    measured: false,
   });
   const shownModes = useRef(modes);
   const mode = modes.sidebar;
@@ -423,6 +430,7 @@ function SidebarShell({
   const shell: AppShellState = {
     sidebar: mode,
     panel: modes.panel,
+    measured: modes.measured,
     openSidebar: () => {
       setSheetOpen(true);
     },
