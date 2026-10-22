@@ -26,7 +26,7 @@ export function LabelPrinterBanner(): ReactElement {
         Print a shipping label from any order without leaving the page.
       </Banner>
       <AppPage.Section title="To pack">
-        <Stack gap={2}>
+        <Stack gap={3}>
           {TO_PACK.map((order) => (
             <Text key={order} variant="body">
               {order}

@@ -36,7 +36,7 @@ function isOrder(value: string): value is Order {
 export function SortOrder(): ReactElement {
   const [order, setOrder] = useState<Order>("newest");
   return (
-    <Stack gap={3} align="start">
+    <Stack gap={4} align="start">
       <Menu>
         <Surface asChild level="raised" padX={4} padY={2} radius="full">
           <Menu.Trigger asChild>
@@ -61,7 +61,7 @@ export function SortOrder(): ReactElement {
           </Menu.RadioGroup>
         </Menu.Content>
       </Menu>
-      <Stack gap={2}>
+      <Stack gap={3}>
         {[...CARDS].sort(COMPARE[order]).map((card) => (
           <Text key={card.name} variant="body">
             {card.name}

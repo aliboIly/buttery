@@ -76,7 +76,7 @@ export function OrderFilters(): ReactElement {
           </Stack>
         </FilterPill>
       </FilterBar>
-      <Stack gap={2}>
+      <Stack gap={3}>
         <Text variant="label">{`${String(shown.length)} of ${String(ORDERS.length)} orders`}</Text>
         {shown.map((order) => (
           <Text key={order.id} variant="body-sm" tone="secondary">
