@@ -92,7 +92,7 @@ The docs search is buttery's own `CommandSearch`, opened with ⌘K or `/`. It wo
 - Results are grouped (Components, Guides, Foundations, Patterns, Props, Tokens, Examples, Changelog). Each shows its breadcrumb path and a snippet with the matched text highlighted. Enter goes straight to the heading's anchor; ⌘Enter opens it in a new tab.
 - An empty query shows recent searches and suggestions: Quick start, Button, Dialog, Theming and the layout contract.
 - The filter syntax is `CommandSearch`'s: `component:`, `prop:`, `token:` and `guide:`.
-- From 1024px wide, a preview pane shows the highlighted result: its description, its import line, and a small live demo for a component.
+- Where the window has room beside the search (from about 1024px wide), a preview pane shows the highlighted result: its description, its import line, and a small live demo for a component, left out when the demo is wider than the pane.
 - No results shows a "did you mean" suggestion and a link to ask for the missing docs.
 - `/search?q=` lists every result, with filters by section.
 - Results change in the frame the query does once the index has loaded, and the index loads in under 200ms on a normal connection.

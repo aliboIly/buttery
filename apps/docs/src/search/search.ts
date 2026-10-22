@@ -89,7 +89,8 @@ function isKind(value: unknown): value is SearchKind {
   return typeof value === "string" && value in KIND_BOOST;
 }
 
-function entryOf(
+/** The result `id` names, from the titles index, or `null` when there's none. */
+export function entryOf(
   id: string,
   stored: Record<string, unknown> | undefined,
 ): SearchEntry | null {
@@ -228,4 +229,23 @@ export function searchDocs(
       ];
     })
     .slice(0, limit);
+}
+
+/**
+ * A nearby search that finds something, for a query that found nothing, such as "dialog" for "dailog": the
+ * titles index's closest suggestion, allowing more typos than a search does.
+ */
+export function correctionFor(
+  indexes: SearchIndexes,
+  query: string,
+): string | undefined {
+  const text = query.trim().toLowerCase();
+  if (text === "") return undefined;
+  const [best] = indexes.titles.autoSuggest(text, { fuzzy: 0.34 });
+  const suggestion = best?.suggestion;
+  return suggestion !== undefined &&
+    suggestion !== text &&
+    searchDocs(indexes, suggestion, 1).length > 0
+    ? suggestion
+    : undefined;
 }

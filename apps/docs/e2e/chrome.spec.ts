@@ -100,3 +100,39 @@ test("the landing page's settings card changes its preview", async ({
   await page.getByRole("menuitem", { name: "Snooze for an hour" }).click();
   await expect(tryIt.getByText("Snoozed for an hour")).toBeVisible();
 });
+
+test("the docs search previews the highlighted result, with a component's import", async ({
+  page,
+}) => {
+  await page.goto("/foundations/colors");
+  await page.getByRole("combobox", { name: "Search the docs" }).click();
+  await page.keyboard.type("dialog");
+  const preview = page.locator('[data-bt-part="command-search-preview"]');
+  await expect(
+    preview.getByText('import { Dialog } from "@buttery/react";'),
+  ).toBeVisible();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  await expect(preview.getByText("Dialog", { exact: true })).toBeHidden();
+});
+
+test("the docs search offers a nearby word when nothing matches", async ({
+  page,
+}) => {
+  await page.goto("/foundations/colors");
+  await page.getByRole("combobox", { name: "Search the docs" }).click();
+  await page.keyboard.type("dailog");
+  await expect(page.getByText('No results for "dailog"')).toBeVisible();
+  const correction = page
+    .getByRole("group", { name: "Did you mean" })
+    .getByRole("option");
+  await expect(correction).toHaveText("dialog");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await expect(
+    page.getByRole("combobox", { name: "Search the docs" }),
+  ).toHaveValue("dialog");
+  await expect(
+    page.getByRole("group", { name: "Components" }).getByRole("option").first(),
+  ).toContainText("Dialog");
+});

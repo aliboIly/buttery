@@ -23,7 +23,7 @@ import { ExportDocs, PropsTables } from "./PropsTables.tsx";
 import type { Heading } from "./content.ts";
 import { MOTION_TEXT, REDUCED_TEXT } from "./motion-text.ts";
 import { rootOf } from "./nav.ts";
-import { components } from "./registry.ts";
+import { components, docsRouteOf, packageOf } from "./registry.ts";
 import type { ComponentEntry } from "./registry.ts";
 import { DOCS_VERSION } from "./routes.ts";
 import { slugify } from "./slug.ts";
@@ -93,22 +93,6 @@ const STATUS: Readonly<
 
 function minorOf(version: string): string {
   return version.split(".").slice(0, 2).join(".");
-}
-
-/** The package a component is imported from, by its folder. */
-function packageOf(entry: ComponentEntry): string {
-  return entry.folder.startsWith("packages/core/")
-    ? "@buttery/core"
-    : "@buttery/react";
-}
-
-/** Where a component's docs are: its own page, or its section on the written page that's its home. */
-export function docsRouteOf(entry: ComponentEntry): string | undefined {
-  const { page } = entry;
-  if (!page) return undefined;
-  return page.home === undefined
-    ? `${rootOf(page.section)}/${entry.route}`
-    : `${page.home}#${slugify(entry.meta.name)}`;
 }
 
 /**

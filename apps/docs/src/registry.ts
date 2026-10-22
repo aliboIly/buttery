@@ -6,7 +6,9 @@ import type {
   DocsPage,
   LiveDemo,
 } from "@buttery/core";
+import { rootOf } from "./nav.ts";
 import { componentRoute } from "./routes.ts";
+import { slugify } from "./slug.ts";
 
 interface MetaModule {
   readonly meta: ComponentMeta;
@@ -120,3 +122,19 @@ export const components: readonly ComponentEntry[] = Object.entries(metaModules)
     };
   })
   .sort((a, b) => a.meta.name.localeCompare(b.meta.name));
+
+/** The package a component is imported from, by its folder. */
+export function packageOf(entry: ComponentEntry): string {
+  return entry.folder.startsWith("packages/core/")
+    ? "@buttery/core"
+    : "@buttery/react";
+}
+
+/** Where a component's docs are: its own page, or its section on the written page that's its home. */
+export function docsRouteOf(entry: ComponentEntry): string | undefined {
+  const { page } = entry;
+  if (!page) return undefined;
+  return page.home === undefined
+    ? `${rootOf(page.section)}/${entry.route}`
+    : `${page.home}#${slugify(entry.meta.name)}`;
+}
