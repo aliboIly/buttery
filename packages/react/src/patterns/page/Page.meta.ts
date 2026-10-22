@@ -13,4 +13,7 @@ export const meta: ComponentMeta = {
   related: ["Section", "Container", "SplitHero", "NavBar"],
   a11y: "No role of its own; pass asChild with a main element to make it the page's main landmark.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It takes its container's width as a column of sections on the surface background, and it's the size container the page grid follows: the side padding inside it (16, 24 or 32px) and the display type step up as its own width passes 640 and 1024px. It sets no height, truncates nothing and has no hit areas of its own.",
 };

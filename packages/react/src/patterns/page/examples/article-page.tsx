@@ -1,8 +1,9 @@
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Page, Section } from "@buttery/react";
 
-/** A single long section of reading on a page. */
+/** A single long section of reading on a page, its headline sized by the page's own width. */
 export function ArticlePage(): ReactElement {
   return (
     <Page>
@@ -18,3 +19,9 @@ export function ArticlePage(): ReactElement {
     </Page>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Designing a launch card");
+};
