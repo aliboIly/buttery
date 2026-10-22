@@ -30,7 +30,7 @@ export function HeroWithALiveCard(): ReactElement {
         <>
           <Stagger.Item>
             <Surface level="card" pad={8}>
-              <Stack gap={1}>
+              <Stack gap={2}>
                 <Text variant="title">Launch card</Text>
                 <Text variant="caption" tone="secondary">
                   {`Finish · ${finish}`}

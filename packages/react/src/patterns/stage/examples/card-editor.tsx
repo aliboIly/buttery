@@ -38,7 +38,7 @@ export function CardEditor(): ReactElement {
           background={preset ? gradientCss(preset) : undefined}
         >
           <Center>
-            <Stack gap={1} align="center">
+            <Stack gap={2} align="center">
               <Text variant="title">{title}</Text>
               <Text variant="caption">{`Backdrop · ${preset?.name ?? ""}`}</Text>
             </Stack>

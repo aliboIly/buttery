@@ -52,7 +52,7 @@ export function GuideWithAside(): ReactElement {
               <Surface
                 key={name}
                 asChild
-                level="app"
+                level={index === step ? "raised" : "app"}
                 padX={3}
                 padY={1}
                 radius="md"
@@ -69,9 +69,9 @@ export function GuideWithAside(): ReactElement {
             ))}
           </Stack>
         </Sticky>
-        <Stack gap={4} padY={3}>
+        <Stack gap={6} padY={3}>
           {STEPS.map(({ name, text, tip }) => (
-            <Stack key={name} gap={1}>
+            <Stack key={name} gap={2}>
               <Text variant="title">{name}</Text>
               <Text variant="body">{text}</Text>
               <Text variant="body" tone="secondary">

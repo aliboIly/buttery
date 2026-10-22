@@ -81,7 +81,7 @@ function LiveToolbar({
   return (
     <Center>
       <Surface ref={frame} level="card" padX={10} padY={8}>
-        <Stack gap={1}>
+        <Stack gap={2}>
           <Text variant="title">Launch card</Text>
           <Text variant="caption">
             {showing && meta !== "" ? `Resizing to ${meta}` : `Canvas ${size}`}

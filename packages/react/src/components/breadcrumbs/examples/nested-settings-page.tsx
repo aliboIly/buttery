@@ -31,7 +31,7 @@ export function NestedSettingsPage(): ReactElement {
     setDepth(PAGES.findIndex((entry) => entry.href === href));
   };
   return (
-    <Stack gap={2}>
+    <Stack gap={3}>
       {depth > 0 ? (
         <Breadcrumbs items={PAGES.slice(0, depth)} onNavigate={open} />
       ) : null}

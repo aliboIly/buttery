@@ -83,9 +83,9 @@ export function OrderFilter(): ReactElement {
       <Text variant="caption">
         {`Showing ${String(shown.length)} of ${String(ORDERS.length)} orders`}
       </Text>
-      <Stack gap={1}>
+      <Stack gap={3}>
         {shown.map((order) => (
-          <Inline key={order.id} gap={3} justify="between">
+          <Inline key={order.id} gap={3} justify="between" align="baseline">
             <Text variant="body">{order.coffee}</Text>
             <Text variant="caption">{order.roast}</Text>
           </Inline>
