@@ -51,8 +51,19 @@ const ci = Boolean(process.env["CI"]);
 const TIMING_SPECS = /(?:motion|arrow|toaster)\.spec\.ts$/;
 const group = process.env["BUTTERY_E2E"];
 
+/**
+ * How far above each app's dev port its test server runs. Another checkout running its tests at the same time
+ * sets `BUTTERY_E2E_PORT_OFFSET` to a free one, such as 2000.
+ */
+const portOffset = Number(process.env["BUTTERY_E2E_PORT_OFFSET"] ?? "1000");
+if (!Number.isInteger(portOffset) || portOffset <= 0) {
+  throw new Error(
+    `BUTTERY_E2E_PORT_OFFSET is "${String(process.env["BUTTERY_E2E_PORT_OFFSET"])}". Fix: set it to a whole number of ports, such as 2000, or leave it unset.`,
+  );
+}
+
 function testPort(app: App): number {
-  return app.port + 1000;
+  return app.port + portOffset;
 }
 
 export default defineConfig({
