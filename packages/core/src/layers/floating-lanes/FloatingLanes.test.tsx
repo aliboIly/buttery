@@ -188,6 +188,11 @@ describe("FloatingLanes", () => {
   });
 
   it("moves the end lanes in past an obstacle that runs the window's height along its end, centering toasts in the room left", async () => {
+    const [width, height] = [window.innerWidth, window.innerHeight];
+    onTestFinished(async () => {
+      await page.viewport(width, height);
+    });
+    await page.viewport(1200, 800);
     function Panel(): ReactElement {
       const obstacle = useFloatingObstacle();
       return (
