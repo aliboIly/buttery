@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Footer } from "@buttery/react";
 
 /** Columns of links with nothing else: a help center's foot. */
@@ -16,3 +17,11 @@ export function LinksOnly(): ReactElement {
     </Footer>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Getting started");
+  await see("Your first card");
+  await see("PNG or JPG");
+};
