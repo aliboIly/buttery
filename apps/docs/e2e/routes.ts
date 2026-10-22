@@ -1,6 +1,6 @@
 import { globSync, readFileSync } from "node:fs";
 import { basename } from "node:path";
-import { componentRoute, demoPages } from "../src/routes.ts";
+import { componentRoute, demoPages, templates } from "../src/routes.ts";
 
 /** A component's page metadata, read from the `page` its `*.playground.tsx` exports. */
 function pageOf(meta: string): {
@@ -78,9 +78,16 @@ export function url(route: string, settings = ""): string {
   return `/${path}${search === "" ? "" : `?${search}`}`;
 }
 
+/** Each template's live preview, a full-window page the template's own page shows in a frame. */
+export const previewRoutes: readonly string[] = templates.map(
+  ({ name }) => `templates/${name}/preview`,
+);
+
 /** Every page's path, read from the files that create them. */
 export const routes: readonly string[] = [
   ...contentRoutes.map((page) => page.route),
+  "demos",
   ...demoPages.map((page) => `demos/${page.route}`),
+  ...previewRoutes,
   ...componentRoutes.map(({ route }) => route),
 ];

@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { componentRoutes, contentRoutes, url } from "./routes.ts";
+import {
+  componentRoutes,
+  contentRoutes,
+  previewRoutes,
+  url,
+} from "./routes.ts";
 
 /**
  * Collects console errors, page errors, buttery's development warnings and ResizeObserver loops, which
@@ -101,6 +106,18 @@ const demos = [
     "roastery/search?q=status%3Arefunded",
   ].map((route) => ({ route, ready: '[data-testid="roastery"] h1' })),
 ] as const;
+
+for (const route of previewRoutes) {
+  test(`renders the ${route} page with no console problems`, async ({
+    page,
+  }) => {
+    const problems = await watchConsole(page);
+    await page.goto(url(route));
+    await expect(page.locator("#root > *").first()).toBeVisible();
+    await settle(page);
+    expect(problems).toEqual([]);
+  });
+}
 
 for (const { route, ready } of demos) {
   test(`renders the ${route} demo with no console problems`, async ({
