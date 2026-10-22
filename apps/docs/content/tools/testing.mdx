@@ -37,6 +37,9 @@ Each check has a name. Pass a list of them as `rules` to run only those, such as
 - `reach`: content no one can scroll to, such as a fixed box that runs past the window.
 - `layering`: a `z-index` that isn't one of the layer bands.
 - `emphasis`: more than one primary button in one region.
+- `crowding`: text under other text with less than 2px between its descenders and the next line's capitals.
+- `wrapping`: a word broken across lines that would fit on one, or a short word in a column squeezed narrower than it.
+- `alignment`: controls of one height side by side in a row that start at different heights.
 - `stability`: something that moves after an interaction when it shouldn't.
 - `accessibility`: axe's accessibility rules.
 

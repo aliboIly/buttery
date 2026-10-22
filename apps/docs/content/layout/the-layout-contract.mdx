@@ -18,7 +18,7 @@ The layout contract is the set of rules buttery's components follow and its chec
 4. Overlays avoid collisions. Popovers and menus open 8px from their trigger and never cover it, move to stay 8px inside the window, and scroll inside when they're taller than the room they have.
 5. Sizes come from tokens. Controls take their heights from the height tokens and fixed widths come from the width tokens; everything else takes the width its container gives it.
 6. Children can shrink. Every flex and grid child in buttery's primitives has `min-width: 0`, so long content shrinks instead of pushing its neighbors off the screen.
-7. Text never overflows. One-line control text truncates with an ellipsis and keeps the whole text in a tooltip; `Text truncate` does both. Content text wraps, at most 60 characters a line for body text and 22 for display headings, and numbers that change use tabular figures, so a counting number doesn't push what's beside it.
+7. Text never overflows. One-line control text truncates with an ellipsis and keeps the whole text in a tooltip; `Text truncate` does both. Content text wraps between words, at most 60 characters a line for body text and 22 for display headings; a word breaks only when it's a long address that can't fit its line. Numbers that change use tabular figures, so a counting number doesn't push what's beside it.
 8. Media keeps its shape. Images and canvases keep their aspect ratio, and `FitBox` fits content of a given aspect into the space it has, as large as it can and centered.
 9. Containers, not the viewport. Components respond to the room they're given, through container queries, so the same component works in a 340px inspector and on a 1200px page.
 10. Overflow by priority, not by wrapping. A row that runs out of room moves its least important items into a "More" menu with `OverflowCluster`, rather than wrapping, overlapping or shrinking its text. Applied filter pills are the exception: `FilterBar` wraps them, since a person has to see each one to remove it.
@@ -55,6 +55,6 @@ export function Notice(): ReactElement {
 
 ## How it's checked
 
-- `LayoutGuard` runs in development and outlines anything that overlaps, overflows, truncates without saying so or drifts off the scale. ⌥⇧L hides and shows the outlines, and ⌥⇧G shows the page grid.
+- `LayoutGuard` runs in development and outlines anything that overlaps, overflows, truncates without saying so or drifts off the scale, text stacked so close its descenders crowd the next line, words broken across lines and controls in a row that don't line up. ⌥⇧L hides and shows the outlines, and ⌥⇧G shows the page grid.
 - `expectButtery(page)` from `@buttery/test` runs the same checks in Playwright, at every width, theme and density you ask for, and reports each problem with how to fix it.
 - buttery's stylelint config fails raw colors, lengths off the scale, `z-index` values that aren't a layer band, negative margins and `transition: all`.

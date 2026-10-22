@@ -27,6 +27,9 @@ const LAYOUT_RULES: readonly LayoutRule[] = [
   "layering",
   "reach",
   "emphasis",
+  "crowding",
+  "wrapping",
+  "alignment",
 ];
 
 /**
