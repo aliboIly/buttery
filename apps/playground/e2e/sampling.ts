@@ -18,8 +18,10 @@ export interface Reading {
 }
 
 /**
- * The sampled elements in one animation frame, read as the frame begins: before the browser's own layout
- * pass, so a size that a ResizeObserver puts back before paint can show for that one frame.
+ * The sampled elements in one animation frame, as that frame draws them: read after the page's own frame
+ * callbacks (such as Motion's), or as the frame begins when the main thread was too busy to read later, and
+ * before the browser's layout pass, so a size that a ResizeObserver puts back before paint can show for that
+ * one frame.
  */
 export interface Frame {
   /** When the frame started, in ms since sampling began. */
@@ -94,6 +96,7 @@ function samplerScript(startOnLoad: string | undefined): void {
     readonly transitions: TransitionRecord[];
     readonly animations: AnimationRecord[];
     readonly unlisten: () => void;
+    readonly channel: MessageChannel;
     request: number;
   } | null = null;
 
@@ -138,6 +141,17 @@ function samplerScript(startOnLoad: string | undefined): void {
     if (!active) return;
     active.frames.push(frame(active.selector, now - active.origin));
     active.request = requestAnimationFrame(tick);
+    active.channel.port2.postMessage(null);
+  };
+
+  // Asked for once this frame is over, it runs after the callbacks the page asked for during this frame.
+  const readLate = (channel: MessageChannel): void => {
+    requestAnimationFrame((now) => {
+      if (active?.channel !== channel) return;
+      const t = now - active.origin;
+      const index = active.frames.findLastIndex((reading) => reading.t === t);
+      if (index !== -1) active.frames[index] = frame(active.selector, t);
+    });
   };
 
   const mark = (name: string): void => {
@@ -204,6 +218,10 @@ function samplerScript(startOnLoad: string | undefined): void {
       });
       window.addEventListener("transitionrun", onTransition, true);
       window.addEventListener("animationstart", onAnimation, true);
+      const channel = new MessageChannel();
+      channel.port1.onmessage = () => {
+        readLate(channel);
+      };
       active = {
         selector,
         origin,
@@ -217,6 +235,7 @@ function samplerScript(startOnLoad: string | undefined): void {
           window.removeEventListener("transitionrun", onTransition, true);
           window.removeEventListener("animationstart", onAnimation, true);
         },
+        channel,
         request: requestAnimationFrame(tick),
       };
     },
@@ -235,8 +254,10 @@ function samplerScript(startOnLoad: string | undefined): void {
         animations,
         request,
         unlisten,
+        channel,
       } = active;
       cancelAnimationFrame(request);
+      channel.port1.close();
       unlisten();
       active = null;
       return { before, frames, marks, transitions, animations };
