@@ -296,7 +296,7 @@ export function ComponentBody({
                 </thead>
                 <tbody>
                   {meta.keyboard.map((row) => (
-                    <tr key={row.keys}>
+                    <tr key={`${row.keys}: ${row.does}`}>
                       <td>
                         <kbd className="docs-kbd">{row.keys}</kbd>
                       </td>
