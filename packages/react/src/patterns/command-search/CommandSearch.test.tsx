@@ -185,6 +185,165 @@ describe("CommandSearch", () => {
     expect(options("Customers")).toEqual(["Setareh Amini"]);
   });
 
+  it("lists its suggestions while the field is empty, after the recent searches", async () => {
+    window.localStorage.setItem(
+      "buttery:command-search-recent:test-search",
+      JSON.stringify(["decaf"]),
+    );
+    render(
+      <Search
+        storageKey="test-search"
+        suggestions={[
+          { id: "start", label: "Quick start", href: "#quick-start" },
+          { id: "dialog", label: "Dialog", href: "#dialog" },
+        ]}
+      />,
+    );
+    await userEvent.click(field());
+    const groups = within(screen.getByRole("listbox"))
+      .getAllByRole("group")
+      .map((element) => element.getAttribute("aria-label"));
+    expect(groups).toEqual([
+      "Suggested filters",
+      "Recent searches",
+      "Suggestions",
+    ]);
+    expect(options("Suggestions")).toEqual(["Quick start", "Dialog"]);
+    expect(
+      within(group("Suggestions"))
+        .getByRole("option", { name: "Dialog" })
+        .getAttribute("href"),
+    ).toBe("#dialog");
+    await userEvent.keyboard("o");
+    expect(
+      within(screen.getByRole("listbox")).queryByRole("group", {
+        name: "Suggestions",
+      }),
+    ).toBeNull();
+  });
+
+  it("offers a better search under No results, which a row runs", async () => {
+    render(
+      <Search
+        didYouMean={(query) =>
+          query.text.trim() === "ordrs" ? "orders" : undefined
+        }
+      />,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("ordrs");
+    expect(screen.getByText('No results for "ordrs"')).toBeTruthy();
+    expect(options("Did you mean")).toEqual(["orders"]);
+    await userEvent.keyboard("{ArrowDown}{Enter}");
+    expect((field() as HTMLInputElement).value).toBe("orders");
+    expect(options("Go to")).toEqual(["Orders"]);
+  });
+
+  it("previews the highlighted result beside the rows when the window has room, inert", async () => {
+    render(
+      <Search
+        preview={(item) => <p>{`About ${item.label}`}</p>}
+        sources={[CUSTOMERS]}
+      />,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("a");
+    const panel = screen
+      .getByRole("listbox")
+      .closest<HTMLElement>(".bt-command-search-panel");
+    if (!panel) throw new Error("No panel.");
+    const pane = await waitFor(() => {
+      const found = panel.querySelector<HTMLElement>(
+        '[data-bt-part="command-search-preview"]',
+      );
+      if (!found) throw new Error("No preview.");
+      return found;
+    });
+    expect(pane.textContent).toBe("About Ines Vale");
+    expect(pane.inert).toBe(true);
+    await userEvent.keyboard("{ArrowDown}{ArrowDown}");
+    expect(pane.textContent).toBe("About Oskar Lind");
+    await waitFor(() => {
+      expect(panel.getBoundingClientRect().width).toBe(
+        box().getBoundingClientRect().width + 340,
+      );
+    });
+    expect(pane.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+      box().getBoundingClientRect().right - 1,
+    );
+  });
+
+  it("puts the preview before the field, the panel lined up with the field's end, when the room is only there", async () => {
+    render(
+      <ButteryProvider>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            padding: "16px",
+          }}
+        >
+          <CommandSearch
+            sources={[CUSTOMERS]}
+            preview={(item) => <p>{`About ${item.label}`}</p>}
+          />
+        </div>
+      </ButteryProvider>,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("a");
+    const panel = screen
+      .getByRole("listbox")
+      .closest<HTMLElement>(".bt-command-search-panel");
+    if (!panel) throw new Error("No panel.");
+    const pane = await waitFor(() => {
+      const found = panel.querySelector<HTMLElement>(
+        '[data-bt-part="command-search-preview"]',
+      );
+      if (!found) throw new Error("No preview.");
+      return found;
+    });
+    await waitFor(() => {
+      expect(panel.getBoundingClientRect().right).toBeCloseTo(
+        box().getBoundingClientRect().right,
+        0,
+      );
+    });
+    expect(pane.getBoundingClientRect().right).toBeLessThanOrEqual(
+      box().getBoundingClientRect().left + 1,
+    );
+  });
+
+  it("leaves the preview out when the window has no room for it beside the field", async () => {
+    await page.viewport(800, 800);
+    render(
+      <Search
+        preview={(item) => <p>{`About ${item.label}`}</p>}
+        sources={[CUSTOMERS]}
+      />,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("a");
+    expect(options("Customers")).toHaveLength(3);
+    expect(
+      document.querySelector('[data-bt-part="command-search-preview"]'),
+    ).toBeNull();
+  });
+
+  it("opens the highlighted result in a new tab with ⌘ or Ctrl and Enter, keeping the panel", async () => {
+    const opened = vi.spyOn(window, "open").mockReturnValue(null);
+    render(<Search />);
+    await userEvent.click(field());
+    await userEvent.keyboard("pay");
+    await userEvent.keyboard("{ArrowDown}");
+    await userEvent.keyboard("{Meta>}{Enter}{/Meta}");
+    expect(opened).toHaveBeenCalledWith("#payouts", "_blank", "noopener");
+    await userEvent.keyboard("{Control>}{Enter}{/Control}");
+    expect(opened).toHaveBeenCalledTimes(2);
+    expect(field().getAttribute("aria-expanded")).toBe("true");
+    opened.mockRestore();
+  });
+
   it("cuts a long detail before a row's path and label", async () => {
     const guides: LocalSearchSource = {
       id: "guides",
