@@ -48,7 +48,7 @@ Page layout follows a strict grid with a consistent section rhythm: split heroes
 | Cards in a grid / bento | 16 |
 | Heading ↔ body | 8 (app) · 16 (page) |
 | Body ↔ actions | 20 (app) · 24–32 (page) |
-| Section intro ↔ section content | 48 (md) · 64 (lg) |
+| Section intro ↔ section content | 48 · 64 from 1024px of page |
 | Page sections (padding-block) | 64 (sm) · 96 (md) · 128 (lg) |
 | Sidebar items | 2 |
 | An app page's header block ↔ its first section | 24 |
