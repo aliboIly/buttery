@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { headingsOf, parseFrontmatter } from "./frontmatter.ts";
+import { headingsOf, parseFrontmatter, withoutJsx } from "./frontmatter.ts";
 
 describe("parseFrontmatter", () => {
   it("reads strings, numbers and lists, one key a line", () => {
@@ -68,5 +68,50 @@ describe("headingsOf", () => {
       { depth: 2, text: "0.9.0 Docs site", id: "release-0-9-0" },
       { depth: 2, text: "After", id: "after" },
     ]);
+  });
+});
+
+describe("withoutJsx", () => {
+  it("drops a whole component, even over several lines, and keeps the Markdown a wrapper holds", () => {
+    expect(
+      withoutJsx(
+        [
+          "<Rules>",
+          '<Rule title="Flow layout">',
+          "",
+          "Siblings sit in a `Stack`.",
+          "",
+          "</Rule>",
+          "</Rules>",
+          "",
+          "<SurfacesDemo />",
+          "",
+          "<Card",
+          '  icon="monitor"',
+          '  title="On the desktop"',
+          ">",
+          "",
+          "It knows it's in Tauri.",
+          "",
+          "</Card>",
+          "<DocsTable",
+          '  columns={["A"]}',
+          '  rows={[["b"]]}',
+          "/>",
+          "After the table.",
+        ].join("\n"),
+      )
+        .split("\n")
+        .filter((line) => line.trim() !== ""),
+    ).toEqual([
+      "Siblings sit in a `Stack`.",
+      "It knows it's in Tauri.",
+      "After the table.",
+    ]);
+  });
+
+  it("leaves code blocks alone, components in them included", () => {
+    const code = ["```tsx", "<Stack gap={3} />", "```"].join("\n");
+    expect(withoutJsx(code)).toBe(code);
   });
 });

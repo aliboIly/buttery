@@ -689,30 +689,28 @@ function bodyMarkdown(
       continue;
     }
     if (/^<\/[A-Z][A-Za-z]*>\s*$/.test(line)) continue;
-    const wrapper = /^<([A-Z][A-Za-z]*)(?:\s[^>]*[^/])?>\s*$/.exec(line)?.[1];
-    if (wrapper !== undefined) {
-      const title = /\btitle="([^"]+)"/.exec(line)?.[1];
+    if (!/^<[A-Z]/.test(line)) {
+      out.push(linksUnder(line, base));
+      continue;
+    }
+    let jsx = line;
+    while (!/>\s*$/.test(jsx) && index + 1 < lines.length) {
+      index += 1;
+      jsx += `\n${lines[index] ?? ""}`;
+    }
+    if (!/\/>\s*$/.test(jsx)) {
+      const wrapper = /^<([A-Z][A-Za-z]*)/.exec(jsx)?.[1];
+      const title = /\btitle="([^"]+)"/.exec(jsx)?.[1];
       if (wrapper === "Rules") rule = 0;
       if (wrapper === "Rule") rule += 1;
       if (wrapper === "Do" || wrapper === "Dont")
         out.push(`**${wrapper === "Do" ? "Do" : "Don't"}:**`, "");
       if (title !== undefined)
         out.push(
-          wrapper === "Rule"
-            ? `**${String(rule)}. ${title}**`
-            : `**${title}**`,
+          wrapper === "Rule" ? `**${String(rule)}. ${title}**` : `**${title}**`,
           "",
         );
       continue;
-    }
-    if (!/^<[A-Z]/.test(line)) {
-      out.push(linksUnder(line, base));
-      continue;
-    }
-    let jsx = line;
-    while (!/\/>\s*$/.test(jsx) && index + 1 < lines.length) {
-      index += 1;
-      jsx += `\n${lines[index] ?? ""}`;
     }
     const name = /^<([A-Z][A-Za-z]*)/.exec(jsx)?.[1] ?? "";
     if (name === "ComponentDocs") {

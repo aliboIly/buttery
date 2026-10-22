@@ -20,6 +20,7 @@ import {
 } from "./markdown.ts";
 import type { MarkdownMiddleware } from "./markdown.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
+import { roadmapIn } from "./roadmap.ts";
 import { SECTIONS } from "../src/nav.ts";
 import { demoPages } from "../src/routes.ts";
 
@@ -245,10 +246,18 @@ describe("the site as Markdown", () => {
 
   it("writes the Roadmap out from ROADMAP.md: the release being built with its boxes, and the shipped ones linking to their notes", () => {
     const markdown = pageMarkdown(root, "resources/roadmap", components) ?? "";
-    expect(markdown).toMatch(/^## Now: 1\.0\.0, /m);
+    const { releases } = roadmapIn(root);
+    const building = releases.find((release) => release.stage === "now");
+    const shipped = releases.filter((release) => release.stage === "shipped");
+    const newest = shipped.at(-1);
+    if (!building || !newest)
+      throw new Error("ROADMAP.md has no release in progress or none shipped.");
+    expect(markdown).toContain(
+      `## Now: ${building.version}, ${building.title}`,
+    );
     expect(markdown).toMatch(/^- \[[ x]\] /m);
     expect(markdown).toContain(
-      "- [0.9.0: The docs site](/resources/whats-new#release-0-9-0)",
+      `(/resources/whats-new#release-${newest.version.replaceAll(".", "-")})`,
     );
   });
 

@@ -7,11 +7,30 @@ import {
   searchDocs,
 } from "../src/search/search.ts";
 import { searchGolden } from "../tests/search-golden.ts";
-import { searchDocsIn } from "./search.ts";
+import { plainText, searchDocsIn } from "./search.ts";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const docs = searchDocsIn(root);
 const indexes = buildSearchIndexes(docs);
+
+describe("plainText", () => {
+  it("keeps the words inside a wrapper even when a whole component follows it", () => {
+    const text = plainText(
+      [
+        "<Rules>",
+        '<Rule title="Panel, section, card">',
+        "",
+        "Surfaces nest in that order.",
+        "",
+        "</Rule>",
+        "</Rules>",
+        "",
+        "<SurfacesDemo />",
+      ].join("\n"),
+    );
+    expect(text).toBe("Surfaces nest in that order.");
+  });
+});
 
 describe("docs search", () => {
   it("puts a component's result in the group of its page's section", () => {

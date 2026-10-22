@@ -10,6 +10,7 @@ import { captionOf } from "./code.ts";
 import {
   parseFrontmatter,
   splitFrontmatter,
+  withoutJsx,
   withoutModuleBlocks,
 } from "./frontmatter.ts";
 import { propsTablesIn } from "./props.ts";
@@ -72,9 +73,9 @@ function sectionTitle(section: string): string {
 
 /** A page's prose as plain words: no code blocks, components, imports or Markdown marks. */
 export function plainText(markdown: string): string {
-  return withoutModuleBlocks(markdown)
-    .replace(/^```[\s\S]*?^```/gm, " ")
-    .replace(/<[A-Z][\s\S]*?\/>/g, " ")
+  return withoutJsx(
+    withoutModuleBlocks(markdown).replace(/^```[\s\S]*?^```/gm, " "),
+  )
     .replace(/<\/?[A-Za-z][^>]*>/g, " ")
     .replace(/\{[^{}]*\}/g, " ")
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")

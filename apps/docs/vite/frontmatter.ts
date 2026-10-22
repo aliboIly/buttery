@@ -75,6 +75,31 @@ export function withoutModuleBlocks(body: string): string {
   return kept.join("\n");
 }
 
+/**
+ * A page's Markdown without its components' tags: a component written whole, such as a `<DocsTable … />` over
+ * several lines, goes, and a component that wraps Markdown, such as `<Card …>` and `</Card>`, leaves the
+ * Markdown inside it. Code blocks stay as they are.
+ */
+export function withoutJsx(body: string): string {
+  const out: string[] = [];
+  const lines = body.split("\n");
+  let fenced = false;
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? "";
+    if (line.startsWith("```")) fenced = !fenced;
+    if (fenced || line.startsWith("```") || !/^<\/?[A-Z]/.test(line)) {
+      out.push(line);
+      continue;
+    }
+    let tag = line;
+    while (!/>\s*$/.test(tag) && index + 1 < lines.length) {
+      index += 1;
+      tag += `\n${lines[index] ?? ""}`;
+    }
+  }
+  return out.join("\n");
+}
+
 /** A page's heading for its "On this page" list. */
 export interface Heading {
   readonly depth: 2 | 3;
