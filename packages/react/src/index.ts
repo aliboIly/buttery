@@ -617,6 +617,7 @@ export {
 export type {
   LocalSearchSource,
   PageSourceOptions,
+  ParseSearchOptions,
   RemoteSearchSource,
   SearchFilter,
   SearchItem,

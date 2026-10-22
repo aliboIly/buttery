@@ -165,17 +165,33 @@ export function matchRanges(
   return merged;
 }
 
+/** Options for `parseSearch`. */
+export interface ParseSearchOptions {
+  /**
+   * Whether the search has been sent, as a results page's address holds it: a filter at the very end counts as
+   * finished too. Defaults to `false`, for a field someone is still typing in.
+   */
+  readonly sent?: boolean | undefined;
+}
+
 /**
  * Reads what's in a `CommandSearch` field into its finished filters and its words. A `key:value` whose key is
- * one of `filters` is finished once a space follows it; until then it's still being typed.
+ * one of `filters` is finished once a space follows it; until then it's still being typed. A sent search
+ * (`{ sent: true }`), such as the `q` of a results page, finishes the last one too.
  *
  * @example
  * parseSearch("status:shipped decaf", filters) // { filters: [{ key: "status", value: "shipped" }], text: "decaf" }
+ * parseSearch("decaf status:shipped", filters, { sent: true }) // { filters: [{ key: "status", value: "shipped" }], text: "decaf" }
  */
 export function parseSearch(
   value: string,
   filters: readonly SearchFilter[],
+  { sent = false }: ParseSearchOptions = {},
 ): SearchQuery {
+  if (sent) {
+    const query = parseSearch(`${value} `, filters);
+    return { ...query, text: query.text.trimEnd() };
+  }
   const keys = new Map(
     filters.map((filter) => [filter.key.toLowerCase(), filter.key]),
   );

@@ -440,7 +440,7 @@ export function Roastery(): ReactElement {
         {place.page === "search" ? (
           <SearchResults
             key={place.search}
-            query={parseSearch(place.search, FILTERS)}
+            query={parseSearch(place.search, FILTERS, { sent: true })}
             sources={sources}
             emptyHint="Try another word, or a filter such as status:shipped."
           />

@@ -145,7 +145,7 @@ function ResultRow({
  * so, with `emptyHint` under it. It's where `CommandSearch`'s "View all results" leads.
  *
  * @example
- * <SearchResults query={parseSearch(params.get("q") ?? "", filters)} sources={[pages, orders, help]} />
+ * <SearchResults query={parseSearch(params.get("q") ?? "", filters, { sent: true })} sources={[pages, orders, help]} />
  */
 export function SearchResults({
   query,
