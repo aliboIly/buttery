@@ -129,7 +129,7 @@ function homesIn(docsSite) {
  */
 export function checkDocs({
   contentDir = join(root, "apps/docs/content"),
-  metaFiles = globSync("packages/*/src/*/*/*.meta.ts", { cwd: root }).map(
+  metaFiles = globSync("packages/*/src/**/*.meta.ts", { cwd: root }).map(
     (file) => join(root, file),
   ),
   docsSite = join(root, "docs/DOCS_SITE.md"),

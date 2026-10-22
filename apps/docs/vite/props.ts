@@ -83,6 +83,11 @@ function inheritsOf(
   );
 }
 
+/** The interface a component's props table reads when it isn't `<Name>Props`: the factory's recipe. */
+const PROPS_INTERFACES: Readonly<Record<string, string>> = {
+  buttery: "ButteryRecipe",
+};
+
 /**
  * The props tables of the component `name`, read from its source file: its `<Name>Props` and every
  * `<Name><Part>Props` beside it, each prop it declares itself with its type, default and JSDoc.
@@ -106,9 +111,10 @@ export function propsTablesOf(name: string, source: string): PropsTable[] {
     )
       continue;
     const interfaceName = statement.name.text;
-    const match = new RegExp(`^${name}([A-Z][A-Za-z]*)?Props$`).exec(
-      interfaceName,
-    );
+    const match =
+      PROPS_INTERFACES[name] === interfaceName
+        ? [interfaceName]
+        : new RegExp(`^${name}([A-Z][A-Za-z]*)?Props$`).exec(interfaceName);
     if (!match) continue;
     const props = statement.members.flatMap((member): PropDoc[] => {
       if (!ts.isPropertySignature(member)) return [];
@@ -265,7 +271,7 @@ export function butteryProps(root: string): Plugin {
       const tables: Record<string, PropsTable[]> = {};
       for (const index of globSync("packages/*/src/index.ts", { cwd: root }))
         this.addWatchFile(join(root, index));
-      for (const meta of globSync("packages/*/src/*/*/*.meta.ts", {
+      for (const meta of globSync("packages/*/src/**/*.meta.ts", {
         cwd: root,
       })) {
         const name = basename(meta, ".meta.ts");

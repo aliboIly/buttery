@@ -1,6 +1,17 @@
 import { Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { buttery } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "buttery",
+  description:
+    "Makes any element or component buttery with token-typed props: a surface, spacing, a layout, press, focus and hover feedback, and an entrance or layout animation.",
+  order: 170,
+  status: "stable",
+  since: "0.3.0",
+  home: "motion/presets",
+};
 
 export const demos: readonly DemoSection[] = [
   {
