@@ -1,6 +1,8 @@
 @layer bt.patterns {
   /* The bar stacks at the sticky band whatever its behavior, so its menu panel stays over the blur. */
   .bt-nav-bar {
+    --bt-nav-bar-search-min: 160px;
+
     z-index: var(--bt-z-sticky);
     min-inline-size: 0;
     transition:
@@ -58,20 +60,53 @@
 
   /*
    * In a bar the menu sets no stacking context or size container of its own, so its card opens under the
-   * whole bar and may take the bar's width. The bar folds rather than scrolling its row.
+   * whole bar and may take the bar's width. It never narrows past its menus: a search gives way first, and
+   * then the bar folds rather than scrolling its row.
    */
   .bt-nav-bar .bt-morph-menu {
     --bt-morph-menu-reach: var(--bt-h-nav-bar);
 
     position: static;
     z-index: auto;
-    flex: 1 1 auto;
+    flex: 1 0 auto;
     container-type: normal;
   }
 
   .bt-nav-bar .bt-morph-menu-list {
     padding: 0;
     overflow: visible;
+  }
+
+  /* The search narrows to its least before the menus fold, and outlasts them in the bar. */
+  .bt-nav-bar [data-bt-part="nav-bar-search"] {
+    display: flex;
+    flex: 0 1 var(--bt-w-search);
+    align-items: center;
+    min-inline-size: var(--bt-nav-bar-search-min);
+  }
+
+  .bt-nav-bar [data-bt-part="nav-bar-search"] > * {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+  }
+
+  /* With focus, the search takes the menus' room, and the brand's too while folded, ending where it did. */
+  .bt-nav-bar
+    [data-bt-part="nav-bar-bar"]:has(
+      > [data-bt-part="nav-bar-search"]:focus-within
+    )
+    > .bt-morph-menu,
+  .bt-nav-bar
+    [data-bt-part="nav-bar-bar"][data-folded]:has(
+      > [data-bt-part="nav-bar-search"]:focus-within
+    )
+    > [data-bt-part="nav-bar-brand"] {
+    display: none;
+  }
+
+  .bt-nav-bar [data-bt-part="nav-bar-search"]:focus-within {
+    flex: 1 1 auto;
+    justify-content: flex-end;
   }
 
   .bt-nav-bar [data-bt-part="nav-bar-actions"] {
@@ -87,6 +122,11 @@
 
   .bt-nav-bar [data-bt-part="nav-bar-bar"][data-folded] {
     justify-content: space-between;
+  }
+
+  .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-search"] {
+    flex-grow: 1;
+    min-inline-size: 0;
   }
 
   .bt-nav-bar [data-folded] > .bt-morph-menu,

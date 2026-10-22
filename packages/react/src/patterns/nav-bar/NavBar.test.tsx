@@ -458,6 +458,129 @@ describe("NavBar", () => {
     expect(screen.queryByRole("button", { name: "Templates" })).toBeNull();
   });
 
+  it("keeps a search in the bar, between the brand and the menu button, when its menus fold", () => {
+    render(
+      <div style={{ inlineSize: "600px" }}>
+        <NavBar
+          brand={<a href="#top">Card Studio</a>}
+          search={<input aria-label="Search the guides" />}
+          data-testid="bar"
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+        </NavBar>
+      </div>,
+    );
+    const search = screen.getByRole("textbox", { name: "Search the guides" });
+    const menu = screen.getByRole("button", { name: "Menu" });
+    expect(search.checkVisibility()).toBe(true);
+    expect(bar().contains(search)).toBe(true);
+    expect(search.getBoundingClientRect().right).toBeLessThanOrEqual(
+      menu.getBoundingClientRect().left,
+    );
+  });
+
+  it("narrows its search rather than squeezing its menus, which never run under it", () => {
+    const labels = [
+      "Get started",
+      "Foundations",
+      "Layout",
+      "Motion",
+      "Components",
+      "Patterns",
+      "Guides",
+      "Tools",
+      "Resources",
+    ];
+    render(
+      <div style={{ inlineSize: "1400px" }}>
+        <NavBar
+          brand={<a href="#top">buttery</a>}
+          search={<input aria-label="Search the docs" />}
+          actions={<Button>Sign in</Button>}
+          contained={false}
+        >
+          {labels.map((label) => (
+            <MorphMenu.Item key={label} label={label}>
+              <MorphMenu.Column>
+                <MorphMenu.Entry href={`#${label}`} title={label} />
+              </MorphMenu.Column>
+            </MorphMenu.Item>
+          ))}
+        </NavBar>
+      </div>,
+    );
+    expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
+    const last = screen.getByRole("button", { name: "Resources" });
+    const search = screen
+      .getByRole("textbox", { name: "Search the docs" })
+      .closest('[data-bt-part="nav-bar-search"]');
+    expect(last.getBoundingClientRect().right).toBeLessThanOrEqual(
+      search?.getBoundingClientRect().left ?? 0,
+    );
+  });
+
+  it("gives a search with focus the menus' room, and puts them back once it lets go", async () => {
+    render(
+      <div style={{ inlineSize: "1100px" }}>
+        <NavBar
+          brand={<a href="#top">Card Studio</a>}
+          search={<input aria-label="Search the guides" />}
+          actions={<Button>Sign in</Button>}
+          contained={false}
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+          <MorphMenu.Link href="#guides">Guides</MorphMenu.Link>
+        </NavBar>
+      </div>,
+    );
+    const field = screen.getByRole("textbox", { name: "Search the guides" });
+    const part = field.closest('[data-bt-part="nav-bar-search"]');
+    const before = part?.getBoundingClientRect().width ?? 0;
+    await userEvent.click(field);
+    expect(
+      screen
+        .getByRole("link", { name: "Pricing", hidden: true })
+        .checkVisibility(),
+    ).toBe(false);
+    expect(part?.getBoundingClientRect().width).toBeGreaterThan(before);
+    await userEvent.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(
+      screen.getByRole("link", { name: "Pricing" }).checkVisibility(),
+    ).toBe(true);
+  });
+
+  it("narrows its search, at most 360px wide, before its menus fold", () => {
+    render(
+      <div style={{ inlineSize: "1000px" }}>
+        <NavBar
+          brand={<a href="#top">Card Studio</a>}
+          search={<input aria-label="Search the guides" />}
+          actions={<Button>Start a long free trial now</Button>}
+        >
+          {["Product", "Templates", "Guides"].map((label) => (
+            <MorphMenu.Item key={label} label={label}>
+              <MorphMenu.Column>
+                <MorphMenu.Entry href={`#${label}`} title={label} />
+              </MorphMenu.Column>
+            </MorphMenu.Item>
+          ))}
+        </NavBar>
+      </div>,
+    );
+    expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
+    const field = screen.getByRole("textbox", { name: "Search the guides" });
+    const width = field
+      .closest('[data-bt-part="nav-bar-search"]')
+      ?.getBoundingClientRect().width;
+    expect(width).toBeGreaterThanOrEqual(160);
+    expect(width).toBeLessThan(360);
+    const items = screen.getByRole("button", { name: "Guides" });
+    const search = field.closest('[data-bt-part="nav-bar-search"]');
+    expect(items.getBoundingClientRect().right).toBeLessThanOrEqual(
+      search?.getBoundingClientRect().left ?? 0,
+    );
+  });
+
   it("stays folded when it widens past 640px from a narrow start, if its menus still don't fit", async () => {
     render(
       <div data-testid="frame" style={{ inlineSize: "390px" }}>

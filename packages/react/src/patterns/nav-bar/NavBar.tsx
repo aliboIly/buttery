@@ -47,6 +47,11 @@ export interface NavBarProps extends Omit<
 > {
   /** The start of the bar: the product's mark and name, usually a link home. */
   readonly brand?: ReactNode;
+  /**
+   * A search after the menus, before the actions: a `CommandSearch` or a soft `SearchField`, at most 360px,
+   * narrowing before the menus fold. It stays in the bar, before the menu button, when they do.
+   */
+  readonly search?: ReactNode;
   /** The end of the bar: a `secondary` pill and a `primary` call to action with `arrow="forward"`. */
   readonly actions?: ReactNode;
   /**
@@ -91,11 +96,17 @@ function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
       row.querySelector(':scope > [data-bt-part="nav-bar-brand"]'),
       row.querySelector(':scope > [data-bt-part="nav-bar-actions"]'),
     ].filter((group) => group !== null);
+    const search = row.querySelector(
+      ':scope > [data-bt-part="nav-bar-search"]',
+    );
     const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
     needed.current =
       items +
       groups.reduce((sum, group) => sum + widthOf(group), 0) +
-      gap * groups.length;
+      gap * groups.length +
+      (search
+        ? (Number.parseFloat(getComputedStyle(search).minWidth) || 0) + gap
+        : 0);
   }
   return (
     row.clientWidth < displayBreakpoints.md || needed.current > row.clientWidth
@@ -323,7 +334,8 @@ function PhoneMenu({
  * pinned and scrolled it takes the `panel` surface. It stacks at `--bt-z-sticky` whatever its `behavior`,
  * and while it can stay on screen it publishes its height as `--bt-sticky-top`; an auto-hiding bar also
  * publishes how far it has slid away as `--bt-sticky-shift`, for sticky followers such as `SubNav`. With
- * less than 640px of room, the menus and actions fold into a menu button that opens a full-height sheet.
+ * less than 640px of room, or once they don't fit, the menus and actions fold into a menu button that opens
+ * a full-height sheet; a `search` narrows first, and stays in the bar when they fold.
  *
  * @example
  * <NavBar
@@ -337,6 +349,7 @@ function PhoneMenu({
  */
 export function NavBar({
   brand,
+  search,
   actions,
   behavior = "static",
   label = "Main",
@@ -404,6 +417,9 @@ export function NavBar({
       >
         {children}
       </MorphMenu>
+      {hasContent(search) ? (
+        <div data-bt-part="nav-bar-search">{search}</div>
+      ) : null}
       {hasContent(actions) ? (
         <div data-bt-part="nav-bar-actions">{actions}</div>
       ) : null}
