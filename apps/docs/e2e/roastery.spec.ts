@@ -328,7 +328,7 @@ test("a results page reads a filter typed last, and pages its rows", async ({
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery/search?q=status%3Arefunded");
+  await page.goto("/demos/roastery/search?q=status%3Arefunded");
   await expect(page.locator("h1").first()).toHaveText(
     'Results for "status:refunded"',
   );
