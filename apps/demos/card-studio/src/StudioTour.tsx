@@ -3,6 +3,7 @@ import { Inline, Stack, Surface, Text } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Onboarding, hasSeenOnboarding } from "@buttery/react";
 import type { OnboardingStep } from "@buttery/react";
+import { STORAGE_PREFIX } from "./storage.ts";
 
 function backdrop(id: string): string | undefined {
   const preset = gradients.find((candidate) => candidate.id === id);
@@ -119,7 +120,7 @@ export const STUDIO_TOUR: readonly OnboardingStep[] = [
 ];
 
 /** Remembers the tour under this key, so it opens by itself only on the first visit. */
-export const STUDIO_TOUR_KEY = "card-studio";
+export const STUDIO_TOUR_KEY = STORAGE_PREFIX;
 
 /** Whether the tour should open as the studio first shows: on the first visit only. */
 export function tourIsNew(): boolean {

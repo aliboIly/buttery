@@ -2,11 +2,6 @@
   block-size: 100dvh;
 }
 
-/* The playground's chrome takes its header and three of its 16px paddings. */
-.pg-main .cs-root {
-  block-size: calc(100dvh - var(--bt-h-header) - 3 * var(--bt-space-4));
-}
-
 /* The canvas's own box, so the card's sizes follow the canvas the way the export draws them. */
 .cs-artwork {
   container-type: size;

@@ -36,6 +36,9 @@
     },
     {
       "path": "./apps/demos/roastery"
+    },
+    {
+      "path": "./apps/demos/card-studio"
     }
   ]
 }

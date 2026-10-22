@@ -12,6 +12,9 @@
     },
     {
       "path": "../demos/roastery"
+    },
+    {
+      "path": "../demos/card-studio"
     }
   ]
 }
