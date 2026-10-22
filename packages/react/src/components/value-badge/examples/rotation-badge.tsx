@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ValueBadge } from "@buttery/react";
 
 /** A label with its current value, sized for the widest value it can show. */
@@ -11,3 +12,9 @@ export function RotationBadge(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("12°");
+};
