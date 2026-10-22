@@ -248,11 +248,14 @@ function RoasteryTopBar({
   onNewOrder,
   helping,
   onHelp,
+  home,
 }: {
   readonly sources: readonly SearchSource[];
   readonly onNewOrder: () => void;
   readonly helping: boolean;
   readonly onHelp: () => void;
+  /** Whether the overview is showing: the delivery nudge opens by itself only there, where its header has no actions. */
+  readonly home: boolean;
 }): ReactElement {
   const link = useLink();
   const navigate = useNavigate();
@@ -327,6 +330,8 @@ function RoasteryTopBar({
           >
             <NotificationNudge
               storageKey={`${STORAGE_PREFIX}-delivery-questions`}
+              opensItself={home}
+              align="center"
               title="2 customers asked about delivery"
               description="Reply before Tuesday's roast ships."
               action={{ label: "See orders", href: link("/orders") }}
@@ -392,6 +397,7 @@ export function Roastery(): ReactElement {
             onHelp={() => {
               setHelping((open) => !open);
             }}
+            home={place.page === "overview"}
           />
         }
         panel={

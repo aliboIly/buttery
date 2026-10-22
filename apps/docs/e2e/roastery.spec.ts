@@ -71,6 +71,37 @@ test("a first visit opens What's new by itself, then the delivery nudge once it'
   await expect(nudge).toBeHidden();
 });
 
+test("the delivery nudge waits for the overview to open by itself, so it never covers the orders page's New order", async ({
+  page,
+}) => {
+  await page.addInitScript((key) => {
+    localStorage.setItem(key, "true");
+  }, ANNOUNCEMENT);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/demos/roastery/orders");
+  const nudge = page.getByRole("dialog", {
+    name: "2 customers asked about delivery",
+  });
+  const newOrder = pageRegion(page).getByRole("button", {
+    name: "New order",
+  });
+  await expect(newOrder).toBeVisible();
+  await page.waitForTimeout(600);
+  await expect(nudge).toBeHidden();
+  await page
+    .getByRole("navigation", { name: "Halfmoon Roastery" })
+    .getByRole("link", { name: "Home", exact: true })
+    .click();
+  await expect(nudge).toBeVisible();
+  for (const text of [
+    page.getByRole("heading", { level: 1, name: "Overview" }),
+    page.getByText("How the roastery is doing, and what needs you today."),
+    page.getByRole("button", { name: "New order", exact: true }),
+  ]) {
+    expect(await overlap(nudge, text)).toBe(false);
+  }
+});
+
 test("the sidebar is a sheet on a phone, a rail on a small laptop and full on a wide screen", async ({
   page,
 }) => {
