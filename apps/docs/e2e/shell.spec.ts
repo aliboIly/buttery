@@ -64,3 +64,25 @@ test("the display settings say which row is the theme, the density and the motio
     await expect(settings.getByRole("radiogroup", { name })).toBeVisible();
   }
 });
+
+test("On this page follows a jump down the page and back, and a press on one of its links", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/patterns/app-shell");
+  const toc = page.getByRole("navigation", { name: "On this page" });
+  const current = toc.locator('[aria-current="location"]');
+  await expect(current).toHaveText("The dashboard");
+  await page.evaluate(() => {
+    document
+      .getElementById("appshell-roastery-dashboard-example")
+      ?.scrollIntoView();
+  });
+  await expect(current).toHaveText("AppShell");
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
+  await expect(current).toHaveText("The dashboard");
+  await toc.getByRole("link", { name: "AppPage", exact: true }).click();
+  await expect(current).toHaveText("AppPage");
+});
