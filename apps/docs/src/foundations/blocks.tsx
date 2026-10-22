@@ -11,6 +11,7 @@ import {
   space,
   spaceVar,
   textRoles,
+  timing,
   widths,
   zIndex,
 } from "@buttery/core";
@@ -18,7 +19,9 @@ import type { SpaceStep } from "@buttery/core";
 import "./blocks.css";
 import { COLOR_GROUPS } from "./color-groups.ts";
 import type { ColorGroup } from "./color-groups.ts";
+import { TIMING_TEXT } from "./timing-text.ts";
 import { TableScroll } from "../TableScroll.tsx";
+import { withInlineCode } from "../inline-code.tsx";
 
 const SAMPLE = "Pick a backdrop and round the corners";
 
@@ -245,6 +248,33 @@ export function LayerTokens(): ReactElement {
 }
 
 /** The durations and easings tweens use. */
+/** The timing tokens, the delays and lifetimes around a transition, each with its value and what it times. */
+export function TimingTokens(): ReactElement {
+  const rows = Object.entries(timing) as [keyof typeof timing, number][];
+  return (
+    <TableScroll label="timing tokens">
+      <table className="tk-table">
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Value</th>
+            <th scope="col">What it times</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([name, value]) => (
+            <tr key={name}>
+              <td className="pg-mono docs-token">--bt-{name}</td>
+              <td className="pg-mono">{`${String(value)}ms`}</td>
+              <td>{withInlineCode(TIMING_TEXT[name])}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </TableScroll>
+  );
+}
+
 export function MotionTokens(): ReactElement {
   return (
     <Definitions

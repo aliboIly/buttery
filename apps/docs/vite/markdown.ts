@@ -5,6 +5,7 @@ import type { Plugin } from "vite";
 import { pathUnderBase, sitePath } from "../src/base.ts";
 import { COLOR_GROUPS, isColorGroup } from "../src/foundations/color-groups.ts";
 import { MOTION_TEXT, REDUCED_TEXT } from "../src/motion-text.ts";
+import { TIMING_TEXT } from "../src/foundations/timing-text.ts";
 import { slugify } from "../src/slug.ts";
 import { captionOf } from "./code.ts";
 import { shownSource } from "./example-source.ts";
@@ -646,12 +647,21 @@ function tokenBlock(
     case "MotionTokens":
       return table(
         ["Token", "Value"],
-        [...group("duration"), ...group("easing"), ...group("timing")].map(
-          ([, token]) => [
-            `\`${value(token, "cssVar")}\``,
-            value(token, "value"),
-          ],
-        ),
+        [...group("duration"), ...group("easing")].map(([, token]) => [
+          `\`${value(token, "cssVar")}\``,
+          value(token, "value"),
+        ]),
+      );
+    case "TimingTokens":
+      return table(
+        ["Token", "Value", "What it times"],
+        group("timing").map(([name, token]) => [
+          `\`${value(token, "cssVar")}\``,
+          value(token, "value"),
+          name in TIMING_TEXT
+            ? TIMING_TEXT[name as keyof typeof TIMING_TEXT]
+            : "",
+        ]),
       );
     default:
       return null;

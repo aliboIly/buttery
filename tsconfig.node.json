@@ -34,6 +34,7 @@
     "apps/docs/src/search/search.ts",
     "apps/docs/src/search/synonyms.ts",
     "apps/docs/src/foundations/color-groups.ts",
+    "apps/docs/src/foundations/timing-text.ts",
     "apps/docs/src/motion-text.ts",
     "apps/docs/tests/**/*.ts"
   ],

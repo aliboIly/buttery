@@ -8,7 +8,7 @@ since: 0.3.0
 related: [motion/principles, motion/presets]
 ---
 
-import { MotionTokens } from "../../src/foundations/blocks.tsx";
+import { MotionTokens, TimingTokens } from "../../src/foundations/blocks.tsx";
 
 Motion tokens are the named springs, durations, easings and delays buttery animates with, such as `spring.smooth` or `--bt-dur-fast`. Use a token for every animation, so timings stay consistent and reduced motion can turn them all down at once.
 
@@ -62,77 +62,4 @@ CSS transitions fade and recolor: opacity, colors and shadows. Each duration and
 
 The timing tokens hold the delays and lifetimes around a transition, such as how long the pointer rests before a menu opens, or how long a toast stays:
 
-<DocsTable
-  columns={["Token", "Value", "What it times"]}
-  rows={[
-    [
-      "`--bt-stagger`",
-      "50ms",
-      "The gap between staggered items, closer in a long list",
-    ],
-    [
-      "`--bt-entrance-max`",
-      "900ms",
-      "The longest choreographed entrance, stagger included",
-    ],
-    [
-      "`--bt-delay-hover-open`",
-      "150ms",
-      "The pointer's rest on a trigger before its menu opens",
-    ],
-    [
-      "`--bt-delay-hover-close`",
-      "100ms",
-      "The wait after the pointer leaves before a menu closes",
-    ],
-    [
-      "`--bt-delay-hover-skip`",
-      "300ms",
-      "The time after a close in which a menu reopens at once",
-    ],
-    [
-      "`--bt-delay-submenu`",
-      "40ms",
-      "The pointer's rest on an item before its submenu opens",
-    ],
-    ["`--bt-delay-tooltip`", "500ms", "The wait before a tooltip opens"],
-    [
-      "`--bt-delay-follow`",
-      "80ms",
-      "The wait before chrome that follows a change arrives",
-    ],
-    [
-      "`--bt-delay-loading`",
-      "300ms",
-      "How long loading lasts before a loading pill shows",
-    ],
-    [
-      "`--bt-delay-search`",
-      "120ms",
-      "The pause after typing before a search asks a server",
-    ],
-    [
-      "`--bt-typeahead`",
-      "500ms",
-      "How long typed letters build up one search in a list",
-    ],
-    ["`--bt-count-up`", "800ms", "A stat counting up to its number"],
-    ["`--bt-loop-cycle`", "4000ms", "One step of a `Loop`"],
-    ["`--bt-celebration`", "900ms", "A confetti burst's life"],
-    [
-      "`--bt-toast-life`",
-      "3000ms",
-      "How long a toast stays while nothing pauses it",
-    ],
-    [
-      "`--bt-toast-life-action`",
-      "5000ms",
-      "How long a toast with an action stays",
-    ],
-    [
-      "`--bt-announcement-life`",
-      "1000ms",
-      "How long a live region holds what it announced",
-    ],
-  ]}
-/>
+<TimingTokens />
