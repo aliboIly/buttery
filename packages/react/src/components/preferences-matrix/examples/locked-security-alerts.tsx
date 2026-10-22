@@ -1,6 +1,6 @@
-import type { ExamplePlay } from "@buttery/core";
-import { PreferencesMatrix } from "@buttery/react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { PreferencesMatrix } from "@buttery/react";
 
 /** Preferences in two tabs, with security alerts locked on by email. */
 export function LockedSecurityAlerts(): ReactElement {
@@ -45,6 +45,8 @@ export function LockedSecurityAlerts(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("tab", "Orders");

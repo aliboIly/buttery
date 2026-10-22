@@ -1,9 +1,9 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { PreferencesMatrix } from "@buttery/react";
-import type { PreferenceValue } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { PreferencesMatrix } from "@buttery/react";
+import type { PreferenceValue } from "@buttery/react";
 
 /** Team notifications across email and push, controlled, with a summary of what's on. */
 export function TeamNotifications(): ReactElement {
@@ -40,6 +40,8 @@ export function TeamNotifications(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("checkbox", "Push for Refunds");
