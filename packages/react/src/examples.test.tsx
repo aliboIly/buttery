@@ -7,6 +7,7 @@ import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { Button } from "./components/button/Button.tsx";
+import { LineChart } from "./components/line-chart/LineChart.tsx";
 import { SegmentedControl } from "./components/segmented-control/SegmentedControl.tsx";
 import { toast } from "./components/toaster/Toaster.tsx";
 import { Tooltip } from "./components/tooltip/Tooltip.tsx";
@@ -31,6 +32,42 @@ function nextFrame(): Promise<void> {
       resolve();
     });
   });
+}
+
+function clips(overflow: string): boolean {
+  return overflow === "hidden" || overflow === "clip";
+}
+
+/**
+ * Whether a sighted person can see the text in `element`: it's drawn and not transparent, and no element
+ * around it clips it to nothing, as a screen-reader-only box of 1px or a folded-away section does.
+ */
+function inSight(element: Element): boolean {
+  if (
+    !element.checkVisibility({
+      visibilityProperty: true,
+      opacityProperty: true,
+    })
+  )
+    return false;
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  const text = range.getBoundingClientRect();
+  let { left, top, right, bottom } =
+    text.width > 0 && text.height > 0 ? text : element.getBoundingClientRect();
+  for (let node: Element | null = element; node; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    const box = node.getBoundingClientRect();
+    if (clips(style.overflowX)) {
+      left = Math.max(left, box.left);
+      right = Math.min(right, box.right);
+    }
+    if (clips(style.overflowY)) {
+      top = Math.max(top, box.top);
+      bottom = Math.min(bottom, box.bottom);
+    }
+  }
+  return right - left > 1 && bottom - top > 1;
 }
 
 const context: ExamplePlayContext = {
@@ -64,12 +101,14 @@ const context: ExamplePlayContext = {
   see: async (text) => {
     await waitFor(
       () => {
-        const shown = screen
-          .queryAllByText(text)
-          .filter((element) =>
-            element.checkVisibility({ visibilityProperty: true }),
-          );
-        expect(shown.length).toBeGreaterThan(0);
+        const found = screen.queryAllByText(text);
+        const quoted = typeof text === "string" ? `"${text}"` : String(text);
+        expect(
+          found.some(inSight),
+          found.length === 0
+            ? `Nothing on the page says ${quoted}.`
+            : `${quoted} is on the page but out of sight: screen-reader-only, clipped away or transparent. Fix: see what a person sees, or open what shows it first, such as hovering or focusing a tooltip's element.`,
+        ).toBe(true);
       },
       { timeout: 3000 },
     );
@@ -143,6 +182,18 @@ describe("examples", () => {
 });
 
 describe("the play actions", () => {
+  it("see only what a sighted person can, not a chart's screen-reader table", async () => {
+    render(
+      <LineChart
+        label="Sales"
+        labels={["Mon", "Tue"]}
+        series={[{ key: "now", label: "This week", values: [1420, 1560] }]}
+      />,
+    );
+    expect(screen.getAllByText("1,420").length).toBeGreaterThan(0);
+    await expect(context.see("1,420")).rejects.toThrow();
+  });
+
   it("open a tooltip by resting the pointer on its element", async () => {
     render(
       <ButteryProvider>

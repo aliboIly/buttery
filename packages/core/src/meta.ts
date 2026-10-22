@@ -134,7 +134,10 @@ export interface ExamplePlayContext {
    * does, so a radio group that moves focus a moment later still sees the key and picks the option.
    */
   readonly key: (key: string) => Promise<void>;
-  /** Waits for this text to show, failing if it doesn't. */
+  /**
+   * Waits for this text to show where a sighted person can see it, failing if it doesn't. Text only screen
+   * readers get, such as a chart's data table, and text clipped away or transparent don't count.
+   */
   readonly see: (text: string | RegExp) => Promise<void>;
 }
 
