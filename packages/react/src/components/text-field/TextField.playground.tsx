@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { TextField } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -11,6 +12,35 @@ export const page: DocsPage = {
   order: 110,
   status: "stable",
   since: "0.4.5",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    size: { kind: "choice", options: ["md", "lg"], initial: "md" },
+    label: { kind: "text", initial: "Shop name" },
+    hint: { kind: "text", initial: "Shown on your receipts." },
+    error: { kind: "text", initial: "" },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ size, label, hint, error, disabled }) => (
+    <TextField
+      size={demoChoice(size, ["md", "lg"])}
+      label={String(label)}
+      hint={String(hint) === "" ? undefined : String(hint)}
+      error={String(error) === "" ? undefined : String(error)}
+      disabled={disabled === true}
+    />
+  ),
+  code: ({ size, label, hint, error, disabled }) =>
+    [
+      "<TextField",
+      `  size="${demoChoice(size, ["md", "lg"])}"`,
+      `  label="${String(label)}"`,
+      ...(String(hint) === "" ? [] : [`  hint="${String(hint)}"`]),
+      ...(String(error) === "" ? [] : [`  error="${String(error)}"`]),
+      ...(disabled === true ? ["  disabled"] : []),
+      "/>",
+    ].join("\n"),
 };
 
 export const demos: readonly DemoSection[] = [
