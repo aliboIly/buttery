@@ -11,6 +11,7 @@ export function OverviewTip(): ReactElement {
     <AppPage width="full" header={<PageHeader title="Overview" />}>
       <RecommendationCard
         title="Send low-stock alerts to the roastery"
+        titleAs="h2"
         action={{
           label: alerts ? "Alerts are on" : "Turn on alerts",
           onClick: () => {
