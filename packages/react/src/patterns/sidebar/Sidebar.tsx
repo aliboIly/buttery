@@ -37,6 +37,7 @@ import type {
 } from "react";
 import { Tooltip } from "../../components/tooltip/Tooltip.tsx";
 import { useAppShell } from "../app-shell/app-shell-context.ts";
+import type { SidebarMode } from "../app-shell/app-shell-context.ts";
 
 /** A page the sidebar remembers having shown. */
 interface RecentPage {
@@ -78,7 +79,7 @@ function isRemembered(value: unknown): value is Remembered {
 }
 
 interface SidebarState {
-  readonly mode: "full" | "rail";
+  readonly mode: Exclude<SidebarMode, "sheet">;
   readonly navigate: (
     href: string,
     event: MouseEvent<HTMLAnchorElement>,
@@ -111,7 +112,7 @@ function useSidebar(part: string): SidebarState {
  * How the `Sidebar` around a component shows: `"full"`, or `"rail"` while the shell has made it an icon
  * rail; `undefined` outside a sidebar. A workspace switcher reads it to show its tile alone in a rail.
  */
-export function useSidebarMode(): SidebarState["mode"] | undefined {
+export function useSidebarMode(): Exclude<SidebarMode, "sheet"> | undefined {
   return use(SidebarContext)?.mode;
 }
 

@@ -49,7 +49,8 @@ export interface SearchItem {
   readonly onSelect?: (() => void) | undefined;
 }
 
-interface SearchSourceBase {
+/** What every search source has, whether it answers at once or from a server. */
+export interface SearchSourceBase {
   /** Identifies it among the sources. */
   readonly id: string;
   /** Its group's heading, such as `"Orders"`. */

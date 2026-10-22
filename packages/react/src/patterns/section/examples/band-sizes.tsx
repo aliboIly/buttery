@@ -3,11 +3,11 @@ import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Section, SegmentedControl } from "@buttery/react";
+import type { SectionSize } from "@buttery/react";
 
-type Size = "sm" | "md" | "lg";
 type Tone = "default" | "muted";
 
-const ROOM: Readonly<Record<Size, string>> = {
+const ROOM: Readonly<Record<SectionSize, string>> = {
   sm: "64px above and below",
   md: "96px above and below",
   lg: "128px above and below",
@@ -20,12 +20,12 @@ const GROUND: Readonly<Record<Tone, string>> = {
 
 /** The three sizes and two tones of a band: pick one of each and the band's room and background follow. */
 export function BandSizes(): ReactElement {
-  const [size, setSize] = useState<Size>("md");
+  const [size, setSize] = useState<SectionSize>("md");
   const [tone, setTone] = useState<Tone>("default");
   return (
     <Stack gap={4}>
       <Inline gap={2} wrap>
-        <SegmentedControl<Size>
+        <SegmentedControl<SectionSize>
           label="Size"
           options={[
             { value: "sm", label: "Small" },
