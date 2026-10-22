@@ -42,6 +42,20 @@ export interface TransitionRecord {
   readonly easing: string;
 }
 
+/** A CSS animation that started on a sampled element, with the timing it was declared with. */
+export interface AnimationRecord {
+  /** The element it ran on, as in its readings. */
+  readonly id: number;
+  /** When it started, in ms since sampling began. */
+  readonly t: number;
+  /** Its `@keyframes` name. */
+  readonly name: string;
+  /** In ms. */
+  readonly duration: number;
+  /** Its timing function. */
+  readonly easing: string;
+}
+
 /** The elements just before the action, then on every frame after it, and when marked events happened. */
 export interface Run {
   readonly before: Frame;
@@ -50,6 +64,8 @@ export interface Run {
   readonly marks: Readonly<Partial<Record<string, number>>>;
   /** The CSS transitions that ran on the sampled elements. */
   readonly transitions: readonly TransitionRecord[];
+  /** The CSS animations that started on the sampled elements. */
+  readonly animations: readonly AnimationRecord[];
 }
 
 interface Sampler {
@@ -76,6 +92,7 @@ function samplerScript(startOnLoad: string | undefined): void {
     readonly frames: Frame[];
     readonly marks: Record<string, number>;
     readonly transitions: TransitionRecord[];
+    readonly animations: AnimationRecord[];
     readonly unlisten: () => void;
     request: number;
   } | null = null;
@@ -152,6 +169,30 @@ function samplerScript(startOnLoad: string | undefined): void {
           easing: running?.effect?.getTiming().easing ?? "",
         });
       };
+      const animations: AnimationRecord[] = [];
+      const onAnimation = (event: AnimationEvent): void => {
+        const { target, animationName } = event;
+        if (!(target instanceof Element) || !target.matches(selector)) return;
+        const running = target
+          .getAnimations()
+          .find(
+            (animation) =>
+              animation instanceof CSSAnimation &&
+              animation.animationName === animationName,
+          );
+        const effect = running?.effect;
+        const timing = effect?.getComputedTiming();
+        const [first] =
+          effect instanceof KeyframeEffect ? effect.getKeyframes() : [];
+        animations.push({
+          id: idOf(target),
+          t: performance.now() - origin,
+          name: animationName,
+          duration:
+            typeof timing?.duration === "number" ? timing.duration : Number.NaN,
+          easing: first?.easing ?? "",
+        });
+      };
       const listeners = events.map((name) => {
         const listener = (): void => {
           mark(name);
@@ -162,6 +203,7 @@ function samplerScript(startOnLoad: string | undefined): void {
         };
       });
       window.addEventListener("transitionrun", onTransition, true);
+      window.addEventListener("animationstart", onAnimation, true);
       active = {
         selector,
         origin,
@@ -169,9 +211,11 @@ function samplerScript(startOnLoad: string | undefined): void {
         frames: [],
         marks: {},
         transitions,
+        animations,
         unlisten: () => {
           for (const unlisten of listeners) unlisten();
           window.removeEventListener("transitionrun", onTransition, true);
+          window.removeEventListener("animationstart", onAnimation, true);
         },
         request: requestAnimationFrame(tick),
       };
@@ -183,11 +227,19 @@ function samplerScript(startOnLoad: string | undefined): void {
     },
     stop() {
       if (!active) throw new Error("The sampler isn't running.");
-      const { before, frames, marks, transitions, request, unlisten } = active;
+      const {
+        before,
+        frames,
+        marks,
+        transitions,
+        animations,
+        request,
+        unlisten,
+      } = active;
       cancelAnimationFrame(request);
       unlisten();
       active = null;
-      return { before, frames, marks, transitions };
+      return { before, frames, marks, transitions, animations };
     },
   };
 

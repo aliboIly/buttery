@@ -265,6 +265,15 @@ function transitionsOf(
     .map(({ duration, easing }) => [duration, easing] as const);
 }
 
+function animationsOf(
+  run: Run,
+  name: string,
+): readonly (readonly [number, string])[] {
+  return run.animations
+    .filter((animation) => animation.name === name)
+    .map(({ duration, easing }) => [duration, easing] as const);
+}
+
 test.describe("full motion", () => {
   test.beforeEach(async ({ page }) => {
     await open(page, "full");
@@ -2299,12 +2308,18 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
         expect(panelNow?.opacity).toBe(1);
       }
     }
-    expectTween(
-      "side panel content fading in",
+    // A CSS animation reports the timing it runs on; the frames, a handful for 120ms, check its curve.
+    expect(animationsOf(opening, "bt-side-panel-in")).toEqual([
+      [DURATIONS.fast, CSS_EASE_OUT],
+    ]);
+    const fade = fitTween(
       progress(traceOf(opening, contentId, opacity), 0, 1),
       EASE_OUT,
-      DURATIONS.fast,
     );
+    report(
+      `side panel content fading in: ${String(DURATIONS.fast)}ms, within ${fade.error.toFixed(1)}ms over ${String(fade.frames)} frames`,
+    );
+    expect(fade.error).toBeLessThanOrEqual(CURVE_ERROR);
     await startSampling(page, `${column}, ${panel}`, ["keydown"]);
     await page.keyboard.press("Escape");
     const closing = framesFrom(await finishSampling(page, 300), "keydown");
