@@ -409,6 +409,23 @@ describe("CommandSearch", () => {
     expect(gapAfter(mark)).toBeCloseTo(0, 1);
   });
 
+  it("sets a match in the accent's text color, which reads in dark too, where its tint barely shows", async () => {
+    render(
+      <ButteryProvider colorScheme="dark" layoutGuard={false}>
+        <CommandSearch sources={[PAGES, CUSTOMERS]} filters={FILTERS} />
+      </ButteryProvider>,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("ines");
+    const mark = await screen.findByText("Ines", { selector: "mark" });
+    const probe = document.createElement("span");
+    probe.style.color = "var(--bt-accent-text)";
+    document.body.append(probe);
+    const accent = getComputedStyle(probe).color;
+    probe.remove();
+    expect(getComputedStyle(mark).color).toBe(accent);
+  });
+
   it("moves through the rows across groups with the arrow keys, and Enter opens the one it's on", async () => {
     const onSelect = vi.fn();
     const pick: LocalSearchSource = {

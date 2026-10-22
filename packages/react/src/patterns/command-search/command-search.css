@@ -239,7 +239,7 @@
   .bt-search-match {
     border-radius: var(--bt-r-xs);
     background-color: var(--bt-accent-subtle);
-    color: inherit;
+    color: var(--bt-accent-text);
   }
 
   /*
