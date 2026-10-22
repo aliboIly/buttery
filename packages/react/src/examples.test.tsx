@@ -7,6 +7,11 @@ import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { Button } from "./components/button/Button.tsx";
+import { celebrate } from "./components/confetti/Confetti.tsx";
+import {
+  getBursts,
+  removeBurst,
+} from "./components/confetti/confetti-store.ts";
 import { LineChart } from "./components/line-chart/LineChart.tsx";
 import { SegmentedControl } from "./components/segmented-control/SegmentedControl.tsx";
 import { toast } from "./components/toaster/Toaster.tsx";
@@ -134,6 +139,7 @@ beforeEach(() => {
 function endExample(): void {
   cleanup();
   toast.dismiss();
+  for (const burst of getBursts()) removeBurst(burst.id);
   vi.restoreAllMocks();
 }
 
@@ -155,6 +161,17 @@ describe("examples", () => {
       );
     expect(new Set(expected).size).toBe(expected.length);
     expect(names).toEqual(expect.arrayContaining(expected));
+  });
+
+  it("starts each example without the confetti the one before left", async () => {
+    render(<ButteryProvider />);
+    celebrate();
+    await nextFrame();
+    expect(document.querySelector('[data-bt="Confetti"]')).not.toBeNull();
+    endExample();
+    render(<ButteryProvider />);
+    await nextFrame();
+    expect(document.querySelector('[data-bt="Confetti"]')).toBeNull();
   });
 
   it("starts each example without the toasts the one before left", async () => {
