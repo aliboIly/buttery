@@ -1,5 +1,5 @@
 import { Surface } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, Page, Section, SubNav } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -39,6 +39,63 @@ const SECTIONS = [
     body: "Free while you make one card a day. One price for the rest.",
   },
 ] as const;
+
+const LIVE_SECTIONS = SECTIONS.map((section) => ({
+  ...section,
+  id: section.id.replace("sub-nav-", "live-"),
+}));
+
+export const live: LiveDemo = {
+  controls: {
+    title: { kind: "text", initial: "Card Studio" },
+    action: { kind: "toggle", initial: true },
+  },
+  render: ({ title, action }) => (
+    <Surface
+      level="card"
+      role="region"
+      aria-label="Product page"
+      tabIndex={0}
+      style={{
+        blockSize: "calc(var(--bt-bento-row) * 1.5)",
+        overflowY: "auto",
+      }}
+    >
+      <Page>
+        <SubNav
+          title={String(title)}
+          items={LIVE_SECTIONS}
+          action={
+            action === true ? <Button size="sm">Get it</Button> : undefined
+          }
+        />
+        {LIVE_SECTIONS.map((section) => (
+          <Section
+            key={section.id}
+            id={section.id}
+            size="sm"
+            title={section.label}
+            body={section.body}
+          />
+        ))}
+      </Page>
+    </Surface>
+  ),
+  code: ({ title, action }) =>
+    [
+      "<SubNav",
+      ...(String(title) === "" ? [] : [`  title="${String(title)}"`]),
+      "  items={[",
+      ...LIVE_SECTIONS.map(
+        (section) => `    { id: "${section.id}", label: "${section.label}" },`,
+      ),
+      "  ]}",
+      ...(action === true
+        ? ['  action={<Button size="sm">Get it</Button>}']
+        : []),
+      "/>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {
