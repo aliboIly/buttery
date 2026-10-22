@@ -16,4 +16,9 @@ export const meta: ComponentMeta = {
   related: ["Presence", "Toast", "Onboarding"],
   a11y: "Decorative and hidden from assistive technology: announce the success itself in text. Never shown with reduced motion.",
   motion: "celebration",
+  keyboard: [],
+  layout:
+    "It takes no room in the page and no presses: each burst is 5×8px pieces in the toast layer, thrown from the middle of the element passed to celebrate(), or of the window without one, and gone after 900ms.",
+  reducedMotion:
+    "It never bursts: celebrate() does nothing, so the success has to be said in text as well.",
 };

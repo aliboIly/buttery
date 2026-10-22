@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Pressable, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { celebrate } from "@buttery/react";
 
 /** The last onboarding step's button, which celebrates once the tour is done. */
@@ -27,3 +28,10 @@ export function FinishButton(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Finish");
+  await see("You're all set.");
+};
