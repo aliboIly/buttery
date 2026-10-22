@@ -62,3 +62,17 @@ describe.each(demoPages)("the $route demo", ({ route, template }) => {
     expect(own.dependencies).toMatchObject(given.dependencies);
   });
 });
+
+describe("the dashboard template's page", () => {
+  it("shows the overview screen's code as the template's file has it", () => {
+    const page = readFileSync(
+      join(root, "apps/docs/content/templates/dashboard.mdx"),
+      "utf8",
+    );
+    const shown =
+      /## The overview screen\n[\s\S]*?```tsx\n([\s\S]*?)\n```/.exec(page)?.[1];
+    expect(shown).toBe(
+      read(folderOf("dashboard"), "src/pages/OverviewPage.tsx").trimEnd(),
+    );
+  });
+});

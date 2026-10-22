@@ -14,20 +14,172 @@ A data table page is an app page whose main block is a table of records, such as
 
 `AppPage fill` gives the page's last block the height left under the header, tabs and filters, so the table scrolls inside it with its header row sticky, and the page itself doesn't scroll. `SavedViews` keeps named filter sets as tabs; `FilterBar` holds the filters in force as pills, which wrap rather than fold, since a person has to see and remove them. `ColumnSettings` picks which columns show.
 
+Here is a whole orders page: two saved views, a status filter and a search in the filter bar, and a table that sorts by its total. The orders are written into the file to keep it short; an app's would come from its data.
+
 ```tsx
+import { useState } from "react";
 import type { ReactElement } from "react";
-import { AppPage, PageHeader } from "@buttery/react";
-import { OrdersTable } from "./OrdersTable.tsx";
+import { Stack } from "@buttery/core";
+import {
+  AppPage,
+  Button,
+  DataTable,
+  FilterBar,
+  FilterPill,
+  PageHeader,
+  SavedViews,
+  SearchField,
+  StatusBadge,
+} from "@buttery/react";
+import type { DataTableColumn, DataTableSort, SavedView } from "@buttery/react";
+
+const STATUSES = ["Paid", "Unpaid", "Refunded"] as const;
+
+type Status = (typeof STATUSES)[number];
+
+interface Order {
+  readonly id: string;
+  readonly customer: string;
+  readonly status: Status;
+  readonly total: number;
+}
+
+const ORDERS: readonly Order[] = [
+  { id: "ORD-3101", customer: "Larkspur Café", status: "Paid", total: 64 },
+  { id: "ORD-3102", customer: "Northgate Bakery", status: "Unpaid", total: 38 },
+  { id: "ORD-3103", customer: "Wren Street Deli", status: "Paid", total: 112 },
+  {
+    id: "ORD-3104",
+    customer: "Saltmarsh Kitchen",
+    status: "Refunded",
+    total: 21,
+  },
+  { id: "ORD-3105", customer: "Larkspur Café", status: "Unpaid", total: 47 },
+];
+
+const VIEWS: readonly SavedView[] = [
+  { id: "all", label: "All orders" },
+  { id: "open", label: "Waiting on payment" },
+];
+
+const TONES = {
+  Paid: "success",
+  Unpaid: "warning",
+  Refunded: "neutral",
+} as const;
+
+const COLUMNS: readonly DataTableColumn<Order>[] = [
+  {
+    id: "id",
+    header: "Order",
+    cell: (order) => <DataTable.Id value={order.id} />,
+  },
+  {
+    id: "customer",
+    header: "Customer",
+    minWidth: "md",
+    grow: 2,
+    cell: (order) => order.customer,
+  },
+  {
+    id: "status",
+    header: "Status",
+    skeleton: "badge",
+    cell: (order) => (
+      <StatusBadge tone={TONES[order.status]}>{order.status}</StatusBadge>
+    ),
+  },
+  {
+    id: "total",
+    header: "Total",
+    align: "end",
+    sortable: true,
+    cell: (order) => <DataTable.Amount value={order.total} currency="USD" />,
+  },
+];
 
 export function OrdersPage(): ReactElement {
+  const [view, setView] = useState("all");
+  const [status, setStatus] = useState<Status | undefined>(undefined);
+  const [picking, setPicking] = useState(false);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<DataTableSort | null>(null);
+  const clearAll = (): void => {
+    setStatus(undefined);
+    setQuery("");
+  };
+  const search = query.trim().toLowerCase();
+  const rows = ORDERS.filter(
+    (order) =>
+      (view === "all" || order.status === "Unpaid") &&
+      (status === undefined || order.status === status) &&
+      order.customer.toLowerCase().includes(search),
+  ).sort((a, b) =>
+    sort === null
+      ? 0
+      : (a.total - b.total) * (sort.direction === "ascending" ? 1 : -1),
+  );
   return (
     <AppPage header={<PageHeader title="Orders" />} fill>
       <AppPage.Section>
-        <OrdersTable />
+        <SavedViews
+          label="Order views"
+          views={VIEWS}
+          value={view}
+          onValueChange={setView}
+        />
+        <FilterBar
+          onClearAll={clearAll}
+          actions={
+            <SearchField
+              label="Search orders"
+              placeholder="Customer"
+              variant="outline"
+              value={query}
+              onValueChange={setQuery}
+            />
+          }
+        >
+          <FilterPill
+            label="Status"
+            value={status}
+            open={picking}
+            onOpenChange={setPicking}
+            onRemove={() => {
+              setStatus(undefined);
+            }}
+          >
+            <Stack gap={1}>
+              {STATUSES.map((choice) => (
+                <Button
+                  key={choice}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setStatus(choice);
+                    setPicking(false);
+                  }}
+                >
+                  {choice}
+                </Button>
+              ))}
+            </Stack>
+          </FilterPill>
+        </FilterBar>
+        <DataTable
+          label="Orders"
+          columns={COLUMNS}
+          rows={rows}
+          rowKey={(order) => order.id}
+          rowLabel={(order) => order.id}
+          sort={sort}
+          onSortChange={setSort}
+          onClearAll={clearAll}
+        />
       </AppPage.Section>
     </AppPage>
   );
 }
 ```
 
-See [DataTable](/components/data-table), [FilterBar](/components/filter-bar) and [SavedViews](/components/saved-views) for each part.
+The [FilterBar examples](/components/filter-bar) show the filters and the table working together, and the roastery demo's [orders page](/demos/roastery/orders) is the full version, with saved views you can add and rename, `ColumnSettings`, row actions and pages of results. See [DataTable](/components/data-table), [FilterBar](/components/filter-bar) and [SavedViews](/components/saved-views) for each part.

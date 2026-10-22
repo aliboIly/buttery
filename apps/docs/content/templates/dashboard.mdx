@@ -88,6 +88,103 @@ The template is a web app. For a desktop app, start from [blank](/templates/blan
 
 It's made from these patterns: the [app shell](/patterns/app-shell), an [overview](/patterns/overview), a [data table page](/patterns/data-table-page) and a [settings page](/patterns/settings-pages).
 
+## The overview screen
+
+The app opens on `src/pages/OverviewPage.tsx`, its main screen: the week's sales and orders in two `MetricCard`s, then sales each day in a `BarChart`. `src/App.tsx` shows it inside the `AppShell`, beside the sidebar and under the top bar, as it does every page; `useLink` comes from the template's router and the numbers from `src/data.ts`.
+
+```tsx
+import type { ReactElement } from "react";
+import { Grid } from "@buttery/core";
+import {
+  AppPage,
+  ArrowLink,
+  BarChart,
+  MetricCard,
+  PageHeader,
+} from "@buttery/react";
+import { ORDER_COUNTS, SALES, WEEK, change, money, total } from "../data.ts";
+import { useLink } from "../router.tsx";
+
+/** The dashboard's front page: the week's numbers, then sales day by day. */
+export function OverviewPage(): ReactElement {
+  const link = useLink();
+  const sales = total(SALES.now);
+  const orders = total(ORDER_COUNTS.now);
+  return (
+    <AppPage
+      header={
+        <PageHeader
+          title="Overview"
+          description="How the shop did over the last seven days."
+        />
+      }
+    >
+      <AppPage.Section title="This week">
+        <Grid columns={{ base: 1, md: 2 }} gap={4}>
+          <MetricCard
+            title="Sales"
+            info="Every sale, before refunds and fees."
+            value={money(sales)}
+            delta={change(sales, total(SALES.before))}
+            labels={WEEK}
+            series={[
+              { key: "now", label: "This week", values: SALES.now },
+              {
+                key: "before",
+                label: "Last week",
+                values: SALES.before,
+                comparison: true,
+              },
+            ]}
+            formatValue={money}
+            updated="Updated just now"
+            href={link("/orders")}
+          />
+          <MetricCard
+            title="Orders"
+            value={String(orders)}
+            delta={change(orders, total(ORDER_COUNTS.before))}
+            labels={WEEK}
+            series={[
+              { key: "now", label: "This week", values: ORDER_COUNTS.now },
+              {
+                key: "before",
+                label: "Last week",
+                values: ORDER_COUNTS.before,
+                comparison: true,
+              },
+            ]}
+            updated="Updated just now"
+            href={link("/orders")}
+          />
+        </Grid>
+      </AppPage.Section>
+      <AppPage.Section
+        title="Sales each day"
+        actions={<ArrowLink href={link("/orders")}>See orders</ArrowLink>}
+      >
+        <BarChart
+          label="Sales each day this week"
+          summary={`${money(sales)} this week, against ${money(total(SALES.before))} the week before.`}
+          labels={WEEK}
+          labelsHeading="Day"
+          series={[
+            { key: "now", label: "This week", values: SALES.now },
+            {
+              key: "before",
+              label: "Last week",
+              values: SALES.before,
+              comparison: true,
+            },
+          ]}
+          formatValue={money}
+        />
+      </AppPage.Section>
+    </AppPage>
+  );
+}
+```
+
 ## Routing
 
 Each template has a small router of its own in `src/router.tsx`, with no dependency, so its pages have real addresses: `/orders`, `/settings`. `useRoute()` reads the path and the query from the address and follows it as it changes, `useLink()` turns a path in the app into its address, and `useNavigate()` goes to one. `followLinks()` in `src/main.tsx` makes a click on any link to the app a move within the page, so buttery's link components, which render a plain `<a href>`, work as they are.
