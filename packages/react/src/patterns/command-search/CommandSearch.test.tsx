@@ -360,14 +360,16 @@ describe("CommandSearch", () => {
     expect(field().getAttribute("aria-expanded")).toBe("true");
   });
 
-  it("gives every row its own id, so the arrows reach each one even when pages share an href", async () => {
-    const twins = pageSource({
-      pages: [
-        { label: "Shop settings", href: "#same" },
-        { label: "Shipping", href: "#same" },
-        { label: "Stock", href: "#same" },
+  it("gives every row its own id, so the arrows reach each one even when a source repeats an id", async () => {
+    const twins: LocalSearchSource = {
+      id: "twins",
+      label: "Go to",
+      search: () => [
+        { id: "same", label: "Shop settings" },
+        { id: "same", label: "Shipping" },
+        { id: "same", label: "Stock" },
       ],
-    });
+    };
     render(<Search sources={[twins]} filters={[]} />);
     await userEvent.click(field());
     await userEvent.keyboard("s");
@@ -439,7 +441,7 @@ describe("CommandSearch", () => {
     expect(field().getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("leaves the keys an input method composes with alone", async () => {
+  it("leaves the keys an input method composes with alone, the key that ends it included", async () => {
     const onSelect = vi.fn();
     const actions: LocalSearchSource = {
       id: "actions",
@@ -448,16 +450,169 @@ describe("CommandSearch", () => {
     };
     render(<Search sources={[actions]} filters={[]} />);
     await userEvent.click(field());
-    await userEvent.keyboard("e");
+    await userEvent.keyboard("e{ArrowDown}");
     fireEvent.compositionStart(field());
     fireEvent.keyDown(field(), { key: "ArrowDown", isComposing: true });
-    expect(field().hasAttribute("aria-activedescendant")).toBe(false);
     fireEvent.compositionEnd(field());
-    fireEvent.keyDown(field(), { key: "Escape" });
-    expect(field()).toHaveProperty("value", "e");
-    fireEvent.keyUp(field(), { key: "Escape" });
-    await userEvent.keyboard("{ArrowDown}{Enter}");
+    fireEvent.keyDown(field(), { key: "Enter" });
+    expect(onSelect).not.toHaveBeenCalled();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await userEvent.keyboard("{Enter}");
     expect(onSelect).toHaveBeenCalledOnce();
+  });
+
+  it("doesn't swallow the next key after a composition that ended without one", async () => {
+    render(<Search sources={[CUSTOMERS]} filters={[]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("i");
+    fireEvent.compositionStart(field());
+    fireEvent.compositionEnd(field());
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await userEvent.keyboard("{ArrowDown}");
+    expect(field().getAttribute("aria-activedescendant")).toBe(
+      screen.getAllByRole("option")[0]?.id,
+    );
+  });
+
+  it("keeps a highlighted row highlighted when another group's answer arrives, and never moves it to another result", async () => {
+    let answer: ((items: readonly SearchItem[]) => void) | undefined;
+    const help: RemoteSearchSource = {
+      id: "help",
+      label: "Help",
+      remote: true,
+      search: () =>
+        new Promise((resolve) => {
+          answer = resolve;
+        }),
+    };
+    const orders: LocalSearchSource = {
+      id: "orders",
+      label: "Orders",
+      search: () => [{ id: "1042", label: "Order 1042, set for Friday" }],
+    };
+    render(<Search sources={[help, CUSTOMERS, orders]} filters={[]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("set{ArrowDown}");
+    const chosen = field().getAttribute("aria-activedescendant");
+    expect(document.getElementById(chosen ?? "")?.textContent).toBe(
+      "Setareh Amini",
+    );
+    await waitFor(() => {
+      expect(answer).toBeDefined();
+    });
+    answer?.([]);
+    await waitFor(() => {
+      expect(
+        within(screen.getByRole("listbox")).queryByRole("group", {
+          name: "Help",
+        }),
+      ).toBeNull();
+    });
+    const now = field().getAttribute("aria-activedescendant");
+    expect(document.getElementById(now ?? "")?.textContent).toBe(
+      "Setareh Amini",
+    );
+  });
+
+  it("shows the footer's link as the row Enter opens once the arrows reach it, and follows it closing the panel", async () => {
+    render(<Search filtersHref="#filters" />);
+    await userEvent.click(field());
+    const more = screen.getByRole("option", { name: "View more filters" });
+    const footer = more.parentElement;
+    if (!footer) throw new Error("No footer.");
+    const resting = getComputedStyle(footer).backgroundColor;
+    await userEvent.keyboard("{ArrowUp}");
+    expect(field().getAttribute("aria-activedescendant")).toBe(more.id);
+    expect(getComputedStyle(footer).backgroundColor).not.toBe(resting);
+    expect(getComputedStyle(more).textDecorationLine).toBe("underline");
+    more.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+    await userEvent.keyboard("{Enter}");
+    expect(field().getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("passes its input the handlers it's given", async () => {
+    const onClick = vi.fn();
+    const onKeyUp = vi.fn();
+    const onCompositionStart = vi.fn();
+    const onCompositionEnd = vi.fn();
+    render(
+      <Search
+        onClick={onClick}
+        onKeyUp={onKeyUp}
+        onCompositionStart={onCompositionStart}
+        onCompositionEnd={onCompositionEnd}
+      />,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("i");
+    fireEvent.compositionStart(field());
+    fireEvent.compositionEnd(field());
+    expect(onClick).toHaveBeenCalled();
+    expect(onKeyUp).toHaveBeenCalled();
+    expect(onCompositionStart).toHaveBeenCalled();
+    expect(onCompositionEnd).toHaveBeenCalled();
+  });
+
+  it("stays wide and open while focus is on one of its chips", async () => {
+    render(<Search defaultValue="status:paid ines" />);
+    await userEvent.click(field());
+    await waitFor(() => {
+      expect(box().getBoundingClientRect().width).toBe(600);
+    });
+    const chip = screen.getByRole("button", { name: "Remove status:paid" });
+    chip.focus();
+    expect(document.activeElement).toBe(chip);
+    expect(field().getAttribute("aria-expanded")).toBe("true");
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expect(box().getBoundingClientRect().width).toBe(600);
+  });
+
+  it("drops a remote group's answer to a different search, keeping only a refined one's", async () => {
+    const help: RemoteSearchSource = {
+      id: "help",
+      label: "Help",
+      remote: true,
+      search: async (query) => {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        return [{ id: query.text, label: `Help: ${query.text}` }];
+      },
+    };
+    render(<Search sources={[help]} filters={[]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("payout");
+    await waitFor(() => {
+      expect(options("Help")).toEqual(["Help: payout"]);
+    });
+    await userEvent.keyboard("s");
+    expect(options("Help")).toEqual(["Help: payout", "Searching help"]);
+    await userEvent.fill(field(), "decaf");
+    expect(options("Help")).toEqual(["Searching help"]);
+  });
+
+  it("announces how many its sources found, past the panel's five, or how many filters it suggests", async () => {
+    const orders: LocalSearchSource = {
+      id: "orders",
+      label: "Orders",
+      search: (query) =>
+        Array.from({ length: 12 }, (_, index) => ({
+          id: String(index),
+          label: `Order ${String(1000 + index)}`,
+        })).filter((order) => matchesSearch(query.text, order.label)),
+    };
+    render(<Search sources={[orders]} />);
+    await userEvent.click(field());
+    await userEvent.keyboard("order");
+    await waitFor(() => {
+      expect(within(box()).getByRole("status").textContent).toBe("12 results");
+    });
+    await userEvent.fill(field(), "status:");
+    await waitFor(() => {
+      expect(within(box()).getByRole("status").textContent).toBe(
+        "4 suggestions",
+      );
+    });
   });
 
   it("is a listbox in a plain panel: its filters described, what it found announced, every row reachable", async () => {

@@ -68,8 +68,10 @@ export interface CommandSearchLabels {
   readonly removeFilter: (token: string) => string;
   /** Describes the field while it holds finished filters, such as "Filtered by status:shipped". */
   readonly filtering: (tokens: readonly string[]) => string;
-  /** Announces how many results the groups show, such as "5 results". */
+  /** Announces how many results its sources found, such as "12 results". */
   readonly resultCount: (count: number) => string;
+  /** Announces how many filters it suggests while nothing has been found, such as "4 suggestions". */
+  readonly suggestionCount: (count: number) => string;
 }
 
 /** Props for `CommandSearch`. `ref` and other input props go to the input; `className` and `style` to the field. */
@@ -120,6 +122,8 @@ const LABELS: CommandSearchLabels = {
   filtering: (tokens) => `Filtered by ${tokens.join(", ")}`,
   resultCount: (count) =>
     count === 1 ? "1 result" : `${String(count)} results`,
+  suggestionCount: (count) =>
+    count === 1 ? "1 suggestion" : `${String(count)} suggestions`,
 };
 
 const NO_FILTERS: readonly SearchFilter[] = [];
@@ -146,6 +150,8 @@ interface PanelGroup {
   readonly label: string;
   readonly options: readonly PanelOption[];
   readonly loading: boolean;
+  /** How many results its source found, more than it shows when it found more than its limit. */
+  readonly found: number;
 }
 
 interface RemoteResult {
@@ -165,6 +171,23 @@ function isSearches(value: unknown): value is readonly string[] {
   return (
     Array.isArray(value) && value.every((entry) => typeof entry === "string")
   );
+}
+
+function keyOf(option: PanelOption): string {
+  switch (option.kind) {
+    case "filter":
+      return `filter:${option.filter.key}`;
+    case "value":
+      return `value:${option.filter.key}:${option.value}`;
+    case "recent":
+      return `recent:${option.search}`;
+    case "item":
+      return `item:${option.item.id}`;
+    default: {
+      const unknown: never = option;
+      return unknown;
+    }
+  }
 }
 
 function suggestFilters(
@@ -270,6 +293,9 @@ export function CommandSearch({
   onKeyDown,
   onFocus,
   onBlur,
+  onClick,
+  onCompositionStart,
+  onCompositionEnd,
   disabled,
   "aria-describedby": describedBy,
   ...rest
@@ -396,6 +422,7 @@ export function CommandSearch({
       label: words.filters,
       options: suggestions,
       loading: false,
+      found: 0,
     });
   if (empty && recent.length > 0)
     groups.push({
@@ -403,6 +430,7 @@ export function CommandSearch({
       label: words.recent,
       options: recent.map((search) => ({ kind: "recent", search })),
       loading: false,
+      found: 0,
     });
   if (!empty) {
     for (const source of sources) {
@@ -410,18 +438,35 @@ export function CommandSearch({
         ? remote[source.id]
         : { query: queryKey, items: localResults.get(source.id) ?? [] };
       const loading = isRemote(source) && result?.query !== queryKey;
-      const items = (result?.items ?? []).slice(0, source.limit ?? GROUP_LIMIT);
+      // A remote group keeps its last answer while a refined search is asked, but not one for a different search.
+      const kept =
+        result !== undefined &&
+        (queryKey.startsWith(result.query) ||
+          result.query.startsWith(queryKey));
+      const all = kept ? result.items : [];
+      const items = all.slice(0, source.limit ?? GROUP_LIMIT);
       if (items.length === 0 && !loading) continue;
       groups.push({
         id: `source:${source.id}`,
         label: source.label,
         options: items.map((item) => ({ kind: "item", source, item })),
         loading,
+        found: all.length,
       });
     }
   }
-  const optionId = (group: number, option: number): string =>
-    `${baseId}-option-${String(group)}-${String(option)}`;
+  // A row's id comes from its group and what it is, so it stays with its row when another group's answer
+  // arrives, and a highlight never moves onto a different result.
+  const counted = new Map<string, number>();
+  const placed = groups.map((group) => ({
+    group,
+    rows: group.options.map((option) => {
+      const id = `${baseId}-${encodeURIComponent(`${group.id}|${keyOf(option)}`)}`;
+      const seen = counted.get(id) ?? 0;
+      counted.set(id, seen + 1);
+      return { id: seen === 0 ? id : `${id}-${String(seen + 1)}`, option };
+    }),
+  }));
   const footerLink = empty
     ? filtersHref !== undefined
     : resultsHref !== undefined || onSearch !== undefined;
@@ -429,12 +474,7 @@ export function CommandSearch({
     readonly id: string;
     readonly option?: PanelOption;
   }[] = [
-    ...groups.flatMap((group, groupIndex) =>
-      group.options.map((option, optionIndex) => ({
-        id: optionId(groupIndex, optionIndex),
-        option,
-      })),
-    ),
+    ...placed.flatMap((entry) => entry.rows),
     ...(footerLink ? [{ id: footerId }] : []),
   ];
   const activeId =
@@ -450,11 +490,7 @@ export function CommandSearch({
     disabled !== true &&
     (groups.length > 0 || !empty || footerLink);
   const tokens = query.filters.map((token) => `${token.key}:${token.value}`);
-  const found = groups.reduce(
-    (count, group) =>
-      count + group.options.filter((option) => option.kind === "item").length,
-    0,
-  );
+  const found = groups.reduce((count, group) => count + group.found, 0);
   const status =
     !panelOpen || empty || groups.some((group) => group.loading)
       ? ""
@@ -464,8 +500,21 @@ export function CommandSearch({
             ? words.noResults(
                 query.text.trim() === "" ? tokens.join(" ") : query.text.trim(),
               )
-            : words.resultCount(found),
+            : found > 0
+              ? words.resultCount(found)
+              : words.suggestionCount(suggestions.length),
         ].join(". ");
+  const [announced, setAnnounced] = useState("");
+
+  // What it found is announced once typing has paused, rather than on every key.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setAnnounced(status);
+    }, timing["delay-loading"]);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [status]);
 
   // The panel takes the field's width before it first paints, and follows it as the window resizes. Radix's
   // own width variable is set while the browser is delivering ResizeObserver notifications, which would
@@ -803,6 +852,17 @@ export function CommandSearch({
           data-focused={focused ? "" : undefined}
           data-disabled={disabled ? "" : undefined}
           data-bt-control=""
+          onFocus={() => {
+            setFocused(true);
+          }}
+          onBlur={(event) => {
+            if (
+              event.relatedTarget instanceof Node &&
+              event.currentTarget.contains(event.relatedTarget)
+            )
+              return;
+            setFocused(false);
+          }}
           onMouseDown={(event) => {
             if (
               disabled === true ||
@@ -898,27 +958,29 @@ export function CommandSearch({
                 );
               }}
               onKeyDown={handleKeyDown}
-              onKeyUp={() => {
-                composed.current = false;
-              }}
-              onCompositionStart={() => {
+              onCompositionStart={(event) => {
+                onCompositionStart?.(event);
                 composing.current = true;
               }}
-              onCompositionEnd={() => {
+              onCompositionEnd={(event) => {
+                onCompositionEnd?.(event);
                 composing.current = false;
+                // WebKit sends the key that ended the composition after compositionend.
                 composed.current = true;
+                requestAnimationFrame(() => {
+                  composed.current = false;
+                });
               }}
-              onClick={() => {
+              onClick={(event) => {
+                onClick?.(event);
                 setDismissed(false);
               }}
               onFocus={(event) => {
                 onFocus?.(event);
-                setFocused(true);
                 setDismissed(false);
               }}
               onBlur={(event) => {
                 onBlur?.(event);
-                setFocused(false);
                 composed.current = false;
               }}
               data-bt-part="command-search-input"
@@ -953,7 +1015,7 @@ export function CommandSearch({
           <VisuallyHidden.Root id={tokensId}>
             {tokens.length > 0 ? words.filtering(tokens) : null}
           </VisuallyHidden.Root>
-          <VisuallyHidden.Root role="status">{status}</VisuallyHidden.Root>
+          <VisuallyHidden.Root role="status">{announced}</VisuallyHidden.Root>
         </motion.div>
       </Popover.Anchor>
       <Popover.Content
@@ -995,7 +1057,7 @@ export function CommandSearch({
             aria-owns={footerLink ? footerId : undefined}
             data-bt-part="groups"
           >
-            {groups.map((group, groupIndex) => (
+            {placed.map(({ group, rows: groupRows }) => (
               <div
                 key={group.id}
                 role="group"
@@ -1010,9 +1072,7 @@ export function CommandSearch({
                 >
                   {group.label}
                 </div>
-                {group.options.map((option, optionIndex) =>
-                  renderOption(option, optionId(groupIndex, optionIndex)),
-                )}
+                {groupRows.map(({ id, option }) => renderOption(option, id))}
                 {group.loading ? (
                   <div
                     role="option"
@@ -1060,7 +1120,13 @@ export function CommandSearch({
         {empty ? (
           filtersHref === undefined ? null : (
             <div data-bt-part="command-search-footer">
-              <a href={filtersHref} {...footerProps(activeId === footerId)}>
+              <a
+                href={filtersHref}
+                {...footerProps(activeId === footerId)}
+                onClick={() => {
+                  finish(true);
+                }}
+              >
                 {words.moreFilters}
               </a>
             </div>

@@ -310,4 +310,14 @@
       text-decoration: underline;
     }
   }
+
+  /* The footer's link is a row the arrow keys reach; its band shows it's the one Enter opens. */
+  .bt-command-search-panel
+    [data-bt-part="command-search-footer"]:has(> [data-active]) {
+    background-color: var(--bt-bg-control-active);
+  }
+
+  .bt-command-search-panel [data-bt-part="footer-link"][data-active] {
+    text-decoration: underline;
+  }
 }
