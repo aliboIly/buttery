@@ -148,6 +148,33 @@ describe("AppPage", () => {
     expect(box("header").left - box("frame").left).toBe(16);
   });
 
+  it("frames itself on its own, outside a shell: its padding follows its own width and its header starts 24px down", () => {
+    render(
+      <div style={{ inlineSize: "1100px" }}>
+        <Orders />
+      </div>,
+    );
+    expect(box("header").left - box("frame").left).toBe(32);
+    expect(box("header").top - box("frame").top).toBe(24);
+    cleanup();
+    render(
+      <div style={{ inlineSize: "800px" }}>
+        <Orders />
+      </div>,
+    );
+    expect(box("header").left - box("frame").left).toBe(24);
+    cleanup();
+    render(
+      <div
+        style={{ display: "grid", justifyItems: "center", inlineSize: "500px" }}
+      >
+        <Orders />
+      </div>,
+    );
+    expect(box("frame").width).toBe(500);
+    expect(box("header").left - box("frame").left).toBe(16);
+  });
+
   it("puts its sections 24px under the header and 32px apart, each named by its title-md heading", () => {
     inShell(1440, <Orders />);
     const sections = screen.getAllByRole("region");
