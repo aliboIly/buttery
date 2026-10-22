@@ -19,7 +19,7 @@ export const page: DocsPage = {
   title: "SidePanel",
   description:
     "A panel beside the page, such as help, that narrows the page instead of covering it.",
-  order: 60,
+  order: 110,
   status: "new",
   since: "0.7.0",
 };

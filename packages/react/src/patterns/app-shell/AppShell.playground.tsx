@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Center, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   AppShell,
@@ -12,6 +12,16 @@ import {
   Stage,
 } from "@buttery/react";
 import { Redo2, Undo2 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "AppShell",
+  description:
+    'A whole app screen: an editor (a header and a stage beside an inspector that becomes a sheet on narrow screens) or, with layout="sidebar", a dashboard (a sidebar beside a top bar and the page).',
+  order: 120,
+  status: "stable",
+  since: "0.5.0",
+};
 
 const BACKDROP = gradients.find((preset) => preset.id === "mint");
 

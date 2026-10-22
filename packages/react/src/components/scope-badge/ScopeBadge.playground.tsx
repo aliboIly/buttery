@@ -7,7 +7,7 @@ export const page: DocsPage = {
   title: "ScopeBadge",
   description:
     "A badge after a settings page's title that says what its settings apply to.",
-  order: 70,
+  order: 130,
   status: "new",
   since: "0.7.0",
 };

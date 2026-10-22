@@ -1,5 +1,15 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { BarChart } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "BarChart",
+  description:
+    "Values per period or category as bars, side by side for each series, with a column that highlights on hover.",
+  order: 30,
+  status: "new",
+  since: "0.7.0",
+};
 
 const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

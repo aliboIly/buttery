@@ -6,7 +6,7 @@ export const page: DocsPage = {
   title: "Breadcrumbs",
   description:
     "The trail of pages above a nested page, as links above its title.",
-  order: 10,
+  order: 20,
   status: "new",
   since: "0.7.0",
 };

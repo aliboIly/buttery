@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   AnchorGrid,
@@ -18,6 +18,16 @@ import {
 } from "@buttery/react";
 import type { Anchor, Swatch, TiltValue } from "@buttery/react";
 import { ArrowLeftRight, Copy } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "Inspector",
+  description:
+    "A settings panel of titled sections holding rows of controls, with a footer for its main actions.",
+  order: 200,
+  status: "stable",
+  since: "0.5.0",
+};
 
 type Edge = "plain" | "outline" | "glow";
 

@@ -6,7 +6,7 @@ export const page: DocsPage = {
   title: "Plans",
   description:
     "Plans side by side under one control group, their parts lined up.",
-  order: 60,
+  order: 240,
   status: "new",
   since: "0.7.0",
 };

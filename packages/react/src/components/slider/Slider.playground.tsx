@@ -1,8 +1,18 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Slider } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "Slider",
+  description:
+    "A labeled slider row: the label and its value badge beside a track you drag, click or step with the keyboard.",
+  order: 90,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function RotationDemo(): ReactElement {
   const [angle, setAngle] = useState(-8);

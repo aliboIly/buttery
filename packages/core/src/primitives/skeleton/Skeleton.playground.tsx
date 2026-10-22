@@ -1,5 +1,15 @@
 import { Skeleton, Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "Skeleton",
+  description:
+    "A shimmering placeholder for something still loading, shaped like the text or block it stands in for.",
+  order: 90,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

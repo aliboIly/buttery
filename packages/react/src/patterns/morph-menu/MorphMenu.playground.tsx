@@ -1,7 +1,17 @@
 import type { ReactElement } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { ArrowLink, MorphMenu } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "MorphMenu",
+  description:
+    "A row of menu triggers whose menus open in one floating panel that reshapes from menu to menu instead of closing and reopening.",
+  order: 40,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function Story(): ReactElement {
   return (

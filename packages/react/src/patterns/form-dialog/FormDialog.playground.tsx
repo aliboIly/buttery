@@ -8,7 +8,7 @@ export const page: DocsPage = {
   title: "FormDialog",
   description:
     "A dialog that asks for a value or two, Submit waiting until the form is valid.",
-  order: 50,
+  order: 60,
   status: "new",
   since: "0.7.0",
 };

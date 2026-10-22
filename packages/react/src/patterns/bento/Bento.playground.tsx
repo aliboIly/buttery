@@ -1,8 +1,18 @@
 import type { ReactElement, ReactNode } from "react";
 import { Center, Inline, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Bento, Page, Section } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "Bento",
+  description:
+    "A grid of feature cards on a 12-column page grid, each spanning 4, 6, 8 or 12 columns and one or two rows.",
+  order: 140,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function fill(id: string): string | undefined {
   const preset = gradients.find((candidate) => candidate.id === id);

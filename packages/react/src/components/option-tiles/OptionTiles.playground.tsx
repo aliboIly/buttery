@@ -5,7 +5,7 @@ export const page: DocsPage = {
   section: "components/selection",
   title: "OptionTiles",
   description: "Several choices at once, as tiles that take a press anywhere.",
-  order: 75,
+  order: 50,
   status: "new",
   since: "0.7.0",
 };

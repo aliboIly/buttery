@@ -1,6 +1,16 @@
 import type { ReactElement } from "react";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { LogoStrip, Page, Section } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "LogoStrip",
+  description:
+    "A row of partner or customer marks in equal cells, each fitted into a 120 by 24 box and drawn in one quiet color.",
+  order: 210,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function Wordmark({
   name,

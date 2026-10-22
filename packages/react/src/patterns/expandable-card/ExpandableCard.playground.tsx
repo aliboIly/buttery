@@ -1,8 +1,18 @@
 import type { ReactElement, ReactNode } from "react";
 import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Bento, Button, ExpandableCard, Page, Section } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "ExpandableCard",
+  description:
+    "A bento card that opens into a dialog by turning into it, its title travelling along, and closes back into the card.",
+  order: 50,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function fill(id: string): string | undefined {
   const preset = gradients.find((candidate) => candidate.id === id);

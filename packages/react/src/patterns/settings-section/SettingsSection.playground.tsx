@@ -8,7 +8,7 @@ export const page: DocsPage = {
   title: "SettingsSection",
   description:
     "A settings page's section: a heading, one line, one action, then its content.",
-  order: 31,
+  order: 280,
   status: "new",
   since: "0.7.0",
 };

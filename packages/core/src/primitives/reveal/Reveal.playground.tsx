@@ -1,5 +1,15 @@
 import { Grid, Reveal, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "Reveal",
+  description:
+    "Fades and lifts its content in the first time it scrolls into view.",
+  order: 140,
+  status: "stable",
+  since: "0.3.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

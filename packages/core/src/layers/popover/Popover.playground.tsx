@@ -7,7 +7,17 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "Popover",
+  description:
+    "A floating panel anchored to a trigger, on the floating surface in the dropdown layer.",
+  order: 100,
+  status: "stable",
+  since: "0.2.0",
+};
 
 function Trigger({ label }: { readonly label: string }): ReactElement {
   return (

@@ -1,8 +1,18 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Morph, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients, solids } from "@buttery/core/palettes";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "Morph",
+  description:
+    "One container whose content swaps or grows: the height follows the content and swapped content crossfades in place.",
+  order: 120,
+  status: "stable",
+  since: "0.3.0",
+};
 
 function FillDemo(): ReactElement {
   const [fill, setFill] = useState<"blend" | "flat">("blend");

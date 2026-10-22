@@ -2,8 +2,18 @@ import { Clipboard, FileImage } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SplitButton } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "SplitButton",
+  description:
+    "A primary action with a menu of related ones beside it: two halves of one pill, each its own button.",
+  order: 90,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function ExportDemo(): ReactElement {
   const [last, setLast] = useState("Nothing yet");

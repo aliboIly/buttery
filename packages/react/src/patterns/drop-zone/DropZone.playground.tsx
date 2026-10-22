@@ -1,7 +1,17 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, DropZone, EmptyState } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "DropZone",
+  description:
+    "An area that takes files dropped on it, pasted or opened with a shortcut, and says so while a file is held over it.",
+  order: 40,
+  status: "stable",
+  since: "0.5.0",
+};
 
 function ImageDrop(): ReactElement {
   const [name, setName] = useState<string | null>(null);

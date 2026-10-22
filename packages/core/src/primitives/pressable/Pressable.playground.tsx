@@ -1,5 +1,15 @@
 import { Inline, Pressable, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "Pressable",
+  description:
+    "An unstyled button with buttery's press feedback and focus ring.",
+  order: 70,
+  status: "stable",
+  since: "0.2.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

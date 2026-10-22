@@ -1,5 +1,15 @@
 import { Grid, Stagger, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "Stagger",
+  description:
+    "Brings a group of items in one after another the first time it scrolls into view.",
+  order: 160,
+  status: "stable",
+  since: "0.3.0",
+};
 
 const CARDS = [
   "Templates",

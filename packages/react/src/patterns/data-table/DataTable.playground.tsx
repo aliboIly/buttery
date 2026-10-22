@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Menu, Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, DataTable, StatusBadge } from "@buttery/react";
 import type { DataTableColumn, DataTableSort } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "DataTable",
+  description:
+    "A table of records: columns with minimum widths and shares, selection, sorting, row actions, a sticky header and first column, skeleton rows and pagination.",
+  order: 60,
+  status: "new",
+  since: "0.7.0",
+};
 
 interface Order {
   readonly id: string;

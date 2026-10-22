@@ -1,6 +1,16 @@
 import { Grid } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { MetricCard } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "MetricCard",
+  description:
+    "One metric on a card: its title, value and change against the previous period, a small chart of both periods, and when it was updated.",
+  order: 120,
+  status: "new",
+  since: "0.7.0",
+};
 
 const DAYS = Array.from({ length: 14 }, (_, day) => `Oct ${String(day + 1)}`);
 const dollars = new Intl.NumberFormat("en-US", {

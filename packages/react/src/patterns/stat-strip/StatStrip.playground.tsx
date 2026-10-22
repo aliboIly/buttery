@@ -1,5 +1,15 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Page, Section, Stat, StatStrip } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "StatStrip",
+  description:
+    "Equal columns of headline numbers, each with a hairline and a label, the numbers counting up once as they come into view.",
+  order: 330,
+  status: "stable",
+  since: "0.6.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

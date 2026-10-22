@@ -1,8 +1,18 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SegmentedControl } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "SegmentedControl",
+  description:
+    "One choice out of a few, shown side by side in a track, with the selection sliding between them.",
+  order: 80,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function FillDemo(): ReactElement {
   const [fill, setFill] = useState("Blend");

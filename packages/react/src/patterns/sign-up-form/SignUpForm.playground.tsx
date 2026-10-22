@@ -1,6 +1,16 @@
 import { Surface } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SignUpForm, toast } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "SignUpForm",
+  description:
+    "A sign-up form: name, email, a new password with its rules, the terms, and errors summed up where they can be fixed.",
+  order: 300,
+  status: "stable",
+  since: "0.4.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

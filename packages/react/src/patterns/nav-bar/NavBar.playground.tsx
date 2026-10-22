@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   ArrowLink,
@@ -11,6 +11,16 @@ import {
   Section,
 } from "@buttery/react";
 import type { NavBarBehavior } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "NavBar",
+  description:
+    "The bar across the top of a page: the brand, menus that open in one morphing panel, and the calls to action, static, sticky or auto-hiding.",
+  order: 50,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function fill(id: string): string | undefined {
   const preset = gradients.find((candidate) => candidate.id === id);

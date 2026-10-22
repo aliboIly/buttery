@@ -1,6 +1,16 @@
 import type { ReactElement } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, SpaceValue } from "@buttery/core";
+import type { DemoSection, DocsPage, SpaceValue } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "Stack",
+  description:
+    "Lays children out in a column with a gap from the spacing scale.",
+  order: 200,
+  status: "stable",
+  since: "0.2.0",
+};
 
 function Box({ label }: { readonly label: string }): ReactElement {
   return (

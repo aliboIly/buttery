@@ -1,8 +1,18 @@
 import type { ReactElement } from "react";
 import { Center, Inline, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Button, Dialog } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "Dialog",
+  description:
+    "A modal dialog that dims the page, traps focus and hands it back when it closes.",
+  order: 40,
+  status: "stable",
+  since: "0.6.0",
+};
 
 const LILAC = gradients.find((preset) => preset.id === "lilac");
 

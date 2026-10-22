@@ -1,5 +1,15 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { LineChart } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "LineChart",
+  description:
+    "Values over time as smooth lines, the comparison in gray beneath, with a crosshair and tooltip that follow the pointer.",
+  order: 110,
+  status: "new",
+  since: "0.7.0",
+};
 
 const DAYS = Array.from({ length: 14 }, (_, day) => `Oct ${String(day + 1)}`);
 const dollars = new Intl.NumberFormat("en-US", {

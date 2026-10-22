@@ -7,7 +7,17 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "Loop",
+  description:
+    "Cycles a living demo through its steps, pausing off screen and under reduced motion.",
+  order: 110,
+  status: "stable",
+  since: "0.3.0",
+};
 
 const TOTALS = ["1,204", "1,318", "1,472"] as const;
 

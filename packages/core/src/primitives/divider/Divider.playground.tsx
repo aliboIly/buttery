@@ -1,5 +1,14 @@
 import { Divider, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "Divider",
+  description: "A 1px line in the border color between groups of content.",
+  order: 130,
+  status: "stable",
+  since: "0.2.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

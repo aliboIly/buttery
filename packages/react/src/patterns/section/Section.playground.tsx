@@ -1,7 +1,17 @@
 import type { ReactElement } from "react";
 import { Grid, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Page, Section } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "Section",
+  description:
+    "A band of a page: room above and below, an optional heading and body, and its content in a Container.",
+  order: 190,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function Tile({ label }: { readonly label: string }): ReactElement {
   return (

@@ -1,6 +1,16 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Switch } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "Switch",
+  description:
+    "A switch that turns a setting on or off at once, with its label beside it.",
+  order: 110,
+  status: "stable",
+  since: "0.4.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

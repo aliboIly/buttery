@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Chip, TiltPad } from "@buttery/react";
 import type { TiltValue } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "TiltPad",
+  description:
+    "A small pad for tilting something in 3D: drag the knob or use the arrow keys.",
+  order: 120,
+  status: "stable",
+  since: "0.5.0",
+};
 
 const LEVEL: TiltValue = { x: 0, y: 0 };
 

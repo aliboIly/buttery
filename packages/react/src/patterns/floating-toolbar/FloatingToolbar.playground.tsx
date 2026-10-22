@@ -1,8 +1,18 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, FloatingToolbar } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "FloatingToolbar",
+  description:
+    "A floating pill of actions anchored under an element, such as crop mode's size, Reset, Cancel and Apply.",
+  order: 40,
+  status: "stable",
+  since: "0.5.0",
+};
 
 function CropDemo(): ReactElement {
   const frame = useRef<HTMLDivElement>(null);

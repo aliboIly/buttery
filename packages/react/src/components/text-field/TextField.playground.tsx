@@ -1,7 +1,17 @@
 import { Search } from "lucide-react";
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { TextField } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "TextField",
+  description:
+    "A labelled box for a line of text, with a hint, an error and optional icons.",
+  order: 110,
+  status: "stable",
+  since: "0.4.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

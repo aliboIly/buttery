@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { AnchorGrid } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "AnchorGrid",
+  description:
+    "A 3\u00d73 grid of dots for picking where something sits: a corner, an edge or the center.",
+  order: 10,
+  status: "stable",
+  since: "0.5.0",
+};
 
 function Placement(): ReactElement {
   const [anchor, setAnchor] = useState<Anchor>("center");

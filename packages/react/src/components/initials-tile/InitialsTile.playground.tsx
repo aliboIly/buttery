@@ -1,6 +1,16 @@
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { InitialsTile } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "InitialsTile",
+  description:
+    "A square tile with up to two initials, standing in for a workspace or team that has no picture.",
+  order: 90,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

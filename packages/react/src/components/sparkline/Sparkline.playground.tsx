@@ -1,7 +1,17 @@
 import { Grid, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Sparkline } from "@buttery/react";
 import type { ChartColor } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "Sparkline",
+  description:
+    "A trend at a glance: one small line, no axes, its last point marked, for a table row or beside a number.",
+  order: 140,
+  status: "new",
+  since: "0.7.0",
+};
 
 const ROWS: readonly {
   readonly name: string;

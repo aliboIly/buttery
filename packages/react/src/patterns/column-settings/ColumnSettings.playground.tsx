@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { ColumnSettings } from "@buttery/react";
 import type { ColumnLayout } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "ColumnSettings",
+  description:
+    "A button that opens a list of a table's columns to show, hide and reorder by dragging or with Alt and the arrow keys.",
+  order: 50,
+  status: "new",
+  since: "0.7.0",
+};
 
 const COLUMNS = [
   { id: "order", label: "Order" },

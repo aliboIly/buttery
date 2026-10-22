@@ -1,7 +1,17 @@
 import { Menu, Surface } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { AccountMenu } from "@buttery/react";
 import { LogOut, Plus, Settings, UserRound } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "AccountMenu",
+  description:
+    "The workspace switcher at the top of a sidebar and its menu: the workspace, switching to another, the person signed in, and signing out.",
+  order: 10,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

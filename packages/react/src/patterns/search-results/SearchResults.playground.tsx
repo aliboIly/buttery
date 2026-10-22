@@ -8,7 +8,7 @@ export const page: DocsPage = {
   title: "SearchResults",
   description:
     "Every result for a search on one page, a section for each place it looked.",
-  order: 70,
+  order: 250,
   status: "new",
   since: "0.7.0",
 };

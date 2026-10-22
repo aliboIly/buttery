@@ -8,7 +8,17 @@ import {
   SharedIndicator,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "SharedIndicator",
+  description:
+    "A selection indicator that slides from the old item to the new one instead of jumping.",
+  order: 150,
+  status: "stable",
+  since: "0.3.0",
+};
 
 const EDGES = ["Plain", "Outline", "Glow"] as const;
 

@@ -1,4 +1,4 @@
-import type { DemoFrame, DemoSection } from "@buttery/core";
+import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
 import { SettingsIndex } from "@buttery/react";
 import {
   Bell,
@@ -12,6 +12,16 @@ import {
   User,
   Users,
 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "SettingsIndex",
+  description:
+    "A settings home page: titled sections of links, each with an icon, a title and a line on what's inside, in up to three columns.",
+  order: 80,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const frame: DemoFrame = "page";
 

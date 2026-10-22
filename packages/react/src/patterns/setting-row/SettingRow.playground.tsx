@@ -6,7 +6,7 @@ export const page: DocsPage = {
   title: "SettingRow",
   description:
     "One setting: what it is, its current state, and its one action.",
-  order: 32,
+  order: 260,
   status: "new",
   since: "0.7.0",
 };

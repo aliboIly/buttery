@@ -1,6 +1,16 @@
 import { Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Page, Section } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "Page",
+  description:
+    "A marketing or content page: a column of sections that the page grid, side padding and headline sizes follow.",
+  order: 180,
+  status: "stable",
+  since: "0.6.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

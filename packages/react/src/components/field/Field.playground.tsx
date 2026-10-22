@@ -1,7 +1,17 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Field, SegmentedControl, Select } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "Field",
+  description:
+    "A label, an optional hint and an error message wired to any form control by id.",
+  order: 50,
+  status: "stable",
+  since: "0.4.0",
+};
 
 type Format = "png" | "jpg" | "webp";
 

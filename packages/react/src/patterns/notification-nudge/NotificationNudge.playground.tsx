@@ -1,5 +1,5 @@
 import { Inline, Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import {
   Button,
   IconButton,
@@ -9,6 +9,16 @@ import {
 import { Bell } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "NotificationNudge",
+  description:
+    "A small popover that points at a button with news, once: a title, a line, an action and Later, opening by itself without taking focus.",
+  order: 90,
+  status: "new",
+  since: "0.7.0",
+};
 
 function TopBarNudge(): ReactElement {
   const [round, setRound] = useState(0);

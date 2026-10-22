@@ -1,6 +1,16 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SearchField, TopBar } from "@buttery/react";
 import { Bell, CircleHelp, Settings } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "TopBar",
+  description:
+    "The bar over a dashboard's page: search at its start, icon actions and a round create button at its end.",
+  order: 140,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

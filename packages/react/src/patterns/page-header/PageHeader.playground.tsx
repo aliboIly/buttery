@@ -1,6 +1,16 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { PageHeader } from "@buttery/react";
 import { Download, Plus, Upload } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "PageHeader",
+  description:
+    "An app page's title with an optional value and its explanation, and the page's actions at the end, folding into a menu.",
+  order: 230,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

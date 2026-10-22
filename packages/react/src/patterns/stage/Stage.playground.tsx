@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Center, Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   Button,
@@ -10,6 +10,16 @@ import {
   Stage,
 } from "@buttery/react";
 import type { StageSize } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "Stage",
+  description:
+    "The canvas an editor works on: fitted to the space at its shape, with artwork that may overlap its edges and a crop mode.",
+  order: 320,
+  status: "stable",
+  since: "0.5.0",
+};
 
 type Shape = "16:9" | "1:1" | "9:16";
 

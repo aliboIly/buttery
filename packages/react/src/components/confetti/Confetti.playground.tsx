@@ -1,7 +1,17 @@
 import type { ReactElement } from "react";
 import { Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { celebrate } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "Confetti",
+  description:
+    "A short burst of confetti from an element, for a genuine finish such as completing onboarding.",
+  order: 30,
+  status: "stable",
+  since: "0.3.0",
+};
 
 function CelebrateDemo(): ReactElement {
   return (

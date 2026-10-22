@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, FilterBar, FilterPill } from "@buttery/react";
 import { Download } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "FilterBar",
+  description:
+    "A row of filter pills over a list that wrap as they're applied, with Clear filters and actions, folding into one button on a phone.",
+  order: 40,
+  status: "new",
+  since: "0.7.0",
+};
 
 function Filters(): ReactElement {
   const [status, setStatus] = useState<string | undefined>("Unpaid");

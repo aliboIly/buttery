@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { ColorDot, IconButton } from "@buttery/react";
 import { ArrowLeftRight } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "ColorDot",
+  description:
+    "A small round swatch that opens buttery's color picker in a popover to choose any color.",
+  order: 30,
+  status: "stable",
+  since: "0.5.0",
+};
 
 function GradientColors(): ReactElement {
   const [from, setFrom] = useState("#a5b4fc");

@@ -1,6 +1,16 @@
 import type { ReactElement } from "react";
 import { Inline, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "Inline",
+  description:
+    "Lays children out in a row with a gap from the spacing scale, vertically centered by default.",
+  order: 160,
+  status: "stable",
+  since: "0.2.0",
+};
 
 function Box({ label }: { readonly label: string }): ReactElement {
   return (

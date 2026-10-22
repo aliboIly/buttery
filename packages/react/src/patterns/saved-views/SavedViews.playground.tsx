@@ -1,7 +1,17 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Menu } from "@buttery/core";
 import { SavedViews } from "@buttery/react";
 import { Copy, Pencil, Trash2 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "SavedViews",
+  description:
+    "A track of saved views of a list, the chosen one on a sliding raised pill, with every view and its actions in a menu.",
+  order: 70,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

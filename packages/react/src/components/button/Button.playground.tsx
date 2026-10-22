@@ -2,9 +2,19 @@ import { Download, Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button } from "@buttery/react";
 import type { ButtonVariant } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "Button",
+  description:
+    "A button for actions: four variants, three sizes, a loading state, icons and a navigation arrow.",
+  order: 20,
+  status: "stable",
+  since: "0.4.0",
+};
 
 const VARIANTS: readonly ButtonVariant[] = [
   "primary",

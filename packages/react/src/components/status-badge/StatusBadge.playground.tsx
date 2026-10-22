@@ -1,7 +1,17 @@
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { StatusBadge } from "@buttery/react";
 import { ArrowDownRight, ArrowUpRight, Lightbulb } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "StatusBadge",
+  description:
+    "A short label for a record's state, such as Paid or Overdue, in a tone that repeats what it says.",
+  order: 100,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

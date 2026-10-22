@@ -1,5 +1,20 @@
 import { displayRoles, Stack, Surface, Text, textRoles } from "@buttery/core";
-import type { DemoSection, TextTone, TextVariant } from "@buttery/core";
+import type {
+  DemoSection,
+  DocsPage,
+  TextTone,
+  TextVariant,
+} from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "Text",
+  description:
+    "Text in one of buttery's type roles, with size, line height, weight, tracking and color from the tokens.",
+  order: 160,
+  status: "stable",
+  since: "0.2.0",
+};
 
 const ROLES = [
   ...Object.keys(textRoles),

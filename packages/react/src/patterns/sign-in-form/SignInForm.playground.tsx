@@ -1,7 +1,17 @@
 import { KeyRound, Mail } from "lucide-react";
 import { Surface } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SignInForm, toast } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "SignInForm",
+  description:
+    "A sign-in form: email, password, keep me signed in, other ways to sign in, and errors summed up where they can be fixed.",
+  order: 290,
+  status: "stable",
+  since: "0.4.0",
+};
 
 /** Waits a moment, as a server would, then lets sam@example.com in with any password over 7 characters. */
 async function signIn({

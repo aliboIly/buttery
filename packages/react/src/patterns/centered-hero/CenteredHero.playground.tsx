@@ -1,6 +1,16 @@
 import { Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, CenteredHero, Page } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "CenteredHero",
+  description:
+    "A page's opening band: a centered two-tone headline, a line and actions above a full-width visual that assembles.",
+  order: 160,
+  status: "stable",
+  since: "0.6.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

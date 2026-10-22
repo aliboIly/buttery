@@ -2,9 +2,19 @@ import { Bell, HelpCircle, Redo2, Undo2, X } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { IconButton } from "@buttery/react";
 import { Grid3x3 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "IconButton",
+  description:
+    "A square button that shows only an icon, named by a label that also appears as its tooltip.",
+  order: 50,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function ToggleDemo(): ReactElement {
   const [on, setOn] = useState(false);

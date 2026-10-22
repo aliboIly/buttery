@@ -8,7 +8,7 @@ export const page: DocsPage = {
   title: "HoverActions",
   description:
     "A row whose actions show on hover and keyboard focus, with an accent bar.",
-  order: 40,
+  order: 80,
   status: "new",
   since: "0.7.0",
 };

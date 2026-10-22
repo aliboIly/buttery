@@ -1,6 +1,16 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { TextArea } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "TextArea",
+  description:
+    "A labelled box for longer text that grows with what's typed up to a limit, then scrolls.",
+  order: 100,
+  status: "stable",
+  since: "0.4.0",
+};
 
 const LONG = Array.from(
   { length: 12 },

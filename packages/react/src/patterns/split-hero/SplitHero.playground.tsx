@@ -1,8 +1,18 @@
 import type { ReactElement } from "react";
 import { Stack, Stagger, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Button, Page, SplitHero } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "SplitHero",
+  description:
+    "A page's opening band: a two-tone headline, a line and actions beside a visual that assembles as it arrives.",
+  order: 310,
+  status: "stable",
+  since: "0.6.0",
+};
 
 const LILAC = gradients.find((preset) => preset.id === "lilac");
 

@@ -9,7 +9,17 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "OverflowCluster",
+  description:
+    'A row of actions that moves its lowest-priority items into a "More" menu instead of wrapping, overlapping or shrinking.',
+  order: 170,
+  status: "stable",
+  since: "0.2.0",
+};
 
 const ACTIONS = [
   { label: "Undo", icon: Undo2, priority: 5 },

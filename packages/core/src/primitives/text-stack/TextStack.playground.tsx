@@ -1,5 +1,15 @@
 import { Surface, TextStack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "TextStack",
+  description:
+    "A title with body text and a caption under it, spaced by the gaps between trimmed text: for dialogs, empty states and page sections.",
+  order: 170,
+  status: "stable",
+  since: "0.4.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

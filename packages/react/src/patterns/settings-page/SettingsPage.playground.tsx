@@ -13,7 +13,7 @@ export const page: DocsPage = {
   title: "Settings pages",
   description:
     "A settings detail page in the page grammar: breadcrumbs, a title, one line, then sections.",
-  order: 30,
+  order: 270,
   status: "new",
   since: "0.7.0",
 };

@@ -1,7 +1,17 @@
 import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Footer, Page } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "Footer",
+  description:
+    "The foot of a page: a brand column and columns of links on the page grid, then small print under a divider.",
+  order: 180,
+  status: "stable",
+  since: "0.6.0",
+};
 
 const COLUMNS = [
   {

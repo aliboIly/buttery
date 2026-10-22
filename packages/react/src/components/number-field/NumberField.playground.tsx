@@ -1,8 +1,18 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { NumberField } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "NumberField",
+  description:
+    "A small field for an exact number, with arrow-key steps, a stepper on hover and scrubbing by dragging its label.",
+  order: 60,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function SizeDemo(): ReactElement {
   const [width, setWidth] = useState(1080);

@@ -1,6 +1,16 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { AnnouncementDialog, Button } from "@buttery/react";
 import type { ReactElement } from "react";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "AnnouncementDialog",
+  description:
+    "What's new, once: a large dialog with a title, short sections and an illustration, a Got it button and a link to read more.",
+  order: 10,
+  status: "new",
+  since: "0.7.0",
+};
 
 function WeekPlan(): ReactElement {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];

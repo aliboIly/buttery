@@ -1,10 +1,20 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { OverflowCluster, Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { HeaderBar, IconButton, Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
 import { CircleHelp, Redo2, Trash2, Undo2 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "HeaderBar",
+  description:
+    "An app's top bar: its mark and title, then actions that fold into a More menu when there isn't room.",
+  order: 190,
+  status: "stable",
+  since: "0.5.0",
+};
 
 type Shape = "16:9" | "4:3" | "1:1";
 

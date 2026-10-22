@@ -1,6 +1,16 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SearchField } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "SearchField",
+  description:
+    "A field for finding things: a search icon, a clear button once it holds text, and an optional shortcut that focuses it.",
+  order: 80,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

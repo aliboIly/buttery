@@ -1,10 +1,20 @@
 import { Inline, ReflowGroup, Stack, Text, useReflow } from "@buttery/core";
-import type { DemoFrame, DemoSection } from "@buttery/core";
+import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
 import { Banner, Button } from "@buttery/react";
 import { Printer } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "Banner",
+  description:
+    "A one-line suggestion across a page: an icon, the message, an action and how long it takes, dismissed for good once closed.",
+  order: 10,
+  status: "new",
+  since: "0.7.0",
+};
 
 function Below(): ReactElement {
   return (

@@ -1,6 +1,15 @@
 import type { ReactElement } from "react";
 import { Grid, Surface, Text } from "@buttery/core";
-import type { DemoSection, GridColumns } from "@buttery/core";
+import type { DemoSection, DocsPage, GridColumns } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "Grid",
+  description: "Equal columns with a gap from the spacing scale.",
+  order: 150,
+  status: "stable",
+  since: "0.2.0",
+};
 
 function Cell({ label }: { readonly label: string }): ReactElement {
   return (

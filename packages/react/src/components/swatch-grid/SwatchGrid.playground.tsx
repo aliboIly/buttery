@@ -1,7 +1,17 @@
 import { gradientCss, gradients, solids } from "@buttery/core/palettes";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SwatchGrid } from "@buttery/react";
 import type { Swatch } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "SwatchGrid",
+  description:
+    "A grid of color and gradient swatches to pick one from, like radio buttons.",
+  order: 100,
+  status: "stable",
+  since: "0.5.0",
+};
 
 const GRADIENTS: readonly Swatch[] = gradients.map((preset) => ({
   value: preset.id,

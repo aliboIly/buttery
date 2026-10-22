@@ -7,7 +7,7 @@ export const page: DocsPage = {
   title: "ConsequenceDialog",
   description:
     "A dialog that spells out what saying yes will do before anyone confirms.",
-  order: 40,
+  order: 30,
   status: "new",
   since: "0.7.0",
 };

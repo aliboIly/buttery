@@ -1,8 +1,18 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, PageDots } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "PageDots",
+  description:
+    "A row of dots showing which step of a few is current, the current one a pill that slides on spring.snappy.",
+  order: 60,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function Steps(): ReactElement {
   const [step, setStep] = useState(1);

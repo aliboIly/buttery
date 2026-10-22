@@ -1,5 +1,15 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { AreaChart } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "AreaChart",
+  description:
+    "Values over time as lines with their area filled in faintly, for totals that build up, with a crosshair and tooltip.",
+  order: 10,
+  status: "new",
+  since: "0.7.0",
+};
 
 const MONTHS = [
   "Nov",

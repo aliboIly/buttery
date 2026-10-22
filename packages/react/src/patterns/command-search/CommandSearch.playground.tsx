@@ -13,7 +13,7 @@ export const page: DocsPage = {
   title: "CommandSearch",
   description:
     "The top bar's search: grouped results from typed sources, filters and recent searches.",
-  order: 20,
+  order: 30,
   status: "new",
   since: "0.7.0",
 };

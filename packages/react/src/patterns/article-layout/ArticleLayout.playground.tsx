@@ -1,7 +1,17 @@
 import type { ReactElement } from "react";
 import { Stack, Text, TextStack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { ArticleLayout, Page, Section } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "ArticleLayout",
+  description:
+    "An article beside a sticky aside on the page grid: 8 columns for the article, the last 3 for the aside.",
+  order: 130,
+  status: "stable",
+  since: "0.6.0",
+};
 
 const SECTIONS = [
   {

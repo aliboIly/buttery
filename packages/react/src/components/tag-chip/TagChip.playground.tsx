@@ -6,7 +6,7 @@ export const page: DocsPage = {
   section: "components/data-display",
   title: "TagChip",
   description: "A small outlined tag with a colored dot.",
-  order: 80,
+  order: 150,
   status: "new",
   since: "0.7.0",
 };

@@ -1,9 +1,19 @@
 import { Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { ArrowLink, Button, SetupGuide } from "@buttery/react";
 import type { SetupTask } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "SetupGuide",
+  description:
+    "A floating checklist in the bottom-end lane: progress, the next task, and every task when unfolded, remembered across visits.",
+  order: 80,
+  status: "new",
+  since: "0.7.0",
+};
 
 const TASKS: readonly Omit<SetupTask, "done">[] = [
   {

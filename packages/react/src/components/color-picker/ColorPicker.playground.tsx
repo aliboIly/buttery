@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { ColorPicker } from "@buttery/react";
 import { solids } from "@buttery/core/palettes";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "ColorPicker",
+  description:
+    "A color area, a hue track and a hex code for picking any color, with optional presets.",
+  order: 10,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function Backdrop(): ReactElement {
   const [color, setColor] = useState("#7c9cf5");

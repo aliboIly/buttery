@@ -7,7 +7,7 @@ export const page: DocsPage = {
   title: "Detail page",
   description:
     "A page about one thing: the main column and an aside with its action and links.",
-  order: 40,
+  order: 170,
   status: "new",
   since: "0.7.0",
 };

@@ -1,6 +1,16 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Checkbox } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "Checkbox",
+  description:
+    "A box to tick for one yes-or-no choice, with its label beside it.",
+  order: 20,
+  status: "stable",
+  since: "0.4.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

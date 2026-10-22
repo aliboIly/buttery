@@ -1,6 +1,16 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { PasswordField } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "PasswordField",
+  description:
+    "A labelled password box with a button that shows or hides what's typed, and optional requirements.",
+  order: 70,
+  status: "stable",
+  since: "0.4.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

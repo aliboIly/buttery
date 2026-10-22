@@ -8,7 +8,7 @@ export const page: DocsPage = {
   title: "FullscreenDialog",
   description:
     "A dialog that takes the whole window for one big question and its answer.",
-  order: 55,
+  order: 70,
   status: "new",
   since: "0.7.0",
 };

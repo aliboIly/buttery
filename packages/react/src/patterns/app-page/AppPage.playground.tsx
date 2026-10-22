@@ -1,6 +1,16 @@
 import { Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { AppPage, Button, PageHeader } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "AppPage",
+  description:
+    "A dashboard page in its shell: contained to 1280px or full width, padded by its column, with an optional right rail.",
+  order: 110,
+  status: "new",
+  since: "0.7.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

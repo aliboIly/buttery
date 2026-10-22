@@ -1,7 +1,17 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { TabNav } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "TabNav",
+  description:
+    "Underlined tabs that go to other pages, marking the current one, with the links that don't fit in a menu.",
+  order: 120,
+  status: "new",
+  since: "0.7.0",
+};
 
 const VIEWS = ["All", "Open", "Shipped", "Refunded", "Disputed"] as const;
 

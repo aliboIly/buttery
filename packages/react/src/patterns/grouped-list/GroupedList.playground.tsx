@@ -1,6 +1,16 @@
 import { Menu } from "@buttery/core";
-import type { DemoFrame, DemoSection } from "@buttery/core";
+import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
 import { Avatar, GroupedList, InitialsTile } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "GroupedList",
+  description:
+    "Things grouped in one well: card rows with media, a title, a line and a value, under optional titles with a \u2026 menu, and a dashed row that adds one more.",
+  order: 70,
+  status: "new",
+  since: "0.7.0",
+};
 
 const warehouseActions = (
   <>

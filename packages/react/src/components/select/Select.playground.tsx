@@ -1,9 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { NumberField, Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "Select",
+  description:
+    "A trigger that shows the chosen value and opens a list to pick another, with an optional footer for custom values.",
+  order: 90,
+  status: "stable",
+  since: "0.5.0",
+};
 
 type Shape = "match" | "16:9" | "4:3" | "1:1" | "3:2" | "9:16";
 

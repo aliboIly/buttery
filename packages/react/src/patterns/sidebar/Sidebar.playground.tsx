@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Surface } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Sidebar } from "@buttery/react";
 import {
   ChartLine,
@@ -12,6 +12,16 @@ import {
   Repeat,
   Users,
 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "Sidebar",
+  description:
+    "An app's navigation down the side: a workspace switcher, items, titled sections, groups that fold, and the pages visited lately.",
+  order: 90,
+  status: "new",
+  since: "0.7.0",
+};
 
 function Nav(): ReactElement {
   const [path, setPath] = useState("/orders");

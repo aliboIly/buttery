@@ -1,5 +1,15 @@
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, EmptyState } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "EmptyState",
+  description:
+    "What shows where content will be: a title, a line about how to add some, and the actions that do.",
+  order: 40,
+  status: "stable",
+  since: "0.5.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

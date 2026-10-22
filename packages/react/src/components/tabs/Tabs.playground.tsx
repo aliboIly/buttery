@@ -1,6 +1,16 @@
 import { Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Tabs } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/navigation",
+  title: "Tabs",
+  description:
+    "Underlined tabs that switch the panel under them, with a sliding underline and the tabs that don't fit in a menu.",
+  order: 130,
+  status: "new",
+  since: "0.7.0",
+};
 
 const SECTIONS = [
   "Overview",

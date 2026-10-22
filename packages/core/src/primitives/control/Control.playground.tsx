@@ -1,9 +1,19 @@
-import type { DemoSection } from "../../meta.ts";
+import type { DemoSection, DocsPage } from "../../meta.ts";
 import { Inline } from "../inline/Inline.tsx";
 import { Pressable } from "../pressable/Pressable.tsx";
 import { Surface } from "../surface/Surface.tsx";
 import { Control } from "./Control.tsx";
 import type { ControlSize } from "./Control.tsx";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "Control",
+  description:
+    "The root of a fixed-height control you build yourself: a token height, matching padding and data-bt-control.",
+  order: 20,
+  status: "stable",
+  since: "0.6.0",
+};
 
 const SIZES: readonly ControlSize[] = [
   "badge",

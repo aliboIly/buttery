@@ -1,5 +1,15 @@
 import { FitBox, Grid, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "FitBox",
+  description:
+    "Draws its content in the largest box of a given aspect ratio that fits, always centered.",
+  order: 140,
+  status: "stable",
+  since: "0.2.0",
+};
 
 const RATIOS = [
   { label: "16:9", ratio: 16 / 9 },

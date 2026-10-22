@@ -1,8 +1,18 @@
 import { useRef } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Button, toast } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "Toaster",
+  description:
+    "Shows short messages from toast() at the bottom of the window, three at most, each leaving on its own after a few seconds.",
+  order: 110,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function StackDemo(): ReactElement {
   const exported = useRef(0);

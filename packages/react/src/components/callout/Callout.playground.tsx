@@ -1,6 +1,16 @@
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { ArrowLink, Callout } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "Callout",
+  description:
+    "A tinted box for a message in place: information, success, a warning or an error.",
+  order: 20,
+  status: "stable",
+  since: "0.4.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

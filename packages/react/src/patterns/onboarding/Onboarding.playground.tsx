@@ -1,10 +1,20 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Button, Onboarding } from "@buttery/react";
 import type { OnboardingStep } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "Onboarding",
+  description:
+    "A few steps in a dialog: a scene that morphs between steps, text that crossfades in place, page dots, Back and Next, and confetti at the end.",
+  order: 220,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function background(id: string): string | undefined {
   const preset = gradients.find((candidate) => candidate.id === id);

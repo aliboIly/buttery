@@ -1,6 +1,16 @@
 import { ArrowLeftRight, Copy, ImagePlus } from "lucide-react";
 import { Icon, Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "Icon",
+  description:
+    "An icon at buttery's sizes: 16px in controls, 20px in empty states, stroke 1.75.",
+  order: 120,
+  status: "stable",
+  since: "0.2.0",
+};
 
 export const demos: readonly DemoSection[] = [
   {

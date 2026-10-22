@@ -7,7 +7,7 @@ export const page: DocsPage = {
   title: "Brand",
   description:
     "buttery's mark, a soft pat of butter, and where the 🧈 character goes instead.",
-  order: 30,
+  order: 110,
   status: "new",
   since: "0.8.0",
 };
