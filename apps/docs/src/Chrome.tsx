@@ -100,7 +100,7 @@ function PageLinks({ current }: { readonly current: string }): ReactElement {
               >
                 <Pressable asChild className="bt-hover-tint">
                   <a
-                    href={`#/${page.route}`}
+                    href={`/${page.route}`}
                     className="pg-nav-link"
                     aria-current={page.route === current ? "page" : undefined}
                   >
@@ -185,7 +185,7 @@ export function Chrome({
         label="Playground"
         className="pg-top"
         brand={
-          <a href="#/tokens">
+          <a href="/">
             <BrandMark size={24} />
             buttery
           </a>
@@ -199,7 +199,7 @@ export function Chrome({
                 {column.map((page) => (
                   <MorphMenu.Entry
                     key={page.route}
-                    href={`#/${page.route}`}
+                    href={`/${page.route}`}
                     title={page.title}
                     aria-current={page.route === current ? "page" : undefined}
                   />

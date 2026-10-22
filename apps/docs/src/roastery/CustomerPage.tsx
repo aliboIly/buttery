@@ -76,7 +76,9 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
             title="Customer"
             breadcrumbs={
               <Breadcrumbs
-                items={[{ label: "Customers", href: "#/roastery/customers" }]}
+                items={[
+                  { label: "Customers", href: "/demos/roastery/customers" },
+                ]}
               />
             }
           />
@@ -87,7 +89,9 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
           title="This customer isn't here"
           description="They may have been removed, or the link is from somewhere else."
           docs={
-            <ArrowLink href="#/roastery/customers">All customers</ArrowLink>
+            <ArrowLink href="/demos/roastery/customers">
+              All customers
+            </ArrowLink>
           }
         />
       </AppPage>
@@ -109,7 +113,9 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
             title={customer.name}
             breadcrumbs={
               <Breadcrumbs
-                items={[{ label: "Customers", href: "#/roastery/customers" }]}
+                items={[
+                  { label: "Customers", href: "/demos/roastery/customers" },
+                ]}
               />
             }
             description={`${customer.email}, ${customer.city}`}
@@ -242,7 +248,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
                 title="No subscriptions"
                 description="Coffee on a schedule shows up here once they start one."
                 docs={
-                  <ArrowLink href="#/roastery/subscriptions">
+                  <ArrowLink href="/demos/roastery/subscriptions">
                     All subscriptions
                   </ArrowLink>
                 }
@@ -271,7 +277,7 @@ export function CustomerPage({ id }: { readonly id: string }): ReactElement {
                         }
                         value={`${String(subscription.bags)} ${subscription.bags === 1 ? "bag" : "bags"}`}
                         onClick={() => {
-                          go("#/roastery/subscriptions");
+                          go("/demos/roastery/subscriptions");
                         }}
                       />
                     );

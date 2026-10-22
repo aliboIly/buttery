@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import type { ReactElement } from "react";
 import { ButteryProvider } from "@buttery/react";
 import type { ReducedMotionPreference } from "@buttery/react";
 import { Chrome } from "./Chrome.tsx";
-import { useSettings } from "./location.ts";
+import { followLinks, useSettings } from "./location.ts";
 import type { MotionSetting } from "./location.ts";
 import { pages } from "./pages.tsx";
 
@@ -11,13 +12,14 @@ const REDUCED_MOTION: Readonly<Record<MotionSetting, ReducedMotionPreference>> =
 
 export function App(): ReactElement {
   const settings = useSettings();
+  useEffect(() => followLinks(), []);
   const page =
     pages.find((candidate) => candidate.route === settings.route) ??
     pages.find((candidate) =>
       settings.route.startsWith(`${candidate.route}/`),
     ) ??
     pages[0];
-  if (!page) throw new Error("The playground needs at least one page.");
+  if (!page) throw new Error("The docs site needs at least one page.");
   const content = page.render();
   return (
     <ButteryProvider

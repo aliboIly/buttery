@@ -7,7 +7,7 @@ export function customerCell(id: string): ReactNode {
   const customer = customerOf(id);
   if (customer === undefined) return "Removed customer";
   return (
-    <DataTable.Link href={`#/roastery/customers/${customer.id}`}>
+    <DataTable.Link href={`/demos/roastery/customers/${customer.id}`}>
       {customer.name}
     </DataTable.Link>
   );

@@ -29,7 +29,7 @@ import {
 } from "@buttery/react";
 import { CardStudioMark } from "./CardStudioMark.tsx";
 
-const STUDIO = "#/card-studio";
+const STUDIO = "/demos/card-studio";
 
 const SECTIONS = [
   { id: "site-overview", label: "Overview" },
@@ -179,12 +179,12 @@ function Menus(): ReactElement[] {
     <MorphMenu.Item key="guides" label="Guides">
       <MorphMenu.Column title="Learn">
         <MorphMenu.Entry
-          href="#/onboarding"
+          href="/components/onboarding"
           title="The tour"
           caption="Four steps, one minute"
         />
         <MorphMenu.Entry
-          href="#/kbd"
+          href="/components/kbd"
           title="Shortcuts"
           caption="Every key on one page"
         />
@@ -271,7 +271,7 @@ export function CardStudioSite(): ReactElement {
               <a href={STUDIO}>Open the studio</a>
             </Button>
             <Button variant="soft" asChild>
-              <a href="#/onboarding">Take the tour</a>
+              <a href="/components/onboarding">Take the tour</a>
             </Button>
           </>
         }
@@ -453,7 +453,7 @@ export function CardStudioSite(): ReactElement {
         </Footer.Column>
         <Footer.Column title="Studio">
           <Footer.Link href={STUDIO}>Open the studio</Footer.Link>
-          <Footer.Link href="#/onboarding">The tour</Footer.Link>
+          <Footer.Link href="/components/onboarding">The tour</Footer.Link>
         </Footer.Column>
       </Footer>
     </Page>

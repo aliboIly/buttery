@@ -31,7 +31,9 @@ import type { Setting } from "./settings-list.ts";
 import { useInvites, usePickup } from "./shop-state.ts";
 
 const CRUMBS = (
-  <Breadcrumbs items={[{ label: "Settings", href: "#/roastery/settings" }]} />
+  <Breadcrumbs
+    items={[{ label: "Settings", href: "/demos/roastery/settings" }]}
+  />
 );
 
 /** Every setting, grouped by what it's about. */
@@ -63,7 +65,7 @@ export function SettingsPage(): ReactElement {
                 <SettingsIndex.More
                   title="See what each plan adds"
                   description="Roast planning, wholesale and more."
-                  href="#/roastery/settings/plans"
+                  href="/demos/roastery/settings/plans"
                 />
               ) : null}
             </SettingsIndex.Section>

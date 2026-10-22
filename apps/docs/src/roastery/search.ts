@@ -15,7 +15,7 @@ import { SETTINGS, settingHref } from "./settings-list.ts";
 
 /** Every page of the demo: the sidebar's, from its navigation, and each setting the settings index reaches. */
 export const PAGES: readonly SearchPage[] = [
-  ...navPages().filter((page) => page.href.startsWith("#/roastery")),
+  ...navPages().filter((page) => page.href.startsWith("/demos/roastery")),
   ...SETTINGS.filter((setting) => setting.href === undefined).map(
     (setting) => ({
       label: setting.title,
@@ -86,7 +86,7 @@ export const ORDER_SOURCE: LocalSearchSource = {
       label: order.id,
       detail: `${BY_ID.get(order.customerId)?.name ?? "Someone"}, ${money(order.amount)}, ${order.status}`,
       icon: Receipt,
-      href: `#/roastery/customers/${order.customerId}`,
+      href: `/demos/roastery/customers/${order.customerId}`,
     }));
   },
 };
@@ -107,7 +107,7 @@ export const CUSTOMER_SOURCE: LocalSearchSource = {
       label: customer.name,
       detail: `${customer.city}, ${customer.email}`,
       icon: User,
-      href: `#/roastery/customers/${customer.id}`,
+      href: `/demos/roastery/customers/${customer.id}`,
     }));
   },
 };

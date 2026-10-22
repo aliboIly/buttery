@@ -2,14 +2,12 @@ import { useSyncExternalStore } from "react";
 import type { Density } from "@buttery/core";
 import type { ColorSchemePreference } from "@buttery/react";
 
-const CHANGE = "playground:location";
+const CHANGE = "docs:location";
 
 function subscribe(onChange: () => void): () => void {
-  window.addEventListener("hashchange", onChange);
   window.addEventListener("popstate", onChange);
   window.addEventListener(CHANGE, onChange);
   return () => {
-    window.removeEventListener("hashchange", onChange);
     window.removeEventListener("popstate", onChange);
     window.removeEventListener(CHANGE, onChange);
   };
@@ -19,11 +17,14 @@ function useHref(): string {
   return useSyncExternalStore(subscribe, () => window.location.href);
 }
 
-/** Motion in the playground: the OS setting, or forced full or reduced. */
+/** Motion on the site: the OS setting, or forced full or reduced. */
 export type MotionSetting = "system" | "full" | "reduced";
 
 export interface Settings {
+  /** The path without its leading slash, such as `components/button`; empty on the home page. */
   readonly route: string;
+  /** The query string, such as `?q=decaf`, for pages that read their own parameters. */
+  readonly query: string;
   readonly theme: ColorSchemePreference;
   readonly density: Density;
   readonly motion: MotionSetting;
@@ -42,13 +43,42 @@ function parseMotion(value: string | null): MotionSetting {
 export function useSettings(): Settings {
   const url = new URL(useHref());
   return {
-    route: url.hash.replace(/^#\/?/, "") || "tokens",
+    route: url.pathname.replace(/^\/+|\/+$/g, ""),
+    query: url.search,
     theme: parseTheme(url.searchParams.get("theme")),
     density:
       url.searchParams.get("density") === "compact" ? "compact" : "comfortable",
     motion: parseMotion(url.searchParams.get("motion")),
     chrome: url.searchParams.get("chrome") !== "0",
   };
+}
+
+/** The settings that stay with the visitor from page to page. */
+const KEPT = ["theme", "density", "motion", "chrome"] as const;
+
+/**
+ * Goes to `href`, a path on this site, adding a history entry. The theme, density, motion and chrome
+ * settings in the URL carry over unless `href` sets them.
+ */
+export function navigate(href: string): void {
+  const current = new URL(window.location.href);
+  const next = new URL(href, current);
+  for (const name of KEPT) {
+    const value = current.searchParams.get(name);
+    if (value !== null && !next.searchParams.has(name))
+      next.searchParams.set(name, value);
+  }
+  if (next.href === current.href) return;
+  window.history.pushState(null, "", next);
+  window.dispatchEvent(new Event(CHANGE));
+  if (next.hash === "") {
+    window.scrollTo({ top: 0 });
+    return;
+  }
+  const id = decodeURIComponent(next.hash.slice(1));
+  requestAnimationFrame(() => {
+    document.getElementById(id)?.scrollIntoView();
+  });
 }
 
 /** Updates one URL setting without adding a history entry. */
@@ -60,4 +90,46 @@ export function setSetting(
   url.searchParams.set(name, value);
   window.history.replaceState(null, "", url);
   window.dispatchEvent(new Event(CHANGE));
+}
+
+/** Whether a click on a link is one the browser should handle: another tab, a download, another site. */
+function leavesPage(event: MouseEvent, link: HTMLAnchorElement): boolean {
+  return (
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    (link.target !== "" && link.target !== "_self") ||
+    link.hasAttribute("download") ||
+    link.origin !== window.location.origin
+  );
+}
+
+/**
+ * Makes a click on any link to a path on this site a navigation within the page, so every buttery link
+ * component works as it is. A link to an anchor on the same page is left to the browser. Returns the
+ * function that stops it.
+ */
+export function followLinks(): () => void {
+  const onClick = (event: MouseEvent): void => {
+    const link =
+      event.target instanceof Element ? event.target.closest("a[href]") : null;
+    if (!(link instanceof HTMLAnchorElement) || leavesPage(event, link)) return;
+    const next = new URL(link.href);
+    const here = new URL(window.location.href);
+    if (
+      next.pathname === here.pathname &&
+      next.search === here.search &&
+      next.hash !== ""
+    )
+      return;
+    event.preventDefault();
+    navigate(next.pathname + next.search + next.hash);
+  };
+  document.addEventListener("click", onClick);
+  return () => {
+    document.removeEventListener("click", onClick);
+  };
 }

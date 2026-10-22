@@ -122,7 +122,7 @@ test("the exported PNG draws the card where the stage shows it, tilted, turned, 
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/?chrome=0#/card-studio");
+  await page.goto("/demos/card-studio?chrome=0");
   await page.getByTestId("title-card").waitFor();
 
   await page.getByRole("textbox", { name: "Title" }).fill("");
@@ -290,7 +290,7 @@ test("the exported PNG carries the title, the blend and the shadow as the stage 
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/?chrome=0#/card-studio");
+  await page.goto("/demos/card-studio?chrome=0");
   await page.getByTestId("title-card").waitFor();
   await page
     .getByRole("radiogroup", { name: "Finish" })
@@ -345,7 +345,7 @@ test("discarding a resize puts the canvas back where resize mode found it, even 
     });
   });
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/?chrome=0#/card-studio");
+  await page.goto("/demos/card-studio?chrome=0");
   await page.getByTestId("title-card").waitFor();
   const shape = page.getByRole("button", { name: /^Canvas shape/ });
   await expect(shape).toHaveAccessibleName("Canvas shape, Wide · 16:9");
@@ -379,7 +379,7 @@ test("deleting the card from the keyboard takes focus to New card, and the toast
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/?chrome=0#/card-studio");
+  await page.goto("/demos/card-studio?chrome=0");
   await page.getByTestId("title-card").waitFor();
   const remove = page.getByRole("button", { name: "Delete", exact: true });
   await remove.focus();
@@ -398,7 +398,7 @@ test("deleting the card from the keyboard takes focus to New card, and the toast
 test("the tour opens by itself on the first visit, and not again once it's finished", async ({
   page,
 }) => {
-  await page.goto("/?chrome=0&motion=reduced#/card-studio");
+  await page.goto("/demos/card-studio?chrome=0&motion=reduced");
   await page.evaluate(() => {
     window.localStorage.removeItem("buttery:onboarding:card-studio");
   });

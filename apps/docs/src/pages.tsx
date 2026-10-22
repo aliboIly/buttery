@@ -16,6 +16,7 @@ import { components } from "./registry.ts";
 import { demoPages, foundationPages } from "./routes.ts";
 
 export interface Page {
+  /** Its path without the leading slash, such as `components/button`. */
   readonly route: string;
   readonly title: string;
   readonly render: () => ReactElement;
@@ -70,7 +71,7 @@ export const pageGroups: readonly PageGroup[] = [
   {
     title: "Foundations",
     pages: foundationPages.map(({ route, title }) => ({
-      route,
+      route: `foundations/${route}`,
       title,
       render: FOUNDATIONS[route],
     })),
@@ -78,7 +79,7 @@ export const pageGroups: readonly PageGroup[] = [
   {
     title: "Demos",
     pages: demoPages.map(({ route, title }) => ({
-      route,
+      route: `demos/${route}`,
       title,
       ...DEMOS[route],
     })),
@@ -88,7 +89,7 @@ export const pageGroups: readonly PageGroup[] = [
     pages: components
       .filter((entry) => entry.meta.kind === kind)
       .map((entry) => ({
-        route: entry.route,
+        route: `components/${entry.route}`,
         title: entry.meta.name,
         render: () => <ComponentPage entry={entry} />,
       })),
@@ -99,7 +100,7 @@ export const pageGroups: readonly PageGroup[] = [
           title: "Local",
           pages: [
             {
-              route: "compare",
+              route: "lab/compare",
               title: "Compare",
               render: () => (
                 <Suspense fallback={null}>
@@ -123,6 +124,6 @@ const duplicate = pages.find(
 );
 if (duplicate) {
   throw new Error(
-    `Two playground pages use the route "${duplicate.route}". Fix: rename the foundation page in routes.ts.`,
+    `Two docs pages use the route "${duplicate.route}". Fix: rename the foundation page in routes.ts.`,
   );
 }

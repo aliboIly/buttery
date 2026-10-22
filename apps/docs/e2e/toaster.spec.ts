@@ -81,7 +81,7 @@ function report(description: string): void {
 
 async function open(page: Page, motion: "full" | "reduced"): Promise<void> {
   await installSampler(page);
-  await page.goto(`/?chrome=0&motion=${motion}#/toaster`);
+  await page.goto(`/components/toaster?chrome=0&motion=${motion}`);
   await page.getByRole("heading", { name: "Toaster", level: 1 }).waitFor();
   await page.evaluate(async () => {
     await document.fonts.ready;

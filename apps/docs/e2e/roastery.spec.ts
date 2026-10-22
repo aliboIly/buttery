@@ -50,7 +50,7 @@ test("a first visit opens What's new by itself, then the delivery nudge once it'
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   const announcement = page.getByRole("dialog", {
     name: "Roasts plan themselves now",
   });
@@ -84,7 +84,7 @@ test("the sidebar is a sheet on a phone, a rail on a small laptop and full on a 
     [1728, 1117, "full"],
   ] as const) {
     await page.setViewportSize({ width, height });
-    await page.goto("/#/roastery/orders");
+    await page.goto("/demos/roastery/orders");
     await expect(shell, `at ${String(width)}`).toHaveAttribute(
       "data-sidebar",
       mode,
@@ -105,7 +105,7 @@ test("a customer's name in the list opens their page, and each page starts at th
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 640 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await page.locator("h1").first().waitFor();
   const scrolled = async (): Promise<void> => {
     await pageRegion(page).evaluate((region) => {
@@ -151,7 +151,7 @@ for (const [width, height] of [
   }) => {
     await returningVisitor(page);
     await page.setViewportSize({ width, height });
-    await page.goto("/#/roastery/orders");
+    await page.goto("/demos/roastery/orders");
     await page.locator("h1").first().waitFor();
     const more = page.getByRole("button", {
       name: "More page actions",
@@ -191,7 +191,7 @@ test("a view saved from another view keeps that view's orders and adds its filte
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery/orders");
+  await page.goto("/demos/roastery/orders");
   await page.locator("h1").first().waitFor();
   const views = page.getByRole("radiogroup", { name: "Order views" });
   await views.getByRole("radio", { name: "Unpaid", exact: true }).click();
@@ -218,7 +218,7 @@ test("a view saved from another view keeps that view's orders and adds its filte
 test("an export of one order says one order", async ({ page }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery/orders");
+  await page.goto("/demos/roastery/orders");
   await page.locator("h1").first().waitFor();
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
   const id =
@@ -238,7 +238,7 @@ test("an export of one order says one order", async ({ page }) => {
 test("inviting someone twice lists them once", async ({ page }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery/settings/team");
+  await page.goto("/demos/roastery/settings/team");
   await page.locator("h1").first().waitFor();
   for (const address of ["june@example.com", "June@example.com"]) {
     await page.getByRole("button", { name: "Invite someone" }).click();
@@ -257,7 +257,7 @@ test("inviting someone twice lists them once", async ({ page }) => {
 test("switching workspace says what happened", async ({ page }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await page.locator("h1").first().waitFor();
   await page
     .getByRole("button", { name: /^Workspace: Halfmoon Roastery/ })
@@ -276,7 +276,7 @@ test("the search finds a customer by name and opens their page", async ({
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await page.locator("h1").first().waitFor();
   await page.keyboard.press("/");
   const search = page.getByRole("combobox", { name: "Search", exact: true });
@@ -304,7 +304,7 @@ test("a finished filter becomes a chip, and Enter shows every result for it", as
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await page.locator("h1").first().waitFor();
   await page.getByRole("combobox", { name: "Search", exact: true }).click();
   await page.keyboard.type("stat");
@@ -344,7 +344,7 @@ test("help docks beside the page on a wide screen, and covers it as a sheet on a
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await page.locator("h1").first().waitFor();
   const column = page.locator('[data-bt="AppShell"] > [data-bt-part="column"]');
   const before = await column.boundingBox();
@@ -373,7 +373,7 @@ test("help docks beside the page on a wide screen, and covers it as a sheet on a
 test("Turn on alerts leads to the notifications setting", async ({ page }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await page.locator("h1").first().waitFor();
   await page.getByRole("link", { name: "Turn on alerts" }).click();
   await expect(page.locator("h1").first()).toHaveText("Notifications");
@@ -390,7 +390,7 @@ test("trying a plan spells out the trial, then moves the shop onto it", async ({
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/#/roastery/settings/plans");
+  await page.goto("/demos/roastery/settings/plans");
   await page.locator("h1").first().waitFor();
   await page.getByRole("button", { name: "Try Roaster" }).click();
   const dialog = page.getByRole("dialog", { name: "Try Roaster" });

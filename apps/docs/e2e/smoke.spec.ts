@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { componentRoutes } from "./routes.ts";
+import { componentRoutes, url } from "./routes.ts";
 
 const foundations = [
   { route: "tokens", landmark: "Text roles" },
@@ -44,7 +44,7 @@ for (const { route, landmark } of foundations) {
     page,
   }) => {
     const problems = await watchConsole(page);
-    await page.goto(`/?theme=light#/${route}`);
+    await page.goto(url(route, "theme=light"));
     await expect(
       page.getByText(landmark).or(page.getByLabel(landmark)).first(),
     ).toBeVisible();
@@ -63,7 +63,7 @@ for (const { route, name } of componentRoutes) {
     page,
   }) => {
     const problems = await watchConsole(page);
-    await page.goto(`/#/${route}`);
+    await page.goto(url(route));
     await expect(
       page.getByRole("heading", { level: 1, name, exact: true }),
     ).toBeVisible();
@@ -102,7 +102,7 @@ for (const { route, ready } of demos) {
     page,
   }) => {
     const problems = await watchConsole(page);
-    await page.goto(`/#/${route}`);
+    await page.goto(url(route));
     await expect(page.locator(ready).first()).toBeVisible();
     await settle(page);
     expect(problems).toEqual([]);

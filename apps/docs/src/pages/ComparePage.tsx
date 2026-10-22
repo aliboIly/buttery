@@ -342,7 +342,9 @@ const CROPS: readonly Crop[] = [
     width: 0,
     height: 0,
     note: "An open select, the crop toolbar and a toast float over the app, so the phase report compares them as whole screens of Card Studio next to the captures.",
-    ours: () => <ArrowLink href="#/card-studio">Open Card Studio</ArrowLink>,
+    ours: () => (
+      <ArrowLink href="/demos/card-studio">Open Card Studio</ArrowLink>
+    ),
   },
   {
     title: "Button and ArrowLink with the arrow",
@@ -357,7 +359,7 @@ const CROPS: readonly Crop[] = [
         <Button variant="primary" arrow="forward">
           Get started
         </Button>
-        <ArrowLink href="#/button">More about buttons</ArrowLink>
+        <ArrowLink href="/components/button">More about buttons</ArrowLink>
       </Inline>
     ),
   },

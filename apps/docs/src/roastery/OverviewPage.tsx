@@ -112,7 +112,7 @@ export function OverviewPage(): ReactElement {
               title="Get an alert when green coffee runs low"
               action={{
                 label: "Turn on alerts",
-                href: "#/roastery/settings/notifications",
+                href: "/demos/roastery/settings/notifications",
               }}
               estimate="2 min"
               storageKey="roastery-low-stock"
@@ -127,7 +127,7 @@ export function OverviewPage(): ReactElement {
                 info="This week's paid sales, less fees, sent to your bank on Friday."
                 value={money(nextPayout.amount)}
                 updated={`Arrives ${shortDate(nextPayout.arrives)}`}
-                href="#/roastery/payouts"
+                href="/demos/roastery/payouts"
                 onNavigate={(href, event) => {
                   event.preventDefault();
                   go(href);
@@ -144,7 +144,7 @@ export function OverviewPage(): ReactElement {
           icon={Truck}
           action={{
             label: "Turn on pickup",
-            href: "#/roastery/settings/pickup",
+            href: "/demos/roastery/settings/pickup",
           }}
           estimate="2 min"
           storageKey="roastery-pickup"
@@ -166,7 +166,7 @@ export function OverviewPage(): ReactElement {
             formatTick={shortMoney}
             updated="Updated just now"
             loading={loading}
-            href="#/roastery/payouts"
+            href="/demos/roastery/payouts"
           />
           <MetricCard
             title="Orders"
@@ -176,7 +176,7 @@ export function OverviewPage(): ReactElement {
             series={orders.series}
             updated="Updated just now"
             loading={loading}
-            href="#/roastery/orders"
+            href="/demos/roastery/orders"
           />
           <MetricCard
             title="Bags sold"
@@ -187,7 +187,7 @@ export function OverviewPage(): ReactElement {
             series={bags.series}
             updated="Updated just now"
             loading={loading}
-            href="#/roastery/stock"
+            href="/demos/roastery/stock"
           />
           <MetricCard
             title="Refunds"
@@ -199,7 +199,7 @@ export function OverviewPage(): ReactElement {
             series={refunds.series}
             updated="Updated just now"
             loading={loading}
-            href="#/roastery/orders"
+            href="/demos/roastery/orders"
           />
         </Grid>
       </AppPage.Section>
@@ -209,7 +209,7 @@ export function OverviewPage(): ReactElement {
           <Button
             size="sm"
             onClick={() => {
-              go("#/roastery/orders");
+              go("/demos/roastery/orders");
             }}
           >
             See orders
@@ -233,7 +233,7 @@ export function OverviewPage(): ReactElement {
         />
       </AppPage.Section>
       <AppPage.Section title="Green coffee on hand">
-        <StockList href="#/roastery/stock" />
+        <StockList href="/demos/roastery/stock" />
       </AppPage.Section>
     </AppPage>
   );

@@ -97,7 +97,7 @@ export const SETTING_SECTIONS: readonly {
         icon: Landmark,
         title: "Payouts",
         description: "Your bank and when sales arrive.",
-        href: "#/roastery/payouts",
+        href: "/demos/roastery/payouts",
       },
       {
         id: "payments",
@@ -128,5 +128,5 @@ export const SETTINGS: readonly Setting[] = SETTING_SECTIONS.flatMap(
 
 /** Where a setting's link goes. */
 export function settingHref(setting: Setting): string {
-  return setting.href ?? `#/roastery/settings/${setting.id}`;
+  return setting.href ?? `/demos/roastery/settings/${setting.id}`;
 }

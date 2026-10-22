@@ -343,7 +343,7 @@ export function OrdersPage({
             <>
               <Menu.Item
                 onSelect={() => {
-                  go(`#/roastery/customers/${order.customerId}`);
+                  go(`/demos/roastery/customers/${order.customerId}`);
                 }}
               >
                 View customer

@@ -45,7 +45,7 @@ test("a switch keeps its edge and its thumb, off and on, enabled and disabled", 
   page,
 }) => {
   await page.emulateMedia({ forcedColors: "active" });
-  await page.goto("/#/switch");
+  await page.goto("/components/switch");
   for (const name of [
     "Snap to the grid",
     "Show guides",
@@ -70,7 +70,7 @@ test("a checkbox keeps its edge, and its mark when ticked", async ({
   page,
 }) => {
   await page.emulateMedia({ forcedColors: "active" });
-  await page.goto("/#/checkbox");
+  await page.goto("/components/checkbox");
   const box = page.getByRole("checkbox").first();
   const boxPaint = await paint(box);
   expect(boxPaint.border).toMatch(/^1px solid /);

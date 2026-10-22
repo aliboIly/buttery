@@ -258,13 +258,13 @@ export function MotionPage(): ReactElement {
                 >
                   Get started
                 </ButteryButton>
-                <ArrowLink href="#/button" data-testid="arrow-link">
+                <ArrowLink href="/components/button" data-testid="arrow-link">
                   More about buttons
                 </ArrowLink>
               </Inline>
               <Surface asChild level="card" pad={4} className="mo-card">
                 <Pressable asChild className="bt-hover-lift">
-                  <a href="#/pressable" data-testid="lift-card">
+                  <a href="/components/pressable" data-testid="lift-card">
                     <Stack gap={1}>
                       <Text variant="label">Pressable</Text>
                       <Text variant="caption">The press and hover recipes</Text>

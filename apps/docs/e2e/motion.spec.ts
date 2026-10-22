@@ -105,7 +105,7 @@ async function open(
 ): Promise<void> {
   await installSampler(page, startOnLoad);
   const setting = motion === "system" ? "" : `&motion=${motion}`;
-  await page.goto(`/?chrome=0${setting}#/motion`);
+  await page.goto(`/foundations/motion?chrome=0${setting}`);
   await page.getByRole("heading", { name: "Motion", level: 1 }).waitFor();
   await page.evaluate(async () => {
     await document.fonts.ready;
@@ -401,7 +401,7 @@ test.describe("full motion", () => {
     page,
   }) => {
     const menu = '[data-bt="Menu"]';
-    await page.goto("/?chrome=0&motion=full#/menu");
+    await page.goto("/components/menu?chrome=0&motion=full");
     const trigger = page
       .getByRole("button", { name: "Card actions", exact: true })
       .first();
@@ -442,7 +442,7 @@ test.describe("full motion", () => {
   test("a dialog fades in over dur-fast growing from 97%, over a scrim that fades with it, and both leave over dur-fast", async ({
     page,
   }) => {
-    await page.goto("/?chrome=0&motion=full#/dialog");
+    await page.goto("/components/dialog?chrome=0&motion=full");
     const trigger = page
       .getByRole("button", { name: "Delete card", exact: true })
       .first();
@@ -504,7 +504,7 @@ test.describe("full motion", () => {
   test("an onboarding's shared card travels to its next place on spring.smooth", async ({
     page,
   }) => {
-    await page.goto("/?chrome=0&motion=full#/onboarding");
+    await page.goto("/components/onboarding?chrome=0&motion=full");
     await page
       .getByRole("button", { name: "Take the tour", exact: true })
       .click();
@@ -534,7 +534,7 @@ test.describe("full motion", () => {
   test("an expandable card grows into its dialog on spring.morph and goes back into the card on spring.smooth", async ({
     page,
   }) => {
-    await page.goto("/?chrome=0&motion=full#/expandable-card");
+    await page.goto("/components/expandable-card?chrome=0&motion=full");
     const card = '[data-bt="ExpandableCard"]';
     const expand = page
       .getByRole("button", { name: "Open Lean it in 3D", exact: true })
@@ -571,7 +571,7 @@ test.describe("full motion", () => {
   test("a nav bar's menu unfolds from the bar in dur-fast with ease-out once the pointer has rested on its trigger for 150ms", async ({
     page,
   }) => {
-    await page.goto("/?chrome=0&motion=full#/nav-bar");
+    await page.goto("/components/nav-bar?chrome=0&motion=full");
     const panel = '[data-bt-part="panel"]';
     const body = `${panel} > [data-bt-part="body"]`;
     const product = page
@@ -623,7 +623,7 @@ test.describe("full motion", () => {
   test("moving to the next trigger reshapes the nav bar's panel at once on spring.snappy, and leaving folds it after 100ms in dur-fast with ease-in", async ({
     page,
   }) => {
-    await page.goto("/?chrome=0&motion=full#/nav-bar");
+    await page.goto("/components/nav-bar?chrome=0&motion=full");
     const panel = '[data-bt-part="panel"]';
     const product = page
       .getByRole("button", { name: "Product", exact: true })
@@ -1023,7 +1023,7 @@ test.describe("reduced motion", () => {
   test("an expandable card's dialog fades in place in 100ms", async ({
     page,
   }) => {
-    await page.goto("/?chrome=0&motion=reduced#/expandable-card");
+    await page.goto("/components/expandable-card?chrome=0&motion=reduced");
     await page
       .getByRole("button", { name: "Open Lean it in 3D", exact: true })
       .first()
@@ -1276,7 +1276,7 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
   test.beforeEach(async ({ page }) => {
     await installSampler(page);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/?chrome=0&motion=full#/card-studio");
+    await page.goto("/demos/card-studio?chrome=0&motion=full");
     await page.getByTestId("title-card").waitFor();
     await page.evaluate(async () => {
       await document.fonts.ready;
@@ -1818,7 +1818,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
   });
 
   async function openDemo(page: Page, path: string): Promise<void> {
-    await page.goto(`/?motion=full#/roastery${path}`);
+    await page.goto(`/demos/roastery${path}?motion=full`);
     await page.locator("h1").first().waitFor();
     await page.evaluate(async () => {
       await document.fonts.ready;
@@ -2161,7 +2161,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
   test("a metric's skeleton turns into its numbers in place, nothing moving more than 1px", async ({
     page,
   }) => {
-    await page.goto("/?chrome=0&motion=full#/metric-card");
+    await page.goto("/components/metric-card?chrome=0&motion=full");
     // The example whose numbers arrive after a moment; the page's Loading demo stays a skeleton.
     const card = page
       .locator(".bt-metric-card")
@@ -2241,7 +2241,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
   test("a full-screen dialog fades in and out over dur-fast without growing, rising or shrinking", async ({
     page,
   }) => {
-    await page.goto("/?motion=full#/fullscreen-dialog");
+    await page.goto("/components/fullscreen-dialog?motion=full");
     await page.locator("h1").first().waitFor();
     await page.evaluate(async () => {
       await document.fonts.ready;
@@ -2438,7 +2438,7 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
   test("a row's hover actions fade in over dur-fast while its tint shows at once", async ({
     page,
   }) => {
-    await page.goto("/?motion=full#/hover-actions");
+    await page.goto("/components/hover-actions?motion=full");
     await page.locator("h1").first().waitFor();
     const row = page.locator('[data-bt="HoverActions"]').first();
     await row.scrollIntoViewIfNeeded();

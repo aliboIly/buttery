@@ -7,7 +7,7 @@ import {
   watchResizeLoops,
 } from "@buttery/test";
 import type { ButteryInteraction, ButteryViewport } from "@buttery/test";
-import { routes } from "./routes.ts";
+import { routes, url } from "./routes.ts";
 
 const matrix =
   process.env["BUTTERY_MATRIX"] === "full" ? fullMatrix : quickMatrix;
@@ -498,7 +498,7 @@ test.beforeEach(async ({ page }) => {
 
 for (const route of routes) {
   test(`${route} is buttery`, async ({ page }) => {
-    await page.goto(`/#/${route}`);
+    await page.goto(url(route));
     await expectButtery(page, {
       ...matrix,
       name: route,
@@ -510,7 +510,7 @@ for (const route of routes) {
 test("the playground chrome is buttery with its menus open", async ({
   page,
 }) => {
-  await page.goto("/#/tokens");
+  await page.goto("/foundations/tokens");
   await expectButtery(page, {
     ...matrix,
     name: "chrome",
@@ -743,7 +743,7 @@ const roasteryPages = [
 for (const route of roasteryPages) {
   test(`${route} is buttery`, async ({ page }) => {
     await returningVisitor(page);
-    await page.goto(`/#/${route}`);
+    await page.goto(url(route));
     await expectButtery(page, {
       ...matrix,
       name: route,
@@ -754,7 +754,7 @@ for (const route of roasteryPages) {
 
 test("a roastery customer's page is buttery", async ({ page }) => {
   await returningVisitor(page);
-  await page.goto("/#/roastery/customers");
+  await page.goto("/demos/roastery/customers");
   await page
     .locator('[data-bt="DataTable"] [data-bt-part="data-table-link"]')
     .first()
@@ -790,7 +790,7 @@ test("the roastery's delivery nudge is buttery open beside its bell", async ({
     );
   });
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await page
     .getByRole("dialog", { name: "2 customers asked about delivery" })
     .waitFor();
@@ -806,7 +806,7 @@ test("the roastery's sidebar, menus and guide are buttery with the sidebar full 
 }) => {
   await returningVisitor(page);
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/#/roastery");
+  await page.goto("/demos/roastery");
   await expectButtery(page, {
     name: "roastery with its sidebar full",
     viewports: [{ width: 1280, height: 800 }],
@@ -835,7 +835,7 @@ test("the roastery's sidebar, menus and guide are buttery with the sidebar full 
     ],
   });
   await page.setViewportSize({ width: 960, height: 640 });
-  await page.goto("/#/roastery/orders");
+  await page.goto("/demos/roastery/orders");
   await expectButtery(page, {
     name: "roastery with its sidebar as a rail",
     viewports: [{ width: 960, height: 640 }],
@@ -884,7 +884,7 @@ test("Card Studio resizes from 1728 to 390 without an overlap or overflow, foldi
   page,
 }) => {
   await page.setViewportSize({ width: 1728, height: 1117 });
-  await page.goto("/?chrome=0#/card-studio");
+  await page.goto("/demos/card-studio?chrome=0");
   const more = page.getByRole("button", { name: "More actions", exact: true });
   const sheet = page.getByRole("button", { name: "Edit card", exact: true });
   const inspector = page.locator(

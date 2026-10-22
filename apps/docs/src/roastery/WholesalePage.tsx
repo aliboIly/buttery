@@ -114,7 +114,7 @@ const COLUMNS: readonly DataTableColumn<Account>[] = [
     id: "cafe",
     header: "Café",
     cell: (account) => (
-      <DataTable.Link href={`#/roastery/customers/${account.customer.id}`}>
+      <DataTable.Link href={`/demos/roastery/customers/${account.customer.id}`}>
         {account.customer.name}
       </DataTable.Link>
     ),
@@ -163,7 +163,9 @@ function AccountCard({ account }: { readonly account: Account }): ReactElement {
         <Stack gap={1}>
           <Text variant="title-sm" asChild>
             <h3>
-              <ArrowLink href={`#/roastery/customers/${account.customer.id}`}>
+              <ArrowLink
+                href={`/demos/roastery/customers/${account.customer.id}`}
+              >
                 {account.customer.name}
               </ArrowLink>
             </h3>
@@ -251,13 +253,13 @@ export function WholesalePage({
         >
           <TabNav label="Wholesale">
             <TabNav.Link
-              href="#/roastery/wholesale"
+              href="/demos/roastery/wholesale"
               current={tab === "accounts"}
             >
               Accounts
             </TabNav.Link>
             <TabNav.Link
-              href="#/roastery/wholesale/prices"
+              href="/demos/roastery/wholesale/prices"
               current={tab === "prices"}
             >
               Price lists

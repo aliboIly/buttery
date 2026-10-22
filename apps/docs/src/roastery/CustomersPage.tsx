@@ -37,7 +37,7 @@ const COLUMNS: readonly DataTableColumn<CustomerRow>[] = [
     id: "name",
     header: "Customer",
     cell: (row) => (
-      <DataTable.Link href={`#/roastery/customers/${row.id}`}>
+      <DataTable.Link href={`/demos/roastery/customers/${row.id}`}>
         {row.name}
       </DataTable.Link>
     ),
@@ -264,7 +264,7 @@ export function CustomersPage(): ReactElement {
           rowActions={(row) => (
             <Menu.Item
               onSelect={() => {
-                go(`#/roastery/customers/${row.id}`);
+                go(`/demos/roastery/customers/${row.id}`);
               }}
             >
               View customer

@@ -56,9 +56,8 @@ import {
 import { useInvites, usePickup } from "./shop-state.ts";
 import "./roastery.css";
 
-function placeOf(route: string): Place {
-  const [path = "", query = ""] = route.split("?");
-  const [, part, id] = path.split("/");
+function placeOf(route: string, query: string): Place {
+  const [part, id] = route.split("/").slice(2);
   const section = part ?? "";
   switch (section) {
     case "search":
@@ -109,7 +108,10 @@ function useSetupTasks(): readonly SetupTask[] {
       id: "pickup",
       title: "Offer local pickup",
       description: "Customers nearby collect their bags at the roastery.",
-      action: { label: "Turn on pickup", href: "#/roastery/settings/pickup" },
+      action: {
+        label: "Turn on pickup",
+        href: "/demos/roastery/settings/pickup",
+      },
       group: "Take orders",
       done: pickup,
     },
@@ -123,7 +125,7 @@ function useSetupTasks(): readonly SetupTask[] {
       id: "team",
       title: "Invite your team",
       description: "Give the roasters and packers their own sign-in.",
-      action: { label: "Invite", href: "#/roastery/settings/team" },
+      action: { label: "Invite", href: "/demos/roastery/settings/team" },
       group: "Bring in the team",
       done: invites.length > 0,
     },
@@ -136,21 +138,21 @@ const ORDER_KINDS = [
     icon: ShoppingBag,
     title: "Retail order",
     description: "One customer, shipped to their door.",
-    href: "#/roastery/orders",
+    href: "/demos/roastery/orders",
   },
   {
     id: "wholesale",
     icon: Store,
     title: "Wholesale order",
     description: "Cases for a café, invoiced on terms.",
-    href: "#/roastery/wholesale",
+    href: "/demos/roastery/wholesale",
   },
   {
     id: "subscription",
     icon: Repeat,
     title: "Subscription",
     description: "A bag every week or two, billed each time.",
-    href: "#/roastery/subscriptions",
+    href: "/demos/roastery/subscriptions",
   },
 ];
 
@@ -228,12 +230,12 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
                 toast("Halfmoon Café has no orders of its own in this demo.");
             }}
           />
-          <Menu.Link href="#/roastery/settings" icon={Settings}>
+          <Menu.Link href="/demos/roastery/settings" icon={Settings}>
             Settings
           </Menu.Link>
           <Menu.Separator />
           <AccountMenu.User name="Rosa Delgado" />
-          <Menu.Link href="#/tokens" icon={ArrowLeft}>
+          <Menu.Link href="/foundations/tokens" icon={ArrowLeft}>
             Back to the playground
           </Menu.Link>
         </AccountMenu>
@@ -264,7 +266,7 @@ function RoasteryTopBar({
           sources={sources}
           filters={FILTERS}
           resultsHref={(query) =>
-            `#/roastery/search?q=${encodeURIComponent(formatSearch(query))}`
+            `/demos/roastery/search?q=${encodeURIComponent(formatSearch(query))}`
           }
           storageKey="roastery"
           emptyHint="Try another word, or a filter such as status:shipped."
@@ -309,7 +311,7 @@ function RoasteryTopBar({
               media={<WeekPlan />}
               learnMore={{
                 label: "See next week's roasts",
-                href: "#/roastery/roasts",
+                href: "/demos/roastery/roasts",
               }}
             />
           </OverflowCluster.Item>
@@ -320,7 +322,7 @@ function RoasteryTopBar({
               icon: Bell,
               dot: true,
               onSelect: () => {
-                go("#/roastery/orders");
+                go("/demos/roastery/orders");
               },
             }}
           >
@@ -328,7 +330,7 @@ function RoasteryTopBar({
               storageKey="roastery-delivery-questions"
               title="2 customers asked about delivery"
               description="Reply before Tuesday's roast ships."
-              action={{ label: "See orders", href: "#/roastery/orders" }}
+              action={{ label: "See orders", href: "/demos/roastery/orders" }}
             >
               <IconButton icon={Bell} label="Notifications" dot />
             </NotificationNudge>
@@ -338,7 +340,7 @@ function RoasteryTopBar({
             icon={Settings}
             priority={2}
             onSelect={() => {
-              go("#/roastery/settings");
+              go("/demos/roastery/settings");
             }}
           />
         </>
@@ -353,8 +355,8 @@ function RoasteryTopBar({
  * components on seeded, made-up data.
  */
 export function Roastery(): ReactElement {
-  const { route } = useSettings();
-  const place = placeOf(route);
+  const { route, query } = useSettings();
+  const place = placeOf(route, query);
   const [choosing, setChoosing] = useState(false);
   const [helping, setHelping] = useState(false);
   const [article, setArticle] = useState<string | null>(null);

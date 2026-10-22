@@ -63,7 +63,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Home",
-      href: "#/roastery",
+      href: "/demos/roastery",
       icon: House,
       current: (place) => place.page === "overview",
     },
@@ -72,7 +72,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Orders",
-      href: "#/roastery/orders",
+      href: "/demos/roastery/orders",
       icon: Receipt,
       current: (place) => place.page === "orders",
     },
@@ -81,7 +81,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Subscriptions",
-      href: "#/roastery/subscriptions",
+      href: "/demos/roastery/subscriptions",
       icon: Repeat,
       current: (place) => place.page === "subscriptions",
     },
@@ -90,7 +90,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Customers",
-      href: "#/roastery/customers",
+      href: "/demos/roastery/customers",
       icon: Users,
       current: (place) =>
         place.page === "customers" || place.page === "customer",
@@ -100,7 +100,7 @@ export const NAV: readonly NavBlock[] = [
     kind: "page",
     page: {
       label: "Payouts",
-      href: "#/roastery/payouts",
+      href: "/demos/roastery/payouts",
       icon: Landmark,
       current: (place) => place.page === "payouts",
     },
@@ -114,7 +114,7 @@ export const NAV: readonly NavBlock[] = [
         kind: "page",
         page: {
           label: "Roast plan",
-          href: "#/roastery/roasts",
+          href: "/demos/roastery/roasts",
           icon: CalendarDays,
           current: (place) => place.page === "roasts",
         },
@@ -123,7 +123,7 @@ export const NAV: readonly NavBlock[] = [
         kind: "page",
         page: {
           label: "Green coffee",
-          href: "#/roastery/stock",
+          href: "/demos/roastery/stock",
           icon: Package,
           current: (place) => place.page === "stock",
         },
@@ -135,13 +135,13 @@ export const NAV: readonly NavBlock[] = [
         pages: [
           {
             label: "Accounts",
-            href: "#/roastery/wholesale",
+            href: "/demos/roastery/wholesale",
             current: (place) =>
               place.page === "wholesale" && place.tab === "accounts",
           },
           {
             label: "Price lists",
-            href: "#/roastery/wholesale/prices",
+            href: "/demos/roastery/wholesale/prices",
             current: (place) =>
               place.page === "wholesale" && place.tab === "prices",
           },
@@ -157,12 +157,12 @@ export const NAV: readonly NavBlock[] = [
     pages: [
       {
         label: "Settings",
-        href: "#/roastery/settings",
+        href: "/demos/roastery/settings",
         icon: Settings,
         current: (place) =>
           place.page === "settings" || place.page === "setting",
       },
-      { label: "Back to the playground", href: "#/tokens" },
+      { label: "Back to the playground", href: "/foundations/tokens" },
     ],
   },
 ];
