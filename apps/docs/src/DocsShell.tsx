@@ -124,6 +124,7 @@ export function DocsShell({
         behavior="sticky"
         contained={false}
         label="Docs"
+        skipTo="content"
         className="docs-top"
         brand={
           <a href="/">
@@ -169,7 +170,9 @@ export function DocsShell({
         })}
       </NavBar>
       {wide ? (
-        <main className="docs-wide">{children}</main>
+        <main id="content" className="docs-wide">
+          {children}
+        </main>
       ) : (
         <div className="docs-body">
           <Sticky variant="aside" className="docs-sidebar bt-scroll-fade">
@@ -177,7 +180,9 @@ export function DocsShell({
               <PagesNav current={current} />
             </div>
           </Sticky>
-          <main className="docs-main">{children}</main>
+          <main id="content" className="docs-main">
+            {children}
+          </main>
           <Sticky variant="aside" className="docs-aside">
             <OnThisPage headings={headings} />
           </Sticky>
