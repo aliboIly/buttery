@@ -19,7 +19,7 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [
     { keys: "Letters, numbers and symbols", does: "Types them in" },
-    { keys: "Enter", does: "Sends the form it's in" },
+    { keys: "Enter", does: "Submits the form it's in, as any text input does" },
   ],
   layout:
     'It fills its container\'s width. The box is --bt-h-control (34px) tall, or --bt-h-cta (48px) with 16px text at size="lg", and the whole box is the hit area, its icons included; text longer than the box scrolls inside the input. The label, the hint and the error sit above and below the box and wrap.',

@@ -22,6 +22,6 @@ export const meta: ComponentMeta = {
     { keys: "Escape", does: "Closes it, leaving focus on its element" },
   ],
   layout:
-    "It opens 6px from its element on side, top by default, flipping when there's no room and staying 8px inside the window. It's as wide as its label up to --bt-w-inspector (340px) or the room the window leaves, wrapping the label in balanced lines past that, and it holds no controls, so it has no hit area of its own.",
+    "It opens 6px from its element, on top unless side says otherwise, and flips when there's no room, staying 8px inside the window. It's as wide as its label up to --bt-w-inspector (340px) or the room the window leaves, wrapping the label in balanced lines past that, and it holds no controls, so it has no hit area of its own.",
   reducedMotion: "It appears at once instead of fading in.",
 };

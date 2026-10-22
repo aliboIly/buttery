@@ -21,10 +21,7 @@ export const meta: ComponentMeta = {
       keys: "Tab",
       does: "Moves along the links, then to the More pages button once some have folded into it",
     },
-    {
-      keys: "Enter",
-      does: "Follows the focused link, or the folded link focused in the menu",
-    },
+    { keys: "Enter", does: "Follows the focused link" },
     {
       keys: "Enter, Space or Arrow Down",
       does: "Opens the More pages menu from its button",
@@ -32,6 +29,10 @@ export const meta: ComponentMeta = {
     {
       keys: "Arrow Down or Arrow Up",
       does: "Moves through the folded links in the menu",
+    },
+    {
+      keys: "Enter or Space",
+      does: "Follows the folded link focused in the menu",
     },
     {
       keys: "Escape",

@@ -20,7 +20,7 @@ export const meta: ComponentMeta = {
   keyboard: [
     {
       keys: "Enter, Space, Arrow Down or Arrow Up",
-      does: "Opens the list from the trigger, with focus on the chosen option",
+      does: "Opens the list from the trigger, with focus on the chosen option, or the first when none is chosen",
     },
     {
       keys: "Arrow Down or Arrow Up",
@@ -45,7 +45,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'The ghost trigger is a pill --bt-h-button (36px) tall, or --bt-h-sm (28px) with size="sm", as wide as its value; the outline box is --bt-h-control (34px) or --bt-h-sm tall and fills its column. The value truncates with an ellipsis and shows in full as its title, and the whole trigger is the hit area. The list is at least --bt-w-menu-min (200px) wide, and an outline list at least as wide as its box; its options are --bt-h-button tall with labels that truncate, and it scrolls inside when the window leaves it less room than it needs.',
+    'The ghost trigger is a pill --bt-h-button (36px) tall, or --bt-h-sm (28px) with size="sm", as wide as its value and chevron; the outline box is --bt-h-control (34px) or --bt-h-sm tall and fills its column. The value truncates with an ellipsis and shows in full as its title, and the whole trigger is the hit area. The list is at least --bt-w-menu-min (200px) wide, and an outline list at least as wide as its box; its options are --bt-h-button tall with labels that truncate, and it scrolls inside when the window leaves it less room than it needs.',
   reducedMotion:
     "The list fades in and out over 100ms, without growing from the trigger.",
 };
