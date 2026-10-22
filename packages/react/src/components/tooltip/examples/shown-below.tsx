@@ -11,7 +11,6 @@ export function ShownBelow(): ReactElement {
     <Inline gap={3}>
       <Tooltip label="Back to the last saved version" side="bottom">
         <Button
-          variant="ghost"
           onClick={() => {
             setVersion("Back to the version saved at 9:30");
           }}

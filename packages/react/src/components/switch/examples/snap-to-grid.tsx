@@ -19,7 +19,6 @@ export function SnapToGrid(): ReactElement {
       </Text>
       <Button
         size="sm"
-        variant="ghost"
         aria-disabled={snap}
         onClick={() => {
           setSnap(true);

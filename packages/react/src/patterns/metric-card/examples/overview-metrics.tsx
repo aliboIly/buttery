@@ -42,7 +42,6 @@ export function OverviewMetrics(): ReactElement {
         <Text variant="title">This week</Text>
         <Button
           size="sm"
-          variant="ghost"
           iconStart={RefreshCw}
           aria-disabled={loading}
           onClick={() => {

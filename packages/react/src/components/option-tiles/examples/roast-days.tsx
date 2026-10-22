@@ -38,7 +38,6 @@ export function RoastDays(): ReactElement {
             : `Roasting on ${days.format(chosen)}`}
         </Text>
         <Button
-          variant="ghost"
           size="sm"
           aria-disabled={chosen.length === 0}
           onClick={() => {
