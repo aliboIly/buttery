@@ -1,19 +1,18 @@
 import { createElement, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { Copy, Check } from "lucide-react";
 import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
 import type { DemoValues, Density } from "@buttery/core";
 import {
   Breadcrumbs,
   Button,
   ButteryProvider,
-  IconButton,
   SegmentedControl,
   StatusBadge,
   TagChip,
 } from "@buttery/react";
 import type { StatusTone } from "@buttery/react";
 import { CodeText } from "./CodeBlock.tsx";
+import { CopyLine } from "./CopyLine.tsx";
 import { CopyPageMarkdown } from "./CopyPageMarkdown.tsx";
 import { ExampleFrame } from "./ExampleFrame.tsx";
 import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
@@ -110,30 +109,6 @@ export function docsRouteOf(entry: ComponentEntry): string | undefined {
   return page.home === undefined
     ? `${rootOf(page.section)}/${entry.route}`
     : `${page.home}#${slugify(entry.meta.name)}`;
-}
-
-function ImportLine({
-  entry,
-}: {
-  readonly entry: ComponentEntry;
-}): ReactElement {
-  const line = `import { ${entry.meta.name} } from "${packageOf(entry)}";`;
-  const [copied, setCopied] = useState(false);
-  return (
-    <Inline gap={2} align="center" className="docs-import">
-      <code className="docs-code">{line}</code>
-      <IconButton
-        icon={copied ? Check : Copy}
-        label={copied ? "Copied" : "Copy the import"}
-        size="sm"
-        onClick={() => {
-          void navigator.clipboard.writeText(line).then(() => {
-            setCopied(true);
-          });
-        }}
-      />
-    </Inline>
-  );
 }
 
 /**
@@ -463,7 +438,10 @@ export function ComponentPage({
             ) : null}
           </Inline>
           <Inline gap={2} align="center" wrap>
-            <ImportLine entry={entry} />
+            <CopyLine
+              text={`import { ${entry.meta.name} } from "${packageOf(entry)}";`}
+              label="Copy the import"
+            />
             <CopyPageMarkdown
               route={
                 page ? `${rootOf(page.section)}/${entry.route}` : entry.route
