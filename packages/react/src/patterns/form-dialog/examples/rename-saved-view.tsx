@@ -1,15 +1,15 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { Button, FormDialog, TextField } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Button, FormDialog, TextField } from "@buttery/react";
 
-/** Renaming a saved view, the save taking a moment: Submit shows busy until it's done. */
+/** Renaming a saved view, the save taking a moment: Submit waits for a new name, then shows busy until it's done. */
 export function RenameSavedView(): ReactElement {
   const [name, setName] = useState("Unpaid");
   const [draft, setDraft] = useState(name);
   return (
-    <Stack gap={2}>
+    <Stack gap={2} align="start">
       <FormDialog
         trigger={<Button>Rename view</Button>}
         title="Rename the view"
@@ -30,6 +30,8 @@ export function RenameSavedView(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("button", "Rename view");

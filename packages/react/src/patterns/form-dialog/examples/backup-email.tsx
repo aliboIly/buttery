@@ -1,22 +1,22 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { Button, FormDialog, TextField } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Button, FormDialog, TextField } from "@buttery/react";
 
 /** A form dialog whose Submit waits for an email address, then saves it. */
 export function BackupEmail(): ReactElement {
   const [email, setEmail] = useState("");
   const [saved, setSaved] = useState<string | undefined>(undefined);
   return (
-    <Stack gap={2}>
+    <Stack gap={2} align="start">
       <FormDialog
         trigger={<Button>Add a backup email</Button>}
         title="Add a backup email"
         description={
           <>
             We send sign-in codes there if you lose your main email.{" "}
-            <a href="/help/backup-email">Why a backup?</a>
+            <a href="#why-a-backup">Why a backup?</a>
           </>
         }
         valid={email.includes("@")}
@@ -38,6 +38,8 @@ export function BackupEmail(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("button", "Add a backup email");
