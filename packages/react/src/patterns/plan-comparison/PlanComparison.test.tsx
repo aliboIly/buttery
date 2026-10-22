@@ -114,7 +114,9 @@ describe("PlanComparison", () => {
       within(group).getByRole("radiogroup", { name: "Billing period" }),
     ).toBeTruthy();
     expect(
-      within(group).getByRole("button", { name: /^Volume, Up to 200 orders/ }),
+      within(group).getByRole("combobox", {
+        name: /^Volume, Up to 200 orders/,
+      }),
     ).toBeTruthy();
     expect(getComputedStyle(group).borderTopWidth).toBe("1px");
     await userEvent.click(within(group).getByRole("radio", { name: "Yearly" }));

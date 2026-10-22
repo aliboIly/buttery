@@ -59,9 +59,9 @@ export function VariantsAndSizes(): ReactElement {
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Bag size 250 g");
+  await press("combobox", "Bag size 250 g");
   await press("option", "1 kg");
-  await press("button", "Bag size 1 kg");
+  await press("combobox", "Bag size 1 kg");
   await press("option", "500 g");
   await see("500 g");
 };

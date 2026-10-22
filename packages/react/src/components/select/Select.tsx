@@ -231,8 +231,10 @@ export function Select<Value extends string = string>({
       {...rest}
       ref={triggerRefs}
       type="button"
+      role="combobox"
       disabled={disabled}
       aria-haspopup="listbox"
+      aria-expanded={isOpen}
       aria-controls={isOpen ? listId : undefined}
       onKeyDown={(event) => {
         onKeyDown?.(event);

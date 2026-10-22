@@ -53,7 +53,7 @@ export const kind: ExampleKind = "controlled";
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "Screen the first renewals only");
   await see("Screening the first renewal");
-  await press("button", /^Renewals to screen/);
+  await press("combobox", /^Renewals to screen/);
   await press("option", "The first three renewals");
   await see("Screening the first three renewals");
 };

@@ -10,8 +10,8 @@ export function DefaultPeriod(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, key }) => {
-  await press("button", "Interval, Daily");
+  await press("combobox", "Interval, Daily");
   await press("option", "Weekly");
-  await press("button", "Interval, Weekly");
+  await press("combobox", "Interval, Weekly");
   await key("Escape");
 };

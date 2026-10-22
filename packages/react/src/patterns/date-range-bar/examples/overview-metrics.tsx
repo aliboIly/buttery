@@ -54,7 +54,7 @@ export function OverviewMetrics(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Date range, Last 7 days");
+  await press("combobox", "Date range, Last 7 days");
   await press("option", "Last 4 weeks");
   await see("$12,480.00");
   await see("284");

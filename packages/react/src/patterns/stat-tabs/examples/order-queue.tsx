@@ -68,7 +68,7 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Order 1043, Ines Moreau");
-  await press("button", /^Orders by state/);
+  await press("combobox", /^Orders by state/);
   await press("option", "Shipped · 2");
   await see("Order 1045, Tomás Reyes");
 };

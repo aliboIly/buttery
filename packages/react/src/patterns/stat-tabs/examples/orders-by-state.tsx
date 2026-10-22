@@ -49,7 +49,7 @@ export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Showing every order.");
-  await press("button", /^Orders by state/);
+  await press("combobox", /^Orders by state/);
   await press("option", "Unpaid · 12");
   await see("Showing orders waiting on a payment.");
 };

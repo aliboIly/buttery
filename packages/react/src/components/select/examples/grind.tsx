@@ -20,9 +20,9 @@ export function CoffeeGrind(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Grind, Whole bean");
+  await press("combobox", "Grind, Whole bean");
   await press("option", "Espresso");
-  await press("button", "Grind, Espresso");
+  await press("combobox", "Grind, Espresso");
   await press("option", "French press");
   await see("French press");
 };

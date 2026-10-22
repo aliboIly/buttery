@@ -347,7 +347,7 @@ test("discarding a resize puts the canvas back where resize mode found it, even 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/demos/card-studio?chrome=0");
   await page.getByTestId("title-card").waitFor();
-  const shape = page.getByRole("button", { name: /^Canvas shape/ });
+  const shape = page.getByRole("combobox", { name: /^Canvas shape/ });
   await expect(shape).toHaveAccessibleName("Canvas shape, Wide · 16:9");
   await page.getByRole("button", { name: "Resize", exact: true }).click();
   const handle = page.locator(
@@ -415,7 +415,7 @@ test("the tour opens by itself on the first visit, and not again once it's finis
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.reload();
   await expect(
-    page.getByRole("button", { name: /^Canvas shape/ }),
+    page.getByRole("combobox", { name: /^Canvas shape/ }),
   ).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

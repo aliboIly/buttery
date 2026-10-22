@@ -38,7 +38,7 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("PNG keeps transparent corners.");
-  await press("button", /^Export as/);
+  await press("combobox", /^Export as/);
   await press("option", "JPG");
   await see("JPG fills transparent corners with white.");
 };

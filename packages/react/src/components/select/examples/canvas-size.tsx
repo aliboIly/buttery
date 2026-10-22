@@ -72,7 +72,7 @@ export function CanvasSize(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
-  await press("button", "Canvas shape, 16:9");
+  await press("combobox", "Canvas shape, 16:9");
   await type("Width", "{selectall}1200{Enter}");
   await see("1200 × 900");
 };

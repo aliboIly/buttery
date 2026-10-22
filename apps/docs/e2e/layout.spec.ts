@@ -12,9 +12,12 @@ import { routes, url } from "./routes.ts";
 const matrix =
   process.env["BUTTERY_MATRIX"] === "full" ? fullMatrix : quickMatrix;
 
-function press(name: string): ButteryInteraction["run"] {
+function press(
+  name: string,
+  role: "button" | "combobox" = "button",
+): ButteryInteraction["run"] {
   return async (page: Page) => {
-    await page.getByRole("button", { name, exact: true }).first().click();
+    await page.getByRole(role, { name, exact: true }).first().click();
   };
 }
 
@@ -123,7 +126,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "open the canvas shape list or the More menu",
       run: async (page: Page) => {
         const select = page
-          .getByRole("button", { name: /^Canvas shape/ })
+          .getByRole("combobox", { name: /^Canvas shape/ })
           .first();
         if (await select.isVisible()) await select.click();
         else
@@ -388,14 +391,14 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   select: [
     {
       name: "open the canvas shape list",
-      run: press("Canvas shape, Wide · 16:9"),
+      run: press("Canvas shape, Wide · 16:9", "combobox"),
     },
     escape,
     {
       name: "open the list with width and height fields",
       run: async (page: Page) => {
         await page
-          .getByRole("button", {
+          .getByRole("combobox", {
             name: "Canvas shape, Wide · 16:9",
             exact: true,
           })
@@ -617,7 +620,7 @@ async function choose(
   option: string,
 ): Promise<void> {
   await page
-    .getByRole("button", { name: new RegExp(`^${select}`) })
+    .getByRole("combobox", { name: new RegExp(`^${select}`) })
     .first()
     .click();
   await page.getByRole("option", { name: option, exact: true }).click();
@@ -936,7 +939,7 @@ test("Card Studio resizes from 1728 to 390 without an overlap or overflow, foldi
       {
         name: "open the canvas shape list",
         run: async (target: Page) => {
-          await target.getByRole("button", { name: /^Canvas shape/ }).click();
+          await target.getByRole("combobox", { name: /^Canvas shape/ }).click();
           await target.getByRole("listbox", { name: "Canvas shape" }).waitFor();
         },
       },

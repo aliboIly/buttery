@@ -15,7 +15,7 @@ export const meta: ComponentMeta = {
     "A choice in a form that waits for submit with many options: a native select styled with bt-control",
   ],
   related: ["Menu", "SegmentedControl", "NumberField", "Popover"],
-  a11y: 'The trigger is a button named by the label and the value ("Canvas shape, 16:9") with aria-haspopup="listbox", aria-expanded and aria-controls. The list is a listbox of options with aria-selected; it opens with focus on the chosen option. Arrow keys, Home and End move, typing jumps, Enter or Space chooses, Escape closes, and focus goes back to the trigger as it closes. A footer is a group named by footerLabel, and Tab loops between the list and its controls.',
+  a11y: 'The trigger is a select-only combobox, a button with role="combobox", named by the label and the value ("Canvas shape, 16:9"), with aria-haspopup="listbox", aria-expanded and aria-controls; in a required Field it has aria-required too. The list is a listbox of options with aria-selected; it opens with focus on the chosen option. Arrow keys, Home and End move, typing jumps, Enter or Space chooses, Escape closes, and focus goes back to the trigger as it closes. A footer is a group named by footerLabel, and Tab loops between the list and its controls.',
   motion: "presence",
   keyboard: [
     {

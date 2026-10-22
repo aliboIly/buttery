@@ -52,6 +52,7 @@ export function NewCoffeeForm(): ReactElement {
         </Field>
         <Field
           label="Grind"
+          required
           error={
             tried && chosen === undefined
               ? "Choose how the coffee is sold."
@@ -87,7 +88,7 @@ export const kind: ExampleKind = "composition";
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Add the coffee");
   await see("Choose how the coffee is sold.");
-  await press("button", /^Grind/);
+  await press("combobox", /^Grind/);
   await press("option", "Espresso");
   await press("button", "Add the coffee");
   await see("Added Ethiopia Guji, a medium roast sold as espresso");

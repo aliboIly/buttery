@@ -20,7 +20,7 @@ export function SubscriptionStates(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", /^Subscriptions by state/);
+  await press("combobox", /^Subscriptions by state/);
   await press("option", "Paused · 27");
   await see("Paused · 27");
 };

@@ -1612,7 +1612,7 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
   test("a new canvas shape reshapes the stage on spring.smooth, the card keeping its shape in the middle", async ({
     page,
   }) => {
-    await page.getByRole("button", { name: /^Canvas shape/ }).click();
+    await page.getByRole("combobox", { name: /^Canvas shape/ }).click();
     await page.getByRole("option", { name: "Square · 1:1" }).waitFor();
     await page.waitForTimeout(400);
     const run = await sampleClickOn(
@@ -1647,7 +1647,7 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
   }) => {
     const run = await sampleClickOn(
       page,
-      page.getByRole("button", { name: /^Canvas shape/ }),
+      page.getByRole("combobox", { name: /^Canvas shape/ }),
       '[data-bt="Popover"]',
       600,
     );
@@ -1668,7 +1668,7 @@ test.describe("Card Studio (MOTION_SPEC §3)", () => {
     );
     expect(Math.abs(growing.start - fading.start)).toBeLessThanOrEqual(3);
     const [trigger, active] = await page
-      .getByRole("button", { name: /^Canvas shape/ })
+      .getByRole("combobox", { name: /^Canvas shape/ })
       .evaluate((element) => {
         const probe = document.createElement("span");
         probe.style.backgroundColor = "var(--bt-bg-control-active)";
@@ -2121,13 +2121,13 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
       await openDemo(page, "");
       const cards = '[data-bt="AppPage"] [data-bt="MetricCard"]';
       if (comparison === "No comparison") {
-        await page.getByRole("button", { name: /^Comparison/ }).click();
+        await page.getByRole("combobox", { name: /^Comparison/ }).click();
         await page
           .getByRole("option", { name: "No comparison", exact: true })
           .click();
         await expect(page.locator(`${cards}[aria-busy="true"]`)).toHaveCount(0);
       }
-      await page.getByRole("button", { name: /^Date range/ }).click();
+      await page.getByRole("combobox", { name: /^Date range/ }).click();
       await page
         .getByRole("option", { name: "Last 4 weeks", exact: true })
         .click();

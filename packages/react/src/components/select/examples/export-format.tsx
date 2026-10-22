@@ -36,7 +36,7 @@ export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Saves as menu-card.png");
-  await press("button", "Export format, PNG");
+  await press("combobox", "Export format, PNG");
   await press("option", "WebP");
   await see("Saves as menu-card.webp");
 };

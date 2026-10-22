@@ -90,7 +90,7 @@ describe("StatTabs", () => {
     );
     expect(screen.queryByRole("radiogroup")).toBeNull();
     await userEvent.click(
-      screen.getByRole("button", { name: /^Orders by state/ }),
+      screen.getByRole("combobox", { name: /^Orders by state/ }),
     );
     await userEvent.click(
       await screen.findByRole("option", { name: "Shipping · 48" }),

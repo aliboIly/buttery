@@ -38,7 +38,7 @@ export function OverviewPeriod(): ReactElement {
 export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Interval, Weekly");
+  await press("combobox", "Interval, Weekly");
   await press("option", "Monthly");
   await see(
     "Fetching /api/overview?range=last-4-weeks&interval=monthly&compare=previous-period",
