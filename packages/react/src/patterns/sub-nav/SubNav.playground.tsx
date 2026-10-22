@@ -16,27 +16,27 @@ const SECTIONS = [
   {
     id: "sub-nav-overview",
     label: "Overview",
-    body: "A card for your announcement, ready before the coffee is.",
+    body: "Our house blend, roasted dark for espresso and milk, $14 a bag.",
   },
   {
-    id: "sub-nav-features",
-    label: "Features",
-    body: "Titles that fit themselves, three finishes and a lean you can feel.",
+    id: "sub-nav-taste",
+    label: "Taste",
+    body: "Cocoa, toasted hazelnut and brown sugar, low in acidity.",
   },
   {
-    id: "sub-nav-backdrops",
-    label: "Backdrops",
-    body: "Blends, solid colors or a picture of your own behind the card.",
+    id: "sub-nav-beans",
+    label: "Beans",
+    body: "Cerrado from Brazil and Huila from Colombia, blended after roasting.",
   },
   {
-    id: "sub-nav-export",
-    label: "Export",
-    body: "PNG or JPG at the canvas's size, or straight to the clipboard.",
+    id: "sub-nav-brewing",
+    label: "Brewing",
+    body: "18 grams for a double shot, or 30 grams in a French press.",
   },
   {
-    id: "sub-nav-pricing",
-    label: "Pricing",
-    body: "Free while you make one card a day. One price for the rest.",
+    id: "sub-nav-delivery",
+    label: "Delivery",
+    body: "Roasted on Monday and at your door by Thursday.",
   },
 ] as const;
 
@@ -47,7 +47,7 @@ const LIVE_SECTIONS = SECTIONS.map((section) => ({
 
 export const live: LiveDemo = {
   controls: {
-    title: { kind: "text", initial: "Card Studio" },
+    title: { kind: "text", initial: "Halfmoon House" },
     action: { kind: "toggle", initial: true },
   },
   render: ({ title, action }) => (
@@ -66,7 +66,7 @@ export const live: LiveDemo = {
           title={String(title)}
           items={LIVE_SECTIONS}
           action={
-            action === true ? <Button size="sm">Get it</Button> : undefined
+            action === true ? <Button size="sm">Add to bag</Button> : undefined
           }
         />
         {LIVE_SECTIONS.map((section) => (
@@ -91,7 +91,7 @@ export const live: LiveDemo = {
       ),
       "  ]}",
       ...(action === true
-        ? ['  action={<Button size="sm">Get it</Button>}']
+        ? ['  action={<Button size="sm">Add to bag</Button>}']
         : []),
       "/>",
     ].join("\n"),
@@ -115,9 +115,9 @@ export const demos: readonly DemoSection[] = [
       >
         <Page>
           <SubNav
-            title="Card Studio"
+            title="Halfmoon House"
             items={SECTIONS}
-            action={<Button size="sm">Get it</Button>}
+            action={<Button size="sm">Add to bag</Button>}
           />
           {SECTIONS.map((section) => (
             <Section

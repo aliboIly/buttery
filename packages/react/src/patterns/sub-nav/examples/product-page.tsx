@@ -8,33 +8,33 @@ const SECTIONS = [
   {
     id: "product-overview",
     label: "Overview",
-    body: "A card for your announcement, ready before the coffee is.",
+    body: "Our house blend, roasted dark for espresso and milk, $14 a bag.",
   },
   {
-    id: "product-features",
-    label: "Features",
-    body: "Titles that fit themselves, three finishes and a lean you can feel.",
+    id: "product-taste",
+    label: "Taste",
+    body: "Cocoa, toasted hazelnut and brown sugar, low in acidity.",
   },
   {
-    id: "product-backdrops",
-    label: "Backdrops",
-    body: "Blends, solid colors or a picture of your own behind the card.",
+    id: "product-beans",
+    label: "Beans",
+    body: "Cerrado from Brazil and Huila from Colombia, blended after roasting.",
   },
   {
-    id: "product-export",
-    label: "Export",
-    body: "PNG or JPG at the canvas's size, or straight to the clipboard.",
+    id: "product-brewing",
+    label: "Brewing",
+    body: "18 grams for a double shot, or 30 grams in a French press.",
   },
   {
-    id: "product-pricing",
-    label: "Pricing",
-    body: "Free while you make one card a day. One price for the rest.",
+    id: "product-delivery",
+    label: "Delivery",
+    body: "Roasted on Monday and at your door by Thursday.",
   },
 ] as const;
 
 /** A long product page: its title at the bar's start, a link to each section, and its call to action at the end. */
 export function ProductPage(): ReactElement {
-  const [inCart, setInCart] = useState(false);
+  const [inBag, setInBag] = useState(false);
   return (
     <Surface
       level="card"
@@ -48,18 +48,18 @@ export function ProductPage(): ReactElement {
     >
       <Page>
         <SubNav
-          title="Card Studio"
+          title="Halfmoon House"
           items={SECTIONS}
           action={
             <Button
               size="sm"
               variant="primary"
-              aria-disabled={inCart || undefined}
+              aria-disabled={inBag || undefined}
               onClick={() => {
-                setInCart(true);
+                setInBag(true);
               }}
             >
-              {inCart ? "In your cart" : "Get it"}
+              {inBag ? "In your bag" : "Add to bag"}
             </Button>
           }
         />
@@ -80,7 +80,7 @@ export function ProductPage(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("A card for your announcement, ready before the coffee is.");
-  await press("button", "Get it");
-  await see("In your cart");
+  await see("Our house blend, roasted dark for espresso and milk, $14 a bag.");
+  await press("button", "Add to bag");
+  await see("In your bag");
 };
