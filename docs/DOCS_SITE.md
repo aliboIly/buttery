@@ -88,7 +88,7 @@ Guides and foundations pages use the same shell without the component-only parts
 The docs search is buttery's own `CommandSearch`, opened with ⌘K or `/`. It works offline, with no hosted service, so it works in the desktop app too.
 
 - The index is generated at build time from the docs content, never by hand: pages, every heading, components, props (name, type, default, description), tokens (name, value per theme, role), examples (title, caption), guides, CLI commands and changelog entries. Titles and headings load on the first focus, fetched ahead while the browser is idle; the full text loads after them.
-- Ranking: an exact title, then a component's name, then a heading, then a prop or token, then body text. It tolerates typos and matches prefixes. `content/search-synonyms.ts` maps the words people use to buttery's names: "modal" and "popup" to `Dialog`, "dropdown" to `Menu` and `Select`, "drawer" to `SidePanel`, "snackbar" to the toast, "spinner" to `LoadingPill`, "toggle" to `SegmentedControl`, and so on.
+- Ranking: an exact title, then a component's name, then a heading, then a prop or token, then body text. It tolerates typos and matches prefixes. `apps/docs/src/search/synonyms.ts` maps the words people use to buttery's names: "modal" and "popup" to `Dialog`, "dropdown" to `Menu` and `Select`, "drawer" to `SidePanel`, "snackbar" to the toast, "spinner" to `LoadingPill`, "toggle" to `SegmentedControl`, and so on.
 - Results are grouped (Components, Guides, Foundations, Patterns, Props, Tokens, Examples, Changelog). Each shows its breadcrumb path and a snippet with the matched text highlighted. Enter goes straight to the heading's anchor; ⌘Enter opens it in a new tab.
 - An empty query shows recent searches and suggestions: Quick start, Button, Dialog, Theming and the layout contract.
 - The filter syntax is `CommandSearch`'s: `component:`, `prop:`, `token:` and `guide:`.
@@ -96,7 +96,7 @@ The docs search is buttery's own `CommandSearch`, opened with ⌘K or `/`. It wo
 - No results shows a "did you mean" suggestion and a link to ask for the missing docs.
 - `/search?q=` lists every result, with filters by section.
 - Results change in the frame the query does once the index has loaded, and the index loads in under 200ms on a normal connection.
-- `tests/search-golden.ts` lists at least 40 real queries with the result each should find, such as "modal" for `Dialog`, "dark mode" for Theming, "onValueChange" for the props of the components that have it, "--bt-r-lg" for Radius, "no overlap" for the layout contract and "make my app buttery" for Make anything buttery. `pnpm check` fails if an expected result drops out of the top three.
+- `apps/docs/tests/search-golden.ts` lists at least 40 real queries with the result each should find, such as "modal" for `Dialog`, "dark mode" for Theming, "onValueChange" for the props of the components that have it, "--bt-r-lg" for Radius, "no overlap" for the layout contract and "make my app buttery" for Make anything buttery. `pnpm check` fails if an expected result drops out of the top three.
 - `minisearch` is approved; a small index of buttery's own is fine if it turns out simpler. Either way the choice is logged in `docs/DECISIONS.md`.
 
 ## Examples

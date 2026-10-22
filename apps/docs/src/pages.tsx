@@ -15,6 +15,7 @@ import { CardStudio } from "./card-studio/CardStudio.tsx";
 import { CardStudioSite } from "./card-studio/CardStudioSite.tsx";
 import { Roastery } from "./roastery/Roastery.tsx";
 import { components } from "./registry.ts";
+import { SearchPage } from "./search/SearchPage.tsx";
 import { demoPages } from "./routes.ts";
 
 export interface Page {
@@ -201,8 +202,16 @@ const labDocs: readonly Page[] = import.meta.env.DEV
     ]
   : [];
 
+/** Every result for a search, which "View all results" in the top bar's search opens. */
+const searchPage: Page = {
+  route: "search",
+  title: "Search",
+  render: () => <SearchPage />,
+};
+
 export const pages: readonly Page[] = [
   ...pageGroups.flatMap((group) => group.pages),
+  searchPage,
   ...labDocs,
 ];
 

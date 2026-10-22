@@ -10,6 +10,7 @@ import { exampleCode } from "./vite/code.ts";
 import { butteryDates } from "./vite/dates.ts";
 import { frontmatter } from "./vite/frontmatter.ts";
 import { butteryProps } from "./vite/props.ts";
+import { butterySearch } from "./vite/search.ts";
 import { rehypeHighlight } from "./vite/highlight.ts";
 
 const { port } = manifest.config;
@@ -43,6 +44,7 @@ export default defineConfig({
   plugins: [
     butteryProps(fileURLToPath(new URL("../..", import.meta.url))),
     butteryDates(fileURLToPath(new URL("../..", import.meta.url))),
+    butterySearch(fileURLToPath(new URL("../..", import.meta.url))),
     exampleCode(),
     frontmatter(),
     {

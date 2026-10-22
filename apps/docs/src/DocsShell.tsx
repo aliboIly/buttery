@@ -11,6 +11,7 @@ import {
   useButtery,
 } from "@buttery/react";
 import { DisplaySettings } from "./DisplaySettings.tsx";
+import { DocsSearch } from "./search/DocsSearch.tsx";
 import { OnThisPage } from "./OnThisPage.tsx";
 import type { Heading } from "./content.ts";
 import { setSetting } from "./location.ts";
@@ -126,6 +127,7 @@ export function DocsShell({
             buttery
           </a>
         }
+        search={<DocsSearch />}
         actions={
           <>
             <Text variant="caption" tone="secondary" className="docs-version">
