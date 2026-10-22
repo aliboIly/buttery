@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Chip, TiltPad } from "@buttery/react";
 import type { TiltValue } from "@buttery/react";
 
@@ -35,6 +36,46 @@ function Tilt(): ReactElement {
     </Inline>
   );
 }
+
+type Lean = "level" | "left" | "right" | "up" | "down";
+
+const LEAN_NAMES: readonly [Lean, ...Lean[]] = [
+  "level",
+  "left",
+  "right",
+  "up",
+  "down",
+];
+
+const LEANS: Readonly<Record<Lean, TiltValue>> = {
+  level: { x: 0, y: 0 },
+  left: { x: -0.6, y: 0 },
+  right: { x: 0.6, y: 0 },
+  up: { x: 0, y: -0.6 },
+  down: { x: 0, y: 0.6 },
+};
+
+export const live: LiveDemo = {
+  controls: {
+    defaultValue: { kind: "choice", options: LEAN_NAMES, initial: "right" },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ defaultValue, disabled }) => {
+    const lean = demoChoice(defaultValue, LEAN_NAMES);
+    return (
+      <TiltPad
+        key={lean}
+        label="Lean"
+        defaultValue={LEANS[lean]}
+        disabled={disabled === true}
+      />
+    );
+  },
+  code: ({ defaultValue, disabled }) => {
+    const { x, y } = LEANS[demoChoice(defaultValue, LEAN_NAMES)];
+    return `<TiltPad label="Lean" defaultValue={{ x: ${String(x)}, y: ${String(y)} }}${disabled === true ? " disabled" : ""} />`;
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {
