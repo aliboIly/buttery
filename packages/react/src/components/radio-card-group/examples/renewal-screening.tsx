@@ -9,7 +9,7 @@ export function RenewalScreening(): ReactElement {
   const [screening, setScreening] = useState("all");
   const [count, setCount] = useState("1");
   return (
-    <Stack gap={3}>
+    <Stack gap={4}>
       <RadioCardGroup
         label="Renewal screening"
         value={screening}
