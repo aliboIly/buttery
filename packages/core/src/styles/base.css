@@ -24,6 +24,11 @@
     line-height: var(--bt-text-label-line);
   }
 
+  /* A nested provider's theme reaches text that sets no color of its own, which would keep the outer theme's. */
+  [data-bt-theme] {
+    color: var(--bt-text);
+  }
+
   ::selection {
     background-color: var(--bt-selection);
   }

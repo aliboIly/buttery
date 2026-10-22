@@ -202,6 +202,22 @@ describe("ButteryProvider", () => {
     expect(inside.parentElement?.style.display).toBe("contents");
   });
 
+  it("colors text in a nested provider with its own theme, even text that sets no color", () => {
+    render(
+      <ButteryProvider colorScheme="dark">
+        <ButteryProvider colorScheme="light">
+          <span data-testid="plain">plain</span>
+          <span data-testid="probe" style={{ color: "var(--bt-text)" }}>
+            probe
+          </span>
+        </ButteryProvider>
+      </ButteryProvider>,
+    );
+    expect(getComputedStyle(screen.getByTestId("plain")).color).toBe(
+      getComputedStyle(screen.getByTestId("probe")).color,
+    );
+  });
+
   it("explains what's missing when used outside a provider", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     expect(() => render(<Probe />)).toThrow(
