@@ -180,6 +180,18 @@
   border: 0;
 }
 
+/* From 640px of frame, the template draws at an app page's width with a desktop's proportions, scaled down to fit. */
+.docs-template-frame[data-scaled] {
+  block-size: calc(var(--bt-w-app-page) * 0.625 * var(--bt-docs-preview-scale));
+}
+
+.docs-template-frame[data-scaled] > .docs-template-preview {
+  inline-size: var(--bt-w-app-page);
+  block-size: calc(var(--bt-w-app-page) * 0.625);
+  transform-origin: 0 0;
+  scale: var(--bt-docs-preview-scale);
+}
+
 /* A demo's picture on the demos page, drawn from the demo by scripts/demo-previews.mjs. */
 .docs-demo-preview {
   display: block;
