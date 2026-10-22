@@ -168,6 +168,16 @@
   min-inline-size: 0;
 }
 
+/* A demo's picture on the demos page, drawn from the demo by scripts/demo-previews.mjs. */
+.docs-demo-preview {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 8 / 5;
+  border: var(--bt-docs-line) solid var(--bt-border);
+  border-radius: var(--bt-r-md);
+}
+
 .docs-page-footer {
   padding-block-start: var(--bt-space-8);
   border-block-start: var(--bt-docs-line) solid var(--bt-border);

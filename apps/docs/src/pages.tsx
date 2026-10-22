@@ -13,10 +13,12 @@ import type { Neighbor } from "./PageFooter.tsx";
 import { buildNav, rootOf } from "./nav.ts";
 import type { NavSection } from "./nav.ts";
 import { MotionPage } from "./pages/MotionPage.tsx";
-import { App as CardStudio } from "demo-card-studio";
-import { App as CardStudioSite } from "demo-card-studio-site";
-import { App as Roastery } from "demo-roastery";
-import { HostedApp } from "./demos/DemoPage.tsx";
+import * as cardStudio from "demo-card-studio";
+import * as cardStudioSite from "demo-card-studio-site";
+import * as roastery from "demo-roastery";
+import { DemoPage } from "./demos/DemoPage.tsx";
+import type { DemoApp } from "./demos/DemoPage.tsx";
+import { DemosPage } from "./demos/DemosPage.tsx";
 import { components } from "./registry.ts";
 import { SearchPage } from "./search/SearchPage.tsx";
 import { demoPages } from "./routes.ts";
@@ -41,26 +43,13 @@ export interface PageGroup {
   readonly pages: readonly Page[];
 }
 
-const DEMOS: Readonly<
-  Record<
-    (typeof demoPages)[number]["route"],
-    Pick<Page, "render" | "fullWindow">
-  >
+/** Each demo's own package, by its route. */
+const DEMO_APPS: Readonly<
+  Record<(typeof demoPages)[number]["route"], DemoApp>
 > = {
-  "card-studio": {
-    render: () => <HostedApp App={CardStudio} base="/demos/card-studio" />,
-    fullWindow: true,
-  },
-  "card-studio-site": {
-    render: () => (
-      <HostedApp App={CardStudioSite} base="/demos/card-studio-site" />
-    ),
-    fullWindow: true,
-  },
-  roastery: {
-    render: () => <HostedApp App={Roastery} base="/demos/roastery" />,
-    fullWindow: true,
-  },
+  "card-studio": cardStudio,
+  "card-studio-site": cardStudioSite,
+  roastery,
 };
 
 const ComparePage =
@@ -145,11 +134,14 @@ function crumbsFor(
   ];
 }
 
-/** The demos, each its own app, for the sidebar's last section. */
+/** The demos page and each demo, its own app, for the sidebar's last section. */
 export const demoLinks: readonly {
   readonly route: string;
   readonly title: string;
-}[] = demoPages.map(({ route, title }) => ({ route: `demos/${route}`, title }));
+}[] = [
+  { route: "demos", title: "All demos" },
+  ...demoPages.map(({ route, title }) => ({ route: `demos/${route}`, title })),
+];
 
 /** The site's nav, generated from every page's metadata. */
 export const nav: readonly NavSection[] = buildNav(
@@ -174,11 +166,15 @@ export const pageGroups: readonly PageGroup[] = [
   }),
   {
     title: "Demos",
-    pages: demoPages.map(({ route, title }) => ({
-      route: `demos/${route}`,
-      title,
-      ...DEMOS[route],
-    })),
+    pages: [
+      { route: "demos", title: "Demos", render: () => <DemosPage /> },
+      ...demoPages.map((demo) => ({
+        route: `demos/${demo.route}`,
+        title: demo.title,
+        render: () => <DemoPage demo={demo} app={DEMO_APPS[demo.route]} />,
+        fullWindow: true,
+      })),
+    ],
   },
 ];
 

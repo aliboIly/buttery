@@ -1,5 +1,17 @@
 import type { ComponentType, ReactElement } from "react";
+import { motion } from "motion/react";
+import { Code, PanelBottomClose, RotateCcw } from "lucide-react";
+import {
+  FloatingLanes,
+  Inline,
+  useLayoutAnimation,
+  useStoredState,
+} from "@buttery/core";
+import { BrandMark, Button, IconButton, buttery } from "@buttery/react";
 import { navigate, useSettings } from "../location.ts";
+import { SOURCE_URL } from "../routes.ts";
+import type { DemoInfo } from "../routes.ts";
+import { ThemeToggle } from "../ThemeToggle.tsx";
 
 /** The props every demo's and template's root takes: the router each of them has. */
 export interface HostedAppProps {
@@ -9,6 +21,12 @@ export interface HostedAppProps {
   readonly navigate?: ((href: string) => void) | undefined;
   /** The address the static build renders it for. */
   readonly serverHref?: string | undefined;
+}
+
+/** What a demo's package gives the docs site: its root and the way to forget what it saved. */
+export interface DemoApp {
+  readonly App: ComponentType<HostedAppProps>;
+  readonly clearSavedState: () => void;
 }
 
 /** An app from its own package, filling the window under `base`, as a demo or a template's preview. */
@@ -26,5 +44,111 @@ export function HostedApp({
       navigate={navigate}
       serverHref={`http://localhost/${route}${query}`}
     />
+  );
+}
+
+function isFlag(value: unknown): value is boolean {
+  return typeof value === "boolean";
+}
+
+/** Where the pill remembers it was folded away, for every demo; Reset demo leaves it as it is. */
+const FOLDED_KEY = "buttery-docs:demo-pill-folded";
+
+/**
+ * The docs site's few controls over a demo, in a floating pill: back to the docs, the demo's source, the
+ * theme and Reset demo. It folds away to one button, and one surface changes size between the two.
+ */
+function DemoPill({
+  demo,
+  onReset,
+}: {
+  readonly demo: DemoInfo;
+  readonly onReset: () => void;
+}): ReactElement {
+  const [folded, setFolded] = useStoredState(FOLDED_KEY, false, isFlag);
+  const keepSize = useLayoutAnimation("smooth", "position");
+  return (
+    <buttery.div
+      surface="floating"
+      radius="full"
+      pad={1}
+      layout
+      layoutDependency={folded}
+      role="group"
+      aria-label="Demo controls"
+      data-testid="demo-pill"
+    >
+      <motion.div {...keepSize} layoutDependency={folded}>
+        {folded ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label="Show the demo controls"
+            onClick={() => {
+              setFolded(false);
+            }}
+          >
+            <BrandMark size={16} />
+          </Button>
+        ) : (
+          <Inline gap={1} align="center">
+            <Button variant="ghost" size="sm" asChild>
+              <a href="/demos">
+                <BrandMark size={16} />
+                Docs
+              </a>
+            </Button>
+            <IconButton icon={Code} label="View source" size="sm" asChild>
+              <a
+                href={`${SOURCE_URL}/tree/main/apps/demos/${demo.route}`}
+                aria-label="View source"
+              />
+            </IconButton>
+            <ThemeToggle size="sm" />
+            <IconButton
+              icon={RotateCcw}
+              label="Reset demo"
+              size="sm"
+              onClick={onReset}
+            />
+            <IconButton
+              icon={PanelBottomClose}
+              label="Hide the demo controls"
+              size="sm"
+              onClick={() => {
+                setFolded(true);
+              }}
+            />
+          </Inline>
+        )}
+      </motion.div>
+    </buttery.div>
+  );
+}
+
+/**
+ * A demo as its own site, filling the window at `/demos/<route>`, with the docs pill in the floating lane
+ * at the bottom end, where the lanes keep it clear of the demo's own floating UI.
+ */
+export function DemoPage({
+  demo,
+  app,
+}: {
+  readonly demo: DemoInfo;
+  readonly app: DemoApp;
+}): ReactElement {
+  return (
+    <>
+      <HostedApp App={app.App} base={`/demos/${demo.route}`} />
+      <FloatingLanes.Item lane="bottom-end">
+        <DemoPill
+          demo={demo}
+          onReset={() => {
+            app.clearSavedState();
+            window.location.reload();
+          }}
+        />
+      </FloatingLanes.Item>
+    </>
   );
 }

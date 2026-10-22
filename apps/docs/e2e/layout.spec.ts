@@ -47,6 +47,9 @@ function headerAction(name: string): ButteryInteraction["run"] {
   };
 }
 
+/** The docs site's pill over a demo, a lane item that moves clear of what the lanes avoid. */
+const PILL = '[data-testid="demo-pill"]';
+
 const escape: ButteryInteraction = {
   name: "press Escape",
   run: async (page: Page) => {
@@ -103,13 +106,15 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   ],
   "card-studio": [
     {
-      name: "enter resize mode",
+      name: "enter resize mode, the docs pill rising above its toolbar",
       run: headerAction("Resize"),
+      allowMove: [PILL],
       acrossMatrix: true,
     },
     {
       name: "discard the resize",
       run: press("Discard"),
+      allowMove: [PILL],
     },
     {
       name: "delete the card, showing the empty state (its toast is checked at the first condition, before it leaves)",

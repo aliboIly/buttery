@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { Code, Moon, Sun } from "lucide-react";
+import { Code } from "lucide-react";
 import { Sticky, Text, useFloatingObstacle } from "@buttery/core";
 import {
   BrandMark,
@@ -8,16 +8,15 @@ import {
   MorphMenu,
   NavBar,
   Sidebar,
-  useButtery,
 } from "@buttery/react";
 import { DisplaySettings } from "./DisplaySettings.tsx";
 import { DocsSearch } from "./search/DocsSearch.tsx";
 import { OnThisPage } from "./OnThisPage.tsx";
 import type { Heading } from "./content.ts";
-import { setSetting } from "./location.ts";
 import type { Settings } from "./location.ts";
 import { demoLinks, nav } from "./pages.tsx";
 import { DOCS_VERSION, SOURCE_URL } from "./routes.ts";
+import { ThemeToggle } from "./ThemeToggle.tsx";
 
 /** Splits `items` into columns of at most `size`, so a long section reads as a grid in its menu. */
 function columns<T>(items: readonly T[], size: number): T[][] {
@@ -26,19 +25,6 @@ function columns<T>(items: readonly T[], size: number): T[][] {
     result.push(items.slice(index, index + size));
   }
   return result;
-}
-
-function ThemeToggle(): ReactElement {
-  const dark = useButtery().colorScheme === "dark";
-  return (
-    <IconButton
-      icon={dark ? Sun : Moon}
-      label={dark ? "Use the light theme" : "Use the dark theme"}
-      onClick={() => {
-        setSetting("theme", dark ? "light" : "dark");
-      }}
-    />
-  );
 }
 
 /** Every page of the site in its sections, the current one marked, for the sidebar. */
