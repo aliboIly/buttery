@@ -40,7 +40,7 @@ export function ScrollHeader(): ReactElement {
                 );
               }}
             >
-              <Text variant="body">{card}</Text>
+              <Text variant="menu">{card}</Text>
             </Pressable>
           </Surface>
         ))}

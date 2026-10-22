@@ -43,22 +43,24 @@ export function PanelFooter(): ReactElement {
               padY={2}
               radius="md"
             >
-              <Pressable
-                aria-label={setting}
-                aria-pressed={on}
-                onClick={() => {
-                  setDraft(
-                    on
-                      ? draft.filter((other) => other !== setting)
-                      : [...draft, setting],
-                  );
-                }}
-              >
-                <Inline gap={3} justify="between" align="center">
-                  <Text variant="body">{setting}</Text>
-                  <Text variant="caption">{on ? "On" : "Off"}</Text>
-                </Inline>
-              </Pressable>
+              <Inline asChild gap={3} justify="between" align="center">
+                <Pressable
+                  aria-label={setting}
+                  aria-pressed={on}
+                  onClick={() => {
+                    setDraft(
+                      on
+                        ? draft.filter((other) => other !== setting)
+                        : [...draft, setting],
+                    );
+                  }}
+                >
+                  <Text variant="menu">{setting}</Text>
+                  <Text variant="control" tone="secondary">
+                    {on ? "On" : "Off"}
+                  </Text>
+                </Pressable>
+              </Inline>
             </Surface>
           );
         })}
