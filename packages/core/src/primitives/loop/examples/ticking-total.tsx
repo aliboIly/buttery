@@ -9,7 +9,7 @@ export function TickingTotal(): ReactElement {
   return (
     <Loop steps={TOTALS.length} aria-hidden="true">
       {(step) => (
-        <Stack gap={3}>
+        <Stack gap={4}>
           <Morph contentKey={step}>
             <Text variant="display" tabular>
               {TOTALS[step]}
