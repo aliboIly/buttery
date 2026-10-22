@@ -2,7 +2,8 @@ import { Download, Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button } from "@buttery/react";
 import type { ButtonVariant } from "@buttery/react";
 
@@ -46,6 +47,32 @@ function LoadingDemo(): ReactElement {
     </Inline>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    variant: {
+      kind: "choice",
+      options: ["primary", "secondary", "soft", "ghost"],
+      initial: "primary",
+    },
+    size: { kind: "choice", options: ["sm", "md", "cta"], initial: "md" },
+    shape: { kind: "choice", options: ["pill", "rounded"], initial: "pill" },
+    loading: { kind: "toggle", initial: false },
+    disabled: { kind: "toggle", initial: false },
+    children: { kind: "text", initial: "Save changes" },
+  },
+  render: ({ variant, size, shape, loading, disabled, children }) => (
+    <Button
+      variant={demoChoice(variant, ["primary", "secondary", "soft", "ghost"])}
+      size={demoChoice(size, ["md", "sm", "cta"])}
+      shape={demoChoice(shape, ["pill", "rounded"])}
+      loading={loading === true}
+      disabled={disabled === true}
+    >
+      {String(children)}
+    </Button>
+  ),
+};
 
 export const demos: readonly DemoSection[] = [
   {

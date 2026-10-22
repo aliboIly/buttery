@@ -2,9 +2,10 @@ import { createElement, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Copy, Check } from "lucide-react";
 import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { Density, MotionClass } from "@buttery/core";
+import type { DemoValues, Density, MotionClass } from "@buttery/core";
 import {
   Breadcrumbs,
+  Button,
   ButteryProvider,
   IconButton,
   SegmentedControl,
@@ -12,7 +13,9 @@ import {
   TagChip,
 } from "@buttery/react";
 import type { StatusTone } from "@buttery/react";
+import { CodeText } from "./CodeBlock.tsx";
 import { ExampleFrame } from "./ExampleFrame.tsx";
+import { LiveControls, initialValues, jsxOf } from "./LiveControls.tsx";
 import { PageFooter } from "./PageFooter.tsx";
 import type { Neighbor } from "./PageFooter.tsx";
 import { PropsTables } from "./PropsTables.tsx";
@@ -160,12 +163,29 @@ function ImportLine({
   );
 }
 
-/** The live demo: the component in a frame with its own theme and density, which the visitor can change. */
-function LiveDemo({ entry }: { readonly entry: ComponentEntry }): ReactElement {
+/**
+ * The live demo: the component in a frame with its own theme and density, controls for its props, and the
+ * code for what it shows.
+ */
+function LiveDemoFrame({
+  entry,
+}: {
+  readonly entry: ComponentEntry;
+}): ReactElement {
   const [scheme, setScheme] = useState<"light" | "dark">("light");
   const [density, setDensity] = useState<Density>("comfortable");
+  const { live } = entry;
+  const [values, setValues] = useState<DemoValues>(() =>
+    live ? initialValues(live.controls) : {},
+  );
+  const [showing, setShowing] = useState(false);
   const [demo] = entry.demos;
   const stage = entry.frame === "page" ? "card" : "section";
+  const code = live
+    ? (live.code ?? ((current: DemoValues) => jsxOf(entry.meta.name, current)))(
+        values,
+      )
+    : undefined;
   return (
     <Stack gap={3}>
       <Inline gap={2} wrap>
@@ -189,10 +209,43 @@ function LiveDemo({ entry }: { readonly entry: ComponentEntry }): ReactElement {
         />
       </Inline>
       <ButteryProvider colorScheme={scheme} density={density}>
-        <Surface level={stage} pad={6} radius="lg" className="pg-stage">
-          {demo ? demo.render() : null}
+        <Surface
+          level={stage}
+          pad={6}
+          radius="lg"
+          className="pg-stage"
+          data-testid="live-demo"
+        >
+          {live ? live.render(values) : demo ? demo.render() : null}
         </Surface>
       </ButteryProvider>
+      {live ? (
+        <LiveControls
+          controls={live.controls}
+          values={values}
+          onChange={(name, value) => {
+            setValues((current) => ({ ...current, [name]: value }));
+          }}
+        />
+      ) : null}
+      {code === undefined ? null : (
+        <Stack gap={3}>
+          <Inline gap={2}>
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-expanded={showing}
+              aria-label={`${showing ? "Hide" : "Show"} code for the ${entry.meta.name} demo`}
+              onClick={() => {
+                setShowing(!showing);
+              }}
+            >
+              {showing ? "Hide code" : "Show code"}
+            </Button>
+          </Inline>
+          {showing ? <CodeText code={code} /> : null}
+        </Stack>
+      )}
     </Stack>
   );
 }
@@ -435,7 +488,7 @@ export function ComponentPage({
             <HeadingAt depth={2} id="demo">
               Demo
             </HeadingAt>
-            <LiveDemo entry={entry} />
+            <LiveDemoFrame entry={entry} />
           </section>
         </Stack>
         <ComponentBody entry={entry} depth={2} />

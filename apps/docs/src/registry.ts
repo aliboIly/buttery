@@ -4,6 +4,7 @@ import type {
   DemoFrame,
   DemoSection,
   DocsPage,
+  LiveDemo,
 } from "@buttery/core";
 import { componentRoute } from "./routes.ts";
 
@@ -15,6 +16,7 @@ interface DemoModule {
   readonly demos: readonly DemoSection[];
   readonly frame?: DemoFrame;
   readonly page?: DocsPage;
+  readonly live?: LiveDemo;
 }
 
 const metaModules = import.meta.glob<MetaModule>(
@@ -60,6 +62,8 @@ export interface ComponentEntry {
   readonly demos: readonly DemoSection[];
   readonly frame: DemoFrame;
   readonly examples: readonly Example[];
+  /** Its page's live demo with prop controls, from its `*.playground.tsx`; undefined until it has one. */
+  readonly live: LiveDemo | undefined;
 }
 
 function folderOf(path: string): string {
@@ -110,6 +114,7 @@ export const components: readonly ComponentEntry[] = Object.entries(metaModules)
       folder: folder.replace(/^(\.\.\/)+/, ""),
       meta,
       demos: page?.demos ?? [],
+      live: page?.live,
       frame: page?.frame ?? "section",
       examples: examplesIn(folder),
     };

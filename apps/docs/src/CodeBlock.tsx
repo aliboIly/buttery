@@ -94,3 +94,15 @@ export function CodeHtml({
     </div>
   );
 }
+
+/** A code block of plain text, such as a live demo's code, with its bar; it isn't highlighted. */
+export function CodeText({ code }: { readonly code: string }): ReactElement {
+  return (
+    <div className="docs-code-block">
+      <CodeBar language="tsx" text={() => code} />
+      <pre className="docs-pre">
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+}

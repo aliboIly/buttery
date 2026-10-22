@@ -115,17 +115,21 @@ export type {
 } from "./layers/sticky/sticky-stack.ts";
 export { LayoutGuard } from "./layout/LayoutGuard.tsx";
 export type { LayoutGuardProps } from "./layout/LayoutGuard.tsx";
+export { demoChoice } from "./meta-values.ts";
 export type {
   ComponentKind,
   ComponentMeta,
+  DemoControl,
   DemoFrame,
   DemoSection,
+  DemoValues,
   DocsPage,
   DocsSection,
   DocsStatus,
   ExamplePlay,
   ExamplePlayContext,
   KeyboardRow,
+  LiveDemo,
   MotionClass,
 } from "./meta.ts";
 export {

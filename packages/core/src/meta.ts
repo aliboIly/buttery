@@ -137,6 +137,67 @@ export interface ExamplePlayContext {
  */
 export type ExamplePlay = (play: ExamplePlayContext) => Promise<void>;
 
+/** One control on a component page's live demo, for one prop. */
+export type DemoControl =
+  | {
+      /** One of a few values, such as a variant. */
+      readonly kind: "choice";
+      readonly options: readonly string[];
+      readonly initial: string;
+    }
+  | {
+      /** On or off, such as `disabled`. */
+      readonly kind: "toggle";
+      readonly initial: boolean;
+    }
+  | {
+      /** Words, such as a label. */
+      readonly kind: "text";
+      readonly initial: string;
+    }
+  | {
+      /** A number in a range. */
+      readonly kind: "number";
+      readonly initial: number;
+      readonly min: number;
+      readonly max: number;
+      readonly step?: number | undefined;
+    };
+
+/** The values a live demo's controls hold, by prop name. */
+export type DemoValues = Readonly<Record<string, string | number | boolean>>;
+
+/**
+ * A component page's live demo, exported from its `*.playground.tsx` as `live`: controls for some of its
+ * props, how to render it with their values, and, for a component JSX can't be generated for, the code that
+ * renders it so.
+ *
+ * @example
+ * export const live: LiveDemo = {
+ *   controls: {
+ *     variant: { kind: "choice", options: ["primary", "soft"], initial: "primary" },
+ *     disabled: { kind: "toggle", initial: false },
+ *     children: { kind: "text", initial: "Save" },
+ *   },
+ *   render: ({ variant, disabled, children }) => (
+ *     <Button variant={variant === "soft" ? "soft" : "primary"} disabled={disabled === true}>
+ *       {String(children)}
+ *     </Button>
+ *   ),
+ * };
+ */
+export interface LiveDemo {
+  /** The controls, by the prop each one sets; `children` sets what's between the tags. */
+  readonly controls: Readonly<Record<string, DemoControl>>;
+  /** Renders the component with the controls' values. */
+  readonly render: (values: DemoValues) => ReactElement;
+  /**
+   * The code the demo shows under "Show code". Defaults to JSX of the component with each control's value
+   * as a prop and `children` between the tags.
+   */
+  readonly code?: ((values: DemoValues) => string) | undefined;
+}
+
 /** One titled demo on a component's playground page. */
 export interface DemoSection {
   /** The demo's heading on the page. */

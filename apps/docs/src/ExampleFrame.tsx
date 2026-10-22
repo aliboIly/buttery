@@ -53,6 +53,7 @@ export function ExampleFrame({
           size="sm"
           variant="ghost"
           aria-expanded={showing}
+          aria-label={`${showing ? "Hide" : "Show"} code for ${title}`}
           onClick={() => {
             setShowing(!showing);
           }}

@@ -107,11 +107,7 @@ export function ContentPage({
         <Stack gap={5}>
           <Content components={markdown} />
         </Stack>
-        <PageFooter
-          previous={previous}
-          next={next}
-          source={entry.source}
-        />
+        <PageFooter previous={previous} next={next} source={entry.source} />
       </article>
     </Stack>
   );
