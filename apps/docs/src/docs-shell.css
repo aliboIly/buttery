@@ -3,12 +3,14 @@
   --bt-docs-shell-toc: 200px;
 }
 
+/* A content site sits on the surface, as Page does, so fills made for a surface, such as bg-control, show. */
 .docs-shell {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-block-size: 100dvh;
   padding-inline: var(--bt-space-4);
   container: docs-shell / inline-size;
+  background-color: var(--bt-bg-surface);
 }
 
 /*
