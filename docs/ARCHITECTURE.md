@@ -200,11 +200,11 @@ Each component lives in its own folder, which is what the playground, the manife
 | `Name.tsx` | The component, with JSDoc on the export and every prop |
 | `name.css` | Its styles in its cascade layer, component variables (`--bt-name-*`) on top |
 | `Name.test.tsx` | Behavior tests, run in Chromium and WebKit |
-| `Name.meta.ts` | What the types can't say: purpose, use and avoid lists, related components, keyboard and screen-reader behavior, motion class |
-| `Name.playground.tsx` | `export const demos`: titled demos the playground renders on the component's page |
-| `examples/*.tsx` | 2–6 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would |
+| `Name.meta.ts` | What the types can't say: purpose, use and avoid lists, related components, keyboard and screen-reader behavior, motion class, and the keyboard table, layout note and reduced-motion note its docs page shows |
+| `Name.playground.tsx` | `page`, its place on the docs site; `live`, its live demo's controls; and `demos`, the titled demos its page shows under Variants and states |
+| `examples/*.tsx` | 2–6 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would, with its `kind` and a `play` script |
 
-`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer` and `--package react|core`) writes that folder and wires the exports and stylesheet. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, the `bt-<name>` class behind its CSS, JSDoc on the export and on every prop, tests, demos, 2–6 examples and a filled-in manifest entry.
+`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer`, `--package react|core` and `--section`, the docs section its page goes in) writes that folder, with a basic and a composition example and the page, live demo, keyboard and layout notes the docs check asks for, and wires the exports and stylesheet. The docs check passes on what it writes once `docs/DOCS_SITE.md` gives the component a home. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, the `bt-<name>` class behind its CSS, JSDoc on the export and on every prop, tests, demos, 2–6 examples and a filled-in manifest entry.
 
 ## Theming & extension
 
