@@ -104,34 +104,12 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     escape,
     { name: "open the view menu", run: press("View") },
   ],
-  "card-studio": [
+  deckhand: [
     {
-      name: "enter resize mode, the docs pill rising above its toolbar",
-      run: headerAction("Resize"),
-      allowMove: [PILL],
-      acrossMatrix: true,
-    },
-    {
-      name: "discard the resize",
-      run: press("Discard"),
-      allowMove: [PILL],
-    },
-    {
-      name: "delete the card, showing the empty state (its toast is checked at the first condition, before it leaves)",
-      run: headerAction("Delete"),
-      allowMove: ['[data-bt="HeaderBar"]'],
-      acrossMatrix: true,
-    },
-    {
-      name: "add a new card",
-      run: press("New card"),
-      allowMove: ['[data-bt="HeaderBar"]'],
-    },
-    {
-      name: "open the canvas shape list or the More menu",
+      name: "open the slide size list or the More menu",
       run: async (page: Page) => {
         const select = page
-          .getByRole("combobox", { name: /^Canvas shape/ })
+          .getByRole("combobox", { name: /^Slide size/ })
           .first();
         if (await select.isVisible()) await select.click();
         else
@@ -142,9 +120,60 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
     },
     escape,
+    { name: "open the new slide menu", run: press("New slide") },
+    escape,
+    {
+      name: "arrange the words, the docs pill rising above the toolbar",
+      run: headerAction("Arrange"),
+      allowMove: [PILL],
+      acrossMatrix: true,
+    },
+    {
+      name: "finish arranging",
+      run: press("Done"),
+      allowMove: [PILL],
+    },
+    {
+      name: "present the deck",
+      run: async (page: Page) => {
+        await headerAction("Present")(page);
+        await page.getByRole("dialog", { name: /^Presenting/ }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "move on a slide in the presentation",
+      run: async (page: Page) => {
+        await page.keyboard.press("ArrowRight");
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "delete every slide, showing the empty state (its toast is checked at the first condition, before it leaves)",
+      run: async (page: Page) => {
+        for (let count = 0; count < 6; count += 1)
+          await headerAction("Delete slide")(page);
+      },
+      allowMove: ['[data-testid="slide-strip"]', PILL],
+      acrossMatrix: true,
+    },
+    {
+      name: "add a slide from the empty state",
+      run: press("New slide"),
+      allowMove: ['[data-testid="slide-strip"]', PILL],
+    },
     {
       name: "open the inspector sheet when it's narrow",
-      run: pressIfShown("button", "Edit card"),
+      run: pressIfShown("button", "Edit slide"),
+    },
+    escape,
+    {
+      name: "rename the deck",
+      run: async (page: Page) => {
+        await headerAction("Rename deck")(page);
+        await page.getByRole("dialog", { name: "Rename deck" }).waitFor();
+      },
     },
     escape,
     {
@@ -154,7 +183,9 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           .getByRole("button", { name: "Help", exact: true })
           .first()
           .click();
-        await page.getByRole("dialog", { name: "Name your card" }).waitFor();
+        await page
+          .getByRole("dialog", { name: "Write in the inspector" })
+          .waitFor();
       },
     },
   ],
@@ -977,25 +1008,26 @@ function resizeSteps(): readonly ButteryViewport[] {
   });
 }
 
-test("Card Studio resizes from 1728 to 390 without an overlap or overflow, folding its header and inspector", async ({
+test("Deckhand resizes from 1728 to 390 without an overlap or overflow, folding its header and inspector", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1728, height: 1117 });
-  await page.goto("/demos/card-studio?chrome=0");
+  await page.goto("/demos/deckhand?chrome=0");
   const more = page.getByRole("button", { name: "More actions", exact: true });
-  const sheet = page.getByRole("button", { name: "Edit card", exact: true });
+  const sheet = page.getByRole("button", { name: "Edit slide", exact: true });
+  const arrange = page.getByRole("button", { name: "Arrange", exact: true });
   const inspector = page.locator(
     '[data-bt="AppShell"] > [data-bt-part="inspector"]',
   );
   await expectButtery(page, {
-    name: "card-studio at 1728 with its canvas shape list open",
+    name: "deckhand at 1728 with its slide size list open",
     viewports: [{ width: 1728, height: 1117 }],
     interactions: [
       {
-        name: "open the canvas shape list",
+        name: "open the slide size list",
         run: async (target: Page) => {
-          await target.getByRole("combobox", { name: /^Canvas shape/ }).click();
-          await target.getByRole("listbox", { name: "Canvas shape" }).waitFor();
+          await target.getByRole("combobox", { name: /^Slide size/ }).click();
+          await target.getByRole("listbox", { name: "Slide size" }).waitFor();
         },
       },
       escape,
@@ -1004,7 +1036,7 @@ test("Card Studio resizes from 1728 to 390 without an overlap or overflow, foldi
   for (const viewport of resizeSteps()) {
     await page.setViewportSize(viewport);
     await expectButtery(page, {
-      name: `card-studio resized to ${String(viewport.width)}`,
+      name: `deckhand resized to ${String(viewport.width)}`,
       viewports: [viewport],
       densities: ["comfortable", "compact"],
     });
@@ -1014,14 +1046,10 @@ test("Card Studio resizes from 1728 to 390 without an overlap or overflow, foldi
     await expect(inspector, at).toHaveCount(narrow ? 0 : 1);
   }
   await expect(more).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Resize", exact: true }),
-  ).toBeHidden();
+  await expect(arrange).toBeHidden();
 
   await page.setViewportSize({ width: 1728, height: 1117 });
   await expect(more).toBeHidden();
-  await expect(
-    page.getByRole("button", { name: "Resize", exact: true }),
-  ).toBeVisible();
+  await expect(arrange).toBeVisible();
   await expect(inspector).toHaveCount(1);
 });
