@@ -7,6 +7,8 @@ export const SECTIONS: readonly {
   readonly groups?: readonly {
     readonly section: DocsSection;
     readonly title: string;
+    /** What's in it, in a few words, for the top bar's menu. */
+    readonly summary: string;
   }[];
 }[] = [
   { root: "get-started", title: "Get started" },
@@ -17,13 +19,41 @@ export const SECTIONS: readonly {
     root: "components",
     title: "Components",
     groups: [
-      { section: "components/actions", title: "Actions" },
-      { section: "components/inputs", title: "Inputs" },
-      { section: "components/selection", title: "Selection" },
-      { section: "components/navigation", title: "Navigation" },
-      { section: "components/overlays", title: "Overlays" },
-      { section: "components/data-display", title: "Data display" },
-      { section: "components/feedback", title: "Feedback and status" },
+      {
+        section: "components/actions",
+        title: "Actions",
+        summary: "Buttons, links and toolbars",
+      },
+      {
+        section: "components/inputs",
+        title: "Inputs",
+        summary: "Fields, sliders and pickers",
+      },
+      {
+        section: "components/selection",
+        title: "Selection",
+        summary: "Checkboxes, switches and choices",
+      },
+      {
+        section: "components/navigation",
+        title: "Navigation",
+        summary: "Bars, tabs, sidebars and search",
+      },
+      {
+        section: "components/overlays",
+        title: "Overlays",
+        summary: "Dialogs, menus and popovers",
+      },
+      {
+        section: "components/data-display",
+        title: "Data display",
+        summary: "Tables, charts and badges",
+      },
+      {
+        section: "components/feedback",
+        title: "Feedback and status",
+        summary: "Banners, toasts and empty states",
+      },
     ],
   },
   { root: "patterns", title: "Patterns" },
@@ -51,6 +81,7 @@ export interface NavSection {
   readonly pages: readonly NavPage[];
   readonly groups: readonly {
     readonly title: string;
+    readonly summary: string;
     readonly pages: readonly NavPage[];
   }[];
 }
@@ -70,6 +101,7 @@ export function buildNav(pages: readonly NavPage[]): readonly NavSection[] {
     groups: groups
       .map((group) => ({
         title: group.title,
+        summary: group.summary,
         pages: pages
           .filter((entry) => entry.page.section === group.section)
           .sort(byOrder),

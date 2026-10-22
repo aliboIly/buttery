@@ -79,7 +79,7 @@ Guides and foundations pages use the same shell without the component-only parts
 ## The shell
 
 - Three columns: the nav on the left (240 wide, groups that fold, the current page highlighted and scrolled into view, scrolling on its own), the content (prose at most 720 wide, demos wider when they need it), and an "On this page" list with scroll-spy on the right from 1280px. Under 1100 the list hides; under 768 the nav becomes a sheet.
-- A top bar: the `BrandMark`, links to the sections, the docs search (below), the version, a theme toggle and GitHub.
+- A top bar: the `BrandMark`, the sections in five menus (Learn: Get started, Foundations, Layout and Motion; Components, by group; Patterns and Templates; Guides and Tools; Resources), the docs search (below), the version, a theme toggle and GitHub.
 - Anchors on headings, copy buttons on code, and syntax highlighting done at build time.
 - Every docs page passes `expectButtery` across the full matrix, like the rest of buttery. The docs site is buttery's biggest dogfood test.
 

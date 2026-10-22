@@ -27,6 +27,21 @@ function columns<T>(items: readonly T[], size: number): T[][] {
   return result;
 }
 
+/**
+ * The top bar's menus, each holding whole sections of the nav, so the site's ten sections fit the bar as
+ * five menus; the sidebar still lists every page.
+ */
+const TOP_MENUS: readonly {
+  readonly label: string;
+  readonly roots: readonly string[];
+}[] = [
+  { label: "Learn", roots: ["get-started", "foundations", "layout", "motion"] },
+  { label: "Components", roots: ["components"] },
+  { label: "Patterns", roots: ["patterns", "templates"] },
+  { label: "Guides", roots: ["guides", "tools"] },
+  { label: "Resources", roots: ["resources"] },
+];
+
 /** Every page of the site in its sections, the current one marked, for the sidebar. */
 function PagesNav({ current }: { readonly current: string }): ReactElement {
   return (
@@ -132,25 +147,48 @@ export function DocsShell({
           </>
         }
       >
-        {nav.map((section) => {
-          const pages = [
-            ...section.pages,
-            ...section.groups.flatMap((group) => group.pages),
-          ];
+        {TOP_MENUS.map((menu) => {
+          const sections = menu.roots.flatMap(
+            (root) => nav.find((section) => section.root === root) ?? [],
+          );
           return (
-            <MorphMenu.Item key={section.root} label={section.title}>
-              {columns(pages, 8).map((column) => (
-                <MorphMenu.Column key={column[0]?.route}>
-                  {column.map(({ route, page }) => (
-                    <MorphMenu.Entry
-                      key={route}
-                      href={`/${route}`}
-                      title={page.title}
-                      aria-current={route === current ? "page" : undefined}
-                    />
-                  ))}
-                </MorphMenu.Column>
-              ))}
+            <MorphMenu.Item key={menu.label} label={menu.label}>
+              {sections.flatMap((section) =>
+                section.groups.length > 0
+                  ? columns(section.groups, 4).map((column) => (
+                      <MorphMenu.Column key={column[0]?.title}>
+                        {column.map((group) => (
+                          <MorphMenu.Entry
+                            key={group.title}
+                            href={`/${group.pages[0]?.route ?? section.root}`}
+                            title={group.title}
+                            caption={group.summary}
+                          />
+                        ))}
+                      </MorphMenu.Column>
+                    ))
+                  : columns(section.pages, 10).map((column, at) => (
+                      <MorphMenu.Column
+                        key={column[0]?.route}
+                        title={
+                          sections.length > 1 && at === 0
+                            ? section.title
+                            : undefined
+                        }
+                      >
+                        {column.map(({ route, page }) => (
+                          <MorphMenu.Entry
+                            key={route}
+                            href={`/${route}`}
+                            title={page.title}
+                            aria-current={
+                              route === current ? "page" : undefined
+                            }
+                          />
+                        ))}
+                      </MorphMenu.Column>
+                    )),
+              )}
             </MorphMenu.Item>
           );
         })}
