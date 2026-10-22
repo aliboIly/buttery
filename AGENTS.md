@@ -64,7 +64,7 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 ## Commands
 - `pnpm dev` — the docs site (`apps/docs`), where every component has its page
 - `pnpm build` — all packages and apps
-- `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, unit and browser tests, app smoke tests, and `expectButtery` on every playground page and the starter at 390 and 1280
+- `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, the docs check (`pnpm check:docs`) and the examples build (`pnpm check:examples`), unit and browser tests, app smoke tests, and `expectButtery` on every docs page and the starter at 390 and 1280
 - `pnpm test:layout` — `expectButtery` across the full matrix (from Phase 2)
 - `pnpm new-component <Name>` — scaffold a compliant component (from Phase 2)
 - `pnpm new-app <name>` — new app from `apps/starter`
