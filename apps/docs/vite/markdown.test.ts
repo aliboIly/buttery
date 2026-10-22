@@ -54,6 +54,17 @@ describe("the site as Markdown", () => {
     expect(markdown).not.toContain("ExampleKind");
   });
 
+  it("writes out the types a component's props use, after its props", () => {
+    const markdown =
+      pageMarkdown(root, "components/data-table", components) ?? "";
+    const types = markdown.indexOf("### DataTableColumn\n");
+    expect(types).toBeGreaterThan(markdown.indexOf("### DataTable\n"));
+    expect(markdown.indexOf("## Accessibility")).toBeGreaterThan(types);
+    expect(markdown.slice(types)).toMatch(
+      /\| `minWidth` \| `[^`]+` \| `"sm"` \|/,
+    );
+  });
+
   it("turns a page's token blocks into tables", () => {
     const markdown = pageMarkdown(root, "foundations/radius", components) ?? "";
     expect(markdown).toMatch(/\| `--bt-r-lg` \| \d+px \|/);

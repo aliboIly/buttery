@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { propsTablesIn } from "./props.ts";
+import { propsTablesIn, typeTablesIn } from "./props.ts";
 import type { PropsTable, ReadSource } from "./props.ts";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
@@ -45,6 +45,7 @@ const TILE = "/repo/packages/react/src/components/tile/Tile.tsx";
 const CHOICE = "/repo/packages/react/src/components/choice/Choice.tsx";
 const TOGGLE = "/repo/packages/react/src/components/mode-toggle/ModeToggle.tsx";
 const GLIDE = "/repo/packages/core/src/primitives/glide/Glide.tsx";
+const LEDGER = "/repo/packages/react/src/patterns/ledger/Ledger.tsx";
 
 const FIXTURES = files({
   ...CORE,
@@ -116,6 +117,62 @@ export type ModeToggleItemProps = ComponentPropsWithRef<"button">;
 export type ModeToggleIconProps = ComponentPropsWithRef<"svg">;
 
 export function ModeToggleItem(props: ModeToggleItemProps) {
+  return null;
+}
+
+export function ModeToggleValue(props: ModeToggleValueProps) {
+  return null;
+}
+`,
+  [LEDGER]: `import type { ComponentPropsWithRef, ReactNode } from "react";
+import type { Size } from "@buttery/core";
+
+/** A column's least width. */
+export type ColumnWidth = "sm" | "md";
+
+/** Where a cell's text sits. */
+export interface CellPlacement {
+  /** \`"start"\` (the default) or \`"end"\`. */
+  readonly align?: "start" | "end" | undefined;
+}
+
+/** One column of a \`Ledger\`. */
+export interface LedgerColumn<Row> extends CellPlacement {
+  /** The header's text. */
+  readonly header: string;
+  /** What a row shows in this column. */
+  readonly cell: (row: Row) => ReactNode;
+  /** The least the column takes. Defaults to \`"sm"\`. */
+  readonly minWidth?: ColumnWidth | undefined;
+  /** Its share of the width. Defaults to 1. */
+  readonly grow?: number | undefined;
+}
+
+/** What a ledger's render prop gets. */
+export interface LedgerControlProps {
+  /** How many rows show. */
+  readonly count: number;
+}
+
+/** Props for \`Ledger\`. */
+export interface LedgerProps<Row> extends ComponentPropsWithRef<"div"> {
+  /** The columns, in order. */
+  readonly columns: readonly LedgerColumn<Row>[];
+  /** The columns' text size. */
+  readonly size?: Size | undefined;
+  /** What shows under the rows. */
+  readonly footer?: ((control: LedgerControlProps) => ReactNode) | undefined;
+  /** The same columns, again. */
+  readonly pinned?: readonly LedgerColumn<Row>[] | undefined;
+}
+
+/** Props for \`Ledger.Row\`. */
+export interface LedgerRowProps {
+  /** Where its text sits. */
+  readonly placement?: CellPlacement | undefined;
+}
+
+export function LedgerRow(props: LedgerRowProps) {
   return null;
 }
 `,
@@ -265,5 +322,101 @@ describe("the props reader", () => {
     expect(table?.inherits).toEqual([
       'Omit<MotionElementProps<"div">, "children">',
     ]);
+  });
+
+  it("lists a part only when its file declares it, so a type named like one isn't taken for a part", () => {
+    expect(
+      propsTablesIn("Ledger", LEDGER, FIXTURES).map((table) => table.part),
+    ).toEqual(["", "Row"]);
+  });
+
+  it("documents the exported types a component's props use, each once, with the types those use", () => {
+    expect(typeTablesIn("Ledger", LEDGER, FIXTURES)).toEqual([
+      {
+        name: "LedgerColumn",
+        description: "One column of a `Ledger`.",
+        props: [
+          {
+            name: "header",
+            type: "string",
+            required: true,
+            defaultValue: null,
+            description: "The header's text.",
+          },
+          {
+            name: "cell",
+            type: "(row: Row) => ReactNode",
+            required: true,
+            defaultValue: null,
+            description: "What a row shows in this column.",
+          },
+          {
+            name: "minWidth",
+            type: '"sm" | "md"',
+            required: false,
+            defaultValue: '"sm"',
+            description: 'The least the column takes. Defaults to `"sm"`.',
+          },
+          {
+            name: "grow",
+            type: "number",
+            required: false,
+            defaultValue: "1",
+            description: "Its share of the width. Defaults to 1.",
+          },
+          {
+            name: "align",
+            type: '"start" | "end"',
+            required: false,
+            defaultValue: '"start"',
+            description: '`"start"` (the default) or `"end"`.',
+          },
+        ],
+        inherits: [],
+      },
+      {
+        name: "LedgerControlProps",
+        description: "What a ledger's render prop gets.",
+        props: [
+          {
+            name: "count",
+            type: "number",
+            required: true,
+            defaultValue: null,
+            description: "How many rows show.",
+          },
+        ],
+        inherits: [],
+      },
+      {
+        name: "CellPlacement",
+        description: "Where a cell's text sits.",
+        props: [
+          {
+            name: "align",
+            type: '"start" | "end"',
+            required: false,
+            defaultValue: '"start"',
+            description: '`"start"` (the default) or `"end"`.',
+          },
+        ],
+        inherits: [],
+      },
+    ]);
+  });
+
+  it("documents DataTable's column, sort, pagination and labels types", () => {
+    const names = typeTablesIn(
+      "DataTable",
+      join(root, "packages/react/src/patterns/data-table/DataTable.tsx"),
+    ).map((table) => table.name);
+    expect(names).toEqual(
+      expect.arrayContaining([
+        "DataTableColumn",
+        "DataTableSort",
+        "DataTablePagination",
+        "DataTableLabels",
+      ]),
+    );
   });
 });

@@ -1,11 +1,80 @@
 import type { ReactElement } from "react";
-import { exportDocs, propsTables } from "virtual:buttery-props";
+import { exportDocs, propsTables, typeTables } from "virtual:buttery-props";
+import type { PropDoc } from "virtual:buttery-props";
 import { Stack, Text } from "@buttery/core";
 import { TableScroll } from "./TableScroll.tsx";
 
+/** A props table, or a type's fields, under its heading, with what else it takes after it. */
+function PropsBlock({
+  title,
+  description,
+  column,
+  props,
+  inherits,
+  headingLevel,
+}: {
+  readonly title: string;
+  readonly description: string;
+  readonly column: "Prop" | "Field";
+  readonly props: readonly PropDoc[];
+  readonly inherits: readonly string[];
+  readonly headingLevel: 3 | 4;
+}): ReactElement {
+  return (
+    <Stack gap={3}>
+      <Text variant="label" asChild>
+        {headingLevel === 3 ? <h3>{title}</h3> : <h4>{title}</h4>}
+      </Text>
+      {description === "" ? null : <Text variant="body">{description}</Text>}
+      {props.length > 0 ? (
+        <TableScroll
+          label={`${title} ${column === "Prop" ? "props" : "fields"}`}
+        >
+          <table className="tk-table">
+            <thead>
+              <tr>
+                <th scope="col">{column}</th>
+                <th scope="col">Type</th>
+                <th scope="col">Default</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {props.map((prop) => (
+                <tr key={prop.name}>
+                  <td className="pg-mono">
+                    {prop.name}
+                    {prop.required ? " (required)" : ""}
+                  </td>
+                  <td className="pg-mono docs-type">{prop.type}</td>
+                  <td className="pg-mono">{prop.defaultValue ?? ""}</td>
+                  <td>{prop.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableScroll>
+      ) : null}
+      {inherits.length > 0 ? (
+        <Text variant="body-sm" tone="secondary">
+          It also takes{" "}
+          {inherits.map((inherited, index) => (
+            <span key={inherited}>
+              {index > 0 ? ", " : null}
+              <code className="docs-code">{inherited}</code>
+            </span>
+          ))}
+          .
+        </Text>
+      ) : null}
+    </Stack>
+  );
+}
+
 /**
  * A component's props, read from its types and their JSDoc at build time: one table for the component and
- * one for each of its parts, such as `Menu.Item`.
+ * one for each of its parts, such as `Menu.Item`, then the fields of each exported type its props use, such
+ * as `DataTableColumn`.
  */
 export function PropsTables({
   name,
@@ -15,58 +84,32 @@ export function PropsTables({
   readonly headingLevel: 3 | 4;
 }): ReactElement | null {
   const tables = propsTables[name] ?? [];
-  if (tables.length === 0) return null;
+  const types = typeTables[name] ?? [];
+  if (tables.length === 0 && types.length === 0) return null;
   return (
     <Stack gap={8}>
-      {tables.map((table) => {
-        const title = table.part === "" ? name : `${name}.${table.part}`;
-        return (
-          <Stack key={table.interfaceName} gap={3}>
-            <Text variant="label" asChild>
-              {headingLevel === 3 ? <h3>{title}</h3> : <h4>{title}</h4>}
-            </Text>
-            {table.props.length > 0 ? (
-              <TableScroll label={`${title} props`}>
-                <table className="tk-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Prop</th>
-                      <th scope="col">Type</th>
-                      <th scope="col">Default</th>
-                      <th scope="col">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {table.props.map((prop) => (
-                      <tr key={prop.name}>
-                        <td className="pg-mono">
-                          {prop.name}
-                          {prop.required ? " (required)" : ""}
-                        </td>
-                        <td className="pg-mono docs-type">{prop.type}</td>
-                        <td className="pg-mono">{prop.defaultValue ?? ""}</td>
-                        <td>{prop.description}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </TableScroll>
-            ) : null}
-            {table.inherits.length > 0 ? (
-              <Text variant="body-sm" tone="secondary">
-                It also takes{" "}
-                {table.inherits.map((inherited, index) => (
-                  <span key={inherited}>
-                    {index > 0 ? ", " : null}
-                    <code className="docs-code">{inherited}</code>
-                  </span>
-                ))}
-                .
-              </Text>
-            ) : null}
-          </Stack>
-        );
-      })}
+      {tables.map((table) => (
+        <PropsBlock
+          key={table.interfaceName}
+          title={table.part === "" ? name : `${name}.${table.part}`}
+          description=""
+          column="Prop"
+          props={table.props}
+          inherits={table.inherits}
+          headingLevel={headingLevel}
+        />
+      ))}
+      {types.map((type) => (
+        <PropsBlock
+          key={type.name}
+          title={type.name}
+          description={type.description}
+          column="Field"
+          props={type.props}
+          inherits={type.inherits}
+          headingLevel={headingLevel}
+        />
+      ))}
     </Stack>
   );
 }

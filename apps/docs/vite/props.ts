@@ -29,6 +29,18 @@ export interface PropsTable {
   readonly inherits: readonly string[];
 }
 
+/** An exported type that a component's props use, such as `DataTableColumn`, with its fields. */
+export interface TypeTable {
+  /** Its name, such as `DataTableColumn`. */
+  readonly name: string;
+  /** Its JSDoc, as written. */
+  readonly description: string;
+  /** Its fields, as a props table shows props. */
+  readonly props: readonly PropDoc[];
+  /** The DOM and library types it builds on, one each. */
+  readonly inherits: readonly string[];
+}
+
 /** Reads a source file, or gives `undefined` when there's none. */
 export type ReadSource = (file: string) => string | undefined;
 
@@ -600,17 +612,24 @@ function declarationShape(
 }
 
 function propDocOf(field: Field): PropDoc {
-  const description = field.description;
   return {
     name: field.name,
     type: field.types.length === 0 ? "undefined" : field.types.join(" | "),
     required: field.required,
-    defaultValue:
-      (/Defaults to `([^`]+)`/.exec(description) ??
-        /`([^`]+)`\s*\((?:[^)]*,\s*)?the default\)/.exec(description))?.[1] ??
-      null,
-    description,
+    defaultValue: defaultIn(field.description),
+    description: field.description,
   };
+}
+
+/** The default a JSDoc states, as "Defaults to `…`", "Defaults to 1" or "`…` (the default)". */
+function defaultIn(description: string): string | null {
+  const stated = /Defaults to (?:`([^`]+)`|(-?\d+(?:\.\d+)?)\b)/.exec(
+    description,
+  );
+  if (stated) return stated[1] ?? stated[2] ?? null;
+  return (
+    /`([^`]+)`\s*\((?:[^)]*,\s*)?the default\)/.exec(description)?.[1] ?? null
+  );
 }
 
 /** Whether `file` declares a function or a constant called `name`, such as the part `MenuItem`. */
@@ -626,20 +645,21 @@ function declares(file: ts.SourceFile, name: string): boolean {
   );
 }
 
-/**
- * The props tables of the component `name`, whose source is `file`: its `<Name>Props` and every
- * `<Name><Part>Props` beside it, interfaces or type aliases. Each lists the props it declares and the ones
- * it takes from buttery's own types, followed through aliases, `Omit` and `Pick`, intersections, unions
- * and the interfaces it extends, in any file; DOM and library props are left as one type each, under
- * `inherits`. A union's members read as one table, so they aren't listed again as parts.
- */
-export function propsTablesIn(
+/** A component's props tables, with the fields they list and the declarations they come from. */
+interface ComponentProps {
+  readonly tables: readonly PropsTable[];
+  readonly fields: readonly Field[];
+  readonly shown: ReadonlySet<Declaration>;
+}
+
+function componentProps(
   name: string,
   file: string,
-  read: ReadSource = readFromDisk,
-): PropsTable[] {
+  read: ReadSource,
+): ComponentProps {
   const source = parse(file, read);
-  if (!source) return [];
+  const shown = new Set<Declaration>();
+  if (!source) return { tables: [], fields: [], shown };
   const pattern = new RegExp(`^${name}([A-Z][A-Za-z]*)?Props$`);
   const declared = source.statements
     .filter(isDeclaration)
@@ -652,17 +672,16 @@ export function propsTablesIn(
           ? ""
           : match && (match[1] ?? "");
       if (part === null) return [];
-      const isPart =
-        part === "" ||
-        ts.isInterfaceDeclaration(declaration) ||
-        declares(source, `${name}${part}`);
-      return isPart ? [{ declaration, part }] : [];
+      return part === "" || declares(source, `${name}${part}`)
+        ? [{ declaration, part }]
+        : [];
     })
     .sort((a, b) =>
       a.part === "" ? -1 : b.part === "" ? 1 : a.part.localeCompare(b.part),
     );
   const consumed = new Set<Declaration>();
   const tables: PropsTable[] = [];
+  const fields: Field[] = [];
   for (const { declaration, part } of declared) {
     if (consumed.has(declaration)) continue;
     const visited = new Set<Declaration>();
@@ -672,7 +691,11 @@ export function propsTablesIn(
       { file: source, params: new Map(), read, visited },
       0,
     );
-    if (part === "") for (const followed of visited) consumed.add(followed);
+    for (const followed of visited) {
+      shown.add(followed);
+      if (part === "") consumed.add(followed);
+    }
+    fields.push(...shape.fields);
     tables.push({
       part,
       interfaceName: declaration.name.text,
@@ -680,7 +703,87 @@ export function propsTablesIn(
       inherits: shape.inherits.map(summaryText),
     });
   }
-  return tables;
+  return { tables, fields, shown };
+}
+
+/**
+ * The props tables of the component `name`, whose source is `file`: its `<Name>Props` and, for each part
+ * the file declares, such as `MenuItem`, its `<Name><Part>Props`, interfaces or type aliases. Each lists
+ * the props it declares and the ones it takes from buttery's own types, followed through aliases, `Omit`
+ * and `Pick`, intersections, unions and the interfaces it extends, in any file; DOM and library props are
+ * left as one type each, under `inherits`. A union's members read as one table, so they aren't listed
+ * again as parts.
+ */
+export function propsTablesIn(
+  name: string,
+  file: string,
+  read: ReadSource = readFromDisk,
+): PropsTable[] {
+  return [...componentProps(name, file, read).tables];
+}
+
+/** The type references in `node`, a type parameter's in what it stands for. */
+function referencesIn(
+  node: ts.Node,
+  scope: Scope,
+): { readonly name: string; readonly scope: Scope }[] {
+  const found: { readonly name: string; readonly scope: Scope }[] = [];
+  const visit = (child: ts.Node): void => {
+    if (ts.isTypeReferenceNode(child) && ts.isIdentifier(child.typeName)) {
+      const bound = scope.params.get(child.typeName.text);
+      if (bound) found.push(...referencesIn(bound.node, bound.scope));
+      else found.push({ name: child.typeName.text, scope });
+    }
+    ts.forEachChild(child, visit);
+  };
+  visit(node);
+  return found;
+}
+
+/**
+ * The exported types the props of the component `name` use, such as `DataTableColumn` for its `columns`,
+ * each with its fields, and then the types those fields use: every buttery interface or object type the
+ * props tables name and don't already show, in the order they're first named. A union of literals is
+ * written out where it's used instead.
+ */
+export function typeTablesIn(
+  name: string,
+  file: string,
+  read: ReadSource = readFromDisk,
+): TypeTable[] {
+  const { fields, shown } = componentProps(name, file, read);
+  const seen = new Set(shown);
+  const queue = fields.flatMap((field) => field.sources);
+  const types: TypeTable[] = [];
+  // The queue grows as it's walked, so the types a new table's fields use are walked too.
+  for (const { node, scope } of queue) {
+    for (const reference of referencesIn(node, scope)) {
+      const found = find(reference.name, reference.scope);
+      if (
+        !found ||
+        seen.has(found.declaration) ||
+        !isExported(found.declaration) ||
+        SUMMARIZED.has(found.declaration.name.text)
+      )
+        continue;
+      seen.add(found.declaration);
+      const shape = declarationShape(
+        found,
+        undefined,
+        { file: found.file, params: new Map(), read, visited: new Set() },
+        0,
+      );
+      if (shape.fields.length === 0) continue;
+      types.push({
+        name: found.declaration.name.text,
+        description: jsDocOf(found.declaration),
+        props: shape.fields.map(propDocOf),
+        inherits: shape.inherits.map(summaryText),
+      });
+      queue.push(...shape.fields.flatMap((field) => field.sources));
+    }
+  }
+  return types;
 }
 
 /** A runtime export of a package's index and the file it comes from. */
@@ -785,8 +888,9 @@ export function exportDocsIn(
 const PROPS_MODULE = "virtual:buttery-props";
 
 /**
- * Serves `virtual:buttery-props`: every component's props tables by its name, read from the packages'
- * sources at build time and again in development when any file they're read from changes.
+ * Serves `virtual:buttery-props`: every component's props tables and the types its props use, by its name,
+ * read from the packages' sources at build time and again in development when any file they're read from
+ * changes.
  */
 export function butteryProps(root: string): Plugin {
   return {
@@ -797,6 +901,7 @@ export function butteryProps(root: string): Plugin {
     load(id) {
       if (id !== `\0${PROPS_MODULE}`) return undefined;
       const tables: Record<string, PropsTable[]> = {};
+      const types: Record<string, TypeTable[]> = {};
       const read: ReadSource = (file) => {
         const text = readFromDisk(file);
         if (text !== undefined) this.addWatchFile(file);
@@ -811,8 +916,13 @@ export function butteryProps(root: string): Plugin {
         const file = join(root, dirname(meta), `${name}.tsx`);
         if (!existsSync(file)) continue;
         tables[name] = propsTablesIn(name, file, read);
+        types[name] = typeTablesIn(name, file, read);
       }
-      return `export const propsTables = ${JSON.stringify(tables)};\nexport const exportDocs = ${JSON.stringify(exportDocsIn(root, tables))};`;
+      return [
+        `export const propsTables = ${JSON.stringify(tables)};`,
+        `export const typeTables = ${JSON.stringify(types)};`,
+        `export const exportDocs = ${JSON.stringify(exportDocsIn(root, tables))};`,
+      ].join("\n");
     },
   };
 }

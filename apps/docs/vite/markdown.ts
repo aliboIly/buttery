@@ -10,7 +10,8 @@ import { shownSource } from "./example-source.ts";
 import { parseFrontmatter, splitFrontmatter } from "./frontmatter.ts";
 import { listed, screensByDemo } from "../src/demo-sentence.ts";
 import { demoUsesIn } from "./demo-uses.ts";
-import { propsTablesIn } from "./props.ts";
+import { propsTablesIn, typeTablesIn } from "./props.ts";
+import type { PropDoc } from "./props.ts";
 import { releasesIn, releasesMarkdown } from "./whats-new.ts";
 
 /** A value a meta file's object literal holds: a string, a list of strings, or a list of string records. */
@@ -162,6 +163,41 @@ function table(
   ].join("\n");
 }
 
+/** A props table, or a type's fields, as Markdown, then what else it takes. */
+function propsBlock(
+  column: "Prop" | "Field",
+  {
+    props,
+    inherits,
+  }: {
+    readonly props: readonly PropDoc[];
+    readonly inherits: readonly string[];
+  },
+): string[] {
+  return [
+    ...(props.length === 0
+      ? []
+      : [
+          table(
+            [column, "Type", "Default", "Description"],
+            props.map((prop) => [
+              `\`${prop.name}\`${prop.required ? " (required)" : ""}`,
+              `\`${prop.type}\``,
+              prop.defaultValue === null ? "" : `\`${prop.defaultValue}\``,
+              prop.description,
+            ]),
+          ),
+          "",
+        ]),
+    ...(inherits.length === 0
+      ? []
+      : [
+          `It also takes ${inherits.map((type) => `\`${type}\``).join(", ")}.`,
+          "",
+        ]),
+  ];
+}
+
 function heading(depth: number, text: string): string {
   return `${"#".repeat(Math.min(depth, 6))} ${text}`;
 }
@@ -224,33 +260,23 @@ export function componentMarkdown(
 
   const sourceFile = join(folder, `${name}.tsx`);
   const tables = existsSync(sourceFile) ? propsTablesIn(name, sourceFile) : [];
-  if (tables.length > 0) {
+  const types = existsSync(sourceFile) ? typeTablesIn(name, sourceFile) : [];
+  if (tables.length > 0 || types.length > 0) {
     lines.push(heading(part, "Props"), "");
     for (const props of tables) {
       lines.push(
         heading(part + 1, props.part === "" ? name : `${name}.${props.part}`),
         "",
+        ...propsBlock("Prop", props),
       );
-      if (props.props.length > 0) {
-        lines.push(
-          table(
-            ["Prop", "Type", "Default", "Description"],
-            props.props.map((prop) => [
-              `\`${prop.name}\`${prop.required ? " (required)" : ""}`,
-              `\`${prop.type}\``,
-              prop.defaultValue === null ? "" : `\`${prop.defaultValue}\``,
-              prop.description,
-            ]),
-          ),
-          "",
-        );
-      }
-      if (props.inherits.length > 0) {
-        lines.push(
-          `It also takes ${props.inherits.map((type) => `\`${type}\``).join(", ")}.`,
-          "",
-        );
-      }
+    }
+    for (const type of types) {
+      lines.push(
+        heading(part + 1, type.name),
+        "",
+        ...(type.description === "" ? [] : [type.description, ""]),
+        ...propsBlock("Field", type),
+      );
     }
   }
 

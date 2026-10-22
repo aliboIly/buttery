@@ -19,6 +19,17 @@ declare module "virtual:buttery-props" {
   /** Every component's props tables, by its name. */
   export const propsTables: Readonly<Record<string, readonly PropsTable[]>>;
 
+  /** An exported type a component's props use, such as `DataTableColumn`, with its fields. */
+  export interface TypeTable {
+    readonly name: string;
+    readonly description: string;
+    readonly props: readonly PropDoc[];
+    readonly inherits: readonly string[];
+  }
+
+  /** The exported types each component's props use, by the component's name. */
+  export const typeTables: Readonly<Record<string, readonly TypeTable[]>>;
+
   /** Something a component's folder exports beside it and its parts, such as a hook or a helper. */
   export interface ExportDoc {
     readonly name: string;
