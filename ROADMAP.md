@@ -79,8 +79,8 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] Demos as their own sites in `apps/demos/<name>/`, served at `/demos/<name>/`, with a `/demos` page
 - [ ] Docs search: an offline index built from the content, synonyms, a preview pane, `/search`, and the golden-query gate
 - [ ] `docs/WRITING.md`, every page as Markdown (`.md`), the comprehension and agent tests
-- [ ] Docs landing page (What's new from Changesets)
-- [ ] `pnpm docs:build`: prerendered routes and a sitemap; deploy target recommended in NEEDS-YOU
+- [x] Docs landing page (What's new from Changesets)
+- [x] `pnpm docs:build`: prerendered routes and a sitemap; deploy target recommended in NEEDS-YOU
 - [ ] Accessibility audit, dark + compact passes, visual regression baselines
 - [ ] `new-app` finished; Changesets
 - [ ] make-it-buttery skill tested on a messy page; the site read cold by a reviewer
