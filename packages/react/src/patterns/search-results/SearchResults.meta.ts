@@ -16,4 +16,12 @@ export const meta: ComponentMeta = {
   related: ["CommandSearch", "AppPage", "EmptyState", "PageHeader"],
   a11y: "A main landmark with the search as its h1 and the count under it. Each source is a region named by its heading, its results links in a list, read with their path first; a long section shows 50 at a time, and its Show more button hands focus to the first row it shows. A section waiting on a server shows a loading pill that says Searching. With nothing found, the empty state's heading says so.",
   motion: "none",
+  keyboard: [
+    {
+      keys: "Enter or Space",
+      does: "On Show more, shows the next results and moves focus to the first of them",
+    },
+  ],
+  layout:
+    "An AppPage, at most 1280px wide unless its width says otherwise, with the search as its title and the count under it. Each result is a row at least 40px tall across the page, the whole row its hit area, its path and label and its detail each truncating and shown in full on hover; a section waiting on a server keeps a 64px-tall place for its loading pill.",
 };

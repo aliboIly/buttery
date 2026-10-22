@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Section, Stat, StatStrip } from "@buttery/react";
 
 /** A band of four numbers on a launch page. */
@@ -14,3 +15,10 @@ export function LaunchNumbers(): ReactElement {
     </Section>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Made every day");
+  await see("cards exported");
+};

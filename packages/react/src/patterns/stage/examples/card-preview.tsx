@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import type { ReactElement } from "react";
 import { Center, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Stage } from "@buttery/react";
 
@@ -24,3 +25,9 @@ export function CardPreview(): ReactElement {
     </div>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Spring launch");
+};

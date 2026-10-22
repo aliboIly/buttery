@@ -1,5 +1,7 @@
+import { useState } from "react";
+import type { ReactElement } from "react";
 import { Stack } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import {
   SearchResults,
   SegmentedControl,
@@ -7,8 +9,6 @@ import {
   pageSource,
 } from "@buttery/react";
 import type { LocalSearchSource } from "@buttery/react";
-import { useState } from "react";
-import type { ReactElement } from "react";
 
 const PAGES = pageSource({
   pages: [
@@ -51,6 +51,8 @@ export function SwitchSearch(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "Decaf");

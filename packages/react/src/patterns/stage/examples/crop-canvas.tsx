@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Center, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Stage } from "@buttery/react";
 import type { StageSize } from "@buttery/react";
 
@@ -23,3 +24,9 @@ export function CropCanvas(): ReactElement {
     </div>
   );
 }
+
+export const kind: ExampleKind = "controlled";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("1200 × 1200");
+};
