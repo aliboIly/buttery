@@ -4,6 +4,11 @@ import type { Page } from "@playwright/test";
 export interface Reading {
   /** Identifies the element across frames. */
   readonly id: number;
+  /**
+   * When its values held, in ms since sampling began: its frame's start, or, in WebKit, when it was read,
+   * for an element a running CSS transition, CSS animation or Web Animation moves.
+   */
+  readonly t: number;
   /** Its box as drawn, transforms included, in viewport px. */
   readonly left: number;
   readonly top: number;
@@ -85,6 +90,13 @@ declare global {
 
 // addInitScript serializes this function into the page, so it can't use anything else in this module.
 function samplerScript(startOnLoad: string | undefined): void {
+  interface Started {
+    readonly target: Element;
+    readonly kind: "transition" | "animation";
+    readonly name: string;
+    readonly t: number;
+  }
+
   const ids = new WeakMap<Element, number>();
   let nextId = 1;
   let active: {
@@ -95,6 +107,7 @@ function samplerScript(startOnLoad: string | undefined): void {
     readonly marks: Record<string, number>;
     readonly transitions: TransitionRecord[];
     readonly animations: AnimationRecord[];
+    readonly started: Started[];
     readonly unlisten: () => void;
     readonly channel: MessageChannel;
     request: number;
@@ -109,7 +122,14 @@ function samplerScript(startOnLoad: string | undefined): void {
     return id;
   };
 
-  const read = (element: Element): Reading => {
+  // WebKit works out a running animation's value at the moment it's read, Chromium at the frame's start.
+  const readsAnimationsLive = !navigator.userAgent.includes("Chrome/");
+
+  const read = (element: Element, t: number, origin: number): Reading => {
+    const animated = element
+      .getAnimations()
+      .some((animation) => animation.playState === "running");
+    const at = readsAnimationsLive && animated ? performance.now() - origin : t;
     const style = getComputedStyle(element);
     const rect = element.getBoundingClientRect();
     const matrix = new DOMMatrixReadOnly(style.transform);
@@ -120,6 +140,7 @@ function samplerScript(startOnLoad: string | undefined): void {
     const scale = Number.isNaN(scaleX) ? 1 : scaleX;
     return {
       id: idOf(element),
+      t: at,
       left: rect.left,
       top: rect.top,
       width: rect.width,
@@ -131,15 +152,60 @@ function samplerScript(startOnLoad: string | undefined): void {
     };
   };
 
-  const frame = (selector: string, t: number): Frame => ({
+  const frame = (selector: string, t: number, origin: number): Frame => ({
     t,
     settled: document.documentElement.hasAttribute("data-bt-settled"),
-    elements: [...document.querySelectorAll(selector)].map(read),
+    elements: [...document.querySelectorAll(selector)].map((element) =>
+      read(element, t, origin),
+    ),
   });
+
+  // Looking an animation up flushes style, and WebKit would then keep the frame's values from that moment, so
+  // the events that start one only note it, and the next read looks it up.
+  const recordStarted = (): void => {
+    if (!active) return;
+    for (const { target, kind, name, t } of active.started.splice(0)) {
+      const running = target
+        .getAnimations()
+        .find((animation) =>
+          kind === "transition"
+            ? animation instanceof CSSTransition &&
+              animation.transitionProperty === name
+            : animation instanceof CSSAnimation &&
+              animation.animationName === name,
+        );
+      const effect = running?.effect;
+      const timing = effect?.getComputedTiming();
+      const duration =
+        typeof timing?.duration === "number" ? timing.duration : Number.NaN;
+      if (kind === "transition") {
+        active.transitions.push({
+          id: idOf(target),
+          t,
+          property: name,
+          duration,
+          easing: effect?.getTiming().easing ?? "",
+        });
+      } else {
+        const [first] =
+          effect instanceof KeyframeEffect ? effect.getKeyframes() : [];
+        active.animations.push({
+          id: idOf(target),
+          t,
+          name,
+          duration,
+          easing: first?.easing ?? "",
+        });
+      }
+    }
+  };
 
   const tick = (now: number): void => {
     if (!active) return;
-    active.frames.push(frame(active.selector, now - active.origin));
+    recordStarted();
+    active.frames.push(
+      frame(active.selector, now - active.origin, active.origin),
+    );
     active.request = requestAnimationFrame(tick);
     active.channel.port2.postMessage(null);
   };
@@ -148,9 +214,11 @@ function samplerScript(startOnLoad: string | undefined): void {
   const readLate = (channel: MessageChannel): void => {
     requestAnimationFrame((now) => {
       if (active?.channel !== channel) return;
+      recordStarted();
       const t = now - active.origin;
-      const index = active.frames.findLastIndex((reading) => reading.t === t);
-      if (index !== -1) active.frames[index] = frame(active.selector, t);
+      const index = active.frames.findLastIndex((sampled) => sampled.t === t);
+      if (index !== -1)
+        active.frames[index] = frame(active.selector, t, active.origin);
     });
   };
 
@@ -162,50 +230,26 @@ function samplerScript(startOnLoad: string | undefined): void {
     start(selector, events) {
       if (active) throw new Error("The sampler is already running.");
       const origin = performance.now();
-      const transitions: TransitionRecord[] = [];
+      const started: Started[] = [];
       const onTransition = (event: TransitionEvent): void => {
         const { target, propertyName } = event;
-        if (!(target instanceof Element) || !target.matches(selector)) return;
-        const running = target
-          .getAnimations()
-          .find(
-            (animation) =>
-              animation instanceof CSSTransition &&
-              animation.transitionProperty === propertyName,
-          );
-        const timing = running?.effect?.getComputedTiming();
-        transitions.push({
-          id: idOf(target),
-          t: performance.now() - origin,
-          property: propertyName,
-          duration:
-            typeof timing?.duration === "number" ? timing.duration : Number.NaN,
-          easing: running?.effect?.getTiming().easing ?? "",
-        });
+        if (target instanceof Element && target.matches(selector))
+          started.push({
+            target,
+            kind: "transition",
+            name: propertyName,
+            t: performance.now() - origin,
+          });
       };
-      const animations: AnimationRecord[] = [];
       const onAnimation = (event: AnimationEvent): void => {
         const { target, animationName } = event;
-        if (!(target instanceof Element) || !target.matches(selector)) return;
-        const running = target
-          .getAnimations()
-          .find(
-            (animation) =>
-              animation instanceof CSSAnimation &&
-              animation.animationName === animationName,
-          );
-        const effect = running?.effect;
-        const timing = effect?.getComputedTiming();
-        const [first] =
-          effect instanceof KeyframeEffect ? effect.getKeyframes() : [];
-        animations.push({
-          id: idOf(target),
-          t: performance.now() - origin,
-          name: animationName,
-          duration:
-            typeof timing?.duration === "number" ? timing.duration : Number.NaN,
-          easing: first?.easing ?? "",
-        });
+        if (target instanceof Element && target.matches(selector))
+          started.push({
+            target,
+            kind: "animation",
+            name: animationName,
+            t: performance.now() - origin,
+          });
       };
       const listeners = events.map((name) => {
         const listener = (): void => {
@@ -225,11 +269,12 @@ function samplerScript(startOnLoad: string | undefined): void {
       active = {
         selector,
         origin,
-        before: frame(selector, 0),
+        before: frame(selector, 0, origin),
         frames: [],
         marks: {},
-        transitions,
-        animations,
+        transitions: [],
+        animations: [],
+        started,
         unlisten: () => {
           for (const unlisten of listeners) unlisten();
           window.removeEventListener("transitionrun", onTransition, true);
@@ -242,10 +287,11 @@ function samplerScript(startOnLoad: string | undefined): void {
     mark,
     peek(selector) {
       const element = document.querySelector(selector);
-      return element ? read(element) : undefined;
+      return element ? read(element, 0, performance.now()) : undefined;
     },
     stop() {
       if (!active) throw new Error("The sampler isn't running.");
+      recordStarted();
       const {
         before,
         frames,
@@ -398,9 +444,9 @@ export function readingsOf(
   run: Run,
   id: number,
 ): readonly { readonly t: number; readonly reading: Reading }[] {
-  return run.frames.flatMap(({ t, elements }) => {
+  return run.frames.flatMap(({ elements }) => {
     const reading = elements.find((element) => element.id === id);
-    return reading ? [{ t, reading }] : [];
+    return reading ? [{ t: reading.t, reading }] : [];
   });
 }
 
@@ -409,9 +455,9 @@ export function trace(
   run: Run,
   pick: (reading: Reading) => number,
 ): readonly Point[] {
-  return run.frames.flatMap(({ t, elements }) => {
+  return run.frames.flatMap(({ elements }) => {
     const first = elements[0];
-    return first ? [{ t, value: pick(first) }] : [];
+    return first ? [{ t: first.t, value: pick(first) }] : [];
   });
 }
 
