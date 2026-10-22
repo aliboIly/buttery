@@ -26,7 +26,7 @@ export function LatestRelease(): ReactElement | null {
         const [of = "", name = ""] = reference.split("/");
         return <Example key={reference} of={of} name={name} />;
       })}
-      <Stack gap={2} asChild>
+      <Stack gap={3} asChild>
         <ul className="docs-list">
           {release.highlights.map((highlight) => (
             <Text key={highlight} variant="body" asChild>

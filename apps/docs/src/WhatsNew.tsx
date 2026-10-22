@@ -88,7 +88,7 @@ export function ReleaseCard({
             <time dateTime={release.date}>{releaseDate(release.date)}</time>
           </Text>
         </Stack>
-        <Stack gap={2} asChild>
+        <Stack gap={3} asChild>
           <ul className="docs-list">
             {release.highlights.map((highlight) => (
               <Text key={highlight} variant="body" asChild>
@@ -219,7 +219,7 @@ function ReleaseNotes({
           <Text variant="title-sm" asChild>
             <h3>Highlights</h3>
           </Text>
-          <Stack gap={2} asChild>
+          <Stack gap={3} asChild>
             <ul className="docs-list">
               {release.highlights.map((highlight) => (
                 <Text key={highlight} variant="body" asChild>

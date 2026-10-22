@@ -73,12 +73,12 @@ export const markdown = {
     </Text>
   ),
   ul: ({ children }: ComponentPropsWithRef<"ul">): ReactElement => (
-    <Stack gap={2} asChild>
+    <Stack gap={3} asChild>
       <ul className="docs-list">{children}</ul>
     </Stack>
   ),
   ol: ({ children }: ComponentPropsWithRef<"ol">): ReactElement => (
-    <Stack gap={2} asChild>
+    <Stack gap={3} asChild>
       <ol className="docs-list">{children}</ol>
     </Stack>
   ),

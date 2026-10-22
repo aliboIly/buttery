@@ -2,7 +2,7 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 7 (hardening, brand and the docs site) is closing: the last written pages are being laid out in the new blocks, then the full gate, the push, the GitHub releases and the deploy to GitHub Pages. Phase 8 (developer and agent experience) is next.
+**Now:** Phase 7 (hardening, brand and the docs site) is closing: every written page is laid out, and what's left is the full gate, the push, the GitHub releases and the deploy to GitHub Pages. Phase 8 (developer and agent experience) is next.
 
 ---
 
@@ -90,7 +90,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Introduction rebuilt: a theme playground, feature cards with live parts, the newest release's examples, and the Get started path
 - [x] Releases numbered one minor per phase, 0.1 to 0.9; What's new as release notes with examples to try, and the Roadmap page read from this file
 - [x] Get started rebuilt, with blocks for written pages: numbered steps, cards, rules, do and don't, notes, related pages, and previous and next as cards
-- [ ] Every written page laid out in those blocks, so none reads as a wall of text
+- [x] Every written page laid out in those blocks, so none reads as a wall of text
 - [ ] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
 - [ ] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
 
