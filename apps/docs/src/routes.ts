@@ -4,12 +4,83 @@ export const DOCS_VERSION = "0.9.0";
 /** Where buttery's source lives. */
 export const SOURCE_URL = "https://github.com/aliboIly/buttery";
 
-/** Original demo apps built from buttery's components. */
-export const demoPages = [
-  { route: "card-studio", title: "Card Studio" },
-  { route: "card-studio-site", title: "Card Studio site" },
-  { route: "roastery", title: "Halfmoon Roastery" },
+/** The templates a new app starts from: `blank` is the starter, and the others live in `apps/templates`. */
+export const templates = [
+  { name: "blank", title: "Blank", folder: "apps/starter" },
+  { name: "dashboard", title: "Dashboard", folder: "apps/templates/dashboard" },
+  { name: "editor", title: "Editor", folder: "apps/templates/editor" },
+  { name: "marketing", title: "Marketing", folder: "apps/templates/marketing" },
 ] as const;
+
+/** A template's name, as `pnpm new-app --template` takes it. */
+export type TemplateName = (typeof templates)[number]["name"];
+
+/** What the docs site says about a demo. */
+export interface DemoInfo {
+  /** Its folder in `apps/demos` and its path under `/demos`. */
+  readonly route: string;
+  readonly title: string;
+  /** The template it's built from, whose shell it keeps. */
+  readonly template: Exclude<TemplateName, "blank">;
+  /** One line on what it is. */
+  readonly description: string;
+  /** The components and patterns it shows, by export name. */
+  readonly uses: readonly string[];
+}
+
+/** Original demo apps built from buttery's components, each its template plus its own content. */
+export const demoPages = [
+  {
+    route: "card-studio",
+    title: "Card Studio",
+    template: "editor",
+    description:
+      "An editor for title cards: style one in the inspector, watch it on the stage and export it as an image.",
+    uses: [
+      "AppShell",
+      "HeaderBar",
+      "Stage",
+      "Inspector",
+      "TiltPad",
+      "SwatchGrid",
+      "FloatingToolbar",
+      "Onboarding",
+    ],
+  },
+  {
+    route: "card-studio-site",
+    title: "Card Studio site",
+    template: "marketing",
+    description: "Card Studio's launch page, made only from the page patterns.",
+    uses: [
+      "NavBar",
+      "MorphMenu",
+      "SubNav",
+      "SplitHero",
+      "Bento",
+      "ExpandableCard",
+      "StatStrip",
+      "Footer",
+    ],
+  },
+  {
+    route: "roastery",
+    title: "Halfmoon Roastery",
+    template: "dashboard",
+    description:
+      "A small coffee roaster's dashboard: orders, customers, wholesale, settings and a search across all of it.",
+    uses: [
+      "AppShell",
+      "Sidebar",
+      "TopBar",
+      "CommandSearch",
+      "MetricCard",
+      "DataTable",
+      "SettingsPage",
+      "SetupGuide",
+    ],
+  },
+] as const satisfies readonly DemoInfo[];
 
 /** The playground route for a component: `fit-box` for FitBox. */
 export function componentRoute(name: string): string {
