@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import {
   expectButtery,
   fullMatrix,
@@ -49,6 +49,25 @@ function headerAction(name: string): ButteryInteraction["run"] {
 
 /** The docs site's pill over a demo, a lane item that moves clear of what the lanes avoid. */
 const PILL = '[data-testid="demo-pill"]';
+
+/**
+ * Scrolls a target to the middle of the window before pressing it, so the floating lanes at the window's
+ * foot (the docs pill, a toast) never sit over what it opens from.
+ */
+async function pressInMiddle(target: Locator): Promise<void> {
+  await target.evaluate((element) => {
+    element.scrollIntoView({ block: "center" });
+  });
+  await target.click();
+}
+
+/** What a change to the Halfmoon shop's coffees moves: the cards, everything after them and the pill. */
+const SHOP_BELOW_COFFEES = [
+  "#coffees",
+  "#coffees ~ *",
+  '[data-bt="Footer"]',
+  PILL,
+];
 
 const escape: ButteryInteraction = {
   name: "press Escape",
@@ -185,6 +204,144 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           .click();
         await page
           .getByRole("dialog", { name: "Write in the inspector" })
+          .waitFor();
+      },
+    },
+  ],
+  "roastery-shop": [
+    {
+      name: "open the bar's sheet",
+      run: async (page: Page) => {
+        await page.getByRole("button", { name: "Menu", exact: true }).click();
+        await page.getByRole("dialog", { name: "Main" }).waitFor();
+      },
+    },
+    {
+      name: "open the Shop menu in the sheet",
+      allowMove: ['[data-bt-part="sheet"]'],
+      run: async (page: Page) => {
+        await page
+          .getByRole("dialog", { name: "Main" })
+          .getByRole("button", { name: "Shop", exact: true })
+          .click();
+      },
+    },
+    {
+      name: "open the Learn menu in the sheet",
+      allowMove: ['[data-bt-part="sheet"]'],
+      run: async (page: Page) => {
+        await page
+          .getByRole("dialog", { name: "Main" })
+          .getByRole("button", { name: "Learn", exact: true })
+          .click();
+      },
+    },
+    escape,
+    {
+      name: "add this week's coffee, which shows a toast",
+      allowMove: [PILL],
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Add to bag", exact: true })
+          .click();
+        await page
+          .getByText("Added Guji, 12 oz.", { exact: true })
+          .first()
+          .waitFor();
+      },
+    },
+    {
+      name: "open the bag with the coffee in it, from the top of the page",
+      run: async (page: Page) => {
+        await page.evaluate(() => {
+          window.scrollTo(0, 0);
+        });
+        await page.getByRole("button", { name: /^Bag, / }).click();
+        await page.getByRole("dialog", { name: "Your bag" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "check out without an email, which asks for one",
+      allowMove: ['[role="dialog"]'],
+      run: async (page: Page) => {
+        await page.getByRole("button", { name: "Check out" }).click();
+        await page.getByRole("button", { name: "Place order" }).click();
+        await page
+          .getByText("Enter your email address, so we can send your receipt.", {
+            exact: true,
+          })
+          .waitFor();
+      },
+    },
+    escape,
+    {
+      name: "show only the dark roasts",
+      allowMove: SHOP_BELOW_COFFEES,
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("radio", { name: "Dark", exact: true }),
+        );
+      },
+    },
+    {
+      name: "open the coffee that's left",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.locator('[data-bt="ExpandableCard"]').filter({
+            hasText: "Halfmoon House",
+          }),
+        );
+        await page.getByRole("dialog", { name: "Halfmoon House" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "build a gift subscription",
+      allowMove: ["#subscribe", "#subscribe ~ *", '[data-bt="Footer"]', PILL],
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("radio", { name: "As a gift", exact: true }),
+        );
+      },
+    },
+    {
+      name: "open a question",
+      allowMove: ["#questions", "#questions ~ *", '[data-bt="Footer"]', PILL],
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", { name: "How much is shipping?" }),
+        );
+      },
+    },
+    {
+      name: "send the letter's form empty, which shows its error",
+      allowMove: ["#letter", '[data-bt="Footer"]', PILL],
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", { name: "Send me the letter" }),
+        );
+        await page
+          .getByText("Enter your email address to get the letter.", {
+            exact: true,
+          })
+          .first()
+          .waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "sign up for the letter, which shows a toast",
+      allowMove: ["#letter", '[data-bt="Footer"]', PILL],
+      run: async (page: Page) => {
+        await page
+          .getByRole("textbox", { name: "Email address" })
+          .fill("ines@example.com");
+        await page.getByRole("button", { name: "Send me the letter" }).click();
+        await page
+          .getByText("You're on the list for the next letter.", { exact: true })
+          .first()
           .waitFor();
       },
     },
@@ -900,6 +1057,73 @@ for (const route of roasteryPages) {
     });
   });
 }
+
+test("demos/roastery-shop is buttery on a wide window, its menus, sign-in and origins open", async ({
+  page,
+}) => {
+  const wide = { width: 1280, height: 800 };
+  await page.setViewportSize(wide);
+  await page.goto("/demos/roastery-shop");
+  await expectButtery(page, {
+    ...matrix,
+    viewports: [wide],
+    name: "demos/roastery-shop on a wide window",
+    interactions: [
+      {
+        name: "open the Shop menu",
+        run: async (target: Page) => {
+          await target
+            .getByRole("button", { name: "Shop", exact: true })
+            .click();
+          await target.locator('[data-bt-part="panel"]').first().waitFor();
+        },
+      },
+      {
+        name: "move to the Learn menu",
+        run: async (target: Page) => {
+          await target
+            .getByRole("button", { name: "Learn", exact: true })
+            .hover();
+          await target
+            .getByRole("button", { name: "Learn", expanded: true })
+            .waitFor();
+        },
+      },
+      escape,
+      {
+        name: "open the sign-in dialog",
+        run: async (target: Page) => {
+          await target
+            .getByRole("button", { name: "Sign in", exact: true })
+            .click();
+          await target.getByRole("dialog", { name: "Sign in" }).waitFor();
+        },
+      },
+      {
+        name: "sign in with nothing filled in, which lists what's missing",
+        allowMove: ['[role="dialog"]'],
+        run: async (target: Page) => {
+          await target
+            .getByRole("dialog", { name: "Sign in" })
+            .getByRole("button", { name: "Sign in", exact: true })
+            .click();
+          await target.getByText("There's a problem").waitFor();
+        },
+      },
+      escape,
+      {
+        name: "list the origins",
+        run: async (target: Page) => {
+          await pressInMiddle(
+            target.getByRole("combobox", { name: /^Origin/ }),
+          );
+          await target.getByRole("listbox").waitFor();
+        },
+      },
+      escape,
+    ],
+  });
+});
 
 test("a roastery customer's page is buttery", async ({ page }) => {
   await returningVisitor(page);
