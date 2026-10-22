@@ -4,7 +4,7 @@ import type { Plugin } from "vite";
 
 /** A demo screen a component page can link to: its demo, its page there when it has several, and where it is. */
 export interface DemoScreen {
-  /** The demo, as a sentence names it, such as "the roastery". */
+  /** The demo, as a sentence names it, such as "the roastery demo". */
   readonly demo: string;
   /** The page, such as "orders", for a demo with several pages. */
   readonly page?: string | undefined;
@@ -13,70 +13,70 @@ export interface DemoScreen {
 
 /**
  * Which demo screen each demo source file draws, as `<demo>/<file>`. In a demo of several pages, a file that
- * isn't listed, such as a helper, counts toward none of them; in a demo of one page, toward that page.
+ * isn't listed, such as a helper, counts toward none of them; in a demo of one page, toward that page. A part
+ * of every page of a demo, such as the roastery's shell or its help panel, names only the demo, which a
+ * component links to when no page of the demo uses it.
  */
 const SCREENS: Readonly<Record<string, DemoScreen>> = {
   "roastery/Roastery.tsx": {
-    demo: "the roastery",
-    page: "shell",
+    demo: "the roastery demo",
     href: "/demos/roastery",
   },
   "roastery/OverviewPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "overview",
     href: "/demos/roastery",
   },
   "roastery/OrdersPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "orders",
     href: "/demos/roastery/orders",
   },
   "roastery/CustomersPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "customers",
     href: "/demos/roastery/customers",
   },
   "roastery/SubscriptionsPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "subscriptions",
     href: "/demos/roastery/subscriptions",
   },
   "roastery/PayoutsPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "payouts",
     href: "/demos/roastery/payouts",
   },
   "roastery/RoastPlanPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "roast plan",
     href: "/demos/roastery/roasts",
   },
   "roastery/StockPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "stock",
     href: "/demos/roastery/stock",
   },
   "roastery/WholesalePage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "wholesale",
     href: "/demos/roastery/wholesale",
   },
   "roastery/SettingsPage.tsx": {
-    demo: "the roastery",
+    demo: "the roastery demo",
     page: "settings",
     href: "/demos/roastery/settings",
   },
   "roastery/HelpPanel.tsx": {
-    demo: "the roastery",
-    page: "help panel",
+    demo: "the roastery demo",
     href: "/demos/roastery",
   },
   "card-studio/CardStudio.tsx": {
-    demo: "Card Studio",
+    demo: "the Card Studio demo",
     href: "/demos/card-studio",
   },
   "card-studio-site/CardStudioSite.tsx": {
-    demo: "the Card Studio site",
+    demo: "the Card Studio site demo",
     href: "/demos/card-studio-site",
   },
 };
@@ -97,7 +97,10 @@ function butteryImports(source: string): string[] {
   );
 }
 
-/** For each component a demo uses, the demo screens that use it, read from the demos' imports. */
+/**
+ * For each component a demo uses, the demo screens that use it, read from the demos' imports: its pages, or
+ * the demo itself when only a part of every page uses it.
+ */
 export function demoUsesIn(root: string): Record<string, DemoScreen[]> {
   const uses: Record<string, DemoScreen[]> = {};
   for (const demo of DEMOS) {
@@ -125,6 +128,15 @@ export function demoUsesIn(root: string): Record<string, DemoScreen[]> {
           list.push(screen);
       }
     }
+  }
+  for (const [name, list] of Object.entries(uses)) {
+    uses[name] = list.filter(
+      (screen) =>
+        screen.page !== undefined ||
+        !list.some(
+          (other) => other.demo === screen.demo && other.page !== undefined,
+        ),
+    );
   }
   return uses;
 }

@@ -5,7 +5,7 @@ export interface ScreenLink {
   readonly href: string;
 }
 
-/** The demo screens grouped by demo, in order, each demo with its pages, for "See it in the roastery's orders and payouts". */
+/** The demo screens grouped by demo, in order, each demo with its pages, for "See it in the roastery demo's orders and payouts". */
 export function screensByDemo(
   screens: readonly ScreenLink[],
 ): { readonly demo: string; readonly screens: readonly ScreenLink[] }[] {
