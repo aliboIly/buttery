@@ -72,9 +72,9 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [x] Coffee roaster dashboard demo (original), passes the full matrix; app-chrome timing measured per frame; settings (index, profile, team notifications, plans), search across the demo and a help panel
 
 ## v0.9 — Hardening, brand & docs site (Phase 7)
-- [ ] 🧈 Original BrandMark (3 directions → pick one) + favicon + app icons + README hero
-- [ ] Docs site shell (`docs/DOCS_SITE.md`): `apps/docs` with `/lab`, the nav generated from frontmatter, the docs check in `pnpm check`
-- [ ] Existing pages moved in (Get started, Foundations, Layout, Motion first); component pages with the full anatomy and working examples (each with a `play` script), and the example and coverage checks
+- [x] 🧈 Original BrandMark (3 directions → pick one) + favicon + app icons + README hero
+- [x] Docs site shell (`docs/DOCS_SITE.md`): `apps/docs` with `/lab`, the nav generated from frontmatter, the docs check in `pnpm check`
+- [x] Existing pages moved in (Get started, Foundations, Layout, Motion first); component pages with the full anatomy and working examples (each with a `play` script), and the example and coverage checks
 - [ ] Patterns, Templates, Guides, Tools and Resources pages
 - [ ] Demos as their own sites in `apps/demos/<name>/`, served at `/demos/<name>/`, with a `/demos` page
 - [ ] Docs search: an offline index built from the content, synonyms, a preview pane, `/search`, and the golden-query gate
