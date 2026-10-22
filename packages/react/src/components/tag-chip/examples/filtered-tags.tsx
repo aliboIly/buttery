@@ -1,5 +1,5 @@
 import { Inline, Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Checkbox, TagChip } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -45,6 +45,8 @@ export function FilteredTags(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("checkbox", "Free trial only");

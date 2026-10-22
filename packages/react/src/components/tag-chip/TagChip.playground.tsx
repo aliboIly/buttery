@@ -1,5 +1,6 @@
 import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { TagChip } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -9,6 +10,30 @@ export const page: DocsPage = {
   order: 150,
   status: "new",
   since: "0.7.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    tone: {
+      kind: "choice",
+      options: ["neutral", "info", "success", "warning", "danger"],
+      initial: "success",
+    },
+    children: { kind: "text", initial: "Free trial" },
+  },
+  render: ({ tone, children }) => (
+    <TagChip
+      tone={demoChoice(tone, [
+        "neutral",
+        "info",
+        "success",
+        "warning",
+        "danger",
+      ])}
+    >
+      {String(children)}
+    </TagChip>
+  ),
 };
 
 export const demos: readonly DemoSection[] = [
