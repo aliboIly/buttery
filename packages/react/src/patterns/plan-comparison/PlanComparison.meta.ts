@@ -22,4 +22,22 @@ export const meta: ComponentMeta = {
   ],
   a11y: "The control group is a group named Plan options: the periods a radio group named by periodLabel, the volume a select named by volumeLabel. Each plan card is a region named by its h3, its checklist a list under an h4; the ribbon is text above the card. Other plans are a region named by its h2.",
   motion: "indicator",
+  keyboard: [
+    {
+      keys: "Arrow keys",
+      does: "Choose the billing period as they move, once Tab has reached it, or move through the volume's open list",
+    },
+    {
+      keys: "Enter or Space",
+      does: "Opens the volume's list, chooses the option in it, or presses a plan's action",
+    },
+    {
+      keys: "Escape",
+      does: "Closes the volume's list and puts focus back on it",
+    },
+  ],
+  layout:
+    "It takes its container's width: the period and volume sit together in one outlined group at the start, and the plans sit side by side from 900px of its own width, sharing their rows so prices, actions and checklists line up, and stack under that. Each plan's action fills its card's width, a ribbon is a 28px tab on its card's top edge, the text wraps, and other plans go two to a row from 640px.",
+  reducedMotion:
+    "The billing period's pill moves to the chosen period at once.",
 };
