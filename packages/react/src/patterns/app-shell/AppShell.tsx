@@ -85,6 +85,11 @@ export interface AppShellSidebarProps extends Omit<
   readonly panel?: ReactNode;
   /** Names the sidebar's sheet on narrow screens. Defaults to `"Navigation"`. */
   readonly sidebarLabel?: string | undefined;
+  /**
+   * Names the button that is the first thing Tab reaches, shown only while it has focus, which moves focus
+   * past the sidebar and the top bar to the page. Defaults to `"Skip to content"`.
+   */
+  readonly skipLabel?: string | undefined;
   /** Whether the sidebar's sheet is open on a narrow screen. Pair with `onOpenChange` to control it. */
   readonly open?: boolean | undefined;
   /** Whether the sheet starts open when uncontrolled. Defaults to `false`. */
@@ -356,6 +361,7 @@ function SidebarShell({
   topBar,
   panel,
   sidebarLabel = "Navigation",
+  skipLabel = "Skip to content",
   open,
   defaultOpen = false,
   onOpenChange,
@@ -460,13 +466,28 @@ function SidebarShell({
           data-layout={layout}
           data-sidebar={mode}
         >
+          <button
+            type="button"
+            className="bt-focus"
+            data-bt-part="skip"
+            onClick={() => {
+              page.current?.focus();
+            }}
+          >
+            {skipLabel}
+          </button>
           {/* Hidden under 640 rather than unmounted, so it still sees the page shown change for Recent. */}
           <div data-bt-part="sidebar" hidden={mode === "sheet"}>
             {sidebar}
           </div>
           <div data-bt-part="column">
             {hasTopBar ? <div data-bt-part="top">{topBar}</div> : null}
-            <div ref={page} data-bt-part="page" className="bt-scroll-fade">
+            <div
+              ref={page}
+              tabIndex={-1}
+              data-bt-part="page"
+              className="bt-scroll-fade"
+            >
               {children}
             </div>
           </div>

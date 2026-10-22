@@ -18,6 +18,10 @@ export const meta: ComponentMeta = {
   motion: "presence",
   keyboard: [
     {
+      keys: "Tab",
+      does: "In the sidebar layout, reaches Skip to content first; pressing it moves focus past the sidebar and the top bar to the page",
+    },
+    {
       keys: "Enter or Space",
       does: "Opens the inspector's sheet from the button under the stage, or the sidebar's sheet from the top bar's menu button, on a narrow screen",
     },

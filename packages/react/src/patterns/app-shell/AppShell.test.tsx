@@ -247,6 +247,23 @@ function part(name: string): HTMLElement {
 }
 
 describe("AppShell layout=sidebar", () => {
+  it("starts with a skip button, out of sight until it has focus, that moves focus past the sidebar to the page", async () => {
+    render(<Dashboard width={1280} />);
+    const skip = screen.getByRole("button", { name: "Skip to content" });
+    const shell = screen.getByTestId("shell");
+    expect(shell.firstElementChild).toBe(skip);
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+    skip.focus();
+    expect(skip.getBoundingClientRect().width).toBeGreaterThan(48);
+    expect(skip.getBoundingClientRect().left).toBeLessThan(
+      shell.getBoundingClientRect().left + 16,
+    );
+    await userEvent.click(skip);
+    const page = shell.querySelector('[data-bt-part="page"]');
+    expect(document.activeElement).toBe(page);
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+  });
+
   it("lays the sidebar beside the top bar and the page, each scrolling on its own while the shell doesn't", () => {
     render(<Dashboard width={1280} />);
     expect(part("sidebar").getBoundingClientRect().width).toBe(240);

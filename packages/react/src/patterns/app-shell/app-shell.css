@@ -2,6 +2,7 @@
   .bt-app-shell {
     --bt-app-shell-gap: var(--bt-space-2);
     --bt-app-shell-line: 1px;
+    --bt-app-shell-skip-hidden: 1px;
 
     display: grid;
     grid-template-areas:
@@ -85,6 +86,7 @@
 
   /* The panel's track is as wide as a docked side panel in it, and takes no room without one. */
   .bt-app-shell[data-layout="sidebar"] {
+    position: relative;
     container: bt-shell / inline-size;
     grid-template-areas: "sidebar column panel";
     grid-template-rows: minmax(0, 1fr);
@@ -94,6 +96,40 @@
     padding: 0;
     overflow: hidden;
     background-color: var(--bt-bg-surface);
+  }
+
+  /* The skip link is out of sight until Tab reaches it, then a raised pill over the shell's top start. */
+  .bt-app-shell [data-bt-part="skip"] {
+    position: absolute;
+    inset-block-start: var(--bt-space-2);
+    inset-inline-start: var(--bt-space-2);
+    z-index: var(--bt-z-raised);
+    display: inline-flex;
+    align-items: center;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-4);
+    border: 0;
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-raised);
+    box-shadow: var(--bt-shadow-raised);
+    color: var(--bt-text-strong);
+    font-size: var(--bt-text-label-size);
+    font-weight: var(--bt-text-label-weight);
+    line-height: var(--bt-text-label-line);
+    white-space: nowrap;
+  }
+
+  .bt-app-shell [data-bt-part="skip"]:not(:focus) {
+    inline-size: var(--bt-app-shell-skip-hidden);
+    block-size: var(--bt-app-shell-skip-hidden);
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  /* The page takes focus from the skip link without a ring: it's where reading starts, not a control. */
+  .bt-app-shell [data-bt-part="page"]:focus {
+    outline: none;
   }
 
   .bt-app-shell[data-layout="sidebar"][data-sidebar="rail"] {
