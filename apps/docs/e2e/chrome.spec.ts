@@ -170,3 +170,17 @@ test("a component's live demo starts in the site's theme and density, then keeps
       .locator("xpath=ancestor::*[@data-bt-theme][1]"),
   ).toHaveAttribute("data-bt-theme", "light");
 });
+
+test("the results page offers a nearby word and a way to ask for docs when nothing matches", async ({
+  page,
+}) => {
+  await page.goto("/search?q=dailog");
+  await expect(
+    page.getByRole("link", { name: "Ask for these docs" }),
+  ).toHaveAttribute("href", /\/issues\/new\?title=Docs%3A%20dailog$/);
+  await page.getByRole("link", { name: "dialog", exact: true }).click();
+  await expect(page).toHaveURL(/\/search\?q=dialog$/);
+  await expect(
+    page.getByRole("link", { name: /Dialog/ }).first(),
+  ).toBeVisible();
+});
