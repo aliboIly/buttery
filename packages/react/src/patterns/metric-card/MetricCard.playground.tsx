@@ -1,5 +1,10 @@
 import { Grid } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type {
+  DemoSection,
+  DemoValues,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
 import { MetricCard } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -52,6 +57,47 @@ const volume = {
   formatTick: (value: number) => shortDollars.format(value),
   updated: "Updated 4 min ago",
   href: "#reports-sales",
+};
+
+function metricCode({
+  value,
+  delta,
+  lowerIsBetter,
+  loading,
+}: DemoValues): string {
+  return [
+    "<MetricCard",
+    '  title="Sales"',
+    '  info="Every sale, before refunds and fees."',
+    `  value="${String(value)}"`,
+    `  delta={${String(delta)}}`,
+    ...(lowerIsBetter === true ? ["  lowerIsBetter"] : []),
+    "  labels={days}",
+    "  series={[thisPeriod, { ...lastPeriod, comparison: true }]}",
+    '  updated="Updated 4 min ago"',
+    '  href="/reports/sales"',
+    ...(loading === true ? ["  loading"] : []),
+    "/>",
+  ].join("\n");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    value: { kind: "text", initial: "$23,405.00" },
+    delta: { kind: "number", initial: 0.09, min: -0.3, max: 0.3, step: 0.01 },
+    lowerIsBetter: { kind: "toggle", initial: false },
+    loading: { kind: "toggle", initial: false },
+  },
+  render: ({ value, delta, lowerIsBetter, loading }) => (
+    <MetricCard
+      {...volume}
+      value={String(value)}
+      delta={typeof delta === "number" ? delta : volume.delta}
+      lowerIsBetter={lowerIsBetter === true}
+      loading={loading === true}
+    />
+  ),
+  code: metricCode,
 };
 
 export const demos: readonly DemoSection[] = [

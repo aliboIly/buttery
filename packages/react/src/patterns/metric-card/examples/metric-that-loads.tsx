@@ -1,4 +1,4 @@
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { MetricCard } from "@buttery/react";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
@@ -39,6 +39,8 @@ export function MetricThatLoads(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ see }) => {
   await see("169");
