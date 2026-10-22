@@ -38,10 +38,10 @@
  */
 .dh-slide {
   --bt-deckhand-unit: calc(100cqmin / 1080);
-  --bt-deckhand-title: 84;
-  --bt-deckhand-title-line: 1.08;
-  --bt-deckhand-sub: 36;
-  --bt-deckhand-gap: 28;
+  --bt-deckhand-title: 88;
+  --bt-deckhand-title-line: 1.06;
+  --bt-deckhand-sub: 40;
+  --bt-deckhand-gap: 30;
 
   container-type: size;
   display: grid;
@@ -59,22 +59,22 @@
 }
 
 .dh-slide[data-layout="points"] {
-  --bt-deckhand-title: 72;
+  --bt-deckhand-title: 80;
   --bt-deckhand-title-line: 1.1;
-  --bt-deckhand-sub: 28;
-  --bt-deckhand-gap: 44;
+  --bt-deckhand-sub: 30;
+  --bt-deckhand-gap: 48;
 }
 
 .dh-slide[data-layout="numbers"] {
-  --bt-deckhand-title: 64;
+  --bt-deckhand-title: 72;
   --bt-deckhand-title-line: 1.1;
-  --bt-deckhand-sub: 28;
+  --bt-deckhand-sub: 30;
   --bt-deckhand-gap: 56;
 }
 
 .dh-slide[data-layout="quote"] {
-  --bt-deckhand-sub: 28;
-  --bt-deckhand-gap: 36;
+  --bt-deckhand-sub: 30;
+  --bt-deckhand-gap: 40;
 }
 
 .dh-slide-room {
@@ -143,11 +143,11 @@
     var(--bt-deckhand-gap) * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
   );
   min-inline-size: 0;
-  padding: calc(48 * var(--bt-deckhand-unit));
-  border-radius: calc(28 * var(--bt-deckhand-unit));
+  padding: calc(56 * var(--bt-deckhand-unit));
+  border-radius: calc(32 * var(--bt-deckhand-unit));
   background-color: var(--bt-deckhand-box-fill);
-  box-shadow: 0 calc(var(--bt-deckhand-depth) * 24 * var(--bt-deckhand-unit))
-    calc(var(--bt-deckhand-depth) * 64 * var(--bt-deckhand-unit))
+  box-shadow: 0 calc(var(--bt-deckhand-depth) * 32 * var(--bt-deckhand-unit))
+    calc(var(--bt-deckhand-depth) * 96 * var(--bt-deckhand-unit))
     var(--bt-deckhand-shadow);
   color: var(--bt-deckhand-ink);
   overflow-wrap: break-word;
@@ -217,17 +217,22 @@
     var(--bt-deckhand-sub) * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
   );
   line-height: 1.36;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 .dh-cite {
   font-weight: var(--bt-text-label-weight);
 }
 
+/* On a box the colors are known, so who said it can step back and still read at AA. */
+.dh-slide:not([data-box="none"]) .dh-cite {
+  opacity: 0.72;
+}
+
 .dh-points {
   display: flex;
   flex-direction: column;
-  gap: calc(18 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  gap: calc(20 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
   min-inline-size: 0;
   padding: 0;
   list-style: none;
@@ -243,7 +248,7 @@
 
 .dh-point {
   --bt-deckhand-point: calc(
-    38 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
+    42 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
   );
 
   display: grid;
@@ -274,7 +279,7 @@
 .dh-stats {
   display: grid;
   grid-template-columns: repeat(var(--bt-deckhand-stats), minmax(0, 1fr));
-  gap: calc(48 * var(--bt-deckhand-unit));
+  gap: calc(40 * var(--bt-deckhand-unit));
   inline-size: 100%;
 }
 
@@ -286,7 +291,7 @@
 }
 
 .dh-stat-value {
-  font-size: calc(128 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  font-size: calc(136 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
   font-weight: var(--bt-text-title-weight);
   line-height: 1;
   letter-spacing: var(--bt-tracking-display);
@@ -294,20 +299,20 @@
 }
 
 .dh-stat-label {
-  font-size: calc(30 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  font-size: calc(32 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
   line-height: 1.32;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 .dh-quote {
-  font-size: calc(54 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  font-size: calc(58 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
   font-weight: var(--bt-text-label-weight);
   line-height: 1.26;
   letter-spacing: var(--bt-tracking-tight);
   text-wrap: pretty;
 }
 
-/* Arrange mode: the box is framed and takes a drag, and the nine places it can land show. */
+/* Arrange mode: the box is framed and takes a drag; while it's dragged, the nine places it can land show. */
 .dh-slide[data-arranging] .dh-slide-box {
   outline: var(--bt-deckhand-ring) solid var(--bt-accent);
   outline-offset: var(--bt-focus-offset);
@@ -326,15 +331,16 @@
 }
 
 .dh-slide-spot {
-  inline-size: calc(22 * var(--bt-deckhand-unit));
+  inline-size: calc(20 * var(--bt-deckhand-unit));
   aspect-ratio: 1;
-  border: calc(4 * var(--bt-deckhand-unit)) solid var(--bt-accent);
   border-radius: var(--bt-r-full);
-  background-color: var(--bt-bg-surface);
+  background-color: var(--bt-accent);
+  opacity: 0.4;
 }
 
 .dh-slide-spot[data-current] {
-  background-color: var(--bt-accent);
+  opacity: 1;
+  scale: 1.6;
 }
 
 .dh-slide-spot:nth-child(3n + 1) {
@@ -367,11 +373,13 @@
   min-inline-size: 0;
 }
 
+/* As tall as a thumbnail with its padding, slides or none, so adding the first slide moves nothing. */
 .dh-strip-scroll {
   display: flex;
   align-items: center;
   gap: var(--bt-space-2);
   min-inline-size: 0;
+  min-block-size: calc(var(--bt-deckhand-thumb) + var(--bt-space-4));
   padding: var(--bt-space-1) var(--bt-space-3);
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -417,6 +425,12 @@
   user-select: none;
 }
 
+@media (hover: hover) {
+  .dh-thumb:not([aria-selected="true"]):hover {
+    background-color: var(--bt-bg-item-hover);
+  }
+}
+
 .dh-thumb[data-dragging] {
   z-index: var(--bt-z-raised);
   cursor: grabbing;
@@ -441,20 +455,23 @@
   box-shadow: var(--bt-shadow-inset);
 }
 
+/* As big as a thumbnail, so its edges line up with theirs. */
 .dh-add {
+  --bt-transition-hover: background-color var(--bt-dur-fast)
+    var(--bt-ease-standard);
+
   display: grid;
   flex: none;
   place-content: center;
   justify-items: center;
   gap: var(--bt-space-1);
-  block-size: calc(var(--bt-deckhand-thumb) + var(--bt-space-2));
-  padding-inline: var(--bt-space-4);
+  block-size: var(--bt-deckhand-thumb);
+  min-inline-size: calc(var(--bt-deckhand-thumb) * var(--bt-deckhand-ratio));
+  padding-inline: var(--bt-space-3);
   border: 1px dashed var(--bt-ring-selected);
-  border-radius: var(--bt-r-md);
+  border-radius: var(--bt-r-xs);
   background: none;
   color: var(--bt-text-secondary);
-  --bt-transition-hover: background-color var(--bt-dur-fast)
-    var(--bt-ease-standard);
 }
 
 @media (hover: hover) {
@@ -468,10 +485,10 @@
   background-color: var(--bt-bg-control-active);
 }
 
-/* A big number's two fields: the number and its caption. */
+/* A big number's two fields: the number, then its wider caption. */
 .dh-stat-fields {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: var(--bt-space-2);
 }
 
@@ -507,12 +524,25 @@
   grid-area: 1 / 1;
   min-inline-size: 0;
   min-block-size: 0;
-  border-radius: var(--bt-r-lg);
   overflow: clip;
+}
+
+.dh-present-dialog[data-idle] {
+  cursor: none;
 }
 
 .dh-present-bar {
   justify-self: center;
+  transition: opacity
+    calc(
+      var(--bt-dur-reduced) + (var(--bt-dur-base) - var(--bt-dur-reduced)) *
+        var(--bt-motion)
+    )
+    var(--bt-ease-standard);
+}
+
+.dh-present-dialog[data-idle] .dh-present-bar:not(:focus-within) {
+  opacity: 0;
 }
 
 .dh-present-count {

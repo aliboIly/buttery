@@ -116,10 +116,13 @@ function TextRows({
       />
     </Inspector.Row>
   );
-  const subtitle = (label: string): ReactElement => (
+  const subtitle = (label: string, placeholder: string): ReactElement => (
     <Inspector.Row block>
-      <TextField
+      <TextArea
         label={label}
+        rows={1}
+        maxRows={4}
+        placeholder={placeholder}
         value={slide.subtitle}
         onValueChange={write("subtitle")}
         onBlur={onSeal}
@@ -132,7 +135,7 @@ function TextRows({
       return (
         <>
           {title}
-          {subtitle("Subtitle")}
+          {subtitle("Subtitle", "A line under the title")}
         </>
       );
     case "points":
@@ -150,7 +153,7 @@ function TextRows({
               data-dh-input="points"
             />
           </Inspector.Row>
-          {subtitle("Note")}
+          {subtitle("Note", "Optional, such as a contact")}
         </>
       );
     case "numbers":
@@ -161,14 +164,18 @@ function TextRows({
             <Inspector.Row key={ORDINALS[index]} block>
               <div className="dh-stat-fields">
                 <TextField
-                  label={`${ORDINALS[index] ?? ""} number`}
+                  label="Number"
+                  aria-label={`${ORDINALS[index] ?? ""} number`}
                   value={stat.value}
                   onValueChange={writeStat(index, "value")}
                   onBlur={onSeal}
                   data-dh-input={`stat-${String(index)}-value`}
                 />
-                <TextField
-                  label={`${ORDINALS[index] ?? ""} caption`}
+                <TextArea
+                  label="Caption"
+                  aria-label={`${ORDINALS[index] ?? ""} caption`}
+                  rows={1}
+                  maxRows={3}
                   value={stat.label}
                   onValueChange={writeStat(index, "label")}
                   onBlur={onSeal}
@@ -177,7 +184,7 @@ function TextRows({
               </div>
             </Inspector.Row>
           ))}
-          {subtitle("Note")}
+          {subtitle("Note", "Optional, such as a source")}
         </>
       );
     case "quote":
@@ -193,7 +200,7 @@ function TextRows({
               data-dh-input="title"
             />
           </Inspector.Row>
-          {subtitle("Who said it")}
+          {subtitle("Who said it", "Their name and where they work")}
         </>
       );
     default: {

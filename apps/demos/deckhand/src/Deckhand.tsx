@@ -449,7 +449,8 @@ export function Deckhand(): ReactElement {
               seal();
             }}
             onArrange={() => {
-              startArrange(true);
+              if (arranging) endArrange(true);
+              else startArrange(true);
             }}
             onExport={exportSlide}
             onCopy={copySlide}

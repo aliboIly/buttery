@@ -216,11 +216,11 @@ interface StageSlideProps {
   readonly size: SlideSize;
   /** While a slider is dragged, the box's shadow follows it at once instead of crossfading. */
   readonly live: boolean;
-  /** Arrange mode: the box is framed, the places it can go show, and it can be dragged. */
+  /** Arrange mode: the box is framed, and while it's dragged the places it can land show. */
   readonly arranging: boolean;
   /** Counts drags let go, so the box glides from where it was dropped even onto the place it left. */
   readonly drops: number;
-  /** The place a drag would drop the box on, which arrange mode marks. */
+  /** The place a drag would drop the box on, which the places shown during a drag mark. */
   readonly target: Anchor;
   /** The wrapper that moves, which a drag offsets and a new place glides. */
   readonly placeRef: Ref<HTMLDivElement>;
@@ -282,7 +282,7 @@ export function StageSlide({
             <SlideWords slide={slide} drawn={false} />
           </div>
         </buttery.div>
-        {arranging ? (
+        {dragging ? (
           <div className="dh-slide-spots" aria-hidden="true">
             {anchors.map((anchor) => (
               <span

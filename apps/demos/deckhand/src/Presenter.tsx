@@ -10,6 +10,7 @@ import {
   Surface,
   Text,
   tabbables,
+  timing,
 } from "@buttery/core";
 import {
   Button,
@@ -60,6 +61,8 @@ function keepTab(event: KeyboardEvent, dialog: HTMLElement): void {
  * The deck playing full-window over a dark room, from slide `start`. The arrow keys, Page Up and Down and a
  * press on the slide move through it, Home and End jump to its ends, and Escape leaves. Each slide arrives
  * on buttery's motion: the old one fades out as the new one grows in, or a plain fade with reduced motion.
+ * The controls fade away, and the pointer hides, while the pointer rests; moving it or tabbing to them
+ * brings them back.
  */
 export function Presenter({
   deck,
@@ -72,6 +75,8 @@ export function Presenter({
 }): ReactElement {
   const outer = useButtery();
   const [index, setIndex] = useState(start);
+  const [idle, setIdle] = useState(false);
+  const idleTimer = useRef(0);
   const count = deck.slides.length;
   const { width, height } = SLIDE_SIZES[deck.size];
   const go = (next: number): void => {
@@ -107,6 +112,21 @@ export function Presenter({
   useEffect(() => {
     keys.current = onKeyDown;
   });
+  useEffect(() => {
+    idleTimer.current = window.setTimeout(() => {
+      setIdle(true);
+    }, timing["toast-life"]);
+    return () => {
+      window.clearTimeout(idleTimer.current);
+    };
+  }, []);
+  const wake = (): void => {
+    window.clearTimeout(idleTimer.current);
+    idleTimer.current = window.setTimeout(() => {
+      setIdle(true);
+    }, timing["toast-life"]);
+    if (idle) setIdle(false);
+  };
   const dialog = useCallback((element: HTMLDivElement | null) => {
     if (!element) return undefined;
     element.focus({ preventScroll: true });
@@ -136,7 +156,9 @@ export function Presenter({
             aria-label={`Presenting ${deck.name}`}
             tabIndex={-1}
             className="dh-present-dialog"
+            data-idle={idle ? "" : undefined}
             data-testid="presenter"
+            onPointerMove={wake}
           >
             <div
               className="dh-present-slides"

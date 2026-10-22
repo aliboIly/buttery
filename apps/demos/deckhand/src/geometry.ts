@@ -84,7 +84,7 @@ export function boxLook(slide: Slide): {
 }
 
 /** The box's shadow color: graphite, at a strength the shadow's size then spreads. */
-export const SHADOW = `${GRAPHITE}73`;
+export const SHADOW = `${GRAPHITE}4d`;
 
 /** What each place on the slide is called. */
 export const ANCHOR_NAMES: Readonly<Record<Anchor, string>> = {

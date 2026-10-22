@@ -3,12 +3,13 @@ import { OverflowCluster } from "@buttery/core";
 import { Button, HeaderBar, IconButton, Select } from "@buttery/react";
 import {
   CircleHelp,
-  Copy,
+  ClipboardCopy,
   CopyPlus,
   Download,
   Move,
   PenLine,
   Play,
+  Ratio,
   Redo2,
   Trash2,
   Undo2,
@@ -49,6 +50,7 @@ export function DeckHeader({
   readonly name: string;
   readonly size: SlideSize;
   readonly hasSlide: boolean;
+  /** Whether arrange mode is on, which presses Arrange; pressing it again ends the mode. */
   readonly arranging: boolean;
   readonly canUndo: boolean;
   readonly canRedo: boolean;
@@ -68,13 +70,26 @@ export function DeckHeader({
   return (
     <HeaderBar mark={<DeckhandMark />} title={name} dragRegion>
       <HeaderBar.Actions>
-        <HeaderBar.Action
-          label="Arrange"
-          icon={Move}
+        <OverflowCluster.Item
           priority={4}
-          disabled={!hasSlide || arranging}
-          onSelect={onArrange}
-        />
+          menuItem={{
+            label: arranging ? "Done arranging" : "Arrange",
+            icon: Move,
+            disabled: !hasSlide,
+            onSelect: onArrange,
+          }}
+        >
+          <Button
+            variant={arranging ? "soft" : "ghost"}
+            aria-pressed={arranging}
+            aria-disabled={!hasSlide || undefined}
+            onClick={() => {
+              if (hasSlide) onArrange();
+            }}
+          >
+            Arrange
+          </Button>
+        </OverflowCluster.Item>
         <HeaderBar.Action
           label="Duplicate slide"
           icon={CopyPlus}
@@ -102,6 +117,7 @@ export function DeckHeader({
           priority={7}
           menuItem={{
             label: `Slide size: ${sizeLabel(size)}`,
+            icon: Ratio,
             onSelect: () => {
               onSize(nextSize(size));
             },
@@ -116,7 +132,7 @@ export function DeckHeader({
         </OverflowCluster.Item>
         <HeaderBar.Action
           label="Copy as image"
-          icon={Copy}
+          icon={ClipboardCopy}
           iconOnly
           priority={3}
           disabled={!hasSlide}

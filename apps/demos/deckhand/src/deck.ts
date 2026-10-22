@@ -95,7 +95,7 @@ export const LAYOUT_DEFAULTS: Readonly<
   Record<Layout, { readonly align: Align; readonly position: Anchor }>
 > = {
   title: { align: "start", position: "bottom-left" },
-  points: { align: "start", position: "top-left" },
+  points: { align: "start", position: "left" },
   numbers: { align: "center", position: "center" },
   quote: { align: "start", position: "center" },
 };
@@ -273,11 +273,11 @@ export const SAMPLE_DECK: Deck = {
       ...newSlide("coffees", "points"),
       title: "The coffees on offer",
       points: [
-        "Guji, Ethiopia: jasmine and white peach",
-        "Huila, Colombia: red apple and cocoa",
-        "Cerrado, Brazil: hazelnut and milk chocolate",
-        "Nyeri, Kenya: blackcurrant and grapefruit",
-        "Halfmoon House: our dark blend for milk",
+        "Guji, Ethiopia: jasmine, peach",
+        "Huila, Colombia: red apple, cocoa",
+        "Cerrado, Brazil: hazelnut, toffee",
+        "Nyeri, Kenya: blackcurrant, citrus",
+        "Halfmoon House: our espresso blend",
       ].join("\n"),
     },
     {
@@ -293,12 +293,11 @@ export const SAMPLE_DECK: Deck = {
       ...newSlide("next", "points"),
       title: "Start with a tasting",
       points: [
-        "We bring three coffees and a grinder",
-        "Your baristas dial in shots with us",
-        "First cases arrive the next Wednesday",
+        "We bring three coffees to your bar",
+        "Your team dials in shots with us",
+        "Your first cases arrive Wednesday",
       ].join("\n"),
       subtitle: "Rosa Delgado · rosa@halfmoon.example",
-      position: "left",
       fill: { kind: "gradient", preset: "espresso", angle: DEFAULT_ANGLE },
     },
   ],
