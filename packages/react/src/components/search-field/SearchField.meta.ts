@@ -32,5 +32,5 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "It fills its container's width and is 34px tall (--bt-h-control), with its 16px search icon at the start. At the end sits a 28px clear button once it holds text, or the shortcut's keycap while it's empty. Text too long for it scrolls inside it and ends in an ellipsis while it doesn't have focus. A press anywhere in the box but the clear button lands in the input.",
+    "It fills its container's width (in an `Inline`, the room its siblings leave) and is 34px tall (--bt-h-control), with its 16px search icon at the start. At the end sits a 28px clear button once it holds text, or the shortcut's keycap while it's empty. Text too long for it scrolls inside it and ends in an ellipsis while it doesn't have focus. A press anywhere in the box but the clear button lands in the input.",
 };

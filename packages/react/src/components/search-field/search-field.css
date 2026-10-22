@@ -17,6 +17,11 @@
     letter-spacing: var(--bt-text-body-tracking);
   }
 
+  /* In an Inline it takes the room its siblings leave, rather than the whole row, which would squeeze them. */
+  .bt-inline > .bt-search-field {
+    flex: 1;
+  }
+
   .bt-search-field[data-variant="soft"] {
     border-color: transparent;
     background-color: var(--bt-bg-control);
