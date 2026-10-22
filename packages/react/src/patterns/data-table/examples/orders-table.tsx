@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Menu } from "@buttery/core";
-import { DataTable, StatusBadge } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { AppPage, DataTable, PageHeader, StatusBadge } from "@buttery/react";
 import type { DataTableColumn, DataTableSort } from "@buttery/react";
 
 interface Order {
@@ -64,25 +65,59 @@ function sorted(
   );
 }
 
-/** Orders with selection, sortable headers and a menu of actions on each row. */
+/** An orders page: selection with a count, sortable headers and a menu of actions on each row. */
 export function OrdersTable(): ReactElement {
   const [sort, setSort] = useState<DataTableSort | null>(null);
+  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+  const [note, setNote] = useState("No changes yet");
   return (
-    <DataTable
-      label="Orders"
-      columns={COLUMNS}
-      rows={sorted(ORDERS, sort)}
-      rowKey={(order) => order.id}
-      rowLabel={(order) => order.id}
-      selectable
-      sort={sort}
-      onSortChange={setSort}
-      rowActions={() => (
-        <>
-          <Menu.Item>Resend receipt</Menu.Item>
-          <Menu.Item>Refund</Menu.Item>
-        </>
-      )}
-    />
+    <AppPage header={<PageHeader title="Orders" />}>
+      <AppPage.Section
+        title="This week"
+        description={`${String(selected.size)} selected · ${note}`}
+      >
+        <DataTable
+          label="Orders"
+          columns={COLUMNS}
+          rows={sorted(ORDERS, sort)}
+          rowKey={(order) => order.id}
+          rowLabel={(order) => order.id}
+          selectable
+          selected={selected}
+          onSelectedChange={setSelected}
+          sort={sort}
+          onSortChange={setSort}
+          rowActions={(order) => (
+            <>
+              <Menu.Item
+                onSelect={() => {
+                  setNote(`Resent the receipt for ${order.id}`);
+                }}
+              >
+                Resend receipt
+              </Menu.Item>
+              <Menu.Item
+                tone="danger"
+                onSelect={() => {
+                  setNote(`Refunded ${order.id}`);
+                }}
+              >
+                Refund
+              </Menu.Item>
+            </>
+          )}
+        />
+      </AppPage.Section>
+    </AppPage>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("checkbox", "Select ORD-2042");
+  await see("1 selected · No changes yet");
+  await press("button", "Actions for ORD-2043");
+  await press("menuitem", "Refund");
+  await see("1 selected · Refunded ORD-2043");
+};

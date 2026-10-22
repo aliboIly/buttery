@@ -1,5 +1,8 @@
+import { useState } from "react";
 import type { ReactElement } from "react";
-import { DataTable } from "@buttery/react";
+import { Stack } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { DataTable, SegmentedControl } from "@buttery/react";
 
 interface Activity {
   readonly id: string;
@@ -13,24 +16,58 @@ const ACTIVITY: readonly Activity[] = [
   { id: "a3", what: "Tomas Reyes paused his plan", when: "Yesterday" },
 ];
 
-/** A short list in an overview: compact, with no selection or pagination. */
+type Size = "compact" | "default";
+
+/** Both sizes: compact for a short list in an overview, without selection or pagination, and the default with them. */
 export function RecentActivity(): ReactElement {
+  const [size, setSize] = useState<Size>("compact");
   return (
-    <DataTable
-      label="Recent activity"
-      size="compact"
-      columns={[
-        {
-          id: "what",
-          header: "Activity",
-          minWidth: "lg",
-          grow: 3,
-          cell: (item) => item.what,
-        },
-        { id: "when", header: "When", align: "end", cell: (item) => item.when },
-      ]}
-      rows={ACTIVITY}
-      rowKey={(item) => item.id}
-    />
+    <Stack gap={3}>
+      <SegmentedControl<Size>
+        label="Table size"
+        options={[
+          { value: "compact", label: "Compact" },
+          { value: "default", label: "Default" },
+        ]}
+        value={size}
+        onValueChange={setSize}
+      />
+      <DataTable
+        label="Recent activity"
+        size={size}
+        selectable
+        pagination={{
+          page: 1,
+          pageSize: 10,
+          total: ACTIVITY.length,
+          onPageChange: () => undefined,
+        }}
+        columns={[
+          {
+            id: "what",
+            header: "Activity",
+            minWidth: "lg",
+            grow: 3,
+            cell: (item) => item.what,
+          },
+          {
+            id: "when",
+            header: "When",
+            align: "end",
+            cell: (item) => item.when,
+          },
+        ]}
+        rows={ACTIVITY}
+        rowKey={(item) => item.id}
+      />
+    </Stack>
   );
 }
+
+export const kind: ExampleKind = "variants";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Guji came back in stock");
+  await press("radio", "Default");
+  await see("1–3 of 3");
+};

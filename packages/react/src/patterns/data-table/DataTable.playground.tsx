@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Menu, Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, DataTable, StatusBadge } from "@buttery/react";
 import type { DataTableColumn, DataTableSort } from "@buttery/react";
 
@@ -73,6 +74,47 @@ const COLUMNS: readonly DataTableColumn<Order>[] = [
 ];
 
 const PAGE = 8;
+
+const LIVE_COLUMNS: readonly DataTableColumn<Order>[] = COLUMNS.map(
+  (column) => ({ ...column, sortable: false }),
+);
+
+export const live: LiveDemo = {
+  controls: {
+    selectable: { kind: "toggle", initial: false },
+    loading: { kind: "toggle", initial: false },
+    size: {
+      kind: "choice",
+      options: ["default", "compact"],
+      initial: "default",
+    },
+  },
+  render: ({ selectable, loading, size }) => (
+    <DataTable
+      label="Orders"
+      columns={LIVE_COLUMNS}
+      rows={ORDERS.slice(0, 4)}
+      rowKey={(order) => order.id}
+      rowLabel={(order) => order.id}
+      selectable={selectable === true}
+      loading={loading === true}
+      size={demoChoice(size, ["default", "compact"])}
+    />
+  ),
+  code: ({ selectable, loading, size }) =>
+    [
+      "<DataTable",
+      '  label="Orders"',
+      "  columns={columns}",
+      "  rows={orders}",
+      "  rowKey={(order) => order.id}",
+      "  rowLabel={(order) => order.id}",
+      ...(selectable === true ? ["  selectable"] : []),
+      ...(loading === true ? ["  loading"] : []),
+      ...(size === "compact" ? ['  size="compact"'] : []),
+      "/>",
+    ].join("\n"),
+};
 
 function Orders(): ReactElement {
   const [sort, setSort] = useState<DataTableSort | null>(null);
