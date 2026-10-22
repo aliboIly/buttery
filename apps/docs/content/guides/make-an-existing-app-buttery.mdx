@@ -10,31 +10,114 @@ related: [get-started/make-anything-buttery, guides/check-your-layout]
 
 This guide moves an existing React app onto buttery without a rewrite: wire up the provider, check the layout, then convert a screen at a time from the top down. Follow it when an app already works and you want it to look, move and lay out like buttery.
 
-## 1. Wire it up
+## Move the app across
 
-Import `@buttery/core/styles.css` and `@buttery/react/styles.css` at the app's entry and wrap it in `ButteryProvider`. buttery's styles sit in CSS cascade layers, so a style the app sets itself still wins, but what the app leaves to the browser changes:
+<Steps>
+<Step>
 
-- The page's font becomes Inter, with `body` text at 14px on a 20px line, and the page's background and text take buttery's colors.
-- A small reset applies: `box-sizing: border-box` on every element, no default margins on headings, paragraphs and lists, images and SVGs as blocks no wider than their container, and form controls that take their font from the page.
-- Selected text takes buttery's selection color, whatever has keyboard focus shows buttery's focus ring, and scrollbars turn thin, in the border color.
-- `ButteryProvider` follows the system's light or dark setting, which switches those colors. Pass `colorScheme="light"` until the app's own styles are ready for dark.
+### Wire it up
+
+Import buttery's two stylesheets at the app's entry and wrap the app in `ButteryProvider`:
+
+```tsx title="src/main.tsx"
+import "@buttery/core/styles.css";
+import "@buttery/react/styles.css";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { ButteryProvider } from "@buttery/react";
+import { App } from "./App.tsx";
+
+const container = document.getElementById("root");
+if (!container) throw new Error("index.html needs a #root element.");
+
+createRoot(container).render(
+  <StrictMode>
+    <ButteryProvider colorScheme="light">
+      <App />
+    </ButteryProvider>
+  </StrictMode>,
+);
+```
+
+buttery's styles sit in CSS cascade layers, so a style the app sets itself still wins. Whatever the app leaves to the browser changes, through buttery's base styles and a small reset:
+
+<DocsTable
+  columns={["Left to the browser", "With buttery"]}
+  rows={[
+    ["The page's font", "Inter, with `body` text at 14px on a 20px line"],
+    ["The page's background and text", "buttery's colors"],
+    ["Box sizing", "`box-sizing: border-box` on every element"],
+    ["Headings, paragraphs and lists", "No default margins"],
+    ["Images and SVGs", "Blocks no wider than their container"],
+    ["Form controls", "Their font from the page"],
+    ["Selected text", "buttery's selection color"],
+    ["Keyboard focus", "buttery's focus ring"],
+    ["Scrollbars", "Thin, in the border color"],
+  ]}
+/>
+
+> **Light and dark.** `ButteryProvider` follows the system's light or dark setting, which switches those colors. Pass `colorScheme="light"`, as above, until the app's own styles are ready for dark.
 
 The app also gains buttery's tokens, the layers that menus, dialogs and toasts open into, and `LayoutGuard` in development.
 
-## 2. See where it stands
+</Step>
+<Step>
 
-Run the app in development and narrow the window from wide to a phone's width. `LayoutGuard` outlines what overlaps, overflows or truncates without saying so. Add one Playwright test per main page with `expectButtery(page, quickMatrix)`, and keep its report as the list of what to fix.
+### See where it stands
 
-## 3. Convert a screen, top down
+Run the app in development and narrow the window from wide to a phone's width. `LayoutGuard` outlines what overlaps, overflows or sits off the spacing scale.
 
-For one screen at a time:
+Then add a Playwright test for each main page, and keep its report as the list of what to fix:
 
-- Match the whole screen to a pattern if one fits: `AppShell` with `AppPage`, a settings page, a detail page.
-- Give each region a `Surface` level and lay out siblings with `Stack`, `Inline` and `Grid`, dropping margins for gaps.
-- Swap each control for its buttery component: `Button`, `TextField`, `Select`, `Switch`.
-- Wrap what has no buttery match in `buttery(Component, { surface: "card" })`, so it takes the surface and motion recipes.
-- Replace raw colors, sizes, radii and durations with tokens. buttery's stylelint config lists the ones left.
+```ts title="e2e/layout.spec.ts"
+import { test } from "@playwright/test";
+import { expectButtery, quickMatrix } from "@buttery/test";
 
-## 4. Keep it there
+test("the home page is buttery", async ({ page }) => {
+  await page.goto("/");
+  await expectButtery(page, { ...quickMatrix, name: "home" });
+});
+```
 
-Add `@buttery/lint`'s configs and the `expectButtery` tests to the app's checks, so a screen stays buttery once it's converted.
+</Step>
+<Step>
+
+### Convert a screen, top down
+
+Take one screen at a time, from the whole screen down to its values:
+
+<DocsTable
+  columns={["Level", "What to do"]}
+  rows={[
+    [
+      "The screen",
+      "Match it to a pattern if one fits: `AppShell` with `AppPage`, a settings page, a detail page",
+    ],
+    [
+      "Its regions",
+      "Give each a `Surface` level, and lay out siblings with `Stack`, `Inline` and `Grid`, dropping margins for gaps",
+    ],
+    [
+      "Its controls",
+      "Swap each for its buttery component: `Button`, `TextField`, `Select`, `Switch`",
+    ],
+    [
+      "Anything without a match",
+      'Wrap it in `buttery(Component, { surface: "card" })`, so it takes the surface and motion recipes',
+    ],
+    [
+      "Its values",
+      "Replace raw colors, sizes, radii and durations with tokens; buttery's stylelint config lists the ones left",
+    ],
+  ]}
+/>
+
+</Step>
+<Step>
+
+### Keep it there
+
+Add `@buttery/lint`'s configs and the `expectButtery` tests to the app's checks, so a screen stays buttery once it's converted. [Lint configs](/tools/lint-configs) has both config files.
+
+</Step>
+</Steps>

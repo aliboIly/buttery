@@ -8,11 +8,16 @@ since: 0.9.0
 related: [foundations/theming, foundations/colors]
 ---
 
-buttery's defaults are neutral on purpose, so an app's own brand shows. This guide puts yours on top: an accent and a primary color, warmer or cooler grays, rounder or tighter corners, and your own mark.
+buttery's defaults are neutral on purpose, so an app's own brand shows. This guide puts yours on top: an accent and a primary color, warmer or cooler grays, rounder or tighter corners, your own mark and your own typeface.
 
-## Colors and corners
+## Add your brand
 
-`createTheme` takes your brand's accent as hex and works out the shades buttery needs, in light and dark, including a text shade that keeps AA contrast. `neutral` tints the grays and `radius` changes how round corners are, keeping nested surfaces concentric.
+<Steps>
+<Step>
+
+### Set your colors and corners
+
+`createTheme` turns your brand's colors and a few choices into a theme, and `ButteryProvider` applies it through its `theme` prop:
 
 ```tsx
 import type { ReactElement } from "react";
@@ -35,12 +40,43 @@ export function Root(): ReactElement {
 }
 ```
 
-For a color the options don't reach, `overrides` sets any color token per scheme. Change roles, not values: set `accent`, not the color of one button.
+<DocsTable
+  columns={["Option", "What it sets"]}
+  rows={[
+    [
+      "`accent`",
+      "Your brand's accent, as hex, from which buttery works out the shades it needs in light and dark, including a text shade that keeps AA contrast",
+    ],
+    ["`primary`", "The primary button's color, as hex"],
+    ["`neutral`", 'The tint of the grays: `"gray"`, `"warm"` or `"cool"`'],
+    [
+      "`radius`",
+      'How round corners are: `"soft"`, `"default"` or `"crisp"`, keeping nested surfaces concentric',
+    ],
+    [
+      "`overrides`",
+      "Any color token, per scheme, for a color the options don't reach",
+    ],
+  ]}
+/>
 
-## Your mark
+> **Change roles, not values.** Set `accent`, not the color of one button. [Theming](/foundations/theming#your-own-theme) has every option.
 
-Put your own logo in the places buttery puts its own: a `NavBar`'s `brand`, an `AppShell`'s sidebar switcher, a `HeaderBar`'s `mark`. Keep buttery's mark for buttery itself.
+</Step>
+<Step>
 
-## Type
+### Put in your mark
 
-buttery sets text in Inter. To use your own typeface, load it locally (no network fonts, so desktop apps work offline) and set `--bt-font-sans` on `:root` after buttery's stylesheet. The type roles keep their sizes, so check long words in narrow places with `expectButtery`.
+Put your own logo in the places buttery puts its own: a `NavBar`'s `brand`, the `switcher` of the `Sidebar` in an `AppShell`, and a `HeaderBar`'s `mark`. Keep buttery's mark for buttery itself.
+
+</Step>
+<Step>
+
+### Set your typeface
+
+buttery sets text in Inter. To use your own typeface, load it from the app's own files and set `--bt-font-sans` on `:root` after buttery's stylesheet. Don't load fonts from the network: desktop apps have to work offline.
+
+The type roles keep their sizes, so check long words in narrow places with `expectButtery`.
+
+</Step>
+</Steps>

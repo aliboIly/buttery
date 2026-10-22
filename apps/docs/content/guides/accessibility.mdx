@@ -12,18 +12,60 @@ Every buttery component works with a keyboard and a screen reader, keeps text re
 
 ## What the components do
 
-- Keyboard: every control can be reached with Tab and used with the keys people expect; menus, dialogs and selects follow Radix's patterns. Each component page has a keyboard table.
-- Focus: a visible ring on `:focus-visible`, focus moved into a dialog or panel as it opens and back to what opened it as it closes.
-- Names: icon-only controls require a `label`; dialogs warn in development when they have no name.
-- Contrast: text and icons meet WCAG AA on the surfaces they're meant for, in light and dark.
-- Targets: every press target is at least 24 by 24, and standalone buttons at least 28 tall.
-- Motion: everything follows the reduced motion setting.
-- Forced colors: switches and checkboxes draw themselves in system colors when Windows' high contrast is on, so their state stays visible.
+<Cards columns={2}>
+<Card title="Keyboard">
+
+Every control can be reached with Tab and used with the keys people expect. Menus, dialogs and selects follow Radix's patterns, and each component page has a keyboard table.
+
+</Card>
+<Card title="Focus">
+
+`:focus-visible` shows a focus ring in the accent color. Focus moves into a dialog or panel as it opens, and back to what opened it as it closes.
+
+</Card>
+<Card title="Names">
+
+Icon-only controls require a `label`, and dialogs warn in development when they have no name.
+
+</Card>
+<Card title="Contrast">
+
+Text and icons meet WCAG AA on the surfaces they're meant for, in light and dark.
+
+</Card>
+<Card title="Targets">
+
+Every press target is at least 24 by 24, and standalone buttons are at least 28 tall.
+
+</Card>
+<Card title="Reduced motion and high contrast">
+
+Everything follows the reduced motion setting. With Windows' high contrast on, switches and checkboxes draw themselves in system colors, so their state stays visible.
+
+</Card>
+</Cards>
 
 ## What's left to you
 
-- Give every page one `h1` and headings in order, and every form field a label.
-- Write link and button text that makes sense on its own: "Download the invoice", not "Click here".
-- Give images that carry meaning alternative text, and an icon that stands alone a `label`.
-- Don't disable a button the person just pressed: use `aria-disabled`, which keeps focus on it.
-- Check with a keyboard and a screen reader as you build. `expectButtery` runs axe's rules on every check, but no automated check finds everything.
+<Rules>
+<Rule title="Structure every page">
+
+Give every page one `h1` and headings in order, and every form field a label.
+
+</Rule>
+<Rule title="Name things plainly">
+
+Write link and button text that makes sense on its own: "Download the invoice", not "Click here". Give images that carry meaning alternative text, and an icon that stands alone a `label`.
+
+</Rule>
+<Rule title="Keep focus on a pressed button">
+
+Don't disable a button the person just pressed: use `aria-disabled`, which keeps focus on it.
+
+</Rule>
+<Rule title="Check by hand">
+
+Check with a keyboard and a screen reader as you build. `expectButtery` runs axe's rules on every check, but no automated check finds everything.
+
+</Rule>
+</Rules>
