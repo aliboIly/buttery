@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
-import { Grid, Icon, Stack, Surface, Text } from "@butteryui/core";
+import { Icon, Stack, Surface, Text } from "@butteryui/core";
 import {
   ArrowRight,
   Blocks,
@@ -68,21 +68,23 @@ const ICONS = {
 /** The icon a `<Card>` shows over its title, by name. */
 export type CardIcon = keyof typeof ICONS;
 
-/** Cards on a written page, a column of them on a phone and `columns` to a row where there's room. */
+/** Cards on a written page: a column of them on a phone, and up to `columns` to a row where there's room. */
 export function Cards({
   columns = 2,
   children,
 }: {
-  /** How many to a row from 640px of room. Defaults to 2. */
+  /** The most to a row, when each still has room for 220px. Defaults to 2. */
   readonly columns?: 2 | 3;
   readonly children: ReactNode;
 }): ReactElement {
   return (
-    <Grid columns={{ base: 1, md: columns }} gap={4} asChild>
-      <ul role="list" className="docs-cards">
-        {children}
-      </ul>
-    </Grid>
+    <ul
+      role="list"
+      className="docs-cards docs-card-grid"
+      data-columns={columns}
+    >
+      {children}
+    </ul>
   );
 }
 

@@ -2,6 +2,7 @@
   --bt-blocks-step: 28px;
   --bt-blocks-line: 1px;
   --bt-blocks-icon: 36px;
+  --bt-blocks-card-min: 220px;
 }
 
 /* Numbered steps: each number on a line that runs down to the next, the step's heading level with it. */
@@ -75,6 +76,35 @@
 .docs-cards {
   margin: 0;
   padding: 0;
+}
+
+/*
+ * As many cards to a row as the column has room for at 220px or wider, up to the block's columns, so the
+ * code in a card fits it whatever the page's width.
+ */
+.docs-card-grid {
+  --bt-blocks-columns: 2;
+
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      min(
+        100%,
+        max(
+          var(--bt-blocks-card-min),
+          (100% - (var(--bt-blocks-columns) - 1) * var(--bt-space-4)) /
+            var(--bt-blocks-columns)
+        )
+      ),
+      1fr
+    )
+  );
+  gap: var(--bt-space-4);
+}
+
+.docs-card-grid[data-columns="3"] {
+  --bt-blocks-columns: 3;
 }
 
 .docs-card-icon {

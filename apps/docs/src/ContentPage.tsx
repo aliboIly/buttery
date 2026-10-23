@@ -1,6 +1,6 @@
 import { createContext, isValidElement, use } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
-import { Grid, Icon, Inline, Stack, Surface, Text } from "@butteryui/core";
+import { Icon, Inline, Stack, Surface, Text } from "@butteryui/core";
 import { ArrowLink, Breadcrumbs, Callout } from "@butteryui/react";
 import { Link2 } from "lucide-react";
 import { Card, Cards } from "./blocks/Cards.tsx";
@@ -160,28 +160,26 @@ function RelatedPages({
     <Stack gap={5} asChild>
       <section aria-labelledby="related">
         <Heading>Related</Heading>
-        <Grid
-          columns={{ base: 1, md: pages.length % 3 === 0 ? 3 : 2 }}
-          gap={4}
-          asChild
+        <ul
+          role="list"
+          className="docs-cards docs-card-grid"
+          data-columns={pages.length % 3 === 0 ? 3 : 2}
         >
-          <ul role="list" className="docs-cards">
-            {pages.map((related) => (
-              <Surface key={related.route} level="section" pad={5} asChild>
-                <li>
-                  <Stack gap={2} align="start">
-                    <ArrowLink href={siteHref(`/${related.route}`)}>
-                      {related.title}
-                    </ArrowLink>
-                    <Text variant="body-sm" tone="secondary">
-                      {related.description}
-                    </Text>
-                  </Stack>
-                </li>
-              </Surface>
-            ))}
-          </ul>
-        </Grid>
+          {pages.map((related) => (
+            <Surface key={related.route} level="section" pad={5} asChild>
+              <li>
+                <Stack gap={2} align="start">
+                  <ArrowLink href={siteHref(`/${related.route}`)}>
+                    {related.title}
+                  </ArrowLink>
+                  <Text variant="body-sm" tone="secondary">
+                    {related.description}
+                  </Text>
+                </Stack>
+              </li>
+            </Surface>
+          ))}
+        </ul>
       </section>
     </Stack>
   );
