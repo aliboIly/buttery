@@ -8,7 +8,7 @@ export type AvatarSize = "xs" | "sm" | "md" | "lg";
  * The shape of an `Avatar` or `InitialsTile`: `"circle"`, or `"rounded"`, a square with 6px corners up to `sm`
  * and 8px from `md`.
  */
-export type AvatarVariant = "circle" | "rounded";
+export type AvatarShape = "circle" | "rounded";
 
 /** Up to two initials from a name, in capitals: the first letters of its first and last words. */
 export function initialsOf(name: string): string {
@@ -36,14 +36,14 @@ export interface InitialsTileProps extends Omit<
    * `"rounded"` (the default), a square with 6px corners up to `sm` and 8px from `md`, or `"circle"`, to sit
    * beside round avatars, such as a team among people.
    */
-  readonly variant?: AvatarVariant | undefined;
+  readonly shape?: AvatarShape | undefined;
   /** Names the tile for screen readers when its name isn't written beside it. Without one, it's decorative. */
   readonly label?: string | undefined;
 }
 
 /**
  * A square tile with up to two initials, standing in for a workspace or team that has no picture: `bg-control`
- * with the initials in the `badge` role, r6 (r8 from `md`), or a circle with `variant="circle"`. Decorative
+ * with the initials in the `badge` role, r6 (r8 from `md`), or a circle with `shape="circle"`. Decorative
  * unless it has a `label`, since its name is usually written beside it.
  *
  * @example
@@ -52,7 +52,7 @@ export interface InitialsTileProps extends Omit<
 export function InitialsTile({
   name,
   size = "sm",
-  variant = "rounded",
+  shape = "rounded",
   label,
   className,
   ...rest
@@ -66,7 +66,7 @@ export function InitialsTile({
       className={cx("bt-initials-tile", className)}
       data-bt="InitialsTile"
       data-size={size}
-      data-variant={variant}
+      data-shape={shape}
     >
       {initialsOf(name)}
     </span>

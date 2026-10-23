@@ -35,11 +35,11 @@
     --bt-avatar-size: var(--bt-avatar-lg);
   }
 
-  .bt-avatar[data-variant="rounded"] {
+  .bt-avatar[data-shape="rounded"] {
     border-radius: var(--bt-r-xs);
   }
 
-  .bt-avatar[data-variant="rounded"]:is([data-size="md"], [data-size="lg"]) {
+  .bt-avatar[data-shape="rounded"]:is([data-size="md"], [data-size="lg"]) {
     border-radius: var(--bt-r-sm);
   }
 

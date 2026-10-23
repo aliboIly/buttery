@@ -57,7 +57,7 @@ describe("InitialsTile", () => {
     ];
     for (const [size, px, radius] of sizes) {
       render(<InitialsTile name="Northside" size={size} data-testid={size} />);
-      expect(screen.getByTestId(size).dataset["variant"]).toBe("rounded");
+      expect(screen.getByTestId(size).dataset["shape"]).toBe("rounded");
       const box = screen.getByTestId(size).getBoundingClientRect();
       expect([box.width, box.height]).toEqual([px, px]);
       expect(getComputedStyle(screen.getByTestId(size)).borderRadius).toBe(
@@ -66,7 +66,7 @@ describe("InitialsTile", () => {
     }
   });
 
-  it("is a circle at every size with variant circle, keeping its size", () => {
+  it("is a circle at every size with shape circle, keeping its size", () => {
     for (const [size, px] of [
       ["xs", 20],
       ["sm", 24],
@@ -77,7 +77,7 @@ describe("InitialsTile", () => {
         <InitialsTile
           name="Northside"
           size={size}
-          variant="circle"
+          shape="circle"
           data-testid={size}
         />,
       );

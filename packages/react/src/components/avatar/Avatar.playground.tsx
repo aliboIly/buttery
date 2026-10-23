@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { demoChoice, Inline } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { Avatar } from "@butteryui/react";
-import type { AvatarVariant } from "@butteryui/react";
+import type { AvatarShape } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",
@@ -20,10 +20,10 @@ const PORTRAIT = `data:image/svg+xml,${encodeURIComponent(
 
 function Sizes({
   src,
-  variant = "circle",
+  shape = "circle",
 }: {
   readonly src?: string;
-  readonly variant?: AvatarVariant;
+  readonly shape?: AvatarShape;
 }): ReactElement {
   return (
     <Inline gap={3} align="center">
@@ -32,7 +32,7 @@ function Sizes({
           key={size}
           name="Tomas Reyes"
           size={size}
-          variant={variant}
+          shape={shape}
           label={`Tomas Reyes, ${size}`}
           {...(src === undefined ? {} : { src })}
         />
@@ -44,18 +44,18 @@ function Sizes({
 export const live: LiveDemo = {
   controls: {
     size: { kind: "choice", options: ["xs", "sm", "md", "lg"], initial: "sm" },
-    variant: {
+    shape: {
       kind: "choice",
       options: ["circle", "rounded"],
       initial: "circle",
     },
     name: { kind: "text", initial: "Mira Okafor" },
   },
-  render: ({ size, variant, name }) => (
+  render: ({ size, shape, name }) => (
     <Avatar
       name={String(name)}
       size={demoChoice(size, ["sm", "xs", "md", "lg"])}
-      variant={demoChoice(variant, ["circle", "rounded"])}
+      shape={demoChoice(shape, ["circle", "rounded"])}
     />
   ),
 };
@@ -77,8 +77,8 @@ export const demos: readonly DemoSection[] = [
       "Round by default; rounded squares the corners to an InitialsTile's at each size, 6px up to sm and 8px from md, for people shown beside workspace tiles.",
     render: () => (
       <Inline gap={6} align="center" wrap>
-        <Sizes src={PORTRAIT} variant="rounded" />
-        <Sizes variant="rounded" />
+        <Sizes src={PORTRAIT} shape="rounded" />
+        <Sizes shape="rounded" />
       </Inline>
     ),
   },

@@ -14,13 +14,13 @@ const SIZES = [
 export function Sizes(): ReactElement {
   return (
     <Stack gap={4}>
-      {(["rounded", "circle"] as const).map((variant) => (
-        <Inline key={variant} gap={6} align="end" wrap>
+      {(["rounded", "circle"] as const).map((shape) => (
+        <Inline key={shape} gap={6} align="end" wrap>
           {SIZES.map(({ size, width }) => (
             <Stack key={size} gap={2} align="center">
-              <InitialsTile name="Harbor Beans" size={size} variant={variant} />
+              <InitialsTile name="Harbor Beans" size={size} shape={shape} />
               <Text variant="caption" tone="secondary">
-                {`${size}, ${width}, ${variant}`}
+                {`${size}, ${width}, ${shape}`}
               </Text>
             </Stack>
           ))}

@@ -8,7 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "A workspace's mark in a sidebar's workspace switcher or an account menu",
     "Teams or companies in a list, without logos",
-    'A team among round avatars, with variant="circle"',
+    'A team among round avatars, with shape="circle"',
   ],
   avoidWhen: [
     "A person: use Avatar, which is round and shows their picture",
@@ -19,5 +19,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [],
   layout:
-    'A square 20px across at size="xs", 24 at "sm", the default, 32 at "md" and 40 at "lg", with 6px corners up to "sm" and 8px from "md", or a circle with variant="circle"; it never shrinks. Its one or two initials sit in the middle on one line and never wrap. It takes no presses, so it has no hit area.',
+    'A square 20px across at size="xs", 24 at "sm", the default, 32 at "md" and 40 at "lg", with 6px corners up to "sm" and 8px from "md", or a circle with shape="circle"; it never shrinks. Its one or two initials sit in the middle on one line and never wrap. It takes no presses, so it has no hit area.',
 };

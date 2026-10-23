@@ -17,17 +17,17 @@ export const live: LiveDemo = {
   controls: {
     name: { kind: "text", initial: "Harbor Beans" },
     size: { kind: "choice", options: ["xs", "sm", "md", "lg"], initial: "md" },
-    variant: {
+    shape: {
       kind: "choice",
       options: ["rounded", "circle"],
       initial: "rounded",
     },
   },
-  render: ({ name, size, variant }) => (
+  render: ({ name, size, shape }) => (
     <InitialsTile
       name={String(name)}
       size={demoChoice(size, ["sm", "xs", "md", "lg"])}
-      variant={demoChoice(variant, ["rounded", "circle"])}
+      shape={demoChoice(shape, ["rounded", "circle"])}
     />
   ),
 };
@@ -60,7 +60,7 @@ export const demos: readonly DemoSection[] = [
             key={size}
             name="Harbor Beans"
             size={size}
-            variant="circle"
+            shape="circle"
             label={`Harbor Beans, ${size}, circle`}
           />
         ))}

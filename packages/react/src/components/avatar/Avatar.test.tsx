@@ -33,11 +33,11 @@ describe("Avatar", () => {
     expect(avatar.getAttribute("aria-hidden")).toBe("true");
     const box = avatar.getBoundingClientRect();
     expect([box.width, box.height]).toEqual([32, 32]);
-    expect(avatar.dataset["variant"]).toBe("circle");
+    expect(avatar.dataset["shape"]).toBe("circle");
     expect(getComputedStyle(avatar).borderRadius).toBe("9999px");
   });
 
-  it("squares its corners with variant rounded, as an InitialsTile of its size does, its picture clipped to them", async () => {
+  it("squares its corners with shape rounded, as an InitialsTile of its size does, its picture clipped to them", async () => {
     for (const [size, radius] of [
       ["xs", "6px"],
       ["sm", "6px"],
@@ -48,7 +48,7 @@ describe("Avatar", () => {
         <Avatar
           name="Mira Okafor"
           size={size}
-          variant="rounded"
+          shape="rounded"
           data-testid={size}
         />,
       );
@@ -63,7 +63,7 @@ describe("Avatar", () => {
         src={PICTURE}
         label="Tomas Reyes"
         size="lg"
-        variant="rounded"
+        shape="rounded"
       />,
     );
     const avatar = screen.getByRole("img", { name: "Tomas Reyes" });

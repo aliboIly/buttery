@@ -4,7 +4,7 @@ import type { ComponentPropsWithRef, ReactElement } from "react";
 import { initialsOf } from "../initials-tile/InitialsTile.tsx";
 import type {
   AvatarSize,
-  AvatarVariant,
+  AvatarShape,
 } from "../initials-tile/InitialsTile.tsx";
 
 /** Props for `Avatar`. */
@@ -22,14 +22,14 @@ export interface AvatarProps extends Omit<
    * `"circle"` (the default), or `"rounded"`, a square with 6px corners up to `sm` and 8px from `md`, the
    * corners an `InitialsTile` of its size has, for people shown beside workspace tiles.
    */
-  readonly variant?: AvatarVariant | undefined;
+  readonly shape?: AvatarShape | undefined;
   /** Names the avatar for screen readers when the person's name isn't written beside it. Without one, it's decorative. */
   readonly label?: string | undefined;
 }
 
 /**
  * A person's round picture, or their initials when there's none or it fails to load, at the same size
- * either way, so nothing moves when the picture arrives; `variant="rounded"` squares its corners. Decorative
+ * either way, so nothing moves when the picture arrives; `shape="rounded"` squares its corners. Decorative
  * unless it has a `label`.
  *
  * @example
@@ -39,7 +39,7 @@ export function Avatar({
   name,
   src,
   size = "sm",
-  variant = "circle",
+  shape = "circle",
   label,
   className,
   ...rest
@@ -53,7 +53,7 @@ export function Avatar({
       className={cx("bt-avatar", className)}
       data-bt="Avatar"
       data-size={size}
-      data-variant={variant}
+      data-shape={shape}
     >
       {src === undefined ? null : (
         <RadixAvatar.Image src={src} alt="" data-bt-part="picture" />

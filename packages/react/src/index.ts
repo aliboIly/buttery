@@ -395,7 +395,7 @@ export {
 } from "./components/initials-tile/InitialsTile.tsx";
 export type {
   AvatarSize,
-  AvatarVariant,
+  AvatarShape,
   InitialsTileProps,
 } from "./components/initials-tile/InitialsTile.tsx";
 export { Avatar } from "./components/avatar/Avatar.tsx";

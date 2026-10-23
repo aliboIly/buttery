@@ -14,12 +14,12 @@ const SIZES = [
 export function AvatarSizes(): ReactElement {
   return (
     <Stack gap={4}>
-      {(["circle", "rounded"] as const).map((variant) => (
-        <Inline key={variant} gap={6} align="end" wrap>
+      {(["circle", "rounded"] as const).map((shape) => (
+        <Inline key={shape} gap={6} align="end" wrap>
           {SIZES.map(({ size, pixels }) => (
             <Stack key={size} gap={2} align="center">
-              <Avatar name="Tomas Reyes" size={size} variant={variant} />
-              <Text variant="caption">{`${size}, ${pixels}, ${variant}`}</Text>
+              <Avatar name="Tomas Reyes" size={size} shape={shape} />
+              <Text variant="caption">{`${size}, ${pixels}, ${shape}`}</Text>
             </Stack>
           ))}
         </Inline>
