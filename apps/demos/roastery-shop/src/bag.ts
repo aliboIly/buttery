@@ -152,7 +152,9 @@ function isPlan(value: unknown): value is Plan {
     isRecord(value) &&
     (value["coffee"] === "choice" || isCoffeeId(value["coffee"])) &&
     (value["bags"] === 1 || value["bags"] === 2 || value["bags"] === 3) &&
-    (value["every"] === "week" || value["every"] === "two-weeks") &&
+    (value["every"] === "week" ||
+      value["every"] === "two-weeks" ||
+      value["every"] === "four-weeks") &&
     isGrindId(value["grind"]) &&
     (value["gift"] === null ||
       value["gift"] === 3 ||

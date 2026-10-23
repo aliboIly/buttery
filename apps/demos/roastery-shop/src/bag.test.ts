@@ -98,6 +98,9 @@ describe("isBag", () => {
   it("takes a bag it saved", () => {
     const bag: Bag = setPlan(addCoffee(EMPTY_BAG, HUILA), PLAN);
     expect(isBag(JSON.parse(JSON.stringify(bag)))).toBe(true);
+    expect(isBag({ lines: [], plan: { ...PLAN, every: "four-weeks" } })).toBe(
+      true,
+    );
   });
 
   it("turns down what it can't show, so the bag starts empty", () => {

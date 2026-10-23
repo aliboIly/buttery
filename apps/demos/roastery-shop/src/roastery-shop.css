@@ -9,8 +9,8 @@
   --bt-roastery-shop-bar: 6px;
   --bt-roastery-shop-dot: 8px;
   --bt-roastery-shop-plan: 360px;
-  --bt-roastery-shop-plan-art: 96px;
-  --bt-roastery-shop-bag-plan: 76px;
+  --bt-roastery-shop-plan-art: 88px;
+  --bt-roastery-shop-bag-plan: 72px;
   --bt-roastery-shop-menu-feature: 240px;
   --bt-roastery-shop-bag-menu: 96px;
 }
@@ -339,6 +339,14 @@
 
 .shop-progress-fill:dir(rtl) {
   transform-origin: right center;
+}
+
+.shop-gift {
+  padding-block-start: var(--bt-space-5);
+}
+
+.shop-plan-summary {
+  block-size: 100%;
 }
 
 .shop-plan-head {

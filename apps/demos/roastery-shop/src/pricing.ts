@@ -33,7 +33,7 @@ export function sizePrices(coffee: CoffeeId): string {
 }
 
 /** How often a subscription delivers. */
-export type Frequency = "week" | "two-weeks";
+export type Frequency = "week" | "two-weeks" | "four-weeks";
 
 /** How many bags each delivery holds. */
 export type BagsPerDelivery = 1 | 2 | 3;

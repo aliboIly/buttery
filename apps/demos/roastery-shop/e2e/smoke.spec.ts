@@ -126,6 +126,35 @@ test("a subscription's price follows how many bags and which coffee", async ({
   await expect(builder.getByText("$183.60", { exact: true })).toBeVisible();
 });
 
+test("a gift asks for who it's for, taking focus to what's missing", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const builder = page.locator("#subscribe");
+  await builder.getByRole("radio", { name: "As a gift" }).click();
+  const add = builder.getByRole("button", { name: "Add the gift to your bag" });
+
+  await add.click();
+  await expect(builder.getByLabel("Their name")).toBeFocused();
+  await expect(builder.getByLabel("Their name")).toBeInViewport();
+  await expect(
+    builder.getByText("Enter the name of the person it's for.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+
+  await builder.getByLabel("Their name").fill("Sam Okafor");
+  await add.click();
+  await expect(builder.getByLabel("Their email")).toBeFocused();
+
+  await builder.getByLabel("Their email").fill("sam@example.com");
+  await add.click();
+  await expect(
+    page.getByText("The gift for Sam is in the bag.", { exact: true }),
+  ).toBeVisible();
+});
+
 test("puts the page between the bars and the footer in a main landmark, which the bar's skip link reaches", async ({
   page,
   browserName,

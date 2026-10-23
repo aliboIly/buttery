@@ -8,13 +8,21 @@ import type {
   PlanCoffee,
 } from "./pricing.ts";
 
+/** How often a subscription can deliver, each labeled to follow "Delivered every". */
 export const FREQUENCIES: readonly {
   readonly value: Frequency;
   readonly label: string;
 }[] = [
-  { value: "week", label: "Every week" },
-  { value: "two-weeks", label: "Every 2 weeks" },
+  { value: "week", label: "Week" },
+  { value: "two-weeks", label: "2 weeks" },
+  { value: "four-weeks", label: "4 weeks" },
 ];
+
+const EVERY: Readonly<Record<Frequency, string>> = {
+  week: "every week",
+  "two-weeks": "every 2 weeks",
+  "four-weeks": "every 4 weeks",
+};
 
 export const BAG_COUNTS: readonly BagsPerDelivery[] = [1, 2, 3];
 
@@ -47,7 +55,7 @@ export function firstName(name: string): string {
 
 /** How much a subscription sends and how often, such as "2 bags every 2 weeks". */
 export function planSchedule(plan: Pick<Plan, "bags" | "every">): string {
-  return `${bags(plan.bags)} ${plan.every === "week" ? "every week" : "every 2 weeks"}`;
+  return `${bags(plan.bags)} ${EVERY[plan.every]}`;
 }
 
 /** The bag count a segmented control's value names. */

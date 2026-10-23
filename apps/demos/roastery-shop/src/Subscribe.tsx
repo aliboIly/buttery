@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Icon, Inline, Morph, Stack, Surface, Text } from "@buttery/core";
 import {
@@ -63,7 +63,10 @@ const PERKS: Readonly<Record<PlanFor, readonly Perk[]>> = {
   gift: [
     { icon: Gift, text: "We email them a card when the first bag ships" },
     { icon: Truck, text: "Free shipping on each delivery" },
-    { icon: CalendarCheck, text: "Ends by itself after the last delivery" },
+    {
+      icon: CalendarCheck,
+      text: "Stops after the last delivery, with nothing to cancel",
+    },
   ],
 };
 
@@ -85,8 +88,8 @@ function recipientErrors(name: string, email: string): RecipientErrors {
 }
 
 /**
- * The subscription builder: who it's for, how often, how many bags, which coffee and grind, and for a gift
- * how many deliveries and who gets them, with the price following each choice.
+ * The subscription builder: who it's for, and for a gift who gets it and how many deliveries, then how
+ * often, how many bags, which coffee and grind, with the price following each choice.
  */
 export function Subscribe({
   planFor,
@@ -103,6 +106,8 @@ export function Subscribe({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<RecipientErrors>({});
+  const nameField = useRef<HTMLInputElement>(null);
+  const emailField = useRef<HTMLInputElement>(null);
   const [bag] = useBag();
   const { addPlan } = useAddToBag();
   const gift = planFor === "gift" ? length : null;
@@ -117,8 +122,9 @@ export function Subscribe({
     const recipient = { name: name.trim(), email: email.trim() };
     const problems = recipientErrors(recipient.name, recipient.email);
     setErrors(problems);
-    if (problems.name !== undefined || problems.email !== undefined) return;
-    addPlan({ coffee, bags: count, every, grind, gift, recipient });
+    if (problems.name !== undefined) nameField.current?.focus();
+    else if (problems.email !== undefined) emailField.current?.focus();
+    else addPlan({ coffee, bags: count, every, grind, gift, recipient });
   };
 
   return (
@@ -126,30 +132,88 @@ export function Subscribe({
       id="subscribe"
       tone="muted"
       title="Never run out"
-      body="Choose how often and how much, and we roast it fresh for each delivery. A subscription takes 10% off every bag."
+      body="Choose how often and how much. We roast each delivery fresh and take 10% off every bag."
     >
-      <Grid columns={{ base: 1, lg: 2 }} gap={4} align="start">
+      <Grid columns={{ base: 1, lg: 2 }} gap={4}>
         <Surface level="card" pad={6}>
           <Stack gap={5}>
-            <Field label="Who it's for">
-              {(control) => (
-                <SegmentedControl<PlanFor>
-                  {...control}
-                  label="Who it's for"
-                  options={[
-                    { value: "me", label: "For me" },
-                    { value: "gift", label: "As a gift" },
-                  ]}
-                  value={planFor}
-                  onValueChange={onPlanForChange}
-                />
-              )}
-            </Field>
-            <Field label="How often">
+            <div>
+              <Field label="Who it's for">
+                {(control) => (
+                  <SegmentedControl<PlanFor>
+                    {...control}
+                    label="Who it's for"
+                    options={[
+                      { value: "me", label: "For me" },
+                      { value: "gift", label: "As a gift" },
+                    ]}
+                    value={planFor}
+                    onValueChange={onPlanForChange}
+                  />
+                )}
+              </Field>
+              <Morph contentKey={planFor}>
+                {planFor === "gift" ? (
+                  <Stack gap={5} className="shop-gift">
+                    <Grid columns={{ base: 1, md: 2 }} gap={4}>
+                      <TextField
+                        ref={nameField}
+                        label="Their name"
+                        autoComplete="off"
+                        value={name}
+                        error={errors.name}
+                        onValueChange={(next) => {
+                          setName(next);
+                          setErrors((current) =>
+                            current.email === undefined
+                              ? {}
+                              : { email: current.email },
+                          );
+                        }}
+                      />
+                      <TextField
+                        ref={emailField}
+                        label="Their email"
+                        type="email"
+                        autoComplete="off"
+                        inputMode="email"
+                        value={email}
+                        error={errors.email}
+                        onValueChange={(next) => {
+                          setEmail(next);
+                          setErrors((current) =>
+                            current.name === undefined
+                              ? {}
+                              : { name: current.name },
+                          );
+                        }}
+                      />
+                    </Grid>
+                    <Field label="Deliveries in the gift">
+                      {(control) => (
+                        <SegmentedControl
+                          {...control}
+                          label="Deliveries in the gift"
+                          options={GIFT_LENGTHS.map((option) => ({
+                            value: String(option),
+                            label: String(option),
+                          }))}
+                          value={String(length)}
+                          onValueChange={(next) => {
+                            setLength(giftLengthFrom(next) ?? length);
+                          }}
+                        />
+                      )}
+                    </Field>
+                  </Stack>
+                ) : null}
+              </Morph>
+            </div>
+            <Field label="Delivered every">
               {(control) => (
                 <SegmentedControl<Frequency>
                   {...control}
-                  label="How often"
+                  label="Delivered every"
                   options={FREQUENCIES}
                   value={every}
                   onValueChange={setEvery}
@@ -201,104 +265,54 @@ export function Subscribe({
                 )}
               </Field>
             </Grid>
-            <Morph contentKey={planFor}>
-              {planFor === "gift" ? (
-                <Stack gap={5}>
-                  <Field label="Deliveries in the gift" hint="Paid today.">
-                    {(control) => (
-                      <SegmentedControl
-                        {...control}
-                        label="Deliveries in the gift"
-                        options={GIFT_LENGTHS.map((option) => ({
-                          value: String(option),
-                          label: String(option),
-                        }))}
-                        value={String(length)}
-                        onValueChange={(next) => {
-                          setLength(giftLengthFrom(next) ?? length);
-                        }}
-                      />
-                    )}
-                  </Field>
-                  <Grid columns={{ base: 1, md: 2 }} gap={4}>
-                    <TextField
-                      label="Their name"
-                      autoComplete="off"
-                      value={name}
-                      error={errors.name}
-                      onValueChange={(next) => {
-                        setName(next);
-                        setErrors((current) =>
-                          current.email === undefined
-                            ? {}
-                            : { email: current.email },
-                        );
-                      }}
-                    />
-                    <TextField
-                      label="Their email"
-                      type="email"
-                      autoComplete="off"
-                      inputMode="email"
-                      value={email}
-                      error={errors.email}
-                      onValueChange={(next) => {
-                        setEmail(next);
-                        setErrors((current) =>
-                          current.name === undefined
-                            ? {}
-                            : { name: current.name },
-                        );
-                      }}
-                    />
-                  </Grid>
-                </Stack>
-              ) : null}
-            </Morph>
           </Stack>
         </Surface>
         <Surface level="card" pad={6}>
-          <Stack gap={6}>
-            <div className="shop-plan-head">
-              <Shelf
-                label={coffee === "choice" ? "choice" : coffeeOf(coffee).label}
-                className="shop-plan-art"
-              />
+          <Stack gap={5} justify="between" className="shop-plan-summary">
+            <Stack gap={5}>
+              <div className="shop-plan-head">
+                <Shelf
+                  label={
+                    coffee === "choice" ? "choice" : coffeeOf(coffee).label
+                  }
+                  className="shop-plan-art"
+                />
+                <Stack gap={3}>
+                  <Text variant="title-md">{planCoffeeName(coffee)}</Text>
+                  <Text variant="body-sm" tone="secondary">
+                    {coffee === "choice"
+                      ? "A different single origin each time, from what's roasting that week."
+                      : `${notesOf(coffeeOf(coffee))}.`}
+                  </Text>
+                </Stack>
+              </div>
               <Stack gap={3}>
-                <Text variant="title-md">{planCoffeeName(coffee)}</Text>
-                <Text variant="body-sm" tone="secondary">
-                  {coffee === "choice"
-                    ? "A different single origin each time, from what's roasting that week."
-                    : `${notesOf(coffeeOf(coffee))}.`}
+                <Text variant="title-lg" tabular>
+                  {money(price.dueToday)}
                 </Text>
+                <Text variant="body-sm" tone="secondary">
+                  {gift === null
+                    ? `Each delivery: ${schedule}, ${grindPhrase(grind)}.`
+                    : `Paid today for ${String(gift)} deliveries: ${schedule}, ${grindPhrase(grind)}.`}
+                </Text>
+                <Inline>
+                  <StatusBadge tone="success">
+                    {`You save ${money(price.saving)} a delivery`}
+                  </StatusBadge>
+                </Inline>
               </Stack>
-            </div>
-            <Stack gap={3}>
-              <Text variant="title-lg" tabular>
-                {money(price.dueToday)}
-              </Text>
-              <Text variant="body-sm" tone="secondary">
-                {gift === null
-                  ? `A delivery of ${schedule}, sent ${grindPhrase(grind)}.`
-                  : `Today, for ${String(gift)} deliveries of ${schedule}, sent ${grindPhrase(grind)}.`}
-              </Text>
-            </Stack>
-            <Inline>
-              <StatusBadge tone="success">
-                {`You save ${money(price.saving)} a delivery`}
-              </StatusBadge>
-            </Inline>
-            <Stack gap={3} asChild>
-              <ul role="list">
-                {PERKS[planFor].map((perk) => (
-                  <li key={perk.text} className="shop-perk">
-                    <span className="shop-icon-line">
-                      <Icon icon={perk.icon} />
-                    </span>
-                    <Text tone="secondary">{perk.text}</Text>
-                  </li>
-                ))}
-              </ul>
+              <Stack gap={2} asChild>
+                <ul role="list">
+                  {PERKS[planFor].map((perk) => (
+                    <li key={perk.text} className="shop-perk">
+                      <span className="shop-icon-line">
+                        <Icon icon={perk.icon} />
+                      </span>
+                      <Text tone="secondary">{perk.text}</Text>
+                    </li>
+                  ))}
+                </ul>
+              </Stack>
             </Stack>
             <Button variant="primary" size="cta" shape="rounded" onClick={add}>
               {bag.plan !== null
