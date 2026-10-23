@@ -43,7 +43,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "It's 64px tall (--bt-h-nav-bar) across its container, with its content on the page container, 1200px at most, unless contained is false: the brand at the start, the menus beside it and the actions at the end, never wrapping. Under 640px of its own width, or once the menus and actions no longer fit beside the brand, they fold into a Menu button that opens a full-height sheet 8px inside the window; a menu opens in one card 8px under the bar, never over it, and scrolls inside when it's taller than the room below.",
+    "It's 64px tall (--bt-h-nav-bar) across its container, with its content on the page container, 1200px at most, unless contained is false: the brand at the start, the menus beside it and the actions at the end, never wrapping. Under 640px of its own width, or once the menus and actions no longer fit beside the brand, they fold into a Menu button that opens a full-height sheet 8px inside the window; a menu opens in one card 8px under the bar, never over it, and scrolls inside when it's taller than the room below. With variant floating the row is a rounded surface (r16, padded 16) 12px under the top, inside the page container's side padding or 12px from the window's sides when not contained, so the bar takes 76px and publishes that as --bt-sticky-top; it folds by the room inside the row's padding.",
   reducedMotion:
-    "Its menus fade in and out in 100ms and take each menu's size and place at once, as MorphMenu's do; the blur behind them and the sheet fade in and out in 100ms, the sheet without rising; and auto-hide shows and hides the bar at once.",
+    "Its menus fade in and out in 100ms and take each menu's size and place at once, as MorphMenu's do; the blur behind them and the sheet fade in and out in 100ms, the sheet without rising; and auto-hide shows and hides the bar at once, a floating one with its inset and shadow.",
 };

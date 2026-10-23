@@ -385,6 +385,7 @@ export { NavBar } from "./patterns/nav-bar/NavBar.tsx";
 export type {
   NavBarBehavior,
   NavBarProps,
+  NavBarVariant,
 } from "./patterns/nav-bar/NavBar.tsx";
 export {
   InitialsTile,

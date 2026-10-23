@@ -26,9 +26,32 @@
     z-index: var(--bt-z-scrim-nav);
   }
 
-  .bt-nav-bar[data-scrolled] {
+  .bt-nav-bar[data-scrolled]:not([data-variant="floating"]) {
     background-color: var(--bt-bg-surface);
     box-shadow: var(--bt-shadow-card);
+  }
+
+  /* Floating, the bar sits 12px under the window's top, and 12px in from its sides when it spans the window. */
+  .bt-nav-bar[data-variant="floating"] {
+    padding-block-start: var(--bt-space-3);
+  }
+
+  .bt-nav-bar[data-variant="floating"]:has(> [data-bt-part="nav-bar-bar"]) {
+    padding-inline: var(--bt-space-3);
+  }
+
+  /* Its row is the surface: rounded, padded and raised, its shadow deepening once the page scrolls under it. */
+  .bt-nav-bar[data-variant="floating"] [data-bt-part="nav-bar-bar"] {
+    padding-inline: var(--bt-space-4);
+    border-radius: var(--bt-r-3xl);
+    background-color: var(--bt-bg-floating);
+    box-shadow: var(--bt-shadow-raised);
+    transition: box-shadow var(--bt-dur-base) var(--bt-ease-standard);
+  }
+
+  .bt-nav-bar[data-variant="floating"][data-scrolled]
+    [data-bt-part="nav-bar-bar"] {
+    box-shadow: var(--bt-shadow-floating);
   }
 
   /* The bar row is the panel's frame: the menu's card opens under it and stays inside its width. */

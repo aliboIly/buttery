@@ -15,7 +15,7 @@ import {
   Page,
   Section,
 } from "@butteryui/react";
-import type { NavBarBehavior } from "@butteryui/react";
+import type { NavBarBehavior, NavBarVariant } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/navigation",
@@ -68,14 +68,17 @@ function Story(): ReactElement {
 function Bar({
   behavior,
   contained = true,
+  variant = "plain",
 }: {
   readonly behavior: NavBarBehavior;
   readonly contained?: boolean;
+  readonly variant?: NavBarVariant;
 }): ReactElement {
   return (
     <NavBar
       behavior={behavior}
       contained={contained}
+      variant={variant}
       brand={<Brand />}
       actions={
         <>
@@ -162,16 +165,18 @@ function Bar({
 function Site({
   behavior,
   contained = true,
+  variant = "plain",
 }: {
   readonly behavior: NavBarBehavior;
   readonly contained?: boolean;
+  readonly variant?: NavBarVariant;
 }): ReactElement {
   const hero = fill("sky") ?? "none";
   return (
     <Surface
       level="card"
       role="region"
-      aria-label={`${behavior} nav bar demo`}
+      aria-label={`${behavior} ${variant} nav bar demo`}
       tabIndex={0}
       style={{
         blockSize: "calc(var(--bt-bento-row) * 1.75)",
@@ -183,7 +188,7 @@ function Site({
           background: `${hero} top / 100% calc(var(--bt-bento-row) * 1.25) no-repeat, var(--bt-bg-surface)`,
         }}
       >
-        <Bar behavior={behavior} contained={contained} />
+        <Bar behavior={behavior} contained={contained} variant={variant} />
         <Stack gap={4} padX={8} padY={16}>
           <Text variant="display">Decks for every meeting</Text>
           <Text variant="body-lg">
@@ -203,10 +208,11 @@ function Site({
   );
 }
 
-function navBarCode({ behavior, contained }: DemoValues): string {
+function navBarCode({ behavior, contained, variant }: DemoValues): string {
   return [
     "<NavBar",
     `  behavior="${String(behavior)}"`,
+    ...(variant === "floating" ? ['  variant="floating"'] : []),
     ...(contained === true ? [] : ["  contained={false}"]),
     '  brand={<a href="/">Deckhand</a>}',
     "  actions={",
@@ -235,11 +241,17 @@ export const live: LiveDemo = {
       initial: "sticky",
     },
     contained: { kind: "toggle", initial: true },
+    variant: {
+      kind: "choice",
+      options: ["plain", "floating"],
+      initial: "plain",
+    },
   },
-  render: ({ behavior, contained }) => (
+  render: ({ behavior, contained, variant }) => (
     <Site
       behavior={demoChoice(behavior, ["static", "sticky", "auto-hide"])}
       contained={contained === true}
+      variant={demoChoice(variant, ["plain", "floating"])}
     />
   ),
   code: navBarCode,
@@ -257,5 +269,11 @@ export const demos: readonly DemoSection[] = [
     description:
       "Slides away on spring.smooth as the page scrolls down and comes back as it scrolls up, publishing how far it has gone as --bt-sticky-shift for a SubNav under it.",
     render: () => <Site behavior="auto-hide" />,
+  },
+  {
+    title: "Floating",
+    description:
+      "variant floating draws the row as a rounded surface 12px under the top, inside the page container, its shadow deepening once the page scrolls under it. It stays sticky or hides itself as a plain bar does, and folds into the same sheet.",
+    render: () => <Site behavior="sticky" variant="floating" />,
   },
 ];

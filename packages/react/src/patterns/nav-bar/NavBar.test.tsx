@@ -24,7 +24,7 @@ import { userEvent as browser, page as screenPage } from "vitest/browser";
 import { Button } from "../../components/button/Button.tsx";
 import { MorphMenu } from "../morph-menu/MorphMenu.tsx";
 import { NavBar } from "./NavBar.tsx";
-import type { NavBarBehavior } from "./NavBar.tsx";
+import type { NavBarBehavior, NavBarVariant } from "./NavBar.tsx";
 
 beforeEach(() => {
   publishSettled();
@@ -32,7 +32,11 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-function page(behavior: NavBarBehavior = "static", width = 1100): HTMLElement {
+function page(
+  behavior: NavBarBehavior = "static",
+  width = 1100,
+  variant: NavBarVariant = "plain",
+): HTMLElement {
   render(
     <div
       data-testid="scroller"
@@ -44,6 +48,7 @@ function page(behavior: NavBarBehavior = "static", width = 1100): HTMLElement {
     >
       <NavBar
         behavior={behavior}
+        variant={variant}
         brand={<a href="#top">Deckhand</a>}
         actions={<Button variant="secondary">Sign in</Button>}
         data-testid="bar"
@@ -67,6 +72,14 @@ function page(behavior: NavBarBehavior = "static", width = 1100): HTMLElement {
 
 function bar(): HTMLElement {
   return screen.getByTestId("bar");
+}
+
+function row(): HTMLElement {
+  const found = bar().querySelector<HTMLElement>(
+    '[data-bt-part="nav-bar-bar"]',
+  );
+  if (!found) throw new Error("No bar row.");
+  return found;
 }
 
 describe("NavBar", () => {
@@ -205,6 +218,126 @@ describe("NavBar", () => {
       expect(scroller.style.getPropertyValue("--bt-sticky-shift")).toBe("0px");
     });
     expect(scroller.style.getPropertyValue("--bt-sticky-top")).toBe("64px");
+  });
+
+  it("draws its row as a raised, rounded surface 12px under the top when floating, the bar around it clear", () => {
+    page("static", 1100, "floating");
+    const surface = getComputedStyle(row());
+    expect(surface.backgroundColor).toBe("rgb(255, 255, 255)");
+    expect(surface.borderTopLeftRadius).toBe("16px");
+    expect(surface.boxShadow).toContain("0px 1px 3px");
+    expect(surface.paddingLeft).toBe("16px");
+    expect(surface.paddingRight).toBe("16px");
+    expect(row().getBoundingClientRect().height).toBe(64);
+    expect(
+      row().getBoundingClientRect().top - bar().getBoundingClientRect().top,
+    ).toBe(12);
+    expect(getComputedStyle(bar()).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+  });
+
+  it("stays pinned when floating and sticky, publishing its height with its inset, the bar staying clear as its row's shadow deepens", async () => {
+    const scroller = page("sticky", 1100, "floating");
+    expect(scroller.style.getPropertyValue("--bt-sticky-top")).toBe("76px");
+    scroller.scrollTop = 300;
+    await waitFor(() => {
+      expect(bar().hasAttribute("data-scrolled")).toBe(true);
+    });
+    expect(getComputedStyle(bar()).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    await waitFor(() => {
+      expect(getComputedStyle(row()).boxShadow).toContain("0px 8px 24px");
+    });
+    expect(bar().getBoundingClientRect().top).toBe(
+      scroller.getBoundingClientRect().top,
+    );
+  });
+
+  it("slides its inset and its row's shadow out of the window too when floating and auto-hiding", async () => {
+    const scroller = page("auto-hide", 1100, "floating");
+    scroller.scrollTop = 200;
+    await waitFor(() => {
+      expect(scroller.style.getPropertyValue("--bt-sticky-shift")).toBe(
+        "108px",
+      );
+    });
+    scroller.scrollTop = 100;
+    await waitFor(() => {
+      expect(scroller.style.getPropertyValue("--bt-sticky-shift")).toBe("0px");
+    });
+  });
+
+  it("folds by the room inside its floating row's padding, not the row's whole width", async () => {
+    const LABELS = [
+      "Product",
+      "Templates",
+      "Guides",
+      "Company",
+      "Community",
+      "Pricing",
+    ];
+    const Bar = ({
+      variant,
+      width,
+    }: {
+      readonly variant: NavBarVariant;
+      readonly width: number;
+    }): ReactElement => (
+      <div style={{ inlineSize: `${String(width)}px` }}>
+        <NavBar
+          variant={variant}
+          contained={false}
+          brand={<a href="#top">Deckhand</a>}
+          actions={<Button>Start a free trial</Button>}
+          data-testid="bar"
+        >
+          {LABELS.map((label) => (
+            <MorphMenu.Link key={label} href={`#${label}`}>
+              {label}
+            </MorphMenu.Link>
+          ))}
+        </NavBar>
+      </div>
+    );
+    const { rerender } = render(<Bar variant="plain" width={1400} />);
+    const widthOf = (selector: string): number =>
+      row().querySelector(selector)?.getBoundingClientRect().width ?? 0;
+    const items = [
+      ...(row().querySelector('[data-bt-part="list"]')?.children ?? []),
+    ].reduce((sum, item) => sum + item.getBoundingClientRect().width, 0);
+    const needed =
+      widthOf(':scope > [data-bt-part="nav-bar-brand"]') +
+      items +
+      widthOf(':scope > [data-bt-part="nav-bar-actions"]') +
+      2 * 24;
+    expect(needed).toBeGreaterThan(656);
+    rerender(<Bar variant="floating" width={Math.ceil(needed) + 24 + 16} />);
+    expect(row().clientWidth).toBeGreaterThan(needed);
+    await waitFor(() => {
+      expect(row().hasAttribute("data-folded")).toBe(true);
+    });
+    expect(screen.getByRole("button", { name: "Menu" })).toBeTruthy();
+  });
+
+  it("sits 12px in from a window it spans when floating, and opens the same sheet when it folds", async () => {
+    render(
+      <div style={{ inlineSize: "680px" }} data-testid="frame">
+        <NavBar
+          variant="floating"
+          contained={false}
+          brand={<a href="#top">Deckhand</a>}
+          actions={<Button variant="secondary">Sign in</Button>}
+          data-testid="bar"
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+        </NavBar>
+      </div>,
+    );
+    const frame = screen.getByTestId("frame").getBoundingClientRect();
+    expect(row().getBoundingClientRect().left - frame.left).toBe(12);
+    expect(frame.right - row().getBoundingClientRect().right).toBe(12);
+    expect(screen.queryByRole("link", { name: "Pricing" })).toBeNull();
+    await browser.click(screen.getByRole("button", { name: "Menu" }));
+    const sheet = await screen.findByRole("dialog", { name: "Main" });
+    expect(within(sheet).getByRole("link", { name: "Pricing" })).toBeTruthy();
   });
 
   it("blurs the page behind an open menu, under the bar", async () => {

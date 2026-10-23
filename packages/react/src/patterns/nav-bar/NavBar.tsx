@@ -40,6 +40,12 @@ import { MorphMenu } from "../morph-menu/MorphMenu.tsx";
 /** How a nav bar behaves as the page scrolls. */
 export type NavBarBehavior = "static" | "sticky" | "auto-hide";
 
+/**
+ * How a nav bar is drawn: `"plain"`, across the top with no background until it's pinned over the page; or
+ * `"floating"`, a rounded surface with a shadow, inset from the window's edges.
+ */
+export type NavBarVariant = "plain" | "floating";
+
 /** Props for `NavBar`. */
 export interface NavBarProps extends Omit<
   ComponentPropsWithRef<"header">,
@@ -65,6 +71,13 @@ export interface NavBarProps extends Omit<
    * surface with `shadow-card`.
    */
   readonly behavior?: NavBarBehavior | undefined;
+  /**
+   * How it's drawn: `"plain"` (the default), across the top with no background at rest; or `"floating"`, its
+   * row a rounded surface (r16, padded 16) with a shadow that deepens once the page scrolls under it, 12px
+   * below the window's top and inside the page container's side padding (12px from the window's sides when
+   * not contained). Its behavior, its menus and its sheet work as they do plain.
+   */
+  readonly variant?: NavBarVariant | undefined;
   /** Names the navigation for screen readers. Defaults to `"Main"`. */
   readonly label?: string | undefined;
   /**
@@ -91,6 +104,12 @@ export interface NavBarProps extends Omit<
 
 /** How far the page has to scroll against its direction before an auto-hiding bar turns with it. */
 const TURN = space["1"];
+
+/** How far an auto-hiding bar slides to leave the window: its row, and for a floating one its inset and shadow. */
+const HIDDEN: Readonly<Record<NavBarVariant, number>> = {
+  plain: heights["nav-bar"].comfortable,
+  floating: heights["nav-bar"].comfortable + space["3"] + space["8"],
+};
 
 function widthOf(element: Element | null | undefined): number {
   return element ? element.getBoundingClientRect().width : 0;
@@ -121,9 +140,12 @@ function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
         ? (Number.parseFloat(getComputedStyle(search).minWidth) || 0) + gap
         : 0);
   }
-  return (
-    row.clientWidth < displayBreakpoints.md || needed.current > row.clientWidth
-  );
+  const style = getComputedStyle(row);
+  const room =
+    row.clientWidth -
+    (Number.parseFloat(style.paddingInlineStart) || 0) -
+    (Number.parseFloat(style.paddingInlineEnd) || 0);
+  return room < displayBreakpoints.md || needed.current > room;
 }
 
 /**
@@ -344,7 +366,8 @@ function PhoneMenu({
  * The bar across the top of a page: the brand at the start, the menus and links next to it, and the
  * actions at the end, 64px tall on the page container. Its menus open in one `MorphMenu` card 8px under the
  * bar, never over it, while the page behind blurs. At rest it has no background, so it sits on a hero;
- * pinned and scrolled it takes the `panel` surface. It stacks at `--bt-z-sticky` whatever its `behavior`,
+ * pinned and scrolled it takes the `panel` surface. `variant="floating"` draws its row as a rounded surface
+ * inset from the window's edges instead. It stacks at `--bt-z-sticky` whatever its `behavior`,
  * and while it can stay on screen it publishes its height as `--bt-sticky-top`; an auto-hiding bar also
  * publishes how far it has slid away as `--bt-sticky-shift`, for sticky followers such as `SubNav`. With
  * less than 640px of room, or once they don't fit, the menus and actions fold into a menu button that opens
@@ -366,6 +389,7 @@ export function NavBar({
   actions,
   pinned,
   behavior = "static",
+  variant = "plain",
   label = "Main",
   menuLabel = "Menu",
   closeLabel = "Close menu",
@@ -468,6 +492,7 @@ export function NavBar({
       className={cx("bt-nav-bar", className)}
       data-bt="NavBar"
       data-behavior={behavior}
+      data-variant={variant}
       data-scrolled={scroll.scrolled ? "" : undefined}
       data-raised={raised ? "" : undefined}
       style={{ ...style, y: shift }}
@@ -483,7 +508,7 @@ export function NavBar({
           setFocused(false);
         }
       }}
-      animate={{ y: hidden ? -heights["nav-bar"].comfortable : 0 }}
+      animate={{ y: hidden ? -HIDDEN[variant] : 0 }}
       transition={slide}
     >
       {contained ? <Container>{barRow}</Container> : barRow}

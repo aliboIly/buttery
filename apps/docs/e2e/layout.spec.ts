@@ -125,6 +125,21 @@ function liveControls(
   };
 }
 
+/** Opens the first nav bar's first menu, or its sheet when the bar has folded. */
+async function openFirstNavMenu(page: Page): Promise<void> {
+  const sheet = page.getByRole("button", { name: "Menu", exact: true }).first();
+  if (await sheet.isVisible()) {
+    await sheet.click();
+    await page.getByRole("dialog").waitFor();
+    return;
+  }
+  await page
+    .getByRole("button", { name: "Product", exact: true })
+    .first()
+    .click();
+  await page.locator('[data-bt-part="panel"]').first().waitFor();
+}
+
 const escape: ButteryInteraction = {
   name: "press Escape",
   run: async (page: Page) => {
@@ -1086,22 +1101,20 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   "nav-bar": [
     {
       name: "open the first menu, or the sheet when the bar is folded",
-      run: async (page: Page) => {
-        const sheet = page
-          .getByRole("button", { name: "Menu", exact: true })
-          .first();
-        if (await sheet.isVisible()) {
-          await sheet.click();
-          await page.getByRole("dialog").waitFor();
-          return;
-        }
-        await page
-          .getByRole("button", { name: "Product", exact: true })
-          .first()
-          .click();
-        await page.locator('[data-bt-part="panel"]').first().waitFor();
-      },
+      run: openFirstNavMenu,
       acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "float the live demo's bar",
+      allowMove: ["main"],
+      run: liveControls({ variant: "floating" }),
+      acrossMatrix: true,
+    },
+    {
+      name: "open the floating bar's first menu, or its sheet when it's folded",
+      run: openFirstNavMenu,
+      acrossMatrix: quick,
     },
   ],
   onboarding: [
