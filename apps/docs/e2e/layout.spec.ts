@@ -370,6 +370,27 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
       acrossMatrix: true,
     },
+    {
+      name: "open the menu with a story, whose card opens over the example after it",
+      run: async (page: Page) => {
+        const stage = page
+          .locator("#menus-with-a-story-example")
+          .locator("xpath=../..")
+          .locator(".pg-stage");
+        const product = stage.getByRole("button", {
+          name: "Product",
+          exact: true,
+        });
+        await product.evaluate((element) => {
+          element.scrollIntoView({ block: "center" });
+        });
+        await product.click();
+        await stage
+          .locator('[data-bt-part="panel"] > [data-bt-part="body"]')
+          .waitFor();
+      },
+      acrossMatrix: true,
+    },
   ],
   "nav-bar": [
     {
