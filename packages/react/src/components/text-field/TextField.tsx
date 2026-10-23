@@ -11,9 +11,16 @@ import {
   FormFieldError,
   useFormFieldIds,
 } from "../../parts/form-field/FormFieldParts.tsx";
+import type {
+  FormFieldSize,
+  FormFieldVariant,
+} from "../../parts/form-field/FormFieldParts.tsx";
 
-/** A field's height: `"md"` (34px, for app forms) or `"lg"` (48px with 16px text, for sign-in pages). */
-export type TextFieldSize = "md" | "lg";
+/**
+ * A field's height: `"sm"` (28px, for a toolbar or a dense panel), `"md"` (34px, for app forms) or `"lg"` (48px
+ * with 16px text, for sign-in pages). The same sizes every text input takes.
+ */
+export type TextFieldSize = FormFieldSize;
 
 /** Props for `TextField`. `ref`, `id` and other input props go to the input; `className` and `style` to the field. */
 export interface TextFieldProps extends Omit<
@@ -32,8 +39,16 @@ export interface TextFieldProps extends Omit<
   readonly defaultValue?: string | undefined;
   /** Called with the text on every change. */
   readonly onValueChange?: ((value: string) => void) | undefined;
-  /** `"md"` (34px, the default) or `"lg"` (48px with 16px text, for sign-in pages). */
+  /**
+   * `"md"` (34px, 30 compact, the default), `"sm"` (28px) for a toolbar or a dense panel, or `"lg"` (48px, 40
+   * compact, with 16px text) for sign-in pages.
+   */
   readonly size?: TextFieldSize | undefined;
+  /**
+   * `"outline"` (the default), a 1px `control-border` edge on `bg-surface`, or `"soft"`, a `bg-control` fill whose
+   * edge shows only on hover and while it has focus, for a field on a card or in a toolbar.
+   */
+  readonly variant?: FormFieldVariant | undefined;
   /** An icon at the start of the box, such as `Mail` from lucide-react. Decorative. */
   readonly iconStart?: ComponentType<IconComponentProps> | undefined;
   /** An icon at the end of the box. Decorative. */
@@ -74,6 +89,7 @@ export function TextFieldShell({
   onValueChange,
   onChange,
   size = "md",
+  variant = "outline",
   iconStart,
   iconEnd,
   announceError = true,
@@ -105,6 +121,7 @@ export function TextFieldShell({
       style={style}
       data-bt={root["data-bt"]}
       data-size={size}
+      data-variant={variant}
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
     >
@@ -114,7 +131,15 @@ export function TextFieldShell({
         hint={hint}
         hintId={ids.hint}
       />
-      <div data-bt-part="box" data-bt-control="">
+      <div
+        className="bt-form-field-box"
+        data-bt-part="box"
+        data-bt-control=""
+        data-size={size}
+        data-variant={variant}
+        data-invalid={invalid ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+      >
         {iconStart ? (
           <span data-bt-part="icon-start">
             <Icon icon={iconStart} />
@@ -149,9 +174,9 @@ export function TextFieldShell({
 }
 
 /**
- * A labelled box for a line of text, with a hint, an error and optional icons. The label sits above the
- * box; the hint and the error are read with the input. Pass `type`, `autoComplete` and `inputMode` as on
- * an input so browsers can fill it in.
+ * A labelled box for a line of text, with a hint, an error and optional icons, outlined or soft at `sm`, `md`
+ * or `lg`. The label sits above the box; the hint and the error are read with the input. Pass `type`,
+ * `autoComplete` and `inputMode` as on an input so browsers can fill it in.
  *
  * @example
  * <TextField label="Email" type="email" autoComplete="email" error={emailError} value={email} onValueChange={setEmail} />

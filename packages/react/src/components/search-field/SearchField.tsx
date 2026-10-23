@@ -13,6 +13,10 @@ import type { Shortcut } from "@butteryui/core";
 import { Search, X } from "lucide-react";
 import { useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
+import type {
+  FormFieldSize,
+  FormFieldVariant,
+} from "../../parts/form-field/FormFieldParts.tsx";
 import { IconButton } from "../icon-button/IconButton.tsx";
 
 /** Props for `SearchField`. `ref` and other input props go to the input; `className` and `style` to the field. */
@@ -28,8 +32,16 @@ export interface SearchFieldProps extends Omit<
   readonly defaultValue?: string | undefined;
   /** Called with the text on every change, and with `""` when it's cleared. */
   readonly onValueChange?: ((value: string) => void) | undefined;
-  /** `"outline"` (the default) with a 1px edge, as in a table's toolbar, or `"soft"` on `bg-control` with none, as in a top bar. */
-  readonly variant?: "outline" | "soft" | undefined;
+  /**
+   * `"outline"` (the default) with a 1px edge, as in a table's toolbar, or `"soft"` on `bg-control`, its edge
+   * showing only on hover and while it has focus, as in a top bar.
+   */
+  readonly variant?: FormFieldVariant | undefined;
+  /**
+   * The field's height: `"md"` (34px, 30 compact, the default), `"sm"` (28px) for a dense toolbar, or `"lg"`
+   * (48px, 40 compact, with 16px text) for a page's own search.
+   */
+  readonly size?: FormFieldSize | undefined;
   /** A key that focuses the field from anywhere outside a text field, written as `useShortcut` takes it, such as `"/"`. It shows while the field is empty. */
   readonly shortcut?: Shortcut | undefined;
   /** Names the clear button. Defaults to `"Clear search"`. */
@@ -37,10 +49,10 @@ export interface SearchFieldProps extends Omit<
 }
 
 /**
- * A field for finding things: 34px tall, a 16px search icon at its start and, once it holds text, a clear
- * button at its end (Escape clears it too, keeping focus). While it's empty it can show a shortcut, such as
- * `/`, that focuses it from anywhere. `soft` sits on `bg-control` with no edge, for a top bar; `outline` has
- * the field's 1px edge, for a toolbar over a table.
+ * A field for finding things: 34px tall (28 at `sm`, 48 at `lg`), a 16px search icon at its start and, once it
+ * holds text, a clear button at its end (Escape clears it too, keeping focus). While it's empty it can show a
+ * shortcut, such as `/`, that focuses it from anywhere. `soft` sits on `bg-control`, its edge showing only on
+ * hover and focus, for a top bar; `outline` has the field's 1px edge, for a toolbar over a table.
  *
  * @example
  * <SearchField variant="soft" shortcut="/" value={query} onValueChange={setQuery} />
@@ -51,6 +63,7 @@ export function SearchField({
   defaultValue,
   onValueChange,
   variant = "outline",
+  size = "md",
   shortcut,
   clearLabel = "Clear search",
   placeholder,
@@ -84,10 +97,11 @@ export function SearchField({
   };
   return (
     <div
-      className={cx("bt-search-field", className)}
+      className={cx("bt-search-field bt-form-field-box", className)}
       style={style}
       data-bt="SearchField"
       data-variant={variant}
+      data-size={size}
       data-disabled={disabled ? "" : undefined}
       data-bt-control=""
     >
@@ -135,12 +149,21 @@ export function SearchField({
       ) : (
         <span data-bt-part="end">
           <IconButton
+            asChild
             icon={X}
             label={clearLabel}
             size="sm"
             disabled={disabled}
             onClick={clear}
-          />
+          >
+            <button type="button">
+              <span
+                data-bt-part="field-hit"
+                data-bt-hit=""
+                aria-hidden="true"
+              />
+            </button>
+          </IconButton>
         </span>
       )}
     </div>

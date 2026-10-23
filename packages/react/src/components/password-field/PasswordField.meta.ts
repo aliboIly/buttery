@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "Signing in, with the saved password filled in (the default)",
     'Choosing a password, with autoComplete="new-password" and the rules it has to meet',
+    'A PIN in a dense panel, with size="sm"; on a card, with variant="soft"',
   ],
   avoidWhen: [
     'Codes sent by email or text: use TextField with autoComplete="one-time-code"',
@@ -30,5 +31,5 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'It fills its container. Its box is 34px tall (--bt-h-control) at size="md", the default, and 48px (--bt-h-cta) with 16px text at "lg", with the 28px reveal button inside its end. The label, with its hint 6px under it, sits 8px above the box, and the error and the requirements follow 8px apart under it, the rules 6px from one another; all of them wrap.',
+    'It fills its container. Its box is 34px tall (--bt-h-control) at size="md", the default, 28px (--bt-h-sm) at "sm" and 48px (--bt-h-cta) with 16px text at "lg", with the 28px reveal button inside its end; in a small box the button draws at the badge height and keeps its 28px target. A soft box keeps its edge transparent until hover or focus. The label, with its hint 6px under it, sits 8px above the box, and the error and the requirements follow 8px apart under it, the rules 6px from one another; all of them wrap.',
 };

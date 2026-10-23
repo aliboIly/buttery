@@ -85,6 +85,8 @@ export type {
   FormFieldErrorProps,
   FormFieldIds,
   FormFieldShown,
+  FormFieldSize,
+  FormFieldVariant,
 } from "./parts/form-field/FormFieldParts.tsx";
 export type {
   FieldControlProps,

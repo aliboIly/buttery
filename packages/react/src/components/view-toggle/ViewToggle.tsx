@@ -10,7 +10,7 @@ export type ViewMode = "grid" | "list";
 /** Props for `ViewToggle`. */
 export interface ViewToggleProps extends Omit<
   SegmentedControlProps<ViewMode>,
-  "options" | "iconOnly" | "label"
+  "options" | "iconOnly" | "label" | "size" | "layout"
 > {
   /** Names the toggle for screen readers. Defaults to `"View"`. */
   readonly label?: string | undefined;

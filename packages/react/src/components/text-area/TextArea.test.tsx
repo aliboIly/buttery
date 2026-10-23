@@ -4,10 +4,19 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent as browser } from "vitest/browser";
 import { TextArea } from "./TextArea.tsx";
 
 afterEach(cleanup);
+
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
 
 function area(): HTMLTextAreaElement {
   const field = screen.getByRole("textbox");
@@ -84,5 +93,44 @@ describe("TextArea", () => {
     const end = panel.scrollTop;
     await userEvent.type(area(), "!");
     expect(panel.scrollTop).toBe(end);
+  });
+
+  it("makes one line as tall as a field of its size: 28 at sm, 48 at lg with 16px text, 40 in compact", () => {
+    render(
+      <>
+        <TextArea label="Small" size="sm" rows={1} />
+        <TextArea label="Large" size="lg" rows={1} />
+        <div data-bt-density="compact">
+          <TextArea label="Large, compact" size="lg" rows={1} />
+        </div>
+      </>,
+    );
+    const height = (label: string): number =>
+      screen
+        .getByLabelText(label)
+        .closest('[data-bt-part="box"]')
+        ?.getBoundingClientRect().height ?? 0;
+    expect(height("Small")).toBe(28);
+    expect(height("Large")).toBe(48);
+    expect(height("Large, compact")).toBe(40);
+    expect(getComputedStyle(screen.getByLabelText("Large")).fontSize).toBe(
+      "16px",
+    );
+    expect(getComputedStyle(screen.getByLabelText("Large")).paddingLeft).toBe(
+      "16px",
+    );
+  });
+
+  it("draws a soft box on bg-control whose edge shows on hover", async () => {
+    render(<TextArea label="Note" variant="soft" />);
+    const box = area().closest<HTMLElement>('[data-bt-part="box"]');
+    if (!box) throw new Error("No box.");
+    const edge = colorOf("--bt-control-border");
+    expect(getComputedStyle(box).backgroundColor).toBe(
+      colorOf("--bt-bg-control"),
+    );
+    expect(getComputedStyle(box).borderTopColor).toBe("rgba(0, 0, 0, 0)");
+    await browser.hover(box);
+    expect(getComputedStyle(box).borderTopColor).toBe(edge);
   });
 });

@@ -22,6 +22,22 @@ function box(): HTMLElement {
   return part;
 }
 
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
+
+function boxOf(label: string): HTMLElement {
+  const field = screen.getByLabelText(label);
+  const part = field.closest<HTMLElement>('[data-bt-part="box"]');
+  if (!part) throw new Error(`No box for ${label}.`);
+  return part;
+}
+
 describe("TextField", () => {
   it("stamps its class and data-bt on the field, and its ref and input props on the input", () => {
     const ref = createRef<HTMLInputElement>();
@@ -85,6 +101,75 @@ describe("TextField", () => {
     rerender(<TextField label="Email" size="lg" />);
     expect(box().getBoundingClientRect().height).toBe(48);
     expect(getComputedStyle(input()).fontSize).toBe("16px");
+  });
+
+  it("takes its height from the height tokens at each size, in either density, 28px at sm", () => {
+    render(
+      <>
+        <TextField label="Small" size="sm" />
+        <TextField label="Medium" />
+        <TextField label="Large" size="lg" />
+        <div data-bt-density="compact">
+          <TextField label="Small, compact" size="sm" />
+          <TextField label="Medium, compact" />
+          <TextField label="Large, compact" size="lg" />
+        </div>
+      </>,
+    );
+    const heights = [
+      "Small",
+      "Medium",
+      "Large",
+      "Small, compact",
+      "Medium, compact",
+      "Large, compact",
+    ].map((label) => boxOf(label).getBoundingClientRect().height);
+    expect(heights).toEqual([28, 34, 48, 28, 30, 40]);
+    expect(getComputedStyle(screen.getByLabelText("Small")).fontSize).toBe(
+      "14px",
+    );
+    expect(getComputedStyle(screen.getByLabelText("Small")).paddingLeft).toBe(
+      "12px",
+    );
+  });
+
+  it("draws a soft box on bg-control whose edge shows only on hover and focus, keeping the focus ring and an error's edge", async () => {
+    render(
+      <>
+        <TextField label="Soft" variant="soft" />
+        <TextField label="Wrong" variant="soft" error="Enter an email" />
+        <TextField label="Off" variant="soft" disabled />
+      </>,
+    );
+    const soft = boxOf("Soft");
+    const edge = colorOf("--bt-control-border");
+    expect(soft.dataset["variant"]).toBe("soft");
+    expect(getComputedStyle(soft).backgroundColor).toBe(
+      colorOf("--bt-bg-control"),
+    );
+    expect(getComputedStyle(soft).borderTopWidth).toBe("1px");
+    expect(getComputedStyle(soft).borderTopColor).toBe("rgba(0, 0, 0, 0)");
+    expect(getComputedStyle(boxOf("Wrong")).borderTopColor).toBe(
+      colorOf("--bt-danger"),
+    );
+    expect(getComputedStyle(boxOf("Off")).borderTopColor).toBe(
+      "rgba(0, 0, 0, 0)",
+    );
+    expect(getComputedStyle(boxOf("Off")).backgroundColor).toBe(
+      colorOf("--bt-bg-control-subtle"),
+    );
+    await browser.hover(soft);
+    expect(getComputedStyle(soft).borderTopColor).toBe(edge);
+    await browser.hover(boxOf("Wrong"));
+    expect(getComputedStyle(boxOf("Wrong")).borderTopColor).toBe(
+      colorOf("--bt-danger"),
+    );
+    await browser.click(screen.getByLabelText("Soft"));
+    await browser.hover(document.body, { position: { x: 1, y: 1 } });
+    expect(document.activeElement).toBe(screen.getByLabelText("Soft"));
+    expect(getComputedStyle(soft).borderTopColor).toBe(edge);
+    expect(getComputedStyle(soft).outlineStyle).toBe("solid");
+    expect(getComputedStyle(soft).outlineColor).toBe(colorOf("--bt-accent"));
   });
 
   it("focuses the input from a press anywhere in its box, icon included", async () => {

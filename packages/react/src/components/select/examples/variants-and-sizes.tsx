@@ -19,7 +19,7 @@ const TRANSITIONS: readonly SelectOption<Transition>[] = [
   { value: "push", label: "Push" },
 ];
 
-/** The ghost pill for toolbars and the outline box for forms, each at its medium and small size. */
+/** The ghost pill for toolbars, and the outline and soft boxes for forms, at their medium and small sizes. */
 export function VariantsAndSizes(): ReactElement {
   return (
     <Stack gap={4}>
@@ -49,7 +49,7 @@ export function VariantsAndSizes(): ReactElement {
             <Select
               {...control}
               label="Slide transition"
-              variant="outline"
+              variant="soft"
               size="sm"
               options={TRANSITIONS}
               defaultValue="none"

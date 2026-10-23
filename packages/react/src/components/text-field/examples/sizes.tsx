@@ -5,12 +5,18 @@ import { Stack, Text } from "@butteryui/core";
 import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import { Button, TextField } from "@butteryui/react";
 
-/** The two sizes: md, 34px tall, for forms in an app, and lg, 48px with 16px text, for a sign-in page. */
+/** The sizes and looks: a small soft field for a toolbar, md for forms in an app, lg with 16px text for a sign-in page. */
 export function Sizes(): ReactElement {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState("");
   return (
     <Stack gap={6}>
+      <TextField
+        label="Batch code"
+        size="sm"
+        variant="soft"
+        defaultValue="HM-0412"
+      />
       <TextField label="Coffee name" defaultValue="Halfmoon House" />
       <form
         onSubmit={(event) => {

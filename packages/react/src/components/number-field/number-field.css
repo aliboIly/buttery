@@ -2,7 +2,7 @@
   .bt-number-field {
     --bt-number-field-width: 128px;
     --bt-number-field-step: 24px;
-    --bt-number-field-line: 1px;
+    --bt-number-field-step-hover: var(--bt-bg-control);
 
     display: inline-flex;
     align-items: center;
@@ -37,22 +37,13 @@
     align-items: center;
     gap: var(--bt-space-1);
     inline-size: var(--bt-number-field-width);
-    block-size: var(--bt-h-control);
-    padding-inline: 0 var(--bt-space-1);
-    border: var(--bt-number-field-line) solid var(--bt-control-border);
-    border-radius: var(--bt-r-lg);
-    background-color: var(--bt-bg-surface);
+    padding-inline: 0 var(--bt-form-field-end);
     container-type: inline-size;
   }
 
-  .bt-number-field[data-disabled] > [data-bt-part="field"] {
-    border-color: var(--bt-border-strong);
-    background-color: var(--bt-bg-control-subtle);
-  }
-
-  .bt-number-field > [data-bt-part="field"]:focus-within {
-    outline: var(--bt-focus-width) solid var(--bt-accent);
-    outline-offset: var(--bt-focus-offset);
+  /* On a soft field's bg-control, a step's hover takes the next shade, as a soft button's does. */
+  .bt-number-field[data-variant="soft"] {
+    --bt-number-field-step-hover: var(--bt-border);
   }
 
   /* The input fills the field's height and reaches its start edge, so a press anywhere but the stepper lands in it. */
@@ -61,7 +52,7 @@
     align-self: stretch;
     min-inline-size: 0;
     padding-block: 0;
-    padding-inline: var(--bt-space-3) 0;
+    padding-inline: var(--bt-form-field-inset) 0;
     border: 0;
     background: none;
     color: var(--bt-text);
@@ -72,6 +63,11 @@
     letter-spacing: var(--bt-text-label-tracking);
     font-variant-numeric: tabular-nums;
     outline: none;
+  }
+
+  /* 16px digits, so phones don't zoom in on focus. */
+  .bt-number-field[data-size="lg"] [data-bt-part="input"] {
+    font-size: var(--bt-text-body-lg-size-sm);
   }
 
   .bt-number-field [data-bt-part="input"]:disabled {
@@ -118,7 +114,7 @@
 
   @media (hover: hover) {
     .bt-number-field [data-bt-part="step"]:not(:disabled):hover {
-      background-color: var(--bt-bg-control);
+      background-color: var(--bt-number-field-step-hover);
       color: var(--bt-text);
     }
   }

@@ -9,6 +9,15 @@ import { NumberField } from "./NumberField.tsx";
 
 afterEach(cleanup);
 
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
+
 function field(): HTMLInputElement {
   const input = screen.getByRole("spinbutton");
   if (!(input instanceof HTMLInputElement)) throw new Error("no input");
@@ -166,5 +175,51 @@ describe("NumberField", () => {
     render(<NumberField label="W" />);
     const box = field().closest('[data-bt-part="field"]');
     expect(box?.getBoundingClientRect().height).toBe(34);
+  });
+
+  it("takes its height from the height tokens at each size, 16px digits at lg", () => {
+    render(
+      <>
+        <NumberField label="Small" size="sm" defaultValue={4} />
+        <NumberField label="Medium" defaultValue={4} />
+        <NumberField label="Large" size="lg" defaultValue={4} />
+      </>,
+    );
+    const box = (label: string): HTMLElement => {
+      const part = screen
+        .getByRole("spinbutton", { name: label })
+        .closest<HTMLElement>('[data-bt-part="field"]');
+      if (!part) throw new Error(`No field for ${label}.`);
+      return part;
+    };
+    expect(box("Small").getBoundingClientRect().height).toBe(28);
+    expect(box("Medium").getBoundingClientRect().height).toBe(34);
+    expect(box("Large").getBoundingClientRect().height).toBe(48);
+    expect(
+      getComputedStyle(screen.getByRole("spinbutton", { name: "Large" }))
+        .fontSize,
+    ).toBe("16px");
+    const step = box("Small").querySelector<HTMLElement>(
+      '[data-bt-part="step"]',
+    );
+    expect(step?.getBoundingClientRect().height).toBe(24);
+  });
+
+  it("draws soft on bg-control, its edge on hover, and a step's hover a shade deeper than the fill", async () => {
+    render(<NumberField label="W" variant="soft" defaultValue={12} />);
+    const part = field().closest<HTMLElement>('[data-bt-part="field"]');
+    if (!part) throw new Error("No field.");
+    const edge = colorOf("--bt-control-border");
+    const deeper = colorOf("--bt-border");
+    expect(getComputedStyle(part).backgroundColor).toBe(
+      colorOf("--bt-bg-control"),
+    );
+    expect(getComputedStyle(part).borderTopColor).toBe("rgba(0, 0, 0, 0)");
+    await browser.hover(part);
+    expect(getComputedStyle(part).borderTopColor).toBe(edge);
+    const increase = screen.getByRole("button", { name: "Increase W" });
+    await browser.hover(increase);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(getComputedStyle(increase).backgroundColor).toBe(deeper);
   });
 });

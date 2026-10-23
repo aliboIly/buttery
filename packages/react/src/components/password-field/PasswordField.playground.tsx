@@ -16,23 +16,30 @@ export const page: DocsPage = {
 export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "Password" },
-    size: { kind: "choice", options: ["md", "lg"], initial: "md" },
+    size: { kind: "choice", options: ["md", "sm", "lg"], initial: "md" },
+    variant: {
+      kind: "choice",
+      options: ["outline", "soft"],
+      initial: "outline",
+    },
     error: { kind: "text", initial: "" },
     disabled: { kind: "toggle", initial: false },
   },
-  render: ({ label, size, error, disabled }) => (
+  render: ({ label, size, variant, error, disabled }) => (
     <PasswordField
       label={String(label)}
-      size={demoChoice(size, ["md", "lg"])}
+      size={demoChoice(size, ["md", "sm", "lg"])}
+      variant={demoChoice(variant, ["outline", "soft"])}
       error={String(error)}
       disabled={disabled === true}
       defaultValue="butter-2026"
     />
   ),
-  code: ({ label, size, error, disabled }) => {
+  code: ({ label, size, variant, error, disabled }) => {
     const props = [
       `label="${String(label)}"`,
       `size="${String(size)}"`,
+      ...(variant === "soft" ? ['variant="soft"'] : []),
       ...(error === "" ? [] : [`error="${String(error)}"`]),
       ...(disabled === true ? ["disabled"] : []),
       `defaultValue="butter-2026"`,
@@ -71,6 +78,26 @@ export const demos: readonly DemoSection[] = [
           { label: "Not your email address", met: true },
         ]}
       />
+    ),
+  },
+  {
+    title: "Sizes, outline and soft",
+    description:
+      "28, 34 and 48px tall; in a small box the reveal button draws at the badge height and keeps a 28px target. Soft sits on bg-control, its edge showing on hover and focus.",
+    render: () => (
+      <Stack gap={4}>
+        <PasswordField label="PIN" size="sm" defaultValue="4821" />
+        <PasswordField
+          label="Password, soft"
+          variant="soft"
+          defaultValue="butter-2026"
+        />
+        <PasswordField
+          label="Password, large"
+          size="lg"
+          defaultValue="butter-2026"
+        />
+      </Stack>
     ),
   },
 ];

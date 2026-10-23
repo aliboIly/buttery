@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "A value a control shows and keeps, picked from a list: a canvas shape, an export format",
     "A list of presets with a custom value beside them, through footer",
+    'A form field, with variant="outline", or variant="soft" beside soft text fields',
   ],
   avoidWhen: [
     "Two to four options that fit side by side: use SegmentedControl",
@@ -45,7 +46,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'The ghost trigger is a pill --bt-h-button (36px) tall, or --bt-h-sm (28px) with size="sm", as wide as its value and chevron; the outline box is --bt-h-control (34px) or --bt-h-sm tall and fills its column. The value truncates with an ellipsis and shows in full as its title, and the whole trigger is the hit area. The list is at least --bt-w-menu-min (200px) wide, and an outline list at least as wide as its box; its options are --bt-h-button tall with labels that truncate, and it scrolls inside when the window leaves it less room than it needs.',
+    'The ghost trigger is a pill --bt-h-button (36px) tall, or --bt-h-sm (28px) with size="sm", as wide as its value and chevron; the outline and soft boxes are --bt-h-control (34px) or --bt-h-sm tall and fill their column, a soft box keeping its edge transparent until hover, keyboard focus or its list opens. The value truncates with an ellipsis and shows in full as its title, and the whole trigger is the hit area. The list is at least --bt-w-menu-min (200px) wide, and a box\'s list at least as wide as the box; its options are --bt-h-button tall with labels that truncate, and it scrolls inside when the window leaves it less room than it needs.',
   reducedMotion:
     "The list fades in and out over 100ms, without growing from the trigger.",
 };

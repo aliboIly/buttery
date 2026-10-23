@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "The app-wide search in a top bar (soft, with a / shortcut)",
     "Narrowing a table or list from its toolbar (outline)",
+    'A dense toolbar, with size="sm"; a page\'s own search, with size="lg"',
   ],
   avoidWhen: [
     "A field in a form with a visible label: use TextField",
@@ -32,5 +33,5 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "It fills its container's width (in an `Inline`, the room its siblings leave) and is 34px tall (--bt-h-control), with its 16px search icon at the start. At the end sits a 28px clear button once it holds text, or the shortcut's keycap while it's empty. Text too long for it scrolls inside it and ends in an ellipsis while it doesn't have focus. A press anywhere in the box but the clear button lands in the input.",
+    "It fills its container's width (in an `Inline`, the room its siblings leave) and is 34px tall (--bt-h-control), 28px (--bt-h-sm) at size=\"sm\" or 48px (--bt-h-cta) with 16px text at \"lg\", with its 16px search icon at the start. At the end sits a 28px clear button once it holds text, drawn at the badge height with a 28px target in a small field, or the shortcut's keycap while it's empty. Text too long for it scrolls inside it and ends in an ellipsis while it doesn't have focus. A press anywhere in the box but the clear button lands in the input.",
 };

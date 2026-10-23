@@ -1,19 +1,17 @@
 @layer bt.components {
-  .bt-form-field {
+  .bt-form-field,
+  .bt-form-field-box {
     --bt-form-field-line: 1px;
     --bt-form-field-inset: var(--bt-space-3);
     --bt-form-field-end: var(--bt-space-1);
+  }
 
+  .bt-form-field {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-2);
     min-inline-size: 0;
-  }
-
-  .bt-form-field[data-size="lg"] {
-    --bt-form-field-inset: var(--bt-space-4);
-    --bt-form-field-end: var(--bt-space-2);
   }
 
   .bt-form-field > [data-bt-part="caption"] {
@@ -37,40 +35,102 @@
     text-box: normal;
   }
 
-  /* The box a field types into: the input fills it edge to edge, so a press anywhere in it lands in the input. */
+  /* The box a labelled field types into: the input fills it edge to edge, so a press anywhere in it lands in the input. */
   .bt-form-field > [data-bt-part="box"] {
     position: relative;
     display: flex;
     align-items: center;
     min-inline-size: 0;
-    block-size: var(--bt-h-control);
-    border: var(--bt-form-field-line) solid var(--bt-control-border);
-    border-radius: var(--bt-r-lg);
-    background-color: var(--bt-bg-surface);
     color: var(--bt-text-tertiary);
     font-size: var(--bt-text-body-size);
     font-weight: var(--bt-text-body-weight);
     letter-spacing: var(--bt-text-body-tracking);
   }
 
+  /*
+   * The box every text input types into, and a select's box: its edge, fill, corners, height and focus ring,
+   * from the data-variant, data-size, data-invalid and data-disabled on the box itself.
+   */
+  .bt-form-field-box {
+    block-size: var(--bt-h-control);
+    border: var(--bt-form-field-line) solid var(--bt-control-border);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-form-field-box[data-size="sm"] {
+    block-size: var(--bt-h-sm);
+  }
+
   /* 16px text, so phones don't zoom in on focus. */
-  .bt-form-field[data-size="lg"] > [data-bt-part="box"] {
+  .bt-form-field-box[data-size="lg"] {
+    --bt-form-field-inset: var(--bt-space-4);
+    --bt-form-field-end: var(--bt-space-2);
+
     block-size: var(--bt-h-cta);
     font-size: var(--bt-text-body-lg-size-sm);
   }
 
-  .bt-form-field > [data-bt-part="box"]:focus-within {
+  /* The edge stays, transparent, so the box doesn't move when it shows. */
+  .bt-form-field-box[data-variant="soft"] {
+    border-color: transparent;
+    background-color: var(--bt-bg-control);
+  }
+
+  @media (hover: hover) {
+    .bt-form-field-box[data-variant="soft"]:not(
+        [data-disabled],
+        :disabled,
+        [data-invalid],
+        [aria-invalid="true"]
+      ):hover {
+      border-color: var(--bt-control-border);
+    }
+  }
+
+  .bt-form-field-box[data-variant="soft"]:is(
+      :focus-within,
+      [aria-expanded="true"]
+    ):not([data-invalid], [aria-invalid="true"]) {
+    border-color: var(--bt-control-border);
+  }
+
+  /* A box that holds its input rings while anything in it has focus; a select's box, itself the button, only for keys. */
+  .bt-form-field-box:not(button):focus-within,
+  button.bt-form-field-box:focus-visible {
     outline: var(--bt-focus-width) solid var(--bt-accent);
     outline-offset: var(--bt-focus-offset);
   }
 
-  .bt-form-field[data-invalid] > [data-bt-part="box"] {
+  .bt-form-field-box:is([data-invalid], [aria-invalid="true"]) {
     border-color: var(--bt-danger);
   }
 
-  .bt-form-field[data-disabled] > [data-bt-part="box"] {
+  .bt-form-field-box:is([data-disabled], :disabled) {
     border-color: var(--bt-border-strong);
     background-color: var(--bt-bg-control-subtle);
+  }
+
+  .bt-form-field-box[data-variant="soft"]:is([data-disabled], :disabled) {
+    border-color: transparent;
+  }
+
+  /*
+   * A button at the box's end, such as a password's reveal or a search's clear, is a 28px IconButton with a hit
+   * area of its own: in a small box it draws at the badge height, inside the 26px its edge leaves, and the hit
+   * area keeps its target 28px.
+   */
+  .bt-form-field-box
+    > [data-bt-part="end"]
+    > .bt-icon-button
+    > [data-bt-part="field-hit"] {
+    position: absolute;
+    inset: calc((100% - var(--bt-h-sm)) / 2);
+  }
+
+  .bt-form-field-box[data-size="sm"] > [data-bt-part="end"] > .bt-icon-button {
+    inline-size: var(--bt-h-badge);
+    block-size: var(--bt-h-badge);
   }
 
   /* Icons sit over the input's padding and let presses through, so the whole box is the input. */

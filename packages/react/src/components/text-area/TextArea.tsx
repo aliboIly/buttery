@@ -11,6 +11,10 @@ import {
   FormFieldError,
   useFormFieldIds,
 } from "../../parts/form-field/FormFieldParts.tsx";
+import type {
+  FormFieldSize,
+  FormFieldVariant,
+} from "../../parts/form-field/FormFieldParts.tsx";
 
 /** Props for `TextArea`. `ref`, `id` and other textarea props go to the textarea; `className` and `style` to the field. */
 export interface TextAreaProps extends Omit<
@@ -34,6 +38,17 @@ export interface TextAreaProps extends Omit<
   /** The most lines it grows to before it scrolls. Defaults to 8. */
   readonly maxRows?: number | undefined;
   /**
+   * `"md"` (the default), 14px text on 22px lines; `"sm"`, 14px text on 20px lines, one line 28px tall
+   * (`--bt-h-sm`), for a dense panel; or `"lg"`, 16px text on 24px lines, one line as tall as `--bt-h-cta`, beside
+   * large fields.
+   */
+  readonly size?: FormFieldSize | undefined;
+  /**
+   * `"outline"` (the default), a 1px `control-border` edge on `bg-surface`, or `"soft"`, a `bg-control` fill whose
+   * edge shows only on hover and while it has focus.
+   */
+  readonly variant?: FormFieldVariant | undefined;
+  /**
    * Whether a new error is read out as it appears. Defaults to `true`; turn it off when an error summary
    * that takes focus reads the errors instead.
    */
@@ -41,9 +56,9 @@ export interface TextAreaProps extends Omit<
 }
 
 /**
- * A labelled box for longer text, such as a note or a description. It grows with what's typed from `rows`
- * lines up to `maxRows`, then scrolls inside itself, and fits again when its width changes. It never
- * animates its height.
+ * A labelled box for longer text, such as a note or a description, outlined or soft at `sm`, `md` or `lg`. It
+ * grows with what's typed from `rows` lines up to `maxRows`, then scrolls inside itself, and fits again when
+ * its width changes. It never animates its height.
  *
  * @example
  * <TextArea label="Note" hint="Printed on the packing slip" value={note} onValueChange={setNote} />
@@ -58,6 +73,8 @@ export function TextArea({
   onChange,
   rows = 3,
   maxRows = 8,
+  size = "md",
+  variant = "outline",
   announceError = true,
   id,
   className,
@@ -103,7 +120,7 @@ export function TextArea({
     };
     fit.current = fitHeight;
     fitHeight();
-  }, [current, rows, maxRows]);
+  }, [current, rows, maxRows, size]);
 
   useEffect(() => {
     const copy = measure.current;
@@ -133,6 +150,8 @@ export function TextArea({
       className={cx("bt-text-area bt-form-field", className)}
       style={style}
       data-bt="TextArea"
+      data-size={size}
+      data-variant={variant}
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
     >
@@ -142,7 +161,14 @@ export function TextArea({
         hint={hint}
         hintId={ids.hint}
       />
-      <div data-bt-part="box">
+      <div
+        className="bt-form-field-box"
+        data-bt-part="box"
+        data-size={size}
+        data-variant={variant}
+        data-invalid={invalid ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+      >
         <textarea
           {...rest}
           ref={refs}

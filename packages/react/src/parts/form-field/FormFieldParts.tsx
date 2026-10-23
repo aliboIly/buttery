@@ -4,6 +4,18 @@ import { VisuallyHidden } from "radix-ui";
 import { isValidElement, useEffect, useId, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 
+/**
+ * How a field's box looks: `"outline"`, a 1px `control-border` edge on `bg-surface`, or `"soft"`, a `bg-control`
+ * fill whose edge shows only on hover and while it has focus. Every text input takes it, and `Select` as a box.
+ */
+export type FormFieldVariant = "outline" | "soft";
+
+/**
+ * A field's height, from the height tokens: `"sm"` (28px, `--bt-h-sm`), `"md"` (34px, 30 compact, `--bt-h-control`)
+ * or `"lg"` (48px, 40 compact, `--bt-h-cta`, with 16px text so phones don't zoom in on focus).
+ */
+export type FormFieldSize = "sm" | "md" | "lg";
+
 /** The ids that tie a field's label, hint and error to its control. */
 export interface FormFieldIds {
   /** The control's id, for the label's `htmlFor`. */

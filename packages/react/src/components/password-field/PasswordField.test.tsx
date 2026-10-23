@@ -119,4 +119,25 @@ describe("PasswordField", () => {
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(input().type).toBe("password");
   });
+
+  it("fits its reveal toggle inside a small box, drawn at the badge height with a 28px target, still toggling", async () => {
+    render(<PasswordField label="Password" size="sm" defaultValue="butter" />);
+    const box = input().closest<HTMLElement>('[data-bt-part="box"]');
+    const reveal = screen.getByRole("button", { name: "Show password" });
+    const hit = reveal.querySelector("[data-bt-hit]");
+    if (!box || !hit) throw new Error("No box or hit area.");
+    const outer = box.getBoundingClientRect();
+    const button = reveal.getBoundingClientRect();
+    expect(outer.height).toBe(28);
+    expect([button.width, button.height]).toEqual([20, 20]);
+    expect(button.top).toBeGreaterThan(outer.top);
+    expect(button.bottom).toBeLessThan(outer.bottom);
+    expect(button.right).toBeLessThan(outer.right);
+    const target = hit.getBoundingClientRect();
+    expect([target.width, target.height]).toEqual([28, 28]);
+    expect(target.top).toBeGreaterThanOrEqual(outer.top);
+    expect(target.bottom).toBeLessThanOrEqual(outer.bottom);
+    await userEvent.click(reveal);
+    expect(input().type).toBe("text");
+  });
 });

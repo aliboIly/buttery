@@ -77,6 +77,7 @@ export function PasswordField({
       afterId={listed ? requirementsId : undefined}
       end={
         <IconButton
+          asChild
           icon={visible ? EyeOff : Eye}
           label={revealLabel}
           size="sm"
@@ -85,7 +86,11 @@ export function PasswordField({
           onClick={() => {
             setVisible((shown) => !shown);
           }}
-        />
+        >
+          <button type="button">
+            <span data-bt-part="field-hit" data-bt-hit="" aria-hidden="true" />
+          </button>
+        </IconButton>
       }
       after={
         listed ? (

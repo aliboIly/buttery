@@ -1,5 +1,28 @@
 @layer bt.components {
-  .bt-text-area > [data-bt-part="box"] {
+  /* One line of a small or large box is as tall as a field of its size, its edge included. */
+  .bt-text-area {
+    --bt-text-area-line: var(--bt-text-body-line);
+    --bt-text-area-pad: var(--bt-space-2);
+  }
+
+  .bt-text-area[data-size="sm"] {
+    --bt-text-area-line: var(--bt-text-body-sm-line);
+    --bt-text-area-pad: calc(
+      (var(--bt-h-sm) - var(--bt-text-body-sm-line)) / 2 -
+        var(--bt-form-field-line)
+    );
+  }
+
+  .bt-text-area[data-size="lg"] {
+    --bt-text-area-line: var(--bt-text-body-lg-line-sm);
+    --bt-text-area-pad: calc(
+      (var(--bt-h-cta) - var(--bt-text-body-lg-line-sm)) / 2 -
+        var(--bt-form-field-line)
+    );
+  }
+
+  /* Its rows set its height, so it takes none from the box's size. */
+  .bt-text-area > [data-bt-part="box"].bt-form-field-box {
     align-items: stretch;
     block-size: auto;
   }
@@ -7,8 +30,8 @@
   .bt-text-area
     > [data-bt-part="box"]
     > :is([data-bt-part="input"], [data-bt-part="measure"]) {
-    padding-block: var(--bt-space-2);
-    line-height: var(--bt-text-body-line);
+    padding-block: var(--bt-text-area-pad);
+    line-height: var(--bt-text-area-line);
     resize: none;
   }
 
@@ -22,7 +45,7 @@
     border: 0;
     font: inherit;
     letter-spacing: inherit;
-    line-height: var(--bt-text-body-line);
+    line-height: var(--bt-text-area-line);
     overflow: hidden;
     visibility: hidden;
     pointer-events: none;

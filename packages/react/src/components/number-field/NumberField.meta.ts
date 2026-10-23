@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "Exact sizes and positions: width, height, x, y, a crop in pixels",
     "Pairs of numbers in an inspector or a menu footer",
+    'A dense panel, with size="sm"; on a card or a bg-section well, with variant="soft"',
   ],
   avoidWhen: [
     "A value judged by eye: use Slider",
@@ -33,5 +34,5 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'With labelPosition="side", the default, the label sits before a 128px field; with "top" it sits above a field that fills its column. The field is 34px tall (--bt-h-control) and its number uses tabular figures; a long label truncates with an ellipsis and shows in full as its title. The stepper\'s 24px buttons show on hover and focus, and a field narrower than 112px drops them, keeping the arrow keys and the label\'s scrub.',
+    'With labelPosition="side", the default, the label sits before a 128px field; with "top" it sits above a field that fills its column. The field is 34px tall (--bt-h-control, 30 compact), 28px (--bt-h-sm) at size="sm" or 48px (--bt-h-cta, 40 compact) with 16px digits at "lg", and its number uses tabular figures; a long label truncates with an ellipsis and shows in full as its title. The stepper\'s 24px buttons show on hover and focus, and a field narrower than 112px drops them, keeping the arrow keys and the label\'s scrub.',
 };

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline } from "@butteryui/core";
+import { Grid, Inline, Stack } from "@butteryui/core";
 import { demoChoice } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { NumberField, Select } from "@butteryui/react";
@@ -74,7 +74,7 @@ export const live: LiveDemo = {
   controls: {
     variant: {
       kind: "choice",
-      options: ["ghost", "outline"],
+      options: ["ghost", "outline", "soft"],
       initial: "ghost",
     },
     size: { kind: "choice", options: ["md", "sm"], initial: "md" },
@@ -85,7 +85,7 @@ export const live: LiveDemo = {
     <Select
       label="Theme"
       options={THEMES}
-      variant={demoChoice(variant, ["ghost", "outline"])}
+      variant={demoChoice(variant, ["ghost", "outline", "soft"])}
       size={demoChoice(size, ["md", "sm"])}
       disabled={disabled === true}
       placeholder={String(placeholder)}
@@ -100,7 +100,7 @@ export const live: LiveDemo = {
         (theme) => `    { value: "${theme.value}", label: "${theme.label}" },`,
       ),
       "  ]}",
-      `  variant="${demoChoice(variant, ["ghost", "outline"])}"`,
+      `  variant="${demoChoice(variant, ["ghost", "outline", "soft"])}"`,
       `  size="${demoChoice(size, ["md", "sm"])}"`,
       ...(disabled === true ? ["  disabled"] : []),
       `  placeholder="${String(placeholder)}"`,
@@ -150,6 +150,51 @@ export const demos: readonly DemoSection[] = [
           disabled
         />
       </Inline>
+    ),
+  },
+  {
+    title: "Outline and soft boxes",
+    description:
+      "For forms, a box like a text field's that fills its column, at 34px or 28px: outline with a 1px edge, or soft on bg-control, its edge showing on hover, for keys and while its list is open.",
+    render: () => (
+      <Stack gap={4}>
+        <Grid columns={{ base: 1, md: 2 }} gap={4}>
+          <Select
+            label="Canvas shape, outline"
+            variant="outline"
+            options={SHAPES}
+            defaultValue="16:9"
+          />
+          <Select
+            label="Canvas shape, soft"
+            variant="soft"
+            options={SHAPES}
+            defaultValue="16:9"
+          />
+        </Grid>
+        <Grid columns={{ base: 1, md: 2 }} gap={4}>
+          <Select
+            label="Export format, outline"
+            variant="outline"
+            size="sm"
+            options={[
+              { value: "png", label: "PNG" },
+              { value: "jpg", label: "JPG" },
+            ]}
+            defaultValue="png"
+          />
+          <Select
+            label="Export format, soft"
+            variant="soft"
+            size="sm"
+            options={[
+              { value: "png", label: "PNG" },
+              { value: "jpg", label: "JPG" },
+            ]}
+            defaultValue="png"
+          />
+        </Grid>
+      </Stack>
     ),
   },
 ];

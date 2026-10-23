@@ -7,6 +7,10 @@ import type {
   PointerEvent,
   ReactElement,
 } from "react";
+import type {
+  FormFieldSize,
+  FormFieldVariant,
+} from "../../parts/form-field/FormFieldParts.tsx";
 
 /** Props for `NumberField`. `ref`, `id` and other input props go to the input; `className` and `style` to the field. */
 export interface NumberFieldProps extends Omit<
@@ -47,6 +51,16 @@ export interface NumberFieldProps extends Omit<
    * fills its column, as in a pair of width and height fields.
    */
   readonly labelPosition?: "side" | "top" | undefined;
+  /**
+   * The field's height: `"md"` (34px, 30 compact, the default), `"sm"` (28px) for a dense panel, or `"lg"` (48px,
+   * 40 compact, with 16px digits) beside large fields.
+   */
+  readonly size?: FormFieldSize | undefined;
+  /**
+   * `"outline"` (the default), a 1px `control-border` edge on `bg-surface`, or `"soft"`, a `bg-control` fill whose
+   * edge shows only on hover and while it has focus.
+   */
+  readonly variant?: FormFieldVariant | undefined;
 }
 
 const SCRUB_PIXELS_PER_STEP = 2;
@@ -57,8 +71,8 @@ function decimalsOf(step: number): number {
 
 /**
  * A small field for an exact number, with arrow-key steps, a stepper on hover and scrubbing by dragging
- * its label. Typing only changes the value when it's committed: Enter or leaving the field commits,
- * Escape puts back what was there.
+ * its label, outlined or soft at `sm`, `md` or `lg`. Typing only changes the value when it's committed: Enter
+ * or leaving the field commits, Escape puts back what was there.
  *
  * @example
  * <NumberField label="W" unit="px" min={1} value={width} onValueChange={setWidth} />
@@ -74,6 +88,8 @@ export function NumberField({
   step = 1,
   unit,
   labelPosition = "side",
+  size = "md",
+  variant = "outline",
   disabled,
   readOnly,
   className,
@@ -178,6 +194,8 @@ export function NumberField({
       style={style}
       data-bt="NumberField"
       data-label-position={labelPosition}
+      data-size={size}
+      data-variant={variant}
       data-disabled={disabled ? "" : undefined}
     >
       <label
@@ -194,7 +212,14 @@ export function NumberField({
       >
         {label}
       </label>
-      <span data-bt-part="field" data-bt-control="">
+      <span
+        className="bt-form-field-box"
+        data-bt-part="field"
+        data-bt-control=""
+        data-size={size}
+        data-variant={variant}
+        data-disabled={disabled ? "" : undefined}
+      >
         <input
           {...rest}
           id={inputId}

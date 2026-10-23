@@ -5,7 +5,7 @@ import { Stack, Text } from "@butteryui/core";
 import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import { Button, PasswordField } from "@butteryui/react";
 
-/** The two sizes: md, 34px, for a password among an app's settings, and lg, 48px with 16px text, for a sign-in page. */
+/** A soft md password among an app's settings, and an lg one, 48px with 16px text, for a sign-in page. */
 export function TwoSizes(): ReactElement {
   const [signedIn, setSignedIn] = useState(false);
   const signIn = (event: SubmitEvent<HTMLFormElement>): void => {
@@ -19,6 +19,7 @@ export function TwoSizes(): ReactElement {
         label="Café Wi-Fi password"
         hint="Staff read it out to customers who ask."
         revealLabel="Show the Wi-Fi password"
+        variant="soft"
         autoComplete="off"
         defaultValue="morning-roast"
       />

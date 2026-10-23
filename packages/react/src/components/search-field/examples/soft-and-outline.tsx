@@ -4,7 +4,7 @@ import { Stack, Text } from "@butteryui/core";
 import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import { SearchField } from "@butteryui/react";
 
-/** Soft for a top bar's search, with its / shortcut, and outline for a toolbar's filter; Enter sends either one. */
+/** Soft for a top bar's search, with its / shortcut, and a small outline one for a toolbar's filter; Enter sends either. */
 export function SoftAndOutline(): ReactElement {
   const [last, setLast] = useState("Nothing searched yet");
   const searchFor =
@@ -26,7 +26,7 @@ export function SoftAndOutline(): ReactElement {
         />
       </form>
       <form role="search" onSubmit={searchFor("Filtered orders by")}>
-        <SearchField label="Filter orders" name="q" />
+        <SearchField label="Filter orders" size="sm" name="q" />
       </form>
       <Text variant="body-sm" tone="secondary">
         {last}

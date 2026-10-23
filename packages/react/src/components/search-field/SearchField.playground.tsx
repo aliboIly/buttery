@@ -20,12 +20,14 @@ export const live: LiveDemo = {
       options: ["outline", "soft"],
       initial: "outline",
     },
+    size: { kind: "choice", options: ["md", "sm", "lg"], initial: "md" },
     label: { kind: "text", initial: "Search orders" },
     disabled: { kind: "toggle", initial: false },
   },
-  render: ({ variant, label, disabled }) => (
+  render: ({ variant, size, label, disabled }) => (
     <SearchField
       variant={demoChoice(variant, ["outline", "soft"])}
+      size={demoChoice(size, ["md", "sm", "lg"])}
       label={String(label)}
       disabled={disabled === true}
     />
@@ -36,7 +38,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Soft and outline",
     description:
-      "Soft on bg-control for a top bar, outlined for a toolbar. Type to see the clear button; Escape clears too.",
+      "Soft on bg-control for a top bar, its edge showing on hover and focus; outlined for a toolbar. Type to see the clear button; Escape clears too.",
     render: () => (
       <Stack gap={4}>
         <SearchField variant="soft" label="Search everything" shortcut="/" />
@@ -47,5 +49,17 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Disabled",
     render: () => <SearchField label="Search payouts" disabled />,
+  },
+  {
+    title: "Sizes",
+    description:
+      "28px for a dense toolbar, its clear button drawn at the badge height with a 28px target; 34px by default; 48px with 16px text for a page's own search.",
+    render: () => (
+      <Stack gap={4}>
+        <SearchField size="sm" label="Filter batches" defaultValue="Guji" />
+        <SearchField label="Search orders" />
+        <SearchField size="lg" variant="soft" label="Search the shop" />
+      </Stack>
+    ),
   },
 ];

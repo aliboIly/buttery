@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "A name, an email address, a search, a title: any single line of text",
     "Sign-in and sign-up forms, at size lg",
+    'A field on a card or in a toolbar, with variant="soft"; a dense panel or a toolbar, with size="sm"',
   ],
   avoidWhen: [
     "A password: use PasswordField",
@@ -22,5 +23,5 @@ export const meta: ComponentMeta = {
     { keys: "Enter", does: "Submits the form it's in, as any text input does" },
   ],
   layout:
-    'It fills its container\'s width. The box is --bt-h-control (34px) tall, or --bt-h-cta (48px) with 16px text at size="lg", and the whole box is the hit area, its icons included; text longer than the box scrolls inside the input. The label, the hint and the error sit above and below the box and wrap.',
+    'It fills its container\'s width. The box is --bt-h-control (34px, 30 compact) tall, --bt-h-sm (28px) at size="sm", or --bt-h-cta (48px, 40 compact) with 16px text at size="lg", and the whole box is the hit area, its icons included; an outline box draws a 1px edge, and a soft one keeps that edge transparent until hover or focus, so the box never moves; text longer than the box scrolls inside the input. The label, the hint and the error sit above and below the box and wrap.',
 };

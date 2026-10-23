@@ -57,13 +57,14 @@ export interface SelectProps<Value extends string = string> extends Omit<
   readonly footer?: ReactNode;
   /** Names the footer for screen readers. Defaults to `label`. */
   readonly footerLabel?: string | undefined;
-  /** Which edge of the trigger the list lines up with. Defaults to `"end"`, or `"start"` for `"outline"`. */
+  /** Which edge of the trigger the list lines up with. Defaults to `"end"`, or `"start"` for a box. */
   readonly align?: "start" | "center" | "end" | undefined;
   /**
-   * How the trigger looks: `"ghost"` (the default), a pill for header bars and toolbars, or `"outline"`, a
-   * box like a text field's that fills its column, for forms. An outline list is at least as wide as its box.
+   * How the trigger looks: `"ghost"` (the default), a pill for header bars and toolbars; `"outline"`, a box like
+   * a text field's that fills its column, for forms; or `"soft"`, the same box on `bg-control`, its edge showing
+   * only on hover, focus and while the list is open. A box's list is at least as wide as the box.
    */
-  readonly variant?: "ghost" | "outline" | undefined;
+  readonly variant?: "ghost" | "outline" | "soft" | undefined;
   /** The trigger's height: `"sm"` (28px) or `"md"` (36px as a pill, 34px as a box). Defaults to `"md"`. */
   readonly size?: "sm" | "md" | undefined;
 }
@@ -84,8 +85,8 @@ function Check(props: IconComponentProps): ReactElement {
 }
 
 /**
- * A ghost pill showing the chosen value, or with `variant="outline"` a box like a text field's for forms;
- * it opens a list to pick another, lined up with its end (its start as a box), and an optional footer for
+ * A ghost pill showing the chosen value, or with `variant="outline"` or `"soft"` a box like a text field's for
+ * forms; it opens a list to pick another, lined up with its end (its start as a box), and an optional footer for
  * a custom value, such as width and height fields. Inside a `Field`, spread the field's props onto it and
  * the field's label names it, followed by the chosen value. The open list moves like a menu:
  * arrow keys, Home and End move, typing jumps to an option, Enter or Space chooses, Escape closes, and
@@ -150,6 +151,7 @@ export function Select<Value extends string = string>({
       : selected;
   const [active, setActive] = useState<Value | undefined>(undefined);
   const focused = active ?? resting?.value;
+  const boxed = variant !== "ghost";
 
   const optionElement = (option: SelectOption<Value>): HTMLElement | null =>
     panel.current?.querySelector<HTMLElement>(
@@ -248,11 +250,11 @@ export function Select<Value extends string = string>({
       aria-labelledby={
         labelledBy === undefined ? undefined : `${labelledBy} ${valueId}`
       }
-      className={cx("bt-select", className)}
+      className={cx("bt-select", boxed && "bt-form-field-box", className)}
       data-bt="Select"
       data-variant={variant}
       data-size={size}
-      data-bt-control={variant === "outline" ? "" : undefined}
+      data-bt-control={boxed ? "" : undefined}
     >
       <span
         id={valueId}
@@ -263,9 +265,7 @@ export function Select<Value extends string = string>({
       >
         {shown}
       </span>
-      {variant === "outline" ? (
-        <Icon icon={ChevronDown} data-bt-part="chevron" />
-      ) : null}
+      {boxed ? <Icon icon={ChevronDown} data-bt-part="chevron" /> : null}
     </button>
   );
 
@@ -278,7 +278,7 @@ export function Select<Value extends string = string>({
       }}
     >
       <Popover.Trigger asChild>
-        {variant === "outline" ? (
+        {boxed ? (
           triggerButton
         ) : (
           <Button asChild variant="ghost" size={size} iconEnd={ChevronDown}>
@@ -288,7 +288,7 @@ export function Select<Value extends string = string>({
       </Popover.Trigger>
       <Popover.Content
         ref={panel}
-        align={align ?? (variant === "outline" ? "start" : "end")}
+        align={align ?? (boxed ? "start" : "end")}
         role={footer === undefined ? "none" : "dialog"}
         aria-label={footer === undefined ? undefined : label}
         className="bt-select-panel"

@@ -6,9 +6,19 @@ import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@butteryui/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { SearchField } from "./SearchField.tsx";
 
 afterEach(cleanup);
+
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
 
 function box(): HTMLElement {
   const field = document.querySelector<HTMLElement>('[data-bt="SearchField"]');
@@ -20,7 +30,7 @@ describe("SearchField", () => {
   it("stamps its class and data-bt, forwards its ref to the input and spreads props", () => {
     const ref = createRef<HTMLInputElement>();
     render(<SearchField ref={ref} className="custom" data-testid="search" />);
-    expect(box().className).toBe("bt-search-field custom");
+    expect(box().className).toBe("bt-search-field bt-form-field-box custom");
     expect(ref.current?.dataset["testid"]).toBe("search");
     expect(ref.current?.type).toBe("search");
   });
@@ -127,5 +137,42 @@ describe("SearchField", () => {
     expect(getComputedStyle(soft).borderColor).toBe("rgba(0, 0, 0, 0)");
     expect(getComputedStyle(outline).borderTopWidth).toBe("1px");
     expect(getComputedStyle(outline).borderColor).not.toBe("rgba(0, 0, 0, 0)");
+  });
+
+  it("draws soft on bg-control, its edge showing only on hover and while it has focus", async () => {
+    render(<SearchField variant="soft" label="Search everything" />);
+    const edge = colorOf("--bt-control-border");
+    expect(getComputedStyle(box()).backgroundColor).toBe(
+      colorOf("--bt-bg-control"),
+    );
+    expect(getComputedStyle(box()).borderTopColor).toBe("rgba(0, 0, 0, 0)");
+    await browser.hover(box());
+    expect(getComputedStyle(box()).borderTopColor).toBe(edge);
+    await browser.click(screen.getByRole("searchbox"));
+    await browser.hover(document.body, { position: { x: 1, y: 1 } });
+    expect(getComputedStyle(box()).borderTopColor).toBe(edge);
+    expect(getComputedStyle(box()).outlineStyle).toBe("solid");
+  });
+
+  it("is 28px tall at sm, its clear button drawn at the badge height with a 28px target, and 48px with 16px text at lg", async () => {
+    const { rerender } = render(
+      <SearchField size="sm" label="Search orders" defaultValue="guji" />,
+    );
+    const clear = screen.getByRole("button", { name: "Clear search" });
+    const hit = clear.querySelector("[data-bt-hit]");
+    if (!hit) throw new Error("No hit area.");
+    const outer = box().getBoundingClientRect();
+    expect(outer.height).toBe(28);
+    expect(clear.getBoundingClientRect().height).toBe(20);
+    expect(clear.getBoundingClientRect().top).toBeGreaterThan(outer.top);
+    expect(hit.getBoundingClientRect().height).toBe(28);
+    expect(hit.getBoundingClientRect().width).toBe(28);
+    await browser.click(clear);
+    expect(screen.getByRole("searchbox")).toHaveValue("");
+    rerender(<SearchField size="lg" label="Search orders" />);
+    expect(box().getBoundingClientRect().height).toBe(48);
+    const input = screen.getByRole("searchbox");
+    expect(getComputedStyle(input).fontSize).toBe("16px");
+    expect(getComputedStyle(input).paddingRight).toBe("16px");
   });
 });

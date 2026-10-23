@@ -16,25 +16,32 @@ export const page: DocsPage = {
 
 export const live: LiveDemo = {
   controls: {
-    size: { kind: "choice", options: ["md", "lg"], initial: "md" },
+    size: { kind: "choice", options: ["md", "sm", "lg"], initial: "md" },
+    variant: {
+      kind: "choice",
+      options: ["outline", "soft"],
+      initial: "outline",
+    },
     label: { kind: "text", initial: "Shop name" },
     hint: { kind: "text", initial: "Shown on your receipts." },
     error: { kind: "text", initial: "" },
     disabled: { kind: "toggle", initial: false },
   },
-  render: ({ size, label, hint, error, disabled }) => (
+  render: ({ size, variant, label, hint, error, disabled }) => (
     <TextField
-      size={demoChoice(size, ["md", "lg"])}
+      size={demoChoice(size, ["md", "sm", "lg"])}
+      variant={demoChoice(variant, ["outline", "soft"])}
       label={String(label)}
       hint={String(hint) === "" ? undefined : String(hint)}
       error={String(error) === "" ? undefined : String(error)}
       disabled={disabled === true}
     />
   ),
-  code: ({ size, label, hint, error, disabled }) =>
+  code: ({ size, variant, label, hint, error, disabled }) =>
     [
       "<TextField",
-      `  size="${demoChoice(size, ["md", "lg"])}"`,
+      `  size="${demoChoice(size, ["md", "sm", "lg"])}"`,
+      ...(variant === "soft" ? ['  variant="soft"'] : []),
       `  label="${String(label)}"`,
       ...(String(hint) === "" ? [] : [`  hint="${String(hint)}"`]),
       ...(String(error) === "" ? [] : [`  error="${String(error)}"`]),
@@ -70,11 +77,35 @@ export const demos: readonly DemoSection[] = [
   },
   {
     title: "Sizes and icons",
-    description: "34px for app forms; 48px with 16px text for sign-in pages.",
+    description:
+      "28px for a toolbar or a dense panel; 34px for app forms; 48px with 16px text for sign-in pages.",
     render: () => (
       <Stack gap={4}>
+        <TextField label="Batch code" size="sm" defaultValue="HM-0412" />
         <TextField label="Search coffees" type="search" iconStart={Search} />
         <TextField label="Email" size="lg" type="email" autoComplete="email" />
+      </Stack>
+    ),
+  },
+  {
+    title: "Outline and soft",
+    description:
+      "Outline, the default, has a 1px edge; soft sits on bg-control and shows its edge only on hover and while it has focus. An error's edge shows in both.",
+    render: () => (
+      <Stack gap={4}>
+        <TextField label="Roast name" defaultValue="Morning blend" />
+        <TextField
+          label="Roast name, soft"
+          variant="soft"
+          defaultValue="Morning blend"
+        />
+        <TextField
+          label="Tasting notes"
+          variant="soft"
+          defaultValue="Too short"
+          error="Write at least three notes."
+        />
+        <TextField label="Roaster" variant="soft" defaultValue="Ana" disabled />
       </Stack>
     ),
   },

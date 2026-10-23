@@ -6,7 +6,7 @@ import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent as browser } from "vitest/browser";
 import { Field } from "../field/Field.tsx";
 import { NumberField } from "../number-field/NumberField.tsx";
 import { Select } from "./Select.tsx";
@@ -37,6 +37,15 @@ beforeEach(() => {
 });
 
 afterEach(cleanup);
+
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
 
 async function settled(): Promise<void> {
   await waitFor(() => {
@@ -418,5 +427,42 @@ describe("Select", () => {
     expect(box.getAttribute("aria-controls")).toBe(
       screen.getByRole("listbox", { name: "Export as" }).id,
     );
+  });
+
+  it("draws a soft box on bg-control that fills its column, its edge on hover, for keys and while its list is open", async () => {
+    render(
+      <div style={{ inlineSize: "320px" }}>
+        <Select
+          label="Export format"
+          variant="soft"
+          options={FORMATS}
+          defaultValue="png"
+        />
+      </div>,
+    );
+    const trigger = screen.getByRole("combobox", {
+      name: "Export format, PNG",
+    });
+    const edge = colorOf("--bt-control-border");
+    expect(trigger.getBoundingClientRect().width).toBe(320);
+    expect(trigger.getBoundingClientRect().height).toBe(34);
+    expect(getComputedStyle(trigger).backgroundColor).toBe(
+      colorOf("--bt-bg-control"),
+    );
+    expect(getComputedStyle(trigger).borderTopColor).toBe("rgba(0, 0, 0, 0)");
+    expect(trigger.querySelector('[data-bt-part="chevron"]')).not.toBeNull();
+    await browser.hover(trigger);
+    expect(getComputedStyle(trigger).borderTopColor).toBe(edge);
+    await browser.hover(document.body, { position: { x: 1, y: 1 } });
+    await browser.keyboard("{Shift}");
+    trigger.focus();
+    expect(getComputedStyle(trigger).outlineStyle).toBe("solid");
+    expect(getComputedStyle(trigger).borderTopColor).toBe(edge);
+    await browser.keyboard("{ArrowDown}");
+    const list = await screen.findByRole("listbox", { name: "Export format" });
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    expect(getComputedStyle(trigger).borderTopColor).toBe(edge);
+    const panel = list.closest<HTMLElement>(".bt-select-panel");
+    expect(panel?.offsetWidth).toBeGreaterThanOrEqual(320);
   });
 });
