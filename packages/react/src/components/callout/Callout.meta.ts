@@ -7,7 +7,7 @@ export const meta: ComponentMeta = {
     "A tinted box for a message in place: information, success, a warning or an error.",
   useWhen: [
     "A form's error summary after a failed submit (role alert)",
-    "A note that belongs with the content around it, such as what happens to a card you share",
+    "A note that belongs with the content around it, such as where a price you change shows up",
   ],
   avoidWhen: [
     "Confirming an action that changed something out of view: use toast()",

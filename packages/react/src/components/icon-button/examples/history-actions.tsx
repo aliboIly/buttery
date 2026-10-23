@@ -5,7 +5,7 @@ import { Inline, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { IconButton } from "@buttery/react";
 
-const TITLES = ["Untitled card", "Spring launch", "Spring launch sale"];
+const TITLES = ["Untitled deck", "Spring launch", "Spring launch plan"];
 
 /** Undo and redo in a header, each aria-disabled, and still focusable, while there's nothing for it to do. */
 export function HistoryActions(): ReactElement {
@@ -41,7 +41,7 @@ export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Undo");
   await see("Spring launch");
   await press("button", "Undo");
-  await see("Untitled card");
+  await see("Untitled deck");
   await press("button", "Redo");
   await see("Spring launch");
 };

@@ -19,7 +19,7 @@ export function Saving(): ReactElement {
           }, 1200);
         }}
       >
-        Save the card
+        Save tasting notes
       </Button>
       <Text variant="body" tone="secondary">
         {state === "saved" ? "Saved just now" : "Not saved yet"}
@@ -32,6 +32,6 @@ export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Not saved yet");
-  await press("button", "Save the card");
+  await press("button", "Save tasting notes");
   await see("Saved just now");
 };

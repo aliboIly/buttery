@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "A modal dialog that dims the page, traps focus and hands it back when it closes.",
   useWhen: [
-    "A decision or a short task to finish before going on: confirm a delete, rename a card",
+    "A decision or a short task to finish before going on: confirm a delete, rename a coffee",
     "Something that needs full attention for a moment, such as an announcement",
   ],
   avoidWhen: [

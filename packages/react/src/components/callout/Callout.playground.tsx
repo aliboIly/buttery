@@ -19,10 +19,10 @@ export const live: LiveDemo = {
       options: ["info", "success", "warning", "danger"],
       initial: "info",
     },
-    title: { kind: "text", initial: "Shared cards stay in sync" },
+    title: { kind: "text", initial: "Wholesale prices stay in sync" },
     children: {
       kind: "text",
-      initial: "Changes you make show up for everyone you've shared with.",
+      initial: "A change here shows up on every café's order form.",
     },
   },
   render: ({ tone, title, children }) => (
@@ -42,18 +42,18 @@ export const demos: readonly DemoSection[] = [
       "Info, success, warning and danger, each with its icon and tint.",
     render: () => (
       <Stack gap={3}>
-        <Callout title="Shared cards stay in sync">
-          Changes you make show up for everyone you've shared with.
+        <Callout title="Wholesale prices stay in sync">
+          A change here shows up on every café's order form.
         </Callout>
-        <Callout tone="success" title="Card exported">
-          It's in your downloads as a PNG.
+        <Callout tone="success" title="Orders exported">
+          The CSV file is in your downloads.
         </Callout>
         <Callout
           tone="warning"
           title="Large export"
-          action={<ArrowLink href="#/callout">Pick a smaller size</ArrowLink>}
+          action={<ArrowLink href="#/callout">Pick a shorter range</ArrowLink>}
         >
-          At this size the file will be over 20 MB.
+          Two years of orders makes a file over 20 MB.
         </Callout>
         <Callout tone="danger" title="Couldn't sign in">
           Check your email and password, then try again.

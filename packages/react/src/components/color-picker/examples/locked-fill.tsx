@@ -4,19 +4,25 @@ import { Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ColorPicker, Switch } from "@buttery/react";
 
-/** A picker that's disabled while its card is locked, with the switch that unlocks it. */
+/** A picker that's disabled while its shape is locked, with the switch that unlocks it. */
 export function LockedFill(): ReactElement {
   const [locked, setLocked] = useState(true);
   return (
     <Stack gap={3}>
       <Switch
-        label="Lock the card"
+        label="Lock the shape"
         checked={locked}
         onCheckedChange={setLocked}
       />
-      <ColorPicker label="Card fill" defaultValue="#a5b4fc" disabled={locked} />
+      <ColorPicker
+        label="Shape fill"
+        defaultValue="#a5b4fc"
+        disabled={locked}
+      />
       <Text variant="caption" tone="secondary">
-        {locked ? "Unlock the card to change its fill" : "Pick the card's fill"}
+        {locked
+          ? "Unlock the shape to change its fill"
+          : "Pick the shape's fill"}
       </Text>
     </Stack>
   );
@@ -25,7 +31,7 @@ export function LockedFill(): ReactElement {
 export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("Unlock the card to change its fill");
-  await press("switch", "Lock the card");
-  await see("Pick the card's fill");
+  await see("Unlock the shape to change its fill");
+  await press("switch", "Lock the shape");
+  await see("Pick the shape's fill");
 };

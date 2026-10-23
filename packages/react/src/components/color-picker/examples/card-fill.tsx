@@ -10,7 +10,7 @@ export function CardFill(): ReactElement {
   return (
     <Stack gap={3}>
       <ColorPicker
-        label="Card fill"
+        label="Shape fill"
         defaultValue="#f5d06f"
         onValueCommit={setPicked}
       />

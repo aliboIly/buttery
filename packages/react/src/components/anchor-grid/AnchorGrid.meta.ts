@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "A 3×3 grid of dots for picking where something sits: a corner, an edge or the center.",
   useWhen: [
-    "Placing content inside a frame: a card on a canvas, a caption on an image",
+    "Placing content inside a frame: a title on a slide, a caption on a picture",
   ],
   avoidWhen: ["Exact positions: use NumberFields for x and y"],
   related: ["TiltPad", "SegmentedControl", "SharedIndicator"],

@@ -4,7 +4,11 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, PageDots } from "@buttery/react";
 
-const TITLES = ["Write a title", "Pick a finish", "Send it out"] as const;
+const TITLES = [
+  "Add your coffees",
+  "Set your roast days",
+  "Open the shop",
+] as const;
 
 /** Where a short tour is, under its step's title, with the buttons that move it. */
 export function TourProgress(): ReactElement {
@@ -43,7 +47,7 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Next");
-  await see("Pick a finish");
+  await see("Set your roast days");
   await press("button", "Back");
-  await see("Write a title");
+  await see("Add your coffees");
 };

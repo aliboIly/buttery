@@ -50,7 +50,7 @@ export interface FieldProps extends Omit<
  * `PasswordField` and `TextArea` already do this.
  *
  * @example
- * <Field label="Export as" hint="PNG keeps transparent corners." error={formatError}>
+ * <Field label="Export as" hint="CSV opens in any spreadsheet app." error={formatError}>
  *   {(control) => <Select {...control} label="Export as" variant="outline" options={formats} />}
  * </Field>
  */

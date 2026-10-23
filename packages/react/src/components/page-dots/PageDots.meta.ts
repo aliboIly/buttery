@@ -4,7 +4,7 @@ export const meta: ComponentMeta = {
   name: "PageDots",
   kind: "component",
   purpose:
-    "A row of dots showing which step of a few is current, the current one a pill that slides on spring.snappy.",
+    "A row of dots showing which step of a few is current, the current one a pill that moves on spring.snappy.",
   useWhen: [
     "Showing progress through a few steps, such as an onboarding dialog's",
   ],

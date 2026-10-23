@@ -6,7 +6,7 @@ import { Button, Dialog, TextField } from "@buttery/react";
 
 /** A short task in a controlled dialog: rename, then close it from the form's submit. */
 export function RenameDialog(): ReactElement {
-  const [name, setName] = useState("Spring launch");
+  const [name, setName] = useState("Huila");
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(name);
   const save = (event: SubmitEvent<HTMLFormElement>): void => {
@@ -31,7 +31,7 @@ export function RenameDialog(): ReactElement {
         </Dialog.Trigger>
         <Dialog.Content>
           <form onSubmit={save}>
-            <Dialog.Text title="Rename the card" />
+            <Dialog.Text title="Rename the coffee" />
             <Dialog.Body>
               <TextField label="Name" value={draft} onValueChange={setDraft} />
             </Dialog.Body>
@@ -56,7 +56,7 @@ export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("button", "Rename");
-  await type("Name", " sale");
+  await type("Name", " honey");
   await press("button", "Save");
-  await see("Spring launch sale");
+  await see("Huila honey");
 };

@@ -4,22 +4,22 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Chip, ColorPicker } from "@buttery/react";
 
-const DEFAULT_BACKDROP = "#7c9cf5";
+const DEFAULT_BACKGROUND = "#7c9cf5";
 
-/** A backdrop color kept in state as `#rrggbb`; Reset beside it puts the first color back, and the thumbs glide there. */
+/** A slide's background color kept in state as `#rrggbb`; Reset beside it puts the first color back, and the thumbs glide there. */
 export function BackdropColor(): ReactElement {
-  const [color, setColor] = useState(DEFAULT_BACKDROP);
+  const [color, setColor] = useState(DEFAULT_BACKGROUND);
   return (
     <Stack gap={3}>
-      <ColorPicker label="Backdrop" value={color} onValueChange={setColor} />
+      <ColorPicker label="Background" value={color} onValueChange={setColor} />
       <Inline gap={2} align="center">
         <Text variant="caption" tone="secondary" tabular>
           {color}
         </Text>
         <Chip
-          aria-disabled={color === DEFAULT_BACKDROP}
+          aria-disabled={color === DEFAULT_BACKGROUND}
           onClick={() => {
-            setColor(DEFAULT_BACKDROP);
+            setColor(DEFAULT_BACKGROUND);
           }}
         >
           Reset

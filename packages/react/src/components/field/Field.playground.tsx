@@ -13,24 +13,22 @@ export const page: DocsPage = {
   since: "0.5.0",
 };
 
-type Format = "png" | "jpg" | "webp";
+type Format = "csv" | "pdf" | "json";
 
 const FORMATS = [
-  { value: "png", label: "PNG" },
-  { value: "jpg", label: "JPG" },
-  { value: "webp", label: "WebP" },
+  { value: "csv", label: "CSV" },
+  { value: "pdf", label: "PDF" },
+  { value: "json", label: "JSON" },
 ] as const;
 
 function ExportFormat(): ReactElement {
-  const [format, setFormat] = useState<Format>("jpg");
+  const [format, setFormat] = useState<Format>("pdf");
   return (
     <Field
       label="Export as"
-      hint="PNG and WebP keep transparent corners."
+      hint="CSV and JSON hold every order."
       error={
-        format === "jpg"
-          ? "JPG fills transparent corners with white."
-          : undefined
+        format === "pdf" ? "PDF holds the first 500 orders only." : undefined
       }
     >
       {(control) => (
@@ -50,7 +48,7 @@ function ExportFormat(): ReactElement {
 export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "Export as" },
-    hint: { kind: "text", initial: "PNG and WebP keep transparent corners." },
+    hint: { kind: "text", initial: "CSV and JSON hold every order." },
     error: { kind: "text", initial: "" },
   },
   render: ({ label, hint, error }) => (
@@ -61,7 +59,7 @@ export const live: LiveDemo = {
           label={String(label)}
           variant="outline"
           options={FORMATS}
-          defaultValue="png"
+          defaultValue="csv"
         />
       )}
     </Field>
@@ -79,11 +77,11 @@ export const live: LiveDemo = {
       label="${String(label)}"
       variant="outline"
       options={[
-        { value: "png", label: "PNG" },
-        { value: "jpg", label: "JPG" },
-        { value: "webp", label: "WebP" },
+        { value: "csv", label: "CSV" },
+        { value: "pdf", label: "PDF" },
+        { value: "json", label: "JSON" },
       ]}
-      defaultValue="png"
+      defaultValue="csv"
     />
   )}
 </Field>`;
@@ -100,13 +98,13 @@ export const demos: readonly DemoSection[] = [
   {
     title: "A segmented control",
     render: () => (
-      <Field label="Card size" hint="Medium fits a story and a post.">
+      <Field label="Bag size" hint="500 g lasts about two weeks.">
         {(control) => (
           <SegmentedControl
             {...control}
-            label="Card size"
-            options={["Small", "Medium", "Large"]}
-            defaultValue="Medium"
+            label="Bag size"
+            options={["250 g", "500 g", "1 kg"]}
+            defaultValue="500 g"
           />
         )}
       </Field>

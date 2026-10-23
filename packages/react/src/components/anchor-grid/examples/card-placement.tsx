@@ -17,7 +17,7 @@ const PLACE: Readonly<Record<Anchor, string>> = {
   "bottom-right": "end end",
 };
 
-/** An anchor mapped to where a card sits in its frame, through CSS `place-items`, gliding there on `spring.smooth`. */
+/** An anchor mapped to where a title sits on its slide, through CSS `place-items`, gliding there on `spring.smooth`. */
 export function CardPlacement(): ReactElement {
   const [anchor, setAnchor] = useState<Anchor>("center");
   return (
@@ -35,14 +35,14 @@ export function CardPlacement(): ReactElement {
             aspectRatio: "16 / 9",
           }}
         >
-          <output aria-label="Card placement">
+          <output aria-label="Title placement">
             <buttery.span
               surface="section"
               pad={2}
               layout
               layoutDependency={anchor}
             >
-              <Text variant="badge">Launch card</Text>
+              <Text variant="badge">Quarterly review</Text>
             </buttery.span>
           </output>
         </Surface>

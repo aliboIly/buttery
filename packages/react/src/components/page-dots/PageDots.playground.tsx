@@ -8,7 +8,7 @@ export const page: DocsPage = {
   section: "components/navigation",
   title: "PageDots",
   description:
-    "A row of dots showing which step of a few is current, the current one a pill that slides on spring.snappy.",
+    "A row of dots showing which step of a few is current, the current one a pill that moves on spring.snappy.",
   order: 60,
   status: "stable",
   since: "0.7.0",

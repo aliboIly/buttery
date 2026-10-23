@@ -7,7 +7,7 @@ export const meta: ComponentMeta = {
     "A short burst of confetti from an element, for a genuine finish such as completing onboarding.",
   useWhen: [
     "The last step of onboarding",
-    "A first big success, once: the first export, the first published card",
+    "A first big success, once: the first export, the first published deck",
   ],
   avoidWhen: [
     "Routine actions such as saving, deleting or copying",

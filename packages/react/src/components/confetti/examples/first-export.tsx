@@ -4,7 +4,7 @@ import { Inline, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, celebrate } from "@buttery/react";
 
-/** A card's export panel that celebrates the first export and none after it, saying each one in text. */
+/** A deck's export panel that celebrates the first export and none after it, saying each one in text. */
 export function FirstExport(): ReactElement {
   const [exports, setExports] = useState(0);
   return (
@@ -27,7 +27,7 @@ export function FirstExport(): ReactElement {
             setExports(exports + 1);
           }}
         >
-          Export as PNG
+          Export as PDF
         </Button>
       </Inline>
     </Surface>
@@ -37,8 +37,8 @@ export function FirstExport(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Export as PNG");
+  await press("button", "Export as PDF");
   await see("Your first export is in your downloads");
-  await press("button", "Export as PNG");
+  await press("button", "Export as PDF");
   await see("Exported 2 times");
 };

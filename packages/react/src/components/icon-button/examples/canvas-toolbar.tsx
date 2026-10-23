@@ -7,14 +7,14 @@ import { IconButton } from "@buttery/react";
 
 const ZOOMS = [100, 125, 150, 175, 200];
 
-/** A card editor's toolbar: zoom out and in around the zoom level, each aria-disabled at its end, and the grid. */
+/** A slide editor's toolbar: zoom out and in around the zoom level, each aria-disabled at its end, and the grid. */
 export function CanvasToolbar(): ReactElement {
   const [zoom, setZoom] = useState(0);
   const [grid, setGrid] = useState(false);
   return (
     <Inline gap={3} align="center" justify="between">
       <Text variant="label" truncate>
-        Spring launch card
+        Quarterly review
       </Text>
       <Inline gap={1} align="center">
         <IconButton

@@ -8,7 +8,7 @@ import { Button, ColorPicker } from "@buttery/react";
 const PRESETS = solids.slice(0, 6).map((solid) => solid.hex);
 const FIRST_FILL = PRESETS[0] ?? "#f5d06f";
 
-/** A card's fill with six presets and an undo, which keeps one step per drag, key, code or preset rather than per frame. */
+/** A shape's fill with six presets and an undo, which keeps one step per drag, key, code or preset rather than per frame. */
 export function FillWithPresets(): ReactElement {
   const [fill, setFill] = useState(FIRST_FILL);
   const [committed, setCommitted] = useState(FIRST_FILL);
@@ -17,7 +17,7 @@ export function FillWithPresets(): ReactElement {
   return (
     <Stack gap={3}>
       <ColorPicker
-        label="Card fill"
+        label="Shape fill"
         value={fill}
         onValueChange={setFill}
         onValueCommit={(color) => {

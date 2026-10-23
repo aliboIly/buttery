@@ -6,7 +6,7 @@ import { Button } from "@buttery/react";
 export function LinkButton(): ReactElement {
   return (
     <Button asChild variant="primary" size="cta" arrow="forward">
-      <a href="#new-card">Start a new card</a>
+      <a href="#subscribe">Start a subscription</a>
     </Button>
   );
 }
@@ -14,5 +14,5 @@ export function LinkButton(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Start a new card");
+  await see("Start a subscription");
 };

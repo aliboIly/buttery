@@ -13,7 +13,7 @@ export function VariantsAndSizes(): ReactElement {
         <Button
           variant="primary"
           onClick={() => {
-            setLast("Published the card");
+            setLast("Published Nyeri to the shop");
           }}
         >
           Publish
@@ -21,7 +21,7 @@ export function VariantsAndSizes(): ReactElement {
         <Button
           variant="secondary"
           onClick={() => {
-            setLast("Duplicated the card");
+            setLast("Duplicated Nyeri");
           }}
         >
           Duplicate
@@ -65,7 +65,7 @@ export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Duplicate");
-  await see("Last action: Duplicated the card");
+  await see("Last action: Duplicated Nyeri");
   await press("button", "Discard");
   await see("Last action: Discarded the draft");
 };

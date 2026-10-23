@@ -19,7 +19,7 @@ export function GridToggle(): ReactElement {
         }}
       />
       <Text variant="body-sm" tone="secondary">
-        {visible ? "Grid lines show on the canvas" : "Grid lines are hidden"}
+        {visible ? "Grid lines show on the slide" : "Grid lines are hidden"}
       </Text>
     </Inline>
   );
@@ -31,5 +31,5 @@ export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Grid");
   await see("Grid lines are hidden");
   await press("button", "Grid");
-  await see("Grid lines show on the canvas");
+  await see("Grid lines show on the slide");
 };

@@ -10,15 +10,17 @@ export function CalloutTones(): ReactElement {
       <Callout title="Prices change on the 1st">
         Subscriptions renew at the new price from next month.
       </Callout>
-      <Callout tone="success" title="Card exported">
-        It&apos;s in your downloads as a PNG.
+      <Callout tone="success" title="Orders exported">
+        The CSV file is in your downloads.
       </Callout>
       <Callout
         tone="warning"
         title="Large export"
-        action={<ArrowLink href="#export-size">Pick a smaller size</ArrowLink>}
+        action={
+          <ArrowLink href="#export-range">Pick a shorter range</ArrowLink>
+        }
       >
-        At this size the file will be over 20 MB.
+        Two years of orders makes a file over 20 MB.
       </Callout>
       <Callout tone="danger" title="Couldn't publish">
         The shop is offline. Try again in a few minutes.

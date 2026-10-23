@@ -65,9 +65,9 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Stack gap={4}>
         <Checkbox label="Keep me signed in" />
-        <Checkbox label="Snap to the grid" defaultChecked />
+        <Checkbox label="Print packing slips" defaultChecked />
         <Checkbox
-          label="Every card in this folder"
+          label="Every order this week"
           defaultChecked="indeterminate"
         />
         <Checkbox label="Email me tips" hint="About once a month." />

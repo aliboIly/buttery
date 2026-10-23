@@ -12,7 +12,7 @@ export function DeleteConfirm(): ReactElement {
       <Dialog.Content>
         <Dialog.Text
           title="Delete this card?"
-          body="It stays in the trash for 30 days."
+          body="Subscriptions paid with it move to your other card."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>

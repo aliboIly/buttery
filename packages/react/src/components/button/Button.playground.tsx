@@ -35,7 +35,7 @@ function LoadingDemo(): ReactElement {
           setLoading(true);
         }}
       >
-        Export the card
+        Export orders
       </Button>
       <Button
         onClick={() => {
@@ -128,7 +128,7 @@ export const demos: readonly DemoSection[] = [
     title: "Icons",
     render: () => (
       <Inline gap={2} wrap>
-        <Button iconStart={Plus}>New card</Button>
+        <Button iconStart={Plus}>New coffee</Button>
         <Button variant="primary" iconStart={Download}>
           Download
         </Button>

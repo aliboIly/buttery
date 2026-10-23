@@ -36,11 +36,11 @@ export function VariantsAndSizes(): ReactElement {
         />
         <IconButton
           icon={Plus}
-          label="New order"
+          label="New deck"
           variant="primary"
           size="sm"
           onClick={() => {
-            setLast("Started a new order");
+            setLast("Started a new deck");
           }}
         />
       </Inline>
@@ -54,8 +54,8 @@ export function VariantsAndSizes(): ReactElement {
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "New order");
-  await see("Last action: Started a new order");
+  await press("button", "New deck");
+  await see("Last action: Started a new deck");
   await press("button", "Notifications, new");
   await see("Last action: Opened notifications");
 };

@@ -6,12 +6,12 @@ import { Button, NumberField } from "@buttery/react";
 
 /** An export panel: width and height fields with their labels on top, each filling its column, and the button that uses them. */
 export function ExportSize(): ReactElement {
-  const [width, setWidth] = useState(1080);
-  const [height, setHeight] = useState(1350);
+  const [width, setWidth] = useState(1920);
+  const [height, setHeight] = useState(1080);
   const [exported, setExported] = useState<string | undefined>(undefined);
   return (
     <Stack gap={4}>
-      <Text variant="title-sm">Export the card</Text>
+      <Text variant="title-sm">Export the slide</Text>
       <Grid columns={2} gap={2}>
         <NumberField
           label="Width"
@@ -55,5 +55,5 @@ export const play: ExamplePlay = async ({ press, key, see }) => {
   await press("spinbutton", "Width");
   await key("ArrowUp");
   await press("button", "Export");
-  await see("Exported at 1081 × 1350 px");
+  await see("Exported at 1921 × 1080 px");
 };

@@ -27,7 +27,7 @@ function Confirm(): ReactElement {
       <Dialog.Content>
         <Dialog.Text
           title="Delete this card?"
-          body="It stays in the trash for 30 days, then it's gone for good."
+          body="Subscriptions paid with the card ending 4242 move to your other card."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -56,7 +56,7 @@ function Scene(): ReactElement {
       }}
     >
       <Surface level="card" padX={6} padY={4}>
-        <Text variant="title">Launch card</Text>
+        <Text variant="title">Guji, Ethiopia</Text>
       </Surface>
     </Center>
   );
@@ -73,9 +73,9 @@ function WithMedia(): ReactElement {
           <Scene />
         </Dialog.Media>
         <Dialog.Text
-          title="Share your card"
-          body="Anyone with the link can see it, but only you can change it."
-          caption="Links stay on until you turn them off."
+          title="Give a friend 20% off"
+          body="They get 20% off their first bag, and you get a bag on us once they order."
+          caption="The link works for 30 days."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -97,9 +97,7 @@ function Sized({ size }: { readonly size: "md" | "lg" }): ReactElement {
       </Dialog.Trigger>
       <Dialog.Content size={size}>
         <Dialog.Text
-          title={
-            size === "md" ? "Pick a starting point" : "What's in this release"
-          }
+          title={size === "md" ? "Pick a grind" : "What's new this season"}
           body="Wider dialogs hold a list of choices or copy beside an illustration."
         />
         <Dialog.Actions>
@@ -144,7 +142,7 @@ export const live: LiveDemo = {
       <Dialog.Content>
         <Dialog.Text
           title="Delete this card?"
-          body="It stays in the trash for 30 days, then it's gone for good."
+          body="Subscriptions paid with the card ending 4242 move to your other card."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -168,7 +166,7 @@ export const live: LiveDemo = {
   <Dialog.Content>
     <Dialog.Text
       title="Delete this card?"
-      body="It stays in the trash for 30 days, then it's gone for good."
+      body="Subscriptions paid with the card ending 4242 move to your other card."
     />
     <Dialog.Actions>
       <Dialog.Close asChild>
