@@ -106,6 +106,14 @@ function Orders(
   );
 }
 
+function textCell(row: HTMLElement | undefined): HTMLElement {
+  const cell = row?.querySelector<HTMLElement>(
+    '[role="cell"]:not([data-check])',
+  );
+  if (!cell) throw new Error("No cell.");
+  return cell;
+}
+
 function rows(): HTMLElement[] {
   const table = screen.getByRole("table", { name: "Orders" });
   const [, body] = within(table).getAllByRole("rowgroup");
@@ -661,6 +669,112 @@ describe("DataTable", () => {
     const resting = getComputedStyle(cell).backgroundColor;
     await browser.hover(cell);
     expect(getComputedStyle(cell).backgroundColor).toBe(resting);
+  });
+
+  it("stripes every second body row on the section's gray when striped, selection and a hover still painting over it", async () => {
+    render(
+      <Orders
+        variant="striped"
+        selectable
+        defaultSelected={new Set(["ORD-1043"])}
+      />,
+    );
+    const body = rows();
+    const fill = (index: number): string =>
+      getComputedStyle(textCell(body[index])).backgroundColor;
+    expect(fill(0)).toBe("rgb(255, 255, 255)");
+    expect(fill(1)).toBe("rgb(247, 247, 247)");
+    expect(fill(2)).toBe("rgb(255, 255, 255)");
+    expect(fill(3)).toBe("rgb(233, 240, 253)");
+    expect(fill(5)).toBe("rgb(247, 247, 247)");
+    const [, customer] = screen.getAllByRole("columnheader");
+    expect(getComputedStyle(customer ?? document.body).backgroundColor).toBe(
+      "rgb(255, 255, 255)",
+    );
+    const hovered = (index: number): string =>
+      getComputedStyle(textCell(body[index])).backgroundImage;
+    await browser.hover(textCell(body[2]));
+    expect(hovered(2)).toContain("rgb(241, 241, 241)");
+    await browser.hover(textCell(body[1]));
+    expect(hovered(1)).toContain("rgb(241, 241, 241)");
+    expect(body[0]?.getBoundingClientRect().height).toBe(36);
+  });
+
+  it("draws a line between its cells inside a 1px frame with 12px corners when bordered, its rows the height they always are", () => {
+    render(<Orders variant="bordered" selectable />);
+    const [first] = rows();
+    const cells = first?.querySelectorAll('[role="cell"]') ?? [];
+    const [check, id] = [...cells].map((cell) => getComputedStyle(cell));
+    expect(check?.borderLeftWidth).toBe("0px");
+    expect(id?.borderLeftWidth).toBe("1px");
+    expect(id?.borderLeftColor).toBe("rgb(235, 235, 235)");
+    const [, order] = screen.getAllByRole("columnheader");
+    expect(getComputedStyle(order ?? document.body).borderLeftWidth).toBe(
+      "1px",
+    );
+    const scroll = document.querySelector('[data-bt-part="scroll"]');
+    if (!scroll) throw new Error("No scroll area.");
+    const frame = getComputedStyle(scroll);
+    expect(frame.outlineStyle).toBe("solid");
+    expect(frame.outlineWidth).toBe("1px");
+    expect(frame.outlineOffset).toBe("-1px");
+    expect(frame.outlineColor).toBe("rgb(235, 235, 235)");
+    expect(frame.borderTopLeftRadius).toBe("12px");
+    expect(first?.getBoundingClientRect().height).toBe(36);
+    cleanup();
+    render(<Orders variant="bordered" size="compact" />);
+    const [compact] = rows();
+    expect(compact?.getBoundingClientRect().height).toBe(32);
+    expect(
+      getComputedStyle(
+        compact?.querySelectorAll('[role="cell"]')[1] ??
+          compact ??
+          document.body,
+      ).borderLeftWidth,
+    ).toBe("1px");
+  });
+
+  it("rings a bordered table's scroll area on keyboard focus in place of its frame, and keeps its header over the first column as it scrolls", async () => {
+    render(
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          inlineSize: "320px",
+          blockSize: "160px",
+        }}
+      >
+        <DataTable<Order>
+          label="Orders"
+          columns={COLUMNS.map((column) => ({
+            ...column,
+            sortable: false,
+            cell: (order: Order) => order.customer,
+          }))}
+          rows={ORDERS}
+          rowKey={(order) => order.id}
+          variant="bordered"
+        />
+      </div>,
+    );
+    const scroll = screen.getByRole("region", { name: "Orders" });
+    expect(getComputedStyle(scroll).outlineColor).toBe("rgb(235, 235, 235)");
+    expect(getComputedStyle(scroll).outlineWidth).toBe("1px");
+    await browser.keyboard("{Tab}");
+    expect(document.activeElement).toBe(scroll);
+    const ring = getComputedStyle(scroll);
+    expect(ring.outlineColor).toBe("rgb(40, 98, 224)");
+    expect(ring.outlineWidth).toBe("2px");
+    scroll.scrollTop = 60;
+    const header = screen.getAllByRole("columnheader")[0];
+    if (!header) throw new Error("No header.");
+    const box = header.getBoundingClientRect();
+    expect(box.top).toBe(scroll.getBoundingClientRect().top);
+    expect(
+      header.contains(
+        document.elementFromPoint(box.left + 8, box.top + box.height / 2),
+      ),
+    ).toBe(true);
   });
 
   it("keeps Clear all in view when filters leave nothing in a table wider than its box", () => {

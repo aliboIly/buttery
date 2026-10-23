@@ -4,7 +4,11 @@ import { Inline, Menu, Stack } from "@butteryui/core";
 import { demoChoice } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { Button, DataTable, StatusBadge } from "@butteryui/react";
-import type { DataTableColumn, DataTableSort } from "@butteryui/react";
+import type {
+  DataTableColumn,
+  DataTableSort,
+  DataTableVariant,
+} from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",
@@ -79,6 +83,8 @@ const LIVE_COLUMNS: readonly DataTableColumn<Order>[] = COLUMNS.map(
   (column) => ({ ...column, sortable: false }),
 );
 
+const VARIANTS = ["plain", "striped", "bordered"] as const;
+
 export const live: LiveDemo = {
   controls: {
     selectable: { kind: "toggle", initial: false },
@@ -88,8 +94,9 @@ export const live: LiveDemo = {
       options: ["default", "compact"],
       initial: "default",
     },
+    variant: { kind: "choice", options: VARIANTS, initial: "plain" },
   },
-  render: ({ selectable, loading, size }) => (
+  render: ({ selectable, loading, size, variant }) => (
     <DataTable
       label="Orders"
       columns={LIVE_COLUMNS}
@@ -99,9 +106,10 @@ export const live: LiveDemo = {
       selectable={selectable === true}
       loading={loading === true}
       size={demoChoice(size, ["default", "compact"])}
+      variant={demoChoice(variant, VARIANTS)}
     />
   ),
-  code: ({ selectable, loading, size }) =>
+  code: ({ selectable, loading, size, variant }) =>
     [
       "<DataTable",
       '  label="Orders"',
@@ -112,11 +120,16 @@ export const live: LiveDemo = {
       ...(selectable === true ? ["  selectable"] : []),
       ...(loading === true ? ["  loading"] : []),
       ...(size === "compact" ? ['  size="compact"'] : []),
+      ...(variant === "plain" ? [] : [`  variant="${String(variant)}"`]),
       "/>",
     ].join("\n"),
 };
 
-function Orders(): ReactElement {
+function Orders({
+  variant = "plain",
+}: {
+  readonly variant?: DataTableVariant;
+}): ReactElement {
   const [sort, setSort] = useState<DataTableSort | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -151,6 +164,7 @@ function Orders(): ReactElement {
         rowKey={(order) => order.id}
         rowLabel={(order) => order.id}
         selectable
+        variant={variant}
         sort={sort}
         onSortChange={setSort}
         loading={loading}
@@ -188,6 +202,36 @@ export const demos: readonly DemoSection[] = [
         rowKey={(order) => order.id}
         onClearAll={() => undefined}
       />
+    ),
+  },
+  {
+    title: "Striped",
+    description:
+      "variant striped puts every second row on bg-section, with selection, sorting, row actions, pagination and the skeleton rows working as in a plain table; hover takes bg-control so it shows on either.",
+    render: () => <Orders variant="striped" />,
+  },
+  {
+    title: "Bordered",
+    description:
+      "variant bordered draws a line between the cells inside a 1px frame with 12px corners. Given a height, the table scrolls inside the frame with its header stuck to the top; here it's compact too.",
+    render: () => (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          blockSize: "var(--bt-bento-row)",
+        }}
+      >
+        <DataTable
+          label="Wholesale orders"
+          columns={COLUMNS}
+          rows={ORDERS}
+          rowKey={(order) => order.id}
+          rowLabel={(order) => order.id}
+          variant="bordered"
+          size="compact"
+        />
+      </div>
     ),
   },
 ];

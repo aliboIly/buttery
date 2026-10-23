@@ -32,6 +32,12 @@ export type ColumnWidth = "xs" | "sm" | "md" | "lg" | "xl";
 /** The shape a column's cells take while its rows load. */
 export type SkeletonShape = "text" | "badge" | "number";
 
+/**
+ * How a table draws its rows: `"plain"`, a 1px divider under each; `"striped"`, every second row on the
+ * section's gray as well; or `"bordered"`, lines between the cells too, inside a 1px frame with 12px corners.
+ */
+export type DataTableVariant = "plain" | "striped" | "bordered";
+
 /** One column of a `DataTable`. */
 export interface DataTableColumn<Row> {
   /** Names the column for sorting and keys. */
@@ -161,6 +167,13 @@ export interface DataTableProps<Row> extends Omit<
    * heights, so its rows are 32px whatever the app's density, and has no selection or pagination.
    */
   readonly size?: "default" | "compact" | undefined;
+  /**
+   * How it draws its rows: `"plain"` (the default), a 1px divider under each; `"striped"`, every second body row
+   * on `bg-section` as well, with hover taking `bg-control` so it shows on either; or `"bordered"`, a 1px line
+   * between the cells too, inside a 1px frame with 12px corners. Each works at either size, with selection,
+   * sorting and the sticky header and first column.
+   */
+  readonly variant?: DataTableVariant | undefined;
   /** Words to use instead of the English ones. */
   readonly labels?: Partial<DataTableLabels> | undefined;
 }
@@ -232,6 +245,7 @@ function DataTableRoot<Row>({
   empty,
   onClearAll,
   size = "default",
+  variant = "plain",
   labels,
   className,
   style,
@@ -380,6 +394,7 @@ function DataTableRoot<Row>({
       className={cx("bt-data-table", className)}
       data-bt="DataTable"
       data-size={size}
+      data-variant={variant}
       data-bt-density={compact ? "compact" : undefined}
     >
       <div
@@ -820,7 +835,8 @@ export interface DataTableComponent {
 /**
  * A table of records on CSS grid rows that share one column template, so each column keeps its least
  * width and a share of the rest; when the least widths don't fit, it scrolls sideways inside itself while
- * the page never does. Rows are `--bt-h-table-row` tall with 1px dividers and never wrap. It offers a
+ * the page never does. Rows are `--bt-h-table-row` tall with 1px dividers and never wrap, plain, striped or
+ * bordered. It offers a
  * checkbox column, sortable headers (`aria-sort`), a "…" menu of actions per row, a header and first column
  * that stick, skeleton rows while it loads, pagination, a row with "Clear all" when filters leave nothing,
  * and an empty state when there's no data. `DataTable.Amount` and `DataTable.Id` format money and ids, and

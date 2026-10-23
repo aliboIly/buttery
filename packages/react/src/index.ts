@@ -484,6 +484,7 @@ export type {
   DataTablePagination,
   DataTableProps,
   DataTableSort,
+  DataTableVariant,
   SkeletonShape,
 } from "./patterns/data-table/DataTable.tsx";
 export { SavedViews } from "./patterns/saved-views/SavedViews.tsx";

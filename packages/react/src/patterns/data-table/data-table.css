@@ -12,6 +12,7 @@
     --bt-data-table-number: 56px;
     --bt-data-table-box: 16px;
     --bt-data-table-sort: 14px;
+    --bt-data-table-fill: var(--bt-bg-surface);
 
     display: flex;
     flex: 1 1 auto;
@@ -96,7 +97,7 @@
     min-inline-size: 0;
     padding-inline: var(--bt-space-3);
     overflow-x: clip;
-    background: var(--bt-bg-surface);
+    background: var(--bt-data-table-fill);
     color: var(--bt-text);
     font-size: var(--bt-text-body-sm-size);
     line-height: var(--bt-text-body-sm-line);
@@ -168,6 +169,45 @@
     [data-bt-part="data-table-row"][data-selected]
     > [data-bt-part="data-table-cell"] {
     background: var(--bt-accent-subtle);
+  }
+
+  /* Every second body row takes the section's gray through its cells, which hover and selection still paint over. */
+  .bt-data-table[data-variant="striped"]
+    [data-bt-part="data-table-body"]
+    > [data-bt-part="data-table-row"]:nth-child(
+      even of [data-bt-part="data-table-row"]
+    ) {
+    --bt-data-table-fill: var(--bt-bg-section);
+  }
+
+  /* Hover takes the control fill, which shows on a striped row and a plain one alike. */
+  @media (hover: hover) {
+    .bt-data-table[data-variant="striped"]
+      [data-bt-part="data-table-body"]
+      > [data-bt-part="data-table-row"]:not([data-selected]):hover
+      > [data-bt-part="data-table-cell"] {
+      background:
+        linear-gradient(var(--bt-bg-control), var(--bt-bg-control)),
+        var(--bt-bg-surface);
+    }
+  }
+
+  .bt-data-table[data-variant="bordered"]
+    [data-bt-part="data-table-row"]
+    > [data-bt-part="data-table-cell"]
+    + [data-bt-part="data-table-cell"] {
+    border-inline-start: var(--bt-data-table-line) solid var(--bt-border);
+  }
+
+  .bt-data-table[data-variant="bordered"] > [data-bt-part="scroll"] {
+    border-radius: var(--bt-r-lg);
+  }
+
+  /* The frame is drawn inside the scroll area, over its edge, so the last row's divider is its bottom line. Keyboard focus shows the ring instead. */
+  .bt-data-table[data-variant="bordered"]
+    > [data-bt-part="scroll"]:not(:focus-visible) {
+    outline: var(--bt-data-table-line) solid var(--bt-border);
+    outline-offset: calc(var(--bt-data-table-line) * -1);
   }
 
   .bt-data-table [data-bt-part="sort-button"] {

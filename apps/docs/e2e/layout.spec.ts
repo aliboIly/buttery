@@ -156,6 +156,18 @@ function opensDialog(trigger: string): ButteryInteraction {
 const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   "data-table": [
     { name: "reload, showing skeleton rows", run: press("Reload") },
+    {
+      name: "stripe the live demo's rows",
+      allowMove: ["main"],
+      run: liveControls({ variant: "striped" }),
+      acrossMatrix: true,
+    },
+    {
+      name: "border the live demo's cells at compact size",
+      allowMove: ["main"],
+      run: liveControls({ variant: "bordered", size: "compact" }),
+      acrossMatrix: quick,
+    },
   ],
   "floating-lanes": [
     {
