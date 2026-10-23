@@ -13,26 +13,30 @@ export const page: DocsPage = {
 };
 
 const STATUSES = ["idle", "verifying", "success", "error"] as const;
+const VARIANTS = ["outline", "soft"] as const;
 
 export const live: LiveDemo = {
   controls: {
     status: { kind: "choice", options: [...STATUSES], initial: "idle" },
+    variant: { kind: "choice", options: [...VARIANTS], initial: "outline" },
     length: { kind: "number", initial: 6, min: 4, max: 8 },
     message: { kind: "text", initial: "The code works for 10 minutes." },
     hideLabel: { kind: "toggle", initial: false },
   },
-  render: ({ status, length, message, hideLabel }) => (
+  render: ({ status, variant, length, message, hideLabel }) => (
     <OneTimeCodeField
       status={demoChoice(status, STATUSES)}
+      variant={demoChoice(variant, VARIANTS)}
       length={Number(length)}
       message={String(message)}
       hideLabel={hideLabel === true}
     />
   ),
-  code: ({ status, length, message, hideLabel }) =>
+  code: ({ status, variant, length, message, hideLabel }) =>
     [
       "<OneTimeCodeField",
       ...(status === "idle" ? [] : [`  status="${String(status)}"`]),
+      ...(variant === "outline" ? [] : [`  variant="${String(variant)}"`]),
       ...(Number(length) === 6 ? [] : [`  length={${String(length)}}`]),
       ...(String(message) === "" ? [] : [`  message="${String(message)}"`]),
       ...(hideLabel === true ? ["  hideLabel"] : []),

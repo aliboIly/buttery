@@ -16,6 +16,7 @@ import {
   FormFieldCaption,
   useFormFieldIds,
 } from "../../parts/form-field/FormFieldParts.tsx";
+import type { FormFieldVariant } from "../../parts/form-field/FormFieldParts.tsx";
 import { Spinner } from "../../parts/spinner/Spinner.tsx";
 
 /** Where a code stands: being typed, being checked, accepted, or turned down. */
@@ -45,6 +46,8 @@ export interface OneTimeCodeFieldProps extends Omit<
   readonly label?: string | undefined;
   /** Keeps the label for screen readers without showing it, for a step whose title already asks. Defaults to `false`. */
   readonly hideLabel?: boolean | undefined;
+  /** `"outline"` (the default), or `"soft"`, a filled box whose edge shows on hover and focus, as every text input takes. */
+  readonly variant?: FormFieldVariant | undefined;
   /** Digits in the code, one slot each. Defaults to `6`. */
   readonly length?: number | undefined;
   /** The digits typed so far. Pair with `onValueChange` to control it. */
@@ -94,6 +97,7 @@ function isOtpCredential(value: unknown): value is OtpCredential {
 export function OneTimeCodeField({
   label = "One-time code",
   hideLabel = false,
+  variant = "outline",
   length = 6,
   value,
   defaultValue,
@@ -226,7 +230,15 @@ export function OneTimeCodeField({
           hintId={ids.hint}
         />
       )}
-      <div data-bt-part="box" data-bt-control="">
+      <div
+        className="bt-form-field-box"
+        data-bt-part="box"
+        data-bt-control=""
+        data-size="lg"
+        data-variant={variant}
+        data-invalid={status === "error" ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+      >
         <div data-bt-part="slots" aria-hidden="true">
           {Array.from({ length }, (_, index) => {
             const digit = digits[index];

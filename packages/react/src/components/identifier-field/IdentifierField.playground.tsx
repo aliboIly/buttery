@@ -1,4 +1,4 @@
-import { Stack } from "@butteryui/core";
+import { Stack, demoChoice } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { IdentifierField } from "@butteryui/react";
 
@@ -12,25 +12,30 @@ export const page: DocsPage = {
   since: "0.10.0",
 };
 
+const VARIANTS = ["outline", "soft"] as const;
+
 export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "Email or phone number" },
+    variant: { kind: "choice", options: [...VARIANTS], initial: "outline" },
     error: { kind: "text", initial: "" },
     passkey: { kind: "toggle", initial: false },
   },
-  render: ({ label, error, passkey }) => (
+  render: ({ label, variant, error, passkey }) => (
     <IdentifierField
       label={String(label)}
+      variant={demoChoice(variant, VARIANTS)}
       error={String(error) === "" ? undefined : String(error)}
       passkey={passkey === true}
     />
   ),
-  code: ({ label, error, passkey }) =>
+  code: ({ label, variant, error, passkey }) =>
     [
       "<IdentifierField",
       ...(String(label) === "Email or phone number"
         ? []
         : [`  label="${String(label)}"`]),
+      ...(variant === "outline" ? [] : [`  variant="${String(variant)}"`]),
       ...(String(error) === "" ? [] : [`  error="${String(error)}"`]),
       ...(passkey === true ? ["  passkey"] : []),
       "/>",

@@ -6,6 +6,7 @@ import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent as browser } from "vitest/browser";
+import { TextField } from "../text-field/TextField.tsx";
 import { OneTimeCodeField } from "./OneTimeCodeField.tsx";
 import type {
   OneTimeCodeFieldProps,
@@ -141,6 +142,34 @@ describe("OneTimeCodeField", () => {
       screen.getAllByText("That code isn't right. Type it again."),
     ).toHaveLength(2);
     expect(status?.getBoundingClientRect().height).toBe(idle);
+  });
+
+  it("draws its box as every text input does, outlined or soft", () => {
+    for (const variant of ["outline", "soft"] as const) {
+      render(
+        <>
+          <OneTimeCodeField variant={variant} />
+          <TextField label="Name" size="lg" variant={variant} />
+        </>,
+      );
+      const code = input().closest('[data-bt-part="box"]');
+      const text = screen
+        .getByRole("textbox", { name: "Name" })
+        .closest('[data-bt-part="box"]');
+      if (!code || !text) throw new Error("No boxes.");
+      for (const property of [
+        "borderTopColor",
+        "borderTopWidth",
+        "borderRadius",
+        "backgroundColor",
+        "height",
+      ] as const) {
+        expect(getComputedStyle(code)[property]).toBe(
+          getComputedStyle(text)[property],
+        );
+      }
+      cleanup();
+    }
   });
 
   it("centers a message long enough to wrap, as it does a short one", () => {
