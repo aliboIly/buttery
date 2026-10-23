@@ -7,6 +7,7 @@ export default defineConfig({
     layout: "src/layout/index.ts",
   },
   platform: "neutral",
+  unbundle: true,
   dts: true,
   sourcemap: true,
 });
