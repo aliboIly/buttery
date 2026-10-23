@@ -762,8 +762,8 @@ export interface CatalogCardProps extends Omit<
   /** Its picture: an image, a drawing or a tile, such as an `InitialsTile`. An `img` or `svg` covers its frame. */
   readonly media?: ReactNode;
   /**
-   * Where its media sits: `"top"`, `"start"` or `"background"`. Defaults to `"top"` in a grid and `"start"` in
-   * a list; in rows it's always at the start.
+   * Where its media sits in a grid: `"top"` (the default), `"start"` or `"background"`. In a list or rows it's
+   * always at the start.
    */
   readonly mediaPosition?: CatalogMediaPosition | undefined;
   /** The media's width ÷ height at the top, or the whole card's with the media behind it, such as `1` for a square. Defaults to `4 / 3` at the top and `3 / 4` behind. */
@@ -877,9 +877,9 @@ export function CatalogCard({
     items !== null && items.expanded !== null && items.expanded !== id;
   const position = !hasContent(media)
     ? undefined
-    : layout === "rows"
-      ? "start"
-      : (mediaPosition ?? (layout === "grid" ? "top" : "start"));
+    : layout === "grid"
+      ? (mediaPosition ?? "top")
+      : "start";
 
   useEffect(() => {
     if (href === undefined || !withDetail) return;

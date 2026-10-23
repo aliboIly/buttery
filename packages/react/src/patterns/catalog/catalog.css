@@ -196,6 +196,12 @@
     gap: var(--bt-space-3);
   }
 
+  .bt-catalog-items[data-layout="list"]:has(
+      > .bt-catalog-card[data-variant="plain"]
+    ) {
+    gap: var(--bt-space-6);
+  }
+
   .bt-catalog-items[data-layout="rows"] {
     gap: 0;
   }

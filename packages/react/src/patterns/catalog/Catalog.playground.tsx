@@ -292,7 +292,7 @@ function GearCatalog({
                 key={gear.id}
                 gear={gear}
                 variant={variant}
-                mediaPosition={mediaPosition}
+                mediaPosition={layout === "grid" ? mediaPosition : undefined}
               />
             ))}
           </Catalog.Items>
