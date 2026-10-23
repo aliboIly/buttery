@@ -73,15 +73,15 @@ export function RoastBoard(): ReactElement {
                 <ContextMenu key={batch.id}>
                   <ContextMenu.Trigger asChild>
                     <Surface asChild level="card" pad={3} radius="lg">
-                      <Pressable
-                        aria-label={`${batch.coffee}, ${String(batch.kilos)} kg, ${STATUSES[batch.status].label}${batch.pinned ? ", pinned" : ""}`}
-                      >
+                      <Pressable>
                         <Stack gap={2}>
                           <Inline gap={2} justify="between">
                             <Text variant="label" truncate>
                               {batch.coffee}
                             </Text>
-                            {batch.pinned ? <Icon icon={Pin} /> : null}
+                            {batch.pinned ? (
+                              <Icon icon={Pin} label="Pinned" />
+                            ) : null}
                           </Inline>
                           {weights ? (
                             <Text variant="caption" tabular>
@@ -176,11 +176,13 @@ export function RoastBoard(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ focus, key, press, see }) => {
-  await focus("button", /^Huila,/);
+  await focus("button", /^Huila/);
   await key("ContextMenu");
   await key("ArrowRight");
-  await press("menuitemradio", "Done");
-  await focus("button", /^Huila, 8 kg, Done/);
+  await key("ArrowDown");
+  await key("ArrowDown");
+  await key("Enter");
+  await focus("button", /^Huila\s*8 kg\s*Done/);
   await focus("region", "Monday's roasts");
   await key("ContextMenu");
   await press("menuitem", "Add a batch");

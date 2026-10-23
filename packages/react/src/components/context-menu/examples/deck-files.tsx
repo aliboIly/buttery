@@ -53,7 +53,7 @@ export function DeckFiles(): ReactElement {
       <Text variant="caption">{`${String(decks.length)} decks · ${opened}`}</Text>
       <Stack gap={1} role="list" aria-label="Decks">
         {decks.map((deck) => (
-          <div key={deck.id} role="listitem">
+          <Stack key={deck.id} role="listitem">
             <ContextMenu>
               <ContextMenu.Trigger asChild>
                 <Surface asChild level="card" padX={3} padY={2} radius="md">
@@ -64,7 +64,6 @@ export function DeckFiles(): ReactElement {
                         files.current.delete(deck.id);
                       };
                     }}
-                    aria-label={`${deck.name}, ${deck.folder}`}
                     onClick={() => {
                       setOpened(`Opened ${deck.name}`);
                     }}
@@ -132,7 +131,7 @@ export function DeckFiles(): ReactElement {
                 </ContextMenu.Item>
               </ContextMenu.Content>
             </ContextMenu>
-          </div>
+          </Stack>
         ))}
       </Stack>
     </Stack>
@@ -142,17 +141,21 @@ export function DeckFiles(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ focus, key, press, see }) => {
-  await focus("button", /^Fall wholesale pitch,/);
+  await focus("button", /^Fall wholesale pitch\s*Pitches$/);
   await key("ContextMenu");
   await press("menuitem", "Duplicate");
   await see("4 decks · No deck open");
   await see("Fall wholesale pitch copy");
-  await focus("button", /^Café price list,/);
+  await focus("button", /^Café price list\s*Price lists$/);
   await key("ContextMenu");
-  await press("menuitem", "Move to");
-  await press("menuitemradio", "Archive");
+  await key("ArrowDown");
+  await key("ArrowDown");
+  await key("ArrowRight");
+  await key("ArrowDown");
+  await key("ArrowDown");
+  await key("Enter");
   await see("Archive");
-  await focus("button", /^Tasting day plan,/);
+  await focus("button", /^Tasting day plan\s*Pitches$/);
   await key("ContextMenu");
   await press("menuitem", "Open");
   await see("4 decks · Opened Tasting day plan");

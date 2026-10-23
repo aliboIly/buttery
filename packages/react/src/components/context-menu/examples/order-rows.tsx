@@ -1,7 +1,7 @@
 import { Receipt, Undo2 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Pressable, Stack, Surface, Text } from "@buttery/core";
+import { Grid, Inline, Pressable, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ContextMenu, StatusBadge } from "@buttery/react";
 
@@ -18,7 +18,7 @@ const FIRST_ORDERS: readonly Order[] = [
   { number: 1039, cafe: "Northside Bakery", total: "$238.00", paid: false },
 ];
 
-/** Wholesale orders as rows, each with its own menu: whether it's paid is kept in state, shown on the row and flipped from the menu or with P. */
+/** Wholesale orders as table rows, each with its own menu: whether it's paid is kept in state, shown on the row and flipped from the menu or with P. */
 export function OrderRows(): ReactElement {
   const [orders, setOrders] = useState<readonly Order[]>(FIRST_ORDERS);
   const [note, setNote] = useState(
@@ -36,34 +36,31 @@ export function OrderRows(): ReactElement {
       <Text variant="caption">{note}</Text>
       <Stack gap={1} role="list" aria-label="Orders">
         {orders.map((order) => (
-          <div key={order.number} role="listitem">
+          <Stack key={order.number} role="listitem">
             <ContextMenu>
               <ContextMenu.Trigger asChild>
                 <Surface asChild level="card" padX={4} padY={2} radius="md">
                   <Pressable
-                    aria-label={`Order ${String(order.number)}, ${order.cafe}, ${order.total}, ${order.paid ? "paid" : "unpaid"}`}
                     onClick={() => {
                       setNote(`Order ${String(order.number)} is open`);
                     }}
                   >
-                    <Inline gap={4} justify="between">
-                      <Inline gap={3}>
-                        <Text variant="label" tabular>
-                          {String(order.number)}
-                        </Text>
-                        <Text variant="body" truncate>
-                          {order.cafe}
-                        </Text>
-                      </Inline>
-                      <Inline gap={3}>
-                        <Text variant="body" tabular>
-                          {order.total}
-                        </Text>
+                    <Grid columns={4} gap={3} align="center">
+                      <Text variant="label" tabular>
+                        {String(order.number)}
+                      </Text>
+                      <Text variant="body" truncate>
+                        {order.cafe}
+                      </Text>
+                      <Text variant="body" tabular>
+                        {order.total}
+                      </Text>
+                      <Inline justify="end">
                         <StatusBadge tone={order.paid ? "success" : "warning"}>
                           {order.paid ? "Paid" : "Unpaid"}
                         </StatusBadge>
                       </Inline>
-                    </Inline>
+                    </Grid>
                   </Pressable>
                 </Surface>
               </ContextMenu.Trigger>
@@ -101,7 +98,7 @@ export function OrderRows(): ReactElement {
                 </ContextMenu.Item>
               </ContextMenu.Content>
             </ContextMenu>
-          </div>
+          </Stack>
         ))}
       </Stack>
     </Stack>
@@ -111,13 +108,13 @@ export function OrderRows(): ReactElement {
 export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ focus, key, press, see }) => {
-  await focus("button", /^Order 1042,/);
+  await focus("button", /^1042/);
   await key("ContextMenu");
   await press("menuitemcheckbox", "Paid");
-  await focus("button", /^Order 1042, .*, paid$/);
+  await focus("button", /^1042\b.*\bPaid$/);
   await key("p");
-  await focus("button", /^Order 1042, .*, unpaid$/);
-  await focus("button", /^Order 1041,/);
+  await focus("button", /^1042\b.*\bUnpaid$/);
+  await focus("button", /^1041/);
   await key("ContextMenu");
   await press("menuitem", "Refund");
   await see("Refunded $96.50 to Corner Table");
