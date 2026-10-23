@@ -627,6 +627,36 @@ describe("viewport fit", () => {
   });
 });
 
+describe("layering", () => {
+  const menus = (z: string): string =>
+    `<main style="display: flex; flex-direction: column; gap: 16px; padding: 16px">
+       <nav data-bt="MorphMenu" data-testid="menu" style="position: relative; z-index: ${z}; block-size: 40px">
+         <button type="button" style="block-size: var(--bt-h-sm)">Product</button>
+         <div data-bt-part="panel" data-bt-float style="position: absolute; inset-block-start: 0; inset-inline-start: 0; z-index: var(--bt-z-behind); inline-size: 240px">
+           <div data-bt-part="reach" style="block-size: 48px"></div>
+           <div data-bt-part="body" data-testid="card" style="block-size: 160px; border-radius: 12px; background: white">Slides</div>
+         </div>
+       </nav>
+       <nav data-bt="MorphMenu" data-testid="next" style="position: relative; z-index: var(--bt-z-raised)">
+         <button type="button" style="block-size: var(--bt-h-sm)">Support</button>
+       </nav>
+     </main>`;
+
+  it("flags page content drawn over a floating surface that opens over it", () => {
+    expect(check(menus("var(--bt-z-raised)"), ["layering"])).toEqual([
+      expect.objectContaining({
+        rule: "layering",
+        a: '[data-testid="next"]',
+        b: '[data-testid="card"]',
+      }),
+    ]);
+  });
+
+  it("passes a floating surface lifted over what follows it, and leaves the strip it doesn't draw alone", () => {
+    expect(check(menus("var(--bt-z-floating)"), ["layering"])).toEqual([]);
+  });
+});
+
 describe("moved", () => {
   it("reports buttery elements that shifted, once per moving group, and skips allowed ones", () => {
     document.body.innerHTML = `

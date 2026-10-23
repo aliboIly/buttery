@@ -1195,6 +1195,79 @@ export function createLayoutToolkit(): LayoutToolkit {
           fix: "Use a z token, such as var(--bt-z-dropdown), or render the element in a Layer, which picks the band for you.",
         });
       }
+
+      for (const float of document.querySelectorAll("[data-bt-float]")) {
+        if (isTooling(float) || !isVisible(float)) continue;
+        const owner = float.parentElement?.closest("[data-bt]") ?? null;
+        const painted = [float, ...float.querySelectorAll("*")].filter(
+          (element) =>
+            isVisible(element) &&
+            isPainted(element) &&
+            styleOf(element).pointerEvents !== "none",
+        );
+        const covering = new Map<Element, Element>();
+        for (const surface of painted) {
+          if (
+            painted.some(
+              (other) => other !== surface && other.contains(surface),
+            )
+          )
+            continue;
+          const box = visibleBox(
+            surface,
+            toBox(surface.getBoundingClientRect()),
+          );
+          if (!box) continue;
+          const style = styleOf(surface);
+          // Hit tests miss a surface's rounded corners, so the samples stay inside them.
+          const inset = Math.max(
+            2,
+            ...[
+              style.borderTopLeftRadius,
+              style.borderTopRightRadius,
+              style.borderBottomRightRadius,
+              style.borderBottomLeftRadius,
+            ].map((radius) => Number.parseFloat(radius) || 0),
+          );
+          const left = Math.max(box.left + inset, 0);
+          const right = Math.min(box.right - inset, viewportWidth);
+          const top = Math.max(box.top + inset, 0);
+          const bottom = Math.min(box.bottom - inset, viewportHeight);
+          if (right <= left || bottom <= top) continue;
+          const step = Math.max(
+            8,
+            Math.sqrt(((right - left) * (bottom - top)) / 4000),
+          );
+          for (let y = top + step / 2; y < bottom; y += step) {
+            for (let x = left + step / 2; x < right; x += step) {
+              const hit = document.elementFromPoint(x, y);
+              if (
+                !hit ||
+                hit === html ||
+                hit === document.body ||
+                float.contains(hit) ||
+                owner?.contains(hit) === true ||
+                isTooling(hit) ||
+                layerOf(hit) !== null
+              ) {
+                continue;
+              }
+              const culprit = hit.closest("[data-bt], [data-bt-part]") ?? hit;
+              if (!covering.has(culprit)) covering.set(culprit, surface);
+            }
+          }
+        }
+        for (const [culprit, surface] of covering) {
+          const under = selectorFor(surface);
+          report({
+            rule: "layering",
+            a: selectorFor(culprit),
+            b: under,
+            message: `draws over ${under}, a floating surface that should cover it`,
+            fix: "While the surface is out, lift the component it opens from over what follows it with a z token, such as var(--bt-z-floating), as MorphMenu and NavBar do.",
+          });
+        }
+      }
     }
 
     if (enabled.has("emphasis")) {
