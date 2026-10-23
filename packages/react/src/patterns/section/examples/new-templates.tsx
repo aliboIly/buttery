@@ -26,7 +26,7 @@ const TEMPLATES = [
 ] as const;
 
 /** A templates page's band: a heading over this week's three new templates, each added to the library from its card. */
-export function WeeklyRoasts(): ReactElement {
+export function NewTemplates(): ReactElement {
   const [added, setAdded] = useState(0);
   return (
     <Page>

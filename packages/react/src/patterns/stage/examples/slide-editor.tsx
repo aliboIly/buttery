@@ -15,7 +15,7 @@ const SWATCHES: readonly Swatch[] = BACKGROUNDS.map((preset) => ({
 }));
 
 /** A slide editor's preview: a title field and background swatches, an inspector's width, change what the canvas shows. */
-export function CardEditor(): ReactElement {
+export function SlideEditor(): ReactElement {
   const [title, setTitle] = useState("Spring launch");
   const [background, setBackground] = useState("lilac");
   const preset = BACKGROUNDS.find((candidate) => candidate.id === background);

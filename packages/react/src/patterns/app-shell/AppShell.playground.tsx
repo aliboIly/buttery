@@ -33,7 +33,7 @@ function Editor(): ReactElement {
   return (
     <div style={{ blockSize: "calc(var(--bt-bento-row) * 2)" }}>
       <AppShell
-        inspectorLabel="Card settings"
+        inspectorLabel="Gift card settings"
         header={
           <HeaderBar title="Gift card for Rosa">
             <HeaderBar.Actions>
@@ -46,7 +46,7 @@ function Editor(): ReactElement {
           </HeaderBar>
         }
         inspector={
-          <Inspector label="Card settings">
+          <Inspector label="Gift card settings">
             <Inspector.Section
               title="Message"
               resettable={size !== 80}

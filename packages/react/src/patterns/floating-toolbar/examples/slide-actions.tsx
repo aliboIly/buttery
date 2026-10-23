@@ -5,7 +5,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { FloatingToolbar } from "@buttery/react";
 
 /** Actions under a slide while it's picked: press the slide to pick it, and Done to put them away. */
-export function CardActions(): ReactElement {
+export function SlideActions(): ReactElement {
   const slide = useRef<HTMLButtonElement>(null);
   const [picked, setPicked] = useState(false);
   const [copies, setCopies] = useState(0);

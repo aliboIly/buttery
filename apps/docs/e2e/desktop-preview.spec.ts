@@ -54,7 +54,7 @@ test("an example that keeps itself narrower than its frame isn't drawn smaller",
   await page.goto("/patterns/app-shell");
   const phone = exampleStage(page, "appshell-phone-sheet-example");
   await expect(phone.locator("[data-bt-preview]")).toHaveCount(0);
-  const open = phone.getByRole("button", { name: "Adjust card" });
+  const open = phone.getByRole("button", { name: "Edit gift card" });
   await expect(open).toBeVisible();
   expect((await open.boundingBox())?.height).toBeGreaterThanOrEqual(28);
 });

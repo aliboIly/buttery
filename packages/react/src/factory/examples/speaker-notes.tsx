@@ -5,7 +5,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, buttery } from "@buttery/react";
 
 /** Each note is one element given a card surface, padding and a column, rising in as it mounts and lifting on hover. */
-export function TastingNotes(): ReactElement {
+export function SpeakerNotes(): ReactElement {
   const [notes, setNotes] = useState<readonly string[]>([]);
   return (
     <Stack gap={3}>

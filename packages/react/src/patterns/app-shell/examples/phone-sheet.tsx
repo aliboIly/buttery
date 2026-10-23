@@ -23,14 +23,14 @@ export function PhoneSheet(): ReactElement {
       }}
     >
       <AppShell
-        inspectorLabel="Card settings"
-        openInspectorLabel="Adjust card"
+        inspectorLabel="Gift card settings"
+        openInspectorLabel="Edit gift card"
         open={open}
         onOpenChange={setOpen}
         header={<HeaderBar title="Gift card for Theo" />}
         inspector={
           <Inspector
-            label="Card settings"
+            label="Gift card settings"
             footer={
               <Inspector.Footer>
                 <Button
@@ -74,7 +74,7 @@ export function PhoneSheet(): ReactElement {
 export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Adjust card");
+  await press("button", "Edit gift card");
   await press("switch", "Show the amount");
   await press("button", "Done");
   await see("$40 of Halfmoon coffee");

@@ -8,7 +8,7 @@ import { Stage } from "@buttery/react";
 const BACKGROUND = gradients.find((preset) => preset.id === "peach");
 
 /** A slide preview at its output size, with the canvas exposed for a toolbar to anchor to. */
-export function CardPreview(): ReactElement {
+export function SlidePreview(): ReactElement {
   const canvas = useRef<HTMLDivElement>(null);
   return (
     <div style={{ blockSize: "var(--bt-bento-row)", display: "grid" }}>

@@ -9,7 +9,7 @@ const THEMES = ["Plain", "Paper", "Ink"] as const;
 type Theme = (typeof THEMES)[number];
 
 /** An opening band whose visual is a slide to try: pick a theme under it and the slide takes it. */
-export function HeroWithALiveCard(): ReactElement {
+export function HeroWithALiveSlide(): ReactElement {
   const [theme, setTheme] = useState<Theme>("Paper");
   return (
     <SplitHero

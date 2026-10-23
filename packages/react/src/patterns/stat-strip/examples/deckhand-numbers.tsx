@@ -3,7 +3,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Stat, StatStrip } from "@buttery/react";
 
 /** Four numbers in equal columns, each counting up once as the strip comes into view. */
-export function RoasteryNumbers(): ReactElement {
+export function DeckhandNumbers(): ReactElement {
   return (
     <StatStrip>
       <Stat value={38} label="templates to start from" />

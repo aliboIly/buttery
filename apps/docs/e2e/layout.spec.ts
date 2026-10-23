@@ -415,10 +415,12 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "open the inspector sheet on the narrow example",
       run: async (page: Page) => {
         await page
-          .getByRole("button", { name: "Adjust card", exact: true })
+          .getByRole("button", { name: "Edit gift card", exact: true })
           .first()
           .click();
-        await page.getByRole("dialog", { name: "Card settings" }).waitFor();
+        await page
+          .getByRole("dialog", { name: "Gift card settings" })
+          .waitFor();
       },
     },
   ],

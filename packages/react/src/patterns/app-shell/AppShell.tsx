@@ -54,7 +54,7 @@ export interface AppShellInspectorProps extends Omit<
   readonly header: ReactNode;
   /** The settings beside the work area, such as an `Inspector`. On narrow screens it opens as a sheet. */
   readonly inspector: ReactNode;
-  /** Names the inspector's sheet on narrow screens, such as "Card settings". */
+  /** Names the inspector's sheet on narrow screens, such as "Gift card settings". */
   readonly inspectorLabel: string;
   /** The button that opens the sheet on narrow screens. Defaults to `"Edit"`. */
   readonly openInspectorLabel?: string | undefined;
@@ -537,7 +537,7 @@ function SidebarShell({
  * inside it arrive instantly, as app chrome does.
  *
  * @example
- * <AppShell header={<HeaderBar title="Gift card for Rosa" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">
+ * <AppShell header={<HeaderBar title="Gift card for Rosa" />} inspector={<Inspector label="Gift card settings">…</Inspector>} inspectorLabel="Gift card settings">
  *   <Stage label="Gift card preview" size={size}>…</Stage>
  * </AppShell>
  * <AppShell layout="sidebar" sidebar={<Sidebar label="Main">…</Sidebar>} topBar={<TopBar />}>
