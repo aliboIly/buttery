@@ -9,9 +9,13 @@ import type {
   GetPromptResult,
   ReadResourceResult,
 } from "@modelcontextprotocol/server";
+import { CHECK_WIDTHS, CheckRequestError, checkLayout } from "./check.ts";
+import type { CheckReport, CheckWidth } from "./check.ts";
 import { CALL_BUDGET, entryText, fitted, resolve } from "./get.ts";
 import type { Detail } from "./get.ts";
 import type { Knowledge, LoadedKnowledge } from "./knowledge.ts";
+import { DIAGNOSTIC_LIMIT, LintRequestError, lint } from "./lint.ts";
+import type { LintReport } from "./lint.ts";
 import { SEARCH_KINDS } from "./search.ts";
 import type { SearchKind, Searcher } from "./search.ts";
 import { suggestionFor } from "./suggest.ts";
@@ -24,6 +28,8 @@ export interface ServerSetup {
   readonly projectRoot: string | null;
   /** The server's own version, as published. */
   readonly serverVersion: string;
+  /** Origins besides this machine's that `buttery_check_layout` may open, from `BUTTERY_MCP_ALLOW_URLS`. */
+  readonly allowedOrigins: readonly string[];
 }
 
 const HOUR = 3_600_000;
@@ -212,6 +218,221 @@ function registerGet(server: McpServer, setup: ServerSetup): void {
           ...(missing.length === 0 ? [] : ["", ...missing]),
         ].join("\n"),
       );
+    },
+  );
+}
+
+interface LintArgs {
+  readonly files?: readonly string[];
+  readonly code?: string;
+  readonly language?: "tsx" | "css";
+}
+
+interface CheckArgs {
+  readonly url: string;
+  readonly viewports?: readonly CheckWidth[];
+  readonly themes?: readonly ("light" | "dark")[];
+  readonly engine?: "chromium" | "webkit";
+}
+
+const DIAGNOSTIC_SCHEMA = {
+  type: "object",
+  properties: {
+    file: { type: "string" },
+    line: { type: "integer" },
+    column: { type: "integer" },
+    rule: { type: "string" },
+    severity: { type: "string", enum: ["error", "warning"] },
+    message: { type: "string" },
+    fix: { type: "string" },
+    docs: { type: "string" },
+  },
+  required: [
+    "file",
+    "line",
+    "column",
+    "rule",
+    "severity",
+    "message",
+    "fix",
+    "docs",
+  ],
+} as const;
+
+const LINT_REPORT_SCHEMA = {
+  type: "object",
+  properties: {
+    summary: {
+      type: "object",
+      properties: {
+        files: { type: "integer" },
+        errors: { type: "integer" },
+        warnings: { type: "integer" },
+        notes: { type: "array", items: { type: "string" } },
+      },
+      required: ["files", "errors", "warnings", "notes"],
+    },
+    diagnostics: { type: "array", items: DIAGNOSTIC_SCHEMA },
+    truncated: { type: "boolean" },
+  },
+  required: ["summary", "diagnostics", "truncated"],
+} as const;
+
+const CHECK_REPORT_SCHEMA = {
+  type: "object",
+  properties: {
+    summary: {
+      type: "object",
+      properties: {
+        url: { type: "string" },
+        conditions: { type: "integer" },
+        violations: { type: "integer" },
+        byRule: { type: "object", additionalProperties: { type: "integer" } },
+      },
+      required: ["url", "conditions", "violations", "byRule"],
+    },
+    violations: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          rule: { type: "string" },
+          a: { type: "string" },
+          b: { type: ["string", "null"] },
+          message: { type: "string" },
+          fix: { type: "string" },
+          conditions: { type: "array", items: { type: "string" } },
+        },
+        required: ["rule", "a", "b", "message", "fix", "conditions"],
+      },
+    },
+    truncated: { type: "boolean" },
+  },
+  required: ["summary", "violations", "truncated"],
+} as const;
+
+function report(content: LintReport | CheckReport): CallToolResult {
+  return {
+    content: [{ type: "text", text: JSON.stringify(content) }],
+    structuredContent: { ...content },
+  };
+}
+
+function registerLint(server: McpServer, setup: ServerSetup): void {
+  server.registerTool(
+    "buttery_lint",
+    {
+      title: "Lint with buttery's rules",
+      description: `Check files in the project, or a snippet, against buttery's rules: raw colors, sizes and z-indexes, margins and positioning, layout animations, and literal prop values a component doesn't take (gap="16px" comes back as gap={4}). Runs the project's ESLint and stylelint with buttery's configs, and says how to set them up if they're missing. Each problem comes with its fix. Call it after editing UI, on the files you changed. Returns at most ${String(DIAGNOSTIC_LIMIT)} problems as JSON.`,
+      inputSchema: fromJsonSchema<LintArgs>({
+        type: "object",
+        properties: {
+          files: {
+            type: "array",
+            items: { type: "string" },
+            minItems: 1,
+            maxItems: 50,
+            description:
+              'Paths or globs from the project root, such as ["src/pages/Settings.tsx"] or ["src/**/*.css"]. Give files or code, not both.',
+          },
+          code: {
+            type: "string",
+            maxLength: 20_000,
+            description:
+              "A snippet to check instead of files: a component in TSX, or CSS with language set to css.",
+          },
+          language: {
+            type: "string",
+            enum: ["tsx", "css"],
+            description: "What code is written in, tsx if left out.",
+          },
+        },
+        additionalProperties: false,
+      }),
+      outputSchema: fromJsonSchema<LintReport>(LINT_REPORT_SCHEMA),
+      annotations: { title: "Lint with buttery's rules", ...READ_ONLY },
+    },
+    async ({ files, code, language }) => {
+      if ((files === undefined) === (code === undefined)) {
+        return failure(
+          'Give files or code, one of them. Fix: buttery_lint({"files":["src/App.tsx"]}) or buttery_lint({"code":"<Stack gap={4}>…</Stack>"}).',
+        );
+      }
+      try {
+        return report(
+          await lint(setup.loaded.knowledge, setup.projectRoot, {
+            files,
+            code,
+            language,
+          }),
+        );
+      } catch (error) {
+        if (error instanceof LintRequestError) return failure(error.message);
+        throw error;
+      }
+    },
+  );
+}
+
+function registerCheck(server: McpServer, setup: ServerSetup): void {
+  server.registerTool(
+    "buttery_check_layout",
+    {
+      title: "Check a page's layout",
+      description:
+        "Open a page of the running app and run buttery's layout checks on it: overlap, overflow, text crowding and wrapping, sizes off the scale, small targets, controls out of line, contrast and the rest, at each width and theme asked for. Each problem comes once, with the selector, a fix and the conditions it showed in. Needs the app running locally and @playwright/test with @butteryui/test in the project; it says how to install what's missing. Call it after a change looks done.",
+      inputSchema: fromJsonSchema<CheckArgs>({
+        type: "object",
+        properties: {
+          url: {
+            type: "string",
+            description:
+              'The page to check, as the dev server serves it, such as "http://localhost:5173/settings".',
+          },
+          viewports: {
+            type: "array",
+            items: { type: "integer", enum: [...CHECK_WIDTHS] },
+            minItems: 1,
+            maxItems: 6,
+            description: "Widths to check at, 390 and 1280 if left out.",
+          },
+          themes: {
+            type: "array",
+            items: { type: "string", enum: ["light", "dark"] },
+            minItems: 1,
+            maxItems: 2,
+            description: "Themes to check in, light if left out.",
+          },
+          engine: {
+            type: "string",
+            enum: ["chromium", "webkit"],
+            description:
+              "The browser engine, chromium if left out; webkit is closest to a desktop app on macOS.",
+          },
+        },
+        required: ["url"],
+        additionalProperties: false,
+      }),
+      outputSchema: fromJsonSchema<CheckReport>(CHECK_REPORT_SCHEMA),
+      annotations: {
+        title: "Check a page's layout",
+        ...READ_ONLY,
+        openWorldHint: true,
+      },
+    },
+    async ({ url, viewports, themes, engine }) => {
+      try {
+        return report(
+          await checkLayout(
+            setup.projectRoot,
+            { url, viewports, themes, engine },
+            setup.allowedOrigins,
+          ),
+        );
+      } catch (error) {
+        if (error instanceof CheckRequestError) return failure(error.message);
+        throw error;
+      }
     },
   );
 }
@@ -453,6 +674,8 @@ export function createButteryServer(setup: ServerSetup): McpServer {
   );
   registerSearch(server, setup);
   registerGet(server, setup);
+  registerLint(server, setup);
+  registerCheck(server, setup);
   registerResources(server, setup);
   registerPrompts(server, setup);
   return server;
