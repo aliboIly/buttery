@@ -1,7 +1,6 @@
 @layer bt.patterns {
   .bt-catalog-page {
     --bt-catalog-page-filters: 220px;
-    --bt-catalog-page-media: 48px;
     --bt-catalog-page-hit: 24px;
   }
 
@@ -87,44 +86,6 @@
   @container bt-catalog-items (width >= 560px) {
     .bt-catalog-page [data-bt-part="catalog-page-items"] {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  .bt-catalog-page [data-bt-part="catalog-page-item"] {
-    display: flex;
-    gap: var(--bt-space-4);
-    min-inline-size: 0;
-  }
-
-  .bt-catalog-page [data-bt-part="catalog-page-media"] {
-    display: grid;
-    flex: none;
-    place-items: center;
-    inline-size: var(--bt-catalog-page-media);
-    block-size: var(--bt-catalog-page-media);
-  }
-
-  .bt-catalog-page [data-bt-part="catalog-page-item-text"] {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--bt-space-2);
-    min-inline-size: 0;
-  }
-
-  .bt-catalog-page [data-bt-part="item-title"] {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: var(--bt-catalog-page-hit);
-    border-radius: var(--bt-r-xs);
-    color: var(--bt-primary);
-    text-decoration: none;
-  }
-
-  @media (hover: hover) {
-    .bt-catalog-page [data-bt-part="item-title"]:hover {
-      color: var(--bt-primary-hover);
     }
   }
 

@@ -249,7 +249,7 @@ describe("CatalogPage", () => {
     expect(onNavigate).not.toHaveBeenCalled();
   });
 
-  it("passes each part its ref, class and other props", () => {
+  it("passes each part its ref, class and other props, an item's class after the card's", () => {
     const refs = {
       categories: createRef<HTMLElement>(),
       group: createRef<HTMLElement>(),
@@ -294,7 +294,9 @@ describe("CatalogPage", () => {
     );
     for (const [name, ref] of Object.entries(refs)) {
       expect(ref.current).toBe(screen.getByTestId(name));
-      expect(ref.current?.className).toBe("custom");
+      expect(ref.current?.className).toBe(
+        name === "item" ? "bt-catalog-card custom" : "custom",
+      );
     }
   });
 });

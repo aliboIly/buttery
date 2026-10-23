@@ -8,6 +8,12 @@ import type {
 } from "react";
 import { AppPage } from "../app-page/AppPage.tsx";
 import type { AppPageProps } from "../app-page/AppPage.tsx";
+import { Catalog } from "../catalog/Catalog.tsx";
+import type {
+  CatalogCardProps,
+  CatalogCardVariant,
+  CatalogMediaPosition,
+} from "../catalog/Catalog.tsx";
 import { PageHeader } from "../page-header/PageHeader.tsx";
 
 /** Props for `CatalogPage`. */
@@ -212,10 +218,18 @@ export function CatalogPageSection({
   );
 }
 
-/** Props for `CatalogPage.Item`. */
+/** Props for `CatalogPage.Item`: a `Catalog.Card`'s, with a link to the item's page, an offer and tags. */
 export interface CatalogPageItemProps extends Omit<
-  ComponentPropsWithRef<"article">,
-  "title" | "children"
+  CatalogCardProps,
+  | "title"
+  | "href"
+  | "description"
+  | "detail"
+  | "open"
+  | "defaultOpen"
+  | "onOpenChange"
+  | "closeLabel"
+  | "children"
 > {
   /** The item's name, a link in `primary` to its page. */
   readonly title: string;
@@ -229,50 +243,32 @@ export interface CatalogPageItemProps extends Omit<
   readonly media?: ReactNode;
   /** Its `TagChip`s, under the rest. */
   readonly tags?: ReactNode;
-  /** Runs as its link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
-  readonly onNavigate?:
-    ((href: string, event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
+  /** How it draws its surface, as a `Catalog.Card` does. Defaults to `"plain"`. */
+  readonly variant?: CatalogCardVariant | undefined;
+  /** Where its media sits, as on a `Catalog.Card`. Defaults to `"start"`. */
+  readonly mediaPosition?: CatalogMediaPosition | undefined;
 }
 
-/** One thing in the catalog: its tile, its name as a link, what it is, its offer and its tags. */
+/**
+ * One thing in the catalog: a plain `Catalog.Card` with its tile at the start, its name as a link, what it is,
+ * its offer and its tags. It takes the card's `variant`, `mediaPosition` and `size` for another look.
+ */
 export function CatalogPageItem({
-  title,
-  href,
-  description,
   note,
-  media,
   tags,
-  onNavigate,
+  variant = "plain",
+  mediaPosition = "start",
   ...rest
 }: CatalogPageItemProps): ReactElement {
   return (
-    <article {...rest} data-bt-part="catalog-page-item">
-      {hasContent(media) ? (
-        <div data-bt-part="catalog-page-media">{media}</div>
-      ) : null}
-      <div data-bt-part="catalog-page-item-text">
-        <a
-          href={href}
-          className="bt-text bt-focus"
-          data-role="label"
-          data-bt-part="item-title"
-          onClick={(event) => {
-            if (!opensElsewhere(event)) onNavigate?.(href, event);
-          }}
-        >
-          {title}
-        </a>
-        {description === undefined ? null : (
-          <Text variant="body-sm">{description}</Text>
-        )}
-        {note === undefined ? null : (
-          <Text variant="body-sm" data-bt-part="catalog-page-note">
-            {note}
-          </Text>
-        )}
-        {hasContent(tags) ? <div data-bt-part="tags">{tags}</div> : null}
-      </div>
-    </article>
+    <Catalog.Card {...rest} variant={variant} mediaPosition={mediaPosition}>
+      {note === undefined ? null : (
+        <Text variant="body-sm" data-bt-part="catalog-page-note">
+          {note}
+        </Text>
+      )}
+      {hasContent(tags) ? <div data-bt-part="tags">{tags}</div> : null}
+    </Catalog.Card>
   );
 }
 
