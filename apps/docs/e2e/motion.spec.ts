@@ -439,6 +439,48 @@ test.describe("full motion", () => {
     expectAtRest(exit);
   });
 
+  test("a context menu grows in from its corner on spring.snappy and leaves with a dur-fast fade", async ({
+    page,
+  }) => {
+    const menu = '[data-bt="ContextMenu"]';
+    await page.goto("/components/context-menu?chrome=0&motion=full");
+    const card = page
+      .getByRole("region", { name: "Café price list", exact: true })
+      .first();
+    await card.focus();
+    await startSampling(page, menu);
+    await page.keyboard.press("Shift+F10");
+    const enter = await finishSampling(page, 700);
+    const fading = expectTween(
+      "context menu fading in",
+      progress(trace(enter, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.base,
+    );
+    const growing = expectSpring(
+      "context menu growing",
+      progress(
+        trace(enter, (reading) => reading.scale),
+        ENTER_SCALE,
+        1,
+      ),
+      "snappy",
+    );
+    expect(Math.abs(growing.start - fading.start)).toBeLessThanOrEqual(3);
+    await startSampling(page, menu);
+    await page.keyboard.press("Escape");
+    const exit = await finishSampling(page, 400);
+    await expect(card).toBeFocused();
+    const leaving = expectTween(
+      "context menu fading out",
+      progress(trace(exit, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+    expectGoneSoonAfter(exit, leaving.start + DURATIONS.fast);
+    expectAtRest(exit);
+  });
+
   test("a dialog fades in over dur-fast growing from 97%, over a scrim that fades with it, and both leave over dur-fast", async ({
     page,
   }) => {

@@ -156,6 +156,53 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     escape,
     { name: "open the view menu", run: press("View") },
   ],
+  "context-menu": [
+    {
+      name: "open a card's menu with a right-click",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page
+          .getByRole("region", { name: "Café price list" })
+          .click({ button: "right" });
+        await page.getByRole("menu", { name: "Café price list" }).waitFor();
+      },
+    },
+    escape,
+    {
+      name: "open a submenu from the keyboard",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page
+          .getByRole("region", { name: "Slide 3: The coffees on offer" })
+          .focus();
+        await page.keyboard.press("Shift+F10");
+        await page.keyboard.press("ArrowRight");
+        await page.getByRole("menu", { name: "New slide after" }).waitFor();
+      },
+    },
+    escape,
+    escape,
+    {
+      name: "open the menu with checkbox and radio items",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page.getByRole("region", { name: "Monday roasts" }).focus();
+        await page.keyboard.press("ContextMenu");
+        await page.getByRole("menu", { name: "Monday roasts" }).waitFor();
+      },
+    },
+    escape,
+    {
+      name: "open the menu with disabled items",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page
+          .getByRole("region", { name: "Archived price list" })
+          .click({ button: "right" });
+        await page.getByRole("menu", { name: "Archived price list" }).waitFor();
+      },
+    },
+  ],
   deckhand: [
     {
       name: "open the slide size list or the More menu",
@@ -173,6 +220,49 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     },
     escape,
     { name: "open the new slide menu", run: press("New slide") },
+    escape,
+    {
+      name: "open a thumbnail's menu with a right-click",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page
+          .getByRole("option", { name: /^Slide 2:/ })
+          .click({ button: "right" });
+        await page.getByRole("menu", { name: /^Slide 2:/ }).waitFor();
+      },
+    },
+    {
+      name: "open its New slide after submenu",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page
+          .getByRole("menuitem", { name: "New slide after", exact: true })
+          .focus();
+        await page.keyboard.press("ArrowRight");
+        await page.getByRole("menu", { name: "New slide after" }).waitFor();
+      },
+    },
+    escape,
+    escape,
+    {
+      name: "open the stage's menu from the keyboard",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page.getByRole("region", { name: "Current slide" }).focus();
+        await page.keyboard.press("Shift+F10");
+        await page.getByRole("menu", { name: "Current slide" }).waitFor();
+      },
+    },
+    {
+      name: "open its Look submenu",
+      acrossMatrix: true,
+      run: async (page: Page) => {
+        await page.getByRole("menuitem", { name: "Look", exact: true }).focus();
+        await page.keyboard.press("ArrowRight");
+        await page.getByRole("menu", { name: "Look" }).waitFor();
+      },
+    },
+    escape,
     escape,
     {
       name: "arrange the words, the docs pill rising above the toolbar",

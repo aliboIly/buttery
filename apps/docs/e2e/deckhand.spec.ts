@@ -674,6 +674,233 @@ test("present plays the deck full-window, moving with the keyboard and leaving w
   await expect(present).toBeFocused();
 });
 
+test("right-clicking a thumbnail picks it and opens its menu, whose Duplicate copies it after itself", async ({
+  page,
+}) => {
+  await open(page);
+  await slide(page, 3).click({ button: "right" });
+  await expect(slide(page, 3)).toHaveAttribute("aria-selected", "true");
+  const menu = page.getByRole("menu", {
+    name: "Slide 3: A week with Halfmoon",
+  });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("menuitem")).toHaveText([
+    "New slide after",
+    /^Duplicate/,
+    "Copy as image",
+    /^Move left/,
+    /^Move right/,
+    /^Delete/,
+  ]);
+  await menu.getByRole("menuitem", { name: "Duplicate" }).click();
+  await expect(page.getByRole("option")).toHaveCount(7);
+  await expect(slide(page, 4)).toHaveAccessibleName(
+    "Slide 4: A week with Halfmoon",
+  );
+  await expect(slide(page, 4)).toHaveAttribute("aria-selected", "true");
+  await expect(menu).toBeHidden();
+});
+
+test("the strip's menu opens with Shift+F10 at the picked thumbnail, and adds a slide of a layout after it", async ({
+  page,
+}) => {
+  await open(page);
+  await slide(page, 2).click();
+  await expect(strip(page)).toBeFocused();
+  await page.keyboard.press("Shift+F10");
+  const menu = page.getByRole("menu", {
+    name: "Slide 2: Roasted Monday, poured by Friday",
+  });
+  await expect(menu).toBeVisible();
+  const thumb = await slide(page, 2).boundingBox();
+  const box = await menu.boundingBox();
+  if (!thumb || !box) throw new Error("The menu or the thumbnail is missing.");
+  expect(Math.abs(box.x - (thumb.x + thumb.width / 2))).toBeLessThanOrEqual(4);
+  const add = menu.getByRole("menuitem", { name: "New slide after" });
+  await expect(add).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  const layouts = page.getByRole("menu", { name: "New slide after" });
+  await expect(
+    layouts.getByRole("menuitem", { name: "Title", exact: true }),
+  ).toBeFocused();
+  await page.keyboard.press("End");
+  await expect(layouts.getByRole("menuitem", { name: "Quote" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("option")).toHaveCount(7);
+  await expect(slide(page, 3)).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByTestId("stage-slide")).toHaveAttribute(
+    "data-layout",
+    "quote",
+  );
+  await expect(strip(page)).toBeFocused();
+});
+
+test("the shortcuts the strip's menu shows work on the focused strip", async ({
+  page,
+}) => {
+  await open(page);
+  await slide(page, 2).click();
+  await page.keyboard.press("ContextMenu");
+  const menu = page.getByRole("menu", { name: /^Slide 2:/ });
+  const duplicate = menu.getByRole("menuitem", { name: "Duplicate" });
+  const right = menu.getByRole("menuitem", { name: "Move right" });
+  const remove = menu.getByRole("menuitem", { name: "Delete" });
+  const apple = await page.evaluate(() =>
+    /Mac|iPhone|iPad/.test(navigator.userAgent),
+  );
+  await expect(duplicate).toHaveAttribute(
+    "aria-keyshortcuts",
+    apple ? "Meta+D" : "Control+D",
+  );
+  await expect(right).toHaveAttribute("aria-keyshortcuts", "Alt+ArrowRight");
+  await expect(remove).toHaveAttribute(
+    "aria-keyshortcuts",
+    apple ? "Backspace" : "Delete",
+  );
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+  await expect(strip(page)).toBeFocused();
+  await page.keyboard.press(apple ? "Meta+d" : "Control+d");
+  await expect(page.getByRole("option")).toHaveCount(7);
+  await expect(slide(page, 3)).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("Alt+ArrowRight");
+  await expect(slide(page, 4)).toHaveAccessibleName(
+    "Slide 4: Roasted Monday, poured by Friday",
+  );
+  await page.keyboard.press(apple ? "Backspace" : "Delete");
+  await expect(page.getByRole("option")).toHaveCount(6);
+});
+
+test("Move right and Delete from a thumbnail's menu move and delete it", async ({
+  page,
+}) => {
+  await open(page);
+  await slide(page, 1).click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Move right" }).click();
+  expect((await slideNames(page)).slice(0, 2)).toEqual([
+    "Slide 1: Roasted Monday, poured by Friday",
+    "Slide 2: Halfmoon Roastery for your café",
+  ]);
+  await slide(page, 1).click({ button: "right" });
+  await expect(
+    page.getByRole("menuitem", { name: "Move left" }),
+  ).toHaveAttribute("aria-disabled", "true");
+  await page.getByRole("menuitem", { name: "Delete" }).click();
+  await expect(page.getByRole("option")).toHaveCount(5);
+  await expect(slide(page, 1)).toHaveAccessibleName(
+    "Slide 1: Halfmoon Roastery for your café",
+  );
+});
+
+test("on a phone a thumbnail's menu moves the slide up and down a row of the grid", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/demos/deckhand?chrome=0");
+  await page.getByTestId("stage-slide").waitFor();
+  await slide(page, 1).click({ button: "right" });
+  const menu = page.getByRole("menu", { name: /^Slide 1:/ });
+  await expect(menu.getByRole("menuitem", { name: "Move up" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
+  const box = await menu.boundingBox();
+  if (!box) throw new Error("No menu.");
+  expect(box.x).toBeGreaterThanOrEqual(8);
+  expect(box.x + box.width).toBeLessThanOrEqual(390 - 8);
+  await menu.getByRole("menuitem", { name: "Move down" }).click();
+  await expect(slide(page, 3)).toHaveAccessibleName(
+    "Slide 3: Halfmoon Roastery for your café",
+  );
+  await expect(slide(page, 3)).toHaveAttribute("aria-selected", "true");
+});
+
+test("the stage's menu opens with the context-menu key on the focused stage and picks a layout", async ({
+  page,
+}) => {
+  await open(page);
+  const stage = page.getByRole("region", { name: "Current slide" });
+  await stage.focus();
+  await page.keyboard.press("ContextMenu");
+  const menu = page.getByRole("menu", { name: "Current slide" });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("menuitem").first()).toBeFocused();
+  const area = await stage.boundingBox();
+  const box = await menu.boundingBox();
+  if (!area || !box) throw new Error("The stage or its menu is missing.");
+  expect(Math.abs(box.y - (area.y + area.height / 2))).toBeLessThanOrEqual(4);
+  await menu.getByRole("menuitem", { name: "Layout" }).focus();
+  await page.keyboard.press("ArrowRight");
+  const layouts = page.getByRole("menu", { name: "Layout" });
+  await expect(
+    layouts.getByRole("menuitemradio", { name: "Title", exact: true }),
+  ).toHaveAttribute("aria-checked", "true");
+  await layouts.getByRole("menuitemradio", { name: "Big numbers" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("stage-slide")).toHaveAttribute(
+    "data-layout",
+    "numbers",
+  );
+  await expect(
+    page.getByRole("combobox", { name: /^Layout/ }),
+  ).toHaveAccessibleName("Layout, Big numbers");
+  await expect(stage).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("stage-slide")).toHaveAttribute(
+    "data-layout",
+    "numbers",
+  );
+});
+
+test("right-clicking words on the stage and choosing Edit text puts the cursor in their field", async ({
+  page,
+}) => {
+  await open(page);
+  await page
+    .locator('[data-testid="stage-slide"] [data-dh-field="subtitle"]')
+    .click({ button: "right" });
+  await page
+    .getByRole("menu", { name: "Current slide" })
+    .getByRole("menuitem", { name: "Edit text" })
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: "Subtitle", exact: true }),
+  ).toBeFocused();
+});
+
+test("the stage's menu arranges the words, sets the look and resets their place", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page);
+  const canvas = await page.locator(CANVAS).boundingBox();
+  if (!canvas) throw new Error("No canvas.");
+  const at = { x: canvas.x + canvas.width * 0.8, y: canvas.y + 40 };
+  await page.mouse.click(at.x, at.y, { button: "right" });
+  const menu = page.getByRole("menu", { name: "Current slide" });
+  await expect(
+    menu.getByRole("menuitem", { name: "Reset position" }),
+  ).toHaveAttribute("aria-disabled", "true");
+  await menu.getByRole("menuitemcheckbox", { name: "Arrange" }).click();
+  const toolbar = page.getByRole("toolbar", { name: "Arrange the words" });
+  await expect(toolbar).toBeVisible();
+  await position(page, "Top right").click();
+  await toolbar.getByRole("button", { name: "Done", exact: true }).click();
+  await expect(toolbar).toBeHidden();
+
+  await page.mouse.click(at.x, at.y, { button: "right" });
+  await menu.getByRole("menuitem", { name: "Look" }).click();
+  const look = page.getByRole("menu", { name: "Look" });
+  await look.getByRole("menuitemradio", { name: "Dark box" }).click();
+  await expect(
+    page.getByRole("radio", { name: "Dark", exact: true }),
+  ).toBeChecked();
+
+  await page.mouse.click(at.x, at.y, { button: "right" });
+  await menu.getByRole("menuitem", { name: "Reset position" }).click();
+  await expect(position(page, "Bottom left")).toBeChecked();
+});
+
 test("the tour opens by itself on the first visit, and not again once it's finished", async ({
   page,
 }) => {
