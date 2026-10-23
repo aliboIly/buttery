@@ -85,7 +85,7 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                Menu, FloatingLanes
 4. Components  Button, IconButton, SplitButton, SegmentedControl, Slider, ValueBadge, Chip,
                SwatchGrid, ColorDot, ColorPicker, TiltPad, AnchorGrid, Select, NumberField,
-               Tooltip, Dialog, Sheet, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti,
+               Tooltip, Dialog, Sheet, ContextMenu, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti,
                Field, TextField, PasswordField, TextArea, Checkbox, Switch, Callout,
                Accordion
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,
@@ -95,7 +95,7 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                SignInForm, SignUpForm, Faq
 ```
 
-Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, Select, Tooltip, Dialog, Sheet, Toaster, FloatingToolbar) are built on the layer primitives.
+Only the layer primitives, and a component's own `data-bt-part` internals, set `position`. The overlay components (Menu, ContextMenu, Select, Tooltip, Dialog, Sheet, Toaster, FloatingToolbar) are built on the layer primitives.
 
 Hosts that the root `ButteryProvider` mounts once take calls from anywhere through a module store: `toast(message, options)` shows a toast in the `Toaster` (in the `bottom-center` lane, three at most, `toast.success()`, `toast.warning()` and `toast.danger()` for a tone, `toast.dismiss(id?)` to close), and `celebrate(element?)` bursts confetti from the `Confetti` host. Without a host, `celebrate()` does nothing and `toast()` keeps its toast until one mounts; both log a development warning with the fix.
 
