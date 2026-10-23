@@ -122,6 +122,26 @@ test("the bar's bag links to the bag's page, opening it in a new tab with ⌘ or
   await expect(page).toHaveURL(/\/$/);
 });
 
+test("a middle click on the bar's bag opens the bag's page in a new tab, leaving the sheet shut", async ({
+  page,
+  context,
+  browserName,
+}) => {
+  test.skip(
+    browserName === "webkit",
+    "WebKit's automation opens no tab for a middle click on a link.",
+  );
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  const [tab] = await Promise.all([
+    context.waitForEvent("page"),
+    bagButton(page).click({ button: "middle" }),
+  ]);
+  await tab.waitForLoadState();
+  await expect(tab).toHaveURL(/\/bag$/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
 test("the bag's page changes what's in it and goes on to checkout, and the sheet's View bag opens it", async ({
   page,
 }) => {
