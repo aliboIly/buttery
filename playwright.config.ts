@@ -98,7 +98,8 @@ export default defineConfig({
         use: {
           ...browser.device,
           baseURL: `http://localhost:${String(testPort(app))}`,
-          // Tests open the apps as a returning visitor; the first-run tour has its own test that clears this.
+          // Tests open the apps as a returning visitor, signed in to the roastery; the first-run tour and the
+          // sign-in screen have their own tests that clear these.
           storageState: {
             cookies: [],
             origins: [
@@ -106,6 +107,7 @@ export default defineConfig({
                 origin: `http://localhost:${String(testPort(app))}`,
                 localStorage: [
                   { name: "buttery:onboarding:deckhand", value: "done" },
+                  { name: "roastery:session", value: '"rosa@halfmoon.coffee"' },
                 ],
               },
             ],

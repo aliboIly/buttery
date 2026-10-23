@@ -20,6 +20,7 @@ import {
 import {
   Bell,
   CircleHelp,
+  LogOut,
   Repeat,
   Settings,
   ShoppingBag,
@@ -51,6 +52,7 @@ import {
   helpSource,
   orderSource,
 } from "./search.ts";
+import { useSession } from "./session.ts";
 import { useInvites, usePickup } from "./shop-state.ts";
 import { STORAGE_PREFIX } from "./storage.ts";
 import "./roastery.css";
@@ -213,6 +215,7 @@ function NavBlocks({
 
 function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
   const link = useLink();
+  const [, setSession] = useSession();
   return (
     <Sidebar
       label="Halfmoon Roastery"
@@ -235,6 +238,14 @@ function RoasterySidebar({ place }: { readonly place: Place }): ReactElement {
           </Menu.Link>
           <Menu.Separator />
           <AccountMenu.User name="Rosa Delgado" />
+          <Menu.Item
+            icon={LogOut}
+            onSelect={() => {
+              setSession(null);
+            }}
+          >
+            Sign out
+          </Menu.Item>
         </AccountMenu>
       }
     >
