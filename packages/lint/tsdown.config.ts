@@ -6,6 +6,7 @@ export default defineConfig({
     eslint: "src/eslint/index.ts",
   },
   platform: "node",
+  fixedExtension: false,
   dts: true,
   sourcemap: true,
 });
