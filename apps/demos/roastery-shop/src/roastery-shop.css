@@ -458,48 +458,6 @@
   gap: var(--bt-space-3);
 }
 
-.shop-faq {
-  display: grid;
-  gap: var(--bt-space-4);
-  align-items: start;
-}
-
-@container bt-page (width >= 1024px) {
-  .shop-faq {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  }
-}
-
-.shop-question + .shop-question {
-  border-block-start: 1px solid var(--bt-border);
-}
-
-.shop-question-button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--bt-space-4);
-  inline-size: 100%;
-  padding: var(--bt-space-4) var(--bt-space-6);
-  border-radius: var(--bt-r-lg);
-  text-align: start;
-}
-
-.shop-chevron {
-  flex: none;
-  color: var(--bt-text-secondary);
-  transition: transform calc(var(--bt-dur-fast) * var(--bt-motion))
-    var(--bt-ease-standard);
-}
-
-.shop-question-button[aria-expanded="true"] .shop-chevron {
-  transform: rotate(180deg);
-}
-
-.shop-answer {
-  padding: 0 var(--bt-space-6) var(--bt-space-5);
-}
-
 .shop-letter {
   justify-self: center;
   inline-size: min(var(--bt-w-dialog), 100%);

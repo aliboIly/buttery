@@ -224,3 +224,39 @@ test("puts the page between the bars and the footer in a main landmark, which th
     main.getByRole("link", { name: "Shop the coffees" }),
   ).toBeFocused();
 });
+
+test("a question opened from the bar shows in its topic, the search finds answers in every topic, and a link to one opens it", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Learn", exact: true }).click();
+  await page.getByRole("link", { name: /^Storing coffee/ }).click();
+  const questions = page.locator("#questions");
+  await expect(
+    questions.getByRole("tab", { name: "Coffee and brewing" }),
+  ).toHaveAttribute("aria-selected", "true");
+  await expect(
+    questions.getByRole("button", { name: "How should I store my coffee?" }),
+  ).toHaveAttribute("aria-expanded", "true");
+
+  await questions
+    .getByRole("searchbox", { name: "Search questions" })
+    .fill("refund");
+  await expect(questions.getByRole("tablist")).toHaveCount(0);
+  await expect(
+    questions.getByRole("button", {
+      name: "What if I don't like a coffee? Orders and shipping",
+    }),
+  ).toBeVisible();
+
+  await page.goto("/#gift-subscriptions");
+  const gift = questions.getByRole("button", {
+    name: "How do gift subscriptions work?",
+  });
+  await expect(gift).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    questions.getByRole("searchbox", { name: "Search questions" }),
+  ).toHaveValue("");
+  await expect(gift).toBeInViewport();
+});

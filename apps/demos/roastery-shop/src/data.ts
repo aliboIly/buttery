@@ -343,54 +343,162 @@ export function isGuideId(value: unknown): value is GuideId {
   return GUIDES.some((guide) => guide.id === value);
 }
 
-/** A question customers ask, and the roastery's answer. */
+/** The topics the shop's questions are grouped in, in the order their tabs show. */
+export const QUESTION_GROUPS = [
+  { value: "orders", label: "Orders and shipping" },
+  { value: "subscriptions", label: "Subscriptions" },
+  { value: "coffee", label: "Coffee and brewing" },
+] as const;
+
+/** A topic the shop's questions are grouped in. */
+export type QuestionGroup = (typeof QUESTION_GROUPS)[number]["value"];
+
+/** A question customers ask, and the roastery's answer, in words the search reads. */
 export interface Question {
+  /** Its anchor on the page, so `#id` opens it. */
   readonly id: string;
+  readonly group: QuestionGroup;
   readonly question: string;
   readonly answer: string;
+  /** Other words people search for it by. */
+  readonly keywords?: string;
 }
 
 export const QUESTIONS: readonly Question[] = [
   {
     id: "arrival",
+    group: "orders",
     question: "When will my coffee arrive?",
     answer:
       "We roast Monday to Friday. Order by noon and your coffee is roasted the next morning and shipped that afternoon. Most orders arrive in two to four days anywhere in the US.",
+    keywords: "delivery when how long",
   },
   {
-    id: "shipping",
+    id: "shipping-cost",
+    group: "orders",
     question: "How much is shipping?",
     answer:
       "Standard shipping is $6, and free once your order reaches $40. Subscriptions always ship free. Next-day delivery is $14.",
+    keywords: "delivery price free",
   },
   {
-    id: "skip",
-    question: "Can I skip or pause a subscription?",
+    id: "ship-abroad",
+    group: "orders",
+    question: "Do you ship outside the US?",
     answer:
-      "Yes. Skip a delivery, change the coffee or pause from your account, up to the day before it roasts. Nothing is charged while it's paused.",
+      "Not yet. We ship to every state, including Alaska and Hawaii, where standard delivery takes a day or two longer.",
+    keywords: "international canada abroad",
   },
   {
-    id: "grind",
-    question: "Should I buy whole beans or ground coffee?",
+    id: "change-order",
+    group: "orders",
+    question: "Can I change or cancel an order?",
     answer:
-      "Whole beans stay fresh longest. If you don't have a grinder, choose your brewer and we grind for it the morning we roast.",
-  },
-  {
-    id: "storage",
-    question: "How should I store my coffee?",
-    answer:
-      "Keep the bag sealed in a cupboard, away from heat and light, and skip the fridge. Coffee tastes best from about four days to four weeks after its roast date.",
+      "Until noon the day before it roasts. Write to hello@halfmoon.example with your order number and we'll change the coffee, the grind or the address, or cancel it and refund you.",
+    keywords: "edit address",
   },
   {
     id: "returns",
+    group: "orders",
     question: "What if I don't like a coffee?",
     answer:
       "Tell us within 30 days, however much is left in the bag, and we'll send you a different coffee or give your money back.",
+    keywords: "refund return exchange money back",
   },
   {
     id: "wholesale",
+    group: "orders",
     question: "Do you sell to cafés and offices?",
     answer:
       "We do, in 5 lb bags delivered weekly around Portland. Write to wholesale@halfmoon.example and we'll set up a tasting.",
+    keywords: "wholesale bulk business",
+  },
+  {
+    id: "skip-delivery",
+    group: "subscriptions",
+    question: "Can I skip or pause a subscription?",
+    answer:
+      "Yes. Skip a delivery, change the coffee or pause from your account, up to the day before it roasts. Nothing is charged while it's paused.",
+    keywords: "holiday away",
+  },
+  {
+    id: "subscription-saving",
+    group: "subscriptions",
+    question: "How much does a subscription save?",
+    answer:
+      "Every bag in a subscription is 10% off, and every delivery ships free. A 12 oz bag of roaster's choice comes to $16.20.",
+    keywords: "discount price cost",
+  },
+  {
+    id: "delivery-frequency",
+    group: "subscriptions",
+    question: "How often can a subscription deliver?",
+    answer:
+      "Every week, every two weeks or every four weeks, with one, two or three bags each time. Change either from your account whenever you like.",
+    keywords: "schedule weekly",
+  },
+  {
+    id: "roasters-choice",
+    group: "subscriptions",
+    question: "What's roaster's choice?",
+    answer:
+      "A different coffee every delivery, picked by whoever's roasting that week. It's usually a harvest that has just landed, and it comes with a card on how we brew it.",
+    keywords: "surprise rotating",
+  },
+  {
+    id: "gift-subscriptions",
+    group: "subscriptions",
+    question: "How do gift subscriptions work?",
+    answer:
+      "Choose 3, 6 or 12 deliveries and pay for them up front. We email the person it's for when their first bag roasts, and it ends on its own, so nobody's charged later.",
+    keywords: "present birthday",
+  },
+  {
+    id: "cancel-subscription",
+    group: "subscriptions",
+    question: "Can I cancel at any time?",
+    answer:
+      "Yes, from your account. Nothing more is charged after the delivery that's already roasting.",
+    keywords: "stop end",
+  },
+  {
+    id: "grind",
+    group: "coffee",
+    question: "Should I buy whole beans or ground coffee?",
+    answer:
+      "Whole beans stay fresh longest. If you don't have a grinder, choose your brewer and we grind for it the morning we roast.",
+    keywords: "grinder ground",
+  },
+  {
+    id: "storage",
+    group: "coffee",
+    question: "How should I store my coffee?",
+    answer:
+      "Keep the bag sealed in a cupboard, away from heat and light, and skip the fridge. Coffee tastes best from about four days to four weeks after its roast date.",
+    keywords: "fresh freezer keep",
+  },
+  {
+    id: "espresso",
+    group: "coffee",
+    question: "Which coffee is best for espresso?",
+    answer:
+      "Cerrado, for a heavy, chocolatey shot, or Halfmoon House if you mostly drink it with milk. Choose Espresso as the grind and we'll grind it fine enough for your machine.",
+    keywords: "latte cappuccino machine",
+  },
+  {
+    id: "decaf",
+    group: "coffee",
+    question: "Do you sell decaf?",
+    answer:
+      "Not right now. We're tasting a few this winter and will add one when it's as good as the rest of the shelf.",
+    keywords: "caffeine free",
+  },
+  {
+    id: "sour-or-bitter",
+    group: "coffee",
+    question: "My coffee tastes sour or bitter. What should I change?",
+    answer:
+      "Sour usually means it brewed too fast, so grind a little finer. Bitter means it brewed too long, so go coarser. Each brew guide above gives a time to aim for.",
+    keywords: "taste weak strong extraction",
   },
 ];
