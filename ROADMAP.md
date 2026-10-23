@@ -12,7 +12,9 @@ Kept up to date as items finish.
 - In progress: an `Accordion` and an FAQ pattern, with the shop's questions rebuilt on them
 - In progress: a right-click `ContextMenu` that works from the keyboard, on Deckhand's slides
 - Up next in this phase: style options (`variant`, `size`, `layout`) for the main controls, badges and page patterns
-- Then the Phase 7 gate (`pnpm check` and the full layout matrix), the push, the GitHub releases, the docs on GitHub Pages and the phase report
+- Then the Phase 7 gate (`pnpm check` and the full layout matrix), `v0.9.0` and its release, and the phase report
+
+Done since the last update: the docs are live at https://aliboily.github.io/buttery/, deployed by each push to `main`, and `v0.1.0` to `v0.8.0` are published as GitHub releases.
 
 **Next**, in order:
 1. `@buttery/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
@@ -108,7 +110,7 @@ Kept up to date as items finish.
 - [x] Every written page laid out in those blocks, so none reads as a wall of text
 - [x] Deckhand, a slide editor, and the Halfmoon shop, the roastery's online store, replace Card Studio and its site as the editor and marketing demos
 - [ ] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
-- [ ] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
+- [x] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
 
 ## v1.0 — Developer and agent experience (Phase 8)
 > buttery on npm, a command line tool that starts, extends and checks apps, and an MCP server so coding agents can look components up instead of guessing.
