@@ -2936,3 +2936,55 @@ test.describe("Accordion on its docs page (MOTION_SPEC §3)", () => {
     );
   });
 });
+
+test.describe("Bento's variants on the marketing page", () => {
+  /** Marks the visual of the plain card in the variants demo for the sampler, and returns where to hover. */
+  async function plainVisual(
+    page: Page,
+    motion: "full" | "reduced",
+  ): Promise<{ readonly x: number; readonly y: number }> {
+    await installSampler(page);
+    await page.goto(`/patterns/marketing-page?chrome=0&motion=${motion}`);
+    const card = page.getByRole("article", {
+      name: "Present from any screen",
+    });
+    await card.evaluate((element) => {
+      element
+        .querySelector(':scope > [data-bt-part="visual"]')
+        ?.setAttribute("data-testid", "plain-visual");
+    });
+    return centerOf(card.locator(':scope > [data-bt-part="visual"]'));
+  }
+
+  test("hovering a plain card lifts its visual 2px over dur-fast, raising its shadow", async ({
+    page,
+  }) => {
+    const { x, y } = await plainVisual(page, "full");
+    await startSampling(page, testId("plain-visual"));
+    await page.mouse.move(x, y);
+    const run = await finishSampling(page, 300);
+    expect(transitionsOf(run, "translate")).toEqual([
+      [DURATIONS.fast, CSS_EASE_OUT],
+    ]);
+    expect(transitionsOf(run, "box-shadow")).toEqual([
+      [DURATIONS.fast, CSS_EASE_OUT],
+    ]);
+    const lift = progress(
+      trace(run, (reading) => reading.y),
+      0,
+      -LIFT,
+    );
+    expectTween("plain card's visual lift", lift, EASE_OUT, DURATIONS.fast);
+    expect(lift.at(-1)?.value).toBe(1);
+  });
+
+  test("with reduced motion a plain card's visual doesn't lift on hover", async ({
+    page,
+  }) => {
+    const { x, y } = await plainVisual(page, "reduced");
+    await startSampling(page, testId("plain-visual"));
+    await page.mouse.move(x, y);
+    const hovered = await finishSampling(page, 300);
+    expectAtRest(hovered);
+  });
+});
