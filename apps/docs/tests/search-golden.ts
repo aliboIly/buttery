@@ -18,6 +18,8 @@ export const searchGolden: readonly GoldenQuery[] = [
     query: "drawer",
     expect: ["/components/sheet", "/components/side-panel"],
   },
+  { query: "right-click menu", expect: ["/components/context-menu"] },
+  { query: "context menu", expect: ["/components/context-menu"] },
   { query: "snackbar", expect: ["/components/toaster"] },
   { query: "spinner", expect: ["/components/loading-pill"] },
   {
