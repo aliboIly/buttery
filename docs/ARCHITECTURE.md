@@ -162,7 +162,7 @@ Same thing without React — recipes are plain classes/attributes:
 
 ### Level 2: compose components
 ```tsx
-<Inspector label="Card settings">
+<Inspector label="Slide settings">
   <Inspector.Section title="Card" resettable={changed} onReset={reset}>
     <Inspector.Row>
       <Slider label="Scale" value={scale} onValueChange={setScale} resetValue={100} format="%" />
