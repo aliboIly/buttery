@@ -64,4 +64,28 @@ export const demos: readonly DemoSection[] = [
       </Page>
     ),
   },
+  {
+    title: "Tinted",
+    description:
+      "The band on bg-tint, a soft fill from the palettes, which the headline, its continuation and the body keep AA contrast on in both themes.",
+    render: () => (
+      <Page>
+        <SplitHero
+          variant="tinted"
+          eyebrow="Deckhand"
+          title="Decks that look designed."
+          titleMore="Write the slides, pick a theme, and present from any screen."
+          actions={
+            <>
+              <Button variant="primary" arrow="forward">
+                Start a deck
+              </Button>
+              <Button variant="secondary">See examples</Button>
+            </>
+          }
+          visual={<Preview />}
+        />
+      </Page>
+    ),
+  },
 ];

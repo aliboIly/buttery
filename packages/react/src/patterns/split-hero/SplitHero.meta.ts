@@ -17,7 +17,7 @@ export const meta: ComponentMeta = {
   motion: "presence",
   keyboard: [],
   layout:
-    "Its own size container, it fills its parent's width in a Container with 96px of room above and below (64 under 640px wide, 128 from 1024). From 1024px the words take 7 of 12 columns and the visual 5, centered on each other; narrower, the visual sits 48px under the words. The headline wraps at 22ch and the body at 60ch, the actions wrap 24px under the body, and its only hit areas are the actions' own.",
+    "Its own size container, it fills its parent's width in a Container with 96px of room above and below (64 under 640px wide, 128 from 1024). From 1024px the words take 7 of 12 columns and the visual 5, centered on each other; narrower, the visual sits 48px under the words. The headline wraps at 22ch and the body at 60ch, the actions wrap 24px under the body, and its only hit areas are the actions' own. The band is the surface, or with variant=\"tinted\" bg-tint, a fill from the palettes the words keep AA contrast on.",
   reducedMotion:
     "The visual's pieces are in place from the start, without rising or fading in.",
 };

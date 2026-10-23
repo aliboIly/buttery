@@ -6,6 +6,10 @@
     background-color: var(--bt-bg-surface);
   }
 
+  .bt-split-hero[data-variant="tinted"] {
+    background-color: var(--bt-bg-tint);
+  }
+
   .bt-split-hero [data-bt-part="split-hero-layout"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr);

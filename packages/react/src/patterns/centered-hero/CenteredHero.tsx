@@ -5,6 +5,9 @@ import { useId } from "react";
 import { HeroText } from "../../parts/hero/HeroText.tsx";
 import { Container } from "../container/Container.tsx";
 
+/** How a centered hero's band is drawn: `"plain"` on the surface, or `"tinted"` on the palette tint. */
+export type CenteredHeroVariant = "plain" | "tinted";
+
 /** Props for `CenteredHero`. */
 export interface CenteredHeroProps extends Omit<
   ComponentPropsWithRef<"section">,
@@ -24,12 +27,18 @@ export interface CenteredHeroProps extends Omit<
   readonly actions?: ReactNode;
   /** The visual under the words, as wide as the page's column. Mark its pieces with `Stagger.Item` to assemble them. */
   readonly visual?: ReactNode;
+  /**
+   * How the band is drawn: `"plain"` (the default) on the surface, or `"tinted"` on `bg-tint`, a soft fill from
+   * the palettes that the words keep AA contrast on, to set the band apart from the page.
+   */
+  readonly variant?: CenteredHeroVariant | undefined;
 }
 
 /**
  * A page's opening band with everything on one axis: the words centered, at most 8 of the page's 12 columns
  * wide, and a visual as wide as the column under them, 48px down (64 past 1024px). The visual assembles as
- * the page opens. The band is a region named by its headline, an `h1` unless `titleAs` says otherwise.
+ * the page opens. The band is a region named by its headline, an `h1` unless `titleAs` says otherwise, on the
+ * surface or the palette tint.
  *
  * @example
  * <CenteredHero
@@ -46,6 +55,7 @@ export function CenteredHero({
   body,
   actions,
   visual,
+  variant = "plain",
   className,
   ...rest
 }: CenteredHeroProps): ReactElement {
@@ -56,6 +66,7 @@ export function CenteredHero({
       {...rest}
       className={cx("bt-centered-hero", className)}
       data-bt="CenteredHero"
+      data-variant={variant}
     >
       <Container>
         <div data-bt-part="centered-hero-layout">

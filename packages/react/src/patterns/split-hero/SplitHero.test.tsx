@@ -1,5 +1,6 @@
 import "@butteryui/core/styles.css";
 import "../../styles.css";
+import { contrastRatio, formatHex } from "@butteryui/core";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
@@ -23,6 +24,11 @@ function hero(width: number, visualSide?: "start" | "end"): void {
   );
 }
 
+function hexOf(color: string): string {
+  const [r = 0, g = 0, b = 0] = (color.match(/\d+/g) ?? []).map(Number);
+  return formatHex({ r: r / 255, g: g / 255, b: b / 255 });
+}
+
 function box(part: string): DOMRect {
   const element = document.querySelector(`[data-bt-part="${part}"]`);
   if (!element) throw new Error(`no ${part}`);
@@ -44,6 +50,31 @@ describe("SplitHero", () => {
     expect(ref.current?.dataset["bt"]).toBe("SplitHero");
     expect(ref.current?.dataset["testid"]).toBe("hero");
     expect(ref.current?.className).toBe("bt-split-hero custom");
+  });
+
+  it("sets its band on the palette tint when tinted, every part of its words keeping AA contrast on it", () => {
+    render(
+      <SplitHero
+        variant="tinted"
+        eyebrow="Halfmoon Roastery"
+        title="Coffee roasted on Thursday."
+        titleMore="At your door by Saturday."
+        body="Small batches from three farms we visit every year."
+        visual={null}
+        data-testid="hero"
+      />,
+    );
+    const hero = screen.getByTestId("hero");
+    const band = getComputedStyle(hero).backgroundColor;
+    expect(band).toBe("rgb(251, 244, 218)");
+    for (const part of ["eyebrow", "title", "more", "body"]) {
+      const words = hero.querySelector(`[data-bt-part="${part}"]`);
+      if (!words) throw new Error(`no ${part}`);
+      expect(
+        contrastRatio(hexOf(getComputedStyle(words).color), hexOf(band)),
+        part,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it("is a region named by its two-tone headline, an h1", () => {

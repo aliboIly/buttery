@@ -5,6 +5,9 @@ import { useId } from "react";
 import { HeroText } from "../../parts/hero/HeroText.tsx";
 import { Container } from "../container/Container.tsx";
 
+/** How a split hero's band is drawn: `"plain"` on the surface, or `"tinted"` on the palette tint. */
+export type SplitHeroVariant = "plain" | "tinted";
+
 /** Props for `SplitHero`. */
 export interface SplitHeroProps extends Omit<
   ComponentPropsWithRef<"section">,
@@ -26,13 +29,18 @@ export interface SplitHeroProps extends Omit<
   readonly visual: ReactNode;
   /** Which side the visual sits on once there's room for both: `"end"` (the default) or `"start"`. */
   readonly visualSide?: "start" | "end" | undefined;
+  /**
+   * How the band is drawn: `"plain"` (the default) on the surface, or `"tinted"` on `bg-tint`, a soft fill from
+   * the palettes that the words keep AA contrast on, to set the band apart from the page.
+   */
+  readonly variant?: SplitHeroVariant | undefined;
 }
 
 /**
  * A page's opening band: the words on 7 of the page's 12 columns and a visual on the other 5, centered on
  * each other, the words first and the visual under them below 1024px of page. The visual assembles as the
  * page opens: its pieces rise from 96% into place, one after another, within 900ms. The band is a region
- * named by its headline, an `h1` unless `titleAs` says otherwise.
+ * named by its headline, an `h1` unless `titleAs` says otherwise, on the surface or the palette tint.
  *
  * @example
  * <SplitHero
@@ -51,6 +59,7 @@ export function SplitHero({
   actions,
   visual,
   visualSide = "end",
+  variant = "plain",
   className,
   ...rest
 }: SplitHeroProps): ReactElement {
@@ -62,6 +71,7 @@ export function SplitHero({
       className={cx("bt-split-hero", className)}
       data-bt="SplitHero"
       data-visual-side={visualSide}
+      data-variant={variant}
     >
       <Container>
         <div data-bt-part="split-hero-layout">

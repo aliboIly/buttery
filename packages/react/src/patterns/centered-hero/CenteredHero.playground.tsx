@@ -38,4 +38,28 @@ export const demos: readonly DemoSection[] = [
       </Page>
     ),
   },
+  {
+    title: "Tinted",
+    description:
+      "The band on bg-tint, a soft fill from the palettes, which the words keep AA contrast on in both themes: here a closing band with an h2.",
+    render: () => (
+      <Page>
+        <CenteredHero
+          variant="tinted"
+          titleAs="h2"
+          title="Your next deck."
+          titleMore="Ready before the meeting starts."
+          body="Pick a theme, write the slides and share a link."
+          actions={
+            <>
+              <Button variant="primary" arrow="forward">
+                Start a deck
+              </Button>
+              <Button variant="secondary">Talk to us</Button>
+            </>
+          }
+        />
+      </Page>
+    ),
+  },
 ];

@@ -314,9 +314,15 @@ export type { SectionProps, SectionSize } from "./patterns/section/Section.tsx";
 export { Container } from "./patterns/container/Container.tsx";
 export type { ContainerProps } from "./patterns/container/Container.tsx";
 export { SplitHero } from "./patterns/split-hero/SplitHero.tsx";
-export type { SplitHeroProps } from "./patterns/split-hero/SplitHero.tsx";
+export type {
+  SplitHeroProps,
+  SplitHeroVariant,
+} from "./patterns/split-hero/SplitHero.tsx";
 export { CenteredHero } from "./patterns/centered-hero/CenteredHero.tsx";
-export type { CenteredHeroProps } from "./patterns/centered-hero/CenteredHero.tsx";
+export type {
+  CenteredHeroProps,
+  CenteredHeroVariant,
+} from "./patterns/centered-hero/CenteredHero.tsx";
 export { HeroText } from "./parts/hero/HeroText.tsx";
 export type { HeroTextProps } from "./parts/hero/HeroText.tsx";
 export { Stat, StatStrip } from "./patterns/stat-strip/StatStrip.tsx";

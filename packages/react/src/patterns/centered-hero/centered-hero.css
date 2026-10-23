@@ -6,6 +6,10 @@
     background-color: var(--bt-bg-surface);
   }
 
+  .bt-centered-hero[data-variant="tinted"] {
+    background-color: var(--bt-bg-tint);
+  }
+
   .bt-centered-hero [data-bt-part="centered-hero-layout"] {
     display: flex;
     flex-direction: column;
