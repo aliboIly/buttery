@@ -60,6 +60,8 @@ const CELEBRATION = 900;
 /** How far things travel as they arrive, and the scales they grow from or press to. */
 const RISE = 8;
 const REVEAL_RISE = 16;
+const STEP_SLIDE = 8;
+const CHECK_SCALE = 0.6;
 const ENTER_SCALE = 0.97;
 const PRESS_SCALE = 0.97;
 const LIFT = 2;
@@ -77,6 +79,7 @@ const TWO_FRAMES = 34;
 
 const testId = (id: string): string => `[data-testid="${id}"]`;
 const INDICATOR = '[aria-label="Edge"] [data-bt-part="indicator"]';
+const SIGN_IN = testId("timed-sign-in");
 const STAGGER_ITEMS = `${testId("stagger")} > [data-bt-part="item"]`;
 const PIECES = '[data-bt="Confetti"] [data-bt-part="piece"]';
 const ms = (value: number): string => `${value.toFixed(0)}ms`;
@@ -272,6 +275,21 @@ function animationsOf(
   return run.animations
     .filter((animation) => animation.name === name)
     .map(({ duration, easing }) => [duration, easing] as const);
+}
+
+/** Finds the shop example's sign-in on the Authentication page, which takes 246810, and tags it `SIGN_IN`. */
+async function shopSignIn(
+  page: Page,
+  motion: "full" | "reduced",
+): Promise<Locator> {
+  await page.goto(`/patterns/authentication?chrome=0&motion=${motion}`);
+  const flow = page
+    .locator('[data-bt="AuthFlow"]')
+    .filter({ has: page.getByText("Halfmoon", { exact: true }) });
+  await flow.evaluate((element) => {
+    element.setAttribute("data-testid", "timed-sign-in");
+  });
+  return flow;
 }
 
 test.describe("full motion", () => {
@@ -601,6 +619,69 @@ test.describe("full motion", () => {
       progress(trace(clear, opacity), 1, 0),
       EASE_IN,
       DURATIONS.fast,
+    );
+  });
+
+  test("a sign-in's code step slides 8px in over dur-base with focus already in its field, and an accepted code turns the box over dur-fast and pops its check on spring.snappy", async ({
+    page,
+  }) => {
+    const flow = await shopSignIn(page, "full");
+    await flow
+      .getByRole("textbox", { name: "Email or phone number" })
+      .fill("rosa@halfmoon.coffee");
+    await flow.getByRole("button", { name: "Continue" }).focus();
+    await startSampling(page, `${SIGN_IN} [data-bt-part="step"]`, ["focusin"]);
+    await page.keyboard.press("Enter");
+    const step = await finishSampling(page, 1200);
+    const shown = new Set(step.before.elements.map(({ id }) => id));
+    const arriving = elementIds(step).find((id) => !shown.has(id));
+    if (arriving === undefined) throw new Error("The code step never came.");
+    const slide = traceOf(step, arriving, (reading) => reading.x);
+    const first = slide[0];
+    if (!first) throw new Error("The code step was never drawn.");
+    expect(first.value).toBeGreaterThan(0);
+    expectTween(
+      "code step sliding in",
+      progress(slide, STEP_SLIDE, 0),
+      EASE_OUT,
+      DURATIONS.base,
+    );
+    const focused = step.marks["focusin"];
+    if (focused === undefined) throw new Error("Focus never moved.");
+    report(
+      `focus in the code field ${ms(focused - first.t)} from the code step's first frame`,
+    );
+    expect(focused).toBeLessThanOrEqual(first.t + FRAME);
+    await expect(
+      flow.getByRole("textbox", { name: "One-time code" }),
+    ).toBeFocused();
+
+    await page.keyboard.type("24681");
+    await startSampling(
+      page,
+      `${SIGN_IN} [data-bt="OneTimeCodeField"] > [data-bt-part="box"], ${SIGN_IN} [data-bt="OneTimeCodeField"] [data-bt-part="mark"]`,
+    );
+    await page.keyboard.type("0");
+    const success = await finishSampling(page, 600);
+    const colors = [
+      ...transitionsOf(success, "border-top-color"),
+      ...transitionsOf(success, "background-color"),
+    ];
+    expect(colors.length).toBeGreaterThanOrEqual(2);
+    for (const timing of colors)
+      expect(timing).toEqual([DURATIONS.fast, CSS_EASE_STANDARD]);
+    const check = elementIds(success).find((id) =>
+      readingsOf(success, id).some(({ reading }) => reading.scale < 1),
+    );
+    if (check === undefined) throw new Error("No check popped in.");
+    expectSpring(
+      "check popping in",
+      progress(
+        traceOf(success, check, (reading) => reading.scale),
+        CHECK_SCALE,
+        1,
+      ),
+      "snappy",
     );
   });
 
@@ -1240,6 +1321,50 @@ test.describe("reduced motion", () => {
       );
       await expect(trigger).toBeFocused();
     }
+  });
+
+  test("a sign-in's steps swap without sliding, and an accepted code's check lands at once and fades in over 100ms", async ({
+    page,
+  }) => {
+    const flow = await shopSignIn(page, "reduced");
+    await flow
+      .getByRole("textbox", { name: "Email or phone number" })
+      .fill("rosa@halfmoon.coffee");
+    await flow.getByRole("button", { name: "Continue" }).focus();
+    await startSampling(page, `${SIGN_IN} [data-bt-part="step"]`);
+    await page.keyboard.press("Enter");
+    const step = await finishSampling(page, 1000);
+    expect(elementIds(step).length).toBeGreaterThan(
+      step.before.elements.length,
+    );
+    for (const { elements } of step.frames)
+      for (const reading of elements) expect(reading.x).toBe(0);
+    await expect(
+      flow.getByRole("textbox", { name: "One-time code" }),
+    ).toBeFocused();
+
+    await page.keyboard.type("24681");
+    await startSampling(
+      page,
+      '[data-bt="OneTimeCodeField"] [data-bt-part="mark"]',
+    );
+    await page.keyboard.type("0");
+    const success = await finishSampling(page, 400);
+    const check = elementIds(success).at(-1);
+    if (check === undefined) throw new Error("No check showed.");
+    expectInstant(
+      progress(
+        traceOf(success, check, (reading) => reading.scale),
+        CHECK_SCALE,
+        1,
+      ),
+    );
+    expectTween(
+      "check fading in",
+      progress(traceOf(success, check, opacity), 0, 1),
+      LINEAR,
+      DURATIONS.reduced,
+    );
   });
 
   test("an expandable card's dialog fades in place in 100ms", async ({
