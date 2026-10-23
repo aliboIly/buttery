@@ -820,6 +820,23 @@ describe("crowding", () => {
 });
 
 describe("wrapping", () => {
+  it("flags a number broken from its unit, as 40% with its % on the next line", () => {
+    const [found] = check(
+      `<p style="inline-size: 30px; overflow-wrap: anywhere; font-size: 20px; margin: 0">40%</p>`,
+      ["wrapping"],
+    );
+    expect(found?.message).toMatch(/^"40%" breaks across lines/);
+  });
+
+  it("passes a compound broken at its hyphen", () => {
+    expect(
+      check(
+        `<p style="inline-size: 80px; font-size: 16px; margin: 0">roast-to-door</p>`,
+        ["wrapping"],
+      ),
+    ).toEqual([]);
+  });
+
   it("flags a word broken across lines though it fits on one", () => {
     const [found] = check(
       `<p style="inline-size: 64px; word-break: break-all; margin: 0">Two variants here</p>`,

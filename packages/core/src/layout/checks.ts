@@ -1387,7 +1387,18 @@ export function createLayoutToolkit(): LayoutToolkit {
           block.clientWidth -
           Number.parseFloat(blockStyle.paddingLeft) -
           Number.parseFloat(blockStyle.paddingRight);
-        for (const match of run.node.data.matchAll(/[\p{L}\p{N}_]{2,}/gu)) {
+        // A word runs from space to space, as "40%" or "don't" does, and may break only after a hyphen, a dash
+        // or a slash. Text in scripts written without spaces breaks between its characters, so it's left out.
+        for (const match of run.node.data.matchAll(
+          /[^\s/\u2010-\u2014-]+[/\u2010-\u2014-]*/gu,
+        )) {
+          if (match[0].length < 2) continue;
+          if (
+            /[\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}\p{sc=Thai}]/u.test(
+              match[0],
+            )
+          )
+            continue;
           const start = match.index;
           range.setStart(run.node, start);
           range.setEnd(run.node, start + match[0].length);
