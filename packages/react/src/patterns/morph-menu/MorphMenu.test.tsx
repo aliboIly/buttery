@@ -8,6 +8,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
@@ -411,6 +412,19 @@ describe("MorphMenu", () => {
         stop.textContent,
       ).toBe(true);
     }
+  });
+
+  it("lines its footer link up with the words of the entries above it", async () => {
+    menu();
+    const card = await openCard("Product");
+    const startOf = (element: Element): number => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getClientRects()[0]?.left ?? Number.NaN;
+    };
+    const entry = within(card).getByText("Slides");
+    const footer = within(card).getByRole("link", { name: "See all" });
+    expect(Math.abs(startOf(footer) - startOf(entry))).toBeLessThanOrEqual(1);
   });
 
   it("keeps the pointer inside the menu all the way from its trigger down to the card", async () => {
