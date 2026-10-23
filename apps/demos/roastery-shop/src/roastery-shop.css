@@ -58,22 +58,10 @@
   border-radius: var(--bt-r-lg);
 }
 
-/*
- * Under 640px of bar the actions fold into the menu sheet. The bag stays: the brand's row then reaches
- * the menu button (its width and the bar's gap short of the bar), with the bag at its end.
- */
-.shop-brand-bag {
-  display: none;
-}
-
-@container (width < 640px) {
-  .shop-brand {
-    justify-content: space-between;
-    min-inline-size: calc(100cqi - var(--bt-h-button) - var(--bt-space-6));
-  }
-
-  .shop-brand-bag {
-    display: contents;
+/* Under 640px of bar the bag link, pinned beside the menu button, drops its word for its icon and count. */
+@container bt-nav (width < 640px) {
+  .shop-bag-word {
+    display: none;
   }
 }
 
@@ -143,8 +131,52 @@
 }
 
 /* Paragraphs keep at least two words on their last line. */
-:is(.shop-page, .shop-dialog) :is(p, li, dd) {
+:is(.shop-page, .shop-dialog, .shop-bag-sheet) :is(p, li, dd) {
   text-wrap: pretty;
+}
+
+/* A page's title sits as far above what follows as a section's intro does. */
+.shop-page-intro {
+  padding-block-end: var(--bt-space-12);
+}
+
+@container bt-page (width >= 1024px) {
+  .shop-page-intro {
+    padding-block-end: var(--bt-space-16);
+  }
+}
+
+/* The bag's lines and checkout's form sit beside their summary from 1024px of page, and over it under that. */
+.shop-bag-layout,
+.shop-checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--bt-space-4);
+}
+
+@container bt-page (width >= 1024px) {
+  .shop-bag-layout,
+  .shop-checkout-layout {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.shop-summary-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--bt-space-4);
+}
+
+.shop-placed {
+  max-inline-size: var(--bt-w-dialog-md);
+}
+
+/* In the bag's sheet the totals sit on the footer's own divider. */
+.shop-bag-sheet .shop-totals {
+  padding-block-start: 0;
+  border-block-start: 0;
 }
 
 .shop-filters {

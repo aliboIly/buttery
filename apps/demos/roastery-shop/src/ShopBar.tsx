@@ -2,11 +2,10 @@ import type { ReactElement } from "react";
 import {
   Grid,
   Icon,
-  Inline,
   Stack,
   Surface,
   Text,
-  scrollToSection,
+  opensElsewhere,
 } from "@buttery/core";
 import { ArrowLink, Button, MorphMenu, NavBar } from "@buttery/react";
 import { ShoppingBag } from "lucide-react";
@@ -17,48 +16,36 @@ import { GUIDES, ROAST_DAY, THIS_WEEK, coffeeOf } from "./data.ts";
 import type { GuideId } from "./data.ts";
 import { items } from "./format.ts";
 import { HalfmoonMark } from "./HalfmoonMark.tsx";
-import { jump } from "./jump.ts";
+import { useGoToSection, useSectionLink } from "./jump.ts";
 import { useLink } from "./router.tsx";
 import type { PlanFor } from "./Subscribe.tsx";
 
 /**
- * The bag, its count in tabular figures. In the actions it's a link, so the bar's sheet closes before the
- * bag opens; compact, beside the brand of a folded bar, it's a button, which keeps its own colors there.
+ * The bag, its count in tabular figures: a link to the bag's page, so a middle click or ⌘-click opens it in
+ * a new tab, that opens the bag's sheet on a plain click. On a narrow bar it drops the word.
  */
-function BagButton({
+function BagLink({
   count,
-  compact = false,
   onOpen,
 }: {
   readonly count: number;
-  /** Drops the word, leaving the icon and the count, for a narrow bar. */
-  readonly compact?: boolean;
   readonly onOpen: () => void;
 }): ReactElement {
-  const name = `Bag, ${items(count)}`;
-  const amount = <span className="shop-count">{count}</span>;
-  if (compact)
-    return (
-      <Button
-        variant="primary"
-        iconStart={ShoppingBag}
-        aria-label={name}
-        onClick={onOpen}
-      >
-        {amount}
-      </Button>
-    );
+  const link = useLink();
   return (
     <Button variant="primary" iconStart={ShoppingBag} asChild>
       <a
-        href="#bag"
-        aria-label={name}
+        href={link("/bag")}
+        aria-label={`Bag, ${items(count)}`}
+        aria-haspopup="dialog"
         onClick={(event) => {
+          if (opensElsewhere(event)) return;
           event.preventDefault();
           onOpen();
         }}
       >
-        Bag {amount}
+        <span className="shop-bag-word">Bag</span>{" "}
+        <span className="shop-count">{count}</span>
       </a>
     </Button>
   );
@@ -66,7 +53,8 @@ function BagButton({
 
 /**
  * The shop's bar: the brand, the Shop and Learn menus, and the account and bag actions. Folded on a phone,
- * the bag stays in the bar, at its end beside the menu button, while the rest moves into the menu sheet.
+ * the bag stays in the bar, pinned beside the menu button, while the rest moves into the menu sheet. Its
+ * links reach the front page's sections from any page.
  */
 export function ShopBar({
   count,
@@ -90,34 +78,29 @@ export function ShopBar({
   readonly onQuestion: (question: string) => void;
 }): ReactElement {
   const link = useLink();
+  const section = useSectionLink();
+  const goTo = useGoToSection();
   const thisWeek = coffeeOf(THIS_WEEK);
   return (
     <NavBar
       skipTo="main"
       behavior="sticky"
       brand={
-        <Inline gap={2} className="shop-brand">
-          <a href={link("/")}>
-            <HalfmoonMark />
-            Halfmoon
-          </a>
-          <span className="shop-brand-bag">
-            <BagButton count={count} compact onOpen={onOpenBag} />
-          </span>
-        </Inline>
+        <a href={link("/")}>
+          <HalfmoonMark />
+          Halfmoon
+        </a>
       }
       actions={
-        <>
-          <AccountAction
-            onSignIn={onSignIn}
-            onSubscription={() => {
-              onPlan("me");
-              scrollToSection("subscribe");
-            }}
-          />
-          <BagButton count={count} onOpen={onOpenBag} />
-        </>
+        <AccountAction
+          onSignIn={onSignIn}
+          onSubscription={() => {
+            onPlan("me");
+            goTo("subscribe");
+          }}
+        />
       }
+      pinned={<BagLink count={count} onOpen={onOpenBag} />}
     >
       <MorphMenu.Item
         label="Shop"
@@ -133,15 +116,14 @@ export function ShopBar({
                 A new harvest, just landed: peach, jasmine and bergamot.
               </Text>
             </Stack>
-            <ArrowLink href="#this-week" onClick={jump("this-week")}>
+            <ArrowLink {...section("this-week")}>
               See this week's coffee
             </ArrowLink>
           </Stack>
         }
         footer={
           <ArrowLink
-            href="#coffees"
-            onClick={jump("coffees", () => {
+            {...section("coffees", () => {
               onCoffees("all");
             })}
           >
@@ -151,24 +133,21 @@ export function ShopBar({
       >
         <MorphMenu.Column title="Coffee">
           <MorphMenu.Entry
-            href="#coffees"
-            onClick={jump("coffees", () => {
+            {...section("coffees", () => {
               onCoffees("Light");
             })}
             title="Light roasts"
             caption="Bright and fruity"
           />
           <MorphMenu.Entry
-            href="#coffees"
-            onClick={jump("coffees", () => {
+            {...section("coffees", () => {
               onCoffees("Medium");
             })}
             title="Medium roasts"
             caption="Caramel and chocolate"
           />
           <MorphMenu.Entry
-            href="#coffees"
-            onClick={jump("coffees", () => {
+            {...section("coffees", () => {
               onCoffees("Dark");
             })}
             title="Dark roasts"
@@ -177,16 +156,14 @@ export function ShopBar({
         </MorphMenu.Column>
         <MorphMenu.Column title="Subscribe">
           <MorphMenu.Entry
-            href="#subscribe"
-            onClick={jump("subscribe", () => {
+            {...section("subscribe", () => {
               onPlan("me");
             })}
             title="Start a subscription"
             caption="10% off, shipped free"
           />
           <MorphMenu.Entry
-            href="#subscribe"
-            onClick={jump("subscribe", () => {
+            {...section("subscribe", () => {
               onPlan("gift");
             })}
             title="Give a subscription"
@@ -231,23 +208,16 @@ export function ShopBar({
                 Roasted at seven, rested, packed and shipped the same day.
               </Text>
             </Stack>
-            <ArrowLink href="#story" onClick={jump("story")}>
-              See how we roast
-            </ArrowLink>
+            <ArrowLink {...section("story")}>See how we roast</ArrowLink>
           </Stack>
         }
-        footer={
-          <ArrowLink href="#brewing" onClick={jump("brewing")}>
-            All brew guides
-          </ArrowLink>
-        }
+        footer={<ArrowLink {...section("brewing")}>All brew guides</ArrowLink>}
       >
         <MorphMenu.Column title="Brew guides">
           {GUIDES.map((guide) => (
             <MorphMenu.Entry
               key={guide.id}
-              href="#brewing"
-              onClick={jump("brewing", () => {
+              {...section("brewing", () => {
                 onGuide(guide.id);
               })}
               title={guide.name}
@@ -257,24 +227,21 @@ export function ShopBar({
         </MorphMenu.Column>
         <MorphMenu.Column title="Questions">
           <MorphMenu.Entry
-            href="#questions"
-            onClick={jump("questions", () => {
+            {...section("questions", () => {
               onQuestion("arrival");
             })}
             title="Shipping"
             caption="When your coffee arrives"
           />
           <MorphMenu.Entry
-            href="#questions"
-            onClick={jump("questions", () => {
+            {...section("questions", () => {
               onQuestion("returns");
             })}
             title="Returns"
             caption="If a coffee isn't for you"
           />
           <MorphMenu.Entry
-            href="#questions"
-            onClick={jump("questions", () => {
+            {...section("questions", () => {
               onQuestion("storage");
             })}
             title="Storing coffee"

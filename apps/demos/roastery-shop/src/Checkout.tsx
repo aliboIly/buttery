@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { ReactElement, RefObject, SubmitEvent } from "react";
-import { Grid, Stack, Text } from "@buttery/core";
-import { Button, Dialog, RadioCardGroup, TextField } from "@buttery/react";
+import { Grid, Stack, Text, TextStack } from "@buttery/core";
+import { Button, RadioCardGroup, TextField } from "@buttery/react";
 import { shippingFor, subtotal, totalFor } from "./bag.ts";
 import type { Bag } from "./bag.ts";
 import { money } from "./format.ts";
@@ -13,6 +13,7 @@ import {
   shippingCost,
 } from "./pricing.ts";
 import type { Delivery } from "./pricing.ts";
+import { useLink } from "./router.tsx";
 
 /** An order's totals as rows of a list, the last one, the total, set apart. */
 export function Totals({
@@ -83,14 +84,16 @@ const ADDRESS_ORDER: readonly (keyof Address)[] = [
   "zip",
 ];
 
-/** Where the order goes and how fast: the email for the receipt, the address and the delivery speed. */
+/**
+ * Where the order goes and how fast: the email for the receipt, the address and the delivery speed, with a
+ * way back to the bag.
+ */
 export function ShippingStep({
   bag,
   address,
   onAddressChange,
   delivery,
   onDeliveryChange,
-  onBack,
   onContinue,
 }: {
   readonly bag: Bag;
@@ -98,9 +101,10 @@ export function ShippingStep({
   readonly onAddressChange: (address: Address) => void;
   readonly delivery: Delivery;
   readonly onDeliveryChange: (delivery: Delivery) => void;
-  readonly onBack: () => void;
   readonly onContinue: () => void;
 }): ReactElement {
+  const link = useLink();
+  const titleId = useId();
   const [tried, setTried] = useState(false);
   const problems: Problems<Address> = tried ? addressProblems(address) : {};
   const email = useRef<HTMLInputElement>(null);
@@ -120,12 +124,17 @@ export function ShippingStep({
   };
 
   return (
-    <form onSubmit={submit} noValidate className="shop-checkout">
-      <Dialog.Text
-        title="Shipping"
-        body="We email your receipt now, and again when it ships."
-      />
-      <Dialog.Body>
+    <form
+      onSubmit={submit}
+      noValidate
+      aria-labelledby={titleId}
+      className="shop-checkout"
+    >
+      <Stack gap={6}>
+        <TextStack
+          title={<span id={titleId}>Shipping</span>}
+          body="We email your receipt now, and again when it ships."
+        />
         <div className="shop-address">
           <TextField
             ref={email}
@@ -221,28 +230,34 @@ export function ShippingStep({
             ]}
           />
         </Stack>
-      </Dialog.Body>
-      <Dialog.Actions>
-        <Button size="cta" shape="rounded" arrow="back" onClick={onBack}>
-          Back
-        </Button>
-        <Button
-          type="submit"
-          variant="primary"
-          size="cta"
-          shape="rounded"
-          arrow="forward"
-        >
-          Payment
-        </Button>
-      </Dialog.Actions>
+        <Grid columns={2} gap={2}>
+          <Button
+            variant="soft"
+            size="cta"
+            shape="rounded"
+            arrow="back"
+            asChild
+          >
+            <a href={link("/bag")}>Bag</a>
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            size="cta"
+            shape="rounded"
+            arrow="forward"
+          >
+            Payment
+          </Button>
+        </Grid>
+      </Stack>
     </form>
   );
 }
 
 const CARD_ORDER: readonly (keyof Card)[] = ["number", "expiry", "code"];
 
-/** Paying for the order: the card, and the total it's charged. */
+/** Paying for the order: the card, on a button that says the total it's charged. */
 export function PaymentStep({
   bag,
   delivery,
@@ -258,6 +273,7 @@ export function PaymentStep({
   readonly onBack: () => void;
   readonly onPay: () => void;
 }): ReactElement {
+  const titleId = useId();
   const [tried, setTried] = useState(false);
   const problems: Problems<Card> = tried ? cardProblems(card) : {};
   const number = useRef<HTMLInputElement>(null);
@@ -276,12 +292,17 @@ export function PaymentStep({
   };
 
   return (
-    <form onSubmit={submit} noValidate className="shop-checkout">
-      <Dialog.Text
-        title="Payment"
-        body="Nothing is charged in this demo shop, and the card isn't kept."
-      />
-      <Dialog.Body>
+    <form
+      onSubmit={submit}
+      noValidate
+      aria-labelledby={titleId}
+      className="shop-checkout"
+    >
+      <Stack gap={6}>
+        <TextStack
+          title={<span id={titleId}>Payment</span>}
+          body="Nothing is charged in this demo shop, and the card isn't kept."
+        />
         <TextField
           ref={number}
           name="number"
@@ -321,16 +342,21 @@ export function PaymentStep({
             onValueChange={change("code")}
           />
         </Grid>
-        <Totals rows={orderTotals(bag, delivery)} />
-      </Dialog.Body>
-      <Dialog.Actions>
-        <Button size="cta" shape="rounded" arrow="back" onClick={onBack}>
-          Back
-        </Button>
-        <Button type="submit" variant="primary" size="cta" shape="rounded">
-          {`Pay ${money(totalFor(bag, delivery))}`}
-        </Button>
-      </Dialog.Actions>
+        <Grid columns={2} gap={2}>
+          <Button
+            variant="soft"
+            size="cta"
+            shape="rounded"
+            arrow="back"
+            onClick={onBack}
+          >
+            Shipping
+          </Button>
+          <Button type="submit" variant="primary" size="cta" shape="rounded">
+            {`Pay ${money(totalFor(bag, delivery))}`}
+          </Button>
+        </Grid>
+      </Stack>
     </form>
   );
 }

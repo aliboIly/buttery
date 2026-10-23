@@ -52,13 +52,14 @@ export const demoPages = [
     title: "Halfmoon shop",
     template: "marketing",
     description:
-      "Halfmoon Roastery's own shop: coffees to filter and open, a subscription builder, brew guides and a bag that checks out in place.",
+      "Halfmoon Roastery's own shop: coffees to filter and open, a subscription builder, brew guides and a bag in a sheet that checks out on its own page.",
     uses: [
       "NavBar",
       "MorphMenu",
       "SplitHero",
       "Bento",
       "ExpandableCard",
+      "Sheet",
       "Dialog",
       "Morph",
       "SegmentedControl",
