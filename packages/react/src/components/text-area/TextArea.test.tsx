@@ -1,6 +1,6 @@
 import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
@@ -119,6 +119,25 @@ describe("TextArea", () => {
     expect(getComputedStyle(screen.getByLabelText("Large")).paddingLeft).toBe(
       "16px",
     );
+  });
+
+  it("fits a large box again when the density changes under it, one line as tall as a large field in each", async () => {
+    render(
+      <div data-bt-density="comfortable" data-testid="density">
+        <TextArea label="Gift message" size="lg" rows={1} />
+      </div>,
+    );
+    const box = (): number =>
+      area().closest('[data-bt-part="box"]')?.getBoundingClientRect().height ??
+      0;
+    await document.fonts.ready;
+    for (let frame = 0; frame < 3; frame += 1)
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(box()).toBe(48);
+    screen.getByTestId("density").setAttribute("data-bt-density", "compact");
+    await waitFor(() => {
+      expect(box()).toBe(40);
+    });
   });
 
   it("draws a soft box on bg-control whose edge shows on hover", async () => {

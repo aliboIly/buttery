@@ -125,15 +125,20 @@ export function TextArea({
   useEffect(() => {
     const copy = measure.current;
     if (!copy) return undefined;
-    let width = copy.getBoundingClientRect().width;
+    const start = copy.getBoundingClientRect();
+    let width = start.width;
+    let height = start.height;
     let live = true;
+    // The copy is no taller than its padding, which a large box takes from the density, so its border box changes with both.
     const observer = new ResizeObserver(([entry]) => {
-      const next = entry?.contentBoxSize[0]?.inlineSize ?? width;
-      if (next === width) return;
-      width = next;
+      const size = entry?.borderBoxSize[0];
+      if (!size || (size.inlineSize === width && size.blockSize === height))
+        return;
+      width = size.inlineSize;
+      height = size.blockSize;
       fit.current();
     });
-    observer.observe(copy);
+    observer.observe(copy, { box: "border-box" });
     if ("fonts" in document) {
       void document.fonts.ready.then(() => {
         if (live) fit.current();
