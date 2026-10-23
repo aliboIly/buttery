@@ -218,6 +218,43 @@ describe("NavBar", () => {
     expect(Number(getComputedStyle(layer ?? scrim).zIndex)).toBeLessThan(20);
   });
 
+  it("blurs a sticky bar that follows it, such as a sub nav, with the rest of the page while a menu is open", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1200, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    render(
+      <div style={{ inlineSize: "1100px" }}>
+        <NavBar brand={<a href="#top">Deckhand</a>}>
+          <MorphMenu.Item label="Product">
+            <MorphMenu.Column title="Make">
+              <MorphMenu.Entry href="#slides" title="Slides" />
+            </MorphMenu.Column>
+          </MorphMenu.Item>
+        </NavBar>
+        <Sticky data-testid="follower">
+          <div style={{ blockSize: "48px", paddingInlineStart: "900px" }}>
+            Sections
+          </div>
+        </Sticky>
+      </div>,
+    );
+    const follower = screen.getByTestId("follower");
+    const box = follower.getBoundingClientRect();
+    const onTop = (): Element | null =>
+      document.elementFromPoint(box.right - 20, box.top + box.height / 2);
+    expect(follower.contains(onTop())).toBe(true);
+    await userEvent.click(screen.getByRole("button", { name: "Product" }));
+    await waitFor(() => {
+      expect(onTop()?.closest('[data-bt="Layer"]')).not.toBeNull();
+    });
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(follower.contains(onTop())).toBe(true);
+    });
+  });
+
   it("opens a menu's card 8px under the bar, leaving the brand, menus and actions uncovered", async () => {
     const { innerWidth, innerHeight } = window;
     await screenPage.viewport(1200, 800);

@@ -20,6 +20,12 @@
     z-index: var(--bt-z-floating);
   }
 
+  /* Those sticky bars step down to the blur's band, which the blur, coming later in the page, covers. */
+  :root:has(.bt-nav-bar[data-raised])
+    .bt-sticky:not(.bt-nav-bar, :has(.bt-nav-bar)) {
+    z-index: var(--bt-z-scrim-nav);
+  }
+
   .bt-nav-bar[data-scrolled] {
     background-color: var(--bt-bg-surface);
     box-shadow: var(--bt-shadow-card);
