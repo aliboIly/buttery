@@ -23,6 +23,7 @@ export const searchSynonyms: Readonly<Record<string, readonly string[]>> = {
   loader: ["LoadingPill", "Skeleton"],
   placeholder: ["Skeleton", "EmptyState"],
   toggle: ["SegmentedControl", "Switch"],
+  "switch between": ["SegmentedControl", "Tabs"],
   "button group": ["SegmentedControl"],
   radio: ["RadioCardGroup", "SegmentedControl"],
   login: ["SignInForm"],

@@ -14,6 +14,7 @@ const AGENT_QUERIES: readonly (readonly [string, readonly string[]])[] = [
   ["toast notification", ["component/Toaster"]],
   ["spinner", ["component/LoadingPill"]],
   ["toggle between three views", ["component/SegmentedControl"]],
+  ["switch between three views", ["component/SegmentedControl"]],
   [
     "settings page",
     [

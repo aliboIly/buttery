@@ -1,0 +1,111 @@
+---
+title: MCP server
+description: "@butteryui/mcp lets a coding agent look buttery up instead of guessing: components and token values for the version in use, page starters, and checks that say how to fix what they find."
+section: tools
+order: 50
+status: beta
+since: 0.10.0
+related: [get-started/using-coding-agents, tools/testing, tools/lint-configs]
+---
+
+`@butteryui/mcp` is a server for the Model Context Protocol, which coding agents use to call tools. With it connected, an agent building UI asks buttery for the component a screen needs, gets its exact props for the version the project has installed, starts a page from its pattern, then lints its code and checks the running page, each problem coming back with its fix.
+
+## Set it up
+
+<Steps>
+<Step>
+
+### Install it beside buttery
+
+```bash
+npm install --save-dev @butteryui/mcp
+```
+
+Installed in the project, it answers from the docs of the buttery version the project uses.
+
+</Step>
+<Step>
+
+### Register it with the agent
+
+Most agents read a JSON file at the project's root, such as `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "buttery": { "command": "npx", "args": ["-y", "@butteryui/mcp"] }
+  }
+}
+```
+
+The package's README has the entry for each common agent's own config file.
+
+</Step>
+<Step>
+
+### Ask for something
+
+Ask the agent to build a page or a component. It searches buttery first, gets what it found in one call, builds, then lints and checks its work.
+
+</Step>
+</Steps>
+
+## The tools
+
+<DocsTable
+  columns={["Tool", "What it does"]}
+  rows={[
+    [
+      "`buttery_search`",
+      "Finds components, patterns, docs pages, props, tokens and layout rules by meaning or by name. Each result is an id to get.",
+    ],
+    [
+      "`buttery_get`",
+      "Up to 10 ids in one call: a component's import, props with types and defaults, parts, the values its token-typed props take and an example; a docs page or one section of it; a group of tokens; a rule or check.",
+    ],
+    [
+      "`buttery_scaffold`",
+      "A page to save from the pattern made for it, such as a table, a detail page, settings, a catalog, plans or sign-in, or the setup for a new app.",
+    ],
+    [
+      "`buttery_lint`",
+      "Files or a snippet against buttery's rules, through the project's ESLint and stylelint with buttery's configs, and the literal values given to components' props.",
+    ],
+    [
+      "`buttery_check_layout`",
+      "The checks from `@butteryui/test` on a page of the running app, at the widths and themes asked for, each problem once with its fix.",
+    ],
+  ]}
+/>
+
+Every tool is read-only: the server writes no files and makes no network requests. The layout check opens pages on the machine it runs on, and lint reads files inside the project.
+
+## What an agent gets back
+
+A search for "switch between three views":
+
+```text
+buttery 0.10.0: 170 found for "switch between three views", the best 3 shown.
+- component/SegmentedControl: One choice out of a few, shown side by side in a track, with the selection sliding between them. Use for: Two to five options that are all worth seeing at once: Gradient or Solid, Fit or Fill
+- component/Tabs: Underlined tabs that switch the panel under them, with a sliding underline and the tabs that don't fit in a menu. Use for: Sections of one record or page, such as a customer's overview, orders and notes
+- component/Switch: A switch that turns a setting on or off at once, with its label beside it. Use for: A setting that takes effect as soon as it's flipped: snap to grid, dark previews, sync
+
+Next: buttery_get({"ids":["component/SegmentedControl","component/Tabs","component/Switch"]})
+```
+
+Lint on a snippet that gives a spacing prop a pixel value:
+
+```json
+{
+  "rule": "buttery/prop-values",
+  "message": "Stack's gap doesn't take \"16px\".",
+  "fix": "Write gap={4}: spacing step 4 is 16px.",
+  "docs": "https://aliboily.github.io/buttery/layout/stack-inline-and-grid#stack"
+}
+```
+
+## Resources and prompts
+
+For agents that read resources, every page of these docs is Markdown at `buttery://docs/` and its path, a component at `buttery://component/` and its name, a group of tokens at `buttery://tokens/` and its name, and the list of pages at `buttery://llms.txt`.
+
+Agents that offer prompts as commands get three: `make-it-buttery`, the steps for building or converting UI; `build-page`, which starts a page of a kind; and `review-ui`, which checks a running page or a file and fixes what it finds.

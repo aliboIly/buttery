@@ -52,21 +52,27 @@ Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from th
 - `docs/*.md` — the specs themselves.
 
 ### 3. `@butteryui/mcp` — MCP server
-Any MCP-capable agent can query buttery instead of guessing.
+Any MCP-capable agent can look buttery up instead of guessing. Five read-only tools, in this order:
 
 | Tool | Returns |
 |---|---|
-| `list_components(query?)` | Names + one-line purpose |
-| `get_component(name)` | Manifest entry + examples |
-| `find_component(description)` | Best matches, e.g. "toggle between 3 options" → `SegmentedControl` |
-| `get_tokens(category?)` | Tokens with values and roles |
-| `get_pattern(name)` | Pattern template + when to use it |
-| `explain_rule(id)` | The layout or motion rule, with a do/don't example |
-| `check_layout(url, options?)` | Runs `expectButtery`, returns JSON violations with fixes |
-| `scaffold_page(kind, options?)` | Files for an App kit page (`table`, `detail`, `overview`, `settings`, `empty`, `feature-intro`), as `buttery add page` writes them |
-| `scaffold_component(name, purpose)` | Files for a custom component on public parts, as `buttery create component` writes them |
+| `buttery_search({ query, kind?, limit? })` | One Markdown line per result, best first, from the docs site's own index and synonyms, ranked for agents (a component above a prop that shares a word): an id, its kind and what it's for. Ends with the `buttery_get` call for the top ids. `kind` narrows to component, pattern, page, guide, token, prop, example or rule; an empty query lists a kind. |
+| `buttery_get({ ids, detail? })` | Up to 10 ids per call, as Markdown, for the installed version: a component's import, props with types and defaults, parts, the values its literal-union and token types take, one example and the ids of the rest; `detail: "full"` adds every part's props, accessibility, keyboard, motion and layout. Also a docs page or one section (`page/<route>#<section>`), a token group, a rule or check (`check/overlap` is the rule a violation names) and an example's code. Bare names and docs URLs work; an unknown id is an error naming the one meant and the call to make. |
+| `buttery_scaffold({ kind, page? })` | A page to save, from its pattern's example that is a whole page (table, detail, overview, settings, settings-index, catalog, plans, search-results, empty, feature-intro, sign-in, sign-up, onboarding, landing, article, faq), with the ids of what it uses; or the setup for a new app. Writes nothing. |
+| `buttery_lint({ files? \| code?, language? })` | JSON, its text exactly the structured content: the project's ESLint and stylelint with buttery's configs, plus literal prop values a component's types don't take (`gap="16px"` comes back as `gap={4}`). At most 50 problems, each with its fix; notes say what couldn't run and how to set it up. |
+| `buttery_check_layout({ url, viewports?, themes?, engine? })` | JSON: `checkButtery` from the project's `@butteryui/test` in its Playwright, each problem once with its fix and the conditions it showed in, at most 30. Loopback URLs only, plus origins in `BUTTERY_MCP_ALLOW_URLS`. |
 
-Resources: every doc in `docs/`. Transport: stdio (`npx @butteryui/mcp`). Phase 8 adds ready-made config for Claude Code (`.mcp.json`), Codex, Gemini CLI and Cursor — checked against each tool's current docs at that time.
+Resources: `buttery://docs/{+path}` (every docs page as Markdown, listed), `buttery://component/{name}` (completed, not listed, so a hundred components don't flood an `@` menu), `buttery://tokens/{group}` and `buttery://llms.txt`. Prompts: `make-it-buttery` (the skill), `build-page` (`kind`) and `review-ui` (`target`), each argument one word, since Claude Code splits prompt arguments on whitespace.
+
+What the clients do decides the shapes (checked against each one's docs and source on 2026-10-22):
+- Claude Code (since 2.1.292) and the Copilot CLI speak protocol 2026-07-28 over stdio; Codex, Gemini CLI, Cursor and VS Code's own client open with the 2025 `initialize` handshake. The server answers both, through the SDK's `serveStdio`.
+- Claude Code drops text blocks when a result has structured content, Gemini CLI reads only text, and the Copilot CLI sends both. So search, get and scaffold return Markdown only, and lint and the layout check return JSON whose text block is exactly the serialized structured content, with object-root output schemas for 2025 clients.
+- Claude Code and Codex load tools on demand and first show only tool names and the server's instructions, so the names explain themselves and the instructions (under 800 characters, the first 512 standing alone) carry the order to use them in.
+- No client renders MCP Apps usefully for this, and the model can't see one, so there's no in-chat preview tool.
+
+There's no planning tool: with no model behind the server, a plan would repeat what search and get return. A request for a login or sign-up screen finds its pattern through search instead, tested by the golden queries ("login form" and "sign in" put `SignInForm` first).
+
+Configs, each `npx -y @butteryui/mcp` with the package installed in the project so `npx` uses that copy: `.mcp.json` (Claude Code; the Copilot CLI reads it too), `.codex/config.toml` (`[mcp_servers.buttery]`, with `startup_timeout_sec = 30` and `tool_timeout_sec = 180`), `.gemini/settings.json` (`mcpServers`, beside `context.fileName`), `.cursor/mcp.json` and `.vscode/mcp.json` (`servers`). This repo's `.mcp.json` runs the built server from `packages/mcp/dist`.
 
 ### 4. Parseable feedback
 `LayoutGuard` console output and `buttery check --json` share one format:
