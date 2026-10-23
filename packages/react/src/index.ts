@@ -355,6 +355,7 @@ export { Footer, FooterColumn, FooterLink } from "./patterns/footer/Footer.tsx";
 export type {
   FooterColumnProps,
   FooterComponent,
+  FooterLayout,
   FooterLinkProps,
   FooterProps,
 } from "./patterns/footer/Footer.tsx";

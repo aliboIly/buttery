@@ -11,9 +11,9 @@ export const meta: ComponentMeta = {
     "The bottom of a dialog or panel: give it an actions row",
   ],
   related: ["Page", "Section", "Container", "NavBar"],
-  a11y: "It's the page's contentinfo landmark. Each column is a list of links named by its heading, an h2; links are at least 24px tall.",
+  a11y: "It's the page's contentinfo landmark. Each column is a list of links named by its heading, an h2, which a simple footer keeps for screen readers only; links are at least 24px tall.",
   motion: "none",
   keyboard: [],
   layout:
-    "It takes its container's width and sets its content on the page container, 1200px at most, in a grid of 4, 8 or 12 columns by its own width: the brand takes 4 of 12 columns, or a row of its own under 1024px, and each column of links takes 2. The small print sits under a 1px divider 48px below the grid; links wrap rather than truncate, and each is at least 24px tall.",
+    "It takes its container's width and sets its content on the page container, 1200px at most, in a grid of 4, 8 or 12 columns by its own width: the brand takes 4 of 12 columns, or a row of its own under 1024px, and each column of links takes 2. The small print sits under a 1px divider 48px below the grid; links wrap rather than truncate, and each is at least 24px tall. With layout centered the brand, the columns and the small print share the footer's middle, the columns 64px apart (40 under 640px) and wrapping onto more rows; with layout simple it's one row of links 24px apart, with the small print at its end and no divider, padded 32 above and below, and the two stack under 640px.",
 };

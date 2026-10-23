@@ -84,4 +84,79 @@
       grid-column: 1 / span 4;
     }
   }
+
+  /* Centered: the brand over the columns over the small print, each on the footer's middle. */
+  .bt-footer[data-layout="centered"] [data-bt-part="footer-body"] {
+    align-items: center;
+    text-align: center;
+  }
+
+  .bt-footer[data-layout="centered"] [data-bt-part="footer-grid"] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--bt-space-10);
+  }
+
+  .bt-footer[data-layout="centered"] [data-bt-part="footer-brand"] {
+    display: flex;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bt-footer[data-layout="centered"] .bt-footer-column,
+  .bt-footer[data-layout="centered"]
+    .bt-footer-column
+    [data-bt-part="footer-links"] {
+    align-items: center;
+  }
+
+  /* The divider spans the footer, and the small print, whatever its own layout, sits on its middle. */
+  .bt-footer[data-layout="centered"] [data-bt-part="legal"] {
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
+  }
+
+  @container bt-footer (width >= 640px) {
+    .bt-footer[data-layout="centered"] [data-bt-part="footer-grid"] {
+      column-gap: var(--bt-space-16);
+    }
+  }
+
+  /* Simple: one row of links, every column's run on after the last, then the small print without a divider. */
+  .bt-footer[data-layout="simple"] {
+    padding-block: var(--bt-space-8);
+  }
+
+  .bt-footer[data-layout="simple"] [data-bt-part="footer-body"] {
+    align-items: flex-start;
+    gap: var(--bt-space-4);
+  }
+
+  .bt-footer[data-layout="simple"] [data-bt-part="footer-grid"],
+  .bt-footer[data-layout="simple"] .bt-footer-column,
+  .bt-footer[data-layout="simple"]
+    .bt-footer-column
+    [data-bt-part="footer-links"] {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: var(--bt-space-1) var(--bt-space-6);
+  }
+
+  .bt-footer[data-layout="simple"] [data-bt-part="legal"] {
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  @container bt-footer (width >= 640px) {
+    .bt-footer[data-layout="simple"] [data-bt-part="footer-body"] {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--bt-space-8);
+    }
+  }
 }

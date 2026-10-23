@@ -53,6 +53,18 @@ function Legal(): ReactElement {
   );
 }
 
+function columns(): ReactElement[] {
+  return COLUMNS.map((column) => (
+    <Footer.Column key={column.title} title={column.title}>
+      {column.links.map((label) => (
+        <Footer.Link key={label} href={`#${slug(label)}`}>
+          {label}
+        </Footer.Link>
+      ))}
+    </Footer.Column>
+  ));
+}
+
 export const demos: readonly DemoSection[] = [
   {
     title: "Site footer",
@@ -61,15 +73,47 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Page>
         <Footer brand={<Brand />} legal={<Legal />}>
-          {COLUMNS.map((column) => (
-            <Footer.Column key={column.title} title={column.title}>
-              {column.links.map((label) => (
-                <Footer.Link key={label} href={`#${slug(label)}`}>
-                  {label}
-                </Footer.Link>
-              ))}
-            </Footer.Column>
-          ))}
+          {columns()}
+        </Footer>
+      </Page>
+    ),
+  },
+  {
+    title: "Centered",
+    description:
+      "layout centered sets the brand over the columns over the small print, each on the footer's middle, the columns wrapping onto more rows as it narrows.",
+    render: () => (
+      <Page>
+        <Footer layout="centered" brand={<Brand />} legal={<Legal />}>
+          {columns()}
+        </Footer>
+      </Page>
+    ),
+  },
+  {
+    title: "Simple",
+    description:
+      "layout simple makes one row of links, each column's heading kept for screen readers only, with the small print at its end; under 640px of footer the small print goes under the links.",
+    render: () => (
+      <Page>
+        <Footer
+          layout="simple"
+          legal={
+            <Text variant="caption" tone="secondary">
+              © 2026 Deckhand
+            </Text>
+          }
+        >
+          <Footer.Column title="Product">
+            <Footer.Link href="#features">Features</Footer.Link>
+            <Footer.Link href="#themes">Themes</Footer.Link>
+            <Footer.Link href="#export">Export</Footer.Link>
+          </Footer.Column>
+          <Footer.Column title="Company">
+            <Footer.Link href="#about">About</Footer.Link>
+            <Footer.Link href="#privacy">Privacy</Footer.Link>
+            <Footer.Link href="#terms">Terms</Footer.Link>
+          </Footer.Column>
         </Footer>
       </Page>
     ),
