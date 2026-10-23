@@ -150,7 +150,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Groups and choices",
     description:
-      "A heading names each group; in a radio group the chosen item shows a check.",
+      "A heading names each group; in a radio group the chosen item shows a check, and so does a checkbox item while it's on.",
     render: () => (
       <Inline>
         <Menu>
@@ -163,7 +163,9 @@ export const demos: readonly DemoSection[] = [
             </Menu.RadioGroup>
             <Menu.Separator />
             <Menu.Group label="Show">
-              <Menu.Item>Archived orders</Menu.Item>
+              <Menu.CheckboxItem defaultChecked>
+                Archived orders
+              </Menu.CheckboxItem>
             </Menu.Group>
           </Menu.Content>
         </Menu>
