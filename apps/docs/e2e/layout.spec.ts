@@ -95,6 +95,30 @@ const SHOP_BELOW_COFFEES = [
   PILL,
 ];
 
+/**
+ * Sets a component page's live demo controls, each by the prop it names, to the values given: a segment of a
+ * segmented control, or an option of the select a choice becomes when its labels don't fit side by side.
+ */
+function liveControls(
+  values: Readonly<Record<string, string>>,
+): ButteryInteraction["run"] {
+  return async (page: Page) => {
+    for (const [prop, value] of Object.entries(values)) {
+      const control = page.locator(`[data-docs-control="${prop}"]`);
+      await control.evaluate((element) => {
+        element.scrollIntoView({ block: "center" });
+      });
+      const segment = control.getByRole("radio", { name: value, exact: true });
+      if ((await segment.count()) > 0) {
+        await segment.click();
+        continue;
+      }
+      await control.getByRole("combobox").click();
+      await page.getByRole("option", { name: value, exact: true }).click();
+    }
+  };
+}
+
 const escape: ButteryInteraction = {
   name: "press Escape",
   run: async (page: Page) => {
@@ -413,15 +437,29 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "open the coffee that's left",
       run: async (page: Page) => {
         await pressInMiddle(
-          page.locator('[data-bt="ExpandableCard"]').filter({
-            hasText: "Halfmoon House",
-          }),
+          page.getByRole("button", { name: "Halfmoon House", exact: true }),
         );
         await page.getByRole("dialog", { name: "Halfmoon House" }).waitFor();
       },
       acrossMatrix: true,
     },
     escape,
+    {
+      name: "show every coffee as a list, cheapest first",
+      allowMove: SHOP_BELOW_COFFEES,
+      run: async (page: Page) => {
+        const coffees = page.locator("#coffees");
+        await pressInMiddle(
+          coffees.getByRole("radio", { name: "All", exact: true }),
+        );
+        await coffees.getByRole("radio", { name: "List", exact: true }).click();
+        await coffees.getByRole("combobox", { name: /^Sort by/ }).click();
+        await page
+          .getByRole("option", { name: "Price, low to high", exact: true })
+          .click();
+      },
+      acrossMatrix: true,
+    },
     {
       name: "build a gift subscription",
       allowMove: ["#subscribe", "#subscribe ~ *", '[data-bt="Footer"]', PILL],
@@ -561,6 +599,83 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
     escape,
+  ],
+  catalog: [
+    {
+      name: "open a card's detail from its title",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page
+            .getByRole("button", { name: "Pour-over dripper", exact: true })
+            .first(),
+        );
+        await page.getByRole("dialog", { name: "Pour-over dripper" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "open the live demo's sort",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("combobox", { name: "Sort by Featured" }).first(),
+        );
+        await page.getByRole("listbox", { name: "Sort by" }).waitFor();
+      },
+    },
+    escape,
+    {
+      name: "show the next page of a paged catalog",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", { name: "Show more", exact: true }).first(),
+        );
+      },
+    },
+    {
+      name: "lay the live demo out as rows of an outline list",
+      allowMove: ["main"],
+      run: liveControls({ layout: "rows", variant: "outline" }),
+      acrossMatrix: true,
+    },
+    {
+      name: "draw the live demo's rows as a soft list",
+      allowMove: ["main"],
+      run: liveControls({ variant: "soft" }),
+    },
+    {
+      name: "lay the live demo out as a list of plain cards",
+      allowMove: ["main"],
+      run: liveControls({ layout: "list", variant: "plain" }),
+      acrossMatrix: true,
+    },
+    {
+      name: "put the media behind the live demo's soft cards in a grid of four",
+      allowMove: ["main"],
+      run: liveControls({
+        layout: "grid",
+        variant: "soft",
+        mediaPosition: "background",
+        columns: "4",
+      }),
+      acrossMatrix: true,
+    },
+    {
+      name: "search the live demo for something it doesn't hold",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        const search = page
+          .getByTestId("live-demo")
+          .getByRole("searchbox", { name: "Search gear" });
+        await search.fill("espresso machine");
+        await page
+          .getByTestId("live-demo")
+          .getByText("No gear matches", { exact: true })
+          .waitFor();
+      },
+      acrossMatrix: true,
+    },
   ],
   "app-shell": [
     {
