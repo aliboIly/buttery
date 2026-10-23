@@ -788,3 +788,19 @@ export {
 } from "./patterns/auth-flow/identifier.ts";
 export type { IdentifierKind } from "./patterns/auth-flow/identifier.ts";
 export type { IdentifierFieldProps } from "./components/identifier-field/IdentifierField.tsx";
+export { AuthFlow } from "./patterns/auth-flow/AuthFlow.tsx";
+export type {
+  AuthFlowLabels,
+  AuthFlowProps,
+} from "./patterns/auth-flow/AuthFlow.tsx";
+export { useOtpFlow } from "./patterns/auth-flow/use-otp-flow.ts";
+export type {
+  CodeStatus,
+  OtpFlow,
+  OtpFlowOptions,
+  OtpStep,
+  RequestCodeFailure,
+  RequestCodeResult,
+  VerifyFailure,
+  VerifyResult,
+} from "./patterns/auth-flow/use-otp-flow.ts";

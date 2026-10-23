@@ -1,0 +1,60 @@
+@layer bt.patterns {
+  /*
+   * A narrow column centered across the page, with room above it that shrinks with a short window, so with
+   * a phone's keyboard up the field and the button are still above it.
+   */
+  .bt-auth-flow {
+    display: flex;
+    justify-content: center;
+    min-inline-size: 0;
+    padding-block: clamp(var(--bt-space-6), 10dvh, var(--bt-space-24))
+      var(--bt-space-8);
+    padding-inline: var(--bt-space-5);
+  }
+
+  .bt-auth-flow > [data-bt-part="column"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-6);
+    inline-size: 100%;
+    max-inline-size: var(--bt-w-auth);
+    min-inline-size: 0;
+  }
+
+  .bt-auth-flow [data-bt-part="logo"] {
+    display: flex;
+    justify-content: center;
+  }
+
+  .bt-auth-flow [data-bt-part="terms"],
+  .bt-auth-flow [data-bt-part="countdown"] {
+    text-align: center;
+  }
+
+  .bt-auth-flow [data-bt-part="countdown"] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The spinner and its words sit where the label was, the button keeping its width. */
+  .bt-auth-flow [data-bt-part="sending"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bt-space-2);
+  }
+
+  .bt-auth-flow [data-bt-part="sending"] > [data-bt-part="spinner"] {
+    position: relative;
+    flex: none;
+    inline-size: var(--bt-icon-sm);
+    block-size: var(--bt-icon-sm);
+  }
+
+  /* Waiting or ready, the resend line keeps a button's height, so nothing moves when it turns into one. */
+  .bt-auth-flow [data-bt-part="resend"],
+  .bt-auth-flow [data-bt-part="back"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--bt-h-button);
+  }
+}

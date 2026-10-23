@@ -115,3 +115,4 @@
 @import "./patterns/faq/faq.css";
 @import "./components/one-time-code-field/one-time-code-field.css";
 @import "./components/identifier-field/identifier-field.css";
+@import "./patterns/auth-flow/auth-flow.css";
