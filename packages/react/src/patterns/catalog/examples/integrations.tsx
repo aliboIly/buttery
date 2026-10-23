@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Catalog, InitialsTile, TagChip } from "@buttery/react";
 
-const ADD_ONS = [
+const INTEGRATIONS = [
   {
     name: "Label printing",
     about: "Print shipping labels at the counter, straight from an order.",
@@ -22,44 +22,44 @@ const ADD_ONS = [
   },
 ];
 
-/** An app's add-ons as rows of one list, with a search and an Install button that becomes a chip. */
-export function AddOnList(): ReactElement {
+/** An app's integrations as rows of one list, with a search and an Install button that becomes a chip. */
+export function Integrations(): ReactElement {
   const [installed, setInstalled] = useState<readonly string[]>([
     "Label printing",
   ]);
   return (
     <Catalog
-      items={ADD_ONS}
+      items={INTEGRATIONS}
       defaultLayout="rows"
-      searchBy={(addOn) => [addOn.name, addOn.about]}
+      searchBy={(integration) => [integration.name, integration.about]}
     >
-      {(addOns) => (
+      {(integrations) => (
         <>
-          <Catalog.Toolbar label="Find an add-on">
-            <Catalog.Search label="Search add-ons" />
+          <Catalog.Toolbar label="Find an integration">
+            <Catalog.Search label="Search integrations" />
             <Catalog.Count
               format={(count) =>
-                count === 1 ? "1 add-on" : `${String(count)} add-ons`
+                count === 1 ? "1 integration" : `${String(count)} integrations`
               }
             />
           </Catalog.Toolbar>
           <Catalog.Items>
-            {addOns.map((addOn) => (
+            {integrations.map((integration) => (
               <Catalog.Card
-                key={addOn.name}
+                key={integration.name}
                 variant="outline"
-                title={addOn.name}
-                media={<InitialsTile name={addOn.name} size="lg" />}
-                description={addOn.about}
+                title={integration.name}
+                media={<InitialsTile name={integration.name} size="lg" />}
+                description={integration.about}
                 actions={
-                  installed.includes(addOn.name) ? (
+                  installed.includes(integration.name) ? (
                     <TagChip tone="success">Installed</TagChip>
                   ) : (
                     <Button
                       size="sm"
-                      aria-label={`Install ${addOn.name}`}
+                      aria-label={`Install ${integration.name}`}
                       onClick={() => {
-                        setInstalled([...installed, addOn.name]);
+                        setInstalled([...installed, integration.name]);
                       }}
                     >
                       Install
@@ -70,7 +70,7 @@ export function AddOnList(): ReactElement {
             ))}
           </Catalog.Items>
           <Catalog.NoResults
-            title="No add-on matches"
+            title="No integration matches"
             description="Try another word, such as labels or invoices."
           />
         </>
@@ -82,8 +82,8 @@ export function AddOnList(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
-  await type("Search add-ons", "books");
-  await see("1 add-on");
+  await type("Search integrations", "books");
+  await see("1 integration");
   await press("button", "Install Bookkeeping");
   await see("Installed");
 };

@@ -869,7 +869,7 @@ export function CatalogCard({
   });
   const [travelling, setTravelling] = useState(false);
   const link = useRef<HTMLAnchorElement>(null);
-  const withDetail = detail !== undefined;
+  const withDetail = hasContent(detail);
   const opens = withDetail && href === undefined;
   const morphs = opens && travels;
   const setExpanded = items?.setExpanded;
