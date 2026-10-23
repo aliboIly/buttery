@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "The live value beside a slider's label (Slider shows one for you)",
     "A short measurement next to a control: 12px, 45°, 80%",
+    'A value on bg-control, such as in a toolbar, with variant="outline"; one that has to stand out, with variant="solid"',
   ],
   avoidWhen: [
     "A record's state or a count: use StatusBadge",
@@ -18,5 +19,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [],
   layout:
-    "It's --bt-h-badge (20px) tall and as wide as the longest of its value and its reserve values, with tabular digits, so it never changes width as the value moves. It stays on one line without truncating, and it takes no input, so it has no hit area.",
+    "It's --bt-h-badge (20px) tall and as wide as the longest of its value and its reserve values, with tabular digits, so it never changes width as the value moves; each variant keeps that size, the outline's edge drawn inside it. It stays on one line without truncating, and it takes no input, so it has no hit area.",
 };

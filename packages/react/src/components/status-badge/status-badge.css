@@ -1,6 +1,7 @@
 @layer bt.components {
   .bt-status-badge {
     --bt-status-badge-icon: 12px;
+    --bt-status-badge-line: 1px;
     --bt-status-badge-bg: var(--bt-bg-control);
     --bt-status-badge-fg: var(--bt-text-secondary);
 
@@ -45,5 +46,17 @@
   .bt-status-badge[data-tone="danger"] {
     --bt-status-badge-bg: var(--bt-danger-subtle);
     --bt-status-badge-fg: var(--bt-danger);
+  }
+
+  /* The text is the surface's color knocked out of the tone, so it clears 4.5:1 as the tone clears it on the surface. */
+  .bt-status-badge[data-variant="solid"] {
+    background-color: var(--bt-status-badge-fg);
+    color: var(--bt-bg-surface);
+  }
+
+  /* An inset edge, so an outlined badge keeps a soft one's size. */
+  .bt-status-badge[data-variant="outline"] {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 var(--bt-status-badge-line) var(--bt-border);
   }
 }

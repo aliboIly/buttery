@@ -1,5 +1,7 @@
 @layer bt.components {
   .bt-value-badge {
+    --bt-value-badge-line: 1px;
+
     display: inline-grid;
     flex: none;
     grid-template-areas: "value";
@@ -23,5 +25,17 @@
 
   .bt-value-badge > [data-bt-part="reserve"] {
     visibility: hidden;
+  }
+
+  /* The surface's color knocked out of text-secondary, which clears 4.5:1 on the surface. */
+  .bt-value-badge[data-variant="solid"] {
+    background-color: var(--bt-text-secondary);
+    color: var(--bt-bg-surface);
+  }
+
+  /* An inset edge, so an outlined badge keeps a soft one's size. */
+  .bt-value-badge[data-variant="outline"] {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 var(--bt-value-badge-line) var(--bt-border);
   }
 }

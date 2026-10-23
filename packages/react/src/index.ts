@@ -399,6 +399,7 @@ export { Avatar } from "./components/avatar/Avatar.tsx";
 export type { AvatarProps } from "./components/avatar/Avatar.tsx";
 export { StatusBadge } from "./components/status-badge/StatusBadge.tsx";
 export type {
+  BadgeVariant,
   StatusBadgeProps,
   StatusTone,
 } from "./components/status-badge/StatusBadge.tsx";

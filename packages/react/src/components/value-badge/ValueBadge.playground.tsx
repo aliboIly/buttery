@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@butteryui/core";
+import { Inline, demoChoice } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { Button, ValueBadge } from "@butteryui/react";
 
@@ -40,14 +40,24 @@ function reserveOf(value: string | number | boolean | undefined): string[] {
 
 export const live: LiveDemo = {
   controls: {
+    variant: {
+      kind: "choice",
+      options: ["soft", "solid", "outline"],
+      initial: "soft",
+    },
     children: { kind: "text", initial: "80%" },
     reserve: { kind: "text", initial: "0%, 100%" },
   },
-  render: ({ children, reserve }) => (
-    <ValueBadge reserve={reserveOf(reserve)}>{String(children)}</ValueBadge>
+  render: ({ variant, children, reserve }) => (
+    <ValueBadge
+      variant={demoChoice(variant, ["soft", "solid", "outline"])}
+      reserve={reserveOf(reserve)}
+    >
+      {String(children)}
+    </ValueBadge>
   ),
-  code: ({ children, reserve }) =>
-    `<ValueBadge reserve={[${reserveOf(reserve)
+  code: ({ variant, children, reserve }) =>
+    `<ValueBadge variant="${String(variant)}" reserve={[${reserveOf(reserve)
       .map((part) => `"${part}"`)
       .join(", ")}]}>${String(children)}</ValueBadge>`,
 };
@@ -58,5 +68,21 @@ export const demos: readonly DemoSection[] = [
     description:
       "It keeps room for -180° and 180°, so it doesn't jitter as the value changes.",
     render: () => <StepDemo />,
+  },
+  {
+    title: "Soft, solid and outline",
+    description:
+      "Soft, the default, on bg-control; solid filled with text-secondary; outline, a 1px edge with no fill, for a badge that sits on bg-control. Each keeps its reserved width.",
+    render: () => (
+      <Inline gap={2} align="center" wrap>
+        <ValueBadge reserve={["0%", "100%"]}>80%</ValueBadge>
+        <ValueBadge variant="solid" reserve={["0%", "100%"]}>
+          80%
+        </ValueBadge>
+        <ValueBadge variant="outline" reserve={["0%", "100%"]}>
+          80%
+        </ValueBadge>
+      </Inline>
+    ),
   },
 ];

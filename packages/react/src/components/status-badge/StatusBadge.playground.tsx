@@ -1,4 +1,4 @@
-import { Inline } from "@butteryui/core";
+import { Inline, Stack } from "@butteryui/core";
 import { demoChoice } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { StatusBadge } from "@butteryui/react";
@@ -21,9 +21,14 @@ export const live: LiveDemo = {
       options: ["neutral", "info", "success", "warning", "danger"],
       initial: "success",
     },
+    variant: {
+      kind: "choice",
+      options: ["soft", "solid", "outline"],
+      initial: "soft",
+    },
     children: { kind: "text", initial: "Paid" },
   },
-  render: ({ tone, children }) => (
+  render: ({ tone, variant, children }) => (
     <StatusBadge
       tone={demoChoice(tone, [
         "neutral",
@@ -32,6 +37,7 @@ export const live: LiveDemo = {
         "warning",
         "danger",
       ])}
+      variant={demoChoice(variant, ["soft", "solid", "outline"])}
     >
       {String(children)}
     </StatusBadge>
@@ -51,6 +57,32 @@ export const demos: readonly DemoSection[] = [
         <StatusBadge tone="warning">Low stock</StatusBadge>
         <StatusBadge tone="danger">Overdue</StatusBadge>
       </Inline>
+    ),
+  },
+  {
+    title: "Soft, solid and outline",
+    description:
+      "Soft, the default, sits on the tone's subtle background; solid fills with the tone's strong color for a state that has to stand out; outline draws a 1px edge around the tone's words for a quieter row. All three keep one size.",
+    render: () => (
+      <Stack gap={3}>
+        {(["soft", "solid", "outline"] as const).map((variant) => (
+          <Inline key={variant} gap={2} align="center" wrap>
+            <StatusBadge variant={variant}>Draft</StatusBadge>
+            <StatusBadge variant={variant} tone="info">
+              Roasting
+            </StatusBadge>
+            <StatusBadge variant={variant} tone="success">
+              Paid
+            </StatusBadge>
+            <StatusBadge variant={variant} tone="warning">
+              Low stock
+            </StatusBadge>
+            <StatusBadge variant={variant} tone="danger">
+              Overdue
+            </StatusBadge>
+          </Inline>
+        ))}
+      </Stack>
     ),
   },
   {

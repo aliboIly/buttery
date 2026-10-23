@@ -3,6 +3,8 @@
     --bt-tag-chip-dot: 6px;
     --bt-tag-chip-line: 1px;
     --bt-tag-chip-color: var(--bt-text-tertiary);
+    --bt-tag-chip-subtle: var(--bt-bg-control);
+    --bt-tag-chip-strong: var(--bt-text-secondary);
 
     display: inline-flex;
     flex: none;
@@ -32,17 +34,43 @@
 
   .bt-tag-chip[data-tone="info"] {
     --bt-tag-chip-color: var(--bt-accent);
+    --bt-tag-chip-subtle: var(--bt-accent-subtle);
+    --bt-tag-chip-strong: var(--bt-accent-text);
   }
 
   .bt-tag-chip[data-tone="success"] {
     --bt-tag-chip-color: var(--bt-success);
+    --bt-tag-chip-subtle: var(--bt-success-subtle);
+    --bt-tag-chip-strong: var(--bt-success);
   }
 
   .bt-tag-chip[data-tone="warning"] {
     --bt-tag-chip-color: var(--bt-warning);
+    --bt-tag-chip-subtle: var(--bt-warning-subtle);
+    --bt-tag-chip-strong: var(--bt-warning);
   }
 
   .bt-tag-chip[data-tone="danger"] {
     --bt-tag-chip-color: var(--bt-danger);
+    --bt-tag-chip-subtle: var(--bt-danger-subtle);
+    --bt-tag-chip-strong: var(--bt-danger);
+  }
+
+  /* The edge stays, transparent, so every look keeps the outlined tag's size. */
+  .bt-tag-chip[data-variant="soft"] {
+    border-color: transparent;
+    background-color: var(--bt-tag-chip-subtle);
+    color: var(--bt-tag-chip-strong);
+  }
+
+  /* The words and the dot are the surface's color knocked out of the tone, which clears 4.5:1 on the surface. */
+  .bt-tag-chip[data-variant="solid"] {
+    border-color: transparent;
+    background-color: var(--bt-tag-chip-strong);
+    color: var(--bt-bg-surface);
+  }
+
+  .bt-tag-chip[data-variant="solid"] > [data-bt-part="dot"] {
+    background-color: currentcolor;
   }
 }
