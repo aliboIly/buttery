@@ -42,7 +42,7 @@ const GROUP_TITLES: Readonly<Record<string, string>> = {
 };
 
 /** The page each group of tokens is documented on. */
-const TOKEN_PAGES: Readonly<Record<string, string>> = {
+export const TOKEN_PAGES: Readonly<Record<string, string>> = {
   color: "foundations/colors",
   shadow: "foundations/elevation",
   space: "foundations/spacing-and-sizing",
@@ -53,7 +53,10 @@ const TOKEN_PAGES: Readonly<Record<string, string>> = {
   duration: "motion/tokens",
   easing: "motion/tokens",
   timing: "motion/tokens",
+  spring: "motion/tokens",
   font: "foundations/typography",
+  text: "foundations/typography",
+  display: "foundations/typography",
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {

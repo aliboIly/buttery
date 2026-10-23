@@ -20,6 +20,9 @@
       "path": "./packages/lint"
     },
     {
+      "path": "./packages/mcp"
+    },
+    {
       "path": "./apps/docs"
     },
     {
