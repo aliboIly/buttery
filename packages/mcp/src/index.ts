@@ -31,8 +31,19 @@ try {
   );
   const searcher = createSearcher(loaded.knowledge);
   const serverVersion = ownVersion();
+  const allowedOrigins = (process.env["BUTTERY_MCP_ALLOW_URLS"] ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter((origin) => origin !== "");
   serveStdio(
-    () => createButteryServer({ loaded, searcher, projectRoot, serverVersion }),
+    () =>
+      createButteryServer({
+        loaded,
+        searcher,
+        projectRoot,
+        serverVersion,
+        allowedOrigins,
+      }),
     {
       onerror: (error) => {
         process.stderr.write(`buttery-mcp: ${error.message}\n`);

@@ -20,6 +20,7 @@ beforeAll(() => {
     searcher: createSearcher(knowledge),
     projectRoot: null,
     serverVersion: "0.0.0-test",
+    allowedOrigins: [],
   };
 });
 
@@ -73,6 +74,8 @@ describe.each([
     expect(first.tools.map((tool) => tool.name)).toEqual([
       "buttery_search",
       "buttery_get",
+      "buttery_lint",
+      "buttery_check_layout",
     ]);
     expect(second.tools).toEqual(first.tools);
     for (const tool of first.tools) {
@@ -81,8 +84,14 @@ describe.each([
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
-        openWorldHint: false,
+        openWorldHint: tool.name === "buttery_check_layout",
       });
+      if (
+        tool.name === "buttery_lint" ||
+        tool.name === "buttery_check_layout"
+      ) {
+        expect(tool.outputSchema?.["type"]).toBe("object");
+      }
       expect(tool.description?.length ?? 0).toBeLessThanOrEqual(800);
     }
     await client.close();
@@ -119,6 +128,53 @@ describe.each([
     expect(textOf(result)).toBe(
       'Nothing has the id "component/Modal". Did you mean component/Dialog? buttery_get({"ids":["component/Dialog"]})',
     );
+    await client.close();
+  });
+
+  it("lints a snippet into JSON whose text is exactly its structured content", async () => {
+    const client = await connect();
+    const result = await client.callTool({
+      name: "buttery_lint",
+      arguments: {
+        code: 'import { Stack } from "@butteryui/core";\nexport const A = () => <Stack gap="16px" />;',
+      },
+    });
+    expect(result.isError).not.toBe(true);
+    expect(textOf(result)).toBe(JSON.stringify(result.structuredContent));
+    expect(result.structuredContent).toMatchObject({
+      summary: { files: 1, errors: 1 },
+      diagnostics: [
+        {
+          file: "snippet.tsx",
+          line: 2,
+          rule: "buttery/prop-values",
+          fix: "Write gap={4}: spacing step 4 is 16px.",
+        },
+      ],
+      truncated: false,
+    });
+    await client.close();
+  });
+
+  it("asks for files or code, one of them, with a call that works", async () => {
+    const client = await connect();
+    const result = await client.callTool({
+      name: "buttery_lint",
+      arguments: { files: ["src/App.tsx"], code: "<Stack />" },
+    });
+    expect(result.isError).toBe(true);
+    expect(textOf(result)).toContain('buttery_lint({"files":["src/App.tsx"]})');
+    await client.close();
+  });
+
+  it("only opens pages on this machine for a layout check", async () => {
+    const client = await connect();
+    const result = await client.callTool({
+      name: "buttery_check_layout",
+      arguments: { url: "https://example.com/" },
+    });
+    expect(result.isError).toBe(true);
+    expect(textOf(result)).toContain("BUTTERY_MCP_ALLOW_URLS");
     await client.close();
   });
 
