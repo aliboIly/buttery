@@ -11,13 +11,20 @@
     inline-size: var(--bt-icon-sm);
     block-size: var(--bt-icon-sm);
     translate: -50% -50%;
+  }
+
+  /* The ring turns inside a box that holds still, so the box never reaches past its place mid-turn. */
+  .bt-spinner[data-bt-part="spinner"]::before {
+    content: "";
+    display: block;
+    block-size: 100%;
     border: var(--bt-spinner-ring) solid var(--bt-spinner-color, currentcolor);
     border-inline-end-color: transparent;
     border-radius: var(--bt-r-full);
     animation: bt-spinner-turn var(--bt-spinner-turn) linear infinite;
   }
 
-  .bt-spinner[data-motion="reduced"] {
+  .bt-spinner[data-motion="reduced"]::before {
     animation: none;
   }
 
