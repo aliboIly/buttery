@@ -894,6 +894,23 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
       acrossMatrix: true,
     },
+    escape,
+    {
+      name: "draw the live demo's cards plain",
+      allowMove: ["main"],
+      run: liveControls({ variant: "plain" }),
+      acrossMatrix: true,
+    },
+    {
+      name: "open a plain card",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Open Tilt it in 3D", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog").waitFor();
+      },
+    },
   ],
   accordion: [
     {

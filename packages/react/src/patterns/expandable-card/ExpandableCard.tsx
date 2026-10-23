@@ -24,7 +24,7 @@ import { use, useEffect, useId, useRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { IconButton } from "../../components/icon-button/IconButton.tsx";
 import { BentoContext } from "../bento/Bento.tsx";
-import type { BentoSpan } from "../bento/Bento.tsx";
+import type { BentoCardVariant, BentoSpan } from "../bento/Bento.tsx";
 
 const stepBack: Transition = {
   duration: durations.base / 1000,
@@ -72,6 +72,12 @@ export interface ExpandableCardProps extends Omit<
   readonly span?: BentoSpan | undefined;
   /** Rows it spans in a `Bento`. Defaults to `1`. */
   readonly rows?: 1 | 2 | undefined;
+  /**
+   * How the card draws its surface in the grid, as a `Bento.Card` does: `"elevated"` (the default),
+   * `"outline"`, `"soft"`, `"plain"` or `"tinted"`. Open, it's a dialog on the dialog surface whatever its
+   * variant, since a dialog over the scrim needs one.
+   */
+  readonly variant?: BentoCardVariant | undefined;
   /** Whether it's open. Pair with `onOpenChange` to control it. */
   readonly open?: boolean | undefined;
   /** Whether it starts open when uncontrolled. Defaults to `false`. */
@@ -104,6 +110,7 @@ export function ExpandableCard({
   detail,
   span = 6,
   rows = 1,
+  variant = "elevated",
   open,
   defaultOpen = false,
   onOpenChange,
@@ -159,6 +166,7 @@ export function ExpandableCard({
         data-bt="ExpandableCard"
         data-span={span}
         data-rows={rows}
+        data-variant={variant}
         data-open={isOpen ? "" : undefined}
         data-travelling={travelling ? "" : undefined}
         onLayoutAnimationStart={() => {

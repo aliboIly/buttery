@@ -3,6 +3,7 @@
   .bt-bento,
   .bt-bento-card {
     --bt-bento-cap: 1cap;
+    --bt-bento-line: 1px;
   }
 
   /* The bento is its own size container, so its columns follow the room it has. */
@@ -62,11 +63,41 @@
     min-block-size: 0;
     overflow: clip;
     border-radius: var(--bt-r-3xl);
-    background-color: var(--bt-bg-surface);
-    box-shadow: var(--bt-shadow-card);
     transition:
       translate calc(var(--bt-dur-fast) * var(--bt-motion)) var(--bt-ease-out),
-      box-shadow var(--bt-dur-fast) var(--bt-ease-out);
+      box-shadow var(--bt-dur-fast) var(--bt-ease-out),
+      background-color var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  .bt-bento-card[data-variant="elevated"] {
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  /* Drawn inside the card, so its title sits on the baseline of the elevated cards beside it. */
+  .bt-bento-card[data-variant="outline"] {
+    outline: var(--bt-bento-line) solid var(--bt-border);
+    outline-offset: calc(var(--bt-bento-line) * -1);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-bento-card[data-variant="soft"] {
+    background-color: var(--bt-bg-control);
+  }
+
+  .bt-bento-card[data-variant="tinted"] {
+    background-color: var(--bt-bg-tint);
+  }
+
+  /* A plain card has no surface to clip to: its visual carries the shape, and focus rings at its edges stay whole. */
+  .bt-bento-card[data-variant="plain"] {
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  /* A soft button shares a soft card's fill, so on one it takes the raised pill, as on a soft catalog card. */
+  .bt-bento-card[data-variant="soft"] .bt-button[data-variant="soft"] {
+    --bt-button-bg: var(--bt-bg-raised);
   }
 
   .bt-bento-card[data-rows="2"] {
@@ -80,9 +111,42 @@
   }
 
   @media (hover: hover) {
-    .bt-bento-card:hover {
+    .bt-bento-card:not([data-variant="plain"]):hover {
+      translate: 0 calc(var(--bt-space-0_5) * -1 * var(--bt-motion));
+    }
+
+    .bt-bento-card:is(
+        [data-variant="elevated"],
+        [data-variant="outline"],
+        [data-variant="tinted"]
+      ):hover {
+      box-shadow: var(--bt-shadow-raised);
+    }
+
+    .bt-bento-card[data-variant="soft"]:hover {
+      background-color: var(--bt-bg-control-active);
+    }
+
+    .bt-bento-card[data-variant="plain"]:hover > [data-bt-part="visual"] {
       box-shadow: var(--bt-shadow-raised);
       translate: 0 calc(var(--bt-space-0_5) * -1 * var(--bt-motion));
+    }
+
+    /* On a soft card an icon button's hover fill would match the card's, so it takes the next step. */
+    .bt-bento-card[data-variant="soft"]
+      .bt-icon-button[data-variant="ghost"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-icon-button-bg: var(--bt-bg-control-active);
+    }
+
+    .bt-bento-card[data-variant="soft"]
+      .bt-button[data-variant="soft"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-button-shadow: var(--bt-shadow-raised);
     }
   }
 
@@ -119,5 +183,22 @@
     flex: 1;
     align-items: end;
     min-block-size: 0;
+  }
+
+  /* With no surface around it, the title starts on the grid's edge, on the baseline of the titles beside it, 16px over the visual. */
+  .bt-bento-card[data-variant="plain"] > [data-bt-part="head"] {
+    padding-inline: 0;
+    padding-block-end: var(--bt-space-4);
+  }
+
+  /* The visual is a section's well, its edge drawn so the shape shows on a gray stage too. */
+  .bt-bento-card[data-variant="plain"] > [data-bt-part="visual"] {
+    overflow: clip;
+    border: var(--bt-bento-line) solid var(--bt-border);
+    border-radius: var(--bt-r-3xl);
+    background-color: var(--bt-bg-section);
+    transition:
+      translate calc(var(--bt-dur-fast) * var(--bt-motion)) var(--bt-ease-out),
+      box-shadow var(--bt-dur-fast) var(--bt-ease-out);
   }
 }

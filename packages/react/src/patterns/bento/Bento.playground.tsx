@@ -100,4 +100,50 @@ export const demos: readonly DemoSection[] = [
       </Page>
     ),
   },
+  {
+    title: "Variants",
+    description:
+      "elevated, the surface with the card shadow; outline, a 1px edge on the surface; soft, the bg-control fill; tinted, bg-tint from the palettes; plain, no surface, its title on the grid's edge and its visual carrying the shape.",
+    render: () => (
+      <Page>
+        <Section size="sm">
+          <Bento>
+            <Bento.Card title="Tilt it in 3D" span={4}>
+              <Picture background="lilac">
+                <Chip label="elevated" tilt={-6} />
+              </Picture>
+            </Bento.Card>
+            <Bento.Card title="Any size" span={4} variant="outline">
+              <Picture background="cream">
+                <Chip label="outline" />
+              </Picture>
+            </Bento.Card>
+            <Bento.Card title="Every change kept" span={4} variant="soft">
+              <Picture background="mint">
+                <Chip label="soft" />
+              </Picture>
+            </Bento.Card>
+            <Bento.Card
+              title="A background for every talk"
+              span={6}
+              variant="tinted"
+            >
+              <Picture background="peach">
+                <Chip label="tinted" />
+              </Picture>
+            </Bento.Card>
+            <Bento.Card
+              title="Present from any screen"
+              span={6}
+              variant="plain"
+            >
+              <Picture background="sky">
+                <Chip label="plain" />
+              </Picture>
+            </Bento.Card>
+          </Bento>
+        </Section>
+      </Page>
+    ),
+  },
 ];

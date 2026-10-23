@@ -339,6 +339,7 @@ export type {
 export { Bento, BentoCard, BentoContext } from "./patterns/bento/Bento.tsx";
 export type {
   BentoCardProps,
+  BentoCardVariant,
   BentoComponent,
   BentoProps,
   BentoSpan,

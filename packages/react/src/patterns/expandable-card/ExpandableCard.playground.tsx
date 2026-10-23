@@ -4,7 +4,7 @@ import { demoChoice } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { gradientCss, gradients } from "@butteryui/core/palettes";
 import { Bento, Button, ExpandableCard, Page, Section } from "@butteryui/react";
-import type { BentoSpan } from "@butteryui/react";
+import type { BentoCardVariant, BentoSpan } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/overlays",
@@ -79,16 +79,24 @@ function spanOf(value: unknown): BentoSpan {
   }
 }
 
+const VARIANTS = ["elevated", "outline", "soft", "plain", "tinted"] as const;
+
+function variantOf(value: unknown): BentoCardVariant {
+  return demoChoice(value, VARIANTS);
+}
+
 export const live: LiveDemo = {
   controls: {
     title: { kind: "text", initial: "Tilt it in 3D" },
     span: { kind: "choice", options: ["4", "6", "8", "12"], initial: "8" },
+    variant: { kind: "choice", options: VARIANTS, initial: "elevated" },
   },
-  render: ({ title, span }) => (
+  render: ({ title, span, variant }) => (
     <Bento>
       <ExpandableCard
         title={String(title)}
         span={spanOf(span)}
+        variant={variantOf(variant)}
         detail={
           <Text variant="body-lg">
             Steer the tilt pad and the picture tips toward you, up to 20 degrees
@@ -103,6 +111,7 @@ export const live: LiveDemo = {
       <ExpandableCard
         title="Any size"
         span={4}
+        variant={variantOf(variant)}
         detail={
           <Text variant="body-lg">
             Wide, standard, square or tall, or a size of your own.
@@ -115,21 +124,24 @@ export const live: LiveDemo = {
       </ExpandableCard>
     </Bento>
   ),
-  code: ({ title, span }) =>
-    [
+  code: ({ title, span, variant }) => {
+    const look = variant === "elevated" ? "" : ` variant="${String(variant)}"`;
+    return [
       "<Bento>",
       "  <ExpandableCard",
       `    title="${String(title)}"`,
       `    span={${String(span)}}`,
+      ...(look === "" ? [] : [`   ${look}`]),
       '    detail={<Text variant="body-lg">Steer the tilt pad and the picture tips toward you, up to 20 degrees each way.</Text>}',
       "  >",
       "    <TiltPreview />",
       "  </ExpandableCard>",
-      '  <ExpandableCard title="Any size" span={4} detail={<SizesDetail />}>',
+      `  <ExpandableCard title="Any size" span={4}${look} detail={<SizesDetail />}>`,
       "    <SizesPreview />",
       "  </ExpandableCard>",
       "</Bento>",
-    ].join("\n"),
+    ].join("\n");
+  },
 };
 
 export const demos: readonly DemoSection[] = [
@@ -191,6 +203,77 @@ export const demos: readonly DemoSection[] = [
                   <Chip label="1:1" />
                   <Chip label="16:9" />
                 </Inline>
+              </Picture>
+            </ExpandableCard>
+          </Bento>
+        </Section>
+      </Page>
+    ),
+  },
+  {
+    title: "Variants",
+    description:
+      "Each card draws itself as a Bento.Card does: outline, soft, tinted or plain, beside elevated above. Open, every one is a dialog on the dialog surface.",
+    render: () => (
+      <Page>
+        <Section size="sm">
+          <Bento>
+            <ExpandableCard
+              title="Every change kept"
+              span={6}
+              variant="outline"
+              detail={
+                <Text variant="body-lg">
+                  Undo and redo remember every change to a deck, up to 100 steps
+                  back.
+                </Text>
+              }
+            >
+              <Picture background="mint">
+                <Chip label="outline" />
+              </Picture>
+            </ExpandableCard>
+            <ExpandableCard
+              title="Notes for the room"
+              span={6}
+              variant="soft"
+              detail={
+                <Text variant="body-lg">
+                  Speaker notes show on your screen and never on the shared one.
+                </Text>
+              }
+            >
+              <Picture background="sky">
+                <Chip label="soft" />
+              </Picture>
+            </ExpandableCard>
+            <ExpandableCard
+              title="A background for every talk"
+              span={6}
+              variant="tinted"
+              detail={
+                <Text variant="body-lg">
+                  Twenty-four gradients and eighteen solid colors, each with
+                  text that stays readable.
+                </Text>
+              }
+            >
+              <Picture background="peach">
+                <Chip label="tinted" />
+              </Picture>
+            </ExpandableCard>
+            <ExpandableCard
+              title="Present from any screen"
+              span={6}
+              variant="plain"
+              detail={
+                <Text variant="body-lg">
+                  Open the deck on a laptop, a tablet or the room's own display.
+                </Text>
+              }
+            >
+              <Picture background="lilac">
+                <Chip label="plain" />
               </Picture>
             </ExpandableCard>
           </Bento>
