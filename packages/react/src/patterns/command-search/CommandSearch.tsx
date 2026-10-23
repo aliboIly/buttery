@@ -674,6 +674,15 @@ export function CommandSearch({
       if (event.target instanceof Node && panel.contains(event.target)) return;
       fit();
     };
+    // The field also moves without a scroll or a resize, as when the content above it changes height; Radix
+    // follows it by moving the panel's wrapper, so each of those moves is measured too.
+    const moved = new MutationObserver(fit);
+    if (panel.parentElement) {
+      moved.observe(panel.parentElement, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+    }
     fit();
     window.addEventListener("scroll", scrolled, {
       capture: true,
@@ -681,6 +690,7 @@ export function CommandSearch({
     });
     window.addEventListener("resize", fit);
     return () => {
+      moved.disconnect();
       window.removeEventListener("scroll", scrolled, { capture: true });
       window.removeEventListener("resize", fit);
     };

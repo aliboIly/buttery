@@ -982,6 +982,51 @@ describe("CommandSearch", () => {
     });
   });
 
+  it("keeps its panel in the window when what's above its field grows while it's open, with no scroll or resize", async () => {
+    await page.viewport(1280, 800);
+    const sources: readonly LocalSearchSource[] = [
+      "One",
+      "Two",
+      "Three",
+      "Four",
+    ].map((label) => ({
+      id: label,
+      label,
+      search: (query) =>
+        query.text.includes("z")
+          ? []
+          : Array.from({ length: 5 }, (_, index) => ({
+              id: `${label}-${String(index)}`,
+              label: `${label} ${String(index)}`,
+            })),
+    }));
+    render(
+      <div>
+        <div data-testid="above" style={{ blockSize: "120px" }} />
+        <Search sources={sources} onSearch={() => undefined} />
+      </div>,
+    );
+    await userEvent.click(field());
+    await userEvent.keyboard("r");
+    const panel = document.querySelector(".bt-command-search-panel");
+    const above = document.querySelector<HTMLElement>('[data-testid="above"]');
+    if (!panel || !above) throw new Error("No panel.");
+    await waitFor(() => {
+      expect(options("Four")).toHaveLength(5);
+    });
+    above.style.blockSize = "420px";
+    await userEvent.keyboard("zzz");
+    await waitFor(() => {
+      expect(panel.textContent).toContain("No results");
+    });
+    await waitFor(() => {
+      const { top, bottom } = panel.getBoundingClientRect();
+      expect(panel.getAttribute("data-side")).toBe("bottom");
+      expect(top).toBeGreaterThanOrEqual(8);
+      expect(bottom).toBeLessThanOrEqual(792);
+    });
+  });
+
   it("keeps its panel's top still over a field that sits low, as answers change how many rows it has", async () => {
     await page.viewport(1280, 800);
     const many: LocalSearchSource = {
