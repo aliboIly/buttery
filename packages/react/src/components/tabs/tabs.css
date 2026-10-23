@@ -70,4 +70,9 @@
   .bt-tabs-panel {
     min-inline-size: 0;
   }
+
+  /* A panel rings for its own focus only: a control focused inside it draws its own ring. */
+  .bt-tabs-panel:not(:focus-visible) {
+    outline: none;
+  }
 }

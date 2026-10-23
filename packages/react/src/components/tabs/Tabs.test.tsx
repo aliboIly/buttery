@@ -6,6 +6,7 @@ import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { userEvent as browser } from "vitest/browser";
 import { Tabs } from "./Tabs.tsx";
 
 beforeEach(() => {
@@ -123,6 +124,26 @@ describe("Tabs", () => {
           .getAttribute("aria-selected"),
       ).toBe("true");
     });
+  });
+
+  it("rings a panel for its own keyboard focus, and not for a control's focus inside it", async () => {
+    render(
+      <Tabs defaultValue="Overview">
+        <Tabs.List label="Customer">
+          <Tabs.Tab value="Overview">Overview</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="Overview">
+          <button type="button">Edit</button>
+        </Tabs.Panel>
+      </Tabs>,
+    );
+    const panel = screen.getByRole("tabpanel");
+    await browser.keyboard("{Shift}");
+    panel.focus();
+    expect(getComputedStyle(panel).outlineStyle).toBe("solid");
+    await browser.keyboard("{Shift}");
+    screen.getByRole("button", { name: "Edit" }).focus();
+    expect(getComputedStyle(panel).outlineStyle).toBe("none");
   });
 
   it("can be controlled", async () => {
