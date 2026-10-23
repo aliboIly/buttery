@@ -1,16 +1,17 @@
 @layer bt.patterns {
-  /*
-   * A narrow column centered across the page. The room above it stays small enough that with a phone's
-   * keyboard up, the field and the button are still above it.
-   */
   .bt-auth-flow {
+    container: bt-auth-flow / inline-size;
     display: flex;
     justify-content: center;
     min-inline-size: 0;
-    padding-block: var(--bt-space-16) var(--bt-space-8);
     padding-inline: var(--bt-space-5);
   }
 
+  /*
+   * A narrow column centered across the page, its room above fixed so the title holds still as the step
+   * changes. On a phone the room is a step smaller, so with the keyboard up the field and the button are
+   * still above it.
+   */
   .bt-auth-flow > [data-bt-part="column"] {
     display: flex;
     flex-direction: column;
@@ -18,6 +19,13 @@
     inline-size: 100%;
     max-inline-size: var(--bt-w-auth);
     min-inline-size: 0;
+    padding-block: var(--bt-space-24) var(--bt-space-8);
+  }
+
+  @container bt-auth-flow (width < 640px) {
+    .bt-auth-flow > [data-bt-part="column"] {
+      padding-block-start: var(--bt-space-16);
+    }
   }
 
   .bt-auth-flow [data-bt-part="logo"] {

@@ -217,4 +217,26 @@ describe("AuthFlow", () => {
     expect(identifier().getBoundingClientRect().top).toBeGreaterThanOrEqual(0);
     await page.viewport(1280, 800);
   });
+
+  it("leaves a step more room above it from 640px wide, the same for both steps", async () => {
+    const roomAbove = (title: string): number => {
+      const heading = screen.getByRole("heading", { level: 1, name: title });
+      const root = heading.closest(".bt-auth-flow");
+      if (!root) throw new Error("No AuthFlow.");
+      return (
+        heading.getBoundingClientRect().top - root.getBoundingClientRect().top
+      );
+    };
+    await page.viewport(390, 844);
+    render(<Flow />);
+    const phone = roomAbove("Sign in or create an account");
+    await page.viewport(1280, 800);
+    await waitFor(() => {
+      expect(roomAbove("Sign in or create an account")).toBe(phone + 32);
+    });
+    await toCodeStep();
+    await waitFor(() => {
+      expect(roomAbove("Check your email")).toBe(phone + 32);
+    });
+  });
 });
