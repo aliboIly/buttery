@@ -43,4 +43,52 @@ export const demos: readonly DemoSection[] = [
       </Page>
     ),
   },
+  {
+    title: "Cards",
+    description:
+      "layout cards puts each stat on a card of its own, 16px apart, in the columns a row has.",
+    render: () => (
+      <Page>
+        <Section size="sm" tone="muted">
+          <StatStrip layout="cards">
+            <Stat value={1.2} suffix="M+" label="decks presented" />
+            <Stat value={48} label="countries" />
+            <Stat value={99.9} suffix="%" label="of exports under a second" />
+            <Stat value={6} label="slide sizes" />
+          </StatStrip>
+        </Section>
+      </Page>
+    ),
+  },
+  {
+    title: "Stacked",
+    description:
+      "layout stacked puts the stats in one column with a hairline between them, for a narrow column such as an aside.",
+    render: () => (
+      <div style={{ maxInlineSize: "var(--bt-w-aside)" }}>
+        <StatStrip layout="stacked">
+          <Stat value={24} label="background gradients" />
+          <Stat value={18} label="solid colors" />
+          <Stat value={6} label="slide sizes" />
+        </StatStrip>
+      </div>
+    ),
+  },
+  {
+    title: "Large",
+    description:
+      "size lg sets display numbers over body-lg labels, in four columns too.",
+    render: () => (
+      <Page>
+        <Section size="sm">
+          <StatStrip size="lg">
+            <Stat value={1.2} suffix="M+" label="decks presented" />
+            <Stat value={48} label="countries" />
+            <Stat value={99.9} suffix="%" label="of exports under a second" />
+            <Stat value={6} label="slide sizes" />
+          </StatStrip>
+        </Section>
+      </Page>
+    ),
+  },
 ];

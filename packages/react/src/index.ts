@@ -328,7 +328,9 @@ export type { HeroTextProps } from "./parts/hero/HeroText.tsx";
 export { Stat, StatStrip } from "./patterns/stat-strip/StatStrip.tsx";
 export type {
   StatProps,
+  StatStripLayout,
   StatStripProps,
+  StatStripSize,
 } from "./patterns/stat-strip/StatStrip.tsx";
 export { LogoStrip, LogoStripMark } from "./patterns/logo-strip/LogoStrip.tsx";
 export type {

@@ -7,6 +7,7 @@ export const meta: ComponentMeta = {
     "Equal columns of headline numbers, each with a hairline and a label, the numbers counting up once as they come into view.",
   useWhen: [
     "A few proud numbers on a marketing page: people, countries, things made",
+    'Numbers in a narrow column beside an article (layout="stacked")',
   ],
   avoidWhen: [
     "Numbers people work with in an app: use MetricCard",
@@ -17,7 +18,7 @@ export const meta: ComponentMeta = {
   motion: "presence",
   keyboard: [],
   layout:
-    "It fills its parent's width in four equal columns 24px apart (two when columns is 2), each stat behind a 1px hairline, and four fall into two rows of two while the strip is under 640px wide. Numbers are heading-1 in four columns and display in two, in tabular figures with room kept for the final number; one too long for its column breaks rather than spilling, and the strip has no hit areas.",
+    "It fills its parent's width in four equal columns 24px apart (two when columns is 2), each stat behind a 1px hairline, and four fall into two rows of two while the strip is under 640px wide. With layout cards each stat is on a card of its own, padded 24 and 16px from the next; with layout stacked the stats take one column, a hairline and 16px on either side of it between each and the next. Numbers are heading-1 in four columns or stacked and display in two, or display everywhere at size lg, over body labels (body-lg at lg), in tabular figures with room kept for the final number; one too long for its column breaks rather than spilling, and the strip has no hit areas.",
   reducedMotion:
     "The numbers show their final values at once instead of counting up.",
 };

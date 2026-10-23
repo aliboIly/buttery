@@ -11,20 +11,59 @@ import { VisuallyHidden } from "radix-ui";
 import { createContext, use, useEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 
-/** The strip a stat sits in: how many columns share its row. */
-const StripContext = createContext<2 | 4 | null>(null);
+/**
+ * How a stat strip lays out its stats: `"row"`, equal columns each behind a 1px hairline; `"cards"`, equal
+ * columns each on a card of its own; or `"stacked"`, one column with a hairline between stats, for a narrow
+ * column.
+ */
+export type StatStripLayout = "row" | "cards" | "stacked";
+
+/** A stat strip's size: `"md"`, or `"lg"` with `display` numbers and `body-lg` labels whatever the columns. */
+export type StatStripSize = "md" | "lg";
+
+/** The text roles the strip gives its stats' numbers and labels. */
+interface StripRoles {
+  readonly number: "heading-1" | "display";
+  readonly label: "body" | "body-lg";
+}
+
+const StripContext = createContext<StripRoles | null>(null);
+
+const LARGE: StripRoles = { number: "display", label: "body-lg" };
+const HEADING: StripRoles = { number: "heading-1", label: "body" };
+const DISPLAY: StripRoles = { number: "display", label: "body" };
 
 /** Props for `StatStrip`. */
 export interface StatStripProps extends ComponentPropsWithRef<"div"> {
   /** How many stats share the row: `2` or `4` (the default). Four fall into two rows of two below 640px of page. */
   readonly columns?: 2 | 4 | undefined;
+  /**
+   * How the stats lay out: `"row"` (the default), equal columns each behind a 1px hairline; `"cards"`, equal
+   * columns 16px apart, each stat on a card of its own; or `"stacked"`, one column with a hairline between
+   * stats, for a narrow column such as an aside, whatever `columns` says.
+   */
+  readonly layout?: StatStripLayout | undefined;
+  /**
+   * `"md"` (the default): `display` numbers in two columns and `heading-1` in four or stacked, with `body`
+   * labels. `"lg"`: `display` numbers and `body-lg` labels in every layout.
+   */
+  readonly size?: StatStripSize | undefined;
+}
+
+function rolesOf(
+  columns: 2 | 4,
+  layout: StatStripLayout,
+  size: StatStripSize,
+): StripRoles {
+  if (size === "lg") return LARGE;
+  return layout === "stacked" || columns === 4 ? HEADING : DISPLAY;
 }
 
 /**
- * A row of headline numbers in equal columns, each `Stat` behind a 1px hairline: `display` numbers in two
- * columns, `heading-1` in four, so a long number still fits its column. Four columns fall into two rows of
- * two when the strip is under 640px wide, wherever it sits. The numbers count up once as the row comes into
- * view.
+ * Headline numbers in equal columns, each `Stat` behind a 1px hairline (or on a card of its own, or stacked in
+ * one column): `display` numbers in two columns, `heading-1` in four, so a long number still fits its column,
+ * and `display` throughout at `size="lg"`. Four columns fall into two rows of two when the strip is under
+ * 640px wide, wherever it sits. The numbers count up once as the row comes into view.
  *
  * @example
  * <StatStrip>
@@ -34,6 +73,8 @@ export interface StatStripProps extends ComponentPropsWithRef<"div"> {
  */
 export function StatStrip({
   columns = 4,
+  layout = "row",
+  size = "md",
   className,
   children,
   ...rest
@@ -44,9 +85,13 @@ export function StatStrip({
       className={cx("bt-stat-strip", className)}
       data-bt="StatStrip"
       data-columns={columns}
+      data-layout={layout}
+      data-size={size}
     >
       <div role="list" data-bt-part="list">
-        <StripContext value={columns}>{children}</StripContext>
+        <StripContext value={rolesOf(columns, layout, size)}>
+          {children}
+        </StripContext>
       </div>
     </div>
   );
@@ -105,7 +150,7 @@ export function Stat({
 }: StatProps): ReactElement {
   const reduced = useMotionPreference() === "reduced";
   const tracked = use(AnimationTrackingContext);
-  const columns = use(StripContext);
+  const roles = use(StripContext);
   const counter = useRef<HTMLSpanElement>(null);
   const counted = useRef(false);
   const decimals = decimalsOf(value);
@@ -157,13 +202,13 @@ export function Stat({
   return (
     <div
       {...rest}
-      role={columns === null ? undefined : "listitem"}
+      role={roles === null ? undefined : "listitem"}
       className={cx("bt-stat", className)}
       data-bt="Stat"
     >
       <span
         className="bt-text"
-        data-role={columns === 4 ? "heading-1" : "display"}
+        data-role={roles?.number ?? "display"}
         data-bt-part="number"
       >
         <span data-bt-part="room" aria-hidden="true">
@@ -174,7 +219,11 @@ export function Stat({
         </span>
         <VisuallyHidden.Root>{final}</VisuallyHidden.Root>
       </span>
-      <span className="bt-text" data-role="body" data-bt-part="label">
+      <span
+        className="bt-text"
+        data-role={roles?.label ?? "body"}
+        data-bt-part="label"
+      >
         {label}
       </span>
     </div>

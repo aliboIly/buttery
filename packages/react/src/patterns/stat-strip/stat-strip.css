@@ -1,6 +1,8 @@
 @layer bt.patterns {
   /* The strip is its own size container, so its columns follow the room it has wherever it sits. */
   .bt-stat-strip {
+    --bt-stat-strip-line: 1px;
+
     min-inline-size: 0;
     container-type: inline-size;
   }
@@ -20,6 +22,43 @@
     .bt-stat-strip[data-columns="4"] > [data-bt-part="list"] {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+  }
+
+  /* Cards in a grid sit 16px apart, each stat on its own surface, inset as far as a row's are from their hairline. */
+  .bt-stat-strip[data-layout="cards"] > [data-bt-part="list"] {
+    gap: var(--bt-space-4);
+  }
+
+  .bt-stat-strip[data-layout="cards"] > [data-bt-part="list"] > .bt-stat {
+    padding: var(--bt-space-6);
+    border-inline-start: 0;
+    border-radius: var(--bt-r-2xl);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  /* Stacked, the stats take one column whatever their count, a hairline between each and the next. */
+  .bt-stat-strip[data-layout="stacked"] > [data-bt-part="list"] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-4);
+  }
+
+  .bt-stat-strip[data-layout="stacked"] > [data-bt-part="list"] > .bt-stat {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+
+  .bt-stat-strip[data-layout="stacked"]
+    > [data-bt-part="list"]
+    > .bt-stat
+    + .bt-stat {
+    padding-block-start: var(--bt-space-4);
+    border-block-start: var(--bt-stat-strip-line) solid var(--bt-border);
+  }
+
+  /* A display number over body-lg sits 12px above it, clear of its descenders. */
+  .bt-stat-strip[data-size="lg"] > [data-bt-part="list"] > .bt-stat {
+    gap: var(--bt-space-3);
   }
 
   .bt-stat {
