@@ -44,9 +44,9 @@ export interface RadioCardGroupProps<
 /**
  * A choice of one among a few options, each an 18px radio beside its name in `label`, a line about it in
  * `body-sm` and `text-secondary` under the name, 12 between options; `size="sm"` draws 14px radios beside
- * 13px names, 8 apart. A chosen option's `detail` opens
- * under its line through `Morph` (`spring.snappy` open, `dur-fast` closed), lined up with the name. Arrow
- * keys move between the options and choose as they go, as a radio group does.
+ * 13px names, 8 apart. A chosen option's `detail` opens under its line through `Morph` (`spring.snappy`
+ * open, `dur-fast` closed), lined up with the name. Arrow keys move between the options and choose as they
+ * go, as a radio group does.
  *
  * @example
  * <RadioCardGroup

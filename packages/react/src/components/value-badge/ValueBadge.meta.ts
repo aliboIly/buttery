@@ -8,7 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "The live value beside a slider's label (Slider shows one for you)",
     "A short measurement next to a control: 12px, 45°, 80%",
-    'A value on bg-control, such as in a toolbar, with variant="outline"; one that has to stand out, with variant="solid"',
+    'A value in a quiet row, with variant="outline"; one that has to stand out, with variant="solid"',
   ],
   avoidWhen: [
     "A record's state or a count: use StatusBadge",

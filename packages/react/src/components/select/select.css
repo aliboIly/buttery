@@ -1,7 +1,9 @@
 @layer bt.components {
-  .bt-select,
+  /* The list renders in the dropdown layer, away from the trigger, so its panel carries its own class. */
   .bt-select-panel {
     --bt-select-line: 1px;
+
+    min-inline-size: var(--bt-w-menu-min);
   }
 
   .bt-select {
@@ -43,11 +45,6 @@
   .bt-select:is([data-variant="outline"], [data-variant="soft"]):disabled
     > [data-bt-part="chevron"] {
     color: var(--bt-icon-disabled);
-  }
-
-  /* The list renders in the dropdown layer, away from the trigger, so its panel carries its own class. */
-  .bt-select-panel {
-    min-inline-size: var(--bt-w-menu-min);
   }
 
   .bt-select-panel:is([data-variant="outline"], [data-variant="soft"]) {

@@ -3,7 +3,7 @@ import { Inline, Text } from "@butteryui/core";
 import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import { ValueBadge } from "@butteryui/react";
 
-/** A value in each look, each keeping room for 100%: soft by default, solid to stand out, outline on bg-control. */
+/** A value in each look, each keeping room for 100%: soft by default, solid to stand out, outline for a quiet row. */
 export function BadgeLooks(): ReactElement {
   return (
     <Inline gap={4} align="center" wrap>

@@ -72,7 +72,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Soft, solid and outline",
     description:
-      "Soft, the default, on bg-control; solid filled with text-secondary; outline, a 1px edge with no fill, for a badge that sits on bg-control. Each keeps its reserved width.",
+      "Soft, the default, on bg-control; solid filled with text-secondary; outline, a 1px edge with no fill, for a quiet row. Each keeps its reserved width.",
     render: () => (
       <Inline gap={2} align="center" wrap>
         <ValueBadge reserve={["0%", "100%"]}>80%</ValueBadge>

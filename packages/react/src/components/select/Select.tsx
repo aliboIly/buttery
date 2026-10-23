@@ -62,7 +62,7 @@ export interface SelectProps<Value extends string = string> extends Omit<
   /**
    * How the trigger looks: `"ghost"` (the default), a pill for header bars and toolbars; `"outline"`, a box like
    * a text field's that fills its column, for forms; or `"soft"`, the same box on `bg-control`, its edge showing
-   * only on hover, focus and while the list is open. A box's list is at least as wide as the box.
+   * only on hover, while it has focus and while the list is open. A box's list is at least as wide as the box.
    */
   readonly variant?: "ghost" | "outline" | "soft" | undefined;
   /** The trigger's height: `"sm"` (28px) or `"md"` (36px as a pill, 34px as a box). Defaults to `"md"`. */

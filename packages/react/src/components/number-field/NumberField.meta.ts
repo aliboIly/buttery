@@ -8,7 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "Exact sizes and positions: width, height, x, y, a crop in pixels",
     "Pairs of numbers in an inspector or a menu footer",
-    'A dense panel, with size="sm"; on a card or a bg-section well, with variant="soft"',
+    'A dense panel, with size="sm"; a field on a white card or in a toolbar, with variant="soft"',
   ],
   avoidWhen: [
     "A value judged by eye: use Slider",

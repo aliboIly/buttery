@@ -102,15 +102,17 @@ describe("TagChip", () => {
   it("draws a soft tag on its tone's subtle background, its words and dot in the tone, at the outlined tag's size", async () => {
     render(
       <>
-        <TagChip tone="success">Free trial</TagChip>
-        <TagChip tone="success" variant="soft">
-          Free gift
+        <TagChip tone="success" data-testid="outline">
+          Free trial
+        </TagChip>
+        <TagChip tone="success" variant="soft" data-testid="soft">
+          Free trial
         </TagChip>
       </>,
     );
     await document.fonts.ready;
-    const outline = tagOf("Free trial");
-    const soft = tagOf("Free gift");
+    const outline = screen.getByTestId("outline");
+    const soft = screen.getByTestId("soft");
     const style = getComputedStyle(soft);
     expect(style.backgroundColor).toBe(
       colorIn(document.body, "--bt-success-subtle"),
@@ -122,6 +124,9 @@ describe("TagChip", () => {
     );
     expect(soft.getBoundingClientRect().height).toBe(
       outline.getBoundingClientRect().height,
+    );
+    expect(soft.getBoundingClientRect().width).toBe(
+      outline.getBoundingClientRect().width,
     );
   });
 

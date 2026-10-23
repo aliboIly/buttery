@@ -8,7 +8,7 @@ export interface ValueBadgeProps extends ComponentPropsWithRef<"span"> {
   readonly reserve?: readonly string[] | undefined;
   /**
    * `"soft"` (the default) on `bg-control`, `"solid"` filled with `text-secondary` under text in the surface's
-   * color, or `"outline"`, a 1px `border` edge with no fill, for a badge on `bg-control` or a busy row.
+   * color, or `"outline"`, a 1px `border` edge with no fill, for a quiet row where a filled badge would be loud.
    */
   readonly variant?: BadgeVariant | undefined;
 }

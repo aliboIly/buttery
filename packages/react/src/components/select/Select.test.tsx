@@ -429,7 +429,7 @@ describe("Select", () => {
     );
   });
 
-  it("draws a soft box on bg-control that fills its column, its edge on hover, for keys and while its list is open", async () => {
+  it("draws a soft box on bg-control that fills its column, its edge on hover, while it has focus and while its list is open", async () => {
     render(
       <div style={{ inlineSize: "320px" }}>
         <Select
@@ -460,6 +460,7 @@ describe("Select", () => {
     expect(getComputedStyle(trigger).borderTopColor).toBe(edge);
     await browser.keyboard("{ArrowDown}");
     const list = await screen.findByRole("listbox", { name: "Export format" });
+    await expect.poll(() => list.contains(document.activeElement)).toBe(true);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
     expect(getComputedStyle(trigger).borderTopColor).toBe(edge);
     const panel = list.closest<HTMLElement>(".bt-select-panel");

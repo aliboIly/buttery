@@ -219,7 +219,8 @@ describe("NumberField", () => {
     expect(getComputedStyle(part).borderTopColor).toBe(edge);
     const increase = screen.getByRole("button", { name: "Increase W" });
     await browser.hover(increase);
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    expect(getComputedStyle(increase).backgroundColor).toBe(deeper);
+    await expect
+      .poll(() => getComputedStyle(increase).backgroundColor)
+      .toBe(deeper);
   });
 });

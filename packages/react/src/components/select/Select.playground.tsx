@@ -155,7 +155,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Outline and soft boxes",
     description:
-      "For forms, a box like a text field's that fills its column, at 34px or 28px: outline with a 1px edge, or soft on bg-control, its edge showing on hover, for keys and while its list is open.",
+      "For forms, a box like a text field's that fills its column, at 34px or 28px: outline with a 1px edge, or soft on bg-control, its edge showing on hover, while it has focus and while its list is open.",
     render: () => (
       <Stack gap={4}>
         <Grid columns={{ base: 1, md: 2 }} gap={4}>
