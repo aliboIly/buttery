@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { Icon, Morph, Stack, Surface, Text } from "@buttery/core";
 import { Button, Section, buttery } from "@buttery/react";
 import { ChevronDown, Mail } from "lucide-react";
-import { QUESTIONS } from "./data.ts";
+import { ADDRESS, QUESTIONS } from "./data.ts";
 import type { Question } from "./data.ts";
 
 function QuestionItem({
@@ -78,22 +78,34 @@ export function Questions({
             />
           ))}
         </Surface>
-        <Surface level="card" pad={6}>
-          <Stack gap={4} align="start">
+        <Stack gap={4}>
+          <Surface level="card" pad={6}>
+            <Stack gap={4} align="start">
+              <Stack gap={3}>
+                <Text variant="title" asChild>
+                  <h3>Still wondering about something?</h3>
+                </Text>
+                <Text variant="body-sm" tone="secondary">
+                  Write to hello@halfmoon.example and Rosa or Theo will answer
+                  within a day, Monday to Friday.
+                </Text>
+              </Stack>
+              <Button iconStart={Mail} asChild>
+                <a href="mailto:hello@halfmoon.example">Email the roastery</a>
+              </Button>
+            </Stack>
+          </Surface>
+          <Surface level="card" pad={6}>
             <Stack gap={3}>
               <Text variant="title" asChild>
-                <h3>Still wondering about something?</h3>
+                <h3>Come by the counter</h3>
               </Text>
               <Text variant="body-sm" tone="secondary">
-                Write to hello@halfmoon.example and Rosa or Theo will answer
-                within a day, Monday to Friday.
+                {`We're at ${ADDRESS} in Portland, Tuesday to Saturday from 8 to 2. Buy a bag, taste what came out of the roaster that morning and say hello.`}
               </Text>
             </Stack>
-            <Button iconStart={Mail} asChild>
-              <a href="mailto:hello@halfmoon.example">Email the roastery</a>
-            </Button>
-          </Stack>
-        </Surface>
+          </Surface>
+        </Stack>
       </div>
     </Section>
   );

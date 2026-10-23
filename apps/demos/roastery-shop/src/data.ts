@@ -221,6 +221,9 @@ export function isGrindId(value: unknown): value is GrindId {
   return GRINDS.some((grind) => grind.value === value);
 }
 
+/** The roastery's street address, kept on one line. */
+export const ADDRESS = "1180\u00a0SE\u00a0Water\u00a0Ave";
+
 /** Cafés around Portland that pour the roastery's coffee, each with the mark on its sign. */
 export const CAFES: readonly {
   readonly name: string;

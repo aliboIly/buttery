@@ -18,7 +18,7 @@ import { bagCount, useBag } from "./bag.ts";
 import { Brewing } from "./Brewing.tsx";
 import { Coffees } from "./Coffees.tsx";
 import type { OriginFilter, RoastFilter } from "./Coffees.tsx";
-import { CAFES } from "./data.ts";
+import { ADDRESS, CAFES } from "./data.ts";
 import type { CoffeeId, GuideId } from "./data.ts";
 import { HalfmoonMark } from "./HalfmoonMark.tsx";
 import { jump } from "./jump.ts";
@@ -30,9 +30,6 @@ import { Story } from "./Story.tsx";
 import { Subscribe } from "./Subscribe.tsx";
 import type { PlanFor } from "./Subscribe.tsx";
 import { ThisWeek } from "./ThisWeek.tsx";
-
-/** The roastery's street address, kept on one line. */
-const ADDRESS = "1180\u00a0SE\u00a0Water\u00a0Ave";
 
 const SECTIONS = [
   { id: "this-week", label: "This week" },
