@@ -2,7 +2,6 @@ import "@buttery/core/styles.css";
 import "../../styles.css";
 import { publishSettled } from "@buttery/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -67,7 +66,7 @@ async function settled(): Promise<void> {
 }
 
 async function openBag(): Promise<HTMLElement> {
-  await userEvent.click(screen.getByRole("button", { name: "Bag" }));
+  await browser.click(screen.getByRole("button", { name: "Bag" }));
   const sheet = await screen.findByRole("dialog");
   await settled();
   return sheet;
@@ -100,7 +99,7 @@ describe("Sheet", () => {
 
   it("opens from its trigger, named by its title and described by its description, with focus waiting on it", async () => {
     render(<Bag />);
-    await userEvent.click(screen.getByRole("button", { name: "Bag" }));
+    await browser.click(screen.getByRole("button", { name: "Bag" }));
     const sheet = await screen.findByRole("dialog");
     expect(document.activeElement).toBe(sheet);
     await settled();
@@ -110,11 +109,20 @@ describe("Sheet", () => {
     );
     expect(sheet.getAttribute("aria-modal")).toBe("true");
     expect(document.activeElement).toBe(sheet);
-    await userEvent.tab();
-    expect(document.activeElement).toBe(
-      screen.getByRole("button", { name: "Remove Guji" }),
-    );
   });
+
+  // WebKit leaves buttons out of the tab order unless the system's keyboard setting puts them in.
+  it.skipIf(!navigator.userAgent.includes("Chrome/"))(
+    "starts Tab at its first control once it has slid in",
+    async () => {
+      render(<Bag />);
+      await openBag();
+      await browser.tab();
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Remove Guji" }),
+      );
+    },
+  );
 
   it("moves focus to its first field to type in once it has slid in", async () => {
     render(
@@ -129,7 +137,7 @@ describe("Sheet", () => {
         </Sheet.Body>
       </Bag>,
     );
-    await userEvent.click(screen.getByRole("button", { name: "Bag" }));
+    await browser.click(screen.getByRole("button", { name: "Bag" }));
     await waitFor(() => {
       expect(document.activeElement).toBe(screen.getByLabelText("Note"));
     });
@@ -138,7 +146,7 @@ describe("Sheet", () => {
   it("closes on Escape and hands focus back to its trigger", async () => {
     render(<Bag />);
     await openBag();
-    await userEvent.keyboard("{Escape}");
+    await browser.keyboard("{Escape}");
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
@@ -150,14 +158,12 @@ describe("Sheet", () => {
   it("closes from its close button, a Sheet.Close and a press on the dimmed page", async () => {
     render(<Bag />);
     await openBag();
-    await userEvent.click(screen.getByRole("button", { name: "Close" }));
+    await browser.click(screen.getByRole("button", { name: "Close" }));
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
     await openBag();
-    await userEvent.click(
-      screen.getByRole("button", { name: "Keep shopping" }),
-    );
+    await browser.click(screen.getByRole("button", { name: "Keep shopping" }));
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
@@ -175,7 +181,7 @@ describe("Sheet", () => {
     render(<Bag />);
     const sheet = await openBag();
     for (let step = 0; step < 6; step += 1) {
-      await userEvent.tab();
+      await browser.tab();
       expect(sheet.contains(document.activeElement)).toBe(true);
     }
   });
@@ -379,7 +385,7 @@ describe("Sheet", () => {
       });
     });
     watch.observe(document.body, { childList: true, subtree: true });
-    await userEvent.click(screen.getByRole("button", { name: "Bag" }));
+    await browser.click(screen.getByRole("button", { name: "Bag" }));
     const sheet = await screen.findByRole("dialog");
     watch.disconnect();
     expect(first).toEqual([{ left: 1200, opacity: "1" }]);
@@ -394,7 +400,7 @@ describe("Sheet", () => {
         <Bag />
       </ButteryProvider>,
     );
-    await userEvent.click(screen.getByRole("button", { name: "Bag" }));
+    await browser.click(screen.getByRole("button", { name: "Bag" }));
     const sheet = await screen.findByRole("dialog");
     expect(Number(getComputedStyle(sheet).opacity)).toBeLessThan(1);
     expect(sheet.getBoundingClientRect().left).toBe(792);
@@ -462,11 +468,11 @@ describe("Sheet", () => {
       );
     }
     render(<Controlled />);
-    await userEvent.click(screen.getByRole("button", { name: "Filters" }));
+    await browser.click(screen.getByRole("button", { name: "Filters" }));
     expect(screen.getByText("open", { selector: "output" })).toBeTruthy();
     await screen.findByRole("dialog");
     await settled();
-    await userEvent.keyboard("{Escape}");
+    await browser.keyboard("{Escape}");
     expect(screen.getByText("closed", { selector: "output" })).toBeTruthy();
   });
 
@@ -500,7 +506,7 @@ describe("Sheet", () => {
         document.documentElement.style.getPropertyValue("--bt-lane-inset-end"),
       ).toBe("416px");
     });
-    await userEvent.keyboard("{Escape}");
+    await browser.keyboard("{Escape}");
     await waitFor(() => {
       expect(
         document.documentElement.style.getPropertyValue("--bt-lane-inset-end"),
