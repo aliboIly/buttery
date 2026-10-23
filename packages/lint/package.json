@@ -1,9 +1,23 @@
 {
   "name": "@butteryui/lint",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.9.0",
   "description": "ESLint and stylelint configs that enforce buttery's tokens and layout rules.",
   "license": "MIT",
+  "keywords": [
+    "eslint",
+    "stylelint",
+    "design-tokens",
+    "design-system"
+  ],
+  "homepage": "https://aliboily.github.io/buttery/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aliboIly/buttery.git",
+    "directory": "packages/lint"
+  },
+  "bugs": {
+    "url": "https://github.com/aliboIly/buttery/issues"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -33,5 +47,8 @@
   "peerDependencies": {
     "eslint": ">=9",
     "stylelint": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
