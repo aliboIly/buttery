@@ -22,14 +22,26 @@ export function DesktopPreview({
   readonly children: ReactNode;
 }): ReactElement {
   const frame = useRef<HTMLDivElement>(null);
+  const ruler = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const [drawing, setDrawing] = useState<Drawing | null>(null);
 
   useLayoutEffect(() => {
     const outer = frame.current;
+    const width = ruler.current;
     const inner = content.current;
-    if (!outer || !inner) return undefined;
+    if (!outer || !width || !inner) return undefined;
     let scaled = false;
+    let pending = 0;
+    // Measured and committed at the start of the next frame: a component inside that commits from its own
+    // observer with flushSync, as AppShell does, would otherwise commit this preview's new size while the
+    // browser delivers resize notifications.
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(pending);
+      pending = requestAnimationFrame(() => {
+        flushSync(measure);
+      });
+    });
     const measure = (): void => {
       const scale = desktopScale(outer.clientWidth);
       const root = inner.firstElementChild;
@@ -38,6 +50,10 @@ export function DesktopPreview({
         (root instanceof HTMLElement &&
           root.offsetWidth >= inner.clientWidth - 1);
       scaled = scale !== null && fills;
+      // Unscaled, the content's height follows what's inside it, which components there change from their own
+      // observers mid-delivery; it's watched only while scaled, when its height sets the frame's.
+      if (scaled) observer.observe(inner);
+      else observer.unobserve(inner);
       const next =
         scaled && scale !== null ? { scale, height: inner.offsetHeight } : null;
       setDrawing((current) =>
@@ -47,18 +63,7 @@ export function DesktopPreview({
       );
     };
     measure();
-    // Measured and committed at the start of the next frame: a component inside that commits from its own
-    // observer with flushSync, as AppShell does, would otherwise commit this preview's new size while the
-    // browser delivers resize notifications.
-    let pending = 0;
-    const observer = new ResizeObserver(() => {
-      cancelAnimationFrame(pending);
-      pending = requestAnimationFrame(() => {
-        flushSync(measure);
-      });
-    });
-    observer.observe(outer);
-    observer.observe(inner);
+    observer.observe(width);
     return () => {
       cancelAnimationFrame(pending);
       observer.disconnect();
@@ -80,6 +85,7 @@ export function DesktopPreview({
       data-bt-preview={drawing === null ? undefined : String(drawing.scale)}
       style={style}
     >
+      <div ref={ruler} className="docs-desktop-ruler" aria-hidden="true" />
       <div ref={content} className="docs-desktop-content">
         {children}
       </div>

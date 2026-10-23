@@ -236,6 +236,11 @@
   min-inline-size: 0;
 }
 
+/* Nothing tall: it reports only the frame's width changing, whatever happens to the content's height. */
+.docs-desktop-ruler {
+  block-size: 0;
+}
+
 .docs-desktop-content {
   container: bt-shell bt-column / inline-size;
 }
