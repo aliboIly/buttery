@@ -155,6 +155,11 @@ export const widths = {
     description: "A docked side panel once it's expanded.",
   },
   dialog: { cssVar: "--bt-w-dialog", value: 400, description: "Dialog width." },
+  auth: {
+    cssVar: "--bt-w-auth",
+    value: 360,
+    description: "A sign-in or sign-up screen's column, at most.",
+  },
   "dialog-md": {
     cssVar: "--bt-w-dialog-md",
     value: 560,

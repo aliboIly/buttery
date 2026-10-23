@@ -113,3 +113,5 @@
 @import "./patterns/search-results/search-results.css";
 @import "./components/accordion/accordion.css";
 @import "./patterns/faq/faq.css";
+@import "./components/one-time-code-field/one-time-code-field.css";
+@import "./components/identifier-field/identifier-field.css";

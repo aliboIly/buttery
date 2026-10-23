@@ -1,0 +1,135 @@
+@layer bt.components {
+  .bt-one-time-code-field {
+    --bt-one-time-code-field-dot: 6px;
+    --bt-one-time-code-field-caret: 2px;
+    --bt-one-time-code-field-blink: 1060ms;
+
+    min-inline-size: 0;
+  }
+
+  /* The slots fill the box; the input lies over them, so every press, paste and autofill lands in it. */
+  .bt-one-time-code-field > [data-bt-part="box"] > [data-bt-part="slots"] {
+    display: flex;
+    flex: 1;
+    align-self: stretch;
+    min-inline-size: 0;
+    padding-inline: var(--bt-form-field-inset);
+  }
+
+  .bt-one-time-code-field [data-bt-part="slot"] {
+    position: relative;
+    display: grid;
+    flex: 1 1 0;
+    place-items: center;
+    min-inline-size: 0;
+    color: var(--bt-text-strong);
+    font-size: var(--bt-text-title-lg-size);
+    font-weight: var(--bt-text-title-lg-weight);
+    line-height: var(--bt-text-title-lg-line);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bt-one-time-code-field [data-bt-part="dot"] {
+    inline-size: var(--bt-one-time-code-field-dot);
+    block-size: var(--bt-one-time-code-field-dot);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-text-tertiary);
+  }
+
+  /* The active slot shows a caret over its dot, as the input's own caret is hidden. */
+  .bt-one-time-code-field [data-bt-part="caret"] {
+    position: absolute;
+    inset-block-start: 25%;
+    inset-inline-start: calc(50% - var(--bt-one-time-code-field-caret) / 2);
+    inline-size: var(--bt-one-time-code-field-caret);
+    block-size: 50%;
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-accent);
+    animation: bt-one-time-code-field-blink var(--bt-one-time-code-field-blink)
+      steps(1) infinite;
+  }
+
+  .bt-one-time-code-field
+    [data-bt-part="slot"]:has(> [data-bt-part="caret"])
+    > [data-bt-part="dot"] {
+    visibility: hidden;
+  }
+
+  .bt-one-time-code-field[data-motion="reduced"] [data-bt-part="caret"] {
+    animation: none;
+  }
+
+  /*
+   * The real input, over the slots and as big as the box, its text, caret and selection see-through: it's
+   * what takes the keys, the paste and the code a phone offers from a message. 16px text keeps phones from
+   * zooming in on focus.
+   */
+  .bt-one-time-code-field > [data-bt-part="box"] > [data-bt-part="input"] {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: transparent;
+    font-size: var(--bt-text-body-lg-size-sm);
+    caret-color: transparent;
+    outline: none;
+  }
+
+  .bt-one-time-code-field
+    > [data-bt-part="box"]
+    > [data-bt-part="input"]::selection {
+    background: transparent;
+  }
+
+  .bt-one-time-code-field > [data-bt-part="box"] {
+    transition:
+      border-color var(--bt-dur-fast) var(--bt-ease-standard),
+      background-color var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  .bt-one-time-code-field[data-status="success"] > [data-bt-part="box"] {
+    border-color: var(--bt-success);
+    background-color: var(--bt-success-subtle);
+  }
+
+  /* One line under the field in every state, so a status coming or going never moves what's below. */
+  .bt-one-time-code-field > [data-bt-part="status"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bt-space-1_5);
+    min-inline-size: 0;
+    min-block-size: var(--bt-icon-sm);
+    color: var(--bt-text-tertiary);
+  }
+
+  .bt-one-time-code-field > [data-bt-part="status"] > .bt-text {
+    color: inherit;
+    text-box: normal;
+  }
+
+  .bt-one-time-code-field[data-status="success"] > [data-bt-part="status"] {
+    color: var(--bt-success);
+  }
+
+  .bt-one-time-code-field[data-status="error"] > [data-bt-part="status"] {
+    color: var(--bt-danger);
+  }
+
+  .bt-one-time-code-field [data-bt-part="mark"] {
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--bt-icon-sm);
+    block-size: var(--bt-icon-sm);
+  }
+
+  @keyframes bt-one-time-code-field-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+}
