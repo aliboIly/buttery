@@ -1,4 +1,0 @@
-/* Room at the page's end for the floating lanes, so its last line can scroll clear of a toast. */
-.lane-room {
-  block-size: var(--bt-lane-clearance, 0px);
-}

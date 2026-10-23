@@ -190,12 +190,6 @@ test("Reset demo forgets what the demo saved and nothing else, and it opens as o
 
 /** Where each demo's own controls are that never scroll, which the pill must keep clear of. */
 const CHROME: Readonly<Record<(typeof demoPages)[number]["route"], string>> = {
-  "card-studio": [
-    '[data-bt="HeaderBar"]',
-    '[data-bt="AppShell"] > [data-bt-part="inspector"]',
-    '[data-bt="AppShell"] > [data-bt-part="sheet-bar"]',
-  ].join(", "),
-  "card-studio-site": '[data-bt="NavBar"], [data-bt="SubNav"]',
   roastery: '[data-bt="Sidebar"], [data-bt="TopBar"], [data-bt="SetupGuide"]',
   "roastery-shop": '[data-bt="NavBar"], [data-bt="SubNav"]',
   deckhand: [

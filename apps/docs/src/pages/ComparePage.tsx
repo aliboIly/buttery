@@ -342,11 +342,9 @@ const CROPS: readonly Crop[] = [
     y: 0,
     width: 0,
     height: 0,
-    note: "An open select, the crop toolbar and a toast float over the app, so the phase report compares them as whole screens of Card Studio next to the captures.",
+    note: "An open select, the arrange toolbar and a toast float over the app, so the phase report compares them as whole screens of Deckhand next to the captures.",
     ours: () => (
-      <ArrowLink href={siteHref("/demos/card-studio")}>
-        Open Card Studio
-      </ArrowLink>
+      <ArrowLink href={siteHref("/demos/deckhand")}>Open Deckhand</ArrowLink>
     ),
   },
   {

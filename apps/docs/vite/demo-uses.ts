@@ -71,14 +71,6 @@ const SCREENS: Readonly<Record<string, DemoScreen>> = {
     demo: "the roastery demo",
     href: "/demos/roastery",
   },
-  "card-studio/CardStudio.tsx": {
-    demo: "the Card Studio demo",
-    href: "/demos/card-studio",
-  },
-  "card-studio-site/CardStudioSite.tsx": {
-    demo: "the Card Studio site demo",
-    href: "/demos/card-studio-site",
-  },
   "roastery-shop/App.tsx": {
     demo: "the Halfmoon shop demo",
     href: "/demos/roastery-shop",
@@ -89,13 +81,7 @@ const SCREENS: Readonly<Record<string, DemoScreen>> = {
   },
 };
 
-const DEMOS = [
-  "roastery",
-  "roastery-shop",
-  "deckhand",
-  "card-studio",
-  "card-studio-site",
-] as const;
+const DEMOS = ["roastery", "roastery-shop", "deckhand"] as const;
 
 /** The names a source imports from buttery's packages. */
 function butteryImports(source: string): string[] {

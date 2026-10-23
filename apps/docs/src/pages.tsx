@@ -17,8 +17,6 @@ import type { NavSection } from "./nav.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 import type { SectionLink } from "./NotFoundPage.tsx";
 import { MotionPage } from "./pages/MotionPage.tsx";
-import * as cardStudio from "demo-card-studio";
-import * as cardStudioSite from "demo-card-studio-site";
 import * as deckhand from "demo-deckhand";
 import * as roastery from "demo-roastery";
 import * as roasteryShop from "demo-roastery-shop";
@@ -99,8 +97,6 @@ const templatePreviews: readonly Page[] = templates.map(({ name, title }) => ({
 const DEMO_APPS: Readonly<
   Record<(typeof demoPages)[number]["route"], DemoApp>
 > = {
-  "card-studio": cardStudio,
-  "card-studio-site": cardStudioSite,
   roastery,
   "roastery-shop": roasteryShop,
   deckhand,

@@ -105,7 +105,6 @@ export default defineConfig({
               {
                 origin: `http://localhost:${String(testPort(app))}`,
                 localStorage: [
-                  { name: "buttery:onboarding:card-studio", value: "done" },
                   { name: "buttery:onboarding:deckhand", value: "done" },
                 ],
               },

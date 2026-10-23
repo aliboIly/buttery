@@ -31,39 +31,6 @@ export interface DemoInfo {
 /** Original demo apps built from buttery's components, each its template plus its own content. */
 export const demoPages = [
   {
-    route: "card-studio",
-    title: "Card Studio",
-    template: "editor",
-    description:
-      "An editor for title cards: style one in the inspector, watch it on the stage and export it as an image.",
-    uses: [
-      "AppShell",
-      "HeaderBar",
-      "Stage",
-      "Inspector",
-      "TiltPad",
-      "SwatchGrid",
-      "FloatingToolbar",
-      "Onboarding",
-    ],
-  },
-  {
-    route: "card-studio-site",
-    title: "Card Studio site",
-    template: "marketing",
-    description: "Card Studio's launch page, made only from the page patterns.",
-    uses: [
-      "NavBar",
-      "MorphMenu",
-      "SubNav",
-      "SplitHero",
-      "Bento",
-      "ExpandableCard",
-      "StatStrip",
-      "Footer",
-    ],
-  },
-  {
     route: "roastery",
     title: "Halfmoon Roastery",
     template: "dashboard",
@@ -85,16 +52,16 @@ export const demoPages = [
     title: "Halfmoon shop",
     template: "marketing",
     description:
-      "Halfmoon Roastery's online shop: its coffees, a subscription and a bag to check out from.",
+      "Halfmoon Roastery's own shop: coffees to filter and open, a subscription builder, brew guides and a bag that checks out in place.",
     uses: [
       "NavBar",
       "MorphMenu",
-      "SubNav",
       "SplitHero",
       "Bento",
       "ExpandableCard",
-      "StatStrip",
-      "Footer",
+      "Dialog",
+      "Morph",
+      "SegmentedControl",
     ],
   },
   {

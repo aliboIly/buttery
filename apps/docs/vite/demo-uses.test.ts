@@ -15,8 +15,8 @@ describe("where the demos use each component", () => {
       href: "/demos/roastery/orders",
     });
     expect(uses["SegmentedControl"]).toContainEqual({
-      demo: "the Card Studio demo",
-      href: "/demos/card-studio",
+      demo: "the Deckhand demo",
+      href: "/demos/deckhand",
     });
     expect(uses["Bento"]).toContainEqual({
       demo: "the Halfmoon shop demo",
