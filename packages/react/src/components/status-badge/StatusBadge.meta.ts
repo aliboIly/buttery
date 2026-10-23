@@ -22,5 +22,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [],
   layout:
-    "It's --bt-h-badge (20px) tall and as wide as its label, its padding and its 12px icon, in every variant: the outline's edge is drawn inside it. It's never wider than its container, where a long label truncates with an ellipsis and shows in full as its title, and it takes no input, so it has no hit area.",
+    "It's `--bt-h-badge` (20px) tall and as wide as its label, its padding and its 12px icon, in every variant: the outline's edge is drawn inside it. It's never wider than its container, where a long label truncates with an ellipsis and shows in full as its title, and it takes no input, so it has no hit area.",
 };

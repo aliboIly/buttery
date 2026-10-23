@@ -34,7 +34,7 @@ export const meta: ComponentMeta = {
     { keys: "Space", does: "Chooses the segment with focus" },
   ],
   layout:
-    'A pill track 34px tall (--bt-h-control, 30 compact) at size="md", 28px (--bt-h-sm) at "sm" or 48px (--bt-h-cta, 40 compact) at "lg", padded 2px (4px at "lg") around segments that share one width, the widest label\'s. With layout="hug", the default, it\'s as wide as that makes it wherever it\'s placed, a Stack or a grid cell that stretches its children included; with layout="fill" it spans the width it\'s given, its segments sharing it equally, and in an Inline it takes the room its siblings leave. It\'s never wider than its container, where a label that doesn\'t fit truncates with an ellipsis and shows in full as its title. Each segment\'s full height is its hit area.',
+    'A pill track 34px tall (`--bt-h-control`, 30 compact) at size="md", 28px (`--bt-h-sm`) at "sm" or 48px (`--bt-h-cta`, 40 compact) at "lg", padded 2px (4px at "lg") around segments that share one width, the widest label\'s. With layout="hug", the default, it\'s as wide as that makes it wherever it\'s placed, a Stack or a grid cell that stretches its children included; with layout="fill" it spans the width it\'s given, its segments sharing it equally, and in an Inline it takes the room its siblings leave. It\'s never wider than its container, where a label that doesn\'t fit truncates with an ellipsis and shows in full as its title. Each segment\'s full height is its hit area.',
   reducedMotion:
     "The selection appears on the chosen segment at once instead of sliding.",
 };

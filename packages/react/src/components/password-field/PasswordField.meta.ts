@@ -31,5 +31,5 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    'It fills its container. Its box is 34px tall (--bt-h-control) at size="md", the default, 28px (--bt-h-sm) at "sm" and 48px (--bt-h-cta) with 16px text at "lg", with the 28px reveal button inside its end; in a small box the button draws at the badge height and keeps its 28px target. A soft box keeps its edge transparent until hover or focus. The label, with its hint 6px under it, sits 8px above the box, and the error and the requirements follow 8px apart under it, the rules 6px from one another; all of them wrap.',
+    'It fills its container. Its box is 34px tall (`--bt-h-control`) at size="md", the default, 28px (`--bt-h-sm`) at "sm" and 48px (`--bt-h-cta`) with 16px text at "lg", with the 28px reveal button inside its end; in a small box the button draws at the badge height and keeps its 28px target. A soft box keeps its edge transparent until hover or focus. The label, with its hint 6px under it, sits 8px above the box, and the error and the requirements follow 8px apart under it, the rules 6px from one another; all of them wrap.',
 };

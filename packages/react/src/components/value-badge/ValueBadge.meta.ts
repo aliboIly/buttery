@@ -19,5 +19,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [],
   layout:
-    "It's --bt-h-badge (20px) tall and as wide as the longest of its value and its reserve values, with tabular digits, so it never changes width as the value moves; each variant keeps that size, the outline's edge drawn inside it. It stays on one line without truncating, and it takes no input, so it has no hit area.",
+    "It's `--bt-h-badge` (20px) tall and as wide as the longest of its value and its reserve values, with tabular digits, so it never changes width as the value moves; each variant keeps that size, the outline's edge drawn inside it. It stays on one line without truncating, and it takes no input, so it has no hit area.",
 };

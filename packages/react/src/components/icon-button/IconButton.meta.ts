@@ -29,7 +29,7 @@ export const meta: ComponentMeta = {
     { keys: "Enter", does: "Follows the link, when it's a link with asChild" },
   ],
   layout:
-    'It\'s a circle 36px across (--bt-h-button) at size="md", the default, 28px (--bt-h-sm) at "sm" or 48px (--bt-h-cta, 40 compact) at "lg", and it never shrinks. The whole circle is the hit area. Its 16px icon sits in the middle at every size, an outline\'s 1px edge is drawn inside the circle, and the dot sits on the icon\'s top end corner without changing the button\'s size.',
+    'It\'s a circle 36px across (`--bt-h-button`) at size="md", the default, 28px (`--bt-h-sm`) at "sm" or 48px (`--bt-h-cta`, 40 compact) at "lg", and it never shrinks. The whole circle is the hit area. Its 16px icon sits in the middle at every size, an outline\'s 1px edge is drawn inside the circle, and the dot sits on the icon\'s top end corner without changing the button\'s size.',
   reducedMotion:
     "It presses in at once, without easing, while its hover color still fades over 120ms.",
 };
