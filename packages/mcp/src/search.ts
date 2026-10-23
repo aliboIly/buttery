@@ -135,6 +135,9 @@ export function createSearcher(knowledge: Knowledge): Searcher {
     knowledge.components.map((component) => [component.name, component]),
   );
   const pages = new Map(knowledge.pages.map((page) => [page.route, page]));
+  const homes = new Map(
+    knowledge.components.map((component) => [component.href, component]),
+  );
   const tokens = new Map(
     knowledge.tokens.flatMap((group) =>
       group.tokens.map((token) => [token.cssVar, { group, token }] as const),
@@ -215,13 +218,16 @@ export function createSearcher(knowledge: Knowledge): Searcher {
         };
       }
       case "heading":
-      case "release":
+      case "release": {
+        const component = homes.get(entry.href);
+        if (component) return componentItem(component);
         return {
           id: `page/${routeOf(entry.href)}`,
           kind: entry.kind === "heading" ? "section" : "release",
           title: [...entry.path.slice(1), entry.title].join(" › "),
           summary: clip(hit.snippet, 220),
         };
+      }
       case "token": {
         const found = tokens.get(entry.title);
         if (!found) return null;

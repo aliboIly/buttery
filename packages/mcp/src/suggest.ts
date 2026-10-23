@@ -20,17 +20,43 @@ function distance(a: string, b: string): number {
   return previous[b.length] ?? 0;
 }
 
-function candidates(knowledge: Knowledge): string[] {
-  return [
-    ...knowledge.components.map((component) => `component/${component.name}`),
-    ...knowledge.pages.map((page) => `page/${page.route}`),
-    ...knowledge.tokens.map((group) => `tokens/${group.name}`),
-    ...knowledge.rules.map((rule) => rule.id),
-  ];
+/** Every id `buttery_get` answers to, of the kind `prefix` names when it names one. */
+function candidates(knowledge: Knowledge, prefix: string): string[] {
+  const all = {
+    component: knowledge.components.map(
+      (component) => `component/${component.name}`,
+    ),
+    page: knowledge.pages.map((page) => `page/${page.route}`),
+    tokens: knowledge.tokens.map((group) => `tokens/${group.name}`),
+    rule: knowledge.rules.map((rule) => rule.id),
+  };
+  switch (prefix) {
+    case "component":
+    case "pattern":
+    case "primitive":
+    case "layer":
+      return all.component;
+    case "page":
+      return all.page;
+    case "tokens":
+    case "token":
+      return all.tokens;
+    case "rule":
+    case "check":
+      return all.rule;
+    default:
+      return [...all.component, ...all.page, ...all.tokens, ...all.rule];
+  }
 }
 
 function nameOf(id: string): string {
   return (id.split("/").at(-1) ?? id).toLowerCase().replace(/[-_\s]/g, "");
+}
+
+function sharedStart(a: string, b: string): number {
+  let length = 0;
+  while (length < a.length && a[length] === b[length]) length += 1;
+  return length;
 }
 
 /**
@@ -44,20 +70,28 @@ export function suggestionFor(
 ): string | null {
   const wanted = nameOf(id);
   if (wanted === "") return null;
+  const slash = id.indexOf("/");
+  const prefix = slash === -1 ? "" : id.slice(0, slash).toLowerCase();
   let best: { readonly id: string; readonly score: number } | null = null;
-  for (const candidate of candidates(knowledge)) {
-    const score = distance(wanted, nameOf(candidate));
+  for (const candidate of candidates(knowledge, prefix)) {
+    const name = nameOf(candidate);
+    // A shared start counts for more than a letter's difference later on, so "spacing" means "space".
+    const score = distance(wanted, name) - 0.75 * sharedStart(wanted, name);
     if (best === null || score < best.score) best = { id: candidate, score };
   }
   if (
     best !== null &&
-    best.score <= Math.max(1, Math.floor(wanted.length / 4))
+    best.score <= Math.max(1, Math.floor(wanted.length / 3))
   ) {
     return best.id;
   }
   const query = (id.split("/").at(-1) ?? id).replace(/[-_]/g, " ");
   const [kind] = id.split("/");
-  const results = searcher.search(query, null, 10).items;
+  const found = searcher.search(query, null, 10);
+  const results =
+    found.items.length === 0 && found.correction !== null
+      ? searcher.search(found.correction, null, 10).items
+      : found.items;
   return (
     results.find(
       (item) =>
