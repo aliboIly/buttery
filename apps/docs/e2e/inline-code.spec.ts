@@ -38,6 +38,7 @@ test("a component's uses, accessibility and layout notes set their code as chips
     ["/patterns/marketing-page", "asideLabel"],
     ["/layout/stack-inline-and-grid", "length={6}"],
     ["/components/text-field", "announceError={false}"],
+    ["/components/kbd", 'keys={["mod", "K"]}'],
   ] as const) {
     await page.goto(path);
     await expect(
