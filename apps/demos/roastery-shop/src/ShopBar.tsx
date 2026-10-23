@@ -251,7 +251,7 @@ export function ShopBar({
                 onGuide(guide.id);
               })}
               title={guide.name}
-              caption={`${String(guide.coffee)} g to ${String(guide.water)} g of water`}
+              caption={`${String(guide.coffee)} g coffee, ${String(guide.water)} g water`}
             />
           ))}
         </MorphMenu.Column>

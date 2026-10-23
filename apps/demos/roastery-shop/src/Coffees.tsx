@@ -223,7 +223,7 @@ export function Coffees({
     <Section
       id="coffees"
       title="The coffees"
-      body="Six coffees, roasted to order. The light roasts are bright and fruity; the medium and dark ones lean toward chocolate and nuts."
+      body="Every one roasted to order. The light roasts are bright and fruity; the medium and dark ones lean toward chocolate and nuts."
     >
       <Stack gap={6}>
         <div className="shop-filters">

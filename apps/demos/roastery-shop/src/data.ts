@@ -49,7 +49,7 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Light",
     price: 19,
     notes: ["Peach", "Jasmine", "Bergamot"],
-    grower: "Guji smallholders",
+    grower: "Hora Dima growers",
     altitude: "1,950–2,200 m",
     varieties: "Local landraces",
     story:
@@ -66,7 +66,7 @@ export const COFFEES: readonly Coffee[] = [
     roast: "Light",
     price: 21,
     notes: ["Blackcurrant", "Grapefruit", "Honey"],
-    grower: "Nyeri cooperative",
+    grower: "Ndimu Hill cooperative",
     altitude: "1,700–1,900 m",
     varieties: "SL28, SL34, Ruiru 11",
     story:
@@ -272,8 +272,8 @@ export const GUIDES: readonly Guide[] = [
     time: ["3 to 3½ min", "3½ to 4 min", "4 to 4½ min", "4½ to 5 min"],
     steps: [
       "Rinse the filter with hot water and pour that water away.",
-      "Add the coffee and pour twice its weight of water just off the boil. Wait 30 seconds while it blooms.",
-      "Pour the rest in slow circles, keeping the bed about half full.",
+      "Add the coffee and pour twice its weight of water just off the boil. Wait 30\u00a0seconds while it blooms.",
+      "Pour the rest in slow circles, keeping the dripper about half full.",
       "Let it drain. If it runs much past the recipe's time, grind a little coarser next time.",
     ],
     pairing: "guji",

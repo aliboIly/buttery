@@ -180,14 +180,10 @@ export function Story(): ReactElement {
         aria-label="Halfmoon in numbers"
       >
         <StatStrip>
-          <Stat value={1850} label="bags of coffee sent last month" />
+          <Stat value={1850} label="bags sent out last month" />
+          <Stat value={420} label="households on a subscription" />
           <Stat value={5} label="countries we buy from" />
-          <Stat
-            value={8}
-            suffix=" hours"
-            label="from the roaster to the post office"
-          />
-          <Stat value={12} suffix=" kg" label="in our biggest batch" />
+          <Stat value={8} suffix=" hours" label="from roaster to post office" />
         </StatStrip>
       </Section>
     </>
