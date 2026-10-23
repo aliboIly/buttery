@@ -38,7 +38,7 @@ export const live: LiveDemo = {
   controls: {
     align: { kind: "choice", options: ALIGNS, initial: "center" },
     disabled: { kind: "toggle", initial: false },
-    children: { kind: "text", initial: "Canvas size" },
+    children: { kind: "text", initial: "Bag size" },
   },
   render: ({ align, disabled, children }) => {
     const edge = demoChoice(align, ALIGNS);
@@ -52,10 +52,10 @@ export const live: LiveDemo = {
               </Pressable>
             </Popover.Trigger>
           </Surface>
-          <Popover.Content align={edge} aria-label="Canvas size">
+          <Popover.Content align={edge} aria-label="Bag size">
             <Stack gap={1} padX={2} padY={1}>
-              <Text variant="label">1080 × 1080</Text>
-              <Text variant="caption">Square, for a feed post</Text>
+              <Text variant="label">250 g</Text>
+              <Text variant="caption">About 16 cups of pour-over</Text>
             </Stack>
           </Popover.Content>
         </Popover>
@@ -74,10 +74,10 @@ export const live: LiveDemo = {
       "        </Pressable>",
       "      </Popover.Trigger>",
       "    </Surface>",
-      `    <Popover.Content align="${edge}" aria-label="Canvas size">`,
+      `    <Popover.Content align="${edge}" aria-label="Bag size">`,
       "      <Stack gap={1} padX={2} padY={1}>",
-      '        <Text variant="label">1080 × 1080</Text>',
-      '        <Text variant="caption">Square, for a feed post</Text>',
+      '        <Text variant="label">250 g</Text>',
+      '        <Text variant="caption">About 16 cups of pour-over</Text>',
       "      </Stack>",
       "    </Popover.Content>",
       "  </Popover>",
@@ -132,8 +132,8 @@ export const demos: readonly DemoSection[] = [
         <Trigger label="Products" />
         <Popover.Content scrim="blur" align="start" aria-label="Products">
           <Stack gap={1} padX={2} padY={1}>
-            <Text variant="menu">Deckhand</Text>
-            <Text variant="menu">Templates</Text>
+            <Text variant="menu">Coffee</Text>
+            <Text variant="menu">Subscriptions</Text>
           </Stack>
         </Popover.Content>
       </Popover>

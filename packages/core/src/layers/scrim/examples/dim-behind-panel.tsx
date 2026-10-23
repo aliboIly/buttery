@@ -11,7 +11,7 @@ import {
 } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A dim scrim first inside a modal layer, under a panel that holds the page while a template applies. */
+/** A dim scrim first inside a modal layer, under a panel that holds the page while a price list applies. */
 export function DimBehindPanel(): ReactElement {
   const [state, setState] = useState<"idle" | "applying" | "applied">("idle");
   useEffect(() => {
@@ -33,13 +33,13 @@ export function DimBehindPanel(): ReactElement {
               setState("applying");
             }}
           >
-            <Text variant="button">Apply the template</Text>
+            <Text variant="button">Apply the holiday prices</Text>
           </Pressable>
         </Surface>
         <Text variant="body" tone="secondary">
           {state === "applied"
-            ? "Template applied to 24 cards"
-            : "24 cards in this set"}
+            ? "Holiday prices applied to 8 cafés"
+            : "8 cafés on this price list"}
         </Text>
       </Inline>
       {state === "applying" ? (
@@ -47,7 +47,9 @@ export function DimBehindPanel(): ReactElement {
           <Scrim />
           <Center pad={4} style={{ blockSize: "100%" }}>
             <Surface level="dialog" padX={6} padY={4} role="status">
-              <Text variant="label">Applying the template to 24 cards…</Text>
+              <Text variant="label">
+                Applying the holiday prices to 8 cafés…
+              </Text>
             </Surface>
           </Center>
         </Layer>
@@ -59,7 +61,7 @@ export function DimBehindPanel(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Apply the template");
-  await see("Applying the template to 24 cards…");
-  await see("Template applied to 24 cards");
+  await press("button", "Apply the holiday prices");
+  await see("Applying the holiday prices to 8 cafés…");
+  await see("Holiday prices applied to 8 cafés");
 };

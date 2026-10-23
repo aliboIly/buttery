@@ -12,14 +12,14 @@ import {
 } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-const CARDS = ["Spring launch", "Weekend tasting", "New single origin"];
+const COFFEES = ["Guji", "Nyeri", "Huehuetenango"];
 
-/** A publish queue: while the cards go out, a panel in the modal layer holds the page and counts them. */
+/** A publish queue: while new coffees go up in the shop, a panel in the modal layer holds the page and counts them. */
 export function PublishProgress(): ReactElement {
   const [sent, setSent] = useState<number | null>(null);
-  const publishing = sent !== null && sent < CARDS.length;
+  const publishing = sent !== null && sent < COFFEES.length;
   useEffect(() => {
-    if (sent === null || sent >= CARDS.length) return undefined;
+    if (sent === null || sent >= COFFEES.length) return undefined;
     const timer = window.setTimeout(() => {
       setSent(sent + 1);
     }, 600);
@@ -30,9 +30,9 @@ export function PublishProgress(): ReactElement {
   return (
     <Stack gap={4} align="start">
       <Stack gap={3}>
-        {CARDS.map((card, index) => (
-          <Inline key={card} gap={6} justify="between" align="baseline">
-            <Text variant="body">{card}</Text>
+        {COFFEES.map((coffee, index) => (
+          <Inline key={coffee} gap={6} justify="between" align="baseline">
+            <Text variant="body">{coffee}</Text>
             <Text variant="caption">
               {sent !== null && sent > index ? "Live" : "Draft"}
             </Text>
@@ -51,7 +51,9 @@ export function PublishProgress(): ReactElement {
           </Pressable>
         </Surface>
         <Text variant="body" tone="secondary">
-          {sent === CARDS.length ? "All cards are live" : "Not published yet"}
+          {sent === COFFEES.length
+            ? "All coffees are live"
+            : "Not published yet"}
         </Text>
       </Inline>
       {publishing ? (
@@ -60,7 +62,7 @@ export function PublishProgress(): ReactElement {
           <Center pad={4} style={{ blockSize: "100%" }}>
             <Surface level="dialog" padX={6} padY={4} role="status">
               <Text variant="label">
-                {`Publishing card ${String(sent + 1)} of ${String(CARDS.length)}`}
+                {`Publishing coffee ${String(sent + 1)} of ${String(COFFEES.length)}`}
               </Text>
             </Surface>
           </Center>
@@ -74,6 +76,6 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Publish all");
-  await see("Publishing card 1 of 3");
-  await see("All cards are live");
+  await see("Publishing coffee 1 of 3");
+  await see("All coffees are live");
 };

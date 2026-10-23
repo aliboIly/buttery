@@ -54,10 +54,10 @@ export const live: LiveDemo = {
             </Menu.Trigger>
           </Surface>
           <Menu.Content align={edge}>
-            <Menu.Item>Duplicate</Menu.Item>
-            <Menu.Item dot={dot === true}>Move to Drafts</Menu.Item>
+            <Menu.Item>Make default</Menu.Item>
+            <Menu.Item dot={dot === true}>Use for subscriptions</Menu.Item>
             <Menu.Separator />
-            <Menu.Item tone="danger">Delete</Menu.Item>
+            <Menu.Item tone="danger">Remove card</Menu.Item>
           </Menu.Content>
         </Menu>
       </Inline>
@@ -76,10 +76,10 @@ export const live: LiveDemo = {
       "      </Menu.Trigger>",
       "    </Surface>",
       `    <Menu.Content align="${edge}">`,
-      "      <Menu.Item>Duplicate</Menu.Item>",
-      `      <Menu.Item${dot === true ? " dot" : ""}>Move to Drafts</Menu.Item>`,
+      "      <Menu.Item>Make default</Menu.Item>",
+      `      <Menu.Item${dot === true ? " dot" : ""}>Use for subscriptions</Menu.Item>`,
       "      <Menu.Separator />",
-      '      <Menu.Item tone="danger">Delete</Menu.Item>',
+      '      <Menu.Item tone="danger">Remove card</Menu.Item>',
       "    </Menu.Content>",
       "  </Menu>",
       "</Inline>",
@@ -97,11 +97,11 @@ export const demos: readonly DemoSection[] = [
         <Menu>
           <Trigger label="Card actions" />
           <Menu.Content>
-            <Menu.Item>Duplicate</Menu.Item>
-            <Menu.Item>Rename</Menu.Item>
-            <Menu.Item disabled>Move to folder</Menu.Item>
+            <Menu.Item>Make default</Menu.Item>
+            <Menu.Item>Use for subscriptions</Menu.Item>
+            <Menu.Item disabled>Update expiry date</Menu.Item>
             <Menu.Separator />
-            <Menu.Item>Delete</Menu.Item>
+            <Menu.Item>Remove card</Menu.Item>
           </Menu.Content>
         </Menu>
       </Inline>
@@ -163,7 +163,7 @@ export const demos: readonly DemoSection[] = [
             </Menu.RadioGroup>
             <Menu.Separator />
             <Menu.Group label="Show">
-              <Menu.Item>Archived cards</Menu.Item>
+              <Menu.Item>Archived orders</Menu.Item>
             </Menu.Group>
           </Menu.Content>
         </Menu>

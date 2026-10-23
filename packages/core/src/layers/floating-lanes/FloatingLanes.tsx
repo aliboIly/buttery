@@ -298,7 +298,7 @@ export interface FloatingLanesComponent {
  * @example
  * <FloatingLanes.Item lane="bottom-end">
  *   <Surface level="floating" padX={4} padY={3}>
- *     <Text variant="label">Exporting 12 cards</Text>
+ *     <Text variant="label">Exporting 12 orders</Text>
  *   </Surface>
  * </FloatingLanes.Item>
  */

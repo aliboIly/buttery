@@ -13,35 +13,35 @@ import {
 } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-interface Card {
+interface PriceList {
   readonly id: number;
   readonly name: string;
 }
 
-const FIRST_CARDS: readonly Card[] = [
-  { id: 1, name: "Spring launch" },
-  { id: 2, name: "Weekend tasting" },
-  { id: 3, name: "Autumn blend" },
+const FIRST_LISTS: readonly PriceList[] = [
+  { id: 1, name: "Café prices" },
+  { id: 2, name: "Office prices" },
+  { id: 3, name: "Holiday prices" },
 ];
 
-/** A list of cards, each with an actions menu at the end of its row that duplicates or deletes it. */
+/** Wholesale price lists, each with an actions menu at the end of its row that duplicates or deletes it. */
 export function CardList(): ReactElement {
-  const [cards, setCards] = useState<readonly Card[]>(FIRST_CARDS);
+  const [lists, setLists] = useState<readonly PriceList[]>(FIRST_LISTS);
   return (
     <Stack gap={3}>
-      <Text variant="caption">{`${String(cards.length)} cards`}</Text>
+      <Text variant="caption">{`${String(lists.length)} price lists`}</Text>
       <Stack gap={3}>
-        {cards.map((card, index) => (
-          <Surface key={card.id} level="card" padX={3} padY={2} radius="md">
+        {lists.map((list, index) => (
+          <Surface key={list.id} level="card" padX={3} padY={2} radius="md">
             <Inline gap={3} align="center" justify="between">
               <Text variant="body" truncate>
-                {card.name}
+                {list.name}
               </Text>
               <Menu>
                 <Surface asChild level="app" radius="full">
                   <Control size="sm" asChild>
                     <Menu.Trigger asChild>
-                      <Pressable aria-label={`Actions for ${card.name}`}>
+                      <Pressable aria-label={`Actions for ${list.name}`}>
                         <Icon icon={Ellipsis} />
                       </Pressable>
                     </Menu.Trigger>
@@ -52,13 +52,13 @@ export function CardList(): ReactElement {
                     icon={Copy}
                     onSelect={() => {
                       const copy = {
-                        id: Math.max(...cards.map(({ id }) => id)) + 1,
-                        name: `${card.name} copy`,
+                        id: Math.max(...lists.map(({ id }) => id)) + 1,
+                        name: `${list.name} copy`,
                       };
-                      setCards([
-                        ...cards.slice(0, index + 1),
+                      setLists([
+                        ...lists.slice(0, index + 1),
                         copy,
-                        ...cards.slice(index + 1),
+                        ...lists.slice(index + 1),
                       ]);
                     }}
                   >
@@ -69,7 +69,7 @@ export function CardList(): ReactElement {
                     icon={Trash2}
                     tone="danger"
                     onSelect={() => {
-                      setCards(cards.filter(({ id }) => id !== card.id));
+                      setLists(lists.filter(({ id }) => id !== list.id));
                     }}
                   >
                     Delete
@@ -87,11 +87,11 @@ export function CardList(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Actions for Spring launch");
+  await press("button", "Actions for Café prices");
   await press("menuitem", "Duplicate");
-  await see("Spring launch copy");
-  await see("4 cards");
-  await press("button", "Actions for Weekend tasting");
+  await see("Café prices copy");
+  await see("4 price lists");
+  await press("button", "Actions for Office prices");
   await press("menuitem", "Delete");
-  await see("3 cards");
+  await see("3 price lists");
 };

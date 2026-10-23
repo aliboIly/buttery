@@ -12,21 +12,21 @@ import {
 } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-const SIZES = ["Square", "Portrait", "Story", "Wide"] as const;
+const SIZES = ["Wallet", "Postcard", "Square"] as const;
 
-/** A trigger that opens a short list of canvas sizes; picking one closes the popover and shows on the trigger. */
+/** A trigger that opens the gift card's printed sizes; picking one closes the popover and shows on the trigger. */
 export function CanvasSize(): ReactElement {
-  const [size, setSize] = useState<(typeof SIZES)[number]>("Square");
+  const [size, setSize] = useState<(typeof SIZES)[number]>("Wallet");
   return (
     <Popover>
       <Surface asChild level="raised" padX={4} padY={2} radius="full">
         <Popover.Trigger asChild>
           <Pressable>
-            <Text variant="button">{`Canvas: ${size}`}</Text>
+            <Text variant="button">{`Gift card: ${size}`}</Text>
           </Pressable>
         </Popover.Trigger>
       </Surface>
-      <Popover.Content align="start" aria-label="Canvas sizes">
+      <Popover.Content align="start" aria-label="Gift card sizes">
         <Stack gap={1}>
           {SIZES.map((option) => (
             <Surface
@@ -61,7 +61,7 @@ export function CanvasSize(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Canvas: Square");
-  await press("button", "Story");
-  await see("Canvas: Story");
+  await press("button", "Gift card: Wallet");
+  await press("button", "Postcard");
+  await see("Gift card: Postcard");
 };

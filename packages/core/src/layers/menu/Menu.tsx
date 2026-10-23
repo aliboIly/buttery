@@ -746,9 +746,9 @@ export interface MenuComponent {
  *     <IconButton icon={Ellipsis} label="Card actions" />
  *   </Menu.Trigger>
  *   <Menu.Content>
- *     <Menu.Item icon={Copy} onSelect={duplicate}>Duplicate</Menu.Item>
+ *     <Menu.Item icon={Star} onSelect={makeDefault}>Make default</Menu.Item>
  *     <Menu.Separator />
- *     <Menu.Item icon={Trash2} onSelect={remove}>Delete</Menu.Item>
+ *     <Menu.Item icon={Trash2} tone="danger" onSelect={remove}>Remove card</Menu.Item>
  *   </Menu.Content>
  * </Menu>
  */

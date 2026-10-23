@@ -33,7 +33,7 @@ export function SavingOverlay(): ReactElement {
               setState("saving");
             }}
           >
-            <Text variant="button">Save the card</Text>
+            <Text variant="button">Save the roast plan</Text>
           </Pressable>
         </Surface>
         <Text variant="body" tone="secondary">
@@ -45,7 +45,7 @@ export function SavingOverlay(): ReactElement {
           <Scrim />
           <Center pad={4} style={{ blockSize: "100%" }}>
             <Surface level="dialog" padX={6} padY={4} role="status">
-              <Text variant="label">Saving the card…</Text>
+              <Text variant="label">Saving the roast plan…</Text>
             </Surface>
           </Center>
         </Layer>
@@ -58,7 +58,7 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Not saved yet");
-  await press("button", "Save the card");
-  await see("Saving the card…");
+  await press("button", "Save the roast plan");
+  await see("Saving the roast plan…");
   await see("Saved just now");
 };

@@ -291,7 +291,7 @@ export interface PopoverComponent {
  * @example
  * <Popover>
  *   <Popover.Trigger asChild>
- *     <button type="button">Canvas size</button>
+ *     <button type="button">Bag size</button>
  *   </Popover.Trigger>
  *   <Popover.Content align="end">…</Popover.Content>
  * </Popover>

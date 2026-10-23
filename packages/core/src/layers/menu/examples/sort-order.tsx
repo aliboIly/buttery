@@ -11,18 +11,18 @@ const ORDERS = {
 
 type Order = keyof typeof ORDERS;
 
-interface Card {
+interface Coffee {
   readonly name: string;
   readonly added: number;
 }
 
-const CARDS: readonly Card[] = [
-  { name: "Weekend tasting", added: 3 },
-  { name: "Autumn blend", added: 1 },
-  { name: "Brew guide", added: 2 },
+const COFFEES: readonly Coffee[] = [
+  { name: "Nyeri", added: 3 },
+  { name: "Huila", added: 1 },
+  { name: "Cerrado", added: 2 },
 ];
 
-const COMPARE: Readonly<Record<Order, (a: Card, b: Card) => number>> = {
+const COMPARE: Readonly<Record<Order, (a: Coffee, b: Coffee) => number>> = {
   newest: (a, b) => b.added - a.added,
   oldest: (a, b) => a.added - b.added,
   name: (a, b) => a.name.localeCompare(b.name),
@@ -62,9 +62,9 @@ export function SortOrder(): ReactElement {
         </Menu.Content>
       </Menu>
       <Stack gap={3}>
-        {[...CARDS].sort(COMPARE[order]).map((card) => (
-          <Text key={card.name} variant="body">
-            {card.name}
+        {[...COFFEES].sort(COMPARE[order]).map((coffee) => (
+          <Text key={coffee.name} variant="body">
+            {coffee.name}
           </Text>
         ))}
       </Stack>

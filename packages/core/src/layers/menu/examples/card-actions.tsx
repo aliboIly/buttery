@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { Inline, Menu, Pressable, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A card's less common actions behind one trigger, with the destructive one set apart in danger. */
+/** A saved payment card's less common actions behind one trigger, with the destructive one set apart in danger. */
 export function CardActions(): ReactElement {
   const [last, setLast] = useState("Nothing chosen yet");
   return (
@@ -19,26 +19,26 @@ export function CardActions(): ReactElement {
         <Menu.Content>
           <Menu.Item
             onSelect={() => {
-              setLast("Duplicated the card");
+              setLast("Card ending 4242 is now your default");
             }}
           >
-            Duplicate
+            Make default
           </Menu.Item>
           <Menu.Item
             onSelect={() => {
-              setLast("Moved the card to Drafts");
+              setLast("Subscriptions now use card ending 4242");
             }}
           >
-            Move to Drafts
+            Use for subscriptions
           </Menu.Item>
           <Menu.Separator />
           <Menu.Item
             tone="danger"
             onSelect={() => {
-              setLast("Deleted the card");
+              setLast("Removed card ending 4242");
             }}
           >
-            Delete
+            Remove card
           </Menu.Item>
         </Menu.Content>
       </Menu>
@@ -51,6 +51,6 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Card actions");
-  await press("menuitem", "Duplicate");
-  await see("Duplicated the card");
+  await press("menuitem", "Make default");
+  await see("Card ending 4242 is now your default");
 };

@@ -7,8 +7,8 @@ type ExportState = "idle" | "running" | "done" | "canceled";
 
 const STATUS: Readonly<Record<ExportState, string>> = {
   idle: "Nothing exporting",
-  running: "Exporting 12 cards",
-  done: "Exported 12 cards",
+  running: "Exporting 12 orders",
+  done: "Exported 12 orders",
   canceled: "Export canceled",
 };
 
@@ -34,7 +34,7 @@ export function ExportProgress(): ReactElement {
               setState("running");
             }}
           >
-            <Text variant="button">Export 12 cards</Text>
+            <Text variant="button">Export 12 orders</Text>
           </Pressable>
         </Surface>
         <Text variant="body" tone="secondary" role="status">
@@ -45,7 +45,7 @@ export function ExportProgress(): ReactElement {
         <FloatingLanes.Item lane="bottom-end">
           <Surface level="floating" padX={4} padY={3}>
             <Inline gap={4} align="center">
-              <Text variant="label">Exporting 12 cards</Text>
+              <Text variant="label">Exporting 12 orders</Text>
               <Surface asChild level="raised" padX={3} padY={1} radius="full">
                 <Pressable
                   onClick={() => {
@@ -67,7 +67,7 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Nothing exporting");
-  await press("button", "Export 12 cards");
-  await see("Exporting 12 cards");
-  await see("Exported 12 cards");
+  await press("button", "Export 12 orders");
+  await see("Exporting 12 orders");
+  await see("Exported 12 orders");
 };
