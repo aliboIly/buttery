@@ -364,6 +364,24 @@ describe("Dialog", () => {
     expect(window.innerWidth - box.right).toBe(16);
   });
 
+  it("stays 16px inside a short window and scrolls inside when its content is taller", async () => {
+    await page.viewport(1200, 400);
+    render(
+      <Confirm>
+        <Dialog.Text
+          title="Delivery terms"
+          body={"Every order ships the morning after it's roasted. ".repeat(40)}
+        />
+      </Confirm>,
+    );
+    const dialog = await openConfirm();
+    const box = dialog.getBoundingClientRect();
+    expect(box.top).toBe(16);
+    expect(window.innerHeight - box.bottom).toBe(16);
+    const scroll = dialog.querySelector('[data-bt-part="scroll"]');
+    expect(scroll?.scrollHeight).toBeGreaterThan(scroll?.clientHeight ?? 0);
+  });
+
   it("fills the window less 16px at size full, and fades in without growing", async () => {
     await page.viewport(1200, 800);
     render(<Confirm size="full" />);

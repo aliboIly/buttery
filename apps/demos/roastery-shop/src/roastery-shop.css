@@ -126,14 +126,6 @@
   text-align: center;
 }
 
-/*
- * A dialog taller than the window keeps 16px inside it and scrolls its body: as a scroll container it no
- * longer asks its frame's row for its content's whole height.
- */
-.shop-dialog {
-  overflow: hidden;
-}
-
 .shop-checkout {
   container: shop-checkout / inline-size;
 }
