@@ -5,24 +5,26 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { buttery, IconButton } from "@buttery/react";
 
-const COFFEES = ["Harbor blend", "Guji natural", "Night shift", "Huila honey"];
+const DECKS = [
+  "Quarterly review",
+  "Spring launch",
+  "Team offsite",
+  "Hiring plan",
+];
 
-/** A list that keeps pinned coffees first: each row glides to its new place through layout, with layoutDependency saying when it moved. */
+/** A list that keeps pinned decks first: each row glides to its new place through layout, with layoutDependency saying when it moved. */
 export function PinnedFirst(): ReactElement {
   const [pinned, setPinned] = useState<readonly string[]>([]);
-  const order = [
-    ...pinned,
-    ...COFFEES.filter((coffee) => !pinned.includes(coffee)),
-  ];
+  const order = [...pinned, ...DECKS.filter((deck) => !pinned.includes(deck))];
   return (
     <Stack gap={3}>
       <Text variant="caption">{`${String(pinned.length)} pinned`}</Text>
       <Stack gap={2}>
-        {order.map((coffee, index) => {
-          const isPinned = pinned.includes(coffee);
+        {order.map((deck, index) => {
+          const isPinned = pinned.includes(deck);
           return (
             <buttery.div
-              key={coffee}
+              key={deck}
               surface="card"
               padX={4}
               padY={2}
@@ -31,17 +33,17 @@ export function PinnedFirst(): ReactElement {
             >
               <Inline gap={3} align="center" justify="between">
                 <Text variant="label" truncate>
-                  {coffee}
+                  {deck}
                 </Text>
                 <IconButton
                   icon={isPinned ? PinOff : Pin}
-                  label={isPinned ? `Unpin ${coffee}` : `Pin ${coffee}`}
+                  label={isPinned ? `Unpin ${deck}` : `Pin ${deck}`}
                   size="sm"
                   onClick={() => {
                     setPinned(
                       isPinned
-                        ? pinned.filter((other) => other !== coffee)
-                        : [coffee, ...pinned],
+                        ? pinned.filter((other) => other !== deck)
+                        : [deck, ...pinned],
                     );
                   }}
                 />
@@ -57,8 +59,8 @@ export function PinnedFirst(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Pin Night shift");
+  await press("button", "Pin Team offsite");
   await see("1 pinned");
-  await press("button", "Unpin Night shift");
+  await press("button", "Unpin Team offsite");
   await see("0 pinned");
 };

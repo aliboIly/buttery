@@ -11,7 +11,7 @@ export function Sizes(): ReactElement {
   const [sent, setSent] = useState("");
   return (
     <Stack gap={6}>
-      <TextField label="Card title" defaultValue="Summer launch" />
+      <TextField label="Coffee name" defaultValue="Halfmoon House" />
       <form
         onSubmit={(event) => {
           event.preventDefault();

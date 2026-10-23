@@ -597,11 +597,11 @@ function showToast(message: string, options: ToastOptions = {}): string {
  * to render; without the provider, render one `<Toaster />` near the root.
  *
  * @example
- * toast("Card deleted", {
+ * toast("Slide deleted", {
  *   action: { label: "Undo", onAction: restore, altText: "Undo with Command Z" },
  * });
- * toast.success("Order shipped");
- * toast.danger("Couldn't export the card", { id: "export" });
+ * toast.success("Deck published");
+ * toast.danger("Couldn't export the deck", { id: "export" });
  */
 export const toast: ToastFunction = Object.assign(showToast, {
   success: (message: string, options: ToneToastOptions = {}): string =>

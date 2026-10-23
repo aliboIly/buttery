@@ -11,7 +11,7 @@ export function ShowMeWhere(): ReactElement {
     <Stack gap={6} align="start">
       <Inline gap={3}>
         <Text variant="body" tone="secondary">
-          Cards export as PNG files.
+          Slides export as PNG files.
         </Text>
         <Button
           size="sm"

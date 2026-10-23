@@ -40,7 +40,7 @@ export const live: LiveDemo = {
   },
   render: ({ swatches, columns, disabled }) => (
     <SwatchGrid
-      label="Backdrop"
+      label="Background"
       swatches={
         demoChoice(swatches, ["gradients", "solids"]) === "gradients"
           ? GRADIENTS
@@ -54,7 +54,7 @@ export const live: LiveDemo = {
   code: ({ swatches, columns, disabled }) =>
     [
       "<SwatchGrid",
-      '  label="Backdrop"',
+      '  label="Background"',
       demoChoice(swatches, ["gradients", "solids"]) === "gradients"
         ? "  swatches={gradients.map((preset) => ({ value: preset.id, label: preset.name, fill: gradientCss(preset) }))}"
         : "  swatches={solids.map((preset) => ({ value: preset.id, label: preset.name, fill: preset.hex }))}",
@@ -71,7 +71,11 @@ export const demos: readonly DemoSection[] = [
     description:
       "buttery's 24 gradients, six to a row. The chosen one gets the selection ring at once.",
     render: () => (
-      <SwatchGrid label="Backdrop" swatches={GRADIENTS} defaultValue="lilac" />
+      <SwatchGrid
+        label="Background"
+        swatches={GRADIENTS}
+        defaultValue="lilac"
+      />
     ),
   },
   {

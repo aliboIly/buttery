@@ -4,9 +4,9 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, TextField } from "@buttery/react";
 
-/** A card's title with a hint, uncontrolled: the form reads it when it's sent. */
+/** A gift card's title with a hint, uncontrolled: the form reads it when it's sent. */
 export function CardTitleField(): ReactElement {
-  const [title, setTitle] = useState("Summer launch");
+  const [title, setTitle] = useState("Happy birthday");
   return (
     <form
       onSubmit={(event) => {
@@ -19,14 +19,14 @@ export function CardTitleField(): ReactElement {
         <TextField
           name="title"
           label="Title"
-          hint="Shown large on the card"
-          defaultValue="Summer launch"
+          hint="Shown large on the gift card"
+          defaultValue="Happy birthday"
           maxLength={60}
         />
         <Inline gap={3}>
           <Button type="submit">Rename</Button>
           <Text variant="body" tone="secondary" truncate>
-            {`The card is called ${title}`}
+            {`The card says ${title}`}
           </Text>
         </Inline>
       </Stack>
@@ -37,7 +37,7 @@ export function CardTitleField(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
-  await type("Title", "{selectall}Autumn menu");
+  await type("Title", "{selectall}Thank you");
   await press("button", "Rename");
-  await see("The card is called Autumn menu");
+  await see("The card says Thank you");
 };

@@ -26,7 +26,7 @@ export function ExportFormat(): ReactElement {
         onValueChange={setFormat}
       />
       <Text variant="body" tone="secondary">
-        Saves as menu-card.{format}
+        Saves as title-slide.{format}
       </Text>
     </Inline>
   );
@@ -35,8 +35,8 @@ export function ExportFormat(): ReactElement {
 export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("Saves as menu-card.png");
+  await see("Saves as title-slide.png");
   await press("combobox", "Export format, PNG");
   await press("option", "WebP");
-  await see("Saves as menu-card.webp");
+  await see("Saves as title-slide.webp");
 };

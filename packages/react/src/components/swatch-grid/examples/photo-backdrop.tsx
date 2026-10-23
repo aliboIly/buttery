@@ -12,23 +12,27 @@ const SWATCHES: readonly Swatch[] = solids.map((preset) => ({
   fill: preset.hex,
 }));
 
-/** A disabled grid: no swatch can be chosen while a photo covers the card's fill. */
+/** A disabled grid: no swatch can be chosen while a picture covers the slide's fill. */
 export function PhotoBackdrop(): ReactElement {
-  const [photo, setPhoto] = useState(true);
+  const [picture, setPicture] = useState(true);
   const [fill, setFill] = useState("paper");
   const name = SWATCHES.find((swatch) => swatch.value === fill)?.label ?? fill;
   return (
     <Stack gap={4}>
-      <Switch label="Use a photo" checked={photo} onCheckedChange={setPhoto} />
+      <Switch
+        label="Use a picture"
+        checked={picture}
+        onCheckedChange={setPicture}
+      />
       <SwatchGrid
         label="Fill"
         swatches={SWATCHES}
         value={fill}
         onValueChange={setFill}
-        disabled={photo}
+        disabled={picture}
       />
       <Text variant="body" tone="secondary">
-        {photo ? "The photo covers the fill" : `Filled with ${name}`}
+        {picture ? "The picture covers the fill" : `Filled with ${name}`}
       </Text>
     </Stack>
   );
@@ -37,8 +41,8 @@ export function PhotoBackdrop(): ReactElement {
 export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("The photo covers the fill");
-  await press("switch", "Use a photo");
+  await see("The picture covers the fill");
+  await press("switch", "Use a picture");
   await press("radio", "Fog");
   await see("Filled with Fog");
 };

@@ -11,8 +11,8 @@ export function CloudSync(): ReactElement {
       label="Sync to the cloud"
       hint={
         sync
-          ? "Your cards back up as you work."
-          : "Your cards stay on this device."
+          ? "Orders and stock back up as you work."
+          : "Orders and stock stay on this computer."
       }
       checked={sync}
       onCheckedChange={setSync}
@@ -23,7 +23,7 @@ export function CloudSync(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("Your cards back up as you work.");
+  await see("Orders and stock back up as you work.");
   await press("switch", "Sync to the cloud");
-  await see("Your cards stay on this device.");
+  await see("Orders and stock stay on this computer.");
 };

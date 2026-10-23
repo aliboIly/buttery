@@ -7,14 +7,9 @@ import { SegmentedControl } from "@buttery/react";
 
 type View = "list" | "grid";
 
-const COFFEES = [
-  "Ethiopia Guji",
-  "Kenya Nyeri",
-  "Colombia Huila",
-  "Peru Cajamarca",
-];
+const SLIDES = ["Title slide", "Agenda", "Q3 in numbers", "Thank you"];
 
-/** A shop's coffee list with an icon-only view switch in its toolbar, each icon's label in its tooltip and name. */
+/** A deck's slides with an icon-only view switch in its toolbar, each icon's label in its tooltip and name. */
 export function ViewSwitch(): ReactElement {
   const [view, setView] = useState<View>("list");
   return (
@@ -22,10 +17,10 @@ export function ViewSwitch(): ReactElement {
       <Inline gap={3} align="center" justify="between">
         <Stack gap={1}>
           <Text variant="title-sm" asChild>
-            <h3>Coffees</h3>
+            <h3>Quarterly review</h3>
           </Text>
           <Text variant="caption" tone="secondary">
-            {`Showing ${String(COFFEES.length)} coffees as a ${view}`}
+            {`Showing ${String(SLIDES.length)} slides as a ${view}`}
           </Text>
         </Stack>
         <SegmentedControl<View>
@@ -42,10 +37,10 @@ export function ViewSwitch(): ReactElement {
       {view === "grid" ? (
         <Grid columns={2} gap={2} asChild>
           <ul role="list">
-            {COFFEES.map((coffee) => (
-              <Surface key={coffee} level="card" pad={3} asChild>
+            {SLIDES.map((slide) => (
+              <Surface key={slide} level="card" pad={3} asChild>
                 <li>
-                  <Text variant="label">{coffee}</Text>
+                  <Text variant="label">{slide}</Text>
                 </li>
               </Surface>
             ))}
@@ -54,9 +49,9 @@ export function ViewSwitch(): ReactElement {
       ) : (
         <Stack gap={2} asChild>
           <ul role="list">
-            {COFFEES.map((coffee) => (
-              <Text key={coffee} variant="label" asChild>
-                <li>{coffee}</li>
+            {SLIDES.map((slide) => (
+              <Text key={slide} variant="label" asChild>
+                <li>{slide}</li>
               </Text>
             ))}
           </ul>
@@ -70,7 +65,7 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "Grid");
-  await see("Showing 4 coffees as a grid");
+  await see("Showing 4 slides as a grid");
   await press("radio", "List");
-  await see("Showing 4 coffees as a list");
+  await see("Showing 4 slides as a list");
 };

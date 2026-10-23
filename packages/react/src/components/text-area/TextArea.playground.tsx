@@ -20,7 +20,7 @@ const LONG = Array.from(
 export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "Note" },
-    hint: { kind: "text", initial: "Shown under the card." },
+    hint: { kind: "text", initial: "Printed on the packing slip." },
     error: { kind: "text", initial: "" },
     rows: { kind: "number", initial: 3, min: 1, max: 8, step: 1 },
     disabled: { kind: "toggle", initial: false },
@@ -53,7 +53,7 @@ export const demos: readonly DemoSection[] = [
       "Three lines when empty; it grows with the text up to eight, then scrolls with faded edges.",
     render: () => (
       <Stack gap={4}>
-        <TextArea label="Note" hint="Shown under the card." />
+        <TextArea label="Note" hint="Printed on the packing slip." />
         <TextArea label="Long note" defaultValue={LONG} />
         <TextArea
           label="Caption"

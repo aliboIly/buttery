@@ -12,25 +12,25 @@ export function ExportOptions(): ReactElement {
       <SplitButton
         menuLabel="More export options"
         onClick={() => {
-          setLast("Exported menu-card.png");
+          setLast("Exported title-slide.png");
         }}
         items={[
           {
             label: "Export as JPG",
             onSelect: () => {
-              setLast("Exported menu-card.jpg");
+              setLast("Exported title-slide.jpg");
             },
           },
           {
             label: "Export as WebP",
             onSelect: () => {
-              setLast("Exported menu-card.webp");
+              setLast("Exported title-slide.webp");
             },
           },
           {
             label: "Copy to clipboard",
             onSelect: () => {
-              setLast("Copied the menu card");
+              setLast("Copied the slide");
             },
           },
         ]}
@@ -48,8 +48,8 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Export PNG");
-  await see("Exported menu-card.png");
+  await see("Exported title-slide.png");
   await press("button", "More export options");
   await press("menuitem", "Export as WebP");
-  await see("Exported menu-card.webp");
+  await see("Exported title-slide.webp");
 };

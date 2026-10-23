@@ -24,7 +24,7 @@ const SHAPES: readonly SelectOption<Shape>[] = [
   { value: "3:2", label: "Photo · 3:2" },
   { value: "16:9", label: "Wide · 16:9" },
   { value: "9:16", label: "Tall · 9:16" },
-  { value: "match", label: "Fit to card" },
+  { value: "match", label: "Fit to picture" },
 ];
 
 function CanvasSize(): ReactElement {
@@ -64,10 +64,10 @@ function CanvasSize(): ReactElement {
   );
 }
 
-const ROASTS: readonly SelectOption[] = [
-  { value: "light", label: "Light" },
-  { value: "medium", label: "Medium" },
-  { value: "dark", label: "Dark" },
+const THEMES: readonly SelectOption[] = [
+  { value: "plain", label: "Plain" },
+  { value: "paper", label: "Paper" },
+  { value: "ink", label: "Ink" },
 ];
 
 export const live: LiveDemo = {
@@ -79,12 +79,12 @@ export const live: LiveDemo = {
     },
     size: { kind: "choice", options: ["md", "sm"], initial: "md" },
     disabled: { kind: "toggle", initial: false },
-    placeholder: { kind: "text", initial: "Choose a roast" },
+    placeholder: { kind: "text", initial: "Choose a theme" },
   },
   render: ({ variant, size, disabled, placeholder }) => (
     <Select
-      label="Roast"
-      options={ROASTS}
+      label="Theme"
+      options={THEMES}
       variant={demoChoice(variant, ["ghost", "outline"])}
       size={demoChoice(size, ["md", "sm"])}
       disabled={disabled === true}
@@ -94,10 +94,10 @@ export const live: LiveDemo = {
   code: ({ variant, size, disabled, placeholder }) =>
     [
       "<Select",
-      '  label="Roast"',
+      '  label="Theme"',
       "  options={[",
-      ...ROASTS.map(
-        (roast) => `    { value: "${roast.value}", label: "${roast.label}" },`,
+      ...THEMES.map(
+        (theme) => `    { value: "${theme.value}", label: "${theme.label}" },`,
       ),
       "  ]}",
       `  variant="${demoChoice(variant, ["ghost", "outline"])}"`,

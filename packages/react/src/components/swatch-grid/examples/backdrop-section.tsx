@@ -20,7 +20,7 @@ const SOLIDS: readonly Swatch[] = solids.map((preset) => ({
   fill: preset.hex,
 }));
 
-/** An inspector's backdrop section: the fill type picks the swatches in the grid's row, and Reset puts it all back. */
+/** An inspector's background section: the fill type picks the swatches in the grid's row, and Reset puts it all back. */
 export function BackdropSection(): ReactElement {
   const [fill, setFill] = useState<Fill>("gradient");
   const [gradient, setGradient] = useState("lilac");
@@ -30,9 +30,9 @@ export function BackdropSection(): ReactElement {
   const name =
     swatches.find((swatch) => swatch.value === value)?.label ?? value;
   return (
-    <Inspector label="Card settings">
+    <Inspector label="Slide settings">
       <Inspector.Section
-        title="Backdrop"
+        title="Background"
         resettable={
           fill !== "gradient" || gradient !== "lilac" || solid !== "stone"
         }
@@ -79,6 +79,6 @@ export const play: ExamplePlay = async ({ press, see }) => {
   await see("Stone");
   await press("radio", "Slate");
   await see("Slate");
-  await press("button", "Reset Backdrop");
+  await press("button", "Reset Background");
   await see("Lilac");
 };

@@ -9,7 +9,7 @@ export function FinishSection(): ReactElement {
   const [corners, setCorners] = useState(12);
   return (
     <Inspector.Section
-      title="Finish"
+      title="Picture"
       resettable={scale !== 100 || corners !== 12}
       onReset={() => {
         setScale(100);
@@ -47,6 +47,6 @@ export const play: ExamplePlay = async ({ press, key, see }) => {
   await press("slider", "Scale");
   await key("End");
   await see("200%");
-  await press("button", "Reset Finish");
+  await press("button", "Reset Picture");
   await see("100%");
 };

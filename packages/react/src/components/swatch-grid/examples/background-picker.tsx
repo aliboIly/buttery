@@ -28,14 +28,14 @@ export function BackgroundPicker(): ReactElement {
             aspectRatio: "16 / 9",
           }}
         >
-          <output aria-label="Backdrop preview" />
+          <output aria-label="Background preview" />
         </Surface>
         <Text variant="body" tone="secondary">
-          {chosen?.label} backdrop
+          {chosen?.label} background
         </Text>
       </Inline>
       <SwatchGrid
-        label="Backdrop"
+        label="Background"
         swatches={SWATCHES}
         value={background}
         onValueChange={setBackground}
@@ -47,8 +47,8 @@ export function BackgroundPicker(): ReactElement {
 export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ key, see }) => {
-  await see("Lilac backdrop");
+  await see("Lilac background");
   await key("Tab");
   await key("ArrowDown");
-  await see("Violet backdrop");
+  await see("Violet background");
 };

@@ -6,15 +6,15 @@ import { SegmentedControl } from "@buttery/react";
 
 const RATIOS = [
   { value: "1:1", label: "Square" },
-  { value: "4:5", label: "Portrait" },
+  { value: "4:3", label: "Classic" },
   { value: "16:9", label: "Wide" },
 ] as const;
 
 type Ratio = (typeof RATIOS)[number]["value"];
 
-/** A canvas aspect ratio, with labels that differ from the values the control reports. */
+/** A deck's slide shape, with labels that differ from the values the control reports. */
 export function AspectPicker(): ReactElement {
-  const [ratio, setRatio] = useState<Ratio>("4:5");
+  const [ratio, setRatio] = useState<Ratio>("4:3");
   return (
     <Stack gap={3} align="start">
       <SegmentedControl<Ratio>
@@ -24,7 +24,7 @@ export function AspectPicker(): ReactElement {
         onValueChange={setRatio}
       />
       <Text variant="body-sm" tone="secondary">
-        {`The canvas is ${ratio}`}
+        {`Every slide is ${ratio}`}
       </Text>
     </Stack>
   );
@@ -34,7 +34,7 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "Wide");
-  await see("The canvas is 16:9");
+  await see("Every slide is 16:9");
   await press("radio", "Square");
-  await see("The canvas is 1:1");
+  await see("Every slide is 1:1");
 };

@@ -23,7 +23,7 @@ function StackDemo(): ReactElement {
       <Button
         onClick={() => {
           exported.current += 1;
-          toast(`Card ${String(exported.current)} exported`);
+          toast(`Slide ${String(exported.current)} exported`);
         }}
       >
         Show a toast
@@ -70,7 +70,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast("Roast profile saved");
+          toast("Speaker notes saved");
         }}
       >
         Plain
@@ -78,7 +78,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast.success("Order shipped");
+          toast.success("Deck published");
         }}
       >
         Success
@@ -86,7 +86,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast.warning("Beans for 2 days left");
+          toast.warning("3 slides have no title");
         }}
       >
         Warning
@@ -94,7 +94,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast.danger("Couldn't export the card", {
+          toast.danger("Couldn't export the deck", {
             action: {
               label: "Retry",
               onAction: () => undefined,
@@ -148,7 +148,7 @@ function LiveToast({
 export const live: LiveDemo = {
   controls: {
     tone: { kind: "choice", options: TONES, initial: "success" },
-    message: { kind: "text", initial: "Order shipped" },
+    message: { kind: "text", initial: "Deck published" },
   },
   render: ({ tone, message }) => (
     <LiveToast tone={demoChoice(tone, TONES)} message={String(message)} />

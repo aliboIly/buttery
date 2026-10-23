@@ -23,7 +23,7 @@ function Tilt(): ReactElement {
   const level = tilt.x === 0 && tilt.y === 0;
   return (
     <Inline gap={3} align="center">
-      <Text variant="label">Lean</Text>
+      <Text variant="label">Tilt</Text>
       <Chip
         aria-disabled={level}
         onClick={() => {
@@ -32,14 +32,14 @@ function Tilt(): ReactElement {
       >
         Flat
       </Chip>
-      <TiltPad label="Lean" value={tilt} onValueChange={setTilt} />
+      <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
     </Inline>
   );
 }
 
-type Lean = "level" | "left" | "right" | "up" | "down";
+type Direction = "level" | "left" | "right" | "up" | "down";
 
-const LEAN_NAMES: readonly [Lean, ...Lean[]] = [
+const DIRECTION_NAMES: readonly [Direction, ...Direction[]] = [
   "level",
   "left",
   "right",
@@ -47,7 +47,7 @@ const LEAN_NAMES: readonly [Lean, ...Lean[]] = [
   "down",
 ];
 
-const LEANS: Readonly<Record<Lean, TiltValue>> = {
+const DIRECTIONS: Readonly<Record<Direction, TiltValue>> = {
   level: { x: 0, y: 0 },
   left: { x: -0.6, y: 0 },
   right: { x: 0.6, y: 0 },
@@ -57,29 +57,33 @@ const LEANS: Readonly<Record<Lean, TiltValue>> = {
 
 export const live: LiveDemo = {
   controls: {
-    defaultValue: { kind: "choice", options: LEAN_NAMES, initial: "right" },
+    defaultValue: {
+      kind: "choice",
+      options: DIRECTION_NAMES,
+      initial: "right",
+    },
     disabled: { kind: "toggle", initial: false },
   },
   render: ({ defaultValue, disabled }) => {
-    const lean = demoChoice(defaultValue, LEAN_NAMES);
+    const direction = demoChoice(defaultValue, DIRECTION_NAMES);
     return (
       <TiltPad
-        key={lean}
-        label="Lean"
-        defaultValue={LEANS[lean]}
+        key={direction}
+        label="Tilt"
+        defaultValue={DIRECTIONS[direction]}
         disabled={disabled === true}
       />
     );
   },
   code: ({ defaultValue, disabled }) => {
-    const { x, y } = LEANS[demoChoice(defaultValue, LEAN_NAMES)];
-    return `<TiltPad label="Lean" defaultValue={{ x: ${String(x)}, y: ${String(y)} }}${disabled === true ? " disabled" : ""} />`;
+    const { x, y } = DIRECTIONS[demoChoice(defaultValue, DIRECTION_NAMES)];
+    return `<TiltPad label="Tilt" defaultValue={{ x: ${String(x)}, y: ${String(y)} }}${disabled === true ? " disabled" : ""} />`;
   },
 };
 
 export const demos: readonly DemoSection[] = [
   {
-    title: "Lean with a chip that lays it flat",
+    title: "Tilt with a chip that lays it flat",
     description:
       "Drag the knob or use the arrow keys; the accent arc shows the direction. Flat glides back on spring.smooth.",
     render: () => <Tilt />,
@@ -88,8 +92,8 @@ export const demos: readonly DemoSection[] = [
     title: "Level and disabled",
     render: () => (
       <Inline gap={4} align="center">
-        <TiltPad label="Lean" />
-        <TiltPad label="Lean" defaultValue={{ x: -0.6, y: 0.6 }} disabled />
+        <TiltPad label="Tilt" />
+        <TiltPad label="Tilt" defaultValue={{ x: -0.6, y: 0.6 }} disabled />
       </Inline>
     ),
   },

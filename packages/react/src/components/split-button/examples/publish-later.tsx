@@ -4,14 +4,14 @@ import { Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { SplitButton, TextField } from "@buttery/react";
 
-/** Publish now, or pick a later time from the menu: both halves stay disabled until the card has a title, and one entry is unavailable. */
+/** Publish now, or pick a later time from the menu: both halves stay disabled until the deck has a title, and one entry is unavailable. */
 export function PublishLater(): ReactElement {
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("Draft");
   const named = title.trim() !== "";
   return (
     <Stack gap={3} align="start">
-      <TextField label="Card title" value={title} onValueChange={setTitle} />
+      <TextField label="Deck title" value={title} onValueChange={setTitle} />
       <SplitButton
         disabled={!named}
         menuLabel="More ways to publish"
@@ -44,8 +44,8 @@ export function PublishLater(): ReactElement {
 export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
-  await type("Card title", "Spring menu");
+  await type("Deck title", "Spring launch");
   await press("button", "More ways to publish");
   await press("menuitem", "Publish tomorrow at 9:00");
-  await see("Spring menu goes out tomorrow at 9:00");
+  await see("Spring launch goes out tomorrow at 9:00");
 };

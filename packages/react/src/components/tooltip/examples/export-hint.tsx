@@ -21,7 +21,7 @@ export function ExportHint(): ReactElement {
       </Tooltip>
       {saved ? (
         <Text variant="body" tone="secondary">
-          Saved menu-card@2x.png
+          Saved title-slide@2x.png
         </Text>
       ) : null}
     </Inline>
@@ -32,5 +32,5 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Export");
-  await see("Saved menu-card@2x.png");
+  await see("Saved title-slide@2x.png");
 };

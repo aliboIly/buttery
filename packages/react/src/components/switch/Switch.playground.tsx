@@ -15,7 +15,10 @@ export const page: DocsPage = {
 export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "Snap to the grid" },
-    hint: { kind: "text", initial: "Cards line up as you drag them." },
+    hint: {
+      kind: "text",
+      initial: "Text on the gift card lines up as you drag it.",
+    },
     defaultChecked: { kind: "toggle", initial: true },
     disabled: { kind: "toggle", initial: false },
   },
@@ -34,14 +37,14 @@ export const demos: readonly DemoSection[] = [
   {
     title: "States",
     description:
-      "Off, on, with a hint, and disabled off and on. The thumb slides on spring.snappy.",
+      "Off, on, with a hint, and disabled off and on. The thumb glides across on spring.snappy.",
     render: () => (
       <Stack gap={4}>
         <Switch label="Snap to the grid" />
         <Switch label="Show guides" defaultChecked />
         <Switch
           label="Sync to the cloud"
-          hint="Your cards back up as you work."
+          hint="Orders and stock back up as you work."
         />
         <Switch label="Share with the team" disabled />
         <Switch label="Keep a backup" disabled defaultChecked />

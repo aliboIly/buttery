@@ -52,15 +52,19 @@ export const demos: readonly DemoSection[] = [
         <TextField label="Name" placeholder="Your name" autoComplete="name" />
         <TextField
           label="Title"
-          hint="Shown large on the first slide"
-          defaultValue="Summer launch"
+          hint="Shown large on the gift card"
+          defaultValue="Happy birthday"
         />
         <TextField
           label="Email"
           defaultValue="sam@"
           error="Enter an email address like name@example.com."
         />
-        <TextField label="Workspace" defaultValue="Deckhand" disabled />
+        <TextField
+          label="Workspace"
+          defaultValue="Halfmoon Roastery"
+          disabled
+        />
       </Stack>
     ),
   },
@@ -69,7 +73,7 @@ export const demos: readonly DemoSection[] = [
     description: "34px for app forms; 48px with 16px text for sign-in pages.",
     render: () => (
       <Stack gap={4}>
-        <TextField label="Search decks" type="search" iconStart={Search} />
+        <TextField label="Search coffees" type="search" iconStart={Search} />
         <TextField label="Email" size="lg" type="email" autoComplete="email" />
       </Stack>
     ),

@@ -12,10 +12,10 @@ export function TastingNotes(): ReactElement {
       <Inline>
         <Button
           onClick={() => {
-            setNotes([...notes, `Tasting note ${String(notes.length + 1)}`]);
+            setNotes([...notes, `Speaker note ${String(notes.length + 1)}`]);
           }}
         >
-          Add a tasting note
+          Add a speaker note
         </Button>
       </Inline>
       {notes.map((note) => (
@@ -29,7 +29,7 @@ export function TastingNotes(): ReactElement {
           hover="lift"
         >
           <Text variant="label">{note}</Text>
-          <Text variant="caption">Bright, with a cocoa finish.</Text>
+          <Text variant="caption">Pause here for questions.</Text>
         </buttery.article>
       ))}
     </Stack>
@@ -39,8 +39,8 @@ export function TastingNotes(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Add a tasting note");
-  await see("Tasting note 1");
-  await press("button", "Add a tasting note");
-  await see("Tasting note 2");
+  await press("button", "Add a speaker note");
+  await see("Speaker note 1");
+  await press("button", "Add a speaker note");
+  await see("Speaker note 2");
 };

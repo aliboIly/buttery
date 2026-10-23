@@ -11,13 +11,13 @@ export function ExportFooter(): ReactElement {
   const [status, setStatus] = useState("Not exported yet");
   return (
     <Inspector
-      label="Card settings"
+      label="Slide settings"
       footer={
         <Inspector.Footer>
           <Button
             iconStart={Copy}
             onClick={() => {
-              setStatus("Copied the card");
+              setStatus("Copied the slide");
             }}
           >
             Copy

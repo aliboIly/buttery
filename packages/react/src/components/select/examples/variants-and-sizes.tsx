@@ -4,19 +4,19 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Field, Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
 
-type Roast = "light" | "medium" | "dark";
-type Bag = "250" | "500" | "1000";
+type Theme = "plain" | "paper" | "ink";
+type Transition = "none" | "fade" | "push";
 
-const ROASTS: readonly SelectOption<Roast>[] = [
-  { value: "light", label: "Light" },
-  { value: "medium", label: "Medium" },
-  { value: "dark", label: "Dark" },
+const THEMES: readonly SelectOption<Theme>[] = [
+  { value: "plain", label: "Plain" },
+  { value: "paper", label: "Paper" },
+  { value: "ink", label: "Ink" },
 ];
 
-const BAGS: readonly SelectOption<Bag>[] = [
-  { value: "250", label: "250 g" },
-  { value: "500", label: "500 g" },
-  { value: "1000", label: "1 kg" },
+const TRANSITIONS: readonly SelectOption<Transition>[] = [
+  { value: "none", label: "None" },
+  { value: "fade", label: "Fade" },
+  { value: "push", label: "Push" },
 ];
 
 /** The ghost pill for toolbars and the outline box for forms, each at its medium and small size. */
@@ -24,30 +24,35 @@ export function VariantsAndSizes(): ReactElement {
   return (
     <Stack gap={4}>
       <Inline gap={2} align="center" wrap>
-        <Select label="Roast" options={ROASTS} defaultValue="medium" />
-        <Select label="Bag" size="sm" options={BAGS} defaultValue="250" />
+        <Select label="Theme" options={THEMES} defaultValue="paper" />
+        <Select
+          label="Transition"
+          size="sm"
+          options={TRANSITIONS}
+          defaultValue="none"
+        />
       </Inline>
       <Grid columns={2} gap={3}>
-        <Field label="Roast level">
+        <Field label="Deck theme">
           {(control) => (
             <Select
               {...control}
-              label="Roast level"
+              label="Deck theme"
               variant="outline"
-              options={ROASTS}
-              defaultValue="medium"
+              options={THEMES}
+              defaultValue="paper"
             />
           )}
         </Field>
-        <Field label="Bag size">
+        <Field label="Slide transition">
           {(control) => (
             <Select
               {...control}
-              label="Bag size"
+              label="Slide transition"
               variant="outline"
               size="sm"
-              options={BAGS}
-              defaultValue="250"
+              options={TRANSITIONS}
+              defaultValue="none"
             />
           )}
         </Field>
@@ -59,9 +64,9 @@ export function VariantsAndSizes(): ReactElement {
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("combobox", "Bag size 250 g");
-  await press("option", "1 kg");
-  await press("combobox", "Bag size 1 kg");
-  await press("option", "500 g");
-  await see("500 g");
+  await press("combobox", "Slide transition None");
+  await press("option", "Push");
+  await press("combobox", "Slide transition Push");
+  await press("option", "Fade");
+  await see("Fade");
 };

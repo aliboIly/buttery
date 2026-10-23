@@ -15,19 +15,19 @@ export function ShowNewOption(): ReactElement {
         open={open}
         onOpenChange={setOpen}
         onClick={() => {
-          setLast("Exported menu-card.png");
+          setLast("Exported title-slide.png");
         }}
         items={[
           {
             label: "Export as JPG",
             onSelect: () => {
-              setLast("Exported menu-card.jpg");
+              setLast("Exported title-slide.jpg");
             },
           },
           {
             label: "Copy to clipboard",
             onSelect: () => {
-              setLast("Copied the menu card");
+              setLast("Copied the slide");
             },
           },
         ]}
@@ -36,7 +36,7 @@ export function ShowNewOption(): ReactElement {
       </SplitButton>
       <Inline gap={2} align="center">
         <Text variant="body" tone="secondary">
-          New: copy the card straight to your clipboard.
+          New: copy to the clipboard.
         </Text>
         <Button
           size="sm"
@@ -60,5 +60,5 @@ export const kind: ExampleKind = "controlled";
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Show me");
   await press("menuitem", "Copy to clipboard");
-  await see("Copied the menu card");
+  await see("Copied the slide");
 };

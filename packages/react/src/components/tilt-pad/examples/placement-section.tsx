@@ -7,7 +7,7 @@ import type { TiltValue } from "@buttery/react";
 
 const LEVEL: TiltValue = { x: 0, y: 0 };
 
-function leanOf({ x, y }: TiltValue): string {
+function tiltOf({ x, y }: TiltValue): string {
   const amount = (value: number): string =>
     `${String(Math.round(Math.abs(value) * 100))}%`;
   const parts: string[] = [];
@@ -16,30 +16,30 @@ function leanOf({ x, y }: TiltValue): string {
   return parts.length === 0 ? "Level" : parts.join(" ");
 }
 
-/** An inspector's placement section: a lean row with its value and a chip that lays it flat, over a turn slider, and Reset for both. */
+/** An inspector's placement section: a tilt row with its value and a chip that lays it flat, over a turn slider, and Reset for both. */
 export function PlacementSection(): ReactElement {
-  const [lean, setLean] = useState<TiltValue>(LEVEL);
+  const [tilt, setTilt] = useState<TiltValue>(LEVEL);
   const [turn, setTurn] = useState(0);
-  const level = lean.x === 0 && lean.y === 0;
+  const level = tilt.x === 0 && tilt.y === 0;
   return (
-    <Inspector label="Card settings">
+    <Inspector label="Picture settings">
       <Inspector.Section
         title="Placement"
         resettable={!level || turn !== 0}
         onReset={() => {
-          setLean(LEVEL);
+          setTilt(LEVEL);
           setTurn(0);
         }}
       >
         <Inspector.Row
-          label="Lean"
+          label="Tilt"
           extra={
             <Inline gap={2}>
-              <ValueBadge reserve={["→ 71% ↓ 71%"]}>{leanOf(lean)}</ValueBadge>
+              <ValueBadge reserve={["→ 71% ↓ 71%"]}>{tiltOf(tilt)}</ValueBadge>
               <Chip
                 aria-disabled={level}
                 onClick={() => {
-                  setLean(LEVEL);
+                  setTilt(LEVEL);
                 }}
               >
                 Flat
@@ -47,7 +47,7 @@ export function PlacementSection(): ReactElement {
             </Inline>
           }
         >
-          <TiltPad label="Lean" value={lean} onValueChange={setLean} />
+          <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
         </Inspector.Row>
         <Inspector.Row>
           <Slider
@@ -69,7 +69,7 @@ export function PlacementSection(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, key, see }) => {
-  await press("group", "Lean");
+  await press("group", "Tilt");
   await key("ArrowDown");
   await key("ArrowDown");
   await key("ArrowDown");

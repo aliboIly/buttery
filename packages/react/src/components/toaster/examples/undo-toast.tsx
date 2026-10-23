@@ -6,7 +6,7 @@ import { Button, toast } from "@buttery/react";
 
 /** A delete that confirms itself with a toast, with Undo in the toast and on Command or Control Z. */
 export function UndoToast(): ReactElement {
-  const [cards, setCards] = useState(3);
+  const [slides, setSlides] = useState(3);
   const [deleted, setDeleted] = useState(0);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export function UndoToast(): ReactElement {
       if (!undo || deleted === 0) return;
       event.preventDefault();
       setDeleted(deleted - 1);
-      setCards((count) => count + 1);
+      setSlides((count) => count + 1);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
@@ -29,29 +29,29 @@ export function UndoToast(): ReactElement {
   return (
     <Inline gap={3} align="center">
       <Button
-        aria-disabled={cards === 0}
+        aria-disabled={slides === 0}
         onClick={() => {
           const key = /Mac|iPhone|iPad/.test(navigator.userAgent)
             ? "Command"
             : "Control";
-          setCards((count) => count - 1);
+          setSlides((count) => count - 1);
           setDeleted((count) => count + 1);
-          toast("Card deleted", {
+          toast("Slide deleted", {
             action: {
               label: "Undo",
               onAction: () => {
                 setDeleted((count) => Math.max(0, count - 1));
-                setCards((count) => count + 1);
+                setSlides((count) => count + 1);
               },
               altText: `Undo with ${key} Z`,
             },
           });
         }}
       >
-        Delete a card
+        Delete a slide
       </Button>
       <Text variant="caption">
-        {cards === 1 ? "1 card" : `${String(cards)} cards`}
+        {slides === 1 ? "1 slide" : `${String(slides)} slides`}
       </Text>
     </Inline>
   );
@@ -60,8 +60,8 @@ export function UndoToast(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Delete a card");
-  await see("2 cards");
+  await press("button", "Delete a slide");
+  await see("2 slides");
   await press("button", "Undo");
-  await see("3 cards");
+  await see("3 slides");
 };

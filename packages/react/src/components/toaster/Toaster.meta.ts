@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "Shows short messages from toast() at the bottom of the window, three at most, each leaving on its own after a few seconds; ButteryProvider mounts one, so an app only calls toast().",
   useWhen: [
-    "Confirming an action that changed something out of view: Card deleted, Link copied, Exported",
+    "Confirming an action that changed something out of view: Slide deleted, Link copied, Exported",
     "Offering a quick way back, such as Undo after a delete",
     "News the person didn't just cause, such as a sync finishing (background: true)",
     "A result with a tone: toast.success() when it went well, toast.warning() when it needs a look, toast.danger() when it failed",

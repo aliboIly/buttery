@@ -4,26 +4,26 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, SegmentedControl } from "@buttery/react";
 
-type Fill = "Blend" | "Color";
+type Fill = "Gradient" | "Color";
 
-/** Gradient or solid fill for a card background, kept in state so the swatches follow it and Reset can set it back. */
+/** Gradient or solid fill for a slide background, kept in state so the swatches follow it and Reset can set it back. */
 export function FillSwitch(): ReactElement {
-  const [fill, setFill] = useState<Fill>("Blend");
+  const [fill, setFill] = useState<Fill>("Gradient");
   return (
     <Stack gap={3} align="start">
       <Inline gap={2} align="center">
         <SegmentedControl<Fill>
           label="Fill"
-          options={["Blend", "Color"]}
+          options={["Gradient", "Color"]}
           value={fill}
           onValueChange={setFill}
         />
         <Button
           variant="ghost"
           size="sm"
-          aria-disabled={fill === "Blend"}
+          aria-disabled={fill === "Gradient"}
           onClick={() => {
-            setFill("Blend");
+            setFill("Gradient");
           }}
         >
           Reset
@@ -42,5 +42,5 @@ export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "Color");
   await see("Showing color swatches.");
   await press("button", "Reset");
-  await see("Showing blend swatches.");
+  await see("Showing gradient swatches.");
 };

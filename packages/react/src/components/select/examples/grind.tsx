@@ -3,26 +3,26 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
 
-type Grind = "whole" | "filter" | "espresso" | "press";
+type Font = "sans" | "serif" | "mono" | "rounded";
 
-const GRINDS: readonly SelectOption<Grind>[] = [
-  { value: "whole", label: "Whole bean" },
-  { value: "filter", label: "Filter" },
-  { value: "espresso", label: "Espresso" },
-  { value: "press", label: "French press" },
+const FONTS: readonly SelectOption<Font>[] = [
+  { value: "sans", label: "Sans" },
+  { value: "serif", label: "Serif" },
+  { value: "mono", label: "Mono" },
+  { value: "rounded", label: "Rounded" },
 ];
 
-/** A select that keeps its own value, starting on whole beans; the trigger shows each grind picked. */
+/** A select that keeps its own value, starting on the deck's sans font; the trigger shows each font picked. */
 export function CoffeeGrind(): ReactElement {
-  return <Select label="Grind" options={GRINDS} defaultValue="whole" />;
+  return <Select label="Font" options={FONTS} defaultValue="sans" />;
 }
 
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("combobox", "Grind, Whole bean");
-  await press("option", "Espresso");
-  await press("combobox", "Grind, Espresso");
-  await press("option", "French press");
-  await see("French press");
+  await press("combobox", "Font, Sans");
+  await press("option", "Serif");
+  await press("combobox", "Font, Serif");
+  await press("option", "Rounded");
+  await see("Rounded");
 };

@@ -8,7 +8,7 @@ export function CopiedToast(): ReactElement {
     <Button
       onClick={() => {
         void navigator.clipboard
-          .writeText("https://example.com/cards/42")
+          .writeText("https://example.com/decks/42")
           .then(() => toast("Link copied", { id: "copy-link" }))
           .catch(() => toast("Couldn't copy the link", { id: "copy-link" }));
       }}

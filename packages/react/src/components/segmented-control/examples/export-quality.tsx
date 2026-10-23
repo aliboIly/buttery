@@ -13,7 +13,7 @@ export function ExportQuality(): ReactElement {
   const [quality, setQuality] = useState<Quality>("High");
   return (
     <Stack gap={4} align="start">
-      <Field label="Format" hint="WebP comes with the Studio plan.">
+      <Field label="Format" hint="WebP comes with the Team plan.">
         {(control) => (
           <SegmentedControl<Format>
             {...control}

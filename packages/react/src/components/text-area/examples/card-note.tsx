@@ -4,14 +4,14 @@ import { Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { TextArea } from "@buttery/react";
 
-/** A note under the card that grows as it gets longer, with the room it has left counted from its state. */
+/** A note for the packing slip that grows as it gets longer, with the room it has left counted from its state. */
 export function CardNote(): ReactElement {
   const [note, setNote] = useState("");
   return (
     <Stack gap={2}>
       <TextArea
         label="Note"
-        hint="Shown under the card in small type."
+        hint="Printed on the packing slip in small type."
         value={note}
         onValueChange={setNote}
         maxLength={280}

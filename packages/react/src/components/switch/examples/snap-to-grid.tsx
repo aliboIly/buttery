@@ -15,7 +15,9 @@ export function SnapToGrid(): ReactElement {
         onCheckedChange={setSnap}
       />
       <Text variant="body" tone="secondary">
-        {snap ? "Cards snap to the 8px grid" : "Cards move freely"}
+        {snap
+          ? "Text on the gift card snaps to the 8px grid"
+          : "Text on the gift card moves freely"}
       </Text>
       <Button
         size="sm"
@@ -34,7 +36,7 @@ export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("switch", "Snap to the grid");
-  await see("Cards move freely");
+  await see("Text on the gift card moves freely");
   await press("button", "Restore default");
-  await see("Cards snap to the 8px grid");
+  await see("Text on the gift card snaps to the 8px grid");
 };

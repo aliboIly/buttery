@@ -5,7 +5,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Switch, TiltPad, ValueBadge } from "@buttery/react";
 import type { TiltValue } from "@buttery/react";
 
-function leanOf({ x, y }: TiltValue): string {
+function tiltOf({ x, y }: TiltValue): string {
   const amount = (value: number): string =>
     `${String(Math.round(Math.abs(value) * 100))}%`;
   const parts: string[] = [];
@@ -14,26 +14,26 @@ function leanOf({ x, y }: TiltValue): string {
   return parts.length === 0 ? "Level" : parts.join(", ");
 }
 
-/** A disabled pad: the lean holds while it's locked, dimmed and ignoring drags and keys, and moves once it's unlocked. */
+/** A disabled pad: the tilt holds while it's locked, dimmed and ignoring drags and keys, and moves once it's unlocked. */
 export function LockedLean(): ReactElement {
   const [locked, setLocked] = useState(true);
-  const [lean, setLean] = useState<TiltValue>({ x: 0.3, y: 0 });
+  const [tilt, setTilt] = useState<TiltValue>({ x: 0.3, y: 0 });
   return (
     <Stack gap={4}>
       <Switch
-        label="Lock the lean"
+        label="Lock the tilt"
         checked={locked}
         onCheckedChange={setLocked}
       />
       <Inline gap={3} align="center">
         <TiltPad
-          label="Lean"
-          value={lean}
-          onValueChange={setLean}
+          label="Tilt"
+          value={tilt}
+          onValueChange={setTilt}
           disabled={locked}
         />
         <ValueBadge reserve={["71% right, 71% down"]}>
-          {leanOf(lean)}
+          {tiltOf(tilt)}
         </ValueBadge>
       </Inline>
     </Stack>
@@ -44,8 +44,8 @@ export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, key, see }) => {
   await see("30% right");
-  await press("switch", "Lock the lean");
-  await press("group", "Lean");
+  await press("switch", "Lock the tilt");
+  await press("group", "Tilt");
   await key("ArrowLeft");
   await see("20% right");
 };

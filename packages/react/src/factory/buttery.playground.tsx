@@ -21,7 +21,7 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <buttery.section surface="card" pad={4} stack gap={2} enter="rise">
         <Text variant="label">Spring launch</Text>
-        <Text variant="caption">Square, blend backdrop, soft edge</Text>
+        <Text variant="caption">12 slides, Paper theme</Text>
       </buttery.section>
     ),
   },
@@ -39,7 +39,7 @@ export const demos: readonly DemoSection[] = [
         focus
         hover="lift"
       >
-        <Text variant="button">Save the card</Text>
+        <Text variant="button">Save the deck</Text>
       </buttery.button>
     ),
   },

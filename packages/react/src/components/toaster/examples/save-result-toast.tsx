@@ -17,9 +17,9 @@ export function SaveResultToast(): ReactElement {
       setSave("idle");
       if (save === "failing") {
         setFailNext(false);
-        toast.danger("Couldn't save the roast", { id: "save" });
+        toast.danger("Couldn't save the theme", { id: "save" });
       } else {
-        toast.success("Roast saved", { id: "save" });
+        toast.success("Theme saved", { id: "save" });
       }
     }, 600);
     return () => {
@@ -35,7 +35,7 @@ export function SaveResultToast(): ReactElement {
           setSave(failNext ? "failing" : "succeeding");
         }}
       >
-        Save roast
+        Save theme
       </Button>
       <Switch
         label="Fail the next save"
@@ -49,11 +49,11 @@ export function SaveResultToast(): ReactElement {
 export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, key, see }) => {
-  await press("button", "Save roast");
-  await see("Roast saved");
+  await press("button", "Save theme");
+  await see("Theme saved");
   await press("switch", "Fail the next save");
-  await press("button", "Save roast");
-  await see("Couldn't save the roast");
+  await press("button", "Save theme");
+  await see("Couldn't save the theme");
   await key("F8");
   await key("Escape");
 };

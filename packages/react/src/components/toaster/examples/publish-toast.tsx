@@ -14,7 +14,7 @@ export function PublishToast(): ReactElement {
     const timer = window.setTimeout(() => {
       setPublishing(null);
       setStatus("Published");
-      toast.success("Card published", { id: publishing });
+      toast.success("Deck published", { id: publishing });
     }, 1500);
     return () => {
       window.clearTimeout(timer);
@@ -29,7 +29,7 @@ export function PublishToast(): ReactElement {
         onClick={() => {
           setStatus("Publishing");
           setPublishing(
-            toast("Publishing the card", {
+            toast("Publishing the deck", {
               duration: Number.POSITIVE_INFINITY,
             }),
           );
@@ -59,9 +59,9 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Publish");
-  await see("Publishing the card");
+  await see("Publishing the deck");
   await press("button", "Cancel");
   await see("Canceled");
   await press("button", "Publish");
-  await see("Card published");
+  await see("Deck published");
 };

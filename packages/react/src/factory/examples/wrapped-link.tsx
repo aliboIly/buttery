@@ -21,21 +21,25 @@ const CardLink = buttery(Link, {
 });
 
 const RECENT = [
-  { id: "summer-sale", title: "Summer sale", edited: "Edited yesterday" },
-  { id: "weekend-tasting", title: "Weekend tasting", edited: "Edited Monday" },
-  { id: "brew-guide", title: "Brew guide", edited: "Edited last week" },
+  {
+    id: "quarterly-review",
+    title: "Quarterly review",
+    edited: "Edited yesterday",
+  },
+  { id: "spring-launch", title: "Spring launch", edited: "Edited Monday" },
+  { id: "team-offsite", title: "Team offsite", edited: "Edited last week" },
 ];
 
-/** A link component from elsewhere, wrapped once into a card that presses and lifts, for a list of recent cards. */
+/** A link component from elsewhere, wrapped once into a card that presses and lifts, for a list of recent decks. */
 export function WrappedLink(): ReactElement {
   return (
     <Stack gap={3}>
-      <Text variant="title">Recent cards</Text>
+      <Text variant="title">Recent decks</Text>
       <Stack gap={2}>
-        {RECENT.map((card) => (
-          <CardLink key={card.id} href={`#${card.id}`}>
-            <Text variant="label">{card.title}</Text>
-            <Text variant="caption">{card.edited}</Text>
+        {RECENT.map((deck) => (
+          <CardLink key={deck.id} href={`#${deck.id}`}>
+            <Text variant="label">{deck.title}</Text>
+            <Text variant="caption">{deck.edited}</Text>
           </CardLink>
         ))}
       </Stack>
@@ -46,7 +50,7 @@ export function WrappedLink(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Recent cards");
-  await see("Summer sale");
+  await see("Recent decks");
+  await see("Quarterly review");
   await see("Edited last week");
 };

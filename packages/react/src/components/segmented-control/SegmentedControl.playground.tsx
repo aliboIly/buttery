@@ -16,12 +16,12 @@ export const page: DocsPage = {
 };
 
 function FillDemo(): ReactElement {
-  const [fill, setFill] = useState("Blend");
+  const [fill, setFill] = useState("Gradient");
   return (
     <Stack gap={3} align="start">
       <SegmentedControl
         label="Fill"
-        options={["Blend", "Color"]}
+        options={["Gradient", "Color"]}
         value={fill}
         onValueChange={setFill}
       />
@@ -69,7 +69,7 @@ export const demos: readonly DemoSection[] = [
     title: "Equal widths, a disabled option",
     render: () => (
       <SegmentedControl
-        label="Canvas fit"
+        label="Picture fit"
         options={[
           { value: "fit", label: "Fit" },
           { value: "fill", label: "Fill the frame" },

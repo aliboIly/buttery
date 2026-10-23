@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "A small pad for tilting something in 3D: drag the knob or use the arrow keys.",
   useWhen: [
-    "Tilting a card or an image in 3D, as x and y from −1 to 1 mapped to rotateY and rotateX",
+    "Tilting a picture on a slide in 3D, as x and y from −1 to 1 mapped to rotateY and rotateX",
   ],
   avoidWhen: [
     "Turning something flat: use a Slider in degrees",

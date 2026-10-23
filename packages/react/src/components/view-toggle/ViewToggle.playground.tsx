@@ -33,7 +33,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Grid or list",
     description:
-      "Two icon segments; hover or focus one for its name. The choice slides on spring.snappy.",
+      "Two icon segments; hover or focus one for its name. The selection glides between them on spring.snappy.",
     render: () => <ViewToggle />,
   },
 ];
