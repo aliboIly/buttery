@@ -56,7 +56,7 @@ const FIXED = fixture(`
     </div>
     <div data-bt="Card" style="inline-size: 100px"><div style="inline-size: 100%; block-size: 10px"></div></div>
     <div data-bt="Row" style="display: flex; gap: 8px"><span>One</span><span>Two</span></div>
-    <button type="button" id="tiny" aria-label="Close" style="position: relative; inline-size: 16px; block-size: 16px; padding: 0; border: 0"><svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" /></svg><span data-bt-hit style="position: absolute; inset: -6px"></span></button>
+    <button type="button" id="tiny" aria-label="Close" style="position: relative; display: grid; place-items: center; inline-size: 16px; block-size: 16px; padding: 0; border: 0"><svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" /></svg><span data-bt-hit style="position: absolute; inset: -6px"></span></button>
     <button type="button" id="unnamed" aria-label="Add a row" style="inline-size: 40px; block-size: 40px"></button>
     <div id="raised" style="position: relative; z-index: var(--bt-z-raised)">Raised with a token</div>
     <span id="clipped" data-bt-truncate title="A label much longer than its box" style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
