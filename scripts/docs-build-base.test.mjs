@@ -274,8 +274,9 @@ function servePages() {
   });
 }
 
-/** What a returning visitor has seen, so a demo opens without its first-visit announcement and nudge. */
+/** What a returning visitor has: a roastery session, and the first-visit announcement and nudge seen. */
 const SEEN = {
+  "roastery:session": '"rosa@halfmoon.coffee"',
   "buttery:announcement:roastery-roast-planning": "true",
   "buttery:nudge:roastery-delivery-questions": "true",
 };
