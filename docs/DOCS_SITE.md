@@ -34,7 +34,7 @@ Every component, primitive and layer has one home. Component-scale parts get a c
 | Section and group | Exports |
 |---|---|
 | Components › Actions | `ArrowLink`, `Button`, `Chip`, `FloatingToolbar`, `IconButton`, `InfoButton`, `Pressable`, `QuickActions`, `SplitButton` |
-| Components › Inputs | `ColorPicker`, `Control`, `DateRangeBar`, `DropZone`, `Field`, `NumberField`, `PasswordField`, `SearchField`, `Slider`, `TextArea`, `TextField`, `TiltPad` |
+| Components › Inputs | `ColorPicker`, `Control`, `DateRangeBar`, `DropZone`, `Field`, `IdentifierField`, `NumberField`, `OneTimeCodeField`, `PasswordField`, `SearchField`, `Slider`, `TextArea`, `TextField`, `TiltPad` |
 | Components › Selection | `AnchorGrid`, `Checkbox`, `ColorDot`, `FilterBar`, `OptionTiles`†, `PreferencesMatrix`†, `RadioCardGroup`†, `SegmentedControl`, `Select`, `SwatchGrid`, `Switch`, `ViewToggle` |
 | Components › Navigation | `AccountMenu`, `Breadcrumbs`†, `CommandSearch`†, `MorphMenu`, `NavBar`, `PageDots`, `SavedViews`, `SettingsIndex`, `Sidebar`, `StatTabs`, `SubNav`, `TabNav`, `Tabs`, `TopBar` |
 | Components › Overlays | `AnnouncementDialog`, `ChoiceDialog`, `ConsequenceDialog`†, `ContextMenu`, `Dialog`, `ExpandableCard`, `FormDialog`†, `FullscreenDialog`†, `Menu`, `NotificationNudge`, `Popover`, `Sheet`, `SidePanel`†, `Tooltip` |
@@ -43,7 +43,7 @@ Every component, primitive and layer has one home. Component-scale parts get a c
 | Foundations | `Text` and `TextStack` (Typography), `Icon` (Icons), `Layer`, `Scrim`, `Sticky` and `FloatingLanes` (Layers) |
 | Layout | `Center`, `Container`, `Divider`, `FitBox`, `Grid`, `Inline`, `OverflowCluster`, `Page`, `Section`, `Stack`, `Surface` |
 | Motion | `buttery` (the motion elements), `Loop`, `Morph`, `Presence`, `Reveal`, `SharedIndicator`, `Stagger` |
-| Patterns | `PageHeader` (Page header); `SignInForm`, `SignUpForm` (Forms); `SettingRow`†, `SettingsPage`†, `SettingsSection`† (Settings pages); `DetailPage`† (Detail page); `CatalogPage`† (Catalog page); `PlanComparison`† (Plans); `Faq` (FAQ); `SearchResults`† (Search and results); `Onboarding` (Onboarding); `HeaderBar`, `Inspector`, `Stage` (Inspector); `AppPage`, `AppShell` (App shell); `ArticleLayout`, `Bento`, `CenteredHero`, `Footer`, `LogoStrip`, `SplitHero`, `StatStrip` (Marketing page) |
+| Patterns | `PageHeader` (Page header); `SignInForm`, `SignUpForm` (Forms); `AuthFlow` (Authentication); `SettingRow`†, `SettingsPage`†, `SettingsSection`† (Settings pages); `DetailPage`† (Detail page); `CatalogPage`† (Catalog page); `PlanComparison`† (Plans); `Faq` (FAQ); `SearchResults`† (Search and results); `Onboarding` (Onboarding); `HeaderBar`, `Inspector`, `Stage` (Inspector); `AppPage`, `AppShell` (App shell); `ArticleLayout`, `Bento`, `CenteredHero`, `Footer`, `LogoStrip`, `SplitHero`, `StatStrip` (Marketing page) |
 
 The Data table page and Overview patterns are compositions of the parts above and add no export of their own. A new export gets a row here in the change that adds it, and the docs check fails on an export that has none. An export of `@butteryui/react` from outside a component's folder, such as `ButteryProvider` or the shared form parts, is listed in the `exports` frontmatter of the written page that describes it.
 

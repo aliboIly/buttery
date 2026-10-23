@@ -782,11 +782,15 @@ export type {
 } from "./components/one-time-code-field/OneTimeCodeField.tsx";
 export { IdentifierField } from "./components/identifier-field/IdentifierField.tsx";
 export {
+  formatIdentifier,
   identifierKind,
   maskedIdentifier,
   validIdentifier,
 } from "./patterns/auth-flow/identifier.ts";
-export type { IdentifierKind } from "./patterns/auth-flow/identifier.ts";
+export type {
+  Edited,
+  IdentifierKind,
+} from "./patterns/auth-flow/identifier.ts";
 export type { IdentifierFieldProps } from "./components/identifier-field/IdentifierField.tsx";
 export { AuthFlow } from "./patterns/auth-flow/AuthFlow.tsx";
 export type {

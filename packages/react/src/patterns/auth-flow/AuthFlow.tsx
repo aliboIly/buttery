@@ -270,7 +270,7 @@ export function AuthFlow<Session>({
           >
             {flow.sending ? (
               <span data-bt-part="sending">
-                <span data-bt-part="spinner">
+                <span data-bt-part="sending-mark">
                   <Spinner />
                 </span>
                 {words.sending}
@@ -281,7 +281,11 @@ export function AuthFlow<Session>({
           </Button>
         </Stack>
         {terms === undefined ? null : (
-          <Text variant="caption" tone="tertiary" data-bt-part="terms">
+          <Text
+            variant="caption"
+            tone="tertiary"
+            data-bt-part="auth-flow-terms"
+          >
             {terms}
           </Text>
         )}
@@ -342,7 +346,7 @@ export function AuthFlow<Session>({
               </Button>
             )}
           </div>
-          <div data-bt-part="back">
+          <div data-bt-part="auth-flow-back">
             <Button
               variant="ghost"
               aria-disabled={done || undefined}

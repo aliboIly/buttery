@@ -3,7 +3,9 @@ export type IdentifierKind = "email" | "phone" | "unknown";
 
 /** A value and where its caret sits, so formatting can keep the caret beside the same digit. */
 export interface Edited {
+  /** The text. */
   readonly value: string;
+  /** Where the caret sits in it, as a count of characters before it. */
   readonly caret: number;
 }
 

@@ -62,8 +62,11 @@ export type CodeStatus = "idle" | "verifying" | "success" | "error";
 
 /** Everything a sign-in screen needs to draw and drive a one-time-code flow. */
 export interface OtpFlow {
+  /** Which step it's on. */
   readonly step: OtpStep;
+  /** The email address or phone number, as typed. */
   readonly identifier: string;
+  /** Changes the identifier, such as from `IdentifierField`'s `onValueChange`. */
   readonly setIdentifier: (value: string) => void;
   /** Whether a code is on its way, for the button's "Sending code…". */
   readonly sending: boolean;
@@ -73,8 +76,11 @@ export interface OtpFlow {
   readonly sendCode: () => Promise<void>;
   /** Where the code went, mostly hidden, such as "••• ••• 5473". */
   readonly destination: string;
+  /** The code's digits typed so far. */
   readonly code: string;
+  /** Changes the code, such as from `OneTimeCodeField`'s `onValueChange`; typing after an error clears its color. */
   readonly setCode: (value: string) => void;
+  /** Where checking the code stands, for `OneTimeCodeField`'s `status`. */
   readonly status: CodeStatus;
   /** Why the last code wasn't accepted, or why a new one couldn't be sent, said as what to do next. */
   readonly codeError: string | null;
@@ -82,11 +88,13 @@ export interface OtpFlow {
   readonly verify: (code: string) => Promise<void>;
   /** Seconds until a new code can be asked for; `0` when it can. */
   readonly resendIn: number;
+  /** Sends a new code once `resendIn` is `0`, staying on the code step. */
   readonly resend: () => Promise<void>;
   /** Seconds the code lasts, from when it was sent, or `null` when the app didn't say. */
   readonly expiresIn: number | null;
   /** Back to the first step, the identifier still filled in. */
   readonly back: () => void;
+  /** Digits in a code. */
   readonly codeLength: number;
 }
 

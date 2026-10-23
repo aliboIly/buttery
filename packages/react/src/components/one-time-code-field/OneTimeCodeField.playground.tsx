@@ -10,7 +10,6 @@ export const page: DocsPage = {
   order: 130,
   status: "new",
   since: "0.10.0",
-  home: "patterns/authentication",
 };
 
 const STATUSES = ["idle", "verifying", "success", "error"] as const;

@@ -1,0 +1,142 @@
+---
+title: Authentication
+description: A passwordless sign-in that's also the sign-up, with an email or phone number and then a one-time code, on one surface.
+section: patterns
+order: 25
+status: new
+since: 0.10.0
+exports:
+  [
+    useOtpFlow,
+    validIdentifier,
+    identifierKind,
+    maskedIdentifier,
+    formatIdentifier,
+  ]
+related: [patterns/forms, components/text-field]
+---
+
+`AuthFlow` signs people in with a code sent to their email or phone, and signs up the ones who are new on the same screen, with no password to make or forget. It's built from parts you can use on their own: [`IdentifierField`](/components/identifier-field) for the email or phone, [`OneTimeCodeField`](/components/one-time-code-field) for the code, and `useOtpFlow` for the steps without the UI. buttery never sends a code or talks to a server; your app passes in the calls that do.
+
+## How the flow goes
+
+<Steps>
+<Step>
+
+### Who's signing in
+
+One field takes an email address or a phone number. It tells them apart as they're typed, formats a North American number as it goes, and asks phones for the matching keyboard. The button holds back until the field is whole, and while the code is on its way it says so without changing width.
+
+</Step>
+<Step>
+
+### The code
+
+The code step slides in with focus already in the code field, and says where the code went with most of it hidden. The field is one real input, so a code the phone offers from a message, a password manager's or a pasted one goes in at once. Under it are how long the code lasts, a countdown to asking for a new one, and the way back with the email or phone still filled in.
+
+</Step>
+<Step>
+
+### Signed in
+
+The last digit checks the code. Accepted, the field turns the success color and a check pops in, and the session goes to your app a moment later. Turned down, the field clears and takes focus back, with a message that says what to do next.
+
+</Step>
+</Steps>
+
+## Connecting it to your server
+
+`AuthFlow` takes three calls: one that sends a code, one that checks it, and one that gets the session once a code is accepted. The first two return a result instead of throwing, so each failure can say what to do next; a call that throws counts as a connection failure.
+
+```tsx
+import { AuthFlow } from "@butteryui/react";
+
+export function SignInScreen({ api, enter }) {
+  return (
+    <AuthFlow
+      onRequestCode={async (identifier) => {
+        const response = await api.sendCode(identifier);
+        return response.ok
+          ? { ok: true, expiresIn: 600 }
+          : {
+              ok: false,
+              reason: response.status === 429 ? "rate-limited" : "unavailable",
+            };
+      }}
+      onVerify={async (identifier, code) => {
+        const response = await api.verify(identifier, code);
+        return response.ok
+          ? { ok: true, session: await response.json() }
+          : {
+              ok: false,
+              reason: response.status === 410 ? "expired" : "wrong",
+            };
+      }}
+      onSuccess={enter}
+    />
+  );
+}
+```
+
+Send a code whether or not an account exists, and let the first verified code create one: `AuthFlow` never says which happened, so the screen can't be used to find out who has an account.
+
+<DocsTable
+  columns={["Result", "What it says"]}
+  rows={[
+    [
+      "`wrong`",
+      "That code isn't right. Check your latest message and type it again.",
+    ],
+    ["`expired`", "That code has expired. Send a new one."],
+    ["`too-many`", "Too many tries. Send a new code and use that one."],
+    [
+      "`rate-limited`",
+      "Too many codes asked for. Wait a minute, then try again.",
+    ],
+    [
+      "`unavailable`",
+      "The code couldn't be sent, or checked. Check your connection and try again.",
+    ],
+  ]}
+/>
+
+A result's `message` replaces the words for its reason, and `labels` changes any of the screen's own words.
+
+## Your own layout
+
+`useOtpFlow` is the flow without the UI: the step, the identifier and code, sending, checking, the countdown and the errors. Draw it with `IdentifierField` and `OneTimeCodeField` when the steps need a layout of their own, such as beside a picture.
+
+```tsx
+import {
+  IdentifierField,
+  OneTimeCodeField,
+  useOtpFlow,
+} from "@butteryui/react";
+
+export function SideBySideSignIn({ api, enter }) {
+  const flow = useOtpFlow({
+    onRequestCode: (identifier) => api.sendCode(identifier),
+    onVerify: (identifier, code) => api.verify(identifier, code),
+    onSuccess: enter,
+  });
+  return flow.step === "identify" ? (
+    <IdentifierField
+      value={flow.identifier}
+      onValueChange={flow.setIdentifier}
+      error={flow.requestError ?? undefined}
+    />
+  ) : (
+    <OneTimeCodeField
+      value={flow.code}
+      onValueChange={flow.setCode}
+      onComplete={flow.verify}
+      status={flow.status}
+      message={flow.codeError ?? undefined}
+    />
+  );
+}
+```
+
+## AuthFlow
+
+<ComponentDocs of="AuthFlow" />

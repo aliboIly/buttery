@@ -11,7 +11,7 @@ export const meta: ComponentMeta = {
     'A PIN in a dense panel, with size="sm"; on a card, with variant="soft"',
   ],
   avoidWhen: [
-    'Codes sent by email or text: use TextField with autoComplete="one-time-code"',
+    "Codes sent by email or text: use OneTimeCodeField, or AuthFlow for a whole passwordless sign-in",
   ],
   related: ["TextField", "SignInForm", "SignUpForm"],
   a11y: 'The reveal button is a toggle with a fixed name ("Show password") and aria-pressed, in the tab order after the input. Requirements are a list that describes the input; each rule has a tick named "Met" or a circle named "Not met", so its state doesn\'t rest on color. A shown password is never corrected, capitalized or spell-checked, and hides again when its form is submitted.',

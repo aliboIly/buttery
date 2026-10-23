@@ -10,7 +10,6 @@ export const page: DocsPage = {
   order: 125,
   status: "new",
   since: "0.10.0",
-  home: "patterns/authentication",
 };
 
 export const live: LiveDemo = {

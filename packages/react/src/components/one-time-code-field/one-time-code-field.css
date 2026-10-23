@@ -16,7 +16,10 @@
     padding-inline: var(--bt-form-field-inset);
   }
 
-  .bt-one-time-code-field [data-bt-part="slot"] {
+  .bt-one-time-code-field
+    > [data-bt-part="box"]
+    > [data-bt-part="slots"]
+    > [data-bt-part="slot"] {
     position: relative;
     display: grid;
     flex: 1 1 0;
@@ -29,7 +32,11 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .bt-one-time-code-field [data-bt-part="dot"] {
+  .bt-one-time-code-field
+    > [data-bt-part="box"]
+    > [data-bt-part="slots"]
+    > [data-bt-part="slot"]
+    > [data-bt-part="dot"] {
     inline-size: var(--bt-one-time-code-field-dot);
     block-size: var(--bt-one-time-code-field-dot);
     border-radius: var(--bt-r-full);
@@ -37,7 +44,11 @@
   }
 
   /* The active slot shows a caret over its dot, as the input's own caret is hidden. */
-  .bt-one-time-code-field [data-bt-part="caret"] {
+  .bt-one-time-code-field
+    > [data-bt-part="box"]
+    > [data-bt-part="slots"]
+    > [data-bt-part="slot"]
+    > [data-bt-part="caret"] {
     position: absolute;
     inset-block-start: 25%;
     inset-inline-start: calc(50% - var(--bt-one-time-code-field-caret) / 2);
@@ -50,12 +61,18 @@
   }
 
   .bt-one-time-code-field
-    [data-bt-part="slot"]:has(> [data-bt-part="caret"])
+    > [data-bt-part="box"]
+    > [data-bt-part="slots"]
+    > [data-bt-part="slot"]:has(> [data-bt-part="caret"])
     > [data-bt-part="dot"] {
     visibility: hidden;
   }
 
-  .bt-one-time-code-field[data-motion="reduced"] [data-bt-part="caret"] {
+  .bt-one-time-code-field[data-motion="reduced"]
+    > [data-bt-part="box"]
+    > [data-bt-part="slots"]
+    > [data-bt-part="slot"]
+    > [data-bt-part="caret"] {
     animation: none;
   }
 
@@ -118,7 +135,7 @@
     color: var(--bt-danger);
   }
 
-  .bt-one-time-code-field [data-bt-part="mark"] {
+  .bt-one-time-code-field > [data-bt-part="status"] > [data-bt-part="mark"] {
     position: relative;
     display: grid;
     flex: none;
