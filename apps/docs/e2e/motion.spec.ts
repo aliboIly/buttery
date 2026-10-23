@@ -713,6 +713,46 @@ test.describe("full motion", () => {
     await expect(expand).toBeFocused();
   });
 
+  test("a catalog card grows into its dialog on spring.morph and goes back into the card on spring.smooth", async ({
+    page,
+  }) => {
+    await page.goto("/components/catalog?chrome=0&motion=full");
+    const card = '[data-testid="live-demo"] [data-bt-part="catalog-card"]';
+    const title = page
+      .getByTestId("live-demo")
+      .getByRole("button", { name: "Pour-over dripper", exact: true });
+    await title.evaluate((element) => {
+      element.scrollIntoView({ block: "center" });
+    });
+    const resting = await peek(page, card);
+    if (!resting) throw new Error("There's no card to open.");
+    await title.focus();
+    await startSampling(page, '[data-bt-part="catalog-detail"]');
+    await page.keyboard.press("Enter");
+    const opening = await finishSampling(page, 800);
+    const growing = trace(opening, (reading) => reading.width);
+    const open = growing.at(-1)?.value ?? resting.width;
+    expect(open - resting.width).toBeGreaterThan(40);
+    expectSpring(
+      "catalog card growing into its dialog",
+      progress(growing, resting.width, open),
+      "morph",
+    );
+    await startSampling(page, card);
+    await page.keyboard.press("Escape");
+    const closing = await finishSampling(page, 600);
+    expectSpring(
+      "dialog going back into the catalog card",
+      progress(
+        trace(closing, (reading) => reading.width),
+        open,
+        resting.width,
+      ),
+      "smooth",
+    );
+    await expect(title).toBeFocused();
+  });
+
   test("a nav bar's menu unfolds from the bar in dur-fast with ease-out once the pointer has rested on its trigger for 150ms", async ({
     page,
   }) => {
@@ -1215,6 +1255,33 @@ test.describe("reduced motion", () => {
     const run = await finishSampling(page, 300);
     expectTween(
       "expanded card fading in",
+      progress(trace(run, opacity), 0, 1),
+      LINEAR,
+      DURATIONS.reduced,
+    );
+    expectAtRest(run);
+    const widths = new Set(
+      run.frames.flatMap(({ elements }) =>
+        elements.map((reading) => Math.round(reading.width)),
+      ),
+    );
+    expect(widths.size).toBe(1);
+  });
+
+  test("a catalog card's dialog fades in place in 100ms", async ({ page }) => {
+    await page.goto("/components/catalog?chrome=0&motion=reduced");
+    const title = page
+      .getByTestId("live-demo")
+      .getByRole("button", { name: "Pour-over dripper", exact: true });
+    await title.evaluate((element) => {
+      element.scrollIntoView({ block: "center" });
+    });
+    await title.focus();
+    await startSampling(page, '[data-bt-part="catalog-detail"]');
+    await page.keyboard.press("Enter");
+    const run = await finishSampling(page, 300);
+    expectTween(
+      "catalog card's dialog fading in",
       progress(trace(run, opacity), 0, 1),
       LINEAR,
       DURATIONS.reduced,
