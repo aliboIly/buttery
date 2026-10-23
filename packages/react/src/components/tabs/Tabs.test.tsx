@@ -7,7 +7,9 @@ import { createRef, useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { userEvent as browser } from "vitest/browser";
+import { ButteryProvider } from "../../provider/ButteryProvider.tsx";
 import { Tabs } from "./Tabs.tsx";
+import type { TabsVariant } from "./Tabs.tsx";
 
 beforeEach(() => {
   publishSettled();
@@ -24,10 +26,20 @@ const SECTIONS = [
   "Activity",
 ];
 
-function Customer({ width = 800 }: { readonly width?: number }): ReactElement {
+function Customer({
+  width = 800,
+  variant,
+}: {
+  readonly width?: number;
+  readonly variant?: TabsVariant;
+}): ReactElement {
   return (
     <div style={{ inlineSize: `${String(width)}px` }}>
-      <Tabs defaultValue="Overview" data-testid="tabs">
+      <Tabs
+        defaultValue="Overview"
+        data-testid="tabs"
+        {...(variant === undefined ? {} : { variant })}
+      >
         <Tabs.List label="Customer">
           {SECTIONS.map((section) => (
             <Tabs.Tab key={section} value={section}>
@@ -43,6 +55,32 @@ function Customer({ width = 800 }: { readonly width?: number }): ReactElement {
       </Tabs>
     </div>
   );
+}
+
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
+
+function indicatorIn(tab: HTMLElement): HTMLElement {
+  const indicator = tab.querySelector<HTMLElement>(
+    '[data-bt-part="indicator"]',
+  );
+  if (!indicator) throw new Error("No indicator in the chosen tab.");
+  return indicator;
+}
+
+function sameBox(a: DOMRect, b: DOMRect): readonly number[] {
+  return [
+    a.left - b.left,
+    a.top - b.top,
+    a.width - b.width,
+    a.height - b.height,
+  ].map((difference) => Math.round(Math.abs(difference)));
 }
 
 async function settled(): Promise<void> {
@@ -83,8 +121,9 @@ describe("Tabs", () => {
     );
   });
 
-  it("draws the chosen tab's 2px underline on the row's line, as wide as the tab", async () => {
+  it("draws the chosen tab's 2px underline on the row's line, as wide as the tab, underlined unless told", async () => {
     render(<Customer />);
+    expect(screen.getByTestId("tabs").dataset["variant"]).toBe("underline");
     await userEvent.click(screen.getByRole("tab", { name: "Payments" }));
     await settled();
     const tab = screen.getByRole("tab", { name: "Payments" });
@@ -165,5 +204,72 @@ describe("Tabs", () => {
     expect(screen.getByRole("tabpanel").textContent).toBe("Notes panel");
     await userEvent.click(screen.getByRole("tab", { name: "Overview" }));
     expect(screen.getByRole("status").textContent).toBe("Overview");
+  });
+
+  it("slides a bg-control pill behind the chosen tab with variant pills, with no line under the row, and moves by arrow key", async () => {
+    render(
+      <ButteryProvider layoutGuard={false} reducedMotion="never">
+        <Customer variant="pills" />
+      </ButteryProvider>,
+    );
+    const row = document.querySelector<HTMLElement>('[data-bt-part="row"]');
+    const list = screen.getByRole("tablist", { name: "Customer" });
+    if (!row) throw new Error("No row.");
+    expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
+    expect(getComputedStyle(list).columnGap).toBe("4px");
+    const overview = screen.getByRole("tab", { name: "Overview" });
+    expect(getComputedStyle(overview).borderTopLeftRadius).toBe("9999px");
+    const pill = indicatorIn(overview);
+    expect(getComputedStyle(pill).backgroundColor).toBe(
+      colorOf("--bt-bg-control"),
+    );
+    expect(getComputedStyle(pill).boxShadow).toBe("none");
+    const rest = overview.getBoundingClientRect();
+    expect(sameBox(pill.getBoundingClientRect(), rest)).toEqual([0, 0, 0, 0]);
+    overview.focus();
+    await browser.keyboard("{ArrowRight}");
+    const orders = screen.getByRole("tab", { name: "Orders" });
+    expect(orders.getAttribute("aria-selected")).toBe("true");
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const moving = indicatorIn(orders).getBoundingClientRect();
+    expect(moving.left).toBeGreaterThan(rest.left);
+    expect(moving.left).toBeLessThan(orders.getBoundingClientRect().left);
+    expect(Math.round(moving.top - rest.top)).toBe(0);
+    expect(Math.round(moving.height - rest.height)).toBe(0);
+    await settled();
+    expect(
+      sameBox(
+        indicatorIn(orders).getBoundingClientRect(),
+        orders.getBoundingClientRect(),
+      ),
+    ).toEqual([0, 0, 0, 0]);
+  });
+
+  it("raises the chosen tab on a bg-control track with variant boxed, its corners concentric with the track's", async () => {
+    render(<Customer variant="boxed" />);
+    const row = document.querySelector<HTMLElement>('[data-bt-part="row"]');
+    const list = screen.getByRole("tablist", { name: "Customer" });
+    if (!row) throw new Error("No row.");
+    const track = getComputedStyle(list);
+    expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
+    expect(track.backgroundColor).toBe(colorOf("--bt-bg-control"));
+    expect(track.paddingTop).toBe("2px");
+    expect(track.borderTopLeftRadius).toBe("12px");
+    expect(list.getBoundingClientRect().height).toBe(36);
+    await userEvent.click(screen.getByRole("tab", { name: "Payments" }));
+    await settled();
+    const payments = screen.getByRole("tab", { name: "Payments" });
+    expect(payments.getBoundingClientRect().height).toBe(32);
+    expect(getComputedStyle(payments).borderTopLeftRadius).toBe("10px");
+    const raised = indicatorIn(payments);
+    expect(getComputedStyle(raised).backgroundColor).toBe(
+      colorOf("--bt-bg-raised"),
+    );
+    expect(getComputedStyle(raised).boxShadow).not.toBe("none");
+    expect(
+      sameBox(raised.getBoundingClientRect(), payments.getBoundingClientRect()),
+    ).toEqual([0, 0, 0, 0]);
+    expect(screen.getByRole("tabpanel").textContent).toBe("Payments panel");
   });
 });

@@ -59,12 +59,48 @@
     color: var(--bt-text-strong);
   }
 
-  .bt-tab > [data-bt-part="indicator-slot"] > [data-bt-part="indicator"] {
+  .bt-tab:not([data-variant="pills"], [data-variant="boxed"])
+    > [data-bt-part="indicator-slot"]
+    > [data-bt-part="indicator"] {
     inset: auto 0 calc(var(--bt-tabs-line) * -1);
     block-size: var(--bt-tabs-underline);
     border-radius: var(--bt-r-full);
     background-color: var(--bt-primary);
     box-shadow: none;
+  }
+
+  .bt-tabs-row[data-bt-part="row"]:is(
+      [data-variant="pills"],
+      [data-variant="boxed"]
+    ) {
+    border-block-end: 0;
+  }
+
+  .bt-tabs-row[data-variant="pills"] > [data-bt-part="list"] {
+    gap: var(--bt-space-1);
+  }
+
+  /* Only the pill behind the chosen tab is drawn, so nothing but the marker crosses the gaps as it slides. */
+  .bt-tab[data-variant="pills"] {
+    --bt-shared-indicator-background: var(--bt-bg-control);
+    --bt-shared-indicator-shadow: none;
+
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-full);
+  }
+
+  /* The track's corners are concentric with the chosen tab's: r-lg less its 2px inset is r-md. */
+  .bt-tabs-row[data-variant="boxed"] > [data-bt-part="list"] {
+    gap: 0;
+    padding: var(--bt-space-0_5);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-control);
+  }
+
+  .bt-tab[data-variant="boxed"] {
+    block-size: calc(var(--bt-h-button) - 2 * var(--bt-space-0_5));
+    padding-inline: var(--bt-space-3);
+    border-radius: var(--bt-r-md);
   }
 
   .bt-tabs-panel {

@@ -17,6 +17,15 @@ const TabsContext: Context<TabsState | null> = createContext<TabsState | null>(
   null,
 );
 
+/**
+ * How a row of tabs marks the chosen one: `"underline"`, a 2px underline on a line across the row; `"pills"`, a
+ * `bg-control` pill behind the chosen tab; or `"boxed"`, the chosen tab raised on a `bg-control` track.
+ */
+export type TabsVariant = "underline" | "pills" | "boxed";
+
+const TabsVariantContext: Context<TabsVariant> =
+  createContext<TabsVariant>("underline");
+
 function useTabs(part: string): TabsState {
   const tabs = use(TabsContext);
   if (!tabs) {
@@ -43,12 +52,19 @@ export interface TabsProps extends Omit<
   readonly defaultValue?: string | undefined;
   /** Called with the value of the tab chosen. */
   readonly onValueChange?: ((value: string) => void) | undefined;
+  /**
+   * How the chosen tab is marked: `"underline"` (the default), a 2px underline on a line across the row, for a
+   * page's sections; `"pills"`, a `bg-control` pill behind it, for a quieter row; or `"boxed"`, raised on a
+   * `bg-control` track, for a few views of one thing. The marker slides on `spring.snappy` in each.
+   */
+  readonly variant?: TabsVariant | undefined;
 }
 
 function TabsRoot({
   value,
   defaultValue,
   onValueChange,
+  variant = "underline",
   className,
   children,
   ...rest
@@ -59,17 +75,20 @@ function TabsRoot({
     onChange: onValueChange,
   });
   return (
-    <TabsContext value={{ value: current, choose: setCurrent }}>
-      <RadixTabs.Root
-        {...rest}
-        value={current}
-        onValueChange={setCurrent}
-        className={cx("bt-tabs", className)}
-        data-bt="Tabs"
-      >
-        {children}
-      </RadixTabs.Root>
-    </TabsContext>
+    <TabsVariantContext value={variant}>
+      <TabsContext value={{ value: current, choose: setCurrent }}>
+        <RadixTabs.Root
+          {...rest}
+          value={current}
+          onValueChange={setCurrent}
+          className={cx("bt-tabs", className)}
+          data-bt="Tabs"
+          data-variant={variant}
+        >
+          {children}
+        </RadixTabs.Root>
+      </TabsContext>
+    </TabsVariantContext>
   );
 }
 
@@ -85,8 +104,8 @@ export interface TabsListProps extends Omit<
 }
 
 /**
- * The row of tabs over a 1px line that spans it. Tabs that don't fit fold into a "…" menu at its end,
- * last ones first, and come back as the row grows.
+ * The row of tabs: over a 1px line that spans it, or with pills or boxed tabs, on its own or on a track. Tabs
+ * that don't fit fold into a "…" menu at its end, last ones first, and come back as the row grows.
  */
 export function TabsList({
   label,
@@ -95,12 +114,14 @@ export function TabsList({
   children,
   ...rest
 }: TabsListProps): ReactElement {
+  const variant = use(TabsVariantContext);
   return (
     <OverflowCluster
-      gap={4}
+      gap={variant === "underline" ? 4 : 1}
       moreLabel={moreLabel}
       className={cx("bt-tabs-row", className)}
       data-bt-part="row"
+      data-variant={variant}
     >
       <SharedIndicator.Group>
         <RadixTabs.List {...rest} aria-label={label} data-bt-part="list">
@@ -122,7 +143,7 @@ export interface TabsTabProps extends Omit<
   readonly children: string;
 }
 
-/** One tab: 36px tall, `text-strong` and underlined while chosen. Arrow keys move between tabs. */
+/** One tab: `text-strong` and marked by its row's variant while chosen. Arrow keys move between tabs. */
 export function TabsTab({
   value,
   className,
@@ -130,6 +151,7 @@ export function TabsTab({
   ...rest
 }: TabsTabProps): ReactElement {
   const tabs = useTabs("Tab");
+  const variant = use(TabsVariantContext);
   const chosen = tabs.value === value;
   return (
     <OverflowCluster.Item
@@ -148,6 +170,7 @@ export function TabsTab({
           value={value}
           className={cx("bt-tab bt-text bt-focus", className)}
           data-role="label"
+          data-variant={variant}
         >
           {children}
         </RadixTabs.Trigger>
@@ -194,9 +217,10 @@ export interface TabsComponent {
 }
 
 /**
- * Underlined tabs that switch the panel under them: 36px tabs 16px apart over a 1px line across the row,
- * the chosen one in `text-strong` with a 2px underline that slides between tabs on `spring.snappy`. Tabs that
- * don't fit fold into a "…" menu. For tabs that go to other pages, use `TabNav`.
+ * Tabs that switch the panel under them: 36px tabs 16px apart over a 1px line across the row, the chosen one
+ * in `text-strong` with a 2px underline that slides between tabs on `spring.snappy`; `variant="pills"` slides
+ * a pill behind it instead, and `"boxed"` raises it on a track. Tabs that don't fit fold into a "…" menu. For
+ * tabs that go to other pages, use `TabNav`.
  *
  * @example
  * <Tabs defaultValue="overview">

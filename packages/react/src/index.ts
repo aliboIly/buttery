@@ -415,6 +415,7 @@ export type {
   TabsPanelProps,
   TabsProps,
   TabsTabProps,
+  TabsVariant,
 } from "./components/tabs/Tabs.tsx";
 export { TabNav } from "./components/tab-nav/TabNav.tsx";
 export type {

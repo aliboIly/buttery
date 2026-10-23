@@ -4,10 +4,11 @@ export const meta: ComponentMeta = {
   name: "Tabs",
   kind: "component",
   purpose:
-    "Underlined tabs that switch the panel under them, with a sliding underline and the tabs that don't fit in a menu.",
+    "Tabs that switch the panel under them, underlined, as pills or boxed on a track, with a sliding marker and the tabs that don't fit in a menu.",
   useWhen: [
     "Sections of one record or page, such as a customer's overview, orders and notes",
     "A page header's views, under its title",
+    'A quieter row, such as tabs inside a card, with variant="pills"; a few views of one thing, such as a chart, with variant="boxed"',
   ],
   avoidWhen: [
     "Tabs that go to other pages: use TabNav",
@@ -48,7 +49,7 @@ export const meta: ComponentMeta = {
     },
   ],
   layout:
-    "It fills its container's width: a row of tabs over a 1px line, then the chosen panel 24px below. Each tab is --bt-h-button (36px) tall, as wide as its label, 16px from the next and wholly its own hit area; labels never wrap or truncate: the tabs that don't fit fold into the More tabs menu at the row's end, last ones first, and the chosen tab stays in the row.",
+    "It fills its container's width: a row of tabs, then the chosen panel 24px below. Underlined, the row sits over a 1px line and each tab is --bt-h-button (36px) tall, 16px from the next; as pills, the tabs are 36px pills 4px apart with no line; boxed, they sit 2px inside a 36px bg-control track (r-lg), each 32px tall (r-md). Each tab is as wide as its label and wholly its own hit area; labels never wrap or truncate: the tabs that don't fit fold into the More tabs menu at the row's end, last ones first, and the chosen tab stays in the row.",
   reducedMotion:
-    "The underline appears under the chosen tab at once instead of sliding there.",
+    "The underline, pill or raised tab appears on the chosen tab at once instead of sliding there.",
 };
