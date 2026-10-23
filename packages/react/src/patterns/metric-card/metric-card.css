@@ -1,6 +1,7 @@
 @layer bt.patterns {
   .bt-metric-card {
     --bt-metric-card-delta: 160px;
+    --bt-metric-card-line: 1px;
 
     display: flex;
     flex-direction: column;
@@ -8,8 +9,54 @@
     min-inline-size: 0;
     padding: var(--bt-space-4);
     border-radius: var(--bt-r-lg);
+  }
+
+  .bt-metric-card[data-variant="elevated"] {
     background-color: var(--bt-bg-surface);
     box-shadow: var(--bt-shadow-card);
+  }
+
+  /* Drawn inside the card, so its parts sit where an elevated card's do beside it. */
+  .bt-metric-card[data-variant="outline"] {
+    outline: var(--bt-metric-card-line) solid var(--bt-border);
+    outline-offset: calc(var(--bt-metric-card-line) * -1);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-metric-card[data-variant="soft"] {
+    background-color: var(--bt-bg-control);
+  }
+
+  .bt-metric-card[data-variant="tinted"] {
+    background-color: var(--bt-bg-tint);
+  }
+
+  .bt-metric-card[data-variant="plain"] {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  /* A neutral badge shares a soft card's fill, so on one it takes the raised fill a control track's choice does. */
+  .bt-metric-card[data-variant="soft"] .bt-status-badge[data-tone="neutral"] {
+    --bt-status-badge-bg: var(--bt-bg-raised);
+  }
+
+  /* On a soft card an icon button's hover fill would match the card's, so it takes the next step. */
+  @media (hover: hover) {
+    .bt-metric-card[data-variant="soft"]
+      .bt-icon-button[data-variant="ghost"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-icon-button-bg: var(--bt-bg-control-active);
+    }
+  }
+
+  /* A headline metric's value is set at the display role's smallest size, as its skeleton is. */
+  .bt-metric-card[data-size="lg"] [data-bt-part="metric-card-value"] {
+    font-size: var(--bt-text-display-size-sm);
+    line-height: var(--bt-text-display-line-sm);
+    letter-spacing: var(--bt-text-display-tracking-sm);
   }
 
   .bt-metric-card > [data-bt-part="head"] {

@@ -1,4 +1,4 @@
-import { Grid } from "@butteryui/core";
+import { Grid, demoChoice } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
@@ -59,11 +59,16 @@ const volume = {
   href: "#reports-sales",
 };
 
+const VARIANTS = ["elevated", "outline", "soft", "plain", "tinted"] as const;
+const SIZES = ["md", "lg"] as const;
+
 function metricCode({
   value,
   delta,
   lowerIsBetter,
   loading,
+  variant,
+  size,
 }: DemoValues): string {
   return [
     "<MetricCard",
@@ -76,6 +81,8 @@ function metricCode({
     "  series={[thisPeriod, { ...lastPeriod, comparison: true }]}",
     '  updated="Updated 4 min ago"',
     '  href="/reports/sales"',
+    ...(variant === "elevated" ? [] : [`  variant="${String(variant)}"`]),
+    ...(size === "lg" ? ['  size="lg"'] : []),
     ...(loading === true ? ["  loading"] : []),
     "/>",
   ].join("\n");
@@ -87,17 +94,43 @@ export const live: LiveDemo = {
     delta: { kind: "number", initial: 0.09, min: -0.3, max: 0.3, step: 0.01 },
     lowerIsBetter: { kind: "toggle", initial: false },
     loading: { kind: "toggle", initial: false },
+    variant: { kind: "choice", options: VARIANTS, initial: "elevated" },
+    size: { kind: "choice", options: SIZES, initial: "md" },
   },
-  render: ({ value, delta, lowerIsBetter, loading }) => (
+  render: ({ value, delta, lowerIsBetter, loading, variant, size }) => (
     <MetricCard
       {...volume}
       value={String(value)}
       delta={typeof delta === "number" ? delta : volume.delta}
       lowerIsBetter={lowerIsBetter === true}
       loading={loading === true}
+      variant={demoChoice(variant, VARIANTS)}
+      size={demoChoice(size, SIZES)}
     />
   ),
   code: metricCode,
+};
+
+const subscribers = {
+  title: "New subscribers",
+  value: "96",
+  delta: 0.231,
+  labels: DAYS,
+  series: [
+    {
+      key: "now",
+      label: "Oct 1–14",
+      values: [5, 6, 6, 7, 5, 7, 8, 7, 9, 8, 10, 9, 11, 12],
+    },
+    {
+      key: "before",
+      label: "Sep 17–30",
+      values: [4, 5, 5, 6, 5, 6, 6, 5, 6, 6, 7, 7, 8, 8],
+      comparison: true,
+    },
+  ],
+  updated: "Updated 4 min ago",
+  href: "#reports-subscribers",
 };
 
 export const demos: readonly DemoSection[] = [
@@ -166,5 +199,39 @@ export const demos: readonly DemoSection[] = [
     description:
       "Each part is a skeleton in its own place, and the chart shows its pill after 300ms.",
     render: () => <MetricCard {...volume} loading />,
+  },
+  {
+    title: "Variants",
+    description:
+      "Beside elevated above: outline, a 1px edge drawn inside; soft, the bg-control fill; tinted, bg-tint from the palettes.",
+    render: () => (
+      <Grid columns={{ base: 1, md: 3 }} gap={4}>
+        <MetricCard {...volume} variant="outline" />
+        <MetricCard {...subscribers} variant="soft" />
+        <MetricCard {...volume} title="Wholesale sales" variant="tinted" />
+      </Grid>
+    ),
+  },
+  {
+    title: "Plain",
+    description:
+      "No surface or padding, for metrics in a row on a page or a panel that's already a surface.",
+    render: () => (
+      <Grid columns={{ base: 1, md: 2 }} gap={8}>
+        <MetricCard {...volume} variant="plain" />
+        <MetricCard {...subscribers} title="New cafés" variant="plain" />
+      </Grid>
+    ),
+  },
+  {
+    title: "Sizes",
+    description:
+      "md sets the value in title-lg; lg sets it at 32px for the one number a page leads with.",
+    render: () => (
+      <Grid columns={{ base: 1, md: 2 }} gap={4}>
+        <MetricCard {...volume} />
+        <MetricCard {...volume} size="lg" />
+      </Grid>
+    ),
   },
 ];

@@ -40,7 +40,7 @@ export const meta: ComponentMeta = {
     { keys: "Enter", does: "Follows the Details link" },
   ],
   layout:
-    "It takes its container's width on a card padded 16px: the title truncates with its full text in its title, the value is title-lg in tabular figures, the change wraps under it, and the chart is 160px tall. While it loads, each part's skeleton holds that part's place, so nothing moves when the numbers arrive; the info button is 28px square.",
+    "It takes its container's width on a card padded 16px, elevated by default, outline (its edge drawn inside, so its parts line up with an elevated card's), soft, tinted (bg-tint, which its words and chart keep their contrast on) or plain (no surface or padding): the title truncates with its full text in its title, the value is title-lg in tabular figures, or 32px at size lg, the change wraps under it, and the chart is 160px tall. While it loads, each part's skeleton holds that part's place, so nothing moves when the numbers arrive; the info button is 28px square.",
   reducedMotion:
     "Its skeletons don't shimmer, and they crossfade into the numbers in 100ms.",
 };

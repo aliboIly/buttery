@@ -1,5 +1,6 @@
 import "@butteryui/core/styles.css";
 import "../../styles.css";
+import { contrastRatio, formatHex } from "@butteryui/core";
 import {
   cleanup,
   fireEvent,
@@ -55,6 +56,11 @@ function Card(props: Partial<MetricCardProps>): ReactElement {
       />
     </div>
   );
+}
+
+function hexOf(color: string): string {
+  const [r = 0, g = 0, b = 0] = (color.match(/\d+/g) ?? []).map(Number);
+  return formatHex({ r: r / 255, g: g / 255, b: b / 255 });
 }
 
 function rectOf(element: Element | null): DOMRect {
@@ -248,6 +254,93 @@ describe("MetricCard", () => {
     expect(line?.textContent).toContain("—");
     expect(line?.textContent).toContain("No change to show");
     expect(Math.abs(height() - comparing)).toBeLessThanOrEqual(1);
+  });
+
+  it("draws each variant's surface: elevated by default, an outline drawn inside, the control fill, the palette tint or none", () => {
+    render(
+      <>
+        <MetricCard title="Elevated" value="96" data-testid="elevated" />
+        <MetricCard
+          title="Outline"
+          value="96"
+          variant="outline"
+          data-testid="outline"
+        />
+        <MetricCard
+          title="Soft"
+          value="96"
+          delta={0}
+          variant="soft"
+          data-testid="soft"
+        />
+        <MetricCard
+          title="Tinted"
+          value="96"
+          variant="tinted"
+          updated="Updated 4 min ago"
+          data-testid="tinted"
+        />
+        <MetricCard
+          title="Plain"
+          value="96"
+          variant="plain"
+          data-testid="plain"
+        />
+      </>,
+    );
+    const style = (id: string): CSSStyleDeclaration =>
+      getComputedStyle(screen.getByTestId(id));
+    expect(style("elevated").backgroundColor).toBe("rgb(255, 255, 255)");
+    expect(style("elevated").boxShadow).toContain("0px 0px 0px 1px");
+    expect(style("outline").outlineStyle).toBe("solid");
+    expect(style("outline").outlineWidth).toBe("1px");
+    expect(style("outline").outlineOffset).toBe("-1px");
+    expect(style("outline").boxShadow).toBe("none");
+    expect(style("soft").backgroundColor).toBe("rgb(241, 241, 241)");
+    const neutral = within(screen.getByTestId("soft"))
+      .getByText("0%")
+      .closest("[data-bt='StatusBadge']");
+    expect(getComputedStyle(neutral ?? document.body).backgroundColor).toBe(
+      "rgb(255, 255, 255)",
+    );
+    expect(style("tinted").backgroundColor).toBe("rgb(251, 244, 218)");
+    const tint = hexOf(style("tinted").backgroundColor);
+    for (const text of [
+      within(screen.getByTestId("tinted")).getByText("Tinted"),
+      within(screen.getByTestId("tinted")).getByText("96"),
+      within(screen.getByTestId("tinted")).getByText("Updated 4 min ago"),
+    ]) {
+      expect(
+        contrastRatio(hexOf(getComputedStyle(text).color), tint),
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(style("plain").backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    expect(style("plain").padding).toBe("0px");
+    expect(
+      rectOf(within(screen.getByTestId("plain")).getByText("Plain")).left,
+    ).toBe(rectOf(screen.getByTestId("plain")).left);
+  });
+
+  it("sets a large card's value at 32px, and its skeleton at the same height, so nothing moves when it arrives", () => {
+    const { rerender } = render(
+      <Card size="lg" loading value={undefined} delta={undefined} />,
+    );
+    const skeleton = screen.getByText("$00,000.00");
+    expect(getComputedStyle(skeleton).fontSize).toBe("32px");
+    const held = rectOf(skeleton).height;
+    const chart = rectOf(document.querySelector(".bt-chart-frame")).top;
+    rerender(<Card size="lg" />);
+    const value = screen.getByText("$12,405.00");
+    expect(getComputedStyle(value).fontSize).toBe("32px");
+    expect(Math.abs(rectOf(value).height - held)).toBeLessThanOrEqual(1);
+    expect(
+      Math.abs(rectOf(document.querySelector(".bt-chart-frame")).top - chart),
+    ).toBeLessThanOrEqual(1);
+    cleanup();
+    render(<Card />);
+    expect(getComputedStyle(screen.getByText("$12,405.00")).fontSize).toBe(
+      "24px",
+    );
   });
 
   it("leaves out the chart and the change when it has neither", () => {

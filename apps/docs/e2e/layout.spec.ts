@@ -912,6 +912,19 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
     },
   ],
+  "metric-card": [
+    {
+      name: "draw the live demo tinted at size lg",
+      allowMove: ["main"],
+      run: liveControls({ variant: "tinted", size: "lg" }),
+      acrossMatrix: true,
+    },
+    {
+      name: "draw the live demo plain",
+      allowMove: ["main"],
+      run: liveControls({ variant: "plain" }),
+    },
+  ],
   accordion: [
     {
       name: "open every item in the demo with icons and avatars",

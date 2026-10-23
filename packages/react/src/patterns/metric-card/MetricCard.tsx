@@ -11,6 +11,17 @@ import { InfoButton } from "../../components/info-button/InfoButton.tsx";
 import { LineChart } from "../../components/line-chart/LineChart.tsx";
 import { StatusBadge } from "../../components/status-badge/StatusBadge.tsx";
 
+/**
+ * How a metric card draws its surface: `"elevated"`, the surface with the card shadow; `"outline"`, a 1px edge
+ * on the surface; `"soft"`, the `bg-control` fill; `"plain"`, no surface or padding; or `"tinted"`, `bg-tint`,
+ * a soft fill from the palettes.
+ */
+export type MetricCardVariant =
+  "elevated" | "outline" | "soft" | "plain" | "tinted";
+
+/** A metric card's size: `"md"` with a `title-lg` value, or `"lg"` with a 32px one. */
+export type MetricCardSize = "md" | "lg";
+
 /** Props for `MetricCard`. */
 export interface MetricCardProps extends Omit<
   ComponentPropsWithRef<"div">,
@@ -54,6 +65,15 @@ export interface MetricCardProps extends Omit<
     ((href: string, event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
   /** Shows the card's skeleton: the same parts in the same places, and the chart's loading pill. */
   readonly loading?: boolean | undefined;
+  /**
+   * How it draws its surface: `"elevated"` (the default), the surface with the card shadow; `"outline"`, a 1px
+   * edge on the surface; `"soft"`, the `bg-control` fill; `"plain"`, no surface or padding, for metrics laid out
+   * on a page or a panel of their own; or `"tinted"`, `bg-tint`, a soft fill from the palettes its words and
+   * chart keep their contrast on.
+   */
+  readonly variant?: MetricCardVariant | undefined;
+  /** `"md"` (the default), the value in `title-lg`, or `"lg"`, a 32px value for a headline metric. */
+  readonly size?: MetricCardSize | undefined;
 }
 
 const signedPercent = new Intl.NumberFormat(undefined, {
@@ -64,9 +84,10 @@ const signedPercent = new Intl.NumberFormat(undefined, {
 
 /**
  * One metric on a card (r12, padded 16): its title with an info button and an expand link, the value in
- * `title-lg` with its change against the previous period as a badge, a small `LineChart` of the period
- * over the one before, and a footer with when it was updated and a link to its details. While loading,
- * each part is a skeleton in its own place, so nothing moves when the numbers arrive.
+ * `title-lg` (32px at `size="lg"`) with its change against the previous period as a badge, a small
+ * `LineChart` of the period over the one before, and a footer with when it was updated and a link to its
+ * details. The card is elevated, outlined, soft, plain or tinted. While loading, each part is a skeleton in
+ * its own place, so nothing moves when the numbers arrive.
  *
  * @example
  * <MetricCard
@@ -98,6 +119,8 @@ export function MetricCard({
   detailsLabel = "Details",
   onNavigate,
   loading = false,
+  variant = "elevated",
+  size = "md",
   className,
   ...rest
 }: MetricCardProps): ReactElement {
@@ -130,6 +153,8 @@ export function MetricCard({
       {...rest}
       className={cx("bt-metric-card", className)}
       data-bt="MetricCard"
+      data-variant={variant}
+      data-size={size}
     >
       <div data-bt-part="head">
         <div data-bt-part="title-row">
@@ -158,9 +183,13 @@ export function MetricCard({
         </div>
         <Morph contentKey={phase}>
           {loading ? (
-            <Skeleton variant="title-lg" text={value ?? "$00,000.00"} />
+            <Skeleton
+              variant="title-lg"
+              text={value ?? "$00,000.00"}
+              data-bt-part="metric-card-value"
+            />
           ) : (
-            <Text variant="title-lg" tabular>
+            <Text variant="title-lg" tabular data-bt-part="metric-card-value">
               {value ?? "—"}
             </Text>
           )}
