@@ -33,7 +33,45 @@ describe("Avatar", () => {
     expect(avatar.getAttribute("aria-hidden")).toBe("true");
     const box = avatar.getBoundingClientRect();
     expect([box.width, box.height]).toEqual([32, 32]);
+    expect(avatar.dataset["variant"]).toBe("circle");
     expect(getComputedStyle(avatar).borderRadius).toBe("9999px");
+  });
+
+  it("squares its corners with variant rounded, as an InitialsTile of its size does, its picture clipped to them", async () => {
+    for (const [size, radius] of [
+      ["xs", "6px"],
+      ["sm", "6px"],
+      ["md", "8px"],
+      ["lg", "8px"],
+    ] as const) {
+      render(
+        <Avatar
+          name="Mira Okafor"
+          size={size}
+          variant="rounded"
+          data-testid={size}
+        />,
+      );
+      expect(
+        getComputedStyle(screen.getByTestId(size)).borderRadius,
+        size,
+      ).toBe(radius);
+    }
+    render(
+      <Avatar
+        name="Tomas Reyes"
+        src={PICTURE}
+        label="Tomas Reyes"
+        size="lg"
+        variant="rounded"
+      />,
+    );
+    const avatar = screen.getByRole("img", { name: "Tomas Reyes" });
+    await waitFor(() => {
+      expect(avatar.querySelector('[data-bt-part="picture"]')).not.toBeNull();
+    });
+    expect(getComputedStyle(avatar).overflow).toBe("hidden");
+    expect(avatar.getBoundingClientRect().width).toBe(40);
   });
 
   it("shows the picture once it loads, keeping its size", async () => {

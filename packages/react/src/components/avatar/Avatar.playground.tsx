@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import { demoChoice, Inline } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { Avatar } from "@butteryui/react";
+import type { AvatarVariant } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",
@@ -17,7 +18,13 @@ const PORTRAIT = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#dbe7f7"/><circle cx="20" cy="16" r="7" fill="#2862e0"/><path d="M6 40c2-9 8-13 14-13s12 4 14 13z" fill="#2862e0"/></svg>',
 )}`;
 
-function Sizes({ src }: { readonly src?: string }): ReactElement {
+function Sizes({
+  src,
+  variant = "circle",
+}: {
+  readonly src?: string;
+  readonly variant?: AvatarVariant;
+}): ReactElement {
   return (
     <Inline gap={3} align="center">
       {(["xs", "sm", "md", "lg"] as const).map((size) => (
@@ -25,6 +32,7 @@ function Sizes({ src }: { readonly src?: string }): ReactElement {
           key={size}
           name="Tomas Reyes"
           size={size}
+          variant={variant}
           label={`Tomas Reyes, ${size}`}
           {...(src === undefined ? {} : { src })}
         />
@@ -36,12 +44,18 @@ function Sizes({ src }: { readonly src?: string }): ReactElement {
 export const live: LiveDemo = {
   controls: {
     size: { kind: "choice", options: ["xs", "sm", "md", "lg"], initial: "sm" },
+    variant: {
+      kind: "choice",
+      options: ["circle", "rounded"],
+      initial: "circle",
+    },
     name: { kind: "text", initial: "Mira Okafor" },
   },
-  render: ({ size, name }) => (
+  render: ({ size, variant, name }) => (
     <Avatar
       name={String(name)}
       size={demoChoice(size, ["sm", "xs", "md", "lg"])}
+      variant={demoChoice(variant, ["circle", "rounded"])}
     />
   ),
 };
@@ -54,6 +68,17 @@ export const demos: readonly DemoSection[] = [
       <Inline gap={6} align="center" wrap>
         <Sizes src={PORTRAIT} />
         <Sizes />
+      </Inline>
+    ),
+  },
+  {
+    title: "Circle and rounded",
+    description:
+      "Round by default; rounded squares the corners to an InitialsTile's at each size, 6px up to sm and 8px from md, for people shown beside workspace tiles.",
+    render: () => (
+      <Inline gap={6} align="center" wrap>
+        <Sizes src={PORTRAIT} variant="rounded" />
+        <Sizes variant="rounded" />
       </Inline>
     ),
   },

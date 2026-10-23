@@ -17,11 +17,17 @@ export const live: LiveDemo = {
   controls: {
     name: { kind: "text", initial: "Harbor Beans" },
     size: { kind: "choice", options: ["xs", "sm", "md", "lg"], initial: "md" },
+    variant: {
+      kind: "choice",
+      options: ["rounded", "circle"],
+      initial: "rounded",
+    },
   },
-  render: ({ name, size }) => (
+  render: ({ name, size, variant }) => (
     <InitialsTile
       name={String(name)}
       size={demoChoice(size, ["sm", "xs", "md", "lg"])}
+      variant={demoChoice(variant, ["rounded", "circle"])}
     />
   ),
 };
@@ -38,6 +44,24 @@ export const demos: readonly DemoSection[] = [
             name="Harbor Beans"
             size={size}
             label={`Harbor Beans, ${size}`}
+          />
+        ))}
+      </Inline>
+    ),
+  },
+  {
+    title: "Rounded and circle",
+    description:
+      "Rounded squares by default; circles to sit beside round avatars, such as a team in a list of people.",
+    render: () => (
+      <Inline gap={3} align="center">
+        {(["xs", "sm", "md", "lg"] as const).map((size) => (
+          <InitialsTile
+            key={size}
+            name="Harbor Beans"
+            size={size}
+            variant="circle"
+            label={`Harbor Beans, ${size}, circle`}
           />
         ))}
       </Inline>

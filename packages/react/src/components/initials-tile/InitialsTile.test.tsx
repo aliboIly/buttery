@@ -48,7 +48,7 @@ describe("InitialsTile", () => {
     expect(screen.getByRole("img", { name: "Harbor Beans" })).toBeTruthy();
   });
 
-  it("is a square at each size, rounder from md", () => {
+  it("is a rounded square at each size unless told, rounder from md", () => {
     const sizes: readonly [AvatarSize, number, string][] = [
       ["xs", 20, "6px"],
       ["sm", 24, "6px"],
@@ -57,11 +57,34 @@ describe("InitialsTile", () => {
     ];
     for (const [size, px, radius] of sizes) {
       render(<InitialsTile name="Northside" size={size} data-testid={size} />);
+      expect(screen.getByTestId(size).dataset["variant"]).toBe("rounded");
       const box = screen.getByTestId(size).getBoundingClientRect();
       expect([box.width, box.height]).toEqual([px, px]);
       expect(getComputedStyle(screen.getByTestId(size)).borderRadius).toBe(
         radius,
       );
+    }
+  });
+
+  it("is a circle at every size with variant circle, keeping its size", () => {
+    for (const [size, px] of [
+      ["xs", 20],
+      ["sm", 24],
+      ["md", 32],
+      ["lg", 40],
+    ] as const) {
+      render(
+        <InitialsTile
+          name="Northside"
+          size={size}
+          variant="circle"
+          data-testid={size}
+        />,
+      );
+      const tile = screen.getByTestId(size);
+      const box = tile.getBoundingClientRect();
+      expect([box.width, box.height], size).toEqual([px, px]);
+      expect(getComputedStyle(tile).borderRadius, size).toBe("9999px");
     }
   });
 });

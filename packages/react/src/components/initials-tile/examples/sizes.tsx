@@ -10,25 +10,29 @@ const SIZES = [
   { size: "lg", width: "40px" },
 ] as const;
 
-/** The four sizes, from a 20px tile in a dense list to a 40px one on a settings page. */
+/** The four sizes, from a 20px tile in a dense list to a 40px one on a settings page, rounded and round. */
 export function Sizes(): ReactElement {
   return (
-    <Inline gap={6} align="end">
-      {SIZES.map(({ size, width }) => (
-        <Stack key={size} gap={2} align="center">
-          <InitialsTile name="Harbor Beans" size={size} />
-          <Text variant="caption" tone="secondary">
-            {`${size}, ${width}`}
-          </Text>
-        </Stack>
+    <Stack gap={4}>
+      {(["rounded", "circle"] as const).map((variant) => (
+        <Inline key={variant} gap={6} align="end" wrap>
+          {SIZES.map(({ size, width }) => (
+            <Stack key={size} gap={2} align="center">
+              <InitialsTile name="Harbor Beans" size={size} variant={variant} />
+              <Text variant="caption" tone="secondary">
+                {`${size}, ${width}, ${variant}`}
+              </Text>
+            </Stack>
+          ))}
+        </Inline>
       ))}
-    </Inline>
+    </Stack>
   );
 }
 
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("xs, 20px");
-  await see("lg, 40px");
+  await see("xs, 20px, rounded");
+  await see("lg, 40px, circle");
 };

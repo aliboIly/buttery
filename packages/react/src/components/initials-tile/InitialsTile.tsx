@@ -4,6 +4,12 @@ import type { ComponentPropsWithRef, ReactElement } from "react";
 /** How big an `Avatar` or `InitialsTile` is: `xs` 20, `sm` 24, `md` 32 or `lg` 40. */
 export type AvatarSize = "xs" | "sm" | "md" | "lg";
 
+/**
+ * The shape of an `Avatar` or `InitialsTile`: `"circle"`, or `"rounded"`, a square with 6px corners up to `sm`
+ * and 8px from `md`.
+ */
+export type AvatarVariant = "circle" | "rounded";
+
 /** Up to two initials from a name, in capitals: the first letters of its first and last words. */
 export function initialsOf(name: string): string {
   const words = name
@@ -26,14 +32,19 @@ export interface InitialsTileProps extends Omit<
   readonly name: string;
   /** How big it is: `xs` 20, `sm` 24, `md` 32 or `lg` 40. Defaults to `"sm"`. */
   readonly size?: AvatarSize | undefined;
+  /**
+   * `"rounded"` (the default), a square with 6px corners up to `sm` and 8px from `md`, or `"circle"`, to sit
+   * beside round avatars, such as a team among people.
+   */
+  readonly variant?: AvatarVariant | undefined;
   /** Names the tile for screen readers when its name isn't written beside it. Without one, it's decorative. */
   readonly label?: string | undefined;
 }
 
 /**
  * A square tile with up to two initials, standing in for a workspace or team that has no picture: `bg-control`
- * with the initials in the `badge` role, r6 (r8 from `md`). Decorative unless it has a `label`, since its name
- * is usually written beside it.
+ * with the initials in the `badge` role, r6 (r8 from `md`), or a circle with `variant="circle"`. Decorative
+ * unless it has a `label`, since its name is usually written beside it.
  *
  * @example
  * <InitialsTile name="Northside Roasters" size="xs" />
@@ -41,6 +52,7 @@ export interface InitialsTileProps extends Omit<
 export function InitialsTile({
   name,
   size = "sm",
+  variant = "rounded",
   label,
   className,
   ...rest
@@ -54,6 +66,7 @@ export function InitialsTile({
       className={cx("bt-initials-tile", className)}
       data-bt="InitialsTile"
       data-size={size}
+      data-variant={variant}
     >
       {initialsOf(name)}
     </span>

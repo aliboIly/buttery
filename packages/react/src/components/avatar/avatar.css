@@ -35,6 +35,14 @@
     --bt-avatar-size: var(--bt-avatar-lg);
   }
 
+  .bt-avatar[data-variant="rounded"] {
+    border-radius: var(--bt-r-xs);
+  }
+
+  .bt-avatar[data-variant="rounded"]:is([data-size="md"], [data-size="lg"]) {
+    border-radius: var(--bt-r-sm);
+  }
+
   .bt-avatar > [data-bt-part="picture"] {
     inline-size: 100%;
     block-size: 100%;

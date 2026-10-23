@@ -10,23 +10,27 @@ const SIZES = [
   { size: "lg", pixels: "40px" },
 ] as const;
 
-/** The four sizes, from a 20px avatar in a dense table to a 40px one in a profile header. */
+/** The four sizes, from a 20px avatar in a dense table to a 40px one in a profile header, round and rounded. */
 export function AvatarSizes(): ReactElement {
   return (
-    <Inline gap={6} align="end" wrap>
-      {SIZES.map(({ size, pixels }) => (
-        <Stack key={size} gap={2} align="center">
-          <Avatar name="Tomas Reyes" size={size} />
-          <Text variant="caption">{`${size}, ${pixels}`}</Text>
-        </Stack>
+    <Stack gap={4}>
+      {(["circle", "rounded"] as const).map((variant) => (
+        <Inline key={variant} gap={6} align="end" wrap>
+          {SIZES.map(({ size, pixels }) => (
+            <Stack key={size} gap={2} align="center">
+              <Avatar name="Tomas Reyes" size={size} variant={variant} />
+              <Text variant="caption">{`${size}, ${pixels}, ${variant}`}</Text>
+            </Stack>
+          ))}
+        </Inline>
       ))}
-    </Inline>
+    </Stack>
   );
 }
 
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("xs, 20px");
-  await see("lg, 40px");
+  await see("xs, 20px, circle");
+  await see("lg, 40px, rounded");
 };
