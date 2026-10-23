@@ -9,10 +9,10 @@ export function ArticlePage(): ReactElement {
     <Page>
       <Section size="sm">
         <Stack gap={4}>
-          <Text variant="heading-1">Designing a launch card</Text>
+          <Text variant="heading-1">Designing a title slide</Text>
           <Text variant="body-lg">
-            Start with the words. A good title fits on one line at the size
-            people will see it.
+            Start with the words. A good title fits on one line, big enough to
+            read from the back of the room.
           </Text>
         </Stack>
       </Section>
@@ -23,5 +23,5 @@ export function ArticlePage(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Designing a launch card");
+  await see("Designing a title slide");
 };

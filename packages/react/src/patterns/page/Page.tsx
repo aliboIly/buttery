@@ -16,7 +16,7 @@ export interface PageProps extends ComponentPropsWithRef<"div"> {
  * <Page>
  *   <NavBar skipTo="main" brand={<Brand />}>…</NavBar>
  *   <main id="main">
- *     <SplitHero title="Cards that look finished." visual={<Preview />} />
+ *     <SplitHero title="Decks that look designed." visual={<Preview />} />
  *     <Section title="Everything in one place">…</Section>
  *   </main>
  *   <Footer brand={<Brand />}>…</Footer>

@@ -21,10 +21,10 @@ export const demos: readonly DemoSection[] = [
       <Page>
         <Section size="sm">
           <StatStrip>
-            <Stat value={1.2} suffix="M+" label="cards exported" />
+            <Stat value={1.2} suffix="M+" label="decks presented" />
             <Stat value={48} label="countries" />
             <Stat value={99.9} suffix="%" label="of exports under a second" />
-            <Stat value={6} label="canvas shapes" />
+            <Stat value={6} label="slide sizes" />
           </StatStrip>
         </Section>
       </Page>
@@ -36,8 +36,8 @@ export const demos: readonly DemoSection[] = [
       <Page>
         <Section size="sm">
           <StatStrip columns={2}>
-            <Stat value={24} label="backdrop blends" />
-            <Stat value={18} label="flat colors" />
+            <Stat value={24} label="background gradients" />
+            <Stat value={18} label="solid colors" />
           </StatStrip>
         </Section>
       </Page>

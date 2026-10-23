@@ -11,7 +11,7 @@ export function CropCanvas(): ReactElement {
   return (
     <div style={{ blockSize: "var(--bt-bento-row)", display: "grid" }}>
       <Stage
-        label="Card preview"
+        label="Slide preview"
         size={size}
         cropping
         onSizeChange={setSize}

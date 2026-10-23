@@ -3,20 +3,37 @@ import { Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { SubNav } from "@buttery/react";
 
-const RELEASES = [
+const DAYS = [
   {
-    id: "notes-2-4",
-    label: "2.4",
-    body: "Cards remember the last finish you used.",
+    id: "roast-mon",
+    label: "Mon",
+    day: "Monday",
+    body: "Guji and Nyeri, roasted light for the week's subscriptions.",
   },
-  { id: "notes-2-3", label: "2.3", body: "Export straight to the clipboard." },
-  { id: "notes-2-2", label: "2.2", body: "Four new backdrop blends." },
   {
-    id: "notes-2-1",
-    label: "2.1",
-    body: "Undo and redo reach back fifty steps.",
+    id: "roast-tue",
+    label: "Tue",
+    day: "Tuesday",
+    body: "Huila and Huehuetenango, roasted medium.",
   },
-  { id: "notes-2-0", label: "2.0", body: "Cards lean in 3D as you tilt them." },
+  {
+    id: "roast-wed",
+    label: "Wed",
+    day: "Wednesday",
+    body: "Halfmoon House, roasted dark for the cafés' Friday orders.",
+  },
+  {
+    id: "roast-thu",
+    label: "Thu",
+    day: "Thursday",
+    body: "Cerrado, and small batches of next month's coffees.",
+  },
+  {
+    id: "roast-fri",
+    label: "Fri",
+    day: "Friday",
+    body: "No roasting: the roaster gets its weekly clean.",
+  },
 ] as const;
 
 /** A sub nav told which section is current, such as by the app's router, rather than following the scroll. */
@@ -25,16 +42,16 @@ export function ChosenSection(): ReactElement {
     <Surface
       level="card"
       role="region"
-      aria-label="Release notes"
+      aria-label="Roasting schedule"
       tabIndex={0}
       style={{ blockSize: "var(--bt-bento-row)", overflowY: "auto" }}
     >
-      <SubNav label="Versions" items={RELEASES} current="notes-2-3" />
-      {RELEASES.map((release) => (
-        <Stack key={release.id} id={release.id} gap={2} padX={6} padY={8}>
-          <Text variant="title">{`Version ${release.label}`}</Text>
+      <SubNav label="Days" items={DAYS} current="roast-tue" />
+      {DAYS.map((day) => (
+        <Stack key={day.id} id={day.id} gap={2} padX={6} padY={8}>
+          <Text variant="title">{day.day}</Text>
           <Text variant="body" tone="secondary">
-            {release.body}
+            {day.body}
           </Text>
         </Stack>
       ))}
@@ -45,6 +62,6 @@ export function ChosenSection(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("link", "2.2");
-  await see("Four new backdrop blends.");
+  await press("link", "Wed");
+  await see("Halfmoon House, roasted dark for the cafés' Friday orders.");
 };

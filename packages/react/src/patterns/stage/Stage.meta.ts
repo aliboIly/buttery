@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "The canvas an editor works on: fitted to the space at its shape, with artwork that may overlap its edges and a crop mode.",
   useWhen: [
-    "The preview in an editor: a card, an image, a slide",
+    "The preview in an editor: a slide, a picture, a page",
     "Anything shown at a fixed shape that has to fit whatever room it gets",
   ],
   avoidWhen: [

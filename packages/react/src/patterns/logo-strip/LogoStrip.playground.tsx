@@ -61,7 +61,7 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Page>
         <Section size="sm">
-          <LogoStrip label="Teams that make cards with us">
+          <LogoStrip label="Teams that present with Deckhand">
             {MARKS.map(([name, shape]) => (
               <LogoStrip.Mark key={name}>
                 <Wordmark name={name} shape={shape} />

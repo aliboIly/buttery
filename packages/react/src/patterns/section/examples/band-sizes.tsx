@@ -45,7 +45,7 @@ export function BandSizes(): ReactElement {
           onValueChange={setTone}
         />
       </Inline>
-      <Section size={size} tone={tone} title="Roasted on Mondays">
+      <Section size={size} tone={tone} title="Made for meeting days">
         <Text variant="body-lg">{`${ROOM[size]}, ${GROUND[tone]}.`}</Text>
       </Section>
     </Stack>

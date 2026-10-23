@@ -6,7 +6,7 @@ import { IconButton, Onboarding } from "@buttery/react";
 import type { OnboardingStep } from "@buttery/react";
 import { CircleHelp } from "lucide-react";
 
-function Card({ title }: { readonly title: string }): ReactElement {
+function Slide({ title }: { readonly title: string }): ReactElement {
   return (
     <Surface level="card" padX={6} padY={4}>
       <Text variant="title">{title}</Text>
@@ -16,20 +16,20 @@ function Card({ title }: { readonly title: string }): ReactElement {
 
 const STEPS: readonly OnboardingStep[] = [
   {
-    title: "Your cards live here",
-    body: "Each one keeps its own title, finish and backdrop.",
+    title: "Your decks live here",
+    body: "Each one keeps its own slides, theme and notes.",
     media: (
-      <Onboarding.Shared id="card">
-        <Card title="Spring launch" />
+      <Onboarding.Shared id="slide">
+        <Slide title="Spring launch" />
       </Onboarding.Shared>
     ),
   },
   {
-    title: "Lean one for depth",
-    body: "Steer the lean pad and the card tips toward you.",
+    title: "Tilt a picture for depth",
+    body: "Steer the tilt pad and the picture tips toward you.",
     media: (
-      <Onboarding.Shared id="card" rotate={-6} scale={1.1}>
-        <Card title="Spring launch" />
+      <Onboarding.Shared id="slide" rotate={-6} scale={1.1}>
+        <Slide title="Spring launch" />
       </Onboarding.Shared>
     ),
   },
@@ -56,7 +56,7 @@ export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Help");
-  await see("Your cards live here");
+  await see("Your decks live here");
   await press("button", "Next");
-  await see("Lean one for depth");
+  await see("Tilt a picture for depth");
 };

@@ -6,7 +6,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, EmptyState, Onboarding } from "@buttery/react";
 import type { OnboardingStep } from "@buttery/react";
 
-function Card({ title }: { readonly title: string }): ReactElement {
+function Slide({ title }: { readonly title: string }): ReactElement {
   return (
     <Surface level="card" padX={6} padY={4}>
       <Text variant="title">{title}</Text>
@@ -17,20 +17,20 @@ function Card({ title }: { readonly title: string }): ReactElement {
 const STEPS: readonly OnboardingStep[] = [
   {
     title: "Start with a title",
-    body: "Type right on the card. A long title wraps onto a second line.",
+    body: "Type right on the slide. A long title wraps onto a second line.",
     media: (
-      <Onboarding.Shared id="card">
-        <Card title="Spring launch" />
+      <Onboarding.Shared id="slide">
+        <Slide title="Spring launch" />
       </Onboarding.Shared>
     ),
   },
   {
-    title: "Dress the card",
-    body: "Pick a finish and a backdrop, and the card follows.",
+    title: "Pick a theme",
+    body: "Choose a theme and a background, and every slide follows.",
     media: (
       <Inline gap={4} align="center">
-        <Onboarding.Shared id="card">
-          <Card title="Spring launch" />
+        <Onboarding.Shared id="slide">
+          <Slide title="Spring launch" />
         </Onboarding.Shared>
         <Surface level="raised" radius="full" padX={3} padY={2}>
           <Text variant="badge">Ink</Text>
@@ -39,17 +39,17 @@ const STEPS: readonly OnboardingStep[] = [
     ),
   },
   {
-    title: "Send it out",
-    body: "Save it as a picture, or keep it on the clipboard for wherever it's headed.",
+    title: "Present it",
+    body: "Show it full screen with your notes beside it, or export a PDF to send.",
     media: (
-      <Onboarding.Shared id="card" rotate={-4}>
-        <Card title="Spring launch" />
+      <Onboarding.Shared id="slide" rotate={-4}>
+        <Slide title="Spring launch" />
       </Onboarding.Shared>
     ),
   },
 ];
 
-/** An empty studio's first screen: Take the tour opens the steps, and finishing them changes what the screen says. */
+/** An empty library's first screen: Take the tour opens the steps, and finishing them changes what the screen says. */
 export function WelcomeScreen(): ReactElement {
   const [open, setOpen] = useState(false);
   const [toured, setToured] = useState(false);
@@ -57,11 +57,11 @@ export function WelcomeScreen(): ReactElement {
     <>
       <EmptyState
         icon={Layers}
-        title={toured ? "You're all set" : "No cards yet"}
+        title={toured ? "You're all set" : "No decks yet"}
         description={
           toured
-            ? "Start your first card whenever you're ready."
-            : "Take a short tour first, or start a card right away."
+            ? "Start your first deck whenever you're ready."
+            : "Take a short tour first, or start a deck right away."
         }
         actions={
           <Button
@@ -92,7 +92,7 @@ export const play: ExamplePlay = async ({ press, see }) => {
   await see("Start with a title");
   await press("button", "Next");
   await press("button", "Next");
-  await see("Send it out");
+  await see("Present it");
   await press("button", "Done");
   await see("You're all set");
 };

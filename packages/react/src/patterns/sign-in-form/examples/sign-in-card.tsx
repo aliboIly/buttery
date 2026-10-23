@@ -20,8 +20,8 @@ export function SignInCard(): ReactElement {
       <Surface level="card" pad={8}>
         <SignInForm
           titleAs="h2"
-          title="Sign in to the roastery"
-          description="Orders, roasts and payouts in one place."
+          title="Sign in to Deckhand"
+          description="Every deck you've made, in one place."
           forgotPasswordHref="#forgot-password"
           signUpHref="#sign-up"
           providers={[

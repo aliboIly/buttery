@@ -31,7 +31,7 @@ export interface SectionProps extends Omit<
  * the content in a `Container`.
  *
  * @example
- * <Section title="Made for launch days" body="Every card exports at the size you need.">
+ * <Section title="Made for meeting days" body="Every deck exports as a PDF or a set of PNGs.">
  *   <Bento>…</Bento>
  * </Section>
  */

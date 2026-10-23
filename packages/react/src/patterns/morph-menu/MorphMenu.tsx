@@ -837,7 +837,7 @@ export interface MorphMenuComponent {
  * <MorphMenu>
  *   <MorphMenu.Item label="Product" footer={<ArrowLink href="/features">See all features</ArrowLink>}>
  *     <MorphMenu.Column title="Make">
- *       <MorphMenu.Entry href="/cards" title="Cards" caption="Titles, finishes and leans" />
+ *       <MorphMenu.Entry href="/slides" title="Slides" caption="Layouts and notes" />
  *     </MorphMenu.Column>
  *   </MorphMenu.Item>
  *   <MorphMenu.Link href="/pricing">Pricing</MorphMenu.Link>

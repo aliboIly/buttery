@@ -8,7 +8,7 @@ export function Stacked(): ReactElement {
     <MorphMenu label="Help" layout="stack">
       <MorphMenu.Item label="Learn">
         <MorphMenu.Column title="Start here">
-          <MorphMenu.Entry href="#first-card" title="Your first card" />
+          <MorphMenu.Entry href="#first-deck" title="Your first deck" />
           <MorphMenu.Entry href="#shortcuts" title="Shortcuts" />
         </MorphMenu.Column>
       </MorphMenu.Item>
@@ -26,5 +26,5 @@ export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Learn");
-  await see("Your first card");
+  await see("Your first deck");
 };

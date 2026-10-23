@@ -15,7 +15,7 @@ const SIZES: Readonly<Record<Shape, StageSize>> = {
   Tall: { width: 1080, height: 1920 },
 };
 
-const BACKDROP = gradients.find((preset) => preset.id === "mist");
+const BACKGROUND = gradients.find((preset) => preset.id === "mist");
 
 /** The canvas at each shape it's given: pick one and it reshapes, staying centered in its space. */
 export function CanvasShapes(): ReactElement {
@@ -31,9 +31,9 @@ export function CanvasShapes(): ReactElement {
       />
       <div style={{ blockSize: "var(--bt-bento-row)", display: "grid" }}>
         <Stage
-          label="Card preview"
+          label="Slide preview"
           size={size}
-          background={BACKDROP ? gradientCss(BACKDROP) : undefined}
+          background={BACKGROUND ? gradientCss(BACKGROUND) : undefined}
         >
           <Center>
             <Text variant="label">{`${String(size.width)} × ${String(size.height)}`}</Text>

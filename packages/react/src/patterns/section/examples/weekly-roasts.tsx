@@ -4,64 +4,64 @@ import { Grid, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Page, Section } from "@buttery/react";
 
-const ROASTS = [
+const TEMPLATES = [
   {
-    id: "guji",
-    name: "Guji",
-    origin: "Ethiopia",
-    notes: "Peach and black tea",
+    id: "quarterly-review",
+    name: "Quarterly review",
+    slides: "12 slides",
+    notes: "Numbers, charts and a summary",
   },
   {
-    id: "huila",
-    name: "Huila",
-    origin: "Colombia",
-    notes: "Red apple and caramel",
+    id: "team-offsite",
+    name: "Team offsite",
+    slides: "8 slides",
+    notes: "Agenda, schedule and a map",
   },
   {
-    id: "cerrado",
-    name: "Cerrado",
-    origin: "Brazil",
-    notes: "Cocoa and hazelnut",
+    id: "hiring-plan",
+    name: "Hiring plan",
+    slides: "10 slides",
+    notes: "Roles, timeline and budget",
   },
 ] as const;
 
-/** A shop page's band: a heading over this week's three coffees, each added to the order from its card. */
+/** A templates page's band: a heading over this week's three new templates, each added to the library from its card. */
 export function WeeklyRoasts(): ReactElement {
-  const [bags, setBags] = useState(0);
+  const [added, setAdded] = useState(0);
   return (
     <Page>
       <Section
         size="sm"
-        title="Roasted this week"
-        body="Three coffees, roasted on Monday and sent out by Friday."
+        title="New this week"
+        body="Three templates, each a deck you can make your own."
       >
         <Stack gap={4}>
           <Grid columns={{ base: 1, md: 3 }} gap={4}>
-            {ROASTS.map((roast) => (
-              <Surface key={roast.id} level="card" pad={5}>
+            {TEMPLATES.map((template) => (
+              <Surface key={template.id} level="card" pad={5}>
                 <Stack gap={3} align="start">
                   <Stack gap={1}>
-                    <Text variant="title-sm">{`${roast.name}, ${roast.origin}`}</Text>
+                    <Text variant="title-sm">{`${template.name}, ${template.slides}`}</Text>
                     <Text variant="body-sm" tone="secondary">
-                      {roast.notes}
+                      {template.notes}
                     </Text>
                   </Stack>
                   <Button
                     size="sm"
                     onClick={() => {
-                      setBags(bags + 1);
+                      setAdded(added + 1);
                     }}
                   >
-                    {`Add ${roast.name}`}
+                    {`Add ${template.name}`}
                   </Button>
                 </Stack>
               </Surface>
             ))}
           </Grid>
           <Text variant="body" tone="secondary">
-            {bags === 1
-              ? "1 bag in your order"
-              : `${String(bags)} bags in your order`}
+            {added === 1
+              ? "1 template in your library"
+              : `${String(added)} templates in your library`}
           </Text>
         </Stack>
       </Section>
@@ -72,8 +72,8 @@ export function WeeklyRoasts(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Add Guji");
-  await see("1 bag in your order");
-  await press("button", "Add Cerrado");
-  await see("2 bags in your order");
+  await press("button", "Add Quarterly review");
+  await see("1 template in your library");
+  await press("button", "Add Hiring plan");
+  await see("2 templates in your library");
 };

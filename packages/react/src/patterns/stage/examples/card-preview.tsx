@@ -5,17 +5,17 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import { Stage } from "@buttery/react";
 
-const BACKDROP = gradients.find((preset) => preset.id === "peach");
+const BACKGROUND = gradients.find((preset) => preset.id === "peach");
 
-/** A card preview at its output size, with the canvas exposed for a toolbar to anchor to. */
+/** A slide preview at its output size, with the canvas exposed for a toolbar to anchor to. */
 export function CardPreview(): ReactElement {
   const canvas = useRef<HTMLDivElement>(null);
   return (
     <div style={{ blockSize: "var(--bt-bento-row)", display: "grid" }}>
       <Stage
-        label="Card preview"
+        label="Slide preview"
         size={{ width: 1600, height: 900 }}
-        background={BACKDROP ? gradientCss(BACKDROP) : undefined}
+        background={BACKGROUND ? gradientCss(BACKGROUND) : undefined}
         canvasRef={canvas}
       >
         <Center>

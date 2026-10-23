@@ -5,22 +5,22 @@ import { SubNav } from "@buttery/react";
 
 const TOPICS = [
   {
-    id: "help-start",
-    label: "Start",
-    title: "Getting started",
-    body: "Make your first card in a minute: pick a shape, write a title, export.",
+    id: "help-brewing",
+    label: "Brewing",
+    title: "Brewing at home",
+    body: "Start with 15 grams of coffee to 250 of water, then adjust to taste.",
   },
   {
-    id: "help-export",
-    label: "Export",
-    title: "Exporting",
-    body: "Cards export as PNG or JPG at the canvas's size, or to the clipboard.",
+    id: "help-plans",
+    label: "Plans",
+    title: "Subscriptions",
+    body: "Pause, skip a bag or change your coffee any time before it's roasted.",
   },
   {
-    id: "help-account",
-    label: "Account",
-    title: "Your account",
-    body: "Change your email address, your password or your plan.",
+    id: "help-shipping",
+    label: "Shipping",
+    title: "Shipping",
+    body: "Bags ship the day after they're roasted, free on orders over $40.",
   },
 ] as const;
 
@@ -50,6 +50,8 @@ export function HelpCenter(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("link", "Account");
-  await see("Change your email address, your password or your plan.");
+  await press("link", "Shipping");
+  await see(
+    "Bags ship the day after they're roasted, free on orders over $40.",
+  );
 };

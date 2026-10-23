@@ -34,7 +34,7 @@ export function SignUpPage(): ReactElement {
     );
   return (
     <SignUpForm
-      description="Make cards and keep them in one place."
+      description="Make decks and keep them in one place."
       termsHref="#terms"
       signInHref="#sign-in"
       onSubmit={async (values) => {

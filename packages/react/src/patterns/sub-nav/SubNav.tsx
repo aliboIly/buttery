@@ -51,9 +51,9 @@ export interface SubNavProps extends Omit<
  *
  * @example
  * <SubNav
- *   title="Deckhand"
- *   items={[{ id: "features", label: "Features" }, { id: "pricing", label: "Pricing" }]}
- *   action={<Button size="sm">Get it</Button>}
+ *   title="Halfmoon House"
+ *   items={[{ id: "overview", label: "Overview" }, { id: "brewing", label: "Brewing" }]}
+ *   action={<Button size="sm">Add to bag</Button>}
  * />
  */
 export function SubNav({

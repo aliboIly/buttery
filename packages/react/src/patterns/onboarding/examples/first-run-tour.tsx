@@ -4,7 +4,7 @@ import { Inline, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Onboarding, hasSeenOnboarding } from "@buttery/react";
 
-function Card({ title }: { readonly title: string }): ReactElement {
+function Slide({ title }: { readonly title: string }): ReactElement {
   return (
     <Surface level="card" padX={6} padY={4}>
       <Text variant="title">{title}</Text>
@@ -53,8 +53,8 @@ export function FirstRunTour(): ReactElement {
               title: "Welcome in",
               body: "Here's a quick look around before you start.",
               media: (
-                <Onboarding.Shared id="card">
-                  <Card title="Your first card" />
+                <Onboarding.Shared id="slide">
+                  <Slide title="Your first deck" />
                 </Onboarding.Shared>
               ),
             },
@@ -62,8 +62,8 @@ export function FirstRunTour(): ReactElement {
               title: "Everything saves itself",
               body: "Close the app whenever you like; your work waits for you.",
               media: (
-                <Onboarding.Shared id="card" rotate={-4}>
-                  <Card title="Your first card" />
+                <Onboarding.Shared id="slide" rotate={-4}>
+                  <Slide title="Your first deck" />
                 </Onboarding.Shared>
               ),
             },

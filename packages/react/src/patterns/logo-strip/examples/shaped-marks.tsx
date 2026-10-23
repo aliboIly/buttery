@@ -55,10 +55,10 @@ export function ShapedMarks(): ReactElement {
       <Section
         size="sm"
         align="center"
-        title="Cafés that print their menus with us"
+        title="Teams that make their decks with us"
       >
         <Stack gap={6}>
-          <LogoStrip label="Cafés that print their menus with us">
+          <LogoStrip label="Teams that make their decks with us">
             {shown.map((mark) => (
               <LogoStrip.Mark key={mark.name}>
                 <Wordmark name={mark.name} shape={mark.shape} />

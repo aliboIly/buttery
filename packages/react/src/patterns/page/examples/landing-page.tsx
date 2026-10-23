@@ -10,10 +10,12 @@ export function LandingPage(): ReactElement {
   return (
     <Page asChild>
       <main>
-        <Section title="Cards that look finished">
-          <Text variant="body-lg">Write a title, pick a finish, export.</Text>
+        <Section title="Decks that look designed">
+          <Text variant="body-lg">
+            Write the slides, pick a theme, present.
+          </Text>
         </Section>
-        <Section tone="muted" title="One price for every size">
+        <Section tone="muted" title="One price, every feature">
           <Stack gap={4} align="start">
             <SegmentedControl
               label="Billing period"

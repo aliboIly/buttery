@@ -24,9 +24,9 @@ function Story(): ReactElement {
       <Text variant="control" tone="secondary">
         New
       </Text>
-      <Text variant="title">The lean pad</Text>
+      <Text variant="title">The presenter view</Text>
       <Text variant="body-sm" tone="secondary">
-        Turn the card toward you, up to 20 degrees.
+        Notes and the next slide, on your screen only.
       </Text>
     </Stack>
   );
@@ -56,23 +56,23 @@ function LiveMenus({
         >
           <MorphMenu.Column title="Make">
             <MorphMenu.Entry
-              href="#cards"
-              title="Cards"
-              caption="Titles, finishes and leans"
+              href="#slides"
+              title="Slides"
+              caption="Layouts and notes"
             />
             <MorphMenu.Entry
-              href="#backdrops"
-              title="Backdrops"
-              caption="Blends, colors or your own picture"
+              href="#themes"
+              title="Themes"
+              caption="Fonts and colors"
             />
           </MorphMenu.Column>
         </MorphMenu.Item>
         <MorphMenu.Item label="Guides" value="guides">
           <MorphMenu.Column title="Learn">
             <MorphMenu.Entry
-              href="#first-card"
-              title="Your first card"
-              caption="Five minutes from blank to done"
+              href="#first-deck"
+              title="Your first deck"
+              caption="Ten minutes from blank to done"
             />
             <MorphMenu.Entry
               href="#shortcuts"
@@ -97,7 +97,7 @@ function menusCode({ layout, open }: DemoValues): string {
     `<MorphMenu${props.length === 0 ? "" : ` ${props.join(" ")}`}>`,
     '  <MorphMenu.Item label="Product" value="product" featured={<Story />} footer={<ArrowLink href="/features">See all features</ArrowLink>}>',
     '    <MorphMenu.Column title="Make">',
-    '      <MorphMenu.Entry href="/cards" title="Cards" caption="Titles, finishes and leans" />',
+    '      <MorphMenu.Entry href="/slides" title="Slides" caption="Layouts and notes" />',
     "    </MorphMenu.Column>",
     "  </MorphMenu.Item>",
     '  <MorphMenu.Item label="Guides" value="guides">…</MorphMenu.Item>',
@@ -142,40 +142,40 @@ export const demos: readonly DemoSection[] = [
           >
             <MorphMenu.Column title="Make">
               <MorphMenu.Entry
-                href="#cards"
-                title="Cards"
-                caption="Titles, finishes and leans"
+                href="#slides"
+                title="Slides"
+                caption="Layouts and notes"
               />
               <MorphMenu.Entry
-                href="#backdrops"
-                title="Backdrops"
-                caption="Blends, colors or your own picture"
+                href="#themes"
+                title="Themes"
+                caption="Fonts and colors"
               />
               <MorphMenu.Entry
                 href="#sizes"
                 title="Sizes"
-                caption="Square to story, or your own"
+                caption="Wide, square or tall"
               />
             </MorphMenu.Column>
             <MorphMenu.Column title="Share">
               <MorphMenu.Entry
                 href="#export"
                 title="Export"
-                caption="PNG or JPG at the canvas's size"
+                caption="PDF or PNG files"
               />
               <MorphMenu.Entry
                 href="#copy"
                 title="Copy"
-                caption="On the clipboard, ready to paste"
+                caption="On the clipboard"
               />
             </MorphMenu.Column>
           </MorphMenu.Item>
           <MorphMenu.Item label="Guides">
             <MorphMenu.Column title="Learn">
               <MorphMenu.Entry
-                href="#first-card"
-                title="Your first card"
-                caption="Five minutes from blank to done"
+                href="#first-deck"
+                title="Your first deck"
+                caption="Ten minutes from blank to done"
               />
               <MorphMenu.Entry
                 href="#shortcuts"

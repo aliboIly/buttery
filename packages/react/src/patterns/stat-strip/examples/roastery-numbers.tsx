@@ -6,10 +6,10 @@ import { Stat, StatStrip } from "@buttery/react";
 export function RoasteryNumbers(): ReactElement {
   return (
     <StatStrip>
-      <Stat value={38} label="coffees on the menu" />
-      <Stat value={12} label="origins this season" />
-      <Stat value={2400} suffix="+" label="bags roasted a month" />
-      <Stat value={98} suffix="%" label="of orders sent the same day" />
+      <Stat value={38} label="templates to start from" />
+      <Stat value={12} label="slide layouts" />
+      <Stat value={2400} suffix="+" label="decks presented a day" />
+      <Stat value={98} suffix="%" label="of exports ready in a second" />
     </StatStrip>
   );
 }
@@ -17,6 +17,6 @@ export function RoasteryNumbers(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("coffees on the menu");
-  await see("of orders sent the same day");
+  await see("templates to start from");
+  await see("of exports ready in a second");
 };

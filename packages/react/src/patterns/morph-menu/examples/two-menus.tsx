@@ -9,9 +9,9 @@ export function TwoMenus(): ReactElement {
       <MorphMenu.Item label="Learn">
         <MorphMenu.Column title="Start here">
           <MorphMenu.Entry
-            href="#first-card"
-            title="Your first card"
-            caption="Five minutes from blank to done"
+            href="#first-deck"
+            title="Your first deck"
+            caption="Ten minutes from blank to done"
           />
         </MorphMenu.Column>
       </MorphMenu.Item>
@@ -33,5 +33,5 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Learn");
-  await see("Five minutes from blank to done");
+  await see("Ten minutes from blank to done");
 };

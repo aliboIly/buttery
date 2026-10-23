@@ -42,29 +42,29 @@ const LEVEL: TiltValue = { x: 0, y: 0 };
 
 const MIST = gradients.find((preset) => preset.id === "mist");
 
-function CardSettings(): ReactElement {
+function SlideSettings(): ReactElement {
   const [edge, setEdge] = useState<Edge>("outline");
   const [scale, setScale] = useState(75);
   const [corners, setCorners] = useState(16);
   const [turn, setTurn] = useState(0);
-  const [lean, setLean] = useState<TiltValue>({ x: 0.3, y: -0.1 });
+  const [tilt, setTilt] = useState<TiltValue>({ x: 0.3, y: -0.1 });
   const [anchor, setAnchor] = useState<Anchor>("center");
-  const [backdrop, setBackdrop] = useState("mist");
+  const [background, setBackground] = useState("mist");
   const [first, setFirst] = useState(MIST?.fromHex ?? "#000000");
   const [second, setSecond] = useState(MIST?.toHex ?? "#000000");
-  const level = lean.x === 0 && lean.y === 0;
-  const cardChanged = edge !== "outline" || scale !== 75 || corners !== 16;
+  const level = tilt.x === 0 && tilt.y === 0;
+  const pictureChanged = edge !== "outline" || scale !== 75 || corners !== 16;
   const placeChanged = turn !== 0 || !level || anchor !== "center";
   return (
     <Inspector
-      label="Card settings"
+      label="Slide settings"
       style={{ blockSize: "calc(var(--bt-bento-row) * 2)" }}
       footer={
         <Inspector.Footer>
           <Button iconStart={Copy}>Copy</Button>
           <SplitButton
             menuLabel="More export options"
-            items={[{ label: "Export JPG", onSelect: () => undefined }]}
+            items={[{ label: "Export PDF", onSelect: () => undefined }]}
           >
             Export PNG
           </SplitButton>
@@ -72,8 +72,8 @@ function CardSettings(): ReactElement {
       }
     >
       <Inspector.Section
-        title="Card"
-        resettable={cardChanged}
+        title="Picture"
+        resettable={pictureChanged}
         onReset={() => {
           setEdge("outline");
           setScale(75);
@@ -119,7 +119,7 @@ function CardSettings(): ReactElement {
         resettable={placeChanged}
         onReset={() => {
           setTurn(0);
-          setLean(LEVEL);
+          setTilt(LEVEL);
           setAnchor("center");
         }}
       >
@@ -137,19 +137,19 @@ function CardSettings(): ReactElement {
         </Inspector.Row>
         <Inspector.Row.Split>
           <Inspector.Row
-            label="Lean"
+            label="Tilt"
             extra={
               <Chip
                 aria-disabled={level}
                 onClick={() => {
-                  setLean(LEVEL);
+                  setTilt(LEVEL);
                 }}
               >
                 Flat
               </Chip>
             }
           >
-            <TiltPad label="Lean" value={lean} onValueChange={setLean} />
+            <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
           </Inspector.Row>
           <Inspector.Row label="Anchor">
             <AnchorGrid
@@ -160,13 +160,13 @@ function CardSettings(): ReactElement {
           </Inspector.Row>
         </Inspector.Row.Split>
       </Inspector.Section>
-      <Inspector.Section title="Backdrop">
+      <Inspector.Section title="Background">
         <Inspector.Row block>
           <SwatchGrid
-            label="Backdrop"
+            label="Background"
             swatches={GRADIENTS}
-            value={backdrop}
-            onValueChange={setBackdrop}
+            value={background}
+            onValueChange={setBackground}
           />
         </Inspector.Row>
         <Inspector.Row label="Hues">
@@ -199,9 +199,9 @@ function CardSettings(): ReactElement {
 
 export const demos: readonly DemoSection[] = [
   {
-    title: "Card settings",
+    title: "Slide settings",
     description:
-      "Sections on nested surfaces, rows of controls, a split row for the lean pad and the anchor grid, and a footer that stays put while the sections scroll.",
-    render: () => <CardSettings />,
+      "Sections on nested surfaces, rows of controls, a split row for the tilt pad and the anchor grid, and a footer that stays put while the sections scroll.",
+    render: () => <SlideSettings />,
   },
 ];

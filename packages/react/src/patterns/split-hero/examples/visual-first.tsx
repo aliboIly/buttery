@@ -9,11 +9,11 @@ export function VisualFirst(): ReactElement {
     <SplitHero
       visualSide="start"
       titleAs="h2"
-      title="Lean it."
-      titleMore="Turn a card in 3D with one small pad."
+      title="Tilt it."
+      titleMore="Turn a picture in 3D with one small pad."
       visual={
         <Surface level="card" pad={8}>
-          <Text variant="title">Launch card</Text>
+          <Text variant="title">Quarterly review</Text>
         </Surface>
       }
     />
@@ -23,6 +23,6 @@ export function VisualFirst(): ReactElement {
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Lean it.");
-  await see("Turn a card in 3D with one small pad.");
+  await see("Tilt it.");
+  await see("Turn a picture in 3D with one small pad.");
 };

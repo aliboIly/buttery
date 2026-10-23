@@ -31,13 +31,13 @@ export const demos: readonly DemoSection[] = [
       <Page>
         <Section
           size="sm"
-          title="Everything a card needs"
-          body="A finish, a backdrop, a lean and an anchor, all in one panel."
+          title="Everything a slide needs"
+          body="A theme, a background, a layout and speaker notes, all in one panel."
         >
           <Grid columns={{ base: 1, md: 3 }} gap={4}>
-            <Tile label="Finish" />
-            <Tile label="Backdrop" />
-            <Tile label="Placement" />
+            <Tile label="Theme" />
+            <Tile label="Background" />
+            <Tile label="Layout" />
           </Grid>
         </Section>
       </Page>

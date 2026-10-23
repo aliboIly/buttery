@@ -114,7 +114,7 @@ export const live: LiveDemo = {
           switcher={
             switcher === true ? (
               <AccountMenu
-                workspace="Halfmoon Roasters"
+                workspace="Halfmoon Roastery"
                 caption="Roastery · 6 people"
               >
                 <Menu.Item icon={Settings}>Settings</Menu.Item>
@@ -166,7 +166,7 @@ export const live: LiveDemo = {
       '  label="Main"',
       ...(switcher === true
         ? [
-            '  switcher={<AccountMenu workspace="Halfmoon Roasters" caption="Roastery · 6 people">…</AccountMenu>}',
+            '  switcher={<AccountMenu workspace="Halfmoon Roastery" caption="Roastery · 6 people">…</AccountMenu>}',
           ]
         : []),
       ">",
