@@ -89,4 +89,7 @@ test("a brew guide's coffee opens its card's details, whatever the filters were"
   );
   await page.keyboard.press("Escape");
   await expect(coffees.getByRole("article")).toHaveCount(6);
+  await expect(
+    coffees.getByRole("button", { name: "Guji", exact: true }),
+  ).toBeFocused();
 });
