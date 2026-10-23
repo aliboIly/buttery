@@ -135,6 +135,15 @@
   text-wrap: pretty;
 }
 
+/* A short page, such as an empty bag, still fills the window, with its footer at the bottom. */
+.shop-page {
+  min-block-size: 100dvh;
+}
+
+.shop-page > main {
+  flex: 1 0 auto;
+}
+
 /* A page's title sits as far above what follows as a section's intro does. */
 .shop-page-intro {
   padding-block-end: var(--bt-space-12);
