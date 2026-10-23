@@ -8,12 +8,14 @@ Kept up to date as items finish.
 
 **Now**, finishing Phase 7's open items:
 - In progress: style options (`variant`, `size`, `layout`) for the main controls, badges and page patterns
-- Then the Phase 7 gate (`pnpm check` and the full layout matrix), `v0.9.0` and its release, the first npm publish of `@butteryui/core`, `react`, `test` and `lint` at 0.9.0, and the phase report
+- Then the Phase 7 gate (`pnpm check` and the full layout matrix, whose first run found and fixed card grids that overflowed at 768 and 960, a search panel that ran off a short window and a resize loop in the desktop previews), `v0.9.0` and its release, the first npm publish of `@butteryui/core`, `react`, `test` and `lint` at 0.9.0, and the phase report
+
+Started alongside, on its own branch: `@butteryui/mcp` works end to end. It has five read-only tools (search, get, scaffold, lint, and a layout check that runs `checkButtery`), answers both protocol versions, has passed its tests and a real agent connection, and has its docs page. It ships as 0.10.0 after the evaluation below.
 
 Done since the last update: a modular `Catalog` (search, filters, sort and paging; grid, list and rows; four card looks and three sizes), with the shop's coffees rebuilt on it; the packages renamed to the `@butteryui` npm scope (`@buttery` belongs to another project) and set up to publish; a right-click `ContextMenu` that also opens from the keyboard, on Deckhand's slides; a `Sheet` (a side panel on a laptop, a drawer on a phone) with the shop's bag on it and `/bag` and `/checkout` pages; an `Accordion` and an `Faq` pattern with the shop's questions on them; `NavBar`'s pinned actions; `OverflowCluster` refitting when its gap or size changes; Deckhand's big numbers kept to one line. Earlier: the docs went live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` are GitHub releases.
 
 **Next**, in order:
-1. `@butteryui/mcp`: designed from the research, built, tested on both protocol versions, measured with an evaluation that compares agents with and without it, and published
+1. `@butteryui/mcp`: the evaluation that compares agents with and without it, its fixes, and the 0.10.0 release on npm
 2. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
 3. Everything else that's left: the rest of 1.0 below, including the command line tool and `create-buttery` on npm, and the follow-ups the demos turned up
 
