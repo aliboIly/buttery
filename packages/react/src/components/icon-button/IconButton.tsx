@@ -16,10 +16,17 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
   readonly icon: ComponentType<IconComponentProps>;
   /** What the button does. Screen readers announce it, and it shows as the tooltip. */
   readonly label: string;
-  /** `"md"` (36px, the default) in headers and toolbars, `"sm"` (28px) to close a dialog or act inline. */
-  readonly size?: "sm" | "md" | undefined;
-  /** `"ghost"` (the default), or `"primary"` for a round create button on the primary color, as in a top bar. */
-  readonly variant?: "ghost" | "primary" | undefined;
+  /**
+   * `"md"` (36px, the default) in headers and toolbars, `"sm"` (28px) to close a dialog or act inline, or `"lg"`
+   * (48px, 40 compact) beside 48px buttons and fields, or as a touch target of its own.
+   */
+  readonly size?: "sm" | "md" | "lg" | undefined;
+  /**
+   * `"ghost"` (the default), with a background only on hover; `"soft"`, on `bg-control` at rest, for an action
+   * that should read as a button without hovering; `"outline"`, a 1px `border-strong` edge; or `"primary"`, a
+   * round create button on the primary color, as in a top bar.
+   */
+  readonly variant?: "ghost" | "soft" | "outline" | "primary" | undefined;
   /** Which side the tooltip opens on. Defaults to `"top"`. */
   readonly tooltipSide?: TooltipSide | undefined;
   /**
@@ -39,7 +46,7 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
  * A square button that shows only an icon, named by a `label` that also appears as its tooltip. The
  * tooltip repeats the name, so it doesn't describe the button to screen readers as well; a description
  * given in `aria-describedby` stays. Ghost by default: the background shows on hover, and `aria-pressed`
- * holds it on for toggles. Use `aria-disabled` instead of `disabled` to keep it focusable while it can't
+ * holds it on for toggles; soft, outline and primary draw it at rest. Use `aria-disabled` instead of `disabled` to keep it focusable while it can't
  * act, such as Undo with nothing left to undo: it looks disabled and ignores presses, and focus stays
  * where it was.
  *

@@ -2,6 +2,7 @@
   .bt-icon-button {
     --bt-icon-button-dot: 8px;
     --bt-icon-button-dot-ring: 2px;
+    --bt-icon-button-line: 1px;
     --bt-icon-button-bg: transparent;
     --bt-icon-button-fg: var(--bt-text-secondary);
     --bt-transition-hover:
@@ -43,6 +44,11 @@
     block-size: var(--bt-h-sm);
   }
 
+  .bt-icon-button[data-size="lg"] {
+    inline-size: var(--bt-h-cta);
+    block-size: var(--bt-h-cta);
+  }
+
   @media (hover: hover) {
     .bt-icon-button:not(:disabled, [aria-disabled="true"]):hover {
       --bt-icon-button-bg: var(--bt-bg-control);
@@ -60,6 +66,38 @@
     --bt-icon-button-fg: var(--bt-icon-disabled);
 
     cursor: default;
+  }
+
+  .bt-icon-button[data-variant="soft"] {
+    --bt-icon-button-bg: var(--bt-bg-control);
+    --bt-icon-button-fg: var(--bt-text);
+  }
+
+  @media (hover: hover) {
+    .bt-icon-button[data-variant="soft"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-icon-button-bg: var(--bt-border);
+      --bt-icon-button-fg: var(--bt-text);
+    }
+  }
+
+  .bt-icon-button[data-variant="soft"]:is(
+      [aria-pressed="true"],
+      [data-state="open"]
+    ) {
+    --bt-icon-button-bg: var(--bt-bg-control-active);
+  }
+
+  .bt-icon-button[data-variant="soft"]:is(:disabled, [aria-disabled="true"]) {
+    --bt-icon-button-bg: var(--bt-bg-control-subtle);
+    --bt-icon-button-fg: var(--bt-icon-disabled);
+  }
+
+  /* A border inside the circle, so the button keeps its size and its icon stays centered. */
+  .bt-icon-button[data-variant="outline"] {
+    border: var(--bt-icon-button-line) solid var(--bt-border-strong);
   }
 
   .bt-icon-button[data-variant="primary"] {

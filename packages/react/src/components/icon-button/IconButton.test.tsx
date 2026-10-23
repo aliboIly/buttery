@@ -10,6 +10,27 @@ import { IconButton } from "./IconButton.tsx";
 
 afterEach(cleanup);
 
+function colorIn(scope: Element, variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  scope.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
+
+/** How far the icon's center sits from the button's, across and down. */
+function iconOffset(button: HTMLElement): readonly [number, number] {
+  const icon = button.querySelector("svg");
+  if (!icon) throw new Error("No icon.");
+  const box = button.getBoundingClientRect();
+  const glyph = icon.getBoundingClientRect();
+  return [
+    Math.abs(glyph.left + glyph.width / 2 - (box.left + box.width / 2)),
+    Math.abs(glyph.top + glyph.height / 2 - (box.top + box.height / 2)),
+  ];
+}
+
 describe("IconButton", () => {
   it("stamps its class and data-bt, forwards its ref and spreads props", () => {
     const ref = createRef<HTMLButtonElement>();
@@ -137,6 +158,77 @@ describe("IconButton", () => {
     expect(
       screen.getByRole("button", { name: "Updates, unread" }),
     ).toBeTruthy();
+  });
+
+  it("is 48px square at lg, 40 in compact, with its 16px icon in the middle", () => {
+    render(
+      <>
+        <IconButton icon={Undo2} label="Undo" size="lg" />
+        <div data-bt-density="compact">
+          <IconButton icon={Undo2} label="Redo" size="lg" />
+        </div>
+      </>,
+    );
+    const roomy = screen.getByRole("button", { name: "Undo" });
+    const compact = screen.getByRole("button", { name: "Redo" });
+    const sizeOf = (button: HTMLElement): readonly number[] => {
+      const { width, height } = button.getBoundingClientRect();
+      return [width, height];
+    };
+    expect(sizeOf(roomy)).toEqual([48, 48]);
+    expect(sizeOf(compact)).toEqual([40, 40]);
+    expect(roomy.querySelector("svg")?.getBoundingClientRect().width).toBe(16);
+    expect(iconOffset(roomy)).toEqual([0, 0]);
+  });
+
+  it("sits on bg-control at rest when soft, deepening on hover and fading when disabled", async () => {
+    render(
+      <>
+        <IconButton icon={Undo2} label="Undo" variant="soft" />
+        <IconButton icon={Undo2} label="Redo" variant="soft" disabled />
+      </>,
+    );
+    const soft = screen.getByRole("button", { name: "Undo" });
+    const off = screen.getByRole("button", { name: "Redo" });
+    expect(soft.dataset["variant"]).toBe("soft");
+    expect(getComputedStyle(soft).backgroundColor).toBe(
+      colorIn(document.body, "--bt-bg-control"),
+    );
+    expect(getComputedStyle(soft).color).toBe(
+      colorIn(document.body, "--bt-text"),
+    );
+    expect(getComputedStyle(off).backgroundColor).toBe(
+      colorIn(document.body, "--bt-bg-control-subtle"),
+    );
+    expect(getComputedStyle(off).color).toBe(
+      colorIn(document.body, "--bt-icon-disabled"),
+    );
+    const hovered = colorIn(document.body, "--bt-border");
+    await userEvent.hover(soft);
+    await waitFor(() => {
+      expect(getComputedStyle(soft).backgroundColor).toBe(hovered);
+    });
+  });
+
+  it("draws a 1px border-strong edge when outlined, keeping its size and its icon centered", () => {
+    render(
+      <>
+        <IconButton icon={Undo2} label="Undo" variant="outline" />
+        <IconButton icon={Undo2} label="Close" variant="outline" size="sm" />
+      </>,
+    );
+    const outline = screen.getByRole("button", { name: "Undo" });
+    const small = screen.getByRole("button", { name: "Close" });
+    const style = getComputedStyle(outline);
+    expect(style.backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    expect(style.borderTopWidth).toBe("1px");
+    expect(style.borderTopColor).toBe(
+      colorIn(document.body, "--bt-border-strong"),
+    );
+    expect(outline.getBoundingClientRect().width).toBe(36);
+    expect(small.getBoundingClientRect().height).toBe(28);
+    expect(iconOffset(outline)).toEqual([0, 0]);
+    expect(iconOffset(small)).toEqual([0, 0]);
   });
 
   it("fills itself with the primary color when it's the primary button", () => {

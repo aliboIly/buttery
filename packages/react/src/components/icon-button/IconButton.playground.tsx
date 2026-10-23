@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@butteryui/core";
+import { Inline, Stack } from "@butteryui/core";
 import { demoChoice } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { IconButton } from "@butteryui/react";
@@ -49,18 +49,18 @@ export const live: LiveDemo = {
     label: { kind: "text", initial: "Settings" },
     variant: {
       kind: "choice",
-      options: ["ghost", "primary"],
+      options: ["ghost", "soft", "outline", "primary"],
       initial: "ghost",
     },
-    size: { kind: "choice", options: ["md", "sm"], initial: "md" },
+    size: { kind: "choice", options: ["md", "sm", "lg"], initial: "md" },
     dot: { kind: "toggle", initial: false },
   },
   render: ({ icon, label, variant, size, dot }) => (
     <IconButton
       icon={ICONS[demoChoice(icon, ICON_NAMES)]}
       label={String(label)}
-      variant={demoChoice(variant, ["ghost", "primary"])}
-      size={demoChoice(size, ["md", "sm"])}
+      variant={demoChoice(variant, ["ghost", "soft", "outline", "primary"])}
+      size={demoChoice(size, ["md", "sm", "lg"])}
       dot={dot === true}
     />
   ),
@@ -72,14 +72,45 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Sizes",
     description:
-      "36px in headers and toolbars, 28px to close a dialog. Hover or focus one for its tooltip.",
+      "36px in headers and toolbars, 28px to close a dialog, 48px beside 48px buttons and fields. Hover or focus one for its tooltip.",
     render: () => (
       <Inline gap={1} align="center">
         <IconButton icon={Undo2} label="Undo" />
         <IconButton icon={Redo2} label="Redo" />
         <IconButton icon={HelpCircle} label="Help" />
         <IconButton icon={X} label="Close" size="sm" />
+        <IconButton icon={Plus} label="Add a photo" size="lg" />
       </Inline>
+    ),
+  },
+  {
+    title: "Ghost, soft, outline and primary",
+    description:
+      "Ghost shows its background only on hover; soft sits on bg-control and outline draws a 1px edge, so either reads as a button at rest; primary is the round create button. Each at sm, md and lg.",
+    render: () => (
+      <Stack gap={3}>
+        {(["ghost", "soft", "outline", "primary"] as const).map((variant) => (
+          <Inline key={variant} gap={2} align="center">
+            <IconButton
+              icon={Settings}
+              label={`Settings, ${variant}, small`}
+              variant={variant}
+              size="sm"
+            />
+            <IconButton
+              icon={Settings}
+              label={`Settings, ${variant}`}
+              variant={variant}
+            />
+            <IconButton
+              icon={Settings}
+              label={`Settings, ${variant}, large`}
+              variant={variant}
+              size="lg"
+            />
+          </Inline>
+        ))}
+      </Stack>
     ),
   },
   {
@@ -99,6 +130,13 @@ export const demos: readonly DemoSection[] = [
       <Inline gap={1} align="center">
         <ToggleDemo />
         <IconButton icon={Redo2} label="Redo" disabled />
+        <IconButton icon={Redo2} label="Redo, soft" variant="soft" disabled />
+        <IconButton
+          icon={Redo2}
+          label="Redo, outline"
+          variant="outline"
+          disabled
+        />
       </Inline>
     ),
   },

@@ -11,6 +11,8 @@ export const meta: ComponentMeta = {
     "Toggles, with aria-pressed",
     "Something new behind it, such as notifications, with dot",
     'A top bar\'s round create button, with variant="primary" and size sm',
+    'An action that should read as a button before it\'s hovered, such as a card\'s or a phone toolbar\'s, with variant="soft" or "outline"',
+    'A 48px row of buttons or fields, or a touch target of its own, with size="lg"',
   ],
   avoidWhen: [
     "An action without an icon everyone reads the same way: use Button with a label",
@@ -27,7 +29,7 @@ export const meta: ComponentMeta = {
     { keys: "Enter", does: "Follows the link, when it's a link with asChild" },
   ],
   layout:
-    'It\'s a circle 36px across (--bt-h-button) at size="md", the default, or 28px (--bt-h-sm) at "sm", and it never shrinks. The whole circle is the hit area. Its 16px icon sits in the middle, and the dot sits on the icon\'s top end corner without changing the button\'s size.',
+    'It\'s a circle 36px across (--bt-h-button) at size="md", the default, 28px (--bt-h-sm) at "sm" or 48px (--bt-h-cta, 40 compact) at "lg", and it never shrinks. The whole circle is the hit area. Its 16px icon sits in the middle at every size, an outline\'s 1px edge is drawn inside the circle, and the dot sits on the icon\'s top end corner without changing the button\'s size.',
   reducedMotion:
     "It presses in at once, without easing, while its hover color still fades over 120ms.",
 };
