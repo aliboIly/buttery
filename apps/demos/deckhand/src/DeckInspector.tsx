@@ -66,7 +66,7 @@ export type ChangeSlide = (
 ) => void;
 
 /** The fill in the other kind, keeping its family where the palettes have both. */
-function switchFill(fill: Fill, kind: Fill["kind"]): Fill {
+export function switchFill(fill: Fill, kind: Fill["kind"]): Fill {
   if (fill.kind === kind) return fill;
   return kind === "solid"
     ? {

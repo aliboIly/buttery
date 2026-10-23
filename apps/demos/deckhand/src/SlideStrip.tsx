@@ -9,15 +9,30 @@ import {
   Text,
   space,
   timing,
+  useApplePlatform,
   useFloatingObstacle,
 } from "@buttery/core";
-import { buttery } from "@buttery/react";
-import { Hash, List, Plus, Quote, Type } from "lucide-react";
+import { ContextMenu, buttery } from "@buttery/react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ClipboardCopy,
+  CopyPlus,
+  Hash,
+  List,
+  Plus,
+  Quote,
+  Trash2,
+  Type,
+} from "lucide-react";
 import { LAYOUT_OPTIONS } from "./deck.ts";
 import type { Deck, Layout, Slide } from "./deck.ts";
 import { SlideView } from "./Slide.tsx";
 
-const LAYOUT_ICONS = {
+/** The icon each layout shows in the menus that pick one. */
+export const LAYOUT_ICONS = {
   title: Type,
   points: List,
   numbers: Hash,
@@ -89,12 +104,23 @@ function perRow(options: readonly HTMLElement[]): number {
     .length;
 }
 
+/** One of the moves the picked slide's menu offers: its words, its keys and how far it goes. */
+interface MoveAction {
+  readonly label: string;
+  readonly icon: typeof ArrowLeft;
+  readonly shortcut: string;
+  /** Slots along the deck, a row's worth for up and down in the grid. */
+  readonly step: number;
+}
+
 /**
  * The deck's slides: a thumbnail of each, the picked one marked by an indicator that slides to whichever is
  * picked next, and a button that adds a slide of the layout chosen from its menu. On a wide work area they
  * run in a strip under the stage; on a tall one, a grid under it that scrolls on its own. Arrow keys pick (up
  * and down by a row in the grid), Alt with an arrow moves the picked slide, and Delete deletes it; a drag
  * moves it too, the others gliding out of its way, and a finger drags once it has held a thumbnail a moment.
+ * A right-click picks a slide and opens its menu, which Shift+F10 or the context-menu key opens on the picked
+ * one: a new slide after it, duplicate, copy as an image, the moves and delete, each with its keys.
  */
 export function SlideStrip({
   deck,
@@ -104,6 +130,8 @@ export function SlideStrip({
   onMoveEnd,
   onDelete,
   onAdd,
+  onDuplicate,
+  onCopy,
 }: {
   readonly deck: Deck;
   readonly selected: string | null;
@@ -113,16 +141,41 @@ export function SlideStrip({
   /** Ends a move, sealing its undo step. */
   readonly onMoveEnd: () => void;
   readonly onDelete: (id: string) => void;
+  /** Adds a slide of `layout` after the picked one. */
   readonly onAdd: (layout: Layout) => void;
+  readonly onDuplicate: (id: string) => void;
+  /** Copies the picked slide, which the stage shows, as an image. */
+  readonly onCopy: () => void;
 }): ReactElement {
   const obstacle = useFloatingObstacle();
+  const apple = useApplePlatform();
   const ids = useId();
   const list = useRef<HTMLDivElement | null>(null);
   const drag = useRef<Drag | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [drops, setDrops] = useState(0);
+  const [row, setRow] = useState(1);
   const { slides } = deck;
   const order = slides.map((slide) => slide.id).join(" ");
+  const at = slides.findIndex((slide) => slide.id === selected);
+  const picked = slides[at];
+  const moves: readonly MoveAction[] = [
+    { label: "Move left", icon: ArrowLeft, shortcut: "alt+left", step: -1 },
+    { label: "Move right", icon: ArrowRight, shortcut: "alt+right", step: 1 },
+    ...(row > 1
+      ? [
+          { label: "Move up", icon: ArrowUp, shortcut: "alt+up", step: -row },
+          {
+            label: "Move down",
+            icon: ArrowDown,
+            shortcut: "alt+down",
+            step: row,
+          },
+        ]
+      : []),
+  ];
+  const moveTo = (step: number): number =>
+    Math.min(Math.max(at + step, 0), slides.length - 1);
 
   // A finger that has started dragging a thumbnail mustn't scroll the list under it.
   const listbox = useCallback((element: HTMLDivElement | null) => {
@@ -161,6 +214,18 @@ export function SlideStrip({
     },
     [],
   );
+
+  // A finger held still on a thumbnail opens its menu rather than lifting it to drag.
+  const dropHold = (): void => {
+    const current = drag.current;
+    if (!current) return;
+    drag.current = null;
+    cancelAnimationFrame(current.frame);
+    window.clearTimeout(current.hold);
+    if (!current.started) return;
+    current.element.releasePointerCapture(current.pointer);
+    setDragging(null);
+  };
 
   const pick = (index: number): void => {
     const slide = slides[Math.min(Math.max(index, 0), slides.length - 1)];
@@ -310,64 +375,138 @@ export function SlideStrip({
         <div className="dh-strip-scroll">
           {slides.length === 0 ? null : (
             <SharedIndicator.Group>
-              <div
-                ref={listbox}
-                role="listbox"
-                aria-label="Slides"
-                aria-activedescendant={
-                  selected === null ? undefined : `${ids}-${selected}`
-                }
-                tabIndex={0}
-                className="dh-strip-list"
-                onKeyDown={onKeyDown}
+              <ContextMenu
+                onOpenChange={(open) => {
+                  if (!open) return;
+                  dropHold();
+                  const columns = perRow(options());
+                  setRow(columns < slides.length ? columns : 1);
+                }}
               >
-                {slides.map((slide, index) => {
-                  const picked = slide.id === selected;
-                  const held = slide.id === dragging;
-                  return (
-                    <SharedIndicator key={slide.id} active={picked} asChild>
-                      <buttery.div
-                        layout
-                        layoutDependency={
-                          held
-                            ? `held ${slide.id}`
-                            : `${order} ${String(drops)}`
-                        }
-                        id={`${ids}-${slide.id}`}
-                        role="option"
-                        aria-selected={picked}
-                        aria-label={slideName(slide, index)}
-                        className="dh-thumb"
-                        style={held ? {} : { translate: "none" }}
-                        data-slide={slide.id}
-                        data-dragging={held ? "" : undefined}
-                        onPointerDown={(event) => {
-                          startPress(event, slide, index);
+                <ContextMenu.Trigger asChild>
+                  <div
+                    ref={listbox}
+                    role="listbox"
+                    aria-label="Slides"
+                    aria-activedescendant={
+                      selected === null ? undefined : `${ids}-${selected}`
+                    }
+                    tabIndex={0}
+                    className="dh-strip-list"
+                    onKeyDown={onKeyDown}
+                  >
+                    {slides.map((slide, index) => {
+                      const picked = slide.id === selected;
+                      const held = slide.id === dragging;
+                      return (
+                        <SharedIndicator key={slide.id} active={picked} asChild>
+                          <buttery.div
+                            layout
+                            layoutDependency={
+                              held
+                                ? `held ${slide.id}`
+                                : `${order} ${String(drops)}`
+                            }
+                            id={`${ids}-${slide.id}`}
+                            role="option"
+                            aria-selected={picked}
+                            aria-label={slideName(slide, index)}
+                            className="dh-thumb"
+                            style={held ? {} : { translate: "none" }}
+                            data-slide={slide.id}
+                            data-dragging={held ? "" : undefined}
+                            onPointerDown={(event) => {
+                              startPress(event, slide, index);
+                            }}
+                            onContextMenu={() => {
+                              onSelect(slide.id);
+                            }}
+                            onPointerMove={movePress}
+                            onPointerUp={endPress}
+                            onPointerCancel={endPress}
+                          >
+                            <Text
+                              variant="badge"
+                              tabular
+                              className="dh-thumb-number"
+                              aria-hidden="true"
+                            >
+                              {String(index + 1)}
+                            </Text>
+                            <span
+                              className="dh-thumb-frame"
+                              data-bt-allow-overlap=""
+                              aria-hidden="true"
+                            >
+                              <SlideView slide={slide} size={deck.size} drawn />
+                            </span>
+                          </buttery.div>
+                        </SharedIndicator>
+                      );
+                    })}
+                  </div>
+                </ContextMenu.Trigger>
+                {picked ? (
+                  <ContextMenu.Content aria-label={slideName(picked, at)}>
+                    <ContextMenu.Sub>
+                      <ContextMenu.SubTrigger icon={Plus}>
+                        New slide after
+                      </ContextMenu.SubTrigger>
+                      <ContextMenu.SubContent>
+                        {LAYOUT_OPTIONS.map((option) => (
+                          <ContextMenu.Item
+                            key={option.value}
+                            icon={LAYOUT_ICONS[option.value]}
+                            onSelect={() => {
+                              onAdd(option.value);
+                            }}
+                          >
+                            {option.label}
+                          </ContextMenu.Item>
+                        ))}
+                      </ContextMenu.SubContent>
+                    </ContextMenu.Sub>
+                    <ContextMenu.Item
+                      icon={CopyPlus}
+                      shortcut="mod+d"
+                      onSelect={() => {
+                        onDuplicate(picked.id);
+                      }}
+                    >
+                      Duplicate
+                    </ContextMenu.Item>
+                    <ContextMenu.Item icon={ClipboardCopy} onSelect={onCopy}>
+                      Copy as image
+                    </ContextMenu.Item>
+                    <ContextMenu.Separator />
+                    {moves.map((move) => (
+                      <ContextMenu.Item
+                        key={move.label}
+                        icon={move.icon}
+                        shortcut={move.shortcut}
+                        disabled={moveTo(move.step) === at}
+                        onSelect={() => {
+                          onMove(picked.id, moveTo(move.step), "move");
+                          onMoveEnd();
                         }}
-                        onPointerMove={movePress}
-                        onPointerUp={endPress}
-                        onPointerCancel={endPress}
                       >
-                        <Text
-                          variant="badge"
-                          tabular
-                          className="dh-thumb-number"
-                          aria-hidden="true"
-                        >
-                          {String(index + 1)}
-                        </Text>
-                        <span
-                          className="dh-thumb-frame"
-                          data-bt-allow-overlap=""
-                          aria-hidden="true"
-                        >
-                          <SlideView slide={slide} size={deck.size} drawn />
-                        </span>
-                      </buttery.div>
-                    </SharedIndicator>
-                  );
-                })}
-              </div>
+                        {move.label}
+                      </ContextMenu.Item>
+                    ))}
+                    <ContextMenu.Separator />
+                    <ContextMenu.Item
+                      icon={Trash2}
+                      tone="danger"
+                      shortcut={apple ? "backspace" : "delete"}
+                      onSelect={() => {
+                        onDelete(picked.id);
+                      }}
+                    >
+                      Delete
+                    </ContextMenu.Item>
+                  </ContextMenu.Content>
+                ) : null}
+              </ContextMenu>
             </SharedIndicator.Group>
           )}
           <div className="dh-add-row">

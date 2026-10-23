@@ -716,3 +716,12 @@
   border-radius: var(--bt-r-md);
   background-color: var(--bt-deckhand-screen);
 }
+
+/* The stage takes focus for its slide's menu, and its ring runs just inside its edge, clear of the header and the strip. */
+.dh-stage-region {
+  border-radius: var(--bt-r-3xl);
+}
+
+.dh-stage-region:focus-visible {
+  outline-offset: calc(-1 * var(--bt-focus-width));
+}

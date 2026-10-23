@@ -8,10 +8,11 @@ import {
 } from "react";
 import type { CSSProperties, PointerEvent, ReactElement } from "react";
 import { flushSync } from "react-dom";
-import { isApplePlatform, useShortcut } from "@buttery/core";
+import { isApplePlatform, lastInput, useShortcut } from "@buttery/core";
 import {
   AppShell,
   Button,
+  ContextMenu,
   EmptyState,
   FloatingToolbar,
   FormDialog,
@@ -20,18 +21,37 @@ import {
   toast,
 } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
-import { Plus, Presentation } from "lucide-react";
+import {
+  LayoutTemplate,
+  Move,
+  Palette,
+  PenLine,
+  Plus,
+  Presentation,
+  RotateCcw,
+} from "lucide-react";
 import { DeckHeader } from "./DeckHeader.tsx";
-import { DeckInspector, EmptyDeckInspector } from "./DeckInspector.tsx";
+import {
+  DeckInspector,
+  EmptyDeckInspector,
+  switchFill,
+} from "./DeckInspector.tsx";
 import type { ChangeSlide } from "./DeckInspector.tsx";
 import { DeckTour, tourIsNew } from "./DeckTour.tsx";
-import { LAYOUT_DEFAULTS, SLIDE_SIZES, withLayout } from "./deck.ts";
-import type { Layout, SlideSize } from "./deck.ts";
+import {
+  LAYOUT_DEFAULTS,
+  LAYOUT_OPTIONS,
+  LOOK_DEFAULTS,
+  SLIDE_SIZES,
+  lookChanged,
+  withLayout,
+} from "./deck.ts";
+import type { Box, Fill, Layout, SlideSize } from "./deck.ts";
 import { fileName, slideBlob } from "./export.ts";
 import { ANCHOR_NAMES, fillCss, nearestAnchor } from "./geometry.ts";
 import { Presenter } from "./Presenter.tsx";
 import { StageSlide } from "./Slide.tsx";
-import { SlideStrip, slideName } from "./SlideStrip.tsx";
+import { LAYOUT_ICONS, SlideStrip, slideName } from "./SlideStrip.tsx";
 import {
   SAMPLE_EDITOR,
   changeSlide,
@@ -71,6 +91,32 @@ function share(offset: number, room: number): number {
   return room <= 0 ? 0.5 : Math.min(Math.max(offset / room, 0), 1);
 }
 
+const BOXES = [
+  { value: "none", label: "No box" },
+  { value: "light", label: "Light box" },
+  { value: "dark", label: "Dark box" },
+] as const satisfies readonly { readonly value: Box; readonly label: string }[];
+
+const FILLS = [
+  { value: "solid", label: "Color" },
+  { value: "gradient", label: "Gradient" },
+] as const satisfies readonly {
+  readonly value: Fill["kind"];
+  readonly label: string;
+}[];
+
+function isLayout(value: string): value is Layout {
+  return LAYOUT_OPTIONS.some((option) => option.value === value);
+}
+
+function isBox(value: string): value is Box {
+  return BOXES.some((option) => option.value === value);
+}
+
+function isFillKind(value: string): value is Fill["kind"] {
+  return FILLS.some((option) => option.value === value);
+}
+
 /** The inspector field that writes a piece of the slide, the last one when two crossfade. */
 function inputFor(field: string): HTMLElement | null {
   const found = document.querySelectorAll<HTMLElement>(
@@ -106,6 +152,7 @@ export function Deckhand(): ReactElement {
   const box = useRef<HTMLDivElement>(null);
   const newSlideButton = useRef<HTMLButtonElement>(null);
   const focusNewSlide = useRef(false);
+  const pointedField = useRef<string | null>(null);
 
   if (arrange && arrange.id !== selected) setArrange(null);
   const arranging = arrange !== null && slide !== null;
@@ -438,6 +485,13 @@ export function Deckhand(): ReactElement {
 
   const atDefault =
     slide !== null && slide.position === LAYOUT_DEFAULTS[slide.layout].position;
+  const resetPosition = (): void => {
+    if (!slide || atDefault) return;
+    change(`position:${slide.id}`, (current) => ({
+      ...current,
+      position: LAYOUT_DEFAULTS[current.layout].position,
+    }));
+  };
 
   return (
     <div className="dh-root" data-testid="deckhand" inert={presenting !== null}>
@@ -510,25 +564,158 @@ export function Deckhand(): ReactElement {
             onPointerDown={leaveWords}
           >
             {slide ? (
-              <Stage
-                label={`${slideName(slide, index)}, ${String(index + 1)} of ${String(deck.slides.length)}`}
-                size={SLIDE_SIZES[deck.size]}
-                background={fillCss(slide.fill)}
-                canvasRef={canvas}
-              >
-                <StageSlide
-                  slide={slide}
-                  size={deck.size}
-                  live={live}
-                  arranging={arranging}
-                  drops={drops}
-                  target={target ?? slide.position}
-                  placeRef={place}
-                  boxRef={box}
-                  dragging={dragging}
-                  boxEvents={boxEvents}
-                />
-              </Stage>
+              <ContextMenu>
+                <ContextMenu.Trigger asChild>
+                  <Stage
+                    label={`${slideName(slide, index)}, ${String(index + 1)} of ${String(deck.slides.length)}`}
+                    size={SLIDE_SIZES[deck.size]}
+                    background={fillCss(slide.fill)}
+                    canvasRef={canvas}
+                    role="region"
+                    aria-label="Current slide"
+                    tabIndex={0}
+                    className="dh-stage-region bt-focus"
+                    onContextMenu={(event) => {
+                      pointedField.current =
+                        event.target instanceof Element
+                          ? (event.target
+                              .closest("[data-dh-field]")
+                              ?.getAttribute("data-dh-field") ?? null)
+                          : null;
+                    }}
+                  >
+                    <StageSlide
+                      slide={slide}
+                      size={deck.size}
+                      live={live}
+                      arranging={arranging}
+                      drops={drops}
+                      target={target ?? slide.position}
+                      placeRef={place}
+                      boxRef={box}
+                      dragging={dragging}
+                      boxEvents={boxEvents}
+                    />
+                  </Stage>
+                </ContextMenu.Trigger>
+                <ContextMenu.Content aria-label="Current slide">
+                  <ContextMenu.Item
+                    icon={PenLine}
+                    onSelect={() => {
+                      const field = pointedField.current ?? "title";
+                      setArrange(null);
+                      focusField(field);
+                    }}
+                  >
+                    Edit text
+                  </ContextMenu.Item>
+                  <ContextMenu.CheckboxItem
+                    icon={Move}
+                    checked={arranging}
+                    onCheckedChange={(on) => {
+                      if (on) startArrange(lastInput() === "keyboard");
+                      else endArrange(true);
+                    }}
+                  >
+                    Arrange
+                  </ContextMenu.CheckboxItem>
+                  <ContextMenu.Item
+                    icon={RotateCcw}
+                    disabled={atDefault}
+                    onSelect={resetPosition}
+                  >
+                    Reset position
+                  </ContextMenu.Item>
+                  <ContextMenu.Separator />
+                  <ContextMenu.Sub>
+                    <ContextMenu.SubTrigger icon={LayoutTemplate}>
+                      Layout
+                    </ContextMenu.SubTrigger>
+                    <ContextMenu.SubContent>
+                      <ContextMenu.RadioGroup
+                        value={slide.layout}
+                        onValueChange={(layout) => {
+                          if (!isLayout(layout)) return;
+                          change(`layout:${slide.id}`, (current) =>
+                            withLayout(current, layout),
+                          );
+                        }}
+                      >
+                        {LAYOUT_OPTIONS.map((option) => (
+                          <ContextMenu.RadioItem
+                            key={option.value}
+                            value={option.value}
+                            icon={LAYOUT_ICONS[option.value]}
+                          >
+                            {option.label}
+                          </ContextMenu.RadioItem>
+                        ))}
+                      </ContextMenu.RadioGroup>
+                    </ContextMenu.SubContent>
+                  </ContextMenu.Sub>
+                  <ContextMenu.Sub>
+                    <ContextMenu.SubTrigger icon={Palette}>
+                      Look
+                    </ContextMenu.SubTrigger>
+                    <ContextMenu.SubContent>
+                      <ContextMenu.RadioGroup
+                        label="Fill"
+                        value={slide.fill.kind}
+                        onValueChange={(kind) => {
+                          if (!isFillKind(kind)) return;
+                          change(`fill:${slide.id}`, (current) => ({
+                            ...current,
+                            fill: switchFill(current.fill, kind),
+                          }));
+                        }}
+                      >
+                        {FILLS.map((option) => (
+                          <ContextMenu.RadioItem
+                            key={option.value}
+                            value={option.value}
+                          >
+                            {option.label}
+                          </ContextMenu.RadioItem>
+                        ))}
+                      </ContextMenu.RadioGroup>
+                      <ContextMenu.Separator />
+                      <ContextMenu.RadioGroup
+                        label="Box"
+                        value={slide.box}
+                        onValueChange={(next) => {
+                          if (!isBox(next)) return;
+                          change(`box:${slide.id}`, (current) => ({
+                            ...current,
+                            box: next,
+                          }));
+                        }}
+                      >
+                        {BOXES.map((option) => (
+                          <ContextMenu.RadioItem
+                            key={option.value}
+                            value={option.value}
+                          >
+                            {option.label}
+                          </ContextMenu.RadioItem>
+                        ))}
+                      </ContextMenu.RadioGroup>
+                      <ContextMenu.Separator />
+                      <ContextMenu.Item
+                        icon={RotateCcw}
+                        disabled={!lookChanged(slide)}
+                        onSelect={() => {
+                          change(`reset-look:${slide.id}`, (current) => ({
+                            ...current,
+                            ...LOOK_DEFAULTS,
+                          }));
+                        }}
+                      >
+                        Reset the look
+                      </ContextMenu.Item>
+                    </ContextMenu.SubContent>
+                  </ContextMenu.Sub>
+                </ContextMenu.Content>
+              </ContextMenu>
             ) : (
               <EmptyState
                 icon={Presentation}
@@ -563,6 +750,10 @@ export function Deckhand(): ReactElement {
             onAdd={(layout) => {
               dispatch({ type: "add", layout });
             }}
+            onDuplicate={(id) => {
+              dispatch({ type: "duplicate", id });
+            }}
+            onCopy={copySlide}
           />
         </div>
       </AppShell>
@@ -583,13 +774,7 @@ export function Deckhand(): ReactElement {
           <FloatingToolbar.Button
             variant="ghost"
             aria-disabled={atDefault}
-            onClick={() => {
-              if (atDefault) return;
-              change(`position:${slide.id}`, (current) => ({
-                ...current,
-                position: LAYOUT_DEFAULTS[current.layout].position,
-              }));
-            }}
+            onClick={resetPosition}
           >
             Reset
           </FloatingToolbar.Button>
