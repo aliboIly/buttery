@@ -9,10 +9,18 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { createRef, useState } from "react";
+import { StrictMode, createRef, useState } from "react";
 import type { ReactElement } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { userEvent } from "vitest/browser";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from "vitest";
+import { page, userEvent } from "vitest/browser";
 import { ContextMenu } from "./ContextMenu.tsx";
 
 // The real pointer stays where an earlier test left it, and a menu drawn under it gets pointer events from the
@@ -234,6 +242,67 @@ describe("ContextMenu", () => {
     const [, submenu] = screen.getAllByRole("menu");
     if (!submenu) throw new Error("No submenu.");
     inside(submenu.getBoundingClientRect());
+  });
+
+  it("moves back 8px inside the window when the window shrinks past where it opened", async () => {
+    const [width, height] = [window.innerWidth, window.innerHeight];
+    onTestFinished(async () => {
+      await page.viewport(width, height);
+    });
+    render(
+      <ContextMenu>
+        <ContextMenu.Trigger
+          tabIndex={0}
+          aria-label="Board"
+          role="region"
+          style={{
+            marginBlockStart: "300px",
+            inlineSize: "200px",
+            blockSize: "120px",
+          }}
+        >
+          Board
+        </ContextMenu.Trigger>
+        <ContextMenu.Content aria-label="Board">
+          <ContextMenu.Item>Paste</ContextMenu.Item>
+          <ContextMenu.Item>Select all</ContextMenu.Item>
+        </ContextMenu.Content>
+      </ContextMenu>,
+    );
+    const board = screen.getByText("Board");
+    await userEvent.click(board, {
+      button: "right",
+      position: { x: 20, y: 110 },
+    });
+    const menu = await screen.findByRole("menu", { name: "Board" });
+    await settled();
+    const opened = menu.getBoundingClientRect();
+    await page.viewport(width, Math.round(opened.top - 40));
+    await waitFor(() => {
+      expect(menu.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+        window.innerHeight - 8,
+      );
+    });
+    expect(menu.getBoundingClientRect().top).toBeGreaterThanOrEqual(8);
+  });
+
+  it("opens at its point under StrictMode, which attaches its refs twice", async () => {
+    render(
+      <StrictMode>
+        <File />
+      </StrictMode>,
+    );
+    file().focus();
+    await userEvent.keyboard("{ContextMenu}");
+    const menu = await screen.findByRole("menu");
+    await settled();
+    const button = file().getBoundingClientRect();
+    expect(
+      Math.abs(
+        menu.getBoundingClientRect().left -
+          (button.left + button.width / 2 + 2),
+      ),
+    ).toBeLessThanOrEqual(1);
   });
 
   it("opens at the focused element with Shift+F10, focus on its first item", async () => {

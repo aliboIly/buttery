@@ -67,11 +67,18 @@ export function FloatingMotion({
   );
 }
 
+/** How far to move a box from `start` to `end` along one side of the window, `size` long, to keep it 8px inside. */
+function intoWindow(start: number, end: number, size: number): number {
+  const edge = space["2"];
+  const past = Math.max(end - (size - edge), 0);
+  return start - past < edge ? edge - start : -past;
+}
+
 /**
- * Keeps a floating panel that opens beside its anchor 8px inside the window's sides, as a ref: a context menu
- * or a submenu in a window too narrow for it on either side, where Radix leaves it hanging past the edge. It
- * slides the panel sideways over its anchor with `translate` each time Radix places it, and returns what
- * stops watching.
+ * Keeps a floating panel that opens beside its anchor 8px inside the window, as a ref: a context menu or a
+ * submenu in a window too narrow for it on either side, where Radix leaves it hanging past the edge, or a menu
+ * whose point the window shrank past. Each time Radix places the panel, it slides the panel's wrapper back
+ * inside with `translate`, and it returns what stops watching.
  *
  * @example
  * <motion.div ref={keepInWindow} className="bt-surface bt-menu">…</motion.div>
@@ -81,15 +88,23 @@ export function keepInWindow(
 ): (() => void) | undefined {
   const wrapper = panel?.parentElement;
   if (!panel || !wrapper) return undefined;
+  let shift = { x: 0, y: 0 };
   const fit = (): void => {
     const box = wrapper.getBoundingClientRect();
-    const edge = space["2"];
-    const past = box.right - (window.innerWidth - edge);
-    const shift =
-      box.left - Math.max(past, 0) < edge
-        ? edge - box.left
-        : -Math.max(past, 0);
-    panel.style.translate = shift === 0 ? "" : `${String(shift)}px 0px`;
+    const next = {
+      x: intoWindow(box.left - shift.x, box.right - shift.x, window.innerWidth),
+      y: intoWindow(
+        box.top - shift.y,
+        box.bottom - shift.y,
+        window.innerHeight,
+      ),
+    };
+    if (next.x === shift.x && next.y === shift.y) return;
+    shift = next;
+    wrapper.style.translate =
+      next.x === 0 && next.y === 0
+        ? ""
+        : `${String(next.x)}px ${String(next.y)}px`;
   };
   // Radix places the panel by writing its wrapper's style, on opening and as the window moves.
   const placed = new MutationObserver(fit);
@@ -97,6 +112,7 @@ export function keepInWindow(
   fit();
   return () => {
     placed.disconnect();
+    wrapper.style.translate = "";
   };
 }
 
