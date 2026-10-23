@@ -6,18 +6,18 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 
 Kept up to date as items finish.
 
-**Now**, finishing Phase 7's open items:
-- In progress: style options (`variant`, `size`, `layout`) for the main controls, badges and page patterns
-- Then the Phase 7 gate (`pnpm check` and the full layout matrix, whose first run found and fixed card grids that overflowed at 768 and 960, a search panel that ran off a short window and a resize loop in the desktop previews), `v0.9.0` and its release, the first npm publish of `@butteryui/core`, `react`, `test` and `lint` at 0.9.0, and the phase report
+**Now**, finishing Phase 7's gate:
+- `v0.9.0` is out: `@butteryui/core`, `react`, `test` and `lint` are on npm, built and checked in a fresh app first, and the release is on GitHub
+- Left for the gate: two failures in `pnpm check` that were already on `main` (a ResizeObserver loop while the app shell page's inspector sheet opens, and the nav bar's menu folding about 80ms late), the full layout matrix, and the phase report
 
-Started alongside, on its own branch: `@butteryui/mcp` works end to end. It has five read-only tools (search, get, scaffold, lint, and a layout check that runs `checkButtery`), answers both protocol versions, has passed its tests and a real agent connection, and has its docs page. It ships as 0.10.0 after the evaluation below.
+Started alongside, on their own branches: `@butteryui/mcp` works end to end, with five read-only tools (search, get, scaffold, lint, and a layout check that runs `checkButtery`), both protocol versions, its tests, a real agent connection and its docs page. The sign-in flow is built too: `IdentifierField`, `OneTimeCodeField`, `AuthFlow` and the `useOtpFlow` hook, an Authentication page, and sign-in screens in the roastery demo and the dashboard template. Both ship in 0.10.0.
 
-Done since the last update: a modular `Catalog` (search, filters, sort and paging; grid, list and rows; four card looks and three sizes), with the shop's coffees rebuilt on it; the packages renamed to the `@butteryui` npm scope (`@buttery` belongs to another project) and set up to publish; a right-click `ContextMenu` that also opens from the keyboard, on Deckhand's slides; a `Sheet` (a side panel on a laptop, a drawer on a phone) with the shop's bag on it and `/bag` and `/checkout` pages; an `Accordion` and an `Faq` pattern with the shop's questions on them; `NavBar`'s pinned actions; `OverflowCluster` refitting when its gap or size changes; Deckhand's big numbers kept to one line. Earlier: the docs went live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` are GitHub releases.
+Done since the last update: style options across the components (`variant`, `size`, `shape` and `layout` on fields, tabs, segmented controls, badges, icon buttons, avatars, cards, metric cards, stat strips, empty states, tables, footers and the nav bar), each defaulting to the look it had; `pnpm check` now builds the packages and checks every file their exports name; a spinner that no longer reaches past its box mid-turn, and a `Morph` that clips only its height while it moves. Earlier: a modular `Catalog`, the `@butteryui` scope, `ContextMenu`, `Sheet`, `Accordion` and `Faq`, the docs live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` as GitHub releases.
 
 **Next**, in order:
-1. `@butteryui/mcp`: the evaluation that compares agents with and without it, its fixes, and the 0.10.0 release on npm
-2. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
-3. Everything else that's left: the rest of 1.0 below, including the command line tool and `create-buttery` on npm, and the follow-ups the demos turned up
+1. `@butteryui/mcp`: the evaluation that compares agents with and without it, and its fixes
+2. 0.10.0 on npm: the MCP server and the sign-in flow
+3. Everything else that's left: the rest of 1.0 below, including the command line tool (with `buttery add page sign-in`) and `create-buttery` on npm, and the follow-ups the demos turned up
 
 ---
 
@@ -111,7 +111,8 @@ Done since the last update: a modular `Catalog` (search, filters, sort and pagin
 - [x] `Accordion` and the `Faq` pattern (groups, a search, deep links, three layouts), with the shop's questions on them
 - [x] `ContextMenu`, a right-click menu that also opens from the keyboard, with Deckhand's slide actions on it
 - [x] `Catalog`, a catalog built from parts (a toolbar with search, filters, sort and a layout switch; grid, list and rows; cards in four looks and three sizes), with `CatalogPage` and the shop's coffees on it
-- [ ] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
+- [x] Style options (`variant`, `size`, `shape` and `layout`) on the controls, badges and page patterns, each defaulting to the look it had
+- [x] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
 - [x] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
 
 ## v1.0 — Developer and agent experience (Phase 8)
@@ -126,7 +127,7 @@ Done since the last update: a modular `Catalog` (search, filters, sort and pagin
 - [ ] `@butteryui/mcp`, an MCP server with `scaffold_page`, `scaffold_component` and `search_docs` (on the docs search's index), and configs for the common coding agents (`docs/DX_AND_AI.md`)
 - [ ] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed
 - [ ] A passwordless sign-in pattern: an identifier field (email or phone), a one-time code field, an `AuthFlow` with a headless `useOtpFlow` hook, a docs page, `buttery add page sign-in`, and a sign-in screen in the dashboard template and the roastery demo
-- [ ] The first publish to npm, as `@butteryui/*` (the org is claimed; `@buttery` belongs to another project)
+- [x] The first publish to npm: `@butteryui/core`, `react`, `test` and `lint` at 0.9.0 (`@buttery` belongs to another project)
 
 ## Later (ideas, not commitments)
 - [ ] More patterns: command palette (⌘K), file browser, chat
