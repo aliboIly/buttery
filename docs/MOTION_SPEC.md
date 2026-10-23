@@ -155,6 +155,16 @@ Measured from local 30fps strips of the same dashboard (`reference/inspiration-s
 | Search results change | Local results swap in the frame the query changes, back to the suggestions in one frame when it's cleared; a remote group keeps its rows until new ones arrive and shows a spinner row only in itself | one frame |
 | Row hover reveal | The row's tint and its accent bar at the start show, and its hidden actions fade in, on hover and on keyboard focus | tint instant; actions `dur-fast` |
 
+### Sign-in (0.10.0)
+
+| Moment | Behavior | Timing |
+|---|---|---|
+| Code sent (_derived_) | The button's label becomes a spinner and "Sending your code…" in place, at its width | one frame |
+| Step changes (_derived_) | One surface: the column's height follows through `Morph` and the steps crossfade, while the new step slides 8px in from its side (the code step from the end, the first step back from the start) and the old one leaves the other way. Focus moves to the new step's field before the slide starts | slide `dur-base`, `ease-out`; height `spring.smooth`, crossfade `dur-fast`. With reduced motion the steps swap with no slide |
+| Code field caret (_derived_) | The active empty slot's caret blinks, as a text caret does | 1060ms, `steps(1)`, looping; steady with reduced motion |
+| Code accepted (_derived_) | The box's edge and fill turn the success color, and a check pops in from 0.6 beside the status; the app gets the session 800ms later (`successHold`) | colors `dur-fast`; check `spring.snappy` |
+| Code turned down (_derived_) | The field clears and keeps focus, the message under it in the danger color | one frame |
+
 ---
 
 ## 4. Choreography patterns
