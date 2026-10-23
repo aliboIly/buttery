@@ -518,6 +518,29 @@ test("on a phone the slides fill a grid under the slide, where Up and Down move 
   await expect(slide(page, 4)).toHaveAttribute("aria-selected", "true");
 });
 
+test("with no slides, the phone's Edit slide sheet offers New slide, which adds one and selects its title", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/demos/deckhand?chrome=0");
+  await page.getByTestId("stage-slide").waitFor();
+  await slide(page, 1).click();
+  for (let count = 6; count > 0; count -= 1) {
+    await page.keyboard.press("Delete");
+    await expect(page.getByRole("option")).toHaveCount(count - 1);
+  }
+  await page.getByRole("button", { name: "Edit slide", exact: true }).click();
+  const sheet = page.getByRole("dialog", { name: "Slide settings" });
+  await expect(sheet.getByText("No slide to style")).toBeVisible();
+  await sheet.getByRole("button", { name: "New slide", exact: true }).click();
+  const title = sheet.getByRole("textbox", { name: "Title", exact: true });
+  await expect(title).toBeFocused();
+  await page.keyboard.type("Opening hours");
+  await expect(title).toHaveValue("Opening hours");
+  await page.keyboard.press("Escape");
+  await expect(slide(page, 1)).toHaveAccessibleName("Slide 1: Opening hours");
+});
+
 test("dragging the words lands them on the nearest place, and Cancel puts them back", async ({
   page,
 }) => {

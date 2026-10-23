@@ -1,8 +1,9 @@
 import type { ReactElement } from "react";
-import { Morph } from "@buttery/core";
+import { Morph, useFloatingObstacle } from "@buttery/core";
 import { gradientCss, gradients, solids } from "@buttery/core/palettes";
 import {
   AnchorGrid,
+  Button,
   EmptyState,
   Inspector,
   SegmentedControl,
@@ -13,7 +14,7 @@ import {
   TextField,
 } from "@buttery/react";
 import type { SegmentedControlOption, Swatch } from "@buttery/react";
-import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
+import { AlignCenter, AlignLeft, AlignRight, Plus } from "lucide-react";
 import {
   DEFAULT_ANGLE,
   DEFAULT_TEXT_SIZE,
@@ -210,14 +211,30 @@ function TextRows({
   }
 }
 
-/** The inspector while the deck has no slides: nothing to style yet. */
-export function EmptyDeckInspector(): ReactElement {
+/**
+ * The inspector while the deck has no slides: nothing to style yet. Given `onAdd`, as in the sheet that covers
+ * the stage's own New slide button, it offers to add one.
+ */
+export function EmptyDeckInspector({
+  onAdd,
+}: {
+  readonly onAdd?: (() => void) | undefined;
+}): ReactElement {
+  // Opened right after the last slide's deletion, the sheet would sit under that toast without this.
+  const obstacle = useFloatingObstacle();
   return (
-    <Inspector label="Slide settings">
+    <Inspector ref={obstacle} label="Slide settings">
       <div className="dh-inspector-empty">
         <EmptyState
           title="No slide to style"
           description="Add a slide, and its words, layout and look show up here."
+          actions={
+            onAdd ? (
+              <Button iconStart={Plus} onClick={onAdd}>
+                New slide
+              </Button>
+            ) : null
+          }
         />
       </div>
     </Inspector>

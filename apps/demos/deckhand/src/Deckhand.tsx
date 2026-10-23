@@ -286,6 +286,15 @@ export function Deckhand(): ReactElement {
     setSheetOpen(true);
   };
 
+  const addFromSheet = (): void => {
+    flushSync(() => {
+      dispatch({ type: "add", layout: "title" });
+    });
+    const title = inputFor("title");
+    title?.focus();
+    if (title instanceof HTMLInputElement) title.select();
+  };
+
   const editAt = (event: MouseEvent): void => {
     const field =
       event.target instanceof Element
@@ -489,7 +498,7 @@ export function Deckhand(): ReactElement {
               }}
             />
           ) : (
-            <EmptyDeckInspector />
+            <EmptyDeckInspector onAdd={sheetOpen ? addFromSheet : undefined} />
           )
         }
       >
