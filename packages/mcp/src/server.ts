@@ -15,6 +15,13 @@ import { CALL_BUDGET, entryText, fitted, resolve } from "./get.ts";
 import type { Detail } from "./get.ts";
 import type { Knowledge, LoadedKnowledge } from "./knowledge.ts";
 import { DIAGNOSTIC_LIMIT, LintRequestError, lint } from "./lint.ts";
+import {
+  PAGE_KIND_NAMES,
+  PAGE_KINDS,
+  ScaffoldRequestError,
+  scaffold,
+} from "./scaffold.ts";
+import type { PageKind } from "./scaffold.ts";
 import type { LintReport } from "./lint.ts";
 import { SEARCH_KINDS } from "./search.ts";
 import type { SearchKind, Searcher } from "./search.ts";
@@ -218,6 +225,61 @@ function registerGet(server: McpServer, setup: ServerSetup): void {
           ...(missing.length === 0 ? [] : ["", ...missing]),
         ].join("\n"),
       );
+    },
+  );
+}
+
+interface ScaffoldArgs {
+  readonly kind: "page" | "app";
+  readonly page?: PageKind;
+}
+
+function registerScaffold(server: McpServer, setup: ServerSetup): void {
+  server.registerTool(
+    "buttery_scaffold",
+    {
+      title: "Start a page or an app",
+      description: `Start a page from the buttery pattern made for it, as a file to save in the app: ${PAGE_KIND_NAMES.join(", ")}. Each compiles as it is and comes with the ids of the components it uses and how to check it. Or start an app: kind "app" gives the commands and the setup. Writes nothing; save the file yourself. Start here rather than from a blank file when building a whole page.`,
+      inputSchema: fromJsonSchema<ScaffoldArgs>({
+        type: "object",
+        properties: {
+          kind: {
+            type: "string",
+            enum: ["page", "app"],
+            description: "What to start: a page of an app, or a new app.",
+          },
+          page: {
+            type: "string",
+            enum: [...PAGE_KIND_NAMES],
+            description:
+              "Which page, with kind page: table, detail, overview, settings, settings-index, catalog, plans, search-results, empty, feature-intro, sign-in, sign-up, onboarding, landing, article or faq.",
+          },
+        },
+        required: ["kind"],
+        additionalProperties: false,
+      }),
+      annotations: { title: "Start a page or an app", ...READ_ONLY },
+    },
+    ({ kind, page }) => {
+      if (kind === "page" && page === undefined) {
+        return failure(
+          `Say which page. Fix: buttery_scaffold({"kind":"page","page":"settings"}); the pages: ${PAGE_KIND_NAMES.map((name) => `${name} (${PAGE_KINDS[name][2]})`).join("; ")}.`,
+        );
+      }
+      try {
+        return text(
+          scaffold(
+            setup.loaded.knowledge,
+            kind === "app" || page === undefined
+              ? { kind: "app" }
+              : { kind: "page", page },
+          ),
+        );
+      } catch (error) {
+        if (error instanceof ScaffoldRequestError)
+          return failure(error.message);
+        throw error;
+      }
     },
   );
 }
@@ -674,6 +736,7 @@ export function createButteryServer(setup: ServerSetup): McpServer {
   );
   registerSearch(server, setup);
   registerGet(server, setup);
+  registerScaffold(server, setup);
   registerLint(server, setup);
   registerCheck(server, setup);
   registerResources(server, setup);

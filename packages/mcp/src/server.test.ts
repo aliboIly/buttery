@@ -74,6 +74,7 @@ describe.each([
     expect(first.tools.map((tool) => tool.name)).toEqual([
       "buttery_search",
       "buttery_get",
+      "buttery_scaffold",
       "buttery_lint",
       "buttery_check_layout",
     ]);
