@@ -28,6 +28,6 @@ export function PastedCode(): ReactElement {
 export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ type, see }) => {
-  await type("One-time code", "613-832");
-  await see("Code 613832 is ready to check");
+  await type("One-time code", "480-517");
+  await see("Code 480517 is ready to check");
 };

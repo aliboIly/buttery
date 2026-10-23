@@ -27,6 +27,6 @@ export function SendACode(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ type, see }) => {
-  await type("Email or phone number", "2155550134");
-  await see("We'll text a code to (215) 555-0134.");
+  await type("Email or phone number", "5035550142");
+  await see("We'll text a code to (503) 555-0142.");
 };

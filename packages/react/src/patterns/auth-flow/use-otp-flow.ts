@@ -74,7 +74,7 @@ export interface OtpFlow {
   readonly requestError: string | null;
   /** Sends a code to the identifier and moves to the code step once it's sent. */
   readonly sendCode: () => Promise<void>;
-  /** Where the code went, mostly hidden, such as "••• ••• 5473". */
+  /** Where the code went, mostly hidden, such as "••• ••• 0187". */
   readonly destination: string;
   /** The code's digits typed so far. */
   readonly code: string;
@@ -101,17 +101,15 @@ export interface OtpFlow {
 const REQUEST_MESSAGES: Readonly<Record<RequestCodeFailure, string>> = {
   invalid:
     "That doesn't look like an email address or a phone number. Check it and try again.",
-  "rate-limited": "Too many codes asked for. Wait a minute, then try again.",
-  unavailable:
-    "The code couldn't be sent. Check your connection and try again.",
+  "rate-limited": "Too many codes sent. Try again in a minute.",
+  unavailable: "We couldn't send a code. Check your connection.",
 };
 
 const VERIFY_MESSAGES: Readonly<Record<VerifyFailure, string>> = {
-  wrong: "That code isn't right. Check your latest message and type it again.",
+  wrong: "That code isn't right. Check it and try again.",
   expired: "That code has expired. Send a new one.",
-  "too-many": "Too many tries. Send a new code and use that one.",
-  unavailable:
-    "The code couldn't be checked. Check your connection and try again.",
+  "too-many": "Too many tries. Send a new code.",
+  unavailable: "We couldn't check the code. Check your connection.",
 };
 
 /**

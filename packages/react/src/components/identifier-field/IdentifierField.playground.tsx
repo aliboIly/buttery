@@ -44,15 +44,15 @@ export const demos: readonly DemoSection[] = [
       "A phone number formatted as it goes, an email address left as written, and one that couldn't be used.",
     render: () => (
       <Stack gap={4}>
-        <IdentifierField label="A phone number" defaultValue="(215) 555-0134" />
+        <IdentifierField label="A phone number" defaultValue="(503) 555-0142" />
         <IdentifierField
           label="An email address"
           defaultValue="rosa@halfmoon.coffee"
         />
         <IdentifierField
           label="One a code couldn't go to"
-          defaultValue="(215) 555-0134"
-          error="Too many codes asked for. Wait a minute, then try again."
+          defaultValue="(503) 555-0142"
+          error="Too many codes sent. Try again in a minute."
         />
       </Stack>
     ),

@@ -83,19 +83,17 @@ Send a code whether or not an account exists, and let the first verified code cr
 <DocsTable
   columns={["Result", "What it says"]}
   rows={[
-    [
-      "`wrong`",
-      "That code isn't right. Check your latest message and type it again.",
-    ],
+    ["`wrong`", "That code isn't right. Check it and try again."],
     ["`expired`", "That code has expired. Send a new one."],
-    ["`too-many`", "Too many tries. Send a new code and use that one."],
+    ["`too-many`", "Too many tries. Send a new code."],
+    ["`rate-limited`", "Too many codes sent. Try again in a minute."],
     [
-      "`rate-limited`",
-      "Too many codes asked for. Wait a minute, then try again.",
+      "`unavailable`, sending",
+      "We couldn't send a code. Check your connection.",
     ],
     [
-      "`unavailable`",
-      "The code couldn't be sent, or checked. Check your connection and try again.",
+      "`unavailable`, checking",
+      "We couldn't check the code. Check your connection.",
     ],
   ]}
 />
@@ -108,24 +106,51 @@ A result's `message` replaces the words for its reason, and `labels` changes any
 
 ```tsx
 import {
+  Button,
   IdentifierField,
   OneTimeCodeField,
   useOtpFlow,
 } from "@butteryui/react";
+import { Stack } from "@butteryui/core";
 
 export function SideBySideSignIn({ api, enter }) {
   const flow = useOtpFlow({
-    onRequestCode: (identifier) => api.sendCode(identifier),
-    onVerify: (identifier, code) => api.verify(identifier, code),
+    onRequestCode: async (identifier) => {
+      const response = await api.sendCode(identifier);
+      return response.ok
+        ? { ok: true, expiresIn: 600 }
+        : { ok: false, reason: "unavailable" };
+    },
+    onVerify: async (identifier, code) => {
+      const response = await api.verify(identifier, code);
+      return response.ok
+        ? { ok: true, session: await response.json() }
+        : { ok: false, reason: "wrong" };
+    },
     onSuccess: enter,
   });
-  return flow.step === "identify" ? (
-    <IdentifierField
-      value={flow.identifier}
-      onValueChange={flow.setIdentifier}
-      error={flow.requestError ?? undefined}
-    />
-  ) : (
+  if (flow.step === "identify") {
+    return (
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void flow.sendCode();
+        }}
+      >
+        <Stack gap={3}>
+          <IdentifierField
+            value={flow.identifier}
+            onValueChange={flow.setIdentifier}
+            error={flow.requestError ?? undefined}
+          />
+          <Button type="submit" variant="primary" size="cta">
+            Continue
+          </Button>
+        </Stack>
+      </form>
+    );
+  }
+  return (
     <OneTimeCodeField
       value={flow.code}
       onValueChange={flow.setCode}

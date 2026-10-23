@@ -35,7 +35,7 @@ function northAmerican(value: string): boolean {
 }
 
 /**
- * A North American number as it's typed, "(215) 910-5473", the country code kept when it's written; other
+ * A North American number as it's typed, "(503) 555-0187", the country code kept when it's written; other
  * numbers stay as written, since grouping them right takes each country's rules.
  */
 export function formatPhone(value: string): string {
@@ -96,7 +96,7 @@ export function validIdentifier(value: string): boolean {
 }
 
 /**
- * Where a code went, with most of it hidden: "••• ••• 5473" for a phone, "a•••@example.com" for an email,
+ * Where a code went, with most of it hidden: "••• ••• 0187" for a phone, "a•••@example.com" for an email,
  * enough to recognize without showing it whole.
  */
 export function maskedIdentifier(value: string): string {

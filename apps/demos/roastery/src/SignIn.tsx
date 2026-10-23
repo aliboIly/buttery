@@ -23,11 +23,6 @@ export function SignIn({
             </Text>
           </Inline>
         }
-        labels={{
-          title: "Sign in to Halfmoon",
-          description:
-            "Enter your email or phone number and we'll send you a code to get into the roastery.",
-        }}
         hint={
           <Text variant="body-sm" tone="secondary">
             {`Demo code: ${DEMO_CODE}`}

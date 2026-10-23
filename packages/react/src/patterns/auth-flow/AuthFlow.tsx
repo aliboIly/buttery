@@ -75,13 +75,12 @@ export interface AuthFlowProps<Session>
 
 const LABELS: AuthFlowLabels = {
   title: "Sign in or create an account",
-  description:
-    "Enter your email or phone number and we'll send you a code. No password needed.",
+  description: "You'll get a code instead of a password.",
   submit: "Continue",
   sending: "Sending your code…",
   empty: "Enter your email address or phone number.",
   invalid:
-    "Enter a full email address or phone number, such as name@example.com or (215) 555-0134.",
+    "Enter a full email address or phone number, such as name@example.com or (503) 555-0142.",
   codeTitle: (kind) =>
     kind === "email" ? "Check your email" : "Check your texts",
   sentTo: (destination) => `We sent a code to ${destination}.`,
@@ -264,6 +263,7 @@ export function AuthFlow<Session>({
             type="submit"
             variant="primary"
             size="cta"
+            shape="rounded"
             arrow={flow.sending ? undefined : "forward"}
             aria-disabled={!ready || flow.sending || undefined}
             data-bt-part="submit"
@@ -327,36 +327,45 @@ export function AuthFlow<Session>({
           }
           labels={{ verifying: words.verifying, success: words.success }}
         />
-        {hint === undefined ? null : <div data-bt-part="auth-flow-hint">{hint}</div>}
-        <Stack gap={2}>
-          <div data-bt-part="resend">
-            {flow.resendIn > 0 ? (
-              <Text variant="body-sm" tone="tertiary" data-bt-part="countdown">
-                {words.resendIn(flow.resendIn)}
-              </Text>
-            ) : (
+        <Stack gap={4}>
+          {hint === undefined ? null : (
+            <div data-bt-part="auth-flow-hint">{hint}</div>
+          )}
+          <Stack gap={2}>
+            <div data-bt-part="resend">
+              {flow.resendIn > 0 ? (
+                <Text
+                  variant="body-sm"
+                  tone="tertiary"
+                  data-bt-part="countdown"
+                >
+                  {words.resendIn(flow.resendIn)}
+                </Text>
+              ) : (
+                <Button
+                  variant="ghost"
+                  aria-disabled={done || undefined}
+                  onClick={() => {
+                    if (!done) void flow.resend();
+                  }}
+                >
+                  {words.resend}
+                </Button>
+              )}
+            </div>
+            <div data-bt-part="auth-flow-back">
               <Button
                 variant="ghost"
+                arrow="back"
                 aria-disabled={done || undefined}
                 onClick={() => {
-                  if (!done) void flow.resend();
+                  if (!done) flow.back();
                 }}
               >
-                {words.resend}
+                {words.back}
               </Button>
-            )}
-          </div>
-          <div data-bt-part="auth-flow-back">
-            <Button
-              variant="ghost"
-              aria-disabled={done || undefined}
-              onClick={() => {
-                if (!done) flow.back();
-              }}
-            >
-              {words.back}
-            </Button>
-          </div>
+            </div>
+          </Stack>
         </Stack>
       </Stack>
     </form>

@@ -45,6 +45,15 @@ function continueButton(): HTMLElement {
   return screen.getByRole("button", { name: /Continue|Sending your code/ });
 }
 
+/** The box the words of `text` take up, without the line's leading. */
+function wordsOf(text: string): DOMRect {
+  const [element] = screen.getAllByText(text);
+  if (!element) throw new Error(`No "${text}".`);
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return range.getBoundingClientRect();
+}
+
 async function toCodeStep(value = "rosa@halfmoon.coffee"): Promise<void> {
   await browser.type(identifier(), value);
   await browser.click(continueButton());
@@ -79,8 +88,8 @@ describe("AuthFlow", () => {
       screen.getAllByText("Enter your email address or phone number.").length,
     ).toBeGreaterThan(0);
     expect(document.activeElement).toBe(identifier());
-    await browser.type(identifier(), "2155550134");
-    expect(identifier().value).toBe("(215) 555-0134");
+    await browser.type(identifier(), "5035550142");
+    expect(identifier().value).toBe("(503) 555-0142");
     expect(continueButton().getAttribute("aria-disabled")).toBeNull();
   });
 
@@ -113,6 +122,46 @@ describe("AuthFlow", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("keeps the words where Continue's were while the code is on its way", async () => {
+    render(<Flow onRequestCode={() => new Promise(() => undefined)} />);
+    await browser.type(identifier(), "rosa@halfmoon.coffee");
+    const resting = wordsOf("Continue");
+    await browser.click(continueButton());
+    await screen.findByText("Sending your code…");
+    const sending = wordsOf("Sending your code…");
+    expect(Math.abs(sending.top - resting.top)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(sending.bottom - resting.bottom)).toBeLessThanOrEqual(0.5);
+  });
+
+  it("rounds its button's corners as its field's are", () => {
+    render(<Flow />);
+    const box = identifier().closest('[data-bt-part="box"]');
+    if (!box) throw new Error("No field box.");
+    expect(getComputedStyle(continueButton()).borderRadius).toBe(
+      getComputedStyle(box).borderRadius,
+    );
+  });
+
+  it("spaces the lines under the code field evenly, and marks the way back with its arrow", async () => {
+    render(<Flow hint={<span>Demo code: 246810</span>} />);
+    await toCodeStep();
+    const lines = [
+      wordsOf("The code works for 10 minutes."),
+      wordsOf("Demo code: 246810"),
+      wordsOf("You can ask for a new code in 30s."),
+      wordsOf("Change email or phone"),
+    ];
+    const gaps = lines
+      .slice(1)
+      .map((line, index) => line.top - (lines[index]?.bottom ?? 0));
+    expect(Math.max(...gaps) - Math.min(...gaps)).toBeLessThanOrEqual(2);
+    expect(
+      screen
+        .getByRole("button", { name: "Change email or phone" })
+        .getAttribute("data-arrow"),
+    ).toBe("back");
+  });
+
   it("checks a full code, shows success and hands the session on after the hold", async () => {
     const onSuccess = vi.fn();
     const onVerify = vi.fn<(id: string, value: string) => VerifyResult<string>>(
@@ -121,19 +170,19 @@ describe("AuthFlow", () => {
     render(
       <Flow onVerify={onVerify} onSuccess={onSuccess} successHold={300} />,
     );
-    await toCodeStep("(215) 555-0134");
+    await toCodeStep("(503) 555-0142");
     expect(
       screen.getByRole("heading", { name: "Check your texts" }),
     ).toBeTruthy();
     await browser.type(code(), "246810");
     expect(onVerify).toHaveBeenCalledExactlyOnceWith(
-      "(215) 555-0134",
+      "(503) 555-0142",
       "246810",
     );
     await screen.findAllByText("You're signed in");
     expect(onSuccess).not.toHaveBeenCalled();
     await waitFor(() => {
-      expect(onSuccess).toHaveBeenCalledExactlyOnceWith("(215) 555-0134");
+      expect(onSuccess).toHaveBeenCalledExactlyOnceWith("(503) 555-0142");
     });
   });
 
@@ -142,15 +191,13 @@ describe("AuthFlow", () => {
     await toCodeStep();
     await browser.type(code(), "111111");
     await screen.findAllByText(
-      "That code isn't right. Check your latest message and type it again.",
+      "That code isn't right. Check it and try again.",
     );
     expect(code().value).toBe("");
     expect(document.activeElement).toBe(code());
     await browser.keyboard("2");
     expect(
-      screen.queryAllByText(
-        "That code isn't right. Check your latest message and type it again.",
-      ),
+      screen.queryAllByText("That code isn't right. Check it and try again."),
     ).toHaveLength(0);
     expect(
       screen.getAllByText("The code works for 10 minutes.").length,

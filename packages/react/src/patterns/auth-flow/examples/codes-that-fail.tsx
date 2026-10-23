@@ -13,7 +13,7 @@ export function CodesThatFail(): ReactElement {
   };
   return (
     <AuthFlow
-      defaultIdentifier="(215) 555-0134"
+      defaultIdentifier="(503) 555-0142"
       resendAfter={5}
       hint={
         <Text variant="body-sm" tone="secondary">

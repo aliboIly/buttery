@@ -53,18 +53,18 @@ export const demos: readonly DemoSection[] = [
         />
         <OneTimeCodeField
           label="Checking"
-          defaultValue="613832"
+          defaultValue="480517"
           status="verifying"
         />
         <OneTimeCodeField
           label="Accepted"
-          defaultValue="613832"
+          defaultValue="480517"
           status="success"
         />
         <OneTimeCodeField
           label="Turned down"
           status="error"
-          message="That code isn't right. Check your latest message and type it again."
+          message="That code isn't right. Check it and try again."
         />
       </Stack>
     ),

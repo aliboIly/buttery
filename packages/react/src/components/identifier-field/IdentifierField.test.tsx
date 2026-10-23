@@ -61,15 +61,15 @@ describe("IdentifierField", () => {
       );
     }
     render(<Spy />);
-    await browser.type(input(), "2155550134");
-    expect(input().value).toBe("(215) 555-0134");
-    expect(onValueChange).toHaveBeenLastCalledWith("(215) 555-0134");
+    await browser.type(input(), "5035550142");
+    expect(input().value).toBe("(503) 555-0142");
+    expect(onValueChange).toHaveBeenLastCalledWith("(503) 555-0142");
     await browser.clear(input());
-    await browser.type(input(), "215555");
-    expect(input().value).toBe("(215) 555");
+    await browser.type(input(), "503555");
+    expect(input().value).toBe("(503) 555");
     input().setSelectionRange(2, 2);
     await browser.keyboard("9");
-    expect(input().value).toBe("(291) 555-5");
+    expect(input().value).toBe("(590) 355-5");
     expect(input().selectionStart).toBe(3);
   });
 
@@ -96,11 +96,11 @@ describe("IdentifierField", () => {
     render(
       <IdentifierField
         defaultValue="rosa@halfmoon.coffee"
-        error="Too many codes asked for."
+        error="Too many codes sent."
       />,
     );
-    expect(
-      screen.getAllByText("Too many codes asked for.").length,
-    ).toBeGreaterThan(0);
+    expect(screen.getAllByText("Too many codes sent.").length).toBeGreaterThan(
+      0,
+    );
   });
 });

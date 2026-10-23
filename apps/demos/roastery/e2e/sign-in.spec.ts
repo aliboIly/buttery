@@ -10,7 +10,7 @@ test("asks someone signed out to sign in with a code, the demo's in its hint, th
   });
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Sign in to Halfmoon" }),
+    page.getByRole("heading", { name: "Sign in or create an account" }),
   ).toBeVisible();
   await expectButtery(page, { ...quickMatrix, name: "roastery sign-in" });
 
@@ -51,6 +51,6 @@ test("signs out from the account menu, back to the sign-in screen", async ({
     .click();
   await page.getByRole("menuitem", { name: "Sign out" }).click();
   await expect(
-    page.getByRole("heading", { name: "Sign in to Halfmoon" }),
+    page.getByRole("heading", { name: "Sign in or create an account" }),
   ).toBeVisible();
 });

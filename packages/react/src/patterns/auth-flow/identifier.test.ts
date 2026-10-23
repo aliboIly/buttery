@@ -23,7 +23,7 @@ describe("identifier", () => {
   it("tells an email from a phone number as it's typed", () => {
     expect(identifierKind("")).toBe("unknown");
     expect(identifierKind("2")).toBe("phone");
-    expect(identifierKind("(215) 910")).toBe("phone");
+    expect(identifierKind("(503) 555")).toBe("phone");
     expect(identifierKind("+44 20")).toBe("phone");
     expect(identifierKind("a")).toBe("email");
     expect(identifierKind("rosa@")).toBe("email");
@@ -31,21 +31,21 @@ describe("identifier", () => {
   });
 
   it("formats a North American number as it's typed, and leaves others as written", () => {
-    expect(typed("2159105473")).toBe("(215) 910-5473");
-    expect(typed("215")).toBe("215");
-    expect(typed("2159")).toBe("(215) 9");
-    expect(typed("12159105473")).toBe("1 (215) 910-5473");
-    expect(typed("+12159105473")).toBe("+1 (215) 910-5473");
+    expect(typed("5035550187")).toBe("(503) 555-0187");
+    expect(typed("503")).toBe("503");
+    expect(typed("5035")).toBe("(503) 5");
+    expect(typed("15035550187")).toBe("1 (503) 555-0187");
+    expect(typed("+15035550187")).toBe("+1 (503) 555-0187");
     expect(formatPhone("+44 20 7946 0958")).toBe("+44 20 7946 0958");
   });
 
   it("keeps the caret after the digit it followed when a digit goes in or out in the middle", () => {
-    expect(formatIdentifier({ value: "(215) 9105-473", caret: 10 })).toEqual({
-      value: "(215) 910-5473",
+    expect(formatIdentifier({ value: "(503) 5550-187", caret: 10 })).toEqual({
+      value: "(503) 555-0187",
       caret: 11,
     });
-    expect(formatIdentifier({ value: "(25) 910-5473", caret: 2 })).toEqual({
-      value: "(259) 105-473",
+    expect(formatIdentifier({ value: "(53) 555-0187", caret: 2 })).toEqual({
+      value: "(535) 550-187",
       caret: 2,
     });
     expect(formatIdentifier({ value: "rosa@cafe.com", caret: 3 })).toEqual({
@@ -57,15 +57,15 @@ describe("identifier", () => {
   it("accepts a full email or phone number and nothing less", () => {
     expect(validIdentifier("rosa@cafe.com")).toBe(true);
     expect(validIdentifier("rosa@cafe")).toBe(false);
-    expect(validIdentifier("(215) 910-5473")).toBe(true);
-    expect(validIdentifier("(215) 910-547")).toBe(false);
+    expect(validIdentifier("(503) 555-0187")).toBe(true);
+    expect(validIdentifier("(503) 555-018")).toBe(false);
     expect(validIdentifier("+44 20 7946 0958")).toBe(true);
     expect(validIdentifier("+44 20")).toBe(false);
     expect(validIdentifier("")).toBe(false);
   });
 
   it("hides most of where a code went", () => {
-    expect(maskedIdentifier("(215) 910-5473")).toBe("••• ••• 5473");
+    expect(maskedIdentifier("(503) 555-0187")).toBe("••• ••• 0187");
     expect(maskedIdentifier("rosa@cafe.com")).toBe("r•••@cafe.com");
   });
 });

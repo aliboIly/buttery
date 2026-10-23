@@ -124,6 +124,7 @@
 
   .bt-one-time-code-field > [data-bt-part="status"] > .bt-text {
     color: inherit;
+    text-align: center;
     text-box: normal;
   }
 

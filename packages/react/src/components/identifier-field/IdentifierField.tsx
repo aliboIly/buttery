@@ -38,7 +38,7 @@ export interface IdentifierFieldProps extends Omit<
 }
 
 const INVALID =
-  "Enter an email address or a phone number, such as name@example.com or (215) 555-0134.";
+  "Enter an email address or a phone number, such as name@example.com or (503) 555-0142.";
 
 /**
  * One field for an email address or a phone number. It tells them apart as they're typed, asks phones for

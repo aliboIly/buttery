@@ -60,10 +60,10 @@ describe("useOtpFlow", () => {
     );
     const { result } = flow({ onRequestCode });
     expect(result.current.step).toBe("identify");
-    await sendTo(result, "(215) 910-5473");
-    expect(onRequestCode).toHaveBeenCalledWith("(215) 910-5473");
+    await sendTo(result, "(503) 555-0187");
+    expect(onRequestCode).toHaveBeenCalledWith("(503) 555-0187");
     expect(result.current.step).toBe("code");
-    expect(result.current.destination).toBe("••• ••• 5473");
+    expect(result.current.destination).toBe("••• ••• 0187");
     expect(result.current.expiresIn).toBe(600);
     expect(result.current.resendIn).toBe(30);
   });
@@ -102,14 +102,14 @@ describe("useOtpFlow", () => {
     await sendTo(result, "rosa@cafe.com");
     expect(result.current.step).toBe("identify");
     expect(result.current.requestError).toBe(
-      "Too many codes asked for. Wait a minute, then try again.",
+      "Too many codes sent. Try again in a minute.",
     );
     const failing = flow({
       onRequestCode: () => Promise.reject(new Error("offline")),
     });
     await sendTo(failing.result, "rosa@cafe.com");
     expect(failing.result.current.requestError).toBe(
-      "The code couldn't be sent. Check your connection and try again.",
+      "We couldn't send a code. Check your connection.",
     );
   });
 

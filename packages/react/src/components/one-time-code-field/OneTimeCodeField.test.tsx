@@ -60,26 +60,26 @@ describe("OneTimeCodeField", () => {
     render(<Controlled onComplete={onComplete} />);
     const user = userEvent.setup();
     await user.click(input());
-    await user.paste("613-832");
-    expect(input().value).toBe("613832");
-    expect(onComplete).toHaveBeenCalledExactlyOnceWith("613832");
+    await user.paste("480-517");
+    expect(input().value).toBe("480517");
+    expect(onComplete).toHaveBeenCalledExactlyOnceWith("480517");
   });
 
   it("takes a code filled in all at once, as autofill does, and completes once however often it's filled", async () => {
     const onComplete = vi.fn();
     render(<Controlled onComplete={onComplete} />);
-    await browser.fill(input(), "613832");
-    await browser.fill(input(), "613832");
-    expect(input().value).toBe("613832");
-    expect(onComplete).toHaveBeenCalledExactlyOnceWith("613832");
+    await browser.fill(input(), "480517");
+    await browser.fill(input(), "480517");
+    expect(input().value).toBe("480517");
+    expect(onComplete).toHaveBeenCalledExactlyOnceWith("480517");
   });
 
   it("clears with Backspace like any input and completes again once refilled", async () => {
     const onComplete = vi.fn();
     render(<Controlled onComplete={onComplete} />);
-    await browser.type(input(), "613832");
+    await browser.type(input(), "480517");
     await browser.keyboard("{Backspace}");
-    expect(input().value).toBe("61383");
+    expect(input().value).toBe("48051");
     await browser.keyboard("2");
     expect(onComplete).toHaveBeenCalledTimes(2);
   });
@@ -143,9 +143,31 @@ describe("OneTimeCodeField", () => {
     expect(status?.getBoundingClientRect().height).toBe(idle);
   });
 
+  it("centers a message long enough to wrap, as it does a short one", () => {
+    render(
+      <div style={{ inlineSize: "var(--bt-w-menu-min)" }}>
+        <OneTimeCodeField
+          status="error"
+          message="That code isn't right. Check it and try again."
+        />
+      </div>,
+    );
+    const words = screen.getAllByText(
+      "That code isn't right. Check it and try again.",
+    )[0];
+    if (!words) throw new Error("No message.");
+    const range = document.createRange();
+    range.selectNodeContents(words);
+    const lines = new Set(
+      [...range.getClientRects()].map((line) => Math.round(line.top)),
+    );
+    expect(lines.size).toBeGreaterThan(1);
+    expect(getComputedStyle(words).textAlign).toBe("center");
+  });
+
   it("draws success in the success color and an error in the danger color", async () => {
     const { rerender } = render(
-      <OneTimeCodeField status="success" defaultValue="613832" />,
+      <OneTimeCodeField status="success" defaultValue="480517" />,
     );
     const box = input().closest<HTMLElement>('[data-bt-part="box"]');
     if (!box) throw new Error("No box.");

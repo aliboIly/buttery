@@ -11,7 +11,7 @@ export function ConfirmAPhone(): ReactElement {
   return (
     <SettingsSection
       title="Phone number"
-      description="We texted a code to (215) 555-0134 to check it's yours."
+      description="We texted a code to (503) 555-0142 to check it's yours."
     >
       <Stack gap={3}>
         <OneTimeCodeField

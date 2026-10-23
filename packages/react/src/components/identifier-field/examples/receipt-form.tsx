@@ -43,7 +43,7 @@ export function ReceiptForm(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ type, press, see }) => {
-  await type("Where to send your receipt", "2155550134");
+  await type("Where to send your receipt", "5035550142");
   await press("button", "Send receipt");
-  await see("Sent to (215) 555-0134.");
+  await see("Sent to (503) 555-0142.");
 };

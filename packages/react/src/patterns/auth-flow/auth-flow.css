@@ -43,16 +43,20 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* The spinner and its words sit where the label was, the button keeping its width. */
+  /*
+   * The spinner and its words sit where the label was, the button keeping its width. The words set the
+   * baseline, so they sit on the line "Continue" did; the spinner centers on them.
+   */
   .bt-auth-flow [data-bt-part="sending"] {
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
     gap: var(--bt-space-2);
   }
 
   .bt-auth-flow [data-bt-part="sending"] > [data-bt-part="sending-mark"] {
     position: relative;
     flex: none;
+    align-self: center;
     inline-size: var(--bt-icon-sm);
     block-size: var(--bt-icon-sm);
   }

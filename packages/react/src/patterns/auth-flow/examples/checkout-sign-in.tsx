@@ -40,9 +40,9 @@ export function CheckoutSignIn(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ type, press, see }) => {
-  await type("Email or phone number", "2155550134");
+  await type("Email or phone number", "5035550142");
   await press("button", "Continue");
   await see("Check your texts");
   await type("One-time code", "135790");
-  await see("Paying as (215) 555-0134.");
+  await see("Paying as (503) 555-0142.");
 };

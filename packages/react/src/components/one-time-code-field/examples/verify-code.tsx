@@ -16,9 +16,7 @@ export function VerifyCode(): ReactElement {
         setStatus("success");
       } else {
         setStatus("error");
-        setError(
-          "That code isn't right. Check your latest message and type it again.",
-        );
+        setError("That code isn't right. Check it and try again.");
         setCode("");
       }
     }, 200);
