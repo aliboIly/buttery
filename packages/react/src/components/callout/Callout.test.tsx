@@ -37,6 +37,39 @@ describe("Callout", () => {
     ).toBe("rgb(231, 245, 237)");
   });
 
+  it("draws an outline in the tone's color on the surface, or a bar on its start edge over the tint", () => {
+    render(
+      <>
+        <Callout
+          tone="danger"
+          variant="outline"
+          title="Couldn't sign in"
+          data-testid="outline"
+        />
+        <Callout
+          tone="success"
+          variant="accent"
+          title="Exported"
+          data-testid="accent"
+        />
+        <Callout tone="success" title="Exported" data-testid="soft" />
+      </>,
+    );
+    const outline = getComputedStyle(screen.getByTestId("outline"));
+    expect(outline.backgroundColor).toBe("rgb(255, 255, 255)");
+    expect(outline.borderTopWidth).toBe("1px");
+    expect(outline.borderTopColor).toBe("rgb(199, 42, 28)");
+    expect(outline.borderLeftWidth).toBe("1px");
+    const accent = getComputedStyle(screen.getByTestId("accent"));
+    expect(accent.backgroundColor).toBe("rgb(231, 245, 237)");
+    expect(accent.borderLeftWidth).toBe("4px");
+    expect(accent.borderLeftColor).toBe("rgb(23, 114, 69)");
+    expect(accent.borderTopWidth).toBe("0px");
+    const soft = getComputedStyle(screen.getByTestId("soft"));
+    expect(soft.borderLeftWidth).toBe("0px");
+    expect(soft.borderTopWidth).toBe("0px");
+  });
+
   it("centers its icon on the first line, with a title or without", () => {
     render(
       <>

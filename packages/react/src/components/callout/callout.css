@@ -2,6 +2,8 @@
   .bt-callout {
     --bt-callout-bg: var(--bt-accent-subtle);
     --bt-callout-ink: var(--bt-accent-text);
+    --bt-callout-line: 1px;
+    --bt-callout-bar: 4px;
 
     display: flex;
     align-items: flex-start;
@@ -26,6 +28,16 @@
   .bt-callout[data-tone="danger"] {
     --bt-callout-bg: var(--bt-danger-subtle);
     --bt-callout-ink: var(--bt-danger);
+  }
+
+  /* The tone's own color draws the edge, so the words sit on the surface every tone's ink passes AA on. */
+  .bt-callout[data-variant="outline"] {
+    border: var(--bt-callout-line) solid var(--bt-callout-ink);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-callout[data-variant="accent"] {
+    border-inline-start: var(--bt-callout-bar) solid var(--bt-callout-ink);
   }
 
   /* As tall as the first line, which centers the icon on it; the icon itself keeps its 16px. */

@@ -117,6 +117,7 @@ export { Callout } from "./components/callout/Callout.tsx";
 export type {
   CalloutProps,
   CalloutTone,
+  CalloutVariant,
 } from "./components/callout/Callout.tsx";
 export { SignInForm } from "./patterns/sign-in-form/SignInForm.tsx";
 export type {
