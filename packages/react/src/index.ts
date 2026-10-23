@@ -208,7 +208,11 @@ export type {
   HeaderBarProps,
 } from "./patterns/header-bar/HeaderBar.tsx";
 export { EmptyState } from "./patterns/empty-state/EmptyState.tsx";
-export type { EmptyStateProps } from "./patterns/empty-state/EmptyState.tsx";
+export type {
+  EmptyStateProps,
+  EmptyStateSize,
+  EmptyStateVariant,
+} from "./patterns/empty-state/EmptyState.tsx";
 export {
   DropZone,
   DropZoneOpen,

@@ -1,8 +1,13 @@
 @layer bt.patterns {
   .bt-empty-state {
     --bt-empty-state-gap: var(--bt-space-6);
+    --bt-empty-state-content-gap: var(--bt-space-4);
     --bt-empty-state-tile: 48px;
+    --bt-empty-state-tile-radius: var(--bt-r-lg);
     --bt-empty-state-line: 1px;
+    --bt-empty-state-dash: 2px;
+    --bt-empty-state-tile-sm: 40px;
+    --bt-empty-state-tile-lg: 56px;
 
     display: flex;
     flex-direction: column;
@@ -12,12 +17,46 @@
     text-align: center;
   }
 
+  .bt-empty-state[data-size="sm"] {
+    --bt-empty-state-gap: var(--bt-space-4);
+    --bt-empty-state-content-gap: var(--bt-space-3);
+    --bt-empty-state-tile: var(--bt-empty-state-tile-sm);
+    --bt-empty-state-tile-radius: var(--bt-r-md);
+  }
+
+  .bt-empty-state[data-size="lg"] {
+    --bt-empty-state-gap: var(--bt-space-8);
+    --bt-empty-state-content-gap: var(--bt-space-5);
+    --bt-empty-state-tile: var(--bt-empty-state-tile-lg);
+    --bt-empty-state-tile-radius: var(--bt-r-xl);
+  }
+
+  /* Drawn as a drop target is, with its corners and dashes, and padded by its size. */
+  .bt-empty-state[data-variant="dashed"] {
+    padding: var(--bt-space-8);
+    border: var(--bt-empty-state-dash) dashed var(--bt-ring-selected);
+    border-radius: var(--bt-r-2xl);
+  }
+
+  .bt-empty-state[data-variant="dashed"][data-size="sm"] {
+    padding: var(--bt-space-6);
+  }
+
+  .bt-empty-state[data-variant="dashed"][data-size="lg"] {
+    padding: var(--bt-space-12);
+  }
+
   .bt-empty-state > [data-bt-part="content"] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--bt-space-4);
+    gap: var(--bt-empty-state-content-gap);
     min-inline-size: 0;
+  }
+
+  /* In a panel or a table, the line sits 8 under the title, close enough to read as one block. */
+  .bt-empty-state[data-size="sm"] > [data-bt-part="content"] > .bt-text-stack {
+    --bt-text-stack-gap: var(--bt-space-2);
   }
 
   .bt-empty-state [data-bt-part="empty-state-icon"] {
@@ -27,7 +66,7 @@
     inline-size: var(--bt-empty-state-tile);
     block-size: var(--bt-empty-state-tile);
     border: var(--bt-empty-state-line) solid var(--bt-border);
-    border-radius: var(--bt-r-lg);
+    border-radius: var(--bt-empty-state-tile-radius);
     background-color: var(--bt-bg-section);
     color: var(--bt-text-secondary);
   }

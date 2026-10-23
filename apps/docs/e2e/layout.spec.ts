@@ -912,6 +912,20 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       },
     },
   ],
+  "empty-state": [
+    {
+      name: "draw the live demo dashed at size lg",
+      allowMove: ["main"],
+      run: liveControls({ size: "lg", variant: "dashed" }),
+      acrossMatrix: true,
+    },
+    {
+      name: "draw the live demo at size sm",
+      allowMove: ["main"],
+      run: liveControls({ size: "sm" }),
+      acrossMatrix: quick,
+    },
+  ],
   "metric-card": [
     {
       name: "draw the live demo tinted at size lg",
