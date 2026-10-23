@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Dialog } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Dialog } from "@butteryui/react";
 
 const ROASTS = ["Lantern Hill", "Harbor Fog", "Ironwood Night"];
 

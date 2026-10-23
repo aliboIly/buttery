@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, CenteredHero, Page } from "@buttery/react";
+import { Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, CenteredHero, Page } from "@butteryui/react";
 
 const SAMPLES = ["Spring launch", "Quarterly review", "Team offsite"];
 

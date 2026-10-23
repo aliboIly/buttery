@@ -1,5 +1,5 @@
-import { Icon, Slot, cx } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { Icon, Slot, cx } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { Slot as RadixSlot } from "radix-ui";
 import type {
   ComponentPropsWithRef,

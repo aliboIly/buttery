@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Select } from "@buttery/react";
-import type { SelectOption } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Select } from "@butteryui/react";
+import type { SelectOption } from "@butteryui/react";
 
 type Format = "png" | "jpg" | "webp";
 

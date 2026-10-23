@@ -1,6 +1,6 @@
-import { Surface } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, Page, Section, SubNav } from "@buttery/react";
+import { Surface } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, Page, Section, SubNav } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/navigation",

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, FormDialog, TextField } from "@buttery/react";
+import { Grid, Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, FormDialog, TextField } from "@butteryui/react";
 
 /** The two widths: "sm" (400px, the default) for a value or two, and "md" (560px) for fields side by side. */
 export function Sizes(): ReactElement {

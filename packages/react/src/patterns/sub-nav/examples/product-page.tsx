@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Surface } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Page, Section, SubNav } from "@buttery/react";
+import { Surface } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Page, Section, SubNav } from "@butteryui/react";
 
 const SECTIONS = [
   {

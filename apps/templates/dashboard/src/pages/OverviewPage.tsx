@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
-import { Grid } from "@buttery/core";
+import { Grid } from "@butteryui/core";
 import {
   AppPage,
   ArrowLink,
   BarChart,
   MetricCard,
   PageHeader,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { ORDER_COUNTS, SALES, WEEK, change, money, total } from "../data.ts";
 import { useLink } from "../router.tsx";
 

@@ -1,4 +1,4 @@
-import { Icon, useMergedRefs } from "@buttery/core";
+import { Icon, useMergedRefs } from "@butteryui/core";
 import { Check, Circle, Eye, EyeOff } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import type { ReactElement } from "react";

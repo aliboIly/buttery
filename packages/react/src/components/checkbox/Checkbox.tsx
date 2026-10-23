@@ -1,4 +1,4 @@
-import { Icon, cx, hasContent, useControllableState } from "@buttery/core";
+import { Icon, cx, hasContent, useControllableState } from "@butteryui/core";
 import { Check, Minus } from "lucide-react";
 import { Checkbox as RadixCheckbox, VisuallyHidden } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";

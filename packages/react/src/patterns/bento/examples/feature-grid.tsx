@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Center, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Bento } from "@buttery/react";
+import { Center, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Bento } from "@butteryui/react";
 
 function Picture({ label }: { readonly label: string }): ReactElement {
   return (

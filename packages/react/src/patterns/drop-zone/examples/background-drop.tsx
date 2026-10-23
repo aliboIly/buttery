@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, DropZone, EmptyState } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, DropZone, EmptyState } from "@butteryui/react";
 
 /** An empty slide that takes a picture for its background: dropped, pasted, opened with ⌘O or picked with the button. */
 export function BackgroundDrop(): ReactElement {

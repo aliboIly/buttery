@@ -1,6 +1,6 @@
 import { useId } from "react";
 import type { ReactElement } from "react";
-import { gradients } from "@buttery/core/palettes";
+import { gradients } from "@butteryui/core/palettes";
 import { BOX_COLORS, INK_DARK } from "./geometry.ts";
 
 const APRICOT = gradients.find((preset) => preset.id === "apricot");

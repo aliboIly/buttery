@@ -5,7 +5,7 @@
     "module": "preserve",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
-    "customConditions": ["@buttery/source"],
+    "customConditions": ["@butteryui/source"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "jsx": "react-jsx",

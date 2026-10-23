@@ -1,5 +1,8 @@
-import { Icon, TextStack, cx, hasContent } from "@buttery/core";
-import type { IconComponentProps, TextStackTitleElement } from "@buttery/core";
+import { Icon, TextStack, cx, hasContent } from "@butteryui/core";
+import type {
+  IconComponentProps,
+  TextStackTitleElement,
+} from "@butteryui/core";
 import type {
   ComponentPropsWithRef,
   ComponentType,

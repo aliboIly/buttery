@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Breadcrumbs } from "@buttery/react";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Breadcrumbs } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/navigation",

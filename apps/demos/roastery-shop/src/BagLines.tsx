@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { StoredStateSetter } from "@buttery/core";
-import { Button, IconButton } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { StoredStateSetter } from "@butteryui/core";
+import { Button, IconButton } from "@butteryui/react";
 import { Minus, Plus } from "lucide-react";
 import {
   MOST_OF_ONE,

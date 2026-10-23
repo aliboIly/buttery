@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SignInForm } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SignInForm } from "@butteryui/react";
 
 async function signIn(email: string, password: string): Promise<boolean> {
   await new Promise((resolve) => {

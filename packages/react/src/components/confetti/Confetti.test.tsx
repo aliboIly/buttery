@@ -1,9 +1,9 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MotionPreferenceContext, publishSettled } from "@buttery/core";
-import { gradients } from "@buttery/core/palettes";
+import { MotionPreferenceContext, publishSettled } from "@butteryui/core";
+import { gradients } from "@butteryui/core/palettes";
 import { celebrate, Confetti } from "./Confetti.tsx";
 
 const root = document.documentElement;

@@ -18,9 +18,13 @@ import {
   Text,
   useAnimationTracking,
   useLayoutAnimation,
-} from "@buttery/core";
-import type { PresencePreset, SpringToken } from "@buttery/core";
-import { ArrowLink, Button as ButteryButton, celebrate } from "@buttery/react";
+} from "@butteryui/core";
+import type { PresencePreset, SpringToken } from "@butteryui/core";
+import {
+  ArrowLink,
+  Button as ButteryButton,
+  celebrate,
+} from "@butteryui/react";
 import { siteHref } from "../location.ts";
 import "./motion-page.css";
 

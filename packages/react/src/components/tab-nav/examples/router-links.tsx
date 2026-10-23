@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { TabNav } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { TabNav } from "@butteryui/react";
 
 /** A router's own links as tabs, with asChild and a label for the overflow menu. */
 export function RouterLinks(): ReactElement {

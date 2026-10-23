@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink, Button, SetupGuide } from "@buttery/react";
+import { Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink, Button, SetupGuide } from "@butteryui/react";
 
 /** A shop's welcome card that opens its setup guide: tasks in groups that fold, progress on the card and in the guide. */
 export function GroupedSetup(): ReactElement {

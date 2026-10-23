@@ -4,7 +4,7 @@ export type Shape = "wide" | "square" | "tall";
 /** What the editor makes: a title on a card, on a backdrop. */
 export interface Design {
   readonly title: string;
-  /** The id of a gradient preset from `@buttery/core/palettes`. */
+  /** The id of a gradient preset from `@butteryui/core/palettes`. */
   readonly backdrop: string;
   readonly shape: Shape;
   /** The card's corner radius, in px of the full-size canvas. */

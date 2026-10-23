@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, ValueBadge } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, ValueBadge } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

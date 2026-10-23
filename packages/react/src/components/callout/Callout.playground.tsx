@@ -1,6 +1,6 @@
-import { demoChoice, Stack } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ArrowLink, Callout } from "@buttery/react";
+import { demoChoice, Stack } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ArrowLink, Callout } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/feedback",

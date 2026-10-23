@@ -1,7 +1,13 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { FloatingLanes, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import {
+  FloatingLanes,
+  Pressable,
+  Stack,
+  Surface,
+  Text,
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A notice in the top-end lane that the user can put away, with a status line in the page that says the same. */
 export function UpdateNotice(): ReactElement {

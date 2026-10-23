@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Bento, Page, SegmentedControl, Section } from "@buttery/react";
+import { Center, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Bento, Page, SegmentedControl, Section } from "@butteryui/react";
 
 type Shape = "wide" | "square" | "tall";
 

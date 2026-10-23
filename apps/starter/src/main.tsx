@@ -1,8 +1,8 @@
-import "@buttery/core/styles.css";
-import "@buttery/react/styles.css";
+import "@butteryui/core/styles.css";
+import "@butteryui/react/styles.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ButteryProvider } from "@buttery/react";
+import { ButteryProvider } from "@butteryui/react";
 import { App } from "./App.tsx";
 
 const container = document.getElementById("root");

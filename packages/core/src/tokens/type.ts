@@ -1,6 +1,6 @@
 import type { ColorToken } from "./color.ts";
 
-/** Font stacks, emitted as `--bt-font-<name>`. Inter ships with `@buttery/core`; "Inter Fallback" is metric-matched Arial. */
+/** Font stacks, emitted as `--bt-font-<name>`. Inter ships with `@butteryui/core`; "Inter Fallback" is metric-matched Arial. */
 export const fontFamilies = {
   sans: '"Inter Variable", "Inter Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
   mono: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace',

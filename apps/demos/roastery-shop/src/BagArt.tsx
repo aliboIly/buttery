@@ -1,8 +1,8 @@
 import { useId } from "react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
-import { cx } from "@buttery/core";
-import { gradients } from "@buttery/core/palettes";
-import type { GradientPreset } from "@buttery/core/palettes";
+import { cx } from "@butteryui/core";
+import { gradients } from "@butteryui/core/palettes";
+import type { GradientPreset } from "@butteryui/core/palettes";
 
 declare module "react" {
   interface CSSProperties {
@@ -56,7 +56,7 @@ export function BagArt({
   label,
   className,
 }: {
-  /** The `@buttery/core/palettes` gradient the label is printed in, or `"choice"`. */
+  /** The `@butteryui/core/palettes` gradient the label is printed in, or `"choice"`. */
   readonly label: string;
   readonly className?: string | undefined;
 }): ReactElement {
@@ -149,7 +149,7 @@ export function BagArt({
   );
 }
 
-/** Two `@buttery/core/palettes` gradients for a backdrop: one for each theme. */
+/** Two `@butteryui/core/palettes` gradients for a backdrop: one for each theme. */
 export interface Backdrop {
   readonly light: string;
   readonly dark: string;

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { MouseEvent, ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Breadcrumbs } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Breadcrumbs } from "@butteryui/react";
 
 const PAGES = [
   {

@@ -1,5 +1,5 @@
-import { Inline, Stack, Sticky, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import { Inline, Stack, Sticky, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "foundations",

@@ -7,8 +7,8 @@ import {
   useButteryTransition,
   useControllableState,
   useMotionPreference,
-} from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { ChevronDown } from "lucide-react";
 import { motion } from "motion/react";
 import { Accordion as RadixAccordion } from "radix-ui";

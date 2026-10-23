@@ -1,4 +1,4 @@
-import { Icon, cx, opensElsewhere } from "@buttery/core";
+import { Icon, cx, opensElsewhere } from "@butteryui/core";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ComponentPropsWithRef, MouseEvent, ReactElement } from "react";
 

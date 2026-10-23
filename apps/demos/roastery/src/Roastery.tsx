@@ -1,4 +1,4 @@
-import { Menu, OverflowCluster } from "@buttery/core";
+import { Menu, OverflowCluster } from "@butteryui/core";
 import {
   AccountMenu,
   AnnouncementDialog,
@@ -16,7 +16,7 @@ import {
   pageSource,
   parseSearch,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import {
   Bell,
   CircleHelp,
@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ReactElement } from "react";
-import type { SearchSource, SetupTask } from "@buttery/react";
+import type { SearchSource, SetupTask } from "@butteryui/react";
 import { CustomerPage } from "./CustomerPage.tsx";
 import { CustomersPage } from "./CustomersPage.tsx";
 import { HelpPanel } from "./HelpPanel.tsx";

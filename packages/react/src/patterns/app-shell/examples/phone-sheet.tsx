@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Center, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   AppShell,
   Button,
@@ -9,7 +9,7 @@ import {
   Inspector,
   Stage,
   Switch,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** At phone width the inspector opens as a sheet; with open kept in useState, Done in the sheet closes it. */
 export function PhoneSheet(): ReactElement {

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Switch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Switch } from "@butteryui/react";
 
 /** A setting kept in state: it takes effect the moment it's flipped, and Restore default sets it back from outside. */
 export function SnapToGrid(): ReactElement {

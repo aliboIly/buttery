@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
-import { Grid, Icon, Inline, Stack, Surface, Text } from "@buttery/core";
-import { ArrowLink, Stat, StatStrip, TagChip } from "@buttery/react";
+import { Grid, Icon, Inline, Stack, Surface, Text } from "@butteryui/core";
+import { ArrowLink, Stat, StatStrip, TagChip } from "@butteryui/react";
 import { Circle, CircleCheck, Lightbulb, Link2 } from "lucide-react";
 import { roadmap } from "virtual:buttery-roadmap";
 import type { RoadmapRelease } from "virtual:buttery-roadmap";

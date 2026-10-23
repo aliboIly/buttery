@@ -5,7 +5,7 @@ import {
   timing,
   trackAnimation,
   useMotionPreference,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { animate } from "motion";
 import { VisuallyHidden } from "radix-ui";
 import { createContext, use, useEffect, useRef } from "react";

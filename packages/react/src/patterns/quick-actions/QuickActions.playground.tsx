@@ -1,11 +1,11 @@
-import { Stack, Text } from "@buttery/core";
+import { Stack, Text } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { QuickActions } from "@buttery/react";
+} from "@butteryui/core";
+import { QuickActions } from "@butteryui/react";
 import { Download, Plus, Send, Upload } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

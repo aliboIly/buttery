@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Inspector, SegmentedControl, Slider } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Inspector, SegmentedControl, Slider } from "@butteryui/react";
 
 const FORMATS = [
   { value: "png", label: "PNG" },

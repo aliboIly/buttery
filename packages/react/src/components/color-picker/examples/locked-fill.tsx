@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ColorPicker, Switch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ColorPicker, Switch } from "@butteryui/react";
 
 /** A picker that's disabled while its shape is locked, with the switch that unlocks it. */
 export function LockedFill(): ReactElement {

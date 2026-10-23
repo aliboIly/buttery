@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, PasswordField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, PasswordField } from "@butteryui/react";
 
 /** The password on a sign-in form, filled in by the browser's saved password and read from the form when it's sent. */
 export function SignInPassword(): ReactElement {

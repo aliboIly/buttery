@@ -1,4 +1,4 @@
-import type { Density } from "@buttery/core";
+import type { Density } from "@butteryui/core";
 
 /** A viewport size in CSS pixels. */
 export interface ButteryViewport {

@@ -1,5 +1,5 @@
-import { OverflowCluster, cx } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { OverflowCluster, cx } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import type { ComponentPropsWithRef, ComponentType, ReactElement } from "react";
 import { Button } from "../../components/button/Button.tsx";
 

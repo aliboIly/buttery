@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { InfoButton } from "@buttery/react";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { InfoButton } from "@butteryui/react";
 
 /** A metric card's title with an info button after it, 4px apart and centered on the title's line. */
 export function InfoBesideATitle(): ReactElement {

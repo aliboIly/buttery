@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import type { Locator, Page } from "@playwright/test";
-import { expectButtery, fullMatrix, quickMatrix } from "@buttery/test";
+import { expectButtery, fullMatrix, quickMatrix } from "@butteryui/test";
 import { demoPages } from "../src/routes.ts";
 
 const matrix =

@@ -29,7 +29,7 @@ import {
   useFloatingEntrance,
   useMergedRefs,
   warnOnce,
-} from "@buttery/core";
+} from "@butteryui/core";
 import type {
   FloatingEntrance,
   MenuCheckboxItemProps,
@@ -43,7 +43,7 @@ import type {
   MenuSubContentProps,
   MenuSubProps,
   MenuSubTriggerProps,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { AnimatePresence } from "motion/react";
 import { ContextMenu as RadixContextMenu } from "radix-ui";
 import { createContext, use, useLayoutEffect, useRef, useState } from "react";

@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
-import { Grid, Icon, Stack, Surface, Text } from "@buttery/core";
+import { Grid, Icon, Stack, Surface, Text } from "@butteryui/core";
 import {
   ArrowRight,
   Blocks,

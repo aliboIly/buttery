@@ -1,4 +1,4 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { cleanup, render } from "@testing-library/react";
 import { createRef } from "react";

@@ -1,9 +1,9 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { IconButton, LoadingPill } from "@buttery/react";
+import { Center, Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { IconButton, LoadingPill } from "@butteryui/react";
 
 const WEEKS = [
   { week: 39, revenue: "$10,870" },

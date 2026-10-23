@@ -6,14 +6,14 @@ import {
   useSyncExternalStore,
 } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import { CommandSearch, formatSearch, parseSearch } from "@buttery/react";
+import { Stack, Surface, Text } from "@butteryui/core";
+import { CommandSearch, formatSearch, parseSearch } from "@butteryui/react";
 import type {
   SearchFilter,
   SearchItem,
   SearchQuery,
   SearchSource,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { initialValues } from "../LiveControls.tsx";
 import { siteHref } from "../location.ts";
 import { components, docsRouteOf, packageOf } from "../registry.ts";

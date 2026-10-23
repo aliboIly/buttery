@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
-import { Grid, Stack, Surface, Text, cx } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ContextMenu } from "@buttery/react";
+import { Grid, Stack, Surface, Text, cx } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ContextMenu } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/overlays",

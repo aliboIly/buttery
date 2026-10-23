@@ -1,4 +1,4 @@
-import { Icon, cx, useControllableState } from "@buttery/core";
+import { Icon, cx, useControllableState } from "@butteryui/core";
 import { Minus, Plus } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import type {

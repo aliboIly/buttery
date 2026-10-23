@@ -1,14 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   AppPage,
   PageHeader,
   SearchField,
   TopBar,
   matchesSearch,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Bell, CircleHelp } from "lucide-react";
 
 interface Order {

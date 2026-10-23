@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Catalog, InitialsTile, TagChip } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Catalog, InitialsTile, TagChip } from "@butteryui/react";
 
 const INTEGRATIONS = [
   {

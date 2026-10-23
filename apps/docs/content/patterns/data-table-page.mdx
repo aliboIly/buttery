@@ -46,7 +46,7 @@ Here is a whole orders page: two saved views, a status filter and a search in th
 ```tsx title="src/pages/OrdersPage.tsx"
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
+import { Stack } from "@butteryui/core";
 import {
   AppPage,
   Button,
@@ -57,8 +57,12 @@ import {
   SavedViews,
   SearchField,
   StatusBadge,
-} from "@buttery/react";
-import type { DataTableColumn, DataTableSort, SavedView } from "@buttery/react";
+} from "@butteryui/react";
+import type {
+  DataTableColumn,
+  DataTableSort,
+  SavedView,
+} from "@butteryui/react";
 
 const STATUSES = ["Paid", "Unpaid", "Refunded"] as const;
 

@@ -8,13 +8,13 @@ since: 0.2.0
 related: [guides/check-your-layout, layout/the-layout-contract]
 ---
 
-`expectButtery` from `@buttery/test` checks a page in Playwright against buttery's layout contract, at each viewport, theme and density you give it, and fails with every problem it finds and how to fix it. Use it in an app's end-to-end tests, so a layout that breaks at one size can't ship.
+`expectButtery` from `@butteryui/test` checks a page in Playwright against buttery's layout contract, at each viewport, theme and density you give it, and fails with every problem it finds and how to fix it. Use it in an app's end-to-end tests, so a layout that breaks at one size can't ship.
 
 ## A first test
 
 ```ts title="e2e/layout.spec.ts"
 import { test } from "@playwright/test";
-import { expectButtery, quickMatrix } from "@buttery/test";
+import { expectButtery, quickMatrix } from "@butteryui/test";
 
 test("the orders page is buttery", async ({ page }) => {
   await page.goto("/orders");

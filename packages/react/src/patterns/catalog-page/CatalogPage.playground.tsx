@@ -3,7 +3,7 @@ import type {
   DemoSection,
   DemoWidth,
   DocsPage,
-} from "@buttery/core";
+} from "@butteryui/core";
 import {
   Button,
   CatalogPage,
@@ -11,7 +11,7 @@ import {
   InitialsTile,
   SearchField,
   TagChip,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

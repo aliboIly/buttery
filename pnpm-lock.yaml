@@ -307,10 +307,10 @@ importers:
 
   apps/demos/deckhand:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../../packages/react
       lucide-react:
@@ -326,7 +326,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../../packages/test
       '@rolldown/plugin-babel':
@@ -350,10 +350,10 @@ importers:
 
   apps/demos/roastery:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../../packages/react
       lucide-react:
@@ -369,7 +369,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../../packages/test
       '@rolldown/plugin-babel':
@@ -393,10 +393,10 @@ importers:
 
   apps/demos/roastery-shop:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../../packages/react
       lucide-react:
@@ -412,7 +412,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../../packages/test
       '@rolldown/plugin-babel':
@@ -436,10 +436,10 @@ importers:
 
   apps/docs:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../packages/react
       demo-deckhand:
@@ -488,7 +488,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../packages/test
       '@mdx-js/rollup':
@@ -518,10 +518,10 @@ importers:
 
   apps/starter:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../packages/react
       lucide-react:
@@ -537,7 +537,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../packages/test
       '@rolldown/plugin-babel':
@@ -564,10 +564,10 @@ importers:
 
   apps/templates/dashboard:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../../packages/react
       lucide-react:
@@ -583,7 +583,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../../packages/test
       '@rolldown/plugin-babel':
@@ -607,10 +607,10 @@ importers:
 
   apps/templates/editor:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../../packages/react
       lucide-react:
@@ -626,7 +626,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../../packages/test
       '@rolldown/plugin-babel':
@@ -650,10 +650,10 @@ importers:
 
   apps/templates/marketing:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../../../packages/core
-      '@buttery/react':
+      '@butteryui/react':
         specifier: workspace:*
         version: link:../../../packages/react
       lucide-react:
@@ -669,7 +669,7 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.7
-      '@buttery/test':
+      '@butteryui/test':
         specifier: workspace:*
         version: link:../../../packages/test
       '@rolldown/plugin-babel':
@@ -752,7 +752,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../core
       lucide-react:
@@ -795,7 +795,7 @@ importers:
       '@axe-core/playwright':
         specifier: 'catalog:'
         version: 4.14.0(playwright-core@1.64.1)
-      '@buttery/core':
+      '@butteryui/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

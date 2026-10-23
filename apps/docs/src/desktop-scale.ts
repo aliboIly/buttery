@@ -1,4 +1,4 @@
-import { widths } from "@buttery/core";
+import { widths } from "@butteryui/core";
 
 /** The width a desktop drawing lays out at before it's scaled down to its frame: an app page's, 1280. */
 const DESKTOP_WIDTH = widths["app-page"].value;

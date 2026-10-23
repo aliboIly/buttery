@@ -1,4 +1,4 @@
-import type { DemoSection, DemoFrame, DocsPage } from "@buttery/core";
+import type { DemoSection, DemoFrame, DocsPage } from "@butteryui/core";
 import {
   Breadcrumbs,
   Button,
@@ -6,7 +6,7 @@ import {
   SettingRow,
   SettingsPage,
   SettingsSection,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

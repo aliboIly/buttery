@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { NumberField, Select } from "@buttery/react";
-import type { SelectOption } from "@buttery/react";
+import { Grid } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { NumberField, Select } from "@butteryui/react";
+import type { SelectOption } from "@butteryui/react";
 
 type Shape = "16:9" | "4:3" | "1:1" | "9:16" | "custom";
 

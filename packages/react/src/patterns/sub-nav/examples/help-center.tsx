@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SubNav } from "@buttery/react";
+import { Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SubNav } from "@butteryui/react";
 
 const TOPICS = [
   {

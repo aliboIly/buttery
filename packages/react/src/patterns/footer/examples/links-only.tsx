@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Footer } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Footer } from "@butteryui/react";
 
 /** Columns of links with nothing else: a help center's foot. */
 export function LinksOnly(): ReactElement {

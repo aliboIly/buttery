@@ -1,9 +1,9 @@
 import { Columns3, LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { SegmentedControl } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { SegmentedControl } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

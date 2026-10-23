@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack } from "@buttery/core";
-import type { DemoControl, DemoValues } from "@buttery/core";
+import { Grid, Stack } from "@butteryui/core";
+import type { DemoControl, DemoValues } from "@butteryui/core";
 import {
   Field,
   SegmentedControl,
@@ -9,7 +9,7 @@ import {
   Slider,
   Switch,
   TextField,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** How wide a segmented control would be with every label whole: its segments share the widest label's width. */
 function wholeWidth(track: Element): number {

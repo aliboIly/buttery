@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Checkbox } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Checkbox } from "@butteryui/react";
 
 /** An uncontrolled box with a hint, read by its form on Save: a ticked box submits its name with "on". */
 export function EmailTips(): ReactElement {

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, demoChoice } from "@buttery/core";
+import { Stack, demoChoice } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { Button, FilterBar, FilterPill, SearchField } from "@buttery/react";
+} from "@butteryui/core";
+import { Button, FilterBar, FilterPill, SearchField } from "@butteryui/react";
 import { Download } from "lucide-react";
 
 export const page: DocsPage = {

@@ -1,4 +1,4 @@
-import { Icon, Menu, Text, cx, hasContent } from "@buttery/core";
+import { Icon, Menu, Text, cx, hasContent } from "@butteryui/core";
 import { Ellipsis, Plus } from "lucide-react";
 import { createContext, use, useId } from "react";
 import type {

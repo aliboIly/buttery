@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, FloatingToolbar } from "@buttery/react";
+import { Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, FloatingToolbar } from "@butteryui/react";
 
 /** Resize mode's bar under the frame, shown from state: the size, then Revert, Discard and Keep size. */
 export function CropBar(): ReactElement {

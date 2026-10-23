@@ -4,8 +4,8 @@ import type {
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { FeatureIntro } from "@buttery/react";
+} from "@butteryui/core";
+import { FeatureIntro } from "@butteryui/react";
 import { CalendarClock, Repeat, Truck } from "lucide-react";
 import type { ReactElement } from "react";
 

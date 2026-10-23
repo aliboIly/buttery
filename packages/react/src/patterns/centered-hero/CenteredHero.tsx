@@ -1,5 +1,5 @@
-import { Stagger, cx } from "@buttery/core";
-import type { TextStackTitleElement } from "@buttery/core";
+import { Stagger, cx } from "@butteryui/core";
+import type { TextStackTitleElement } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { useId } from "react";
 import { HeroText } from "../../parts/hero/HeroText.tsx";

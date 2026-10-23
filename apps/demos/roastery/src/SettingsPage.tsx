@@ -1,4 +1,4 @@
-import { Stack, Text } from "@buttery/core";
+import { Stack, Text } from "@butteryui/core";
 import {
   AppPage,
   Breadcrumbs,
@@ -20,8 +20,8 @@ import {
   Switch,
   TextField,
   toast,
-} from "@buttery/react";
-import type { PreferenceValue } from "@buttery/react";
+} from "@butteryui/react";
+import type { PreferenceValue } from "@butteryui/react";
 import { CalendarClock, CreditCard, Gift, SearchX } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { ReactElement, ReactNode } from "react";

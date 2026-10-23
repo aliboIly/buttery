@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import {
   Inspector,
   SegmentedControl,
@@ -7,8 +7,8 @@ import {
   SwatchGrid,
   TextField,
   ValueBadge,
-} from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+} from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 import { NEW_DESIGN, SHAPE_SIZES } from "./document.ts";
 import type { Design, Shape } from "./document.ts";
 

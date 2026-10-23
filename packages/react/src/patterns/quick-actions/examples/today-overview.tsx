@@ -1,9 +1,9 @@
 import { CalendarPlus, Plus, Send } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { PageHeader, QuickActions } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { PageHeader, QuickActions } from "@butteryui/react";
 
 /** Under an overview page's header, the day's shortcuts, each changing the page under them. */
 export function TodayOverview(): ReactElement {

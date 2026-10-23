@@ -1,6 +1,6 @@
-import { Skeleton, Stack } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+import { Skeleton, Stack } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "components/feedback",

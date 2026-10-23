@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { AnnouncementDialog, Button } from "@buttery/react";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { AnnouncementDialog, Button } from "@butteryui/react";
 import type { ReactElement } from "react";
 
 export const page: DocsPage = {

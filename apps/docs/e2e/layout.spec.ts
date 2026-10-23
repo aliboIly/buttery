@@ -5,8 +5,8 @@ import {
   fullMatrix,
   quickMatrix,
   watchResizeLoops,
-} from "@buttery/test";
-import type { ButteryInteraction, ButteryViewport } from "@buttery/test";
+} from "@butteryui/test";
+import type { ButteryInteraction, ButteryViewport } from "@butteryui/test";
 import { routes, url } from "./routes.ts";
 
 const matrix =

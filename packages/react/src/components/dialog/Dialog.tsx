@@ -13,7 +13,7 @@ import {
   useMergedRefs,
   useMotionPreference,
   warnOnce,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog as RadixDialog, VisuallyHidden } from "radix-ui";

@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 import { Monitor, Moon, Settings2, Sun } from "lucide-react";
-import { Popover, Stack, Text } from "@buttery/core";
-import { Button, Field, SegmentedControl } from "@buttery/react";
-import type { SegmentedControlOption } from "@buttery/react";
+import { Popover, Stack, Text } from "@butteryui/core";
+import { Button, Field, SegmentedControl } from "@butteryui/react";
+import type { SegmentedControlOption } from "@butteryui/react";
 import { setSetting } from "./location.ts";
 import type { Settings } from "./location.ts";
 

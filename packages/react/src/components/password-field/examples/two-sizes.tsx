@@ -1,9 +1,9 @@
 import { KeyRound } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, PasswordField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, PasswordField } from "@butteryui/react";
 
 /** The two sizes: md, 34px, for a password among an app's settings, and lg, 48px with 16px text, for a sign-in page. */
 export function TwoSizes(): ReactElement {

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink, Container } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink, Container } from "@butteryui/react";
 
 /** A row across the top of a page, lined up with the sections under it. */
 export function PageHeaderRow(): ReactElement {

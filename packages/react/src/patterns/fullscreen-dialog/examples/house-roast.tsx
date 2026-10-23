@@ -1,14 +1,14 @@
 import { Coffee } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Icon, Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Icon, Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   Button,
   Dialog,
   FullscreenDialog,
   SegmentedControl,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 const ROASTS = [
   { value: "light", label: "Light" },

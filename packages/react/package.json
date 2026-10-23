@@ -1,5 +1,5 @@
 {
-  "name": "@buttery/react",
+  "name": "@butteryui/react",
   "version": "0.0.0",
   "private": true,
   "description": "buttery's React components and patterns.",
@@ -10,12 +10,12 @@
   ],
   "exports": {
     ".": {
-      "@buttery/source": "./src/index.ts",
+      "@butteryui/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./styles.css": {
-      "@buttery/source": "./src/styles.css",
+      "@butteryui/source": "./src/styles.css",
       "default": "./dist/styles.css"
     },
     "./package.json": "./package.json"
@@ -37,7 +37,7 @@
     "tsdown": "catalog:"
   },
   "dependencies": {
-    "@buttery/core": "workspace:*",
+    "@butteryui/core": "workspace:*",
     "lucide-react": "catalog:",
     "motion": "catalog:",
     "radix-ui": "catalog:"

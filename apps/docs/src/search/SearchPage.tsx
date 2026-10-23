@@ -1,6 +1,6 @@
 import { useEffect, useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
-import { SearchResults, parseSearch } from "@buttery/react";
+import { SearchResults, parseSearch } from "@butteryui/react";
 import { useSettings } from "../location.ts";
 import {
   SEARCH_FILTERS,

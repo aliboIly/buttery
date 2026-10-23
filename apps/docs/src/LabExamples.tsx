@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
+import { Stack, Surface, Text } from "@butteryui/core";
 import type { ComponentEntry } from "./registry.ts";
 
 /**

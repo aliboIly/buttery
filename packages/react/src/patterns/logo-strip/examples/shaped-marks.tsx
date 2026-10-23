@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, LogoStrip, Page, Section } from "@buttery/react";
+import { Inline, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, LogoStrip, Page, Section } from "@butteryui/react";
 
 type Shape = "circle" | "square" | "diamond";
 

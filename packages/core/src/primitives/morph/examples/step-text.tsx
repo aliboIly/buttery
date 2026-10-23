@@ -1,7 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Morph, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import {
+  Inline,
+  Morph,
+  Pressable,
+  Stack,
+  Surface,
+  Text,
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const STEPS = [
   {

@@ -1,4 +1,4 @@
-import { Text, cx, hasContent, opensElsewhere } from "@buttery/core";
+import { Text, cx, hasContent, opensElsewhere } from "@butteryui/core";
 import { useId } from "react";
 import type {
   ComponentPropsWithRef,

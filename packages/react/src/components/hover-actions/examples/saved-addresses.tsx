@@ -1,9 +1,9 @@
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { HoverActions, IconButton } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { HoverActions, IconButton } from "@butteryui/react";
 
 /** A shop's saved pickup addresses, each with a remove action that shows on hover or keyboard focus. */
 export function SavedAddresses(): ReactElement {

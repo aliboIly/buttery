@@ -1,4 +1,4 @@
-import type { LayoutViolation } from "@buttery/core/layout";
+import type { LayoutViolation } from "@butteryui/core/layout";
 
 /** A violation with the page and conditions it was found under. */
 export interface ReportedViolation extends LayoutViolation {

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Surface } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack, Surface } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   CommandSearch,
   PageHeader,
   TopBar,
   matchesSearch,
-} from "@buttery/react";
-import type { LocalSearchSource } from "@buttery/react";
+} from "@butteryui/react";
+import type { LocalSearchSource } from "@butteryui/react";
 
 interface Order {
   readonly id: string;

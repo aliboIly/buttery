@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SearchField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SearchField } from "@butteryui/react";
 
 /** Soft for a top bar's search, with its / shortcut, and outline for a toolbar's filter; Enter sends either one. */
 export function SoftAndOutline(): ReactElement {

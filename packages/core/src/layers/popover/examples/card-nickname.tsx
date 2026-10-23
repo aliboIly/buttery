@@ -8,8 +8,8 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A popover whose open state lives in the example, so the form inside can close it once the saved card has a nickname. */
 export function CardNickname(): ReactElement {

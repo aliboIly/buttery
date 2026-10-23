@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Center, FitBox, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Center, FitBox, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A tall 9:16 slide's preview that fills the height of a wide area without overflowing it. */
 export function PortraitPreview(): ReactElement {

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Stat, StatStrip } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Stat, StatStrip } from "@butteryui/react";
 
 const dollars = new Intl.NumberFormat("en-US", {
   notation: "compact",

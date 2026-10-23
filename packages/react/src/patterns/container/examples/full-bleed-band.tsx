@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Container, Section } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Container, Section } from "@butteryui/react";
 
 /** A band whose background runs edge to edge while its words stay in the column. */
 export function FullBleedBand(): ReactElement {

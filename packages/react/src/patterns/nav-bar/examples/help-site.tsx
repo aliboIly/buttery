@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, MorphMenu, NavBar } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, MorphMenu, NavBar } from "@butteryui/react";
 
 /** A help site's bar: one menu, a link and a single call to action, folding into the Menu button on a narrow page. */
 export function HelpSite(): ReactElement {

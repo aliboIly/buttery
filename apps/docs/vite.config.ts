@@ -91,11 +91,11 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] }),
     referenceCaptures(),
   ],
-  resolve: { conditions: ["@buttery/source", ...defaultClientConditions] },
+  resolve: { conditions: ["@butteryui/source", ...defaultClientConditions] },
   // The static build renders every page on the server from source, the packages' and the apps', as the dev server does.
   ssr: {
-    noExternal: [/^@buttery\//, /^demo-/, /^template-/, "starter"],
-    resolve: { conditions: ["@buttery/source", ...defaultServerConditions] },
+    noExternal: [/^@butteryui\//, /^demo-/, /^template-/, "starter"],
+    resolve: { conditions: ["@butteryui/source", ...defaultServerConditions] },
   },
   server: { port, strictPort: true },
   preview: { port: port + 2000, strictPort: true },

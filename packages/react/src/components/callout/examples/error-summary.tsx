@@ -1,8 +1,8 @@
 import { useId, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Callout, TextField } from "@buttery/react";
+import { Inline, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Callout, TextField } from "@butteryui/react";
 
 /** A sign-in form's error summary, read out as it appears after a failed submit, with links to the fields. */
 export function ErrorSummary(): ReactElement {

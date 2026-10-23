@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, ChoiceDialog } from "@buttery/react";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, ChoiceDialog } from "@butteryui/react";
 import { Repeat, ShoppingBag, Store } from "lucide-react";
 
 export const page: DocsPage = {

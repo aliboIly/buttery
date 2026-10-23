@@ -4,9 +4,9 @@ import type {
   ReactElement,
   Ref,
 } from "react";
-import { cx } from "@buttery/core";
-import { anchors, buttery, useStageLayout } from "@buttery/react";
-import type { Anchor } from "@buttery/react";
+import { cx } from "@butteryui/core";
+import { anchors, buttery, useStageLayout } from "@butteryui/react";
+import type { Anchor } from "@butteryui/react";
 import { SLIDE_SIZES, hasStat, pointsOf } from "./deck.ts";
 import type { Slide, SlideSize } from "./deck.ts";
 import { SHADOW, boxLook, emWidth, fillCss } from "./geometry.ts";

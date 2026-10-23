@@ -1,4 +1,4 @@
-import { TextStack, cx, hasContent } from "@buttery/core";
+import { TextStack, cx, hasContent } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { useId } from "react";
 import { Container } from "../container/Container.tsx";

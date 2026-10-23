@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { Code } from "lucide-react";
-import { Sticky, Text, useFloatingObstacle } from "@buttery/core";
+import { Sticky, Text, useFloatingObstacle } from "@butteryui/core";
 import {
   ArrowLink,
   Button,
@@ -9,7 +9,7 @@ import {
   MorphMenu,
   NavBar,
   Sidebar,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { DisplaySettings } from "./DisplaySettings.tsx";
 import { DocsSearch } from "./search/DocsSearch.tsx";
 import { OnThisPage } from "./OnThisPage.tsx";

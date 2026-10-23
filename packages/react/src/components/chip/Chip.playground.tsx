@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Chip } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Chip } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/actions",

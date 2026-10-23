@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Page, Section, SegmentedControl } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Page, Section, SegmentedControl } from "@butteryui/react";
 
 /** A page as the main landmark, its sections taking turns on the two backgrounds, with prices by the billing period. */
 export function LandingPage(): ReactElement {

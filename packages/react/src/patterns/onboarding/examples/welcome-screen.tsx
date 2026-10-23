@@ -1,10 +1,10 @@
 import { Layers } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, EmptyState, Onboarding } from "@buttery/react";
-import type { OnboardingStep } from "@buttery/react";
+import { Inline, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, EmptyState, Onboarding } from "@butteryui/react";
+import type { OnboardingStep } from "@butteryui/react";
 
 function Slide({ title }: { readonly title: string }): ReactElement {
   return (

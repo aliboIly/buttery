@@ -6,7 +6,7 @@ import type {
   DemoWidth,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { exampleTitle } from "./anatomy.ts";
 import { rootOf } from "./nav.ts";
 import { componentRoute } from "./routes.ts";
@@ -126,8 +126,8 @@ export const components: readonly ComponentEntry[] = Object.entries(metaModules)
 /** The package a component is imported from, by its folder. */
 export function packageOf(entry: ComponentEntry): string {
   return entry.folder.startsWith("packages/core/")
-    ? "@buttery/core"
-    : "@buttery/react";
+    ? "@butteryui/core"
+    : "@butteryui/react";
 }
 
 /** Where a component's docs are: its own page, or its section on the written page that's its home. */

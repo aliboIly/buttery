@@ -1,5 +1,8 @@
-import { Text, cx } from "@buttery/core";
-import type { MotionElementProps, TextStackTitleElement } from "@buttery/core";
+import { Text, cx } from "@butteryui/core";
+import type {
+  MotionElementProps,
+  TextStackTitleElement,
+} from "@butteryui/core";
 import { Lightbulb, X } from "lucide-react";
 import { motion } from "motion/react";
 import type { ReactElement, ReactNode } from "react";

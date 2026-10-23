@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink, MorphMenu } from "@buttery/react";
+import { Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink, MorphMenu } from "@butteryui/react";
 
 /** A site's menus in full: columns of links with captions, a story at the menu's end and a See all link under the columns. */
 export function MenusWithAStory(): ReactElement {

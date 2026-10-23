@@ -1,5 +1,5 @@
-import { gradients, solids } from "@buttery/core/palettes";
-import type { Anchor } from "@buttery/react";
+import { gradients, solids } from "@butteryui/core/palettes";
+import type { Anchor } from "@butteryui/react";
 
 /** How a slide arranges its words: a title, a title over points, a row of big numbers, or a quote. */
 export type Layout = "title" | "points" | "numbers" | "quote";

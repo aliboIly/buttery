@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Dialog, TextField } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Dialog, TextField } from "@butteryui/react";
 
 /** A short task in a controlled dialog: rename, then close it from the form's submit. */
 export function RenameDialog(): ReactElement {

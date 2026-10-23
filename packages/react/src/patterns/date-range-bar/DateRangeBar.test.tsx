@@ -1,4 +1,4 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";

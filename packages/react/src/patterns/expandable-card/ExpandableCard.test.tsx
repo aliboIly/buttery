@@ -1,7 +1,7 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { MotionPreferenceContext, publishSettled } from "@buttery/core";
-import { layoutCheckTokens, runLayoutChecks } from "@buttery/core/layout";
+import { MotionPreferenceContext, publishSettled } from "@butteryui/core";
+import { layoutCheckTokens, runLayoutChecks } from "@butteryui/core/layout";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";

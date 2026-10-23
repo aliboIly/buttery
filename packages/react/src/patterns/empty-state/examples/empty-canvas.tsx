@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, EmptyState } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, EmptyState } from "@butteryui/react";
 
 /** The gift card builder's empty canvas, with the two ways to begin: a primary and a secondary pill. */
 export function EmptyCanvas(): ReactElement {

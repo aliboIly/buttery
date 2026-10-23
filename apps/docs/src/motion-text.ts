@@ -1,4 +1,4 @@
-import type { MotionClass } from "@buttery/core";
+import type { MotionClass } from "@butteryui/core";
 
 /** What each motion class does, in a sentence for a component's Motion part. */
 export const MOTION_TEXT: Readonly<Record<MotionClass, string>> = {

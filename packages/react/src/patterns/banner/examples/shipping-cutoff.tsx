@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Banner } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Banner } from "@butteryui/react";
 import { Truck } from "lucide-react";
 
 /** A suggestion whose action is a button that makes the change in place, then offers to undo it. */

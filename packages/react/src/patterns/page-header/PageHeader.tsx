@@ -1,5 +1,5 @@
-import { OverflowCluster, cx, hasContent, useShortcut } from "@buttery/core";
-import type { IconComponentProps, Shortcut } from "@buttery/core";
+import { OverflowCluster, cx, hasContent, useShortcut } from "@butteryui/core";
+import type { IconComponentProps, Shortcut } from "@butteryui/core";
 import type {
   ComponentPropsWithRef,
   ComponentType,

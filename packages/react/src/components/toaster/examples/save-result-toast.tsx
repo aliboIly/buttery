@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Switch, toast } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Switch, toast } from "@butteryui/react";
 
 type Save = "idle" | "succeeding" | "failing";
 

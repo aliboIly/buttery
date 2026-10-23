@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Accordion } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Accordion } from "@butteryui/react";
 
 /** The shop's shipping questions, one open at a time. */
 export function ShippingQuestions(): ReactElement {

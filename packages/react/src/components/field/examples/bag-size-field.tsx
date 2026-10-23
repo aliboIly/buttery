@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Field, SegmentedControl } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Field, SegmentedControl } from "@butteryui/react";
 
 type BagSize = "250 g" | "500 g" | "1 kg";
 

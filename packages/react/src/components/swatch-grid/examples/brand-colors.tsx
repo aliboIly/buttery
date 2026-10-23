@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SwatchGrid } from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SwatchGrid } from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 
 type Brand = "ink" | "sky" | "moss" | "clay";
 

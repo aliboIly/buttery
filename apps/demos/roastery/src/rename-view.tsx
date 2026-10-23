@@ -1,4 +1,4 @@
-import { Button, Dialog, TextField } from "@buttery/react";
+import { Button, Dialog, TextField } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
 

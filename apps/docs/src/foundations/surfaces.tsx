@@ -17,8 +17,8 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+} from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import {
   Button,
   Chip,
@@ -26,8 +26,8 @@ import {
   SegmentedControl,
   Slider,
   SplitButton,
-} from "@buttery/react";
-import type { SliderProps } from "@buttery/react";
+} from "@butteryui/react";
+import type { SliderProps } from "@butteryui/react";
 import { StarterEmptyState } from "../demo/StarterEmptyState.tsx";
 import "./surfaces.css";
 

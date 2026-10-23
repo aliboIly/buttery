@@ -1,4 +1,4 @@
-# @buttery/fixture-react
+# @butteryui/fixture-react
 
 ## 0.11.0
 

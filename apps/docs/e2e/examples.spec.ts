@@ -1,7 +1,7 @@
 import { existsSync, globSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { test } from "@playwright/test";
-import { expectButtery } from "@buttery/test";
+import { expectButtery } from "@butteryui/test";
 import { componentRoute } from "../src/routes.ts";
 
 const full = process.env["BUTTERY_MATRIX"] === "full";

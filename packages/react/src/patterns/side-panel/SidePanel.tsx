@@ -14,8 +14,8 @@ import {
   useFloatingObstacle,
   useMergedRefs,
   useMotionPreference,
-} from "@buttery/core";
-import type { MotionElementProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { MotionElementProps } from "@butteryui/core";
 import { Ellipsis, Maximize2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog } from "radix-ui";

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Checkbox } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Checkbox } from "@butteryui/react";
 
 /** An error on a box that has to be ticked, cleared once it is, beside a box that's disabled on this plan. */
 export function AgreeToTerms(): ReactElement {

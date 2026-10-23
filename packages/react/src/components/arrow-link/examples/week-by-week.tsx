@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink } from "@butteryui/react";
 
 const FIRST_MONDAY = new Date(2026, 9, 12, 12);
 const day = new Intl.DateTimeFormat("en-US", {

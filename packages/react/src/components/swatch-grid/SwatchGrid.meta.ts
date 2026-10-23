@@ -1,4 +1,4 @@
-import type { ComponentMeta } from "@buttery/core";
+import type { ComponentMeta } from "@butteryui/core";
 
 export const meta: ComponentMeta = {
   name: "SwatchGrid",
@@ -6,7 +6,7 @@ export const meta: ComponentMeta = {
   purpose:
     "A grid of color and gradient swatches to pick one from, like radio buttons.",
   useWhen: [
-    "Picking a background or fill from presets, such as the palettes in @buttery/core/palettes",
+    "Picking a background or fill from presets, such as the palettes in @butteryui/core/palettes",
   ],
   avoidWhen: [
     "Any color at all: use ColorDot",

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { OverflowCluster } from "@buttery/core";
-import { Button, HeaderBar, IconButton, Select } from "@buttery/react";
+import { OverflowCluster } from "@butteryui/core";
+import { Button, HeaderBar, IconButton, Select } from "@butteryui/react";
 import {
   CircleHelp,
   ClipboardCopy,

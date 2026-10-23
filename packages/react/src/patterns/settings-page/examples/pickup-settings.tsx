@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   Breadcrumbs,
   ScopeBadge,
   SettingsPage,
   SettingsSection,
   TextField,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** A settings page in the page grammar, its one section a form that saves a change. */
 export function PickupSettings(): ReactElement {

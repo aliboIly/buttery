@@ -7,8 +7,8 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import { Bento, Section, Stat, StatStrip } from "@buttery/react";
+} from "@butteryui/core";
+import { Bento, Section, Stat, StatStrip } from "@butteryui/react";
 import { BagArt, backdrop, swatch } from "./BagArt.tsx";
 import type { Backdrop } from "./BagArt.tsx";
 import { ROAST_DAY, coffeeOf } from "./data.ts";

@@ -1,4 +1,4 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -253,7 +253,7 @@ describe("Toaster", () => {
   });
 
   it("reads a toned toast's tone before its message, in the words given", async () => {
-    const { FloatingLanes } = await import("@buttery/core");
+    const { FloatingLanes } = await import("@butteryui/core");
     render(
       <>
         <FloatingLanes />
@@ -492,7 +492,7 @@ describe("Toaster", () => {
   });
 
   it("works without ButteryProvider when rendered on its own", async () => {
-    const { FloatingLanes } = await import("@buttery/core");
+    const { FloatingLanes } = await import("@butteryui/core");
     render(
       <>
         <FloatingLanes />

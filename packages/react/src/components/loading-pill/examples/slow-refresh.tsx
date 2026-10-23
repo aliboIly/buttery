@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, LoadingPill } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, LoadingPill } from "@butteryui/react";
 
 /** A refresh that takes a while: the pill appears only once it's been loading for 300ms, and goes when it's done. */
 export function SlowRefresh(): ReactElement {

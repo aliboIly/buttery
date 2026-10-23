@@ -10,9 +10,9 @@ import {
   useReflow,
   useReflowDeparture,
   useStoredState,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { Clock } from "lucide-react";
-import type { ReflowLayout } from "@buttery/core";
+import type { ReflowLayout } from "@butteryui/core";
 import type { Transition } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
 import { useState } from "react";

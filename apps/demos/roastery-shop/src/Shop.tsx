@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Icon, Inline, Stack, Text, scrollToSection } from "@buttery/core";
+import { Icon, Inline, Stack, Text, scrollToSection } from "@butteryui/core";
 import {
   Button,
   Footer,
@@ -10,7 +10,7 @@ import {
   SplitHero,
   SubNav,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { SignInDialog, useAccount } from "./Account.tsx";
 import { BAG_TOAST } from "./add-to-bag.ts";
 import { bagCount, useBag } from "./bag.ts";

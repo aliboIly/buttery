@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
-import type { CssVariables } from "@buttery/core";
+import type { CssVariables } from "@butteryui/core";
 import { desktopScale } from "./desktop-scale.ts";
 
 /** How a scaled preview draws: its scale, and its content's height before scaling, in px. */

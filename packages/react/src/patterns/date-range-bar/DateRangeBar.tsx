@@ -1,4 +1,4 @@
-import { Stack, Text, cx, useControllableState } from "@buttery/core";
+import { Stack, Text, cx, useControllableState } from "@butteryui/core";
 import { useState } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { Select } from "../../components/select/Select.tsx";

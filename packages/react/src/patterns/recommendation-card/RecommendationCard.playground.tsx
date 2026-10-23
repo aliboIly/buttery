@@ -1,11 +1,11 @@
-import { ReflowGroup, Stack, Text, useReflow } from "@buttery/core";
+import { ReflowGroup, Stack, Text, useReflow } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { RecommendationCard } from "@buttery/react";
+} from "@butteryui/core";
+import { RecommendationCard } from "@butteryui/react";
 import { motion } from "motion/react";
 import type { ReactElement } from "react";
 

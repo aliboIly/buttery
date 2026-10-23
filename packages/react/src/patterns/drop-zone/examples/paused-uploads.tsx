@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DropZone, Switch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DropZone, Switch } from "@butteryui/react";
 
 /** A drop zone that takes no files while it's disabled, here while uploads are switched off. */
 export function PausedUploads(): ReactElement {

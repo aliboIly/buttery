@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { HeaderBar } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { HeaderBar } from "@butteryui/react";
 
 /** A plain header for a settings window: the title, and one action that stays focusable once it's done. */
 export function SettingsHeader(): ReactElement {

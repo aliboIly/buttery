@@ -8,8 +8,8 @@ import {
   Scrim,
   Surface,
   Text,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A "Saving" panel in the modal layer, over a dim scrim, that holds the page until the save is done. */
 export function SavingOverlay(): ReactElement {

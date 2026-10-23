@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ColorDot } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ColorDot } from "@butteryui/react";
 
 /** One fill kept in state as `#rrggbb`, changed by the picker's hex code field or its area and hue. */
 export function SolidFill(): ReactElement {

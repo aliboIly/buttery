@@ -1,9 +1,9 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { Text } from "@buttery/core";
+import { Text } from "@butteryui/core";
 import { Page } from "./Page.tsx";
 
 afterEach(cleanup);

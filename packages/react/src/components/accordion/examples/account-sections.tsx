@@ -1,9 +1,14 @@
 import { Bell, MapPin, Repeat } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Accordion, ArrowLink, SegmentedControl, Switch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import {
+  Accordion,
+  ArrowLink,
+  SegmentedControl,
+  Switch,
+} from "@butteryui/react";
 
 const EVERY = ["1 week", "2 weeks", "4 weeks"] as const;
 

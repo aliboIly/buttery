@@ -4,8 +4,8 @@ import type {
   DemoWidth,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { SettingsIndex } from "@buttery/react";
+} from "@butteryui/core";
+import { SettingsIndex } from "@butteryui/react";
 import {
   Bell,
   Building2,

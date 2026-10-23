@@ -1,9 +1,9 @@
 import { Grid3x3 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { IconButton } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { IconButton } from "@butteryui/react";
 
 /** A toggle that stays tinted while it's on; its name stays put and aria-pressed says whether it's on. */
 export function GridToggle(): ReactElement {

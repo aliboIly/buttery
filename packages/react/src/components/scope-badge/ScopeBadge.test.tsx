@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { publishSettled } from "@butteryui/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";

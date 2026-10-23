@@ -1,4 +1,4 @@
-import { cx } from "@buttery/core";
+import { cx } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 
 /** How big an `Avatar` or `InitialsTile` is: `xs` 20, `sm` 24, `md` 32 or `lg` 40. */

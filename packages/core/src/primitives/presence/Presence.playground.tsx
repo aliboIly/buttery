@@ -1,7 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Presence, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, PresencePreset } from "@buttery/core";
+import {
+  Grid,
+  Presence,
+  Pressable,
+  Stack,
+  Surface,
+  Text,
+} from "@butteryui/core";
+import type { DemoSection, DocsPage, PresencePreset } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "motion",

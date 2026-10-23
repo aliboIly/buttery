@@ -1,7 +1,12 @@
-import { Stack, Text } from "@buttery/core";
-import type { DemoFrame, DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import type { GradientPreset } from "@buttery/core/palettes";
+import { Stack, Text } from "@butteryui/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DocsPage,
+  LiveDemo,
+} from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import type { GradientPreset } from "@butteryui/core/palettes";
 import {
   Button,
   Catalog,
@@ -9,14 +14,14 @@ import {
   StatusBadge,
   TagChip,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import type {
   CatalogCardSize,
   CatalogCardVariant,
   CatalogColumns,
   CatalogLayout,
   CatalogMediaPosition,
-} from "@buttery/react";
+} from "@butteryui/react";
 import {
   Bean,
   Coffee,

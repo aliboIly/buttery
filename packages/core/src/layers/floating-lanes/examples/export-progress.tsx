@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { FloatingLanes, Inline, Pressable, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import {
+  FloatingLanes,
+  Inline,
+  Pressable,
+  Surface,
+  Text,
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 type ExportState = "idle" | "running" | "done" | "canceled";
 

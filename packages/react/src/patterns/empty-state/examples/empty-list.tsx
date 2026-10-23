@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { EmptyState } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { EmptyState } from "@butteryui/react";
 
 /** A list that has nothing in it yet, with no action to take. */
 export function EmptyList(): ReactElement {

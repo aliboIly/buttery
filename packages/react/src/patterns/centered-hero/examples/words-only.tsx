@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { CenteredHero } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { CenteredHero } from "@butteryui/react";
 
 /** A short page's opening band, words alone. */
 export function WordsOnly(): ReactElement {

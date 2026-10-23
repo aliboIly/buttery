@@ -14,7 +14,7 @@ export type { ValueToken } from "./scan-value.ts";
  *
  * @example
  * // stylelint.config.mjs
- * import { butteryStylelintConfig } from "@buttery/lint/stylelint";
+ * import { butteryStylelintConfig } from "@butteryui/lint/stylelint";
  * export default butteryStylelintConfig();
  */
 export function butteryStylelintConfig(paths?: Partial<ButteryPaths>): Config {

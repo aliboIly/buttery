@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, StatusBadge } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, StatusBadge } from "@butteryui/react";
 
 const ORDERS: readonly { readonly id: string; readonly item: string }[] = [
   { id: "1042", item: "2 bags of house blend" },

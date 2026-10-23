@@ -1,7 +1,7 @@
-import { demoChoice, Stack } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ChartFrame } from "@buttery/react";
-import type { ChartSeries } from "@buttery/react";
+import { demoChoice, Stack } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ChartFrame } from "@butteryui/react";
+import type { ChartSeries } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

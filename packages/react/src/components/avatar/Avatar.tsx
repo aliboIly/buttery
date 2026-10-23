@@ -1,4 +1,4 @@
-import { cx } from "@buttery/core";
+import { cx } from "@butteryui/core";
 import { Avatar as RadixAvatar } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { initialsOf } from "../initials-tile/InitialsTile.tsx";

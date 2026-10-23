@@ -11,13 +11,13 @@ import {
   Text,
   tabbables,
   timing,
-} from "@buttery/core";
+} from "@butteryui/core";
 import {
   Button,
   ButteryProvider,
   IconButton,
   useButtery,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SLIDE_SIZES } from "./deck.ts";
 import type { Deck } from "./deck.ts";

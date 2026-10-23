@@ -1,7 +1,7 @@
 import { useId } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import { Button, useButtery } from "@buttery/react";
+import { Grid, Inline, Stack, Surface, Text } from "@butteryui/core";
+import { Button, useButtery } from "@butteryui/react";
 import { CopyLine } from "../CopyLine.tsx";
 import { siteHref } from "../location.ts";
 import { components, docsRouteOf } from "../registry.ts";

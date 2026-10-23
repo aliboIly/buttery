@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { RadioCardGroup, TextField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { RadioCardGroup, TextField } from "@butteryui/react";
 
 /** A wholesale order's delivery step: how a café gets its order, shipping asking for an address of its own. */
 export function DeliveryMethod(): ReactElement {

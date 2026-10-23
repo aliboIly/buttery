@@ -297,7 +297,7 @@ export interface FloatingLanesComponent {
  * the center lane moves above the end lane as one column. It publishes how far the bottom lanes reach,
  * plus 8px, as `--bt-lane-clearance` on `<html>`, for scroll areas to add at their end. `ButteryProvider`
  * mounts the host once; render items with `FloatingLanes.Item`. For toasts, call `toast()` from
- * @buttery/react instead.
+ * @butteryui/react instead.
  *
  * @example
  * <FloatingLanes.Item lane="bottom-end">

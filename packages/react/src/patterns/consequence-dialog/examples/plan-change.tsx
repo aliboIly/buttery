@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, ConsequenceDialog, PlanComparison } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, ConsequenceDialog, PlanComparison } from "@butteryui/react";
 import { CalendarClock, CreditCard } from "lucide-react";
 
 type PlanId = "starter" | "roaster";

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { SegmentedControl, Stage } from "@buttery/react";
-import type { StageSize } from "@buttery/react";
+import { Center, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { SegmentedControl, Stage } from "@butteryui/react";
+import type { StageSize } from "@butteryui/react";
 
 type Shape = "Wide" | "Classic" | "Square" | "Tall";
 

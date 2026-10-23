@@ -1,9 +1,9 @@
 import { Download, Plus, RefreshCw, Send, Upload } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { QuickActions } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { QuickActions } from "@butteryui/react";
 
 /** More actions than room: the lowest priority ones fold into the More quick actions menu, where they still run. */
 export function NarrowShortcuts(): ReactElement {

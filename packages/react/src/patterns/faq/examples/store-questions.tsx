@@ -1,8 +1,8 @@
 import { Mail } from "lucide-react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Faq } from "@buttery/react";
-import type { FaqGroup, FaqQuestion } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Faq } from "@butteryui/react";
+import type { FaqGroup, FaqQuestion } from "@butteryui/react";
 
 const GROUPS: readonly FaqGroup[] = [
   { value: "orders", label: "Orders and shipping" },

@@ -10,9 +10,9 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+} from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "layout",

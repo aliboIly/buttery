@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { ChevronDown } from "lucide-react";
-import { Icon, Pressable, Text } from "@buttery/core";
+import { Icon, Pressable, Text } from "@butteryui/core";
 
 /**
  * "Show code" under a live demo or an example: plain text on the column's edge, where a padded button's label

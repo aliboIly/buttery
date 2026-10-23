@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A panel holding a section whose card nests with concentric corners. */
 export function NestedSection(): ReactElement {

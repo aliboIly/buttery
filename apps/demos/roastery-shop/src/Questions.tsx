@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import { Button, Faq, Section } from "@buttery/react";
+import { Stack, Surface, Text } from "@butteryui/core";
+import { Button, Faq, Section } from "@butteryui/react";
 import { Mail } from "lucide-react";
 import { ADDRESS, QUESTIONS, QUESTION_GROUPS } from "./data.ts";
 

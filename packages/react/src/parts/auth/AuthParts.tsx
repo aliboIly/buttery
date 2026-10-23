@@ -1,5 +1,5 @@
-import { Divider } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { Divider } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { useRef, useState } from "react";
 import type {
   ComponentType,

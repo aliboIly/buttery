@@ -1,7 +1,7 @@
-import { Inline } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { StatusBadge } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { StatusBadge } from "@butteryui/react";
 import { ArrowDownRight, ArrowUpRight, Lightbulb } from "lucide-react";
 
 export const page: DocsPage = {

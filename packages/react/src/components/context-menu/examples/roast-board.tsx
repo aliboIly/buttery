@@ -10,9 +10,9 @@ import {
   Surface,
   Text,
   useApplePlatform,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ContextMenu, StatusBadge } from "@buttery/react";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ContextMenu, StatusBadge } from "@butteryui/react";
 
 const STATUSES = {
   queued: { label: "To roast", tone: "neutral" },

@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Surface } from "@buttery/core";
+import { Surface } from "@butteryui/core";
 import { CodeHtml } from "../CodeBlock.tsx";
 import type { ExampleCode } from "../registry.ts";
 import { App } from "./quick-start/App.tsx";

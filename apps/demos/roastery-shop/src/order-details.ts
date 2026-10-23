@@ -1,4 +1,4 @@
-import { looksLikeEmail } from "@buttery/react";
+import { looksLikeEmail } from "@butteryui/react";
 
 /** Where an order goes, and the email its receipt goes to. */
 export interface Address {

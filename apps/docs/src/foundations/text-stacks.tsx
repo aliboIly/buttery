@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { TextStack } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+import { TextStack } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import { StarterEmptyState } from "../demo/StarterEmptyState.tsx";
 import "./text-stacks.css";
 

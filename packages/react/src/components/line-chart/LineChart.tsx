@@ -1,4 +1,4 @@
-import { cx } from "@buttery/core";
+import { cx } from "@butteryui/core";
 import type { ReactElement } from "react";
 import { ChartFrame } from "../chart-frame/ChartFrame.tsx";
 import type { ChartFrameProps } from "../chart-frame/ChartFrame.tsx";

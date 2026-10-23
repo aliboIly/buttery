@@ -8,9 +8,9 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import type { ColorScheme, Density, RadiusScale } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+} from "@butteryui/core";
+import type { ColorScheme, Density, RadiusScale } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import {
   Avatar,
   Button,
@@ -24,8 +24,8 @@ import {
   Switch,
   toast,
   useButtery,
-} from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+} from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 import { Progress } from "../Progress.tsx";
 import "./intro.css";
 

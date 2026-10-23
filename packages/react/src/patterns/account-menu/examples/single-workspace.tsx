@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AccountMenu } from "@buttery/react";
+import { Menu, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AccountMenu } from "@butteryui/react";
 import { LogOut } from "lucide-react";
 
 /** One workspace and nothing to switch to: just the person and Sign out. */

@@ -11,8 +11,8 @@ import {
   timing,
   useApplePlatform,
   useFloatingObstacle,
-} from "@buttery/core";
-import { ContextMenu, buttery } from "@buttery/react";
+} from "@butteryui/core";
+import { ContextMenu, buttery } from "@butteryui/react";
 import {
   ArrowDown,
   ArrowLeft,

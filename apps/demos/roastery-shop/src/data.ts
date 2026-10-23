@@ -33,7 +33,7 @@ export interface Coffee {
   readonly altitude: string;
   readonly varieties: string;
   readonly story: string;
-  /** The `@buttery/core/palettes` gradient its label is printed in. */
+  /** The `@butteryui/core/palettes` gradient its label is printed in. */
   readonly label: string;
   /** A note on the bag, such as a harvest that just landed. */
   readonly flag?: string;

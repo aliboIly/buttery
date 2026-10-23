@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+import { Inline } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import {
   AnchorGrid,
   Button,
@@ -15,8 +15,8 @@ import {
   SplitButton,
   SwatchGrid,
   TiltPad,
-} from "@buttery/react";
-import type { Anchor, Swatch, TiltValue } from "@buttery/react";
+} from "@butteryui/react";
+import type { Anchor, Swatch, TiltValue } from "@butteryui/react";
 import { ArrowLeftRight, Copy } from "lucide-react";
 
 export const page: DocsPage = {

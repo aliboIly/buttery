@@ -22,7 +22,9 @@ for (const { route, name } of componentRoutes) {
       article.getByRole("navigation", { name: "Breadcrumbs" }).first(),
     ).toBeVisible();
     await expect(
-      article.getByText(new RegExp(`^import \\{ ${name} \\} from "@buttery/`)),
+      article.getByText(
+        new RegExp(`^import \\{ ${name} \\} from "@butteryui/`),
+      ),
     ).toBeVisible();
     await expect(
       article.getByRole("button", { name: "Copy the import" }),

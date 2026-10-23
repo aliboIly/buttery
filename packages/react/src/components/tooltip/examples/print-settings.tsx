@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Grid } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Inspector, NumberField, Tooltip } from "@buttery/react";
+import { Grid } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Inspector, NumberField, Tooltip } from "@butteryui/react";
 
 /** Tooltips that explain terse labels in an inspector, shown as each field takes focus. */
 export function PrintSettings(): ReactElement {

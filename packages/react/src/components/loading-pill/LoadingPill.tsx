@@ -5,8 +5,8 @@ import {
   timing,
   useAnimationTracking,
   useMotionPreference,
-} from "@buttery/core";
-import type { MotionElementProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { MotionElementProps } from "@butteryui/core";
 import { AnimatePresence, motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
 import { useEffect, useState } from "react";

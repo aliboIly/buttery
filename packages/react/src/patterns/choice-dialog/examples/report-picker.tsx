@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AppPage, Button, ChoiceDialog, PageHeader } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AppPage, Button, ChoiceDialog, PageHeader } from "@butteryui/react";
 import { CalendarRange, Coffee } from "lucide-react";
 
 /** A reports page whose choices stay on it: picking a report runs it in its section rather than following a link. */

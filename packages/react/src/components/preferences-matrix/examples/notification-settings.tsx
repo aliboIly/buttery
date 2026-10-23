@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, PreferencesMatrix } from "@buttery/react";
-import type { PreferenceValue } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, PreferencesMatrix } from "@butteryui/react";
+import type { PreferenceValue } from "@butteryui/react";
 
 const START: PreferenceValue = { payouts: ["email"], disputes: ["email"] };
 

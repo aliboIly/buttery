@@ -1,7 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Pressable, Stack, Sticky, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import {
+  Inline,
+  Pressable,
+  Stack,
+  Sticky,
+  Surface,
+  Text,
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const ORDERS = Array.from(
   { length: 16 },

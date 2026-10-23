@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ChoiceDialog, PageHeader } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ChoiceDialog, PageHeader } from "@butteryui/react";
 import { ShoppingBag, Store } from "lucide-react";
 
 /** Opened from a page header's action, with open and onOpenChange kept in useState. */

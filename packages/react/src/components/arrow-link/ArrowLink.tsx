@@ -1,4 +1,4 @@
-import { Icon, Slot, cx } from "@buttery/core";
+import { Icon, Slot, cx } from "@butteryui/core";
 import { ExternalLink } from "lucide-react";
 import { Slot as RadixSlot } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement } from "react";

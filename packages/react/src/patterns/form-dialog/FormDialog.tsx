@@ -1,4 +1,4 @@
-import { cx, useControllableState } from "@buttery/core";
+import { cx, useControllableState } from "@butteryui/core";
 import { useLayoutEffect, useRef, useState } from "react";
 import type {
   CSSProperties,

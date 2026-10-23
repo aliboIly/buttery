@@ -1,5 +1,5 @@
-import { Icon, cx, hasContent, useControllableState } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { Icon, cx, hasContent, useControllableState } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import type {
   ComponentPropsWithRef,
   ComponentType,

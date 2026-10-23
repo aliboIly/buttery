@@ -1,6 +1,11 @@
-import { Inline, ReflowGroup, Stack, Text, useReflow } from "@buttery/core";
-import type { DemoFrame, DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Banner, Button } from "@buttery/react";
+import { Inline, ReflowGroup, Stack, Text, useReflow } from "@butteryui/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DocsPage,
+  LiveDemo,
+} from "@butteryui/core";
+import { Banner, Button } from "@butteryui/react";
 import { Printer } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";

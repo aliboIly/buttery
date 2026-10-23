@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { StatusBadge } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { StatusBadge } from "@butteryui/react";
 import { ArrowUpRight } from "lucide-react";
 
 /** A metric's change against the last period, with an arrow before it. */

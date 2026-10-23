@@ -1,6 +1,6 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, ConsequenceDialog } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, ConsequenceDialog } from "@butteryui/react";
 import { PackageX, Users } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

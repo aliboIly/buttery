@@ -1,8 +1,8 @@
 import { Mail } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { TextField } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { TextField } from "@butteryui/react";
 
 /** An email address checked when you leave the field, with the browser's autofill. */
 export function EmailField(): ReactElement {

@@ -1,7 +1,7 @@
 import { useId } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack, Text } from "@buttery/core";
-import { ArrowLink } from "@buttery/react";
+import { Grid, Stack, Text } from "@butteryui/core";
+import { ArrowLink } from "@butteryui/react";
 import { siteHref } from "./location.ts";
 import { DocsSearch } from "./search/DocsSearch.tsx";
 

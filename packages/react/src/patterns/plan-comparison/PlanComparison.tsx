@@ -4,8 +4,8 @@ import {
   cx,
   hasContent,
   useControllableState,
-} from "@buttery/core";
-import type { CssVariables } from "@buttery/core";
+} from "@butteryui/core";
+import type { CssVariables } from "@butteryui/core";
 import { Check, Gift } from "lucide-react";
 import { useId } from "react";
 import type {

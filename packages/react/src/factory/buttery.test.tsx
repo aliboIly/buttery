@@ -1,11 +1,11 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../styles.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
-import { MotionPreferenceContext, Surface } from "@buttery/core";
+import { MotionPreferenceContext, Surface } from "@butteryui/core";
 import { buttery } from "./buttery.tsx";
 
 afterEach(() => {

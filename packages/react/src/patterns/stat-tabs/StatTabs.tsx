@@ -3,7 +3,7 @@ import {
   cx,
   useControllableState,
   useMergedRefs,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { RadioGroup } from "radix-ui";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";

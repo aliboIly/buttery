@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DataTable } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DataTable } from "@butteryui/react";
 
 interface Payout {
   readonly id: string;

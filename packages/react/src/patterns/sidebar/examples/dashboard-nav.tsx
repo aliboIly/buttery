@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Sidebar } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Sidebar } from "@butteryui/react";
 import { ChartLine, Coffee, House, Receipt, Repeat, Users } from "lucide-react";
 
 /** A dashboard's navigation: top pages, Recent, a titled section and a reports group that folds. */

@@ -7,8 +7,8 @@ import {
   Stack,
   TextStack,
   useStoredState,
-} from "@buttery/core";
-import type { StoredStateSetter } from "@buttery/core";
+} from "@butteryui/core";
+import type { StoredStateSetter } from "@butteryui/core";
 import {
   ArrowLink,
   Button,
@@ -18,7 +18,7 @@ import {
   TextField,
   looksLikeEmail,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { LogOut, Repeat, UserRound } from "lucide-react";
 import { firstName } from "./plan.ts";
 import { STORAGE_PREFIX } from "./storage.ts";

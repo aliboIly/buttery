@@ -1,5 +1,5 @@
-import { Icon, cx } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { Icon, cx } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import type { ComponentPropsWithRef, ComponentType, ReactElement } from "react";
 
 /** A status badge's tone: what the state means, repeated in color. */

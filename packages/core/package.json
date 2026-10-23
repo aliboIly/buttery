@@ -1,5 +1,5 @@
 {
-  "name": "@buttery/core",
+  "name": "@butteryui/core",
   "version": "0.0.0",
   "private": true,
   "description": "Tokens, recipes, primitives, layers and motion presets for buttery.",
@@ -10,30 +10,30 @@
   ],
   "exports": {
     ".": {
-      "@buttery/source": "./src/index.ts",
+      "@butteryui/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./palettes": {
-      "@buttery/source": "./src/palettes/index.ts",
+      "@butteryui/source": "./src/palettes/index.ts",
       "types": "./dist/palettes.d.ts",
       "default": "./dist/palettes.js"
     },
     "./layout": {
-      "@buttery/source": "./src/layout/index.ts",
+      "@butteryui/source": "./src/layout/index.ts",
       "types": "./dist/layout.d.ts",
       "default": "./dist/layout.js"
     },
     "./styles.css": {
-      "@buttery/source": "./src/styles/index.css",
+      "@butteryui/source": "./src/styles/index.css",
       "default": "./dist/styles.css"
     },
     "./tailwind.css": {
-      "@buttery/source": "./src/styles/tailwind.css",
+      "@butteryui/source": "./src/styles/tailwind.css",
       "default": "./dist/tailwind.css"
     },
     "./tokens.json": {
-      "@buttery/source": "./src/tokens/tokens.json",
+      "@butteryui/source": "./src/tokens/tokens.json",
       "default": "./dist/tokens.json"
     },
     "./package.json": "./package.json"

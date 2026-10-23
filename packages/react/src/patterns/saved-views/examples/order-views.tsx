@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SavedViews } from "@buttery/react";
-import type { SavedView } from "@buttery/react";
+import { Menu, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SavedViews } from "@butteryui/react";
+import type { SavedView } from "@butteryui/react";
 import { Copy, Trash2 } from "lucide-react";
 
 /** Saved views over an orders table, kept in state with the chosen one, and actions on it in the … menu. */

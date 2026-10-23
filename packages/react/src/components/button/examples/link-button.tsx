@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button } from "@butteryui/react";
 
 /** A link dressed as a call to action, with the forward arrow. */
 export function LinkButton(): ReactElement {

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AppPage, Banner, PageHeader } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AppPage, Banner, PageHeader } from "@butteryui/react";
 import { Printer } from "lucide-react";
 
 const TO_PACK = [

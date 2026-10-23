@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef, ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { buttery } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { buttery } from "@butteryui/react";
 
 function Link({
   children,

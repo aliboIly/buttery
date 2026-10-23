@@ -19,8 +19,8 @@ import {
   useLayoutAnimation,
   useMotionPreference,
   warnOnce,
-} from "@buttery/core";
-import type { CssVariables, MotionElementProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { CssVariables, MotionElementProps } from "@butteryui/core";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type { HTMLMotionProps, MotionStyle, Transition } from "motion/react";

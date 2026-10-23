@@ -1,5 +1,5 @@
-import { Text, cx, space, useMergedRefs, warnOnce } from "@buttery/core";
-import type { ColorToken, CssVariables } from "@buttery/core";
+import { Text, cx, space, useMergedRefs, warnOnce } from "@butteryui/core";
+import type { ColorToken, CssVariables } from "@butteryui/core";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
 import {

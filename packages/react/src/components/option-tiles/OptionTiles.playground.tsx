@@ -1,7 +1,7 @@
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { OptionTiles } from "@buttery/react";
-import type { OptionTile } from "@buttery/react";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { OptionTiles } from "@butteryui/react";
+import type { OptionTile } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

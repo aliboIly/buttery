@@ -8,8 +8,8 @@ import {
   Pressable,
   Surface,
   Text,
-} from "@buttery/core";
-import type { DemoSection, DocsPage, LaneName } from "@buttery/core";
+} from "@butteryui/core";
+import type { DemoSection, DocsPage, LaneName } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "foundations",

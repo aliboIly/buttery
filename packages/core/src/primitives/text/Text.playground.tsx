@@ -1,10 +1,10 @@
-import { displayRoles, Stack, Surface, Text, textRoles } from "@buttery/core";
+import { displayRoles, Stack, Surface, Text, textRoles } from "@butteryui/core";
 import type {
   DemoSection,
   DocsPage,
   TextTone,
   TextVariant,
-} from "@buttery/core";
+} from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "foundations",

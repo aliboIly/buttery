@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Grid, Stack, Stagger, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Grid, Stack, Stagger, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const FEATURES = [
   { title: "Templates", body: "Start from a layout that already works." },

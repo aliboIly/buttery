@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AreaChart, Button } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AreaChart, Button } from "@butteryui/react";
 
 const MONTHS = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 const EARLIER = [9850, 10300, 10100, 10750, 11200, 11600, 11900];

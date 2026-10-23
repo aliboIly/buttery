@@ -1,13 +1,13 @@
 import { use, useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack, Surface, Text } from "@buttery/core";
+import { Grid, Stack, Surface, Text } from "@butteryui/core";
 import {
   ArrowLink,
   Field,
   Section,
   SegmentedControl,
   Tabs,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { GUIDES, coffeeOf, isGuideId } from "./data.ts";
 import type { Guide, GuideId } from "./data.ts";
 import { ShopContext } from "./shop-context.ts";

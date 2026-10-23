@@ -50,7 +50,7 @@ const LEDGER = "/repo/packages/react/src/patterns/ledger/Ledger.tsx";
 const FIXTURES = files({
   ...CORE,
   [TILE]: `import type { ComponentPropsWithRef } from "react";
-import type { Size, SpacingLike } from "@buttery/core";
+import type { Size, SpacingLike } from "@butteryui/core";
 
 interface TileBase extends Omit<ComponentPropsWithRef<"div">, "title"> {
   /** How big it is. Defaults to \`"md"\`. */
@@ -125,7 +125,7 @@ export function ModeToggleValue(props: ModeToggleValueProps) {
 }
 `,
   [LEDGER]: `import type { ComponentPropsWithRef, ReactNode } from "react";
-import type { Size } from "@buttery/core";
+import type { Size } from "@butteryui/core";
 
 /** A column's least width. */
 export type ColumnWidth = "sm" | "md";

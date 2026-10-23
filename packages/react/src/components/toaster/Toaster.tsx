@@ -12,7 +12,7 @@ import {
   useLayoutAnimation,
   useMotionPreference,
   warnOnce,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { CircleAlert, CircleCheck, TriangleAlert } from "lucide-react";
 import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import { VisuallyHidden } from "radix-ui";

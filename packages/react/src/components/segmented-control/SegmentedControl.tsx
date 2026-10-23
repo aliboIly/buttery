@@ -1,5 +1,10 @@
-import { Icon, SharedIndicator, cx, useControllableState } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import {
+  Icon,
+  SharedIndicator,
+  cx,
+  useControllableState,
+} from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { RadioGroup } from "radix-ui";
 import type { ComponentPropsWithRef, ComponentType, ReactElement } from "react";
 import { Tooltip } from "../tooltip/Tooltip.tsx";

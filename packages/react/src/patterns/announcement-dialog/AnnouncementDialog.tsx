@@ -4,7 +4,7 @@ import {
   opensElsewhere,
   useControllableState,
   useStoredState,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { useRef, useState } from "react";
 import type {
   CSSProperties,

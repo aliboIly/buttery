@@ -14,7 +14,7 @@ Motion tokens are the named springs, durations, easings and delays buttery anima
 
 ## Springs
 
-Springs move things: positions, sizes and layouts. `spring` from `@buttery/core` holds them for Motion, and `useButteryTransition(name)` returns one with reduced motion already applied.
+Springs move things: positions, sizes and layouts. `spring` from `@butteryui/core` holds them for Motion, and `useButteryTransition(name)` returns one with reduced motion already applied.
 
 <DocsTable
   columns={["Token", "Settles in", "Use"]}
@@ -46,7 +46,7 @@ Springs move things: positions, sizes and layouts. `spring` from `@buttery/core`
 ```tsx
 import type { ReactElement } from "react";
 import { motion } from "motion/react";
-import { useButteryTransition } from "@buttery/core";
+import { useButteryTransition } from "@butteryui/core";
 
 export function SelectedMark({ x }: { readonly x: number }): ReactElement {
   const transition = useButteryTransition("snappy");

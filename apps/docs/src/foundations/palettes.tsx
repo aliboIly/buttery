@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { formatOklch } from "@buttery/core";
-import { gradientCss, gradients, solids } from "@buttery/core/palettes";
+import { formatOklch } from "@butteryui/core";
+import { gradientCss, gradients, solids } from "@butteryui/core/palettes";
 import "./palettes.css";
 
 export function PaletteGrids(): ReactElement {

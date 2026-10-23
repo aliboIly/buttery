@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SettingRow } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SettingRow } from "@butteryui/react";
 
 const SCHEDULES = ["Every Friday", "Every day", "On the 1st of each month"];
 

@@ -1,8 +1,8 @@
 import { useReducer } from "react";
 import type { CSSProperties, ReactElement } from "react";
-import { useShortcut } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { AppShell, HeaderBar, IconButton, Stage } from "@buttery/react";
+import { useShortcut } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { AppShell, HeaderBar, IconButton, Stage } from "@butteryui/react";
 import { Redo2, RotateCcw, Undo2 } from "lucide-react";
 import { DesignInspector } from "./DesignInspector.tsx";
 import { NEW_DESIGN, SHAPE_SIZES, START, historyReducer } from "./document.ts";

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, PasswordField } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, PasswordField } from "@butteryui/react";
 
 /** A new password kept in state, its rules ticked off as it's typed, and Save held back until they're all met. */
 export function NewPassword(): ReactElement {

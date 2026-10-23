@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A stray on its own. */
 export function Stray(): ReactElement {

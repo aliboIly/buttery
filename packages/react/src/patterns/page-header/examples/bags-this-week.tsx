@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { PageHeader } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { PageHeader } from "@butteryui/react";
 
 /** A header whose value comes from state: each batch added puts 12 more bags in the week. */
 export function BagsThisWeek(): ReactElement {

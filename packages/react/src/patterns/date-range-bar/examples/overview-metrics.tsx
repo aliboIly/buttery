@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DateRangeBar, MetricCard } from "@buttery/react";
-import type { DateRangePreset, DateRangeValue } from "@buttery/react";
+import { Grid, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DateRangeBar, MetricCard } from "@butteryui/react";
+import type { DateRangePreset, DateRangeValue } from "@butteryui/react";
 
 interface Figures {
   readonly revenue: string;

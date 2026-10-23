@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Dialog, toast } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Dialog, toast } from "@butteryui/react";
 
 /** A confirmation before something can't be undone, with the safe choice first, where focus lands. */
 export function DeleteConfirm(): ReactElement {

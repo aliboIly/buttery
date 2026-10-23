@@ -1,7 +1,7 @@
-import { Stack, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { HoverActions, IconButton } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { HoverActions, IconButton } from "@butteryui/react";
 import { Settings, Trash2 } from "lucide-react";
 
 export const page: DocsPage = {

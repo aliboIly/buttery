@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { expectButtery, fullMatrix, quickMatrix } from "@buttery/test";
+import { expectButtery, fullMatrix, quickMatrix } from "@butteryui/test";
 
 const matrix =
   process.env["BUTTERY_MATRIX"] === "full" ? fullMatrix : quickMatrix;

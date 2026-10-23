@@ -12,8 +12,8 @@ import {
   useFloatingObstacle,
   useMergedRefs,
   useMotionPreference,
-} from "@buttery/core";
-import type { PresenceMotion } from "@buttery/core";
+} from "@butteryui/core";
+import type { PresenceMotion } from "@butteryui/core";
 import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import { Toolbar } from "radix-ui";
 import { useLayoutEffect, useRef } from "react";

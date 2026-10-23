@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { InfoButton } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { InfoButton } from "@butteryui/react";
 
 /** An info button explaining a total: a tooltip on hover and focus, and a popover that stays on a press. */
 export function BasicInfoButton(): ReactElement {

@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+import { Center, Inline, Stack, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import {
   Button,
   FloatingToolbar,
   SegmentedControl,
   Stage,
-} from "@buttery/react";
-import type { StageSize } from "@buttery/react";
+} from "@butteryui/react";
+import type { StageSize } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

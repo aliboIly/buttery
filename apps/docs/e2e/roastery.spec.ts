@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import type { Locator, Page } from "@playwright/test";
-import { expectButtery } from "@buttery/test";
+import { expectButtery } from "@butteryui/test";
 
 const ANNOUNCEMENT = "buttery:announcement:roastery-roast-planning";
 const NUDGE = "buttery:nudge:roastery-delivery-questions";

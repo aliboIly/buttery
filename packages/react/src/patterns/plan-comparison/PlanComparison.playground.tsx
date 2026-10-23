@@ -3,8 +3,8 @@ import type {
   DemoSection,
   DemoWidth,
   DocsPage,
-} from "@buttery/core";
-import { Button, PlanComparison } from "@buttery/react";
+} from "@butteryui/core";
+import { Button, PlanComparison } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

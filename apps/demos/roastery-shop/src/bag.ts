@@ -1,5 +1,5 @@
-import { useStoredState } from "@buttery/core";
-import type { StoredStateSetter } from "@buttery/core";
+import { useStoredState } from "@butteryui/core";
+import type { StoredStateSetter } from "@butteryui/core";
 import { isCoffeeId, isGrindId, isSizeId } from "./data.ts";
 import type { CoffeeId, GrindId, SizeId } from "./data.ts";
 import { bagPrice, planPrice, shippingCost } from "./pricing.ts";

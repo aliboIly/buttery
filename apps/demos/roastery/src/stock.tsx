@@ -1,4 +1,4 @@
-import { InitialsTile, GroupedList, toast } from "@buttery/react";
+import { InitialsTile, GroupedList, toast } from "@butteryui/react";
 import type { ReactElement } from "react";
 import { STOCK, coffeeOf } from "./data.ts";
 import { kilograms, shortDate } from "./format.ts";

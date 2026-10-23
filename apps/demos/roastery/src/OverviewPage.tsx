@@ -1,4 +1,4 @@
-import { Grid } from "@buttery/core";
+import { Grid } from "@butteryui/core";
 import {
   AppPage,
   Banner,
@@ -8,8 +8,8 @@ import {
   MetricCard,
   PageHeader,
   RecommendationCard,
-} from "@buttery/react";
-import type { ChartSeries, DateRangeValue } from "@buttery/react";
+} from "@butteryui/react";
+import type { ChartSeries, DateRangeValue } from "@butteryui/react";
 import { Truck } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

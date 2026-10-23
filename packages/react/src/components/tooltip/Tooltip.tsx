@@ -6,7 +6,7 @@ import {
   space,
   timing,
   useControllableState,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { Tooltip as RadixTooltip } from "radix-ui";
 import { use } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";

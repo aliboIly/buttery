@@ -1,7 +1,7 @@
-import { Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ArrowLink, Button, SetupGuide } from "@buttery/react";
-import type { SetupTask } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ArrowLink, Button, SetupGuide } from "@butteryui/react";
+import type { SetupTask } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

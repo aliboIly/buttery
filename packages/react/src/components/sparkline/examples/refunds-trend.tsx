@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Sparkline } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Sparkline } from "@butteryui/react";
 
 /** Refunds over two weeks in the rose chart color, with a gap for days with no data. */
 export function RefundsTrend(): ReactElement {

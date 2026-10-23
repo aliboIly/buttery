@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Page, Section } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Page, Section } from "@butteryui/react";
 
 /** A single long section of reading on a page, its headline sized by the page's own width. */
 export function ArticlePage(): ReactElement {

@@ -25,10 +25,10 @@ There are four levels of effort for making an app buttery, numbered 0 to 3, and 
 Import the stylesheets once at the entry and wrap the app in `ButteryProvider`:
 
 ```tsx title="src/main.tsx"
-import "@buttery/core/styles.css";
-import "@buttery/react/styles.css";
+import "@butteryui/core/styles.css";
+import "@butteryui/react/styles.css";
 import type { ReactElement } from "react";
-import { ButteryProvider } from "@buttery/react";
+import { ButteryProvider } from "@butteryui/react";
 import { App } from "./App.tsx";
 
 export function Root(): ReactElement {
@@ -51,7 +51,7 @@ The [`buttery` factory](/motion/presets#buttery) turns any element or component 
 
 ```tsx
 import type { ReactElement } from "react";
-import { buttery } from "@buttery/react";
+import { buttery } from "@butteryui/react";
 
 export function Receipt(): ReactElement {
   return (

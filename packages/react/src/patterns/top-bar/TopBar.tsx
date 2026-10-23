@@ -1,5 +1,5 @@
-import { OverflowCluster, cx, hasContent } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { OverflowCluster, cx, hasContent } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { Menu as MenuIcon, Plus } from "lucide-react";
 import type {
   ComponentPropsWithRef,

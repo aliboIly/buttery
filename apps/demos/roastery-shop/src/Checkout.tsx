@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { ReactElement, RefObject, SubmitEvent } from "react";
-import { Grid, Stack, Text, TextStack } from "@buttery/core";
-import { Button, RadioCardGroup, TextField } from "@buttery/react";
+import { Grid, Stack, Text, TextStack } from "@butteryui/core";
+import { Button, RadioCardGroup, TextField } from "@butteryui/react";
 import { shippingFor, subtotal, totalFor } from "./bag.ts";
 import type { Bag } from "./bag.ts";
 import { money } from "./format.ts";

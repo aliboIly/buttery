@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Surface, demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { AccountMenu, Sidebar } from "@buttery/react";
+import { Menu, Surface, demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { AccountMenu, Sidebar } from "@butteryui/react";
 import {
   ChartLine,
   Coffee,

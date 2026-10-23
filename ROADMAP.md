@@ -14,7 +14,7 @@ Kept up to date as items finish.
 Done since the last update: a right-click `ContextMenu` that also opens from the keyboard, on Deckhand's slides; a `Sheet` (a side panel on a laptop, a drawer on a phone) with the shop's bag on it and `/bag` and `/checkout` pages; an `Accordion` and an `Faq` pattern with the shop's questions on them; `NavBar`'s pinned actions; `OverflowCluster` refitting when its gap or size changes; Deckhand's big numbers kept to one line; core and react built one module per file for npm. Earlier: the docs went live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` are GitHub releases.
 
 **Next**, in order:
-1. `@buttery/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
+1. `@butteryui/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
 2. npm, as `@butteryui/*` (`@buttery` belongs to another project; the `butteryui` org is set up): the repo renamed as soon as the open work above has merged, then `@butteryui/core`, `react`, `test` and `lint` published as 0.9.0; `@butteryui/mcp` and `create-buttery` follow when they're built. A rehearsal already packed the four packages and built a fresh app from them
 3. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
 4. Everything else that's left: the rest of 1.0 below, and the follow-ups the demos turned up
@@ -33,7 +33,7 @@ Done since the last update: a right-click `ContextMenu` that also opens from the
 - [x] Layout primitives + layer system
 - [x] `expectButtery` (all checks, JSON reports, Chromium + WebKit)
 - [x] `LayoutGuard` + grid overlay
-- [x] `@buttery/lint` enforced repo-wide
+- [x] `@butteryui/lint` enforced repo-wide
 - [x] `new-component` generator
 
 ## v0.3 — Motion (Phase 3)
@@ -122,7 +122,7 @@ Done since the last update: a right-click `ContextMenu` that also opens from the
 - [ ] The command line tool: `create-buttery` with `--template blank`, `dashboard`, `editor` or `marketing`; `init`; `add`, with `add page` for each page the dashboard template has (`table`, `detail`, `overview`, `settings`, `settings-index`, `catalog`, `plans`, `search-results`, `empty` and `feature-intro`); `create component`; `doctor`; `check`; and `migrate`
 - [ ] Any app: `LayoutGuard`, `buttery check` and the lint configs work on an app's own code, and every template and `add page` passes `buttery check` with no edits
 - [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper), and Tools pages for the command line tool and the MCP server with real output
-- [ ] `@buttery/mcp`, an MCP server with `scaffold_page`, `scaffold_component` and `search_docs` (on the docs search's index), and configs for the common coding agents (`docs/DX_AND_AI.md`)
+- [ ] `@butteryui/mcp`, an MCP server with `scaffold_page`, `scaffold_component` and `search_docs` (on the docs search's index), and configs for the common coding agents (`docs/DX_AND_AI.md`)
 - [ ] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed
 - [ ] A passwordless sign-in pattern: an identifier field (email or phone), a one-time code field, an `AuthFlow` with a headless `useOtpFlow` hook, a docs page, `buttery add page sign-in`, and a sign-in screen in the dashboard template and the roastery demo
 - [ ] The first publish to npm, as `@butteryui/*` (the org is claimed; `@buttery` belongs to another project)

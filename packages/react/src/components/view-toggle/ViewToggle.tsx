@@ -1,4 +1,4 @@
-import { cx } from "@buttery/core";
+import { cx } from "@butteryui/core";
 import { LayoutGrid, List } from "lucide-react";
 import type { ReactElement } from "react";
 import { SegmentedControl } from "../segmented-control/SegmentedControl.tsx";

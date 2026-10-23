@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, ChoiceDialog } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, ChoiceDialog } from "@butteryui/react";
 import { ShoppingBag, Store } from "lucide-react";
 
 /** A New order button that asks which kind of order before going to its form. */

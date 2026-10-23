@@ -1,9 +1,9 @@
 import { Copy } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Inspector, Slider, SplitButton } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Inspector, Slider, SplitButton } from "@butteryui/react";
 
 /** An inspector's footer: Copy beside a split Export whose menu holds the other formats. */
 export function ExportFooter(): ReactElement {

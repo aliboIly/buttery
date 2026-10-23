@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { GroupedList } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { GroupedList } from "@butteryui/react";
 
 interface Roast {
   readonly id: string;

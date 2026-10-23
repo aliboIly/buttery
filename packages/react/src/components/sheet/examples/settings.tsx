@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Sheet, Switch } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Sheet, Switch } from "@butteryui/react";
 
 /** Settings in a sheet at the window's end: each switch takes effect as it's turned, and Done closes it. */
 export function SettingsSheet(): ReactElement {

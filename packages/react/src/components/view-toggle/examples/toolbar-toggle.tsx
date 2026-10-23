@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SearchField, ViewToggle } from "@buttery/react";
-import type { ViewMode } from "@buttery/react";
+import { Grid, Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SearchField, ViewToggle } from "@butteryui/react";
+import type { ViewMode } from "@butteryui/react";
 
 const COFFEES: readonly {
   readonly name: string;

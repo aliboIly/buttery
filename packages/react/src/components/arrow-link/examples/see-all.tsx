@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink } from "@butteryui/react";
 
 /** A short list of recent orders with See all at its foot, and a help link that leaves the app. */
 export function SeeAll(): ReactElement {

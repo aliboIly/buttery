@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SignInForm, SignUpForm, Tabs } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SignInForm, SignUpForm, Tabs } from "@butteryui/react";
 
 /** An account page's tabs: sign in under one, create an account under the other. */
 export function AccountTabs(): ReactElement {

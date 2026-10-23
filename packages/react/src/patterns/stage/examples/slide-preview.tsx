@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import type { ReactElement } from "react";
-import { Center, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Stage } from "@buttery/react";
+import { Center, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { Stage } from "@butteryui/react";
 
 const BACKGROUND = gradients.find((preset) => preset.id === "peach");
 

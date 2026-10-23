@@ -1,4 +1,4 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { ArrowUpRight } from "lucide-react";

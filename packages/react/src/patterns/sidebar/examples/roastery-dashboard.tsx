@@ -1,8 +1,14 @@
 import { useState } from "react";
 import type { MouseEvent, ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AppPage, AppShell, PageHeader, Sidebar, TopBar } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import {
+  AppPage,
+  AppShell,
+  PageHeader,
+  Sidebar,
+  TopBar,
+} from "@butteryui/react";
 import { ChartLine, House, Receipt, Users } from "lucide-react";
 
 const PAGES: Readonly<Record<string, { title: string; body: string }>> = {

@@ -6,8 +6,8 @@ import {
   cx,
   shortcutKeys,
   useApplePlatform,
-} from "@buttery/core";
-import type { IconComponentProps, Shortcut } from "@buttery/core";
+} from "@butteryui/core";
+import type { IconComponentProps, Shortcut } from "@butteryui/core";
 import { Slot as RadixSlot } from "radix-ui";
 import type {
   ComponentPropsWithRef,

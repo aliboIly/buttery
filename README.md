@@ -145,10 +145,10 @@ Springs land at once, fades take 100ms, loops hold still and confetti stays off.
 Nothing is published yet, so for now this works inside the repo, where apps import the workspace packages directly.
 
 ```tsx
-import "@buttery/core/styles.css";
-import "@buttery/react/styles.css";
-import { createTheme } from "@buttery/core";
-import { ButteryProvider } from "@buttery/react";
+import "@butteryui/core/styles.css";
+import "@butteryui/react/styles.css";
+import { createTheme } from "@butteryui/core";
+import { ButteryProvider } from "@butteryui/react";
 
 const theme = createTheme({ accent: "#1f8a70", radius: "soft" });
 
@@ -172,11 +172,11 @@ Without React, the same recipes are plain markup:
 </section>
 ```
 
-With Tailwind v4, import the bridge after Tailwind and keep `@buttery/core/styles.css`, which defines the variables the utilities read:
+With Tailwind v4, import the bridge after Tailwind and keep `@butteryui/core/styles.css`, which defines the variables the utilities read:
 
 ```css
 @import "tailwindcss";
-@import "@buttery/core/tailwind.css";
+@import "@butteryui/core/tailwind.css";
 ```
 
 ```html

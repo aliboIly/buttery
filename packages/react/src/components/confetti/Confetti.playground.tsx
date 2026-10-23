@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { demoChoice, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, celebrate } from "@buttery/react";
+import { demoChoice, Pressable, Stack, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, celebrate } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/feedback",

@@ -1,4 +1,4 @@
-import { Grid, Stack } from "@buttery/core";
+import { Grid, Stack } from "@butteryui/core";
 import { useState } from "react";
 import {
   AppPage,
@@ -14,8 +14,8 @@ import {
   StatusBadge,
   Tabs,
   toast,
-} from "@buttery/react";
-import type { DataTableColumn } from "@buttery/react";
+} from "@butteryui/react";
+import type { DataTableColumn } from "@butteryui/react";
 import { Mail, Repeat, UserX } from "lucide-react";
 import type { ReactElement } from "react";
 import { CUSTOMER_ROWS } from "./customers.ts";

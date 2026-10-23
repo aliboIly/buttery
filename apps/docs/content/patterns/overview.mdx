@@ -49,7 +49,7 @@ Here is a whole overview: a banner, two metric cards for the week, a chart of da
 ```tsx title="src/pages/OverviewPage.tsx"
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid } from "@buttery/core";
+import { Grid } from "@butteryui/core";
 import {
   AppPage,
   Banner,
@@ -59,7 +59,7 @@ import {
   RecommendationCard,
   SetupGuide,
   StatTabs,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Truck } from "lucide-react";
 
 const WEEK = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
@@ -225,8 +225,8 @@ Spread its `motionProps` on the part's root, a `buttery.div`:
 ```tsx title="src/RoastDayTip.tsx"
 import { X } from "lucide-react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import { buttery, IconButton, useDismissible } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import { buttery, IconButton, useDismissible } from "@butteryui/react";
 
 export function RoastDayTip(): ReactElement | null {
   const { dismissed, dismiss, motionProps } = useDismissible({

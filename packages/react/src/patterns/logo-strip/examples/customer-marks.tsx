@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { LogoStrip } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { LogoStrip } from "@butteryui/react";
 
 const NAMES = ["Tidewater", "Bramble", "Quillwork", "Halcyon"] as const;
 

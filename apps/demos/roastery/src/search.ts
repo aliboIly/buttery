@@ -1,11 +1,11 @@
-import { matchesSearch } from "@buttery/react";
+import { matchesSearch } from "@butteryui/react";
 import type {
   LocalSearchSource,
   RemoteSearchSource,
   SearchFilter,
   SearchPage,
   SearchQuery,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { CircleHelp, Receipt, User } from "lucide-react";
 import { CUSTOMERS, ORDERS } from "./data.ts";
 import type { Customer } from "./data.ts";

@@ -1,9 +1,9 @@
 import { ArrowLeftRight } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ColorDot, IconButton } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ColorDot, IconButton } from "@butteryui/react";
 
 /** A gradient's two stops and a swap button, 6px apart as in an inspector row. */
 export function GradientStops(): ReactElement {

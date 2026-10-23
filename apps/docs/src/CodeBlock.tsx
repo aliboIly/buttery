@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { Check, Copy } from "lucide-react";
-import { Text, useMergedRefs } from "@buttery/core";
-import { IconButton } from "@buttery/react";
+import { Text, useMergedRefs } from "@butteryui/core";
+import { IconButton } from "@butteryui/react";
 import { focusWhileScrolling } from "./scroll-focus.ts";
 
 /** How long "Copied" shows before the button offers to copy again, in ms. */

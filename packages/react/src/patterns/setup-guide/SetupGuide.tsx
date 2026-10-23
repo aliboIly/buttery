@@ -13,8 +13,8 @@ import {
   useButteryTransition,
   useMotionPreference,
   useStoredState,
-} from "@buttery/core";
-import type { MotionElementProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { MotionElementProps } from "@butteryui/core";
 import { ChevronDown, ChevronUp, Circle, CircleCheck, X } from "lucide-react";
 import { motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";

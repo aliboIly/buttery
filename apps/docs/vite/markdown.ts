@@ -35,7 +35,7 @@ type MetaValue =
 export interface ComponentSource {
   readonly name: string;
   readonly folder: string;
-  /** `@buttery/core` or `@buttery/react`. */
+  /** `@butteryui/core` or `@butteryui/react`. */
   readonly packageName: string;
   readonly section: string;
   /** Its place in its section, lowest first, and its title there, which the nav orders it by. */
@@ -148,8 +148,8 @@ export function componentSources(root: string): ComponentSource[] {
           name,
           folder,
           packageName: meta.startsWith("packages/core/")
-            ? "@buttery/core"
-            : "@buttery/react",
+            ? "@butteryui/core"
+            : "@butteryui/react",
           section,
           order: Number(textOf(page["order"])),
           title: textOf(page["title"]) || name,

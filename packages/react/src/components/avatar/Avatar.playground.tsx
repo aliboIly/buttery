@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { demoChoice, Inline } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Avatar } from "@buttery/react";
+import { demoChoice, Inline } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Avatar } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

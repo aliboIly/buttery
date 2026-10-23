@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { TextArea } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { TextArea } from "@butteryui/react";
 
 const LIMIT = 60;
 

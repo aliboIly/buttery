@@ -1,6 +1,6 @@
-import { Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ScopeBadge } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ScopeBadge } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

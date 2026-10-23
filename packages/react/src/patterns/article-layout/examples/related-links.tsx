@@ -1,14 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   ArrowLink,
   ArticleLayout,
   Button,
   Page,
   Section,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** A release notes page: the notes on the page grid, related reading beside them and a feedback row after them. */
 export function RelatedLinks(): ReactElement {

@@ -1,9 +1,9 @@
 import { Banknote, Receipt, Undo2 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ContextMenu, StatusBadge } from "@buttery/react";
+import { Grid, Inline, Pressable, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ContextMenu, StatusBadge } from "@butteryui/react";
 
 interface Order {
   readonly number: number;

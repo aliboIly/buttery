@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Copy } from "lucide-react";
-import { Icon, Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Icon, Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** An icon and its label with the 6px icon gap. */
 export function IconAndLabel(): ReactElement {

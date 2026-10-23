@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Divider, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Divider, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A deck's slides and who it's shared with in one card, split into two groups by a divider. */
 export function GroupedList(): ReactElement {

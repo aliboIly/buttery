@@ -11,12 +11,12 @@ import {
   StatusBadge,
   matchesSearch,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import type {
   DataTableColumn,
   DataTableSort,
   StatusTone,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Download } from "lucide-react";
 import { shortDate } from "../data.ts";
 import type { Order, OrderStatus } from "../data.ts";

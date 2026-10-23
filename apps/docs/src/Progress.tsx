@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { useAnimationTracking, useButteryTransition } from "@buttery/core";
+import { useAnimationTracking, useButteryTransition } from "@butteryui/core";
 import { motion } from "motion/react";
 
 /**

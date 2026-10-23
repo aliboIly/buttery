@@ -3,7 +3,7 @@ import {
   SharedIndicator,
   cx,
   useControllableState,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { Tabs as RadixTabs } from "radix-ui";
 import { createContext, use } from "react";
 import type { ComponentPropsWithRef, Context, ReactElement } from "react";

@@ -101,7 +101,7 @@ export function countLaneItem(lane: LaneName): () => void {
   if (count > LANE_ROOM) {
     warnOnce(
       "FloatingLanes",
-      `The ${lane} lane holds more than ${String(LANE_ROOM)} items, so it can run off the screen. Fix: show toasts with toast() from @buttery/react, which keeps the newest three, or take older items out as new ones arrive.`,
+      `The ${lane} lane holds more than ${String(LANE_ROOM)} items, so it can run off the screen. Fix: show toasts with toast() from @butteryui/react, which keeps the newest three, or take older items out as new ones arrive.`,
     );
   }
   return () => {

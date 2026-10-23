@@ -23,7 +23,7 @@ const reportFile = join(reportDir, "playwright.json");
 const run = spawnSync(
   process.execPath,
   [
-    "--conditions=@buttery/source",
+    "--conditions=@butteryui/source",
     "node_modules/@playwright/test/cli.js",
     "test",
     "layout.spec",

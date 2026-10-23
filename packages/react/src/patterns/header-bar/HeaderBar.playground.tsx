@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { OverflowCluster, Stack } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { HeaderBar, IconButton, Select } from "@buttery/react";
-import type { SelectOption } from "@buttery/react";
+import { OverflowCluster, Stack } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { HeaderBar, IconButton, Select } from "@butteryui/react";
+import type { SelectOption } from "@butteryui/react";
 import { CircleHelp, Redo2, Trash2, Undo2 } from "lucide-react";
 
 export const page: DocsPage = {

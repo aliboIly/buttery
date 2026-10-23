@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
-import { Stack, Stagger, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Button, Page, SplitHero } from "@buttery/react";
+import { Stack, Stagger, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { Button, Page, SplitHero } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

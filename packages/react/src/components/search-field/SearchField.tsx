@@ -8,8 +8,8 @@ import {
   useControllableState,
   useMergedRefs,
   useShortcut,
-} from "@buttery/core";
-import type { Shortcut } from "@buttery/core";
+} from "@butteryui/core";
+import type { Shortcut } from "@butteryui/core";
 import { Search, X } from "lucide-react";
 import { useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Reveal, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Reveal, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A page section that rises into place the first time the reader reaches it. */
 export function SectionReveal(): ReactElement {

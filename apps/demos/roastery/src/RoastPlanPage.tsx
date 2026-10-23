@@ -1,4 +1,9 @@
-import { AppPage, GroupedList, InitialsTile, PageHeader } from "@buttery/react";
+import {
+  AppPage,
+  GroupedList,
+  InitialsTile,
+  PageHeader,
+} from "@butteryui/react";
 import type { ReactElement } from "react";
 import { ORDERS, SUBSCRIPTIONS, TODAY, coffeeOf, dayNumber } from "./data.ts";
 import { number } from "./format.ts";

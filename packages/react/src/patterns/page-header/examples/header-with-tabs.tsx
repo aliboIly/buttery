@@ -1,9 +1,9 @@
 import { Plus, Send } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { PageHeader, QuickActions, Tabs } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { PageHeader, QuickActions, Tabs } from "@butteryui/react";
 
 /** A header with its tabs and quick actions under it, 16px apart, over the tab's panel. */
 export function HeaderWithTabs(): ReactElement {

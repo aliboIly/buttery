@@ -21,8 +21,8 @@ import {
   useMergedRefs,
   useMotionPreference,
   warnOnce,
-} from "@buttery/core";
-import type { PresenceMotion } from "@buttery/core";
+} from "@butteryui/core";
+import type { PresenceMotion } from "@butteryui/core";
 import { X } from "lucide-react";
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react";
 import type { AnimationPlaybackControls } from "motion/react";

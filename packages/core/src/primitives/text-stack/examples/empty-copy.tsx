@@ -8,8 +8,8 @@ import {
   Surface,
   Text,
   TextStack,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const DECKS = ["Spring launch", "Team offsite", "Board update"] as const;
 

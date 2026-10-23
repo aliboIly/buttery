@@ -8,8 +8,8 @@ import {
   Scrim,
   Surface,
   Text,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A dim scrim first inside a modal layer, under a panel that holds the page while a price list applies. */
 export function DimBehindPanel(): ReactElement {

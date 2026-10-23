@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { celebrate } from "@buttery/react";
+import { Pressable, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { celebrate } from "@butteryui/react";
 
 /** The last onboarding step's button, which celebrates once the tour is done. */
 export function FinishButton(): ReactElement {

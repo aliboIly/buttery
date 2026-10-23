@@ -6,7 +6,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    conditions: ["@buttery/source", ...defaultClientConditions],
+    conditions: ["@butteryui/source", ...defaultClientConditions],
   },
   test: {
     projects: [
@@ -15,13 +15,13 @@ export default defineConfig({
         // Tests in the apps import the packages by name; inlined, they resolve to the source, not a build.
         ssr: {
           resolve: {
-            conditions: ["@buttery/source", ...defaultServerConditions],
+            conditions: ["@butteryui/source", ...defaultServerConditions],
           },
         },
         test: {
           name: "node",
           environment: "node",
-          server: { deps: { inline: [/^@buttery\//] } },
+          server: { deps: { inline: [/^@butteryui\//] } },
           include: [
             "packages/*/src/**/*.test.ts",
             "apps/*/src/**/*.test.ts",

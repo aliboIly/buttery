@@ -6,7 +6,7 @@ That promise is kept three ways, and all three are required:
 
 1. Primitives make the right layout the easy layout (you can't easily express a bad one).
 2. Static lint blocks the usual causes (raw values, negative margins, ad-hoc z-index, stray absolute positioning).
-3. Automated layout checks (`@buttery/test` + the dev-time `LayoutGuard`) catch anything that slips through, at every viewport, in both themes.
+3. Automated layout checks (`@butteryui/test` + the dev-time `LayoutGuard`) catch anything that slips through, at every viewport, in both themes.
 
 Page layout follows a strict grid with a consistent section rhythm: split heroes, bento grids, sticky asides. App layout follows the inspector-style editor in the local app captures, and for dashboards a sidebar shell (§3).
 
@@ -184,7 +184,7 @@ Weight 600 for display/headings, letter-spacing −0.02em at ≥ 32px. Two-tone 
 
 ## 5. Automated checks
 
-### `@buttery/test` — `expectButtery(page, options)`
+### `@butteryui/test` — `expectButtery(page, options)`
 Runs in Playwright against every playground route and every app built on buttery.
 
 | Check | Fails when |
@@ -213,8 +213,8 @@ Default matrix: viewports `390×844, 768×1024, 960×640, 1280×800, 1440×900, 
 ### `LayoutGuard` (dev only)
 Mounted by `ButteryProvider` in Vite development builds (`layoutGuard={false}` turns it off). Re-checks overlap, overflow, off-scale values, crowded text, broken words and misaligned controls on resize, scroll and DOM changes, ignoring its own overlay: once the page has been quiet for 300ms, at least once a second while it keeps changing, and only while buttery reports settled. Each check waits for a rendered frame, so components that adapt in ResizeObserver callbacks (OverflowCluster) have done so. It outlines offenders in red with a label and logs each new set of problems as one `console.warn`: a summary line, then one JSON violation per line in the shared format. `⌥⇧L` toggles the outlines and `⌥⇧G` the 12-column page grid, except while typing in a field. Production builds don't include it.
 
-### `@buttery/lint`
-- **stylelint** (`@buttery/lint/stylelint`, rules `buttery/no-raw-color`, `buttery/z-index-token`, `buttery/no-negative-margin`, `buttery/position-owned`, `buttery/raw-length`, and `buttery/tailwind-tokens`, which checks the classes an `@apply` pulls in the same way the ESLint rule checks `className`):
+### `@butteryui/lint`
+- **stylelint** (`@butteryui/lint/stylelint`, rules `buttery/no-raw-color`, `buttery/z-index-token`, `buttery/no-negative-margin`, `buttery/position-owned`, `buttery/raw-length`, and `buttery/tailwind-tokens`, which checks the classes an `@apply` pulls in the same way the ESLint rule checks `className`):
   - No raw colors outside token files.
   - z-index only `var(--bt-z-*)`.
   - No negative margins.
@@ -222,7 +222,7 @@ Mounted by `ButteryProvider` in Vite development builds (`layoutGuard={false}` t
   - No `!important`, no `transition: all`.
   - Raw lengths and durations are allowed only in: token files; `--bt-<file>-*` variables declared in the first rule of their stylesheet (component variables, such as `--bt-slider-thumb` at the top of `slider.css`); `@container`/`@media` conditions (CSS can't use `var()` there); `@font-face` descriptors; `letter-spacing` (em); border/outline widths ≤ 2px. Everywhere else lengths must be `var(--bt-*)`, `0`, `%`, `fr`, `ch`, `dvh`/`dvw` or container units, and durations `var(--bt-dur-*)`.
   - Out-of-flow positioning in a component file is allowed only in rules that target `[data-bt-part]` internals.
-- **ESLint** (`@buttery/lint/eslint`):
+- **ESLint** (`@butteryui/lint/eslint`):
   - `buttery/no-literal-layout-style` rejects inline `style` margins, z-index, position and sizes with literal values (tokens, percentages, `auto` and computed values pass), and custom properties set to raw lengths.
   - `buttery/no-raw-motion-layout` rejects `layout` and `layoutId` written out on Motion elements (`motion.*` and `m.*` under any import name, and components from `motion.create()`): spread `useLayoutAnimation()` instead, or pass on the `layout` it returns (`layout={layout}`, `layoutId={layout ? "pill" : undefined}`), so reduced motion turns the layout animation off. `layout={false}` is fine.
   - `buttery/tailwind-tokens` keeps Tailwind classes on the tokens: no `absolute`/`fixed`/`sticky`, no z-index but `z-(--bt-z-*)`, no negative margins, no arbitrary values holding raw lengths, durations or colors, no `transition-all` or raw durations, none of Tailwind's own palette, type scale or shadows, and spacing only in steps on buttery's scale. Arbitrary properties (`[position:absolute]`) get the same checks. `butteryEslintConfig({ tailwind: false })` turns it off.

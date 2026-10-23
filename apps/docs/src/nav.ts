@@ -1,4 +1,4 @@
-import type { DocsPage, DocsSection } from "@buttery/core";
+import type { DocsPage, DocsSection } from "@butteryui/core";
 import { slugify } from "./slug.ts";
 
 /** The site's sections in nav order, each with its title, and the component groups under Components. */

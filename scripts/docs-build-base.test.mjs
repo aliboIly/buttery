@@ -408,7 +408,7 @@ describe.each([
         await page.keyboard.type("dialog");
         await page
           .locator('[data-bt-part="command-search-preview"]')
-          .getByText('import { Dialog } from "@buttery/react";')
+          .getByText('import { Dialog } from "@butteryui/react";')
           .waitFor({ state: "visible" });
         await page.keyboard.press("Enter");
         await page.waitForURL(`${site.origin}/buttery/search?q=dialog`);

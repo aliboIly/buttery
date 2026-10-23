@@ -1,11 +1,11 @@
-import { Grid } from "@buttery/core";
+import { Grid } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { MetricCard } from "@buttery/react";
+} from "@butteryui/core";
+import { MetricCard } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

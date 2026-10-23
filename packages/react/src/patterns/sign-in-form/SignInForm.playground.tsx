@@ -1,7 +1,7 @@
 import { KeyRound, Mail } from "lucide-react";
-import { Surface } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { SignInForm, toast } from "@buttery/react";
+import { Surface } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { SignInForm, toast } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

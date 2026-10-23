@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, toast } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, toast } from "@butteryui/react";
 
 /** A publish kept in one toast by the id toast() returns, and canceled with toast.dismiss(id); ButteryProvider mounts the Toaster, so there's none to render. */
 export function PublishToast(): ReactElement {

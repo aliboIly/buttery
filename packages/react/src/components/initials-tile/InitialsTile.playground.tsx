@@ -1,7 +1,7 @@
-import { Inline } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { InitialsTile } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { InitialsTile } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

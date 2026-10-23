@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { publishSettled } from "@butteryui/core";
 import {
   cleanup,
   render,
@@ -11,7 +11,7 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
-import { FloatingLanes, Menu } from "@buttery/core";
+import { FloatingLanes, Menu } from "@butteryui/core";
 import {
   afterEach,
   beforeEach,

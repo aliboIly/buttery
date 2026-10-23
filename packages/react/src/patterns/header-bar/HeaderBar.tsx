@@ -1,5 +1,5 @@
-import { Divider, OverflowCluster, Text, cx } from "@buttery/core";
-import type { IconComponentProps, OverflowClusterProps } from "@buttery/core";
+import { Divider, OverflowCluster, Text, cx } from "@butteryui/core";
+import type { IconComponentProps, OverflowClusterProps } from "@butteryui/core";
 import type {
   ComponentPropsWithRef,
   ComponentType,

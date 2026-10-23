@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { SwatchGrid } from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { SwatchGrid } from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 
 const SWATCHES: readonly Swatch[] = gradients.map((preset) => ({
   value: preset.id,

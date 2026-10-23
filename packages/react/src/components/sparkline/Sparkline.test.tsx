@@ -1,7 +1,7 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
-import { Inline, Text } from "@buttery/core";
+import { Inline, Text } from "@butteryui/core";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Sparkline } from "./Sparkline.tsx";

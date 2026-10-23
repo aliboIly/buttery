@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { MetricCard, SegmentedControl } from "@buttery/react";
+import { Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { MetricCard, SegmentedControl } from "@butteryui/react";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

@@ -1,8 +1,8 @@
 import type { CSSProperties, ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Onboarding, hasSeenOnboarding } from "@buttery/react";
-import type { OnboardingStep } from "@buttery/react";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { Onboarding, hasSeenOnboarding } from "@butteryui/react";
+import type { OnboardingStep } from "@butteryui/react";
 import { DEFAULT_ANGLE } from "./deck.ts";
 import type { Fill } from "./deck.ts";
 import { SCREEN, fillCss, inkFor } from "./geometry.ts";

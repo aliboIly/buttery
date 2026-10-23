@@ -1,11 +1,11 @@
-import { Stack, Text, demoChoice } from "@buttery/core";
+import { Stack, Text, demoChoice } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { Button, FormDialog, TextField } from "@buttery/react";
+} from "@butteryui/core";
+import { Button, FormDialog, TextField } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

@@ -8,7 +8,7 @@ import {
 
 /** The ESLint plugin with buttery's rules. */
 export const butteryEslintPlugin: ESLint.Plugin = {
-  meta: { name: "@buttery/lint" },
+  meta: { name: "@butteryui/lint" },
   rules: {
     "no-literal-layout-style": noLiteralLayoutStyle,
     "no-raw-motion-layout": noRawMotionLayout,
@@ -37,7 +37,7 @@ export interface ButteryEslintOptions {
  *
  * @example
  * // eslint.config.js
- * import { butteryEslintConfig } from "@buttery/lint/eslint";
+ * import { butteryEslintConfig } from "@butteryui/lint/eslint";
  * export default [...yourConfig, ...butteryEslintConfig()];
  */
 export function butteryEslintConfig(

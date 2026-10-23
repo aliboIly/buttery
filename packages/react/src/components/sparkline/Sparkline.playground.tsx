@@ -1,8 +1,8 @@
-import { Grid, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Sparkline } from "@buttery/react";
-import type { ChartColor } from "@buttery/react";
+import { Grid, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Sparkline } from "@butteryui/react";
+import type { ChartColor } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

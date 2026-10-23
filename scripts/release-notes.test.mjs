@@ -12,7 +12,7 @@ const STEPPERS = {
   examples: [],
   highlights: ["A `Stepper`.", "Button shapes."],
   changes: [
-    { packageName: "@buttery/react", lines: ["Add the Stepper component."] },
+    { packageName: "@butteryui/react", lines: ["Add the Stepper component."] },
   ],
 };
 
@@ -33,7 +33,7 @@ describe("release notes for GitHub", () => {
         "",
         "New components: `Stepper`.",
         "",
-        "### @buttery/react",
+        "### @butteryui/react",
         "",
         "- Add the Stepper component.",
         "",

@@ -1,9 +1,9 @@
 import { Settings } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { HoverActions, IconButton } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { HoverActions, IconButton } from "@butteryui/react";
 
 const TOPICS = ["Orders waiting on payment", "Payouts", "Low green coffee"];
 

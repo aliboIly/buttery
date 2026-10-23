@@ -1,8 +1,8 @@
 import type { ReactElement, ReactNode } from "react";
-import { Center, Inline, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Bento, Page, Section } from "@buttery/react";
+import { Center, Inline, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { Bento, Page, Section } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

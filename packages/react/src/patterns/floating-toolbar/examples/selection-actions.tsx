@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Chip, FloatingToolbar } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Chip, FloatingToolbar } from "@butteryui/react";
 
 interface Slide {
   readonly id: number;

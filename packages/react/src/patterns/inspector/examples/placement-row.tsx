@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AnchorGrid, Chip, Inspector, TiltPad } from "@buttery/react";
-import type { Anchor, TiltValue } from "@buttery/react";
+import { Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AnchorGrid, Chip, Inspector, TiltPad } from "@butteryui/react";
+import type { Anchor, TiltValue } from "@butteryui/react";
 
 const LEVEL: TiltValue = { x: 0, y: 0 };
 

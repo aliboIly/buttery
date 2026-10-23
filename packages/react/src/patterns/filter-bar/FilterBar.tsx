@@ -5,7 +5,7 @@ import {
   hasContent,
   useControllableState,
   useMergedRefs,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { ListFilter, Plus, X } from "lucide-react";
 import {
   Children,

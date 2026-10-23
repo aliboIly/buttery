@@ -1,6 +1,6 @@
-import { Inline, Kbd, Stack, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+import { Inline, Kbd, Stack, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "components/data-display",

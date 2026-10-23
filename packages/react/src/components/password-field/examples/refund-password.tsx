@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, PasswordField, Switch } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, PasswordField, Switch } from "@butteryui/react";
 
 /** A refund password that's disabled until the shop asks for one, with an error under it when it's too short to save. */
 export function RefundPassword(): ReactElement {

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ValueBadge } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ValueBadge } from "@butteryui/react";
 
 /** A percentage that never shifts its label as it grows from 0% to 100%. */
 export function PercentBadge(): ReactElement {

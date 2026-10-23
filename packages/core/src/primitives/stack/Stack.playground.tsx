@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, SpaceValue } from "@buttery/core";
+import { Stack, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, SpaceValue } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "layout",

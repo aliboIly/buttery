@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { publishSettled, watchFocusHistory } from "@buttery/core";
+import { publishSettled, watchFocusHistory } from "@butteryui/core";
 import {
   act,
   cleanup,

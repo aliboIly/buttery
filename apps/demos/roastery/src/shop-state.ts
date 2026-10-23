@@ -1,5 +1,5 @@
-import { useStoredState } from "@buttery/core";
-import type { StoredStateSetter } from "@buttery/core";
+import { useStoredState } from "@butteryui/core";
+import type { StoredStateSetter } from "@butteryui/core";
 import { STORAGE_PREFIX } from "./storage.ts";
 
 function isFlag(value: unknown): value is boolean {

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SearchResults, matchesSearch } from "@buttery/react";
-import type { RemoteSearchSource } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SearchResults, matchesSearch } from "@butteryui/react";
+import type { RemoteSearchSource } from "@butteryui/react";
 import { CircleHelp } from "lucide-react";
 
 const ARTICLES = [

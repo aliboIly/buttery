@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { TopBar, toast } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { TopBar, toast } from "@butteryui/react";
 import { Bell } from "lucide-react";
 
 /** A top bar with no search: just its actions and the create button. */

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { demoChoice, Inline, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { AnchorGrid } from "@buttery/react";
-import type { Anchor } from "@buttery/react";
+import { demoChoice, Inline, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { AnchorGrid } from "@butteryui/react";
+import type { Anchor } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

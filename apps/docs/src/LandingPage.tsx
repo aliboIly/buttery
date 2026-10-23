@@ -12,7 +12,7 @@ import {
   Stagger,
   Surface,
   Text,
-} from "@buttery/core";
+} from "@butteryui/core";
 import {
   ArrowLink,
   Button,
@@ -23,7 +23,7 @@ import {
   SegmentedControl,
   Slider,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { releases } from "virtual:buttery-whats-new";
 import { CopyLine } from "./CopyLine.tsx";
 import { withInlineCode } from "./inline-code.tsx";

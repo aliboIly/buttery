@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { opensElsewhere, scrollToSection } from "@buttery/core";
+import { opensElsewhere, scrollToSection } from "@butteryui/core";
 import { useLink, useNavigate } from "./router.tsx";
 
 /** The sections of the shop's page, by their element ids. */

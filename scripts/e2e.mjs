@@ -12,7 +12,7 @@ if (group !== "rest" && group !== "timing") {
 const result = spawnSync(
   process.execPath,
   [
-    "--conditions=@buttery/source",
+    "--conditions=@butteryui/source",
     "node_modules/@playwright/test/cli.js",
     "test",
     ...rest,

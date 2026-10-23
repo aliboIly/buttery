@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink } from "@butteryui/react";
 
 /** A way back to the page above, with the arrow pointing back. */
 export function BackLink(): ReactElement {

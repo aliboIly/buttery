@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SplitButton } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SplitButton } from "@butteryui/react";
 
 /** The menu's open state kept in the example, so a tip can open it to point out a new entry. */
 export function ShowNewOption(): ReactElement {

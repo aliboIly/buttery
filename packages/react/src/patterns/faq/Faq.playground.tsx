@@ -1,7 +1,12 @@
-import { demoChoice } from "@buttery/core";
-import type { DemoFrame, DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, Faq } from "@buttery/react";
-import type { FaqGroup, FaqLayout, FaqQuestion } from "@buttery/react";
+import { demoChoice } from "@butteryui/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DocsPage,
+  LiveDemo,
+} from "@butteryui/core";
+import { Button, Faq } from "@butteryui/react";
+import type { FaqGroup, FaqLayout, FaqQuestion } from "@butteryui/react";
 import type { ReactElement } from "react";
 
 export const page: DocsPage = {

@@ -28,7 +28,7 @@ beforeEach(() => {
   write(
     "packages/react/package.json",
     JSON.stringify({
-      name: "@buttery/react",
+      name: "@butteryui/react",
       exports: {
         ".": { default: "./dist/index.js" },
         "./package.json": "./package.json",

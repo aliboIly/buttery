@@ -16,7 +16,7 @@ import {
   space,
   useStoredState,
   widths,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { ChevronRight, Clock, Search, X } from "lucide-react";
 import { motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { gradientCss, gradients, solids } from "@buttery/core/palettes";
-import { Inspector, SegmentedControl, SwatchGrid } from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { gradientCss, gradients, solids } from "@butteryui/core/palettes";
+import { Inspector, SegmentedControl, SwatchGrid } from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 
 type Fill = "gradient" | "solid";
 

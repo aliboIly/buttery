@@ -1,9 +1,9 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
-import { contrastRatio } from "@buttery/core";
+import { contrastRatio } from "@butteryui/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { ButteryProvider } from "../../provider/ButteryProvider.tsx";

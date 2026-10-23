@@ -1,11 +1,11 @@
 import { Download, Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button } from "@buttery/react";
-import type { ButtonVariant } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button } from "@butteryui/react";
+import type { ButtonVariant } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/actions",

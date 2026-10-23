@@ -1,5 +1,5 @@
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { MetricCard } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { MetricCard } from "@butteryui/react";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 

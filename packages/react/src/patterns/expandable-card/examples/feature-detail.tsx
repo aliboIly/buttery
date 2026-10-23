@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Center, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Bento, ExpandableCard } from "@buttery/react";
+import { Center, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Bento, ExpandableCard } from "@butteryui/react";
 
 /** A feature card with a longer note behind it, beside a card that doesn't open. */
 export function FeatureDetail(): ReactElement {

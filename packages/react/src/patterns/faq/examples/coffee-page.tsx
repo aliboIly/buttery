@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Faq } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Faq } from "@butteryui/react";
 
 /** A coffee's own page ends with three short questions about it: no groups, no search. */
 export function CoffeePage(): ReactElement {

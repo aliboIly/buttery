@@ -1,6 +1,6 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, FullscreenDialog, OptionTiles } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, FullscreenDialog, OptionTiles } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

@@ -1,5 +1,5 @@
 import { use } from "react";
-import { toast } from "@buttery/react";
+import { toast } from "@butteryui/react";
 import { addCoffee, setPlan, useBag } from "./bag.ts";
 import type { CoffeeLine, Plan } from "./bag.ts";
 import { coffeeOf, sizeLabel } from "./data.ts";

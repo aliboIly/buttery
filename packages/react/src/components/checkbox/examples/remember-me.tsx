@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Checkbox } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Checkbox } from "@butteryui/react";
 
 /** A sign-in form's keep-me-signed-in box, its ticked state kept in the form's own state. */
 export function RememberMe(): ReactElement {

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Bento, Button, ExpandableCard } from "@buttery/react";
+import { Center, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Bento, Button, ExpandableCard } from "@butteryui/react";
 
 /** A card opened from elsewhere on the page too, with open and onOpenChange kept in useState. */
 export function ControlledCard(): ReactElement {

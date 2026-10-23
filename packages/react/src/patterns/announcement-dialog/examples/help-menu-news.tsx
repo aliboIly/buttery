@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AnnouncementDialog, Button } from "@buttery/react";
+import { Menu, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AnnouncementDialog, Button } from "@butteryui/react";
 import { CircleHelp } from "lucide-react";
 
 /** Opened from a Help menu's What's new item, with open and onOpenChange kept in useState. */

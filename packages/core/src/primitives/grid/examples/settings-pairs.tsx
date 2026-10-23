@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Grid, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Grid, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** Two equal columns of label and value pairs. */
 export function SettingsPairs(): ReactElement {

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SignUpForm } from "@buttery/react";
-import type { SignUpValues } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SignUpForm } from "@butteryui/react";
+import type { SignUpValues } from "@butteryui/react";
 
 async function createAccount({
   email,

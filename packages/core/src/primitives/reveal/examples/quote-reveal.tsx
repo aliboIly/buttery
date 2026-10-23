@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Reveal, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Reveal, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A quote that fades in once as it scrolls into view. */
 export function QuoteReveal(): ReactElement {

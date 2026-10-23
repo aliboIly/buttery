@@ -1,5 +1,5 @@
-import type { IconComponentProps } from "@buttery/core";
-import type { SearchPage } from "@buttery/react";
+import type { IconComponentProps } from "@butteryui/core";
+import type { SearchPage } from "@butteryui/react";
 import {
   CalendarDays,
   Ellipsis,

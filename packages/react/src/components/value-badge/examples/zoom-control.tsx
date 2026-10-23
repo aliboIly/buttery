@@ -1,9 +1,9 @@
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { IconButton, ValueBadge } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { IconButton, ValueBadge } from "@butteryui/react";
 
 const LEVELS: readonly number[] = [50, 75, 100, 125, 150, 200];
 

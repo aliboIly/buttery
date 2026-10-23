@@ -9,7 +9,7 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
+} from "@butteryui/core";
 import {
   Avatar,
   Button,
@@ -17,7 +17,7 @@ import {
   Slider,
   StatusBadge,
   Switch,
-} from "@buttery/react";
+} from "@butteryui/react";
 import "./intro.css";
 
 /** What a feature's card shows above its words. */

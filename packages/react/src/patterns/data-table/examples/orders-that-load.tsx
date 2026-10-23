@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DataTable, SearchField } from "@buttery/react";
+import { Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DataTable, SearchField } from "@butteryui/react";
 
 interface Order {
   readonly id: string;

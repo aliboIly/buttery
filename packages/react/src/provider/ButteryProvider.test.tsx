@@ -1,8 +1,8 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { colors, createTheme, useMotionPreference } from "@buttery/core";
+import { colors, createTheme, useMotionPreference } from "@butteryui/core";
 import { toast } from "../components/toaster/Toaster.tsx";
 import { ButteryProvider } from "./ButteryProvider.tsx";
 import { useButtery } from "./context.ts";

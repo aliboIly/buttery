@@ -5,7 +5,7 @@ import {
   useControllableState,
   useMergedRefs,
   useStoredState,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { VisuallyHidden } from "radix-ui";
 import { useEffect, useId, useRef, useState } from "react";
 import type {

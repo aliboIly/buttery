@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Text } from "@buttery/core";
-import type { DemoSection, DemoWidth, DocsPage } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+import { Center, Text } from "@butteryui/core";
+import type { DemoSection, DemoWidth, DocsPage } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import {
   AppShell,
   HeaderBar,
@@ -10,7 +10,7 @@ import {
   Inspector,
   Slider,
   Stage,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Redo2, Undo2 } from "lucide-react";
 
 export const page: DocsPage = {

@@ -1,8 +1,12 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Text, demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, Sheet } from "@buttery/react";
-import type { ResponsiveSheetSide, SheetSide, SheetSize } from "@buttery/react";
+import { Inline, Stack, Text, demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, Sheet } from "@butteryui/react";
+import type {
+  ResponsiveSheetSide,
+  SheetSide,
+  SheetSize,
+} from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/overlays",

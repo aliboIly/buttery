@@ -1,4 +1,4 @@
-import { cx, useControllableState } from "@buttery/core";
+import { cx, useControllableState } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { Checkbox } from "../checkbox/Checkbox.tsx";
 import { Tabs } from "../tabs/Tabs.tsx";

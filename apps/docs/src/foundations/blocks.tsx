@@ -14,8 +14,8 @@ import {
   timing,
   widths,
   zIndex,
-} from "@buttery/core";
-import type { SpaceStep } from "@buttery/core";
+} from "@butteryui/core";
+import type { SpaceStep } from "@butteryui/core";
 import "./blocks.css";
 import { COLOR_GROUPS } from "./color-groups.ts";
 import type { ColorGroup } from "./color-groups.ts";

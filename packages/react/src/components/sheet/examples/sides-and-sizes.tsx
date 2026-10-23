@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Sheet } from "@buttery/react";
-import type { SheetSide, SheetSize } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Sheet } from "@butteryui/react";
+import type { SheetSide, SheetSize } from "@butteryui/react";
 
 const SHEETS: readonly {
   readonly name: string;

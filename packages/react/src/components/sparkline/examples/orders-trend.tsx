@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Sparkline } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Sparkline } from "@butteryui/react";
 
 /** Two weeks of orders as a sparkline that fills the row beside the total it adds up to. */
 export function OrdersTrend(): ReactElement {

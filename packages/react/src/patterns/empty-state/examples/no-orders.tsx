@@ -1,14 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   AppPage,
   ArrowLink,
   Button,
   EmptyState,
   PageHeader,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Receipt } from "lucide-react";
 
 /** An app page with nothing in it yet: an icon tile, the way to add some, and where to read more. */

@@ -1,4 +1,4 @@
-import { Text, cx, useControllableState, warnOnce } from "@buttery/core";
+import { Text, cx, useControllableState, warnOnce } from "@butteryui/core";
 import { Slider as RadixSlider } from "radix-ui";
 import { useEffect, useId, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";

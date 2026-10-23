@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Grid, Stack, Surface, Text } from "@buttery/core";
-import { ArrowLink } from "@buttery/react";
+import { Grid, Stack, Surface, Text } from "@butteryui/core";
+import { ArrowLink } from "@butteryui/react";
 import { contentPages } from "../content.ts";
 import { siteHref } from "../location.ts";
 import { templates } from "../routes.ts";

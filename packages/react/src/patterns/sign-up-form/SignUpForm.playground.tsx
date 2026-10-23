@@ -1,6 +1,6 @@
-import { Surface } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { SignUpForm, toast } from "@buttery/react";
+import { Surface } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { SignUpForm, toast } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

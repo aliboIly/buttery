@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Section, SegmentedControl } from "@buttery/react";
-import type { SectionSize } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Section, SegmentedControl } from "@butteryui/react";
+import type { SectionSize } from "@butteryui/react";
 
 type Tone = "default" | "muted";
 

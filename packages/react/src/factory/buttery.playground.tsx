@@ -1,6 +1,6 @@
-import { Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { buttery } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { buttery } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "motion",

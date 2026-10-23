@@ -12,8 +12,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@buttery/core": "workspace:*",
-    "@buttery/react": "workspace:*",
+    "@butteryui/core": "workspace:*",
+    "@butteryui/react": "workspace:*",
     "demo-deckhand": "workspace:*",
     "demo-roastery": "workspace:*",
     "demo-roastery-shop": "workspace:*",
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@axe-core/playwright": "catalog:",
     "@babel/core": "catalog:",
-    "@buttery/test": "workspace:*",
+    "@butteryui/test": "workspace:*",
     "@mdx-js/rollup": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
     "@types/react": "catalog:",

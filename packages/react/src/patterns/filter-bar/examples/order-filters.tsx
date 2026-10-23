@@ -1,9 +1,9 @@
 import { Download } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, FilterBar, FilterPill } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, FilterBar, FilterPill } from "@butteryui/react";
 
 const STATUSES = ["Paid", "Unpaid", "Refunded"] as const;
 

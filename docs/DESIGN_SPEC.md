@@ -78,7 +78,7 @@ Decorative (onboarding illustrations, brand mark):
 | `--bt-brand-gloss` / `--bt-brand-shadow` | `#ffffff` / `#8a5a12` — the mark's highlight and its contact shadow (drawn at 20% and blurred), the same in both themes. |
 | `--bt-skeleton` / `--bt-skeleton-strong` | `#f2f2f4` / `#ececee` (a `Skeleton`'s fill and the band that sweeps across it; skeleton blocks and lines in illustrations) |
 
-### Palettes (`@buttery/core/palettes`)
+### Palettes (`@butteryui/core/palettes`)
 
 buttery's own set, derived in OKLCH rather than taken from the references: 24 two-stop gradients in four rows of six (`gradientRows`), and 18 solids. Six hue families (butter, apricot, rose, lilac, sky, mint), one to a column, run down three rows: cream pastels (L 0.95 → 0.87), fresh mids (L 0.84 → 0.66, more chroma) and a deep row (espresso, rust, plum, ink, navy, forest). The fourth row is neutral, light to dark, each a clear step from the last (midpoints L 0.94 → 0.30): paper (warm white), fog (cool), stone (warm gray), sand (tan), slate (blue-gray) and graphite (near-black, distinct from every deep color). Each gradient's second stop shifts lightness, chroma and hue a little toward a neighbor; `gradientCss` blends them in OKLab at 135°, top-left → bottom-right, which keeps the midpoints from going gray. The solids are the OKLab midpoints of the cream, deep and neutral rows. Hex values are gamut-mapped from the OKLCH source, so CSS and canvas export draw the same color.
 
@@ -115,7 +115,7 @@ Every **active** text/background pair passes WCAG AA in both themes. Disabled st
 
 ## 2. Typography
 
-- Family: **Inter Variable**, bundled via `@fontsource-variable/inter`. It's a dependency of `@buttery/core`, and `styles.css` imports it, so apps get it from the two CSS imports. Desktop apps must work offline, so there's no font CDN. Fallback: `ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif`.
+- Family: **Inter Variable**, bundled via `@fontsource-variable/inter`. It's a dependency of `@butteryui/core`, and `styles.css` imports it, so apps get it from the two CSS imports. Desktop apps must work offline, so there's no font CDN. Fallback: `ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif`.
 - Numbers in values, badges, dimensions: `font-variant-numeric: tabular-nums`.
 - Tracking tokens: `--bt-tracking-tight: -0.01em` (≥15px semibold), `--bt-tracking-display: -0.02em` (≥32px).
 
@@ -368,7 +368,7 @@ A column 20 apart, at most 400 wide (`w-dialog`): a `TextStack` heading (an `h1`
 
 ### Toast
 `inverse-bg` pill, 36h (measured 38, snapped to `--bt-h-button`), padding-x 16, `body`-size text in `inverse-text`, action 14/500 in `inverse-text-secondary` (hover `inverse-text`), gap 20, shadow-floating. One line: a long message truncates at the lane's width (the viewport minus 24 a side). The action's target is 24 tall (2px block padding).
-- Shown with `toast(message, options)` from `@buttery/react`; the `Toaster` that `ButteryProvider` mounts stacks them in the `bottom-center` floating lane, 8 apart, newest at the bottom.
+- Shown with `toast(message, options)` from `@butteryui/react`; the `Toaster` that `ButteryProvider` mounts stacks them in the `bottom-center` floating lane, 8 apart, newest at the bottom.
 - Tones (`tone`, or `toast.success()`, `toast.warning()`, `toast.danger()`): the pill takes `inverse-success-bg`, `inverse-warning-bg` or `inverse-danger-bg`, the inverse surface mixed toward the tone in OKLab (18%, 14% in dark), and leads with a 16px icon in `inverse-success`, `inverse-warning` or `inverse-danger` (a circled check, a warning triangle, a circled exclamation), 6 before the message, with the pill's start padding at 12. Each inverse tone is the other theme's tone, so it reads on the inverse surface. The action takes `inverse-text`, underlined on hover, since the secondary gray is too faint on a tint. A warning or danger toast stays 5s, as one with an action does. Screen readers hear the tone before the message ("Notification Error: Couldn't export the card"); `Toaster toneLabels` changes the words.
 - **Three at most.** A fourth lets the one shown or updated longest ago go. A toast with the `id` of one showing updates it in its place, with its time started over and read out again, so repeating an action never stacks copies and nothing moves.
 - Stays 3s (`--bt-toast-life`), or 5s with an action (`--bt-toast-life-action`); `duration: Infinity` keeps it until dismissed. The clock stops while the pointer or focus is on the toasts or the window is in the background.

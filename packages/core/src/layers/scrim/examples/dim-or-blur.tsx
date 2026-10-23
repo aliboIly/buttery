@@ -6,8 +6,8 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** Both variants, drawn by Popover's scrim prop: dim darkens the page, blur softens it under a light wash. */
 export function DimOrBlur(): ReactElement {

@@ -1,4 +1,4 @@
-import { Slot, cx } from "@buttery/core";
+import { Slot, cx } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 
 /** Props for `Page`. */

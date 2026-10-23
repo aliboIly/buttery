@@ -1,7 +1,7 @@
 import { createContext, isValidElement, use } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
-import { Grid, Icon, Inline, Stack, Surface, Text } from "@buttery/core";
-import { ArrowLink, Breadcrumbs, Callout } from "@buttery/react";
+import { Grid, Icon, Inline, Stack, Surface, Text } from "@butteryui/core";
+import { ArrowLink, Breadcrumbs, Callout } from "@butteryui/react";
 import { Link2 } from "lucide-react";
 import { Card, Cards } from "./blocks/Cards.tsx";
 import { Do, DoDont, Dont } from "./blocks/DoDont.tsx";

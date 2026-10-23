@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { RadioCardGroup, TextField } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { RadioCardGroup, TextField } from "@butteryui/react";
 
 /** How a bag is packed, left uncontrolled: choosing the gift box opens a field for its card. */
 export function Packing(): ReactElement {

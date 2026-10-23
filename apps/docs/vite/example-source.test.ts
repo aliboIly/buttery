@@ -3,9 +3,9 @@ import { shownSource } from "./example-source.ts";
 
 const EXAMPLE = `import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button } from "@butteryui/react";
 
 /** One action and what it changes. */
 export function AddToOrder(): ReactElement {
@@ -32,7 +32,7 @@ describe("shownSource", () => {
     expect(shown).not.toContain("ExampleKind");
     expect(shown).not.toContain("ExamplePlay");
     expect(shown).not.toContain("export const play");
-    expect(shown).toContain('import { Inline, Text } from "@buttery/core";');
+    expect(shown).toContain('import { Inline, Text } from "@butteryui/core";');
     expect(shown.endsWith("}\n")).toBe(true);
     expect(shown).not.toMatch(/\n{3}/);
   });
@@ -44,7 +44,9 @@ describe("shownSource", () => {
         "import type { ExampleKind, ExamplePlay, SpaceStep }",
       ),
     );
-    expect(shown).toContain('import type { SpaceStep } from "@buttery/core";');
+    expect(shown).toContain(
+      'import type { SpaceStep } from "@butteryui/core";',
+    );
   });
 
   it("leaves an example without them as it is", () => {

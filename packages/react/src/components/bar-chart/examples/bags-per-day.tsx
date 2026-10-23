@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { BarChart } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { BarChart } from "@butteryui/react";
 
 /** Bags roasted each day this week beside last week; pointing at a day, or stepping with the arrow keys, shows the change. */
 export function BagsPerDay(): ReactElement {

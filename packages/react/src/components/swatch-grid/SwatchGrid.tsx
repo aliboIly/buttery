@@ -1,5 +1,5 @@
-import { cx, useControllableState, useMergedRefs } from "@buttery/core";
-import type { CssVariables } from "@buttery/core";
+import { cx, useControllableState, useMergedRefs } from "@butteryui/core";
+import type { CssVariables } from "@butteryui/core";
 import { useRef } from "react";
 import type {
   CSSProperties,
@@ -14,7 +14,7 @@ export interface Swatch<Value extends string = string> {
   readonly value: Value;
   /** Its name for screen readers and the tooltip, such as "Peach". */
   readonly label: string;
-  /** A CSS background: a color, or a gradient from `gradientCss` in `@buttery/core/palettes`. */
+  /** A CSS background: a color, or a gradient from `gradientCss` in `@butteryui/core/palettes`. */
   readonly fill: string;
 }
 

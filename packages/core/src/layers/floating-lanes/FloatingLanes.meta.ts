@@ -10,7 +10,7 @@ export const meta: ComponentMeta = {
     "Custom free-floating UI that has to keep clear of sticky bars and toolbars",
   ],
   avoidWhen: [
-    "Toasts: call toast() from @buttery/react, which uses the bottom-center lane and keeps three at most",
+    "Toasts: call toast() from @butteryui/react, which uses the bottom-center lane and keeps three at most",
     "UI anchored to an element: use Popover",
     "Inline status messages: put them in flow",
   ],

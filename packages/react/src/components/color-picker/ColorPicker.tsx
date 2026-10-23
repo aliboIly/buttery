@@ -10,8 +10,8 @@ import {
   trackAnimation,
   useControllableState,
   useMotionPreference,
-} from "@buttery/core";
-import type { Hsv } from "@buttery/core";
+} from "@butteryui/core";
+import type { Hsv } from "@butteryui/core";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import type { MotionStyle, MotionValue } from "motion/react";
 import { VisuallyHidden } from "radix-ui";

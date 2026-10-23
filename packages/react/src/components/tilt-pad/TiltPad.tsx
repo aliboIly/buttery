@@ -6,7 +6,7 @@ import {
   useControllableState,
   useMotionPreference,
   useMergedRefs,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { animate, motion, useMotionValue } from "motion/react";
 import type { MotionStyle, MotionValue } from "motion/react";
 import { VisuallyHidden } from "radix-ui";

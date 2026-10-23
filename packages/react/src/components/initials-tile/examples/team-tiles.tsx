@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { InitialsTile } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { InitialsTile } from "@butteryui/react";
 
 /** Teams shown by their tiles alone, each named for screen readers. */
 export function TeamTiles(): ReactElement {

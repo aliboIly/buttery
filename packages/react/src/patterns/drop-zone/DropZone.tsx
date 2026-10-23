@@ -1,5 +1,5 @@
-import { cx, isTypingField, useMergedRefs, useShortcut } from "@buttery/core";
-import type { Shortcut } from "@buttery/core";
+import { cx, isTypingField, useMergedRefs, useShortcut } from "@butteryui/core";
+import type { Shortcut } from "@butteryui/core";
 import { Slot } from "radix-ui";
 import { createContext, use, useEffect, useRef, useState } from "react";
 import type { ComponentPropsWithRef, Context, ReactElement } from "react";

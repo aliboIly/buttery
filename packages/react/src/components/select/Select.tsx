@@ -5,8 +5,8 @@ import {
   timing,
   useControllableState,
   useMergedRefs,
-} from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { ChevronDown } from "lucide-react";
 import { useId, useRef, useState } from "react";
 import { flushSync } from "react-dom";

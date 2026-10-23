@@ -13,7 +13,7 @@ export const meta: ComponentMeta = {
     "Swapping one piece of content for another in place: use Morph",
     "Sections arriving as the page scrolls: use Reveal or Stagger",
     "Selection indicators: use SharedIndicator",
-    "Toasts: call toast() from @buttery/react",
+    "Toasts: call toast() from @butteryui/react",
   ],
   related: ["Morph", "Reveal", "FloatingLanes", "Toaster"],
   a11y: 'No role of its own. When the change needs announcing, keep a live region (role="status") mounted outside the Presence: a region that mounts along with its content often goes unannounced. With reduced motion it only fades, in 100ms.',

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DateRangeBar } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DateRangeBar } from "@butteryui/react";
 
 /** The bar in Spanish, with its own words for every part. */
 export function SpanishLabels(): ReactElement {

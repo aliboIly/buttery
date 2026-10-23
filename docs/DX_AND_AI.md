@@ -32,7 +32,7 @@ buttery should be **the easiest correct way to build UI** — for a developer in
 buttery has to hold for code it didn't write. Three things make that true:
 - The public kit is the whole kit. buttery's own components use only what a user can import: `Surface`, `Pressable`, `Control`, `Field`, `SharedIndicator`, `Presence`, `Morph`, the layer primitives (`Layer`, `Portal`, `Popover`, `Menu`, `Scrim`, `Sticky`, `FloatingLanes`), `useControllableState`, `useButteryTransition`, `useLayoutAnimation` and `variants()`. The contract test fails when a component imports a helper the packages don't export, so a custom component can always be built the way buttery builds its own.
 - `variants()` turns typed variant props into the `data-*` attributes and class a component's CSS reads, so a custom component styles its variants the way buttery's do.
-- The checks run on user code. `LayoutGuard` watches any app wrapped in `ButteryProvider`, `buttery check` runs `expectButtery` on any running app, and `@buttery/lint` applies the token, position and motion rules to the app's own CSS and TSX.
+- The checks run on user code. `LayoutGuard` watches any app wrapped in `ButteryProvider`, `buttery check` runs `expectButtery` on any running app, and `@butteryui/lint` applies the token, position and motion rules to the app's own CSS and TSX.
 
 Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from the template to a filtered table page) and "Build your own buttery component" (a `Stepper` built from `Control`, `Pressable`, `SharedIndicator`, `variants()` and `useControllableState`).
 
@@ -45,13 +45,13 @@ Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from th
 - `buttery init` writes the same setup into consuming apps (appending a delimited "buttery" section to an existing `AGENTS.md`, never overwriting it).
 
 ### 2. Knowledge shipped in the packages (readable from `node_modules`)
-- `llms.txt` (index with one line per doc/component) and `llms-full.txt` (everything concatenated) — in `@buttery/core` and on the docs site.
+- `llms.txt` (index with one line per doc/component) and `llms-full.txt` (everything concatenated) — in `@butteryui/core` and on the docs site.
 - `manifest.json` (generated at build from types + JSDoc): every primitive/component/pattern → purpose, use when / don't use when, props (type, default, required, allowed token values), compound parts, examples, related components, a11y notes, motion class.
 - `tokens.json` — every token with its value per theme and density and what it's for.
 - `examples/` — 2–6 canonical, copy-pasteable snippets per component. Agents copy examples more reliably than they follow prose.
 - `docs/*.md` — the specs themselves.
 
-### 3. `@buttery/mcp` — MCP server
+### 3. `@butteryui/mcp` — MCP server
 Any MCP-capable agent can query buttery instead of guessing.
 
 | Tool | Returns |
@@ -66,7 +66,7 @@ Any MCP-capable agent can query buttery instead of guessing.
 | `scaffold_page(kind, options?)` | Files for an App kit page (`table`, `detail`, `overview`, `settings`, `empty`, `feature-intro`), as `buttery add page` writes them |
 | `scaffold_component(name, purpose)` | Files for a custom component on public parts, as `buttery create component` writes them |
 
-Resources: every doc in `docs/`. Transport: stdio (`npx @buttery/mcp`). Phase 8 adds ready-made config for Claude Code (`.mcp.json`), Codex, Gemini CLI and Cursor — checked against each tool's current docs at that time.
+Resources: every doc in `docs/`. Transport: stdio (`npx @butteryui/mcp`). Phase 8 adds ready-made config for Claude Code (`.mcp.json`), Codex, Gemini CLI and Cursor — checked against each tool's current docs at that time.
 
 ### 4. Parseable feedback
 `LayoutGuard` console output and `buttery check --json` share one format:

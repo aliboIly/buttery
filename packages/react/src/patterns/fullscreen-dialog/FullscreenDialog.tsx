@@ -1,4 +1,4 @@
-import { cx, hasContent } from "@buttery/core";
+import { cx, hasContent } from "@butteryui/core";
 import type { CSSProperties, ReactElement, ReactNode, Ref } from "react";
 import { Dialog } from "../../components/dialog/Dialog.tsx";
 

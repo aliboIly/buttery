@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Grid, Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   AppPage,
   AppShell,
@@ -11,8 +11,8 @@ import {
   Sidebar,
   StatusBadge,
   TopBar,
-} from "@buttery/react";
-import type { StatusTone } from "@buttery/react";
+} from "@butteryui/react";
+import type { StatusTone } from "@butteryui/react";
 import { Bell, House, Package, Receipt, Repeat, Users } from "lucide-react";
 
 interface Order {

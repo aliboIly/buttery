@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Tabs } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Tabs } from "@butteryui/react";
 
 const SECTIONS = [
   "General",

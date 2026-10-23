@@ -10,8 +10,8 @@ import {
   useButteryTransition,
   useMotionPreference,
   useStoredState,
-} from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { ChevronDown, Clock } from "lucide-react";
 import { motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";

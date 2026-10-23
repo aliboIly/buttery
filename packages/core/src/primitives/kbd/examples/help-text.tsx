@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Inline, Kbd, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Inline, Kbd, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A hint that names the key to press. */
 export function HelpText(): ReactElement {

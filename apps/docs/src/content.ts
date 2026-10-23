@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { DocsPage } from "@buttery/core";
+import type { DocsPage } from "@butteryui/core";
 
 /** A page's heading for its "On this page" list. */
 export interface Heading {

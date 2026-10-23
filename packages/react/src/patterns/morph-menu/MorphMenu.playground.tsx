@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text, demoChoice } from "@buttery/core";
+import { Stack, Surface, Text, demoChoice } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { ArrowLink, MorphMenu } from "@buttery/react";
+} from "@butteryui/core";
+import { ArrowLink, MorphMenu } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/navigation",

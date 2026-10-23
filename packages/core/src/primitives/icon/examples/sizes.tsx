@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Copy, ImagePlus } from "lucide-react";
-import { Icon, Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Icon, Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** The two sizes, 16px for controls and 20px for empty states, both with a 1.75 stroke. */
 export function Sizes(): ReactElement {

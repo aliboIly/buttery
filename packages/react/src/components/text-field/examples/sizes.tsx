@@ -1,9 +1,9 @@
 import { Mail } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, TextField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, TextField } from "@butteryui/react";
 
 /** The two sizes: md, 34px tall, for forms in an app, and lg, 48px with 16px text, for a sign-in page. */
 export function Sizes(): ReactElement {

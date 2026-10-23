@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Breadcrumbs } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Breadcrumbs } from "@butteryui/react";
 
 /** In a narrow column the trail shows only the page one level up, so going back stays one tap away. */
 export function TrailOnAPhone(): ReactElement {

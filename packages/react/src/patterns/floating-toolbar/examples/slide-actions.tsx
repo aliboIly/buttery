@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { FloatingToolbar } from "@buttery/react";
+import { Pressable, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { FloatingToolbar } from "@butteryui/react";
 
 /** Actions under a slide while it's picked: press the slide to pick it, and Done to put them away. */
 export function SlideActions(): ReactElement {

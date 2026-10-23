@@ -1,4 +1,4 @@
-import { Menu } from "@buttery/core";
+import { Menu } from "@butteryui/core";
 import {
   AppPage,
   ColumnSettings,
@@ -11,14 +11,14 @@ import {
   SegmentedControl,
   StatusBadge,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import type {
   ColumnLayout,
   DataTableColumn,
   DataTableSort,
   SavedView,
   StatusTone,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Download } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

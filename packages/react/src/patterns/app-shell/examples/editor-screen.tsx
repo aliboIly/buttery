@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Center, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   AppShell,
   HeaderBar,
@@ -9,7 +9,7 @@ import {
   SegmentedControl,
   Stage,
   ValueBadge,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 type Shape = "wide" | "square";
 

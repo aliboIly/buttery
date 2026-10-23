@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { RecommendationCard } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { RecommendationCard } from "@butteryui/react";
 
 /** A tip with its own badge, whose action does its work in place through a button rather than a link. */
 export function SubscriptionDiscount(): ReactElement {

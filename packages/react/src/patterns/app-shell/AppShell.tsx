@@ -15,8 +15,8 @@ import {
   useMergedRefs,
   useMotionPreference,
   warnOnce,
-} from "@buttery/core";
-import type { CloseFocusFallback } from "@buttery/core";
+} from "@butteryui/core";
+import type { CloseFocusFallback } from "@butteryui/core";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { flushSync } from "react-dom";

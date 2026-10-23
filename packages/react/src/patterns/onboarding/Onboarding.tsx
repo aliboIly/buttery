@@ -9,8 +9,8 @@ import {
   useControllableState,
   useLayoutAnimation,
   useMotionPreference,
-} from "@buttery/core";
-import type { MotionElementProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { MotionElementProps } from "@butteryui/core";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { VisuallyHidden } from "radix-ui";
 import { createContext, use, useEffect, useId, useRef, useState } from "react";

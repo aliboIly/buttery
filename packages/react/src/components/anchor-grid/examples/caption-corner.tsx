@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AnchorGrid } from "@buttery/react";
-import type { Anchor } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AnchorGrid } from "@butteryui/react";
+import type { Anchor } from "@butteryui/react";
 
 const LABELS: Readonly<Record<Anchor, string>> = {
   "top-left": "En haut à gauche",

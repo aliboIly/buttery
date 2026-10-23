@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Stack, Stagger, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack, Stagger, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const STEPS = [
   "Soften the butter",

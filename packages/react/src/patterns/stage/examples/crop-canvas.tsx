@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Stage } from "@buttery/react";
-import type { StageSize } from "@buttery/react";
+import { Center, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Stage } from "@butteryui/react";
+import type { StageSize } from "@butteryui/react";
 
 /** A canvas in crop mode, its size kept in state while the handles move. */
 export function CropCanvas(): ReactElement {

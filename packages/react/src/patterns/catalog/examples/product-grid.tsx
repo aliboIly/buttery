@@ -1,9 +1,9 @@
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import type { GradientPreset } from "@buttery/core/palettes";
-import { Button, Catalog, StatusBadge, toast } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import type { GradientPreset } from "@butteryui/core/palettes";
+import { Button, Catalog, StatusBadge, toast } from "@butteryui/react";
 import { Leaf, Plus } from "lucide-react";
 
 interface Tea {

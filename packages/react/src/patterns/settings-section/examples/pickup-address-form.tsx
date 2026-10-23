@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SettingsSection, TextField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SettingsSection, TextField } from "@butteryui/react";
 
 /** A settings form whose Save and Cancel wait for a change, then save it. */
 export function PickupAddressForm(): ReactElement {

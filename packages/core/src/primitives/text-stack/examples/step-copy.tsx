@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { TextStack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { TextStack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** The copy of one onboarding step: a title, what it does, and a tip. */
 export function StepCopy(): ReactElement {

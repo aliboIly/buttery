@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Control, Icon, Pressable, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Control, Icon, Pressable, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import { Minus, Plus } from "lucide-react";
 
 /** A stepper built from public parts: a raised Control holding two 28px pressable Controls and the count between them. */

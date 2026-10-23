@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactElement } from "react";
-import { Stack, Surface } from "@buttery/core";
-import type { CssVariables } from "@buttery/core";
-import { ArrowLink } from "@buttery/react";
+import { Stack, Surface } from "@butteryui/core";
+import type { CssVariables } from "@butteryui/core";
+import { ArrowLink } from "@butteryui/react";
 import { desktopScale } from "../desktop-scale.ts";
 import { siteHref, useSettings } from "../location.ts";
 import { templates } from "../routes.ts";

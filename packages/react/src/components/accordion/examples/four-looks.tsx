@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Accordion, Field, SegmentedControl, Select } from "@buttery/react";
-import type { AccordionSize, AccordionVariant } from "@buttery/react";
+import { Grid, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Accordion, Field, SegmentedControl, Select } from "@butteryui/react";
+import type { AccordionSize, AccordionVariant } from "@butteryui/react";
 
 const LOOKS: readonly { value: AccordionVariant; label: string }[] = [
   { value: "divided", label: "Divided rows" },

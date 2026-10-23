@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { BarChart, SegmentedControl } from "@buttery/react";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { BarChart, SegmentedControl } from "@butteryui/react";
 
 const ORIGINS = ["Ethiopia", "Colombia", "Brazil", "Kenya", "Guatemala"];
 

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
 import { CodeHtml } from "./CodeBlock.tsx";
 import { CodeToggle } from "./CodeToggle.tsx";
 import { DesktopPreview } from "./DesktopPreview.tsx";
 import { withInlineCode } from "./inline-code.tsx";
-import type { DemoFrame, DemoWidth } from "@buttery/core";
+import type { DemoFrame, DemoWidth } from "@butteryui/core";
 import type { Example } from "./registry.ts";
 
 /** The title and caption over an example or a variant's drawing, alike in both sections of a page. */

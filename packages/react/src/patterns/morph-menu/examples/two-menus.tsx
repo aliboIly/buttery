@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { MorphMenu } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { MorphMenu } from "@butteryui/react";
 
 /** Two short menus and a plain link. */
 export function TwoMenus(): ReactElement {

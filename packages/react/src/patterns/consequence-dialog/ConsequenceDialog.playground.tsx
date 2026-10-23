@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, ConsequenceDialog } from "@buttery/react";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, ConsequenceDialog } from "@butteryui/react";
 import { CalendarClock, CreditCard, Gift } from "lucide-react";
 
 export const page: DocsPage = {

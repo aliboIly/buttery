@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { Sticky, publishSettled, scrollToSection } from "@buttery/core";
+import { Sticky, publishSettled, scrollToSection } from "@butteryui/core";
 import {
   cleanup,
   fireEvent,

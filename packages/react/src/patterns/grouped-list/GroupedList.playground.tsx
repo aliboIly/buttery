@@ -1,12 +1,12 @@
-import { Menu } from "@buttery/core";
+import { Menu } from "@butteryui/core";
 import type {
   DemoFrame,
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { Avatar, GroupedList, InitialsTile } from "@buttery/react";
+} from "@butteryui/core";
+import { Avatar, GroupedList, InitialsTile } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

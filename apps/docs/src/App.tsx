@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { ReactElement } from "react";
-import { ButteryProvider } from "@buttery/react";
-import type { ReducedMotionPreference } from "@buttery/react";
+import { ButteryProvider } from "@butteryui/react";
+import type { ReducedMotionPreference } from "@butteryui/react";
 import { DocsShell } from "./DocsShell.tsx";
 import { followLinks, redirectTo, useSettings } from "./location.ts";
 import type { MotionSetting } from "./location.ts";

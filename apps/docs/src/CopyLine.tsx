@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Check, Copy } from "lucide-react";
-import { Inline } from "@buttery/core";
-import { IconButton } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import { IconButton } from "@butteryui/react";
 
 /** A line of code to copy, such as an import or a command, with a button that copies it. */
 export function CopyLine({

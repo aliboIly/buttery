@@ -9,8 +9,8 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import { ArrowLink, TagChip } from "@buttery/react";
+} from "@butteryui/core";
+import { ArrowLink, TagChip } from "@butteryui/react";
 import { ChevronDown, Link2 } from "lucide-react";
 import { roadmap } from "virtual:buttery-roadmap";
 import { releases } from "virtual:buttery-whats-new";

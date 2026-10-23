@@ -1,9 +1,9 @@
 import { Redo2, RectangleHorizontal, Undo2 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Icon, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { FormDialog, HeaderBar, IconButton, TextField } from "@buttery/react";
+import { Icon, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { FormDialog, HeaderBar, IconButton, TextField } from "@butteryui/react";
 
 /** An editor's header over its canvas: Rename opens a form dialog, and Undo and Redo, after a separator, walk back through the names. */
 export function DocumentHeader(): ReactElement {

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { solids } from "@buttery/core/palettes";
-import { SwatchGrid, Switch } from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { solids } from "@butteryui/core/palettes";
+import { SwatchGrid, Switch } from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 
 const SWATCHES: readonly Swatch[] = solids.map((preset) => ({
   value: preset.id,

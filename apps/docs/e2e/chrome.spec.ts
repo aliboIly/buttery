@@ -131,7 +131,7 @@ test("the docs search previews the highlighted result, with a component's import
   await page.keyboard.type("dialog");
   const preview = page.locator('[data-bt-part="command-search-preview"]');
   await expect(
-    preview.getByText('import { Dialog } from "@buttery/react";'),
+    preview.getByText('import { Dialog } from "@butteryui/react";'),
   ).toBeVisible();
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("ArrowDown");

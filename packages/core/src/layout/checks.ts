@@ -1,4 +1,4 @@
-/** Rules the in-page checker runs. Accessibility and stability need a browser driver and run in `@buttery/test`. */
+/** Rules the in-page checker runs. Accessibility and stability need a browser driver and run in `@butteryui/test`. */
 export type LayoutRule =
   | "overlap"
   | "overflow"

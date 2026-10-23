@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink, Button, MorphMenu, NavBar, Page } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink, Button, MorphMenu, NavBar, Page } from "@butteryui/react";
 
 /** The top of a landing page: the brand, a menu with a story and a See all link, a plain link, and two calls to action over the opening. */
 export function SiteHeader(): ReactElement {

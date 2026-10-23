@@ -1,6 +1,6 @@
-import { contrastRatio } from "@buttery/core";
-import { gradients, solids } from "@buttery/core/palettes";
-import { anchors } from "@buttery/react";
+import { contrastRatio } from "@butteryui/core";
+import { gradients, solids } from "@butteryui/core/palettes";
+import { anchors } from "@butteryui/react";
 import { describe, expect, it } from "vitest";
 import { SAMPLE_DECK } from "./deck.ts";
 import type { Slide } from "./deck.ts";

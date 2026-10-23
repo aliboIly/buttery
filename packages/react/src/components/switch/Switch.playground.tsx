@@ -1,6 +1,6 @@
-import { Stack } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Switch } from "@buttery/react";
+import { Stack } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Switch } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

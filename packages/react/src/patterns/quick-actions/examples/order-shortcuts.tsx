@@ -1,9 +1,9 @@
 import { Download, Plus, Send } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { QuickActions } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { QuickActions } from "@butteryui/react";
 
 /** The few things people do most on an orders page, in one row of small soft buttons. */
 export function OrderShortcuts(): ReactElement {

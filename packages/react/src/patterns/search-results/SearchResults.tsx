@@ -1,4 +1,4 @@
-import { Icon, cx, hasContent, tabbables } from "@buttery/core";
+import { Icon, cx, hasContent, tabbables } from "@butteryui/core";
 import { ChevronRight, Search } from "lucide-react";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";

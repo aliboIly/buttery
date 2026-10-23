@@ -7,7 +7,7 @@ import {
   SettingsSection,
   TextField,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** The shop's settings: its details, saved as a form, and the emails it sends, each turned on or off. */
 export function SettingsPage(): ReactElement {

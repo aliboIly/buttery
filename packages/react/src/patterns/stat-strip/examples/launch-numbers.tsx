@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Section, Stat, StatStrip } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Section, Stat, StatStrip } from "@butteryui/react";
 
 /** A band of four numbers on a launch page. */
 export function LaunchNumbers(): ReactElement {

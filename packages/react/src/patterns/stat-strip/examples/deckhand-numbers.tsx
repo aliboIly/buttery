@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Stat, StatStrip } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Stat, StatStrip } from "@butteryui/react";
 
 /** Four numbers in equal columns, each counting up once as the strip comes into view. */
 export function DeckhandNumbers(): ReactElement {

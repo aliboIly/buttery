@@ -1,4 +1,4 @@
-import { Icon, Popover, cx, useControllableState } from "@buttery/core";
+import { Icon, Popover, cx, useControllableState } from "@butteryui/core";
 import { Info } from "lucide-react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { Tooltip } from "../tooltip/Tooltip.tsx";

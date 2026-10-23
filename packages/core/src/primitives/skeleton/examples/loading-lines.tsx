@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Skeleton, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Skeleton, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** Three lines standing in for a paragraph that's still loading under its heading, the last one shorter. */
 export function LoadingLines(): ReactElement {

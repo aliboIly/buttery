@@ -1,7 +1,7 @@
-import { Inline, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { InfoButton } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { InfoButton } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/actions",

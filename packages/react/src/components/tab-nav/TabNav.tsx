@@ -4,7 +4,7 @@ import {
   Slot,
   cx,
   useMergedRefs,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 

@@ -9,8 +9,8 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const TOTALS = ["1,204", "1,318", "1,472"] as const;
 

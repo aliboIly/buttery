@@ -1,16 +1,16 @@
-import { Inline, Stack, Text, demoChoice } from "@buttery/core";
+import { Inline, Stack, Text, demoChoice } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
+} from "@butteryui/core";
 import {
   Button,
   IconButton,
   NotificationNudge,
   SearchField,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Bell } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

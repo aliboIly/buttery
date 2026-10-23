@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ColumnSettings, DataTable, SearchField } from "@buttery/react";
-import type { ColumnLayout, DataTableColumn } from "@buttery/react";
+import { Inline, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ColumnSettings, DataTable, SearchField } from "@butteryui/react";
+import type { ColumnLayout, DataTableColumn } from "@butteryui/react";
 
 interface Customer {
   readonly name: string;

@@ -1,9 +1,9 @@
-import { Icon, Text, cx } from "@buttery/core";
+import { Icon, Text, cx } from "@butteryui/core";
 import type {
   IconComponentProps,
   MotionElementProps,
   TextStackTitleElement,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { X } from "lucide-react";
 import { motion } from "motion/react";
 import { useId } from "react";

@@ -1,9 +1,9 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { DateRangeBar } from "@buttery/react";
-import type { DateRangeValue } from "@buttery/react";
+import { DateRangeBar } from "@butteryui/react";
+import type { DateRangeValue } from "@butteryui/react";
 
 function query(period: DateRangeValue): string {
   const search = new URLSearchParams({

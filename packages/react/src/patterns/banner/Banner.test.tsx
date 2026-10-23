@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { ReflowGroup, useReflow } from "@buttery/core";
+import { ReflowGroup, useReflow } from "@butteryui/core";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { motion } from "motion/react";

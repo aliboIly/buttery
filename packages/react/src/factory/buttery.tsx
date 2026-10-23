@@ -25,14 +25,14 @@ import {
   useMergedRefs,
   useMotionPreference,
   warnOnce,
-} from "@buttery/core";
+} from "@butteryui/core";
 import type {
   GridColumns,
   MotionElementProps,
   RadiusToken,
   SpaceValue,
   SurfaceLevel,
-} from "@buttery/core";
+} from "@butteryui/core";
 
 /** What the `buttery` factory adds to an element or a component. Every value comes from the tokens. */
 export interface ButteryRecipe {

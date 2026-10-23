@@ -4,7 +4,7 @@ import {
   SharedIndicator,
   cx,
   useControllableState,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { Plus } from "lucide-react";
 import { RadioGroup } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";

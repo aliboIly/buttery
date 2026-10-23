@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { ImagePlus } from "lucide-react";
-import { Icon, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Icon, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** The larger icon size above an empty state's title. */
 export function EmptyStateIcon(): ReactElement {

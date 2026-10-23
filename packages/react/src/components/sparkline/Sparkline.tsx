@@ -1,5 +1,5 @@
-import { cx } from "@buttery/core";
-import type { CssVariables } from "@buttery/core";
+import { cx } from "@butteryui/core";
+import type { CssVariables } from "@butteryui/core";
 import type { ComponentPropsWithRef, CSSProperties, ReactElement } from "react";
 import type { ChartColor } from "../chart-frame/ChartFrame.tsx";
 import { seriesPath } from "../chart-frame/chart-scale.ts";

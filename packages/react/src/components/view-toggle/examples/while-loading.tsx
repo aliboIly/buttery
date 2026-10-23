@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, ViewToggle } from "@buttery/react";
-import type { ViewMode } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, ViewToggle } from "@butteryui/react";
+import type { ViewMode } from "@butteryui/react";
 
 /** The toggle disabled while the coffees load, since there's nothing to lay out yet, and back once they're in. */
 export function WhileLoading(): ReactElement {

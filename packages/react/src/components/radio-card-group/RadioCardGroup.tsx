@@ -1,4 +1,4 @@
-import { Morph, cx, useControllableState } from "@buttery/core";
+import { Morph, cx, useControllableState } from "@butteryui/core";
 import { RadioGroup as RadixRadioGroup } from "radix-ui";
 import { useId } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";

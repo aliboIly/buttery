@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { PageHeader, ScopeBadge, Switch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { PageHeader, ScopeBadge, Switch } from "@butteryui/react";
 
 /** A settings page's header with the badge after its title, through PageHeader's badge, over a setting it governs. */
 export function PickupHoursPage(): ReactElement {

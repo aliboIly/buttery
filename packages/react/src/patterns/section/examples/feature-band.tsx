@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Grid, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Section } from "@buttery/react";
+import { Grid, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Section } from "@butteryui/react";
 
 const FEATURES = ["Theme", "Background", "Layout"] as const;
 

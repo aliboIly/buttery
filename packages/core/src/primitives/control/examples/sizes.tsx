@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Control, Inline, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Control, Inline, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const SIZES = [
   { size: "badge", height: "20px" },

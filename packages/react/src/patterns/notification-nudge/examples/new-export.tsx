@@ -1,9 +1,9 @@
 import { Download } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, IconButton, NotificationNudge } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, IconButton, NotificationNudge } from "@butteryui/react";
 
 /** A nudge kept open in state, opened when the page decides, here from a button, pointing at a new export button. */
 export function NewExport(): ReactElement {

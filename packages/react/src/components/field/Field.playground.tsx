@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Field, SegmentedControl, Select } from "@buttery/react";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Field, SegmentedControl, Select } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/inputs",

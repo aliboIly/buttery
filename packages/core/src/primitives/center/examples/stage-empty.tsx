@@ -1,7 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Inline, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import {
+  Center,
+  Inline,
+  Pressable,
+  Stack,
+  Surface,
+  Text,
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A stage that holds its empty state in the middle, and then the slide that takes its place. */
 export function StageEmpty(): ReactElement {

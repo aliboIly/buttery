@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Control, Inline, Pressable, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Control, Inline, Pressable, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A pill button of your own at the button height: Surface for the look, Control for the height, Pressable for the press. */
 export function PressableControl(): ReactElement {

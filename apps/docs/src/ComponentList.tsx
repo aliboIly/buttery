@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { DocsSection } from "@buttery/core";
+import type { DocsSection } from "@butteryui/core";
 import { siteHref } from "./location.ts";
 import { SECTIONS } from "./nav.ts";
 import { components, docsRouteOf } from "./registry.ts";

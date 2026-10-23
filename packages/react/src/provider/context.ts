@@ -1,6 +1,6 @@
 import { createContext, use } from "react";
 import type { Context } from "react";
-import type { ColorScheme, Density } from "@buttery/core";
+import type { ColorScheme, Density } from "@butteryui/core";
 
 /** Where the app runs. `"desktop"` means a Tauri window. */
 export type Platform = "web" | "desktop";

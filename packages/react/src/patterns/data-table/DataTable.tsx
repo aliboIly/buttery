@@ -8,8 +8,8 @@ import {
   useControllableState,
   useFloatingObstacle,
   warnOnce,
-} from "@buttery/core";
-import type { CssVariables } from "@buttery/core";
+} from "@butteryui/core";
+import type { CssVariables } from "@butteryui/core";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
 import { isValidElement, useCallback, useEffect, useState } from "react";

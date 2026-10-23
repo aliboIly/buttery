@@ -1,9 +1,9 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import type { GradientPreset } from "@buttery/core/palettes";
-import { Button, Catalog, toast } from "@buttery/react";
-import type { CatalogCardVariant } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import type { GradientPreset } from "@butteryui/core/palettes";
+import { Button, Catalog, toast } from "@butteryui/react";
+import type { CatalogCardVariant } from "@butteryui/react";
 import { Coffee } from "lucide-react";
 
 const MUGS: readonly {

@@ -15,15 +15,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@buttery/core": "workspace:*",
-    "@buttery/react": "workspace:*",
+    "@butteryui/core": "workspace:*",
+    "@butteryui/react": "workspace:*",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
     "@babel/core": "catalog:",
-    "@buttery/test": "workspace:*",
+    "@butteryui/test": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

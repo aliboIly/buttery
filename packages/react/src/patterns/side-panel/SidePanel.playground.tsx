@@ -1,5 +1,5 @@
-import { Menu, Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+import { Menu, Stack, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import {
   AppPage,
   AppShell,
@@ -10,7 +10,7 @@ import {
   Sidebar,
   TextArea,
   TopBar,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { CircleHelp, Package } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

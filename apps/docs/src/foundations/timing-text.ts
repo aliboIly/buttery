@@ -1,4 +1,4 @@
-import type { timing } from "@buttery/core";
+import type { timing } from "@butteryui/core";
 
 /** What each timing token times, in a few words, for Motion › Tokens. Every token needs one. */
 export const TIMING_TEXT: Readonly<Record<keyof typeof timing, string>> = {

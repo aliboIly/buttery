@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DateRangeBar } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DateRangeBar } from "@butteryui/react";
 
 /** With no props it keeps its own value, starting on the last 7 days, daily, against the previous period. */
 export function DefaultPeriod(): ReactElement {

@@ -4,7 +4,7 @@ import {
   useAnimationTracking,
   useControllableState,
   useLayoutAnimation,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { motion } from "motion/react";
 import { Switch as RadixSwitch } from "radix-ui";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";

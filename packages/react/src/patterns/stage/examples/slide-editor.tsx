@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { gradientCss, gradientRows } from "@buttery/core/palettes";
-import { Stage, SwatchGrid, TextField } from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+import { Center, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { gradientCss, gradientRows } from "@butteryui/core/palettes";
+import { Stage, SwatchGrid, TextField } from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 
 const BACKGROUNDS = gradientRows.cream;
 

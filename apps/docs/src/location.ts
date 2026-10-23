@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
-import type { Density } from "@buttery/core";
-import type { ColorSchemePreference } from "@buttery/react";
+import type { Density } from "@butteryui/core";
+import type { ColorSchemePreference } from "@butteryui/react";
 import { pathUnderBase, routeOf, sitePath } from "./base.ts";
 
 /**

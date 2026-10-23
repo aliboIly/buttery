@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { MetricCard } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { MetricCard } from "@butteryui/react";
 
 const DAYS = [
   "Oct 8",

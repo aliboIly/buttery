@@ -3,7 +3,7 @@ import {
   useAnimationTracking,
   useLayoutAnimation,
   useMergedRefs,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { motion } from "motion/react";
 import type { MotionStyle } from "motion/react";
 import {
@@ -13,7 +13,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { CssVariables, LayoutAnimation } from "@buttery/core";
+import type { CssVariables, LayoutAnimation } from "@butteryui/core";
 import type {
   CSSProperties,
   ComponentPropsWithRef,

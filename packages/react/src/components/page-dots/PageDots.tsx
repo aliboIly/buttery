@@ -1,4 +1,4 @@
-import { cx, useLayoutAnimation } from "@buttery/core";
+import { cx, useLayoutAnimation } from "@butteryui/core";
 import { motion } from "motion/react";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 

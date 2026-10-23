@@ -8,8 +8,8 @@ import {
   Text,
   TextStack,
   useStoredState,
-} from "@buttery/core";
-import { ArrowLink, Button, EmptyState, Section } from "@buttery/react";
+} from "@butteryui/core";
+import { ArrowLink, Button, EmptyState, Section } from "@butteryui/react";
 import { ShoppingBag } from "lucide-react";
 import { EMPTY_BAG, bagCount, lineKey, lineTotal, useBag } from "./bag.ts";
 import type { Bag, Plan } from "./bag.ts";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Menu, Pressable, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Inline, Menu, Pressable, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A saved payment card's less common actions behind one trigger, with the destructive one set apart in danger. */
 export function SavedCardActions(): ReactElement {

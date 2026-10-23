@@ -6,8 +6,8 @@ import {
   Surface,
   Text,
   opensElsewhere,
-} from "@buttery/core";
-import { ArrowLink, Button, MorphMenu, NavBar } from "@buttery/react";
+} from "@butteryui/core";
+import { ArrowLink, Button, MorphMenu, NavBar } from "@butteryui/react";
 import { ShoppingBag } from "lucide-react";
 import { AccountAction } from "./Account.tsx";
 import { Shelf, backdrop } from "./BagArt.tsx";

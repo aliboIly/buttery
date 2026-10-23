@@ -1,14 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Center, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   Bento,
   ExpandableCard,
   Page,
   SegmentedControl,
   Section,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 type Tilt = "flat" | "toward";
 

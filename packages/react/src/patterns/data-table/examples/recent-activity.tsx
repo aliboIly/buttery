@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DataTable, SegmentedControl } from "@buttery/react";
+import { Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DataTable, SegmentedControl } from "@butteryui/react";
 
 interface Activity {
   readonly id: string;

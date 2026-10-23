@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
+import { Center, Inline, Stack, Surface, Text } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { Button, FloatingToolbar } from "@buttery/react";
+} from "@butteryui/core";
+import { Button, FloatingToolbar } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/actions",

@@ -1,7 +1,7 @@
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { RadioCardGroup, Select } from "@buttery/react";
-import type { RadioCardOption } from "@buttery/react";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { RadioCardGroup, Select } from "@butteryui/react";
+import type { RadioCardOption } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

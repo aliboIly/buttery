@@ -4,8 +4,8 @@ import {
   cx,
   useControllableState,
   useMergedRefs,
-} from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { useLayoutEffect, useRef, useState } from "react";
 import type {
   ComponentType,

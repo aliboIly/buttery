@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Dialog, TextField } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Dialog, TextField } from "@butteryui/react";
 
 interface Member {
   readonly name: string;

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { MorphMenu } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { MorphMenu } from "@butteryui/react";
 
 /** With layout="stack", the menus are sections that open in place, one at a time, as in a phone sheet. */
 export function Stacked(): ReactElement {

@@ -11,8 +11,8 @@ import {
   shortcutKeys,
   useApplePlatform,
   useShortcut,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** Commands with their shortcuts at the end of each row, as in a menu; the keys work while focus is in the list. */
 export function MenuShortcut(): ReactElement {

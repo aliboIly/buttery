@@ -1,7 +1,7 @@
 import { Bell } from "lucide-react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { IconButton, NotificationNudge } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { IconButton, NotificationNudge } from "@butteryui/react";
 
 /** A nudge on the notifications bell that opens by itself on the first visit only, and from the bell after that. */
 export function DeliveryQuestions(): ReactElement {

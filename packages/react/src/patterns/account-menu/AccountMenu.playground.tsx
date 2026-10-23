@@ -1,6 +1,6 @@
-import { Menu, Surface } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { AccountMenu } from "@buttery/react";
+import { Menu, Surface } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { AccountMenu } from "@butteryui/react";
 import { LogOut, Plus, Settings, UserRound } from "lucide-react";
 
 export const page: DocsPage = {

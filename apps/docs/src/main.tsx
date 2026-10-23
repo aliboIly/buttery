@@ -1,5 +1,5 @@
-import "@buttery/core/styles.css";
-import "@buttery/react/styles.css";
+import "@butteryui/core/styles.css";
+import "@butteryui/react/styles.css";
 import "./docs-shell.css";
 import "./docs.css";
 import { StrictMode } from "react";

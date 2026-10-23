@@ -6,8 +6,8 @@ import {
   scrollToSection,
   useControllableState,
   warnOnce,
-} from "@buttery/core";
-import type { TextStackTitleElement } from "@buttery/core";
+} from "@butteryui/core";
+import type { TextStackTitleElement } from "@butteryui/core";
 import { SearchX } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
 import {

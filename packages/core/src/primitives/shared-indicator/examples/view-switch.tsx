@@ -7,8 +7,8 @@ import {
   SharedIndicator,
   Stack,
   Text,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const VIEWS = [
   { label: "Canvas", body: "The slide as people will see it." },

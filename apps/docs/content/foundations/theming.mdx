@@ -17,7 +17,7 @@ A theme is what `ButteryProvider` applies to everything inside it: a color schem
 
 ```tsx
 import type { ReactElement } from "react";
-import { ButteryProvider } from "@buttery/react";
+import { ButteryProvider } from "@butteryui/react";
 import { App } from "./App.tsx";
 
 export function Root(): ReactElement {
@@ -55,8 +55,8 @@ export function Root(): ReactElement {
 
 ```tsx
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import { useButtery } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import { useButtery } from "@butteryui/react";
 
 export function SchemeNote(): ReactElement {
   const { colorScheme } = useButtery();
@@ -72,8 +72,8 @@ export function SchemeNote(): ReactElement {
 
 ```tsx
 import type { ReactElement } from "react";
-import { createTheme } from "@buttery/core";
-import { ButteryProvider } from "@buttery/react";
+import { createTheme } from "@butteryui/core";
+import { ButteryProvider } from "@butteryui/react";
 import { App } from "./App.tsx";
 
 const theme = createTheme({

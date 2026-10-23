@@ -13,7 +13,7 @@ export function shownSource(source: string): string {
     .replace(/^export const kind: ExampleKind = "[a-z]+";\n/m, "")
     .replace(/^export const play: ExamplePlay = [\s\S]*?^\};\n/m, "");
   const withoutTypes = withoutChecks.replace(
-    /^import type \{([^}]*)\} from "@buttery\/core";\n/gm,
+    /^import type \{([^}]*)\} from "@butteryui\/core";\n/gm,
     (line, names: string) => {
       const listed = names
         .split(",")
@@ -23,7 +23,7 @@ export function shownSource(source: string): string {
       if (kept.length === listed.length) return line;
       return kept.length === 0
         ? ""
-        : `import type { ${kept.join(", ")} } from "@buttery/core";\n`;
+        : `import type { ${kept.join(", ")} } from "@butteryui/core";\n`;
     },
   );
   return `${withoutTypes.replace(/\n{3,}/g, "\n\n").trimEnd()}\n`;

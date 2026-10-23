@@ -1,14 +1,14 @@
 import { Bell } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   Avatar,
   IconButton,
   NotificationNudge,
   SearchField,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 const MESSAGES = [
   "Larkspur Café: Will Tuesday's Guji ship before noon?",

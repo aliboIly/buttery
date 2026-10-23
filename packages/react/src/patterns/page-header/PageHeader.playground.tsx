@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { PageHeader } from "@buttery/react";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { PageHeader } from "@butteryui/react";
 import { Download, Plus, Upload } from "lucide-react";
 
 export const page: DocsPage = {

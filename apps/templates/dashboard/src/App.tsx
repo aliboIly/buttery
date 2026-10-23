@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu } from "@buttery/core";
+import { Menu } from "@butteryui/core";
 import {
   AccountMenu,
   AppPage,
@@ -11,7 +11,7 @@ import {
   Sidebar,
   TopBar,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { House, Receipt, Settings } from "lucide-react";
 import { NewOrderDialog } from "./NewOrderDialog.tsx";
 import { ORDERS } from "./data.ts";

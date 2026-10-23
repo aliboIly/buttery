@@ -6,8 +6,8 @@ import {
   StatTabs,
   StatusBadge,
   toast,
-} from "@buttery/react";
-import type { DataTableColumn, StatusTone } from "@buttery/react";
+} from "@butteryui/react";
+import type { DataTableColumn, StatusTone } from "@butteryui/react";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

@@ -1,4 +1,4 @@
-import type { DateRangeValue } from "@buttery/react";
+import type { DateRangeValue } from "@butteryui/react";
 import { HISTORY, TODAY, dayNumber, daysBefore, ordersOn } from "./data.ts";
 import type { Order } from "./data.ts";
 

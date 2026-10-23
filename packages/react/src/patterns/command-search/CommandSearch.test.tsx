@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { isApplePlatform, publishSettled } from "@buttery/core";
+import { isApplePlatform, publishSettled } from "@butteryui/core";
 import {
   cleanup,
   fireEvent,

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SettingsSection, Switch } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SettingsSection, Switch } from "@butteryui/react";
 
 /** A settings section: the first switch turns the emails on, and the ones under it pick what they cover. */
 export function OrderEmails(): ReactElement {

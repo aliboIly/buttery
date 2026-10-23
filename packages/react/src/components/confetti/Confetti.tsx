@@ -7,8 +7,8 @@ import {
   trackAnimation,
   useMotionPreference,
   warnOnce,
-} from "@buttery/core";
-import { gradients } from "@buttery/core/palettes";
+} from "@butteryui/core";
+import { gradients } from "@butteryui/core/palettes";
 import {
   addBurst,
   getBursts,

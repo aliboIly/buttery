@@ -1,7 +1,7 @@
 import { Fragment, createElement, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ColorScheme, DemoValues, Density } from "@buttery/core";
+import { Grid, Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ColorScheme, DemoValues, Density } from "@butteryui/core";
 import {
   Breadcrumbs,
   ButteryProvider,
@@ -10,8 +10,8 @@ import {
   StatusBadge,
   TagChip,
   useButtery,
-} from "@buttery/react";
-import type { StatusTone } from "@buttery/react";
+} from "@butteryui/react";
+import type { StatusTone } from "@butteryui/react";
 import { demoUses } from "virtual:buttery-demo-uses";
 import { listed, screensByDemo } from "./demo-sentence.ts";
 import { CodeText } from "./CodeBlock.tsx";

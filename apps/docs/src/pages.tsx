@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import type { ReactElement } from "react";
-import type { DocsPage, DocsSection } from "@buttery/core";
+import type { DocsPage, DocsSection } from "@butteryui/core";
 import { referenceRoot } from "virtual:buttery-reference";
 import { ComponentPage, componentHeadings } from "./ComponentPage.tsx";
 import { ContentPage } from "./ContentPage.tsx";

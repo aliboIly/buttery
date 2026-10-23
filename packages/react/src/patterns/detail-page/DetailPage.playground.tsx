@@ -1,11 +1,11 @@
-import { Text } from "@buttery/core";
+import { Text } from "@butteryui/core";
 import type {
   DemoFrame,
   DemoSection,
   DemoWidth,
   DocsPage,
-} from "@buttery/core";
-import { Breadcrumbs, Button, DetailPage } from "@buttery/react";
+} from "@butteryui/core";
+import { Breadcrumbs, Button, DetailPage } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

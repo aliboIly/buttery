@@ -1,5 +1,5 @@
-import { Icon, Menu, cx, useControllableState } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { Icon, Menu, cx, useControllableState } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { ChevronDown } from "lucide-react";
 import type {
   ComponentPropsWithRef,

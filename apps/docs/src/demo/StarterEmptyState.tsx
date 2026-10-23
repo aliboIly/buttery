@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Button, EmptyState } from "@buttery/react";
+import { Button, EmptyState } from "@butteryui/react";
 
 /** The empty canvas the playground's surface and text pages show. */
 export function StarterEmptyState(): ReactElement {

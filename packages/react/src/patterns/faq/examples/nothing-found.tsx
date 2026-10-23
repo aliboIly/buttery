@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Faq } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Faq } from "@butteryui/react";
 
 /** A search that finds nothing shows what to try and a way back to every question. */
 export function NothingFound(): ReactElement {

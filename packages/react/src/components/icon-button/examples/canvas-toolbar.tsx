@@ -1,9 +1,9 @@
 import { Grid3x3, ZoomIn, ZoomOut } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { IconButton } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { IconButton } from "@butteryui/react";
 
 const ZOOMS = [100, 125, 150, 175, 200];
 

@@ -27,7 +27,7 @@ const STEPPERS: Release = {
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 
-const CHANGELOG = `# @buttery/react
+const CHANGELOG = `# @butteryui/react
 
 ## 0.10.0
 
@@ -39,7 +39,7 @@ const CHANGELOG = `# @buttery/react
 ### Patch Changes
 
 - Updated dependencies [1a2b3c4]
-  - @buttery/core@0.10.0
+  - @butteryui/core@0.10.0
 
 ## 0.9.0
 
@@ -102,7 +102,7 @@ describe("What's new", () => {
     mkdirSync(join(folder, "react"));
     writeFileSync(
       join(folder, "react", "package.json"),
-      JSON.stringify({ name: "@buttery/react" }),
+      JSON.stringify({ name: "@butteryui/react" }),
     );
     writeFileSync(join(folder, "react", "CHANGELOG.md"), CHANGELOG);
     const [release] = readReleases(join(folder, "whats-new"), [
@@ -117,7 +117,7 @@ describe("What's new", () => {
       highlights: ["A `Stepper`.", "Button shapes."],
       changes: [
         {
-          packageName: "@buttery/react",
+          packageName: "@butteryui/react",
           lines: ["Add the Stepper component.", "Give Button a `shape` prop."],
         },
       ],
@@ -136,14 +136,14 @@ describe("What's new", () => {
           highlights: ["A `Stepper`."],
           changes: [
             {
-              packageName: "@buttery/react",
+              packageName: "@butteryui/react",
               lines: ["Add the Stepper component."],
             },
           ],
         },
       ]),
     ).toBe(
-      "## 0.10.0: Steppers\n\n2026-11-02\n\nShort flows, one step at a time.\n\n- A `Stepper`.\n\n### @buttery/react\n\n- Add the Stepper component.",
+      "## 0.10.0: Steppers\n\n2026-11-02\n\nShort flows, one step at a time.\n\n- A `Stepper`.\n\n### @butteryui/react\n\n- Add the Stepper component.",
     );
   });
 

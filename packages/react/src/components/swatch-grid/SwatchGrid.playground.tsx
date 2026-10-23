@@ -1,8 +1,8 @@
-import { gradientCss, gradients, solids } from "@buttery/core/palettes";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { SwatchGrid } from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+import { gradientCss, gradients, solids } from "@butteryui/core/palettes";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { SwatchGrid } from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

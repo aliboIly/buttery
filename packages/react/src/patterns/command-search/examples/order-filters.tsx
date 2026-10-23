@@ -1,7 +1,7 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { CommandSearch, matchesSearch, parseSearch } from "@buttery/react";
-import type { LocalSearchSource, SearchFilter } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { CommandSearch, matchesSearch, parseSearch } from "@butteryui/react";
+import type { LocalSearchSource, SearchFilter } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

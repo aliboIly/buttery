@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Copy } from "lucide-react";
-import { Button, toast } from "@buttery/react";
+import { Button, toast } from "@butteryui/react";
 import { siteHref } from "./location.ts";
 
 /**

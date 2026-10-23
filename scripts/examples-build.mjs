@@ -19,7 +19,7 @@ const target = join(starter, "src/examples-check");
 
 /** What an example may import: buttery's packages, its icons, React, and nothing from the repo itself. */
 const ALLOWED =
-  /^(?:react|react-dom|@buttery\/(?:core|react)|@buttery\/core\/palettes|lucide-react)$/;
+  /^(?:react|react-dom|@butteryui\/(?:core|react)|@butteryui\/core\/palettes|lucide-react)$/;
 
 function run(command, args) {
   execFileSync(command, args, { cwd: root, stdio: "inherit" });
@@ -43,7 +43,7 @@ export async function checkExamplesBuild() {
     for (const [, specifier] of source.matchAll(/from "([^"]+)"/g)) {
       if (!ALLOWED.test(specifier ?? ""))
         problems.push(
-          `${file} imports ${String(specifier)}, which a fresh app doesn't have. Fix: import it from @buttery/core or @buttery/react.`,
+          `${file} imports ${String(specifier)}, which a fresh app doesn't have. Fix: import it from @butteryui/core or @butteryui/react.`,
         );
     }
     const name = `example-${String(index)}-${basename(dirname(dirname(file)))}-${basename(file)}`;

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SearchResults, matchesSearch } from "@buttery/react";
-import type { LocalSearchSource } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SearchResults, matchesSearch } from "@butteryui/react";
+import type { LocalSearchSource } from "@butteryui/react";
 import { Receipt } from "lucide-react";
 
 const ORDERS = Array.from({ length: 12 }, (_, index) => ({

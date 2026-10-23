@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Loop, Morph, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Loop, Morph, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const TOTALS = ["1,204", "1,318", "1,472"] as const;
 

@@ -1,5 +1,5 @@
 {
-  "name": "@buttery/cli",
+  "name": "@butteryui/cli",
   "version": "0.0.0",
   "private": true,
   "description": "The buttery command line: create, init, add, doctor, check.",

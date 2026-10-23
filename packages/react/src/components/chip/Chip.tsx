@@ -1,4 +1,4 @@
-import { cx } from "@buttery/core";
+import { cx } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 
 /** Props for `Chip`. */

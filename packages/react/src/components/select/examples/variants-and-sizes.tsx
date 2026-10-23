@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Field, Select } from "@buttery/react";
-import type { SelectOption } from "@buttery/react";
+import { Grid, Inline, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Field, Select } from "@butteryui/react";
+import type { SelectOption } from "@butteryui/react";
 
 type Theme = "plain" | "paper" | "ink";
 type Transition = "none" | "fade" | "push";

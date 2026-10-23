@@ -1,7 +1,7 @@
-import { Stack, Text, demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Accordion, Avatar } from "@buttery/react";
-import type { AccordionSize, AccordionVariant } from "@buttery/react";
+import { Stack, Text, demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Accordion, Avatar } from "@butteryui/react";
+import type { AccordionSize, AccordionVariant } from "@butteryui/react";
 import { CreditCard, MapPin, Repeat } from "lucide-react";
 import type { ReactElement } from "react";
 

@@ -9,8 +9,8 @@ import {
   Stack,
   Surface,
   Text,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const ACTIONS = [
   { label: "Undo", icon: Undo2, done: "Undid the color change" },

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SettingsSection, toast } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SettingsSection, toast } from "@butteryui/react";
 
 /** A section that loads on its own while the rest of the page is ready. */
 export function SessionsThatLoad(): ReactElement {

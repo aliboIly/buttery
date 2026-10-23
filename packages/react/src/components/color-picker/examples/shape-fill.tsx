@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ColorPicker } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ColorPicker } from "@butteryui/react";
 
 /** A picker that keeps its own color and reports the one each drag, key or typed code settles on. */
 export function ShapeFill(): ReactElement {

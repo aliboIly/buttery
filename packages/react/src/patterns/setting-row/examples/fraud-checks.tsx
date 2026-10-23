@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SettingRow, SettingsSection } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SettingRow, SettingsSection } from "@butteryui/react";
 
 /** Setting rows under a hairline, the one that turns something on in primary until it's on. */
 export function FraudChecks(): ReactElement {

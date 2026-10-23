@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { FeatureIntro, FormDialog, TextField } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { FeatureIntro, FormDialog, TextField } from "@butteryui/react";
 
 /** The payouts page before a bank account is added: its action opens the first step in a dialog, in place. */
 export function PayoutsIntro(): ReactElement {

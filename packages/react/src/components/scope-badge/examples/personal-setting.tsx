@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ScopeBadge } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ScopeBadge } from "@butteryui/react";
 
 /** A setting that's only yours, its badge controlled so the page can say when its details are open. */
 export function PersonalSetting(): ReactElement {

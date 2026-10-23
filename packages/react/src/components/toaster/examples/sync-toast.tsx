@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, toast } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, toast } from "@butteryui/react";
 
 /** News the person didn't just cause, read out at the next pause: a sync that finishes on its own. */
 export function SyncToast(): ReactElement {

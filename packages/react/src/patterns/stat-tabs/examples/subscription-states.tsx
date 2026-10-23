@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { StatTabs } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { StatTabs } from "@butteryui/react";
 
 /** Subscriptions by state, uncontrolled, starting on Active. */
 export function SubscriptionStates(): ReactElement {

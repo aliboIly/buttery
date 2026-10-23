@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Menu, Stack } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, DataTable, StatusBadge } from "@buttery/react";
-import type { DataTableColumn, DataTableSort } from "@buttery/react";
+import { Inline, Menu, Stack } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, DataTable, StatusBadge } from "@butteryui/react";
+import type { DataTableColumn, DataTableSort } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/data-display",

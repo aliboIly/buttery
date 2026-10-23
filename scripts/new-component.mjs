@@ -116,7 +116,7 @@ export const meta: ComponentMeta = {
 }
 
 function playgroundSource(name, packageName, page) {
-  return `import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+  return `import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { ${name} } from "${packageName}";
 
 export const page: DocsPage = {
@@ -146,7 +146,7 @@ export const demos: readonly DemoSection[] = [
 
 function exampleSource(name, packageName, purpose) {
   return `import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import { ${name} } from "${packageName}";
 
 /** ${purpose} */
@@ -164,12 +164,12 @@ export const play: ExamplePlay = async ({ see }) => {
 
 function compositionSource(name, packageName) {
   const layout = ["Stack", "Surface", "Text"];
-  const own = packageName === "@buttery/core";
+  const own = packageName === "@butteryui/core";
   const fromCore = own ? [...layout, name].sort() : layout;
   const fromPackage = own ? "" : `import { ${name} } from "${packageName}";\n`;
   return `import type { ReactElement } from "react";
-import { ${fromCore.join(", ")} } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { ${fromCore.join(", ")} } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 ${fromPackage}
 /** ${name} in a card, under its title. */
 export function ${name}InACard(): ReactElement {
@@ -253,7 +253,7 @@ function ensureStylesExport(packageJsonPath) {
   manifest.exports = {
     ...rest,
     "./styles.css": {
-      "@buttery/source": "./src/styles.css",
+      "@butteryui/source": "./src/styles.css",
       default: "./dist/styles.css",
     },
     "./package.json": packageEntry,
@@ -304,17 +304,18 @@ export async function createComponent({
   if (existsSync(folder))
     throw new Error(`${relative(root, folder)} already exists.`);
 
-  const npmName = `@buttery/${packageName}`;
+  const npmName = `@butteryui/${packageName}`;
   const sentence = purpose.trim().replace(/\.?$/, ".");
-  const metaImport = packageName === "core" ? "../../meta.ts" : "@buttery/core";
+  const metaImport =
+    packageName === "core" ? "../../meta.ts" : "@butteryui/core";
   const imports =
     packageName === "core"
       ? 'import { cx } from "../../utils/cx.ts";\nimport { Slot } from "../../utils/slot.tsx";'
-      : 'import { cx, Slot } from "@buttery/core";';
+      : 'import { cx, Slot } from "@butteryui/core";';
   const stylesImports =
     packageName === "core"
       ? ["../../styles/index.css"]
-      : ["@buttery/core/styles.css", "../../styles.css"];
+      : ["@butteryui/core/styles.css", "../../styles.css"];
 
   const docsSection = section ?? settings.section;
   const page = {

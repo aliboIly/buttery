@@ -1,5 +1,11 @@
-import { Menu, Stack, Text } from "@buttery/core";
-import { ArrowLink, Button, SidePanel, TextArea, toast } from "@buttery/react";
+import { Menu, Stack, Text } from "@butteryui/core";
+import {
+  ArrowLink,
+  Button,
+  SidePanel,
+  TextArea,
+  toast,
+} from "@butteryui/react";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";

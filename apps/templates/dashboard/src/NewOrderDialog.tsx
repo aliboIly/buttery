@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { FormDialog, NumberField, TextField } from "@buttery/react";
+import { FormDialog, NumberField, TextField } from "@butteryui/react";
 
 /** What a new order needs: who it's for, what they bought and what it cost. */
 export interface NewOrder {

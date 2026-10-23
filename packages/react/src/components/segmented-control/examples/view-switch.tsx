@@ -1,9 +1,9 @@
 import { LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SegmentedControl } from "@buttery/react";
+import { Grid, Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SegmentedControl } from "@butteryui/react";
 
 type View = "list" | "grid";
 

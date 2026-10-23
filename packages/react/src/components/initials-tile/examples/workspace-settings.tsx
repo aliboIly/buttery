@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { InitialsTile, TextField } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { InitialsTile, TextField } from "@butteryui/react";
 
 /** A new workspace's settings: the tile and the title follow the name as it's typed. */
 export function WorkspaceSettings(): ReactElement {

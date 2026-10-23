@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import { ArrowLink } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import { ArrowLink } from "@butteryui/react";
 import { releases } from "virtual:buttery-whats-new";
 import { markdown } from "../ContentPage.tsx";
 import { Example } from "../Example.tsx";

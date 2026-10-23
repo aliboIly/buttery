@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
-import { Icon, Stack, Text } from "@buttery/core";
+import { Icon, Stack, Text } from "@butteryui/core";
 import { Check, X } from "lucide-react";
 import "./blocks.css";
 

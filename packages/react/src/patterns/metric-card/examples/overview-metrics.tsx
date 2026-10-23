@@ -1,9 +1,9 @@
 import { RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, MetricCard } from "@buttery/react";
+import { Grid, Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, MetricCard } from "@butteryui/react";
 
 const DAYS = [
   "Oct 8",

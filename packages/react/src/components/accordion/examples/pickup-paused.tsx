@@ -1,7 +1,7 @@
 import { Store, Truck, Zap } from "lucide-react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Accordion } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Accordion } from "@butteryui/react";
 
 /** Ways to get an order, one of them paused: a disabled item stays shut and the keyboard passes over it. */
 export function PickupPaused(): ReactElement {

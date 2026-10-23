@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { demoChoice, Inline } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ColorDot, IconButton } from "@buttery/react";
+import { demoChoice, Inline } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ColorDot, IconButton } from "@butteryui/react";
 import { ArrowLeftRight } from "lucide-react";
 
 export const page: DocsPage = {

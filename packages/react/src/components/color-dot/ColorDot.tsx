@@ -1,4 +1,4 @@
-import { Popover, cx, useControllableState } from "@buttery/core";
+import { Popover, cx, useControllableState } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement } from "react";
 import { ColorPicker } from "../color-picker/ColorPicker.tsx";
 import type { ColorPickerLabels } from "../color-picker/ColorPicker.tsx";

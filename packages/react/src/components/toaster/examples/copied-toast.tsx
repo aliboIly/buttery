@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, toast } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, toast } from "@butteryui/react";
 
 /** A copy button that confirms with one toast, however often it's pressed: the id replaces the last one. */
 export function CopiedToast(): ReactElement {

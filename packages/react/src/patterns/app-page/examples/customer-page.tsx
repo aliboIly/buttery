@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   AppPage,
   AppShell,
@@ -9,7 +9,7 @@ import {
   SegmentedControl,
   Sidebar,
   TopBar,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Receipt, Users } from "lucide-react";
 
 type Filter = "open" | "shipped";

@@ -4,7 +4,7 @@ import {
   cx,
   useControllableState,
   useLayoutAnimation,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { Columns3, GripVertical } from "lucide-react";
 import { Reorder, useDragControls } from "motion/react";
 import type { ComponentPropsWithRef, KeyboardEvent, ReactElement } from "react";

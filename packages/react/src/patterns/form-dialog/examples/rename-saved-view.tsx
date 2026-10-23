@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, FormDialog, TextField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, FormDialog, TextField } from "@butteryui/react";
 
 /** Renaming a saved view, the save taking a moment: Submit waits for a new name, then shows busy until it's done. */
 export function RenameSavedView(): ReactElement {

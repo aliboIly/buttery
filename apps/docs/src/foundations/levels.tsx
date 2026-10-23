@@ -1,11 +1,11 @@
 import type { ReactElement } from "react";
-import { colors, radii, surfaceLevels, surfaces } from "@buttery/core";
+import { colors, radii, surfaceLevels, surfaces } from "@butteryui/core";
 import type {
   ColorScheme,
   SurfaceDefinition,
   SurfaceLevel,
-} from "@buttery/core";
-import { ButteryProvider } from "@buttery/react";
+} from "@butteryui/core";
+import { ButteryProvider } from "@butteryui/react";
 import "./levels.css";
 
 const SCHEMES: readonly ColorScheme[] = ["light", "dark"];

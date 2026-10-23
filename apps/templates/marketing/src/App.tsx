@@ -7,7 +7,7 @@ import {
   Surface,
   Text,
   scrollToSection,
-} from "@buttery/core";
+} from "@butteryui/core";
 import {
   Button,
   CenteredHero,
@@ -19,7 +19,7 @@ import {
   Stat,
   StatStrip,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { CalendarRange, CloudOff, MousePointerClick } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Router, useLink } from "./router.tsx";

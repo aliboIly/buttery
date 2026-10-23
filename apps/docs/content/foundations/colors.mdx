@@ -45,16 +45,16 @@ Hex values stay the same in dark mode, and buttery's stylelint config fails them
 
 ## In TypeScript and Tailwind
 
-The same tokens are in TypeScript as `colors` from `@buttery/core`, each with its light value, its dark value and what it's for. Use them in code that needs a value rather than a variable, such as a chart drawn on a canvas.
+The same tokens are in TypeScript as `colors` from `@butteryui/core`, each with its light value, its dark value and what it's for. Use them in code that needs a value rather than a variable, such as a chart drawn on a canvas.
 
-With Tailwind v4, import `@buttery/core/tailwind.css` after Tailwind in your stylesheet:
+With Tailwind v4, import `@butteryui/core/tailwind.css` after Tailwind in your stylesheet:
 
 ```css
 @import "tailwindcss";
-@import "@buttery/core/tailwind.css";
+@import "@butteryui/core/tailwind.css";
 ```
 
-Utilities such as `bg-surface`, `text-fg-secondary` and `border-border` then read the same tokens. Keep importing `@buttery/core/styles.css` at your app's entry, because it defines the variables they read.
+Utilities such as `bg-surface`, `text-fg-secondary` and `border-border` then read the same tokens. Keep importing `@butteryui/core/styles.css` at your app's entry, because it defines the variables they read.
 
 ## Surfaces
 

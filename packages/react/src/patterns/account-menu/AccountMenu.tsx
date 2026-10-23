@@ -1,5 +1,5 @@
-import { Icon, Menu, cx, hasContent } from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+import { Icon, Menu, cx, hasContent } from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import { ArrowLeftRight, ChevronDown, Plus, Settings2 } from "lucide-react";
 import { DropdownMenu, VisuallyHidden } from "radix-ui";
 import type {

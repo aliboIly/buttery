@@ -1,4 +1,4 @@
-import { Icon, hasContent, timing } from "@buttery/core";
+import { Icon, hasContent, timing } from "@butteryui/core";
 import { CircleAlert } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
 import { isValidElement, useEffect, useId, useState } from "react";

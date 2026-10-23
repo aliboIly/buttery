@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Skeleton, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Skeleton, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 const LINES = [
   { variant: "title-lg", text: "$12,480.00" },

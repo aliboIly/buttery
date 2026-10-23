@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Inspector, Slider } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Inspector, Slider } from "@butteryui/react";
 
 /** Slider rows in an inspector section, whose Reset puts every row back to its default. */
 export function PictureSection(): ReactElement {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   Button,
   DataTable,
@@ -9,8 +9,8 @@ import {
   FilterPill,
   SearchField,
   StatusBadge,
-} from "@buttery/react";
-import type { DataTableColumn } from "@buttery/react";
+} from "@butteryui/react";
+import type { DataTableColumn } from "@butteryui/react";
 
 const STATUSES = ["Paid", "Unpaid", "Refunded"] as const;
 

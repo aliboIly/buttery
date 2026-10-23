@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AccountMenu, Sidebar } from "@buttery/react";
+import { Menu, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AccountMenu, Sidebar } from "@butteryui/react";
 import { House, LogOut, Receipt, Settings, UserRound } from "lucide-react";
 
 const NORTHSIDE = {

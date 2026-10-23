@@ -1,4 +1,4 @@
-import { hexToOklch, mixOklab, oklchToHex } from "@buttery/core";
+import { hexToOklch, mixOklab, oklchToHex } from "@butteryui/core";
 import { SLIDE_SIZES } from "./deck.ts";
 import type { Fill, SlideSize } from "./deck.ts";
 import { fillStops } from "./geometry.ts";

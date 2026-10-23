@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stagger, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SplitHero } from "@buttery/react";
+import { Stagger, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SplitHero } from "@butteryui/react";
 
 /** A product's opening band with one call to action and a visual of two pieces. */
 export function ProductHero(): ReactElement {

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { BarChart, SegmentedControl, Switch } from "@buttery/react";
-import type { ChartSeries, ChartSize } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { BarChart, SegmentedControl, Switch } from "@butteryui/react";
+import type { ChartSeries, ChartSize } from "@butteryui/react";
 
 const BLENDS = ["House", "Espresso", "Decaf", "Single origin"];
 

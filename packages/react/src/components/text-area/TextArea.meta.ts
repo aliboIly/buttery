@@ -1,4 +1,4 @@
-import type { ComponentMeta } from "@buttery/core";
+import type { ComponentMeta } from "@butteryui/core";
 
 export const meta: ComponentMeta = {
   name: "TextArea",

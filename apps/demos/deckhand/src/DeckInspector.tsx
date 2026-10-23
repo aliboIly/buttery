@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Morph, useFloatingObstacle } from "@buttery/core";
-import { gradientCss, gradients, solids } from "@buttery/core/palettes";
+import { Morph, useFloatingObstacle } from "@butteryui/core";
+import { gradientCss, gradients, solids } from "@butteryui/core/palettes";
 import {
   AnchorGrid,
   Button,
@@ -12,8 +12,8 @@ import {
   SwatchGrid,
   TextArea,
   TextField,
-} from "@buttery/react";
-import type { SegmentedControlOption, Swatch } from "@buttery/react";
+} from "@butteryui/react";
+import type { SegmentedControlOption, Swatch } from "@butteryui/react";
 import { AlignCenter, AlignLeft, AlignRight, Plus } from "lucide-react";
 import {
   DEFAULT_ANGLE,

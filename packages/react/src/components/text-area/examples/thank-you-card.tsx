@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { TextArea } from "@buttery/react";
+import { Grid, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { TextArea } from "@butteryui/react";
 
 /** The message for the back of the card in each box, typed beside a preview of the card that shows it as it's written. */
 export function ThankYouCard(): ReactElement {

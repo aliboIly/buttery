@@ -1,10 +1,10 @@
 import type { ReactElement, ReactNode } from "react";
-import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Bento, Button, ExpandableCard, Page, Section } from "@buttery/react";
-import type { BentoSpan } from "@buttery/react";
+import { Center, Inline, Stack, Surface, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { Bento, Button, ExpandableCard, Page, Section } from "@butteryui/react";
+import type { BentoSpan } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/overlays",

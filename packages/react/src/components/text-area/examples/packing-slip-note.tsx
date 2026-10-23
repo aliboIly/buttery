@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { TextArea } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { TextArea } from "@butteryui/react";
 
 /** A note for the packing slip that grows as it gets longer, with the room it has left counted from its state. */
 export function PackingSlipNote(): ReactElement {

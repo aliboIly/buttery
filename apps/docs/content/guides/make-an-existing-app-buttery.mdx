@@ -20,11 +20,11 @@ This guide moves an existing React app onto buttery without a rewrite: wire up t
 Import buttery's two stylesheets at the app's entry and wrap the app in `ButteryProvider`:
 
 ```tsx title="src/main.tsx"
-import "@buttery/core/styles.css";
-import "@buttery/react/styles.css";
+import "@butteryui/core/styles.css";
+import "@butteryui/react/styles.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ButteryProvider } from "@buttery/react";
+import { ButteryProvider } from "@butteryui/react";
 import { App } from "./App.tsx";
 
 const container = document.getElementById("root");
@@ -71,7 +71,7 @@ Then add a Playwright test for each main page, and keep its report as the list o
 
 ```ts title="e2e/layout.spec.ts"
 import { test } from "@playwright/test";
-import { expectButtery, quickMatrix } from "@buttery/test";
+import { expectButtery, quickMatrix } from "@butteryui/test";
 
 test("the home page is buttery", async ({ page }) => {
   await page.goto("/");
@@ -117,7 +117,7 @@ Take one screen at a time, from the whole screen down to its values:
 
 ### Keep it there
 
-Add `@buttery/lint`'s configs and the `expectButtery` tests to the app's checks, so a screen stays buttery once it's converted. [Lint configs](/tools/lint-configs) has both config files.
+Add `@butteryui/lint`'s configs and the `expectButtery` tests to the app's checks, so a screen stays buttery once it's converted. [Lint configs](/tools/lint-configs) has both config files.
 
 </Step>
 </Steps>

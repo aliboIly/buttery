@@ -1,6 +1,6 @@
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ViewToggle } from "@buttery/react";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ViewToggle } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

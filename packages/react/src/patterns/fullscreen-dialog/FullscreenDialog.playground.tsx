@@ -1,11 +1,16 @@
-import { Icon, Inline, Stack, Text } from "@buttery/core";
+import { Icon, Inline, Stack, Text } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { Button, Dialog, FullscreenDialog, OptionTiles } from "@buttery/react";
+} from "@butteryui/core";
+import {
+  Button,
+  Dialog,
+  FullscreenDialog,
+  OptionTiles,
+} from "@butteryui/react";
 import { Coffee } from "lucide-react";
 import type { ReactElement } from "react";
 

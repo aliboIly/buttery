@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Chip, TiltPad } from "@buttery/react";
-import type { TiltValue } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Chip, TiltPad } from "@butteryui/react";
+import type { TiltValue } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/inputs",

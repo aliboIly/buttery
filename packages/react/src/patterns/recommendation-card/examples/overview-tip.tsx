@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AppPage, PageHeader, RecommendationCard } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AppPage, PageHeader, RecommendationCard } from "@butteryui/react";
 
 /** A tip at the top of an overview page: its action turns the feature on in place, and once it's dismissed the sections under it slide up. */
 export function OverviewTip(): ReactElement {

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { solids } from "@buttery/core/palettes";
-import { Button, ColorPicker } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { solids } from "@butteryui/core/palettes";
+import { Button, ColorPicker } from "@butteryui/react";
 
 const PRESETS = solids.slice(0, 6).map((solid) => solid.hex);
 const FIRST_FILL = PRESETS[0] ?? "#f5d06f";

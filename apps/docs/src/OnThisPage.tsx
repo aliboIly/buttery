@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Stack, Text, useScrollSpy } from "@buttery/core";
+import { Stack, Text, useScrollSpy } from "@butteryui/core";
 import type { Heading } from "./content.ts";
 
 /**

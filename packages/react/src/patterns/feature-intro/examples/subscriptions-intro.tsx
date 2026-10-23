@@ -1,9 +1,9 @@
 import { CalendarClock, Repeat } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { FeatureIntro } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { FeatureIntro } from "@butteryui/react";
 
 /** The subscriptions page before its first plan, put away for good once dismissed. */
 export function SubscriptionsIntro(): ReactElement {

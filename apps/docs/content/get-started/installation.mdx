@@ -101,18 +101,18 @@ An app on buttery needs two stylesheets, imported once at its entry, and `Butter
 
 `ButteryProvider` sets the color scheme, the density and the motion preference for everything inside it, and mounts the layers that menus, dialogs and toasts open into.
 
-These are the packages in the starter's `package.json`. Inside the repository, the `@buttery/*` packages come from the workspace.
+These are the packages in the starter's `package.json`. Inside the repository, the `@butteryui/*` packages come from the workspace.
 
 <DocsTable
   columns={["Package", "Kind", "What it's for"]}
   rows={[
     [
-      "`@buttery/core`",
+      "`@butteryui/core`",
       "Dependency",
       "The tokens, the stylesheet with the Inter font, the layout primitives, the layers and the motion presets",
     ],
     [
-      "`@buttery/react`",
+      "`@butteryui/react`",
       "Dependency",
       "`ButteryProvider`, the components and the patterns, and their stylesheet",
     ],
@@ -123,12 +123,12 @@ These are the packages in the starter's `package.json`. Inside the repository, t
     ],
     ["`react` and `react-dom`", "Dependency", "React 19"],
     [
-      "`@buttery/test`",
+      "`@butteryui/test`",
       "Dev tool",
       "`expectButtery`, the layout, accessibility and stability checks for Playwright, which the starter's `e2e/layout.spec.ts` runs",
     ],
     [
-      "`@buttery/lint`",
+      "`@butteryui/lint`",
       "Dev tool",
       "buttery's stylelint and ESLint configs; in the repository, the root `eslint.config.js` and `stylelint.config.mjs` already apply them to every app",
     ],

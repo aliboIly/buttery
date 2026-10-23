@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Stagger, Surface, Text } from "@buttery/core";
+import { Grid, Inline, Stack, Stagger, Surface, Text } from "@butteryui/core";
 import {
   Button,
   Field,
   SegmentedControl,
   Select,
   StatusBadge,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { Sparkles } from "lucide-react";
 import { useAddToBag } from "./add-to-bag.ts";
 import { Shelf } from "./BagArt.tsx";

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Tooltip } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Tooltip } from "@butteryui/react";
 
 /** A tooltip whose open state the example keeps, so a tip elsewhere can open it to point out a button. */
 export function ShowMeWhere(): ReactElement {

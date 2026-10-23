@@ -1,4 +1,4 @@
-import { cx, hasContent } from "@buttery/core";
+import { cx, hasContent } from "@butteryui/core";
 import { createContext, use, useId } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { Container } from "../container/Container.tsx";

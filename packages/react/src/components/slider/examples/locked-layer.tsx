@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Slider, Switch } from "@buttery/react";
+import { Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Slider, Switch } from "@butteryui/react";
 
 /** A disabled slider: the logo's opacity holds while its layer is locked and moves again once it's unlocked. */
 export function LockedLayer(): ReactElement {

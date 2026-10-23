@@ -1,7 +1,7 @@
 import { ArrowLeftRight, CircleHelp, Copy, Redo2, Undo2 } from "lucide-react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
-import { Inline, Kbd, Stack, Surface, Text } from "@buttery/core";
-import { gradientCss, gradientRows } from "@buttery/core/palettes";
+import { Inline, Kbd, Stack, Surface, Text } from "@butteryui/core";
+import { gradientCss, gradientRows } from "@butteryui/core/palettes";
 import {
   AnchorGrid,
   ArrowLink,
@@ -19,8 +19,8 @@ import {
   SwatchGrid,
   TiltPad,
   Tooltip,
-} from "@buttery/react";
-import type { Swatch } from "@buttery/react";
+} from "@butteryui/react";
+import type { Swatch } from "@butteryui/react";
 import { referenceRoot } from "virtual:buttery-reference";
 import { siteHref } from "../location.ts";
 import "./compare-page.css";

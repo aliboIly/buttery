@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { Button, SettingsSection, TextField } from "@buttery/react";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { Button, SettingsSection, TextField } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

@@ -1,6 +1,6 @@
-import { contrastRatio } from "@buttery/core";
-import { gradients, solids } from "@buttery/core/palettes";
-import type { Anchor } from "@buttery/react";
+import { contrastRatio } from "@butteryui/core";
+import { gradients, solids } from "@butteryui/core/palettes";
+import type { Anchor } from "@butteryui/react";
 import type { Box, Fill, Slide } from "./deck.ts";
 
 function gradient(id: string): (typeof gradients)[number] {

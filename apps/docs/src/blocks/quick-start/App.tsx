@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Center, Inline, Stack, Surface, Text } from "@buttery/core";
-import { Button, Switch, toast } from "@buttery/react";
+import { Center, Inline, Stack, Surface, Text } from "@butteryui/core";
+import { Button, Switch, toast } from "@butteryui/react";
 
 export function App(): ReactElement {
   const [emails, setEmails] = useState(true);

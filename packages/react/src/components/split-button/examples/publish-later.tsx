@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SplitButton, TextField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SplitButton, TextField } from "@butteryui/react";
 
 /** Publish now, or pick a later time from the menu: both halves stay disabled until the deck has a title, and one entry is unavailable. */
 export function PublishLater(): ReactElement {

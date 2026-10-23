@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
-import { Grid, Stack, Surface, Text } from "@buttery/core";
+import { Grid, Stack, Surface, Text } from "@butteryui/core";
 import { withInlineCode } from "../inline-code.tsx";
 import "./blocks.css";
 

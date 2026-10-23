@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Button, Onboarding } from "@buttery/react";
-import type { OnboardingStep } from "@buttery/react";
+import { Inline, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { Button, Onboarding } from "@butteryui/react";
+import type { OnboardingStep } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

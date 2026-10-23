@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { NumberField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { NumberField } from "@butteryui/react";
 
 /** A scale factor in tenths, from 0.1 to 4, saved once each change is final rather than on every keystroke. */
 export function ScaleFactor(): ReactElement {

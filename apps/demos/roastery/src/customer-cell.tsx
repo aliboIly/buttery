@@ -1,4 +1,4 @@
-import { DataTable } from "@buttery/react";
+import { DataTable } from "@butteryui/react";
 import type { ReactElement, ReactNode } from "react";
 import { customerOf } from "./data.ts";
 import { useLink } from "./router.tsx";

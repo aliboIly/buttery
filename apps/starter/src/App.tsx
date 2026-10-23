@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Text } from "@buttery/core";
-import { AppPage, PageHeader } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import { AppPage, PageHeader } from "@butteryui/react";
 
 export function App(): ReactElement {
   return (

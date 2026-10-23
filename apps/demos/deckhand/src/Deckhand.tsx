@@ -8,7 +8,7 @@ import {
 } from "react";
 import type { CSSProperties, PointerEvent, ReactElement } from "react";
 import { flushSync } from "react-dom";
-import { isApplePlatform, lastInput, useShortcut } from "@buttery/core";
+import { isApplePlatform, lastInput, useShortcut } from "@butteryui/core";
 import {
   AppShell,
   Button,
@@ -19,8 +19,8 @@ import {
   Stage,
   TextField,
   toast,
-} from "@buttery/react";
-import type { Anchor } from "@buttery/react";
+} from "@butteryui/react";
+import type { Anchor } from "@butteryui/react";
 import {
   LayoutTemplate,
   Move,

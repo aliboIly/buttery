@@ -1,4 +1,4 @@
-import { Grid, Stack, Surface, Text } from "@buttery/core";
+import { Grid, Stack, Surface, Text } from "@butteryui/core";
 import {
   AppPage,
   ArrowLink,
@@ -9,8 +9,8 @@ import {
   TabNav,
   ViewToggle,
   toast,
-} from "@buttery/react";
-import type { DataTableColumn, ViewMode } from "@buttery/react";
+} from "@butteryui/react";
+import type { DataTableColumn, ViewMode } from "@butteryui/react";
 import { FileText, Package, Store } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

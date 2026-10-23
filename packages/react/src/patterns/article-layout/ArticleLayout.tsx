@@ -1,4 +1,4 @@
-import { Sticky, cx, hasContent } from "@buttery/core";
+import { Sticky, cx, hasContent } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 
 /** Props for `ArticleLayout`. */

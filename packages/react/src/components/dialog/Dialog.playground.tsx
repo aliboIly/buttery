@@ -1,10 +1,10 @@
 import { Trash2 } from "lucide-react";
 import type { ReactElement } from "react";
-import { Center, Inline, Surface, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Button, Dialog, IconButton } from "@buttery/react";
+import { Center, Inline, Surface, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
+import { Button, Dialog, IconButton } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/overlays",

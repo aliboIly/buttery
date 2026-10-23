@@ -8,7 +8,7 @@ import {
   opensElsewhere,
   scrollToSection,
   useScrollSpy,
-} from "@buttery/core";
+} from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { Container } from "../container/Container.tsx";
 

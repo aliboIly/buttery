@@ -1,4 +1,4 @@
-import { Icon, cx, useControllableState } from "@buttery/core";
+import { Icon, cx, useControllableState } from "@butteryui/core";
 import { Check } from "lucide-react";
 import { Checkbox as RadixCheckbox } from "radix-ui";
 import { useId } from "react";

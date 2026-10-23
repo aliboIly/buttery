@@ -1,5 +1,5 @@
-import { Inline, Pressable, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+import { Inline, Pressable, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "components/actions",

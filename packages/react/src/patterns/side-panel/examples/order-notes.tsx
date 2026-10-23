@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SidePanel } from "@buttery/react";
+import { Menu, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SidePanel } from "@butteryui/react";
 
 /** An order's notes, whether they're open kept in state: closed, a button brings them back, and their menu clears them. */
 export function OrderNotes(): ReactElement {

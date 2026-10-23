@@ -1,6 +1,14 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Icon, Inline, Morph, Stack, Surface, Text } from "@buttery/core";
+import {
+  Grid,
+  Icon,
+  Inline,
+  Morph,
+  Stack,
+  Surface,
+  Text,
+} from "@butteryui/core";
 import {
   Button,
   Field,
@@ -10,7 +18,7 @@ import {
   StatusBadge,
   TextField,
   looksLikeEmail,
-} from "@buttery/react";
+} from "@butteryui/react";
 import {
   CalendarCheck,
   CalendarClock,

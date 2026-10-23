@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, TextArea } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, TextArea } from "@butteryui/react";
 
 /** A larger feedback box that starts at five lines and stops growing at twelve, read once the form is sent. */
 export function Feedback(): ReactElement {

@@ -1,6 +1,6 @@
-import { Menu, demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { SavedViews } from "@buttery/react";
+import { Menu, demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { SavedViews } from "@butteryui/react";
 import { Copy, Pencil, Trash2 } from "lucide-react";
 
 export const page: DocsPage = {

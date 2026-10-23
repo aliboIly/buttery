@@ -4,8 +4,8 @@ import {
   hasContent,
   useAnimationTracking,
   useReflow,
-} from "@buttery/core";
-import type { MotionElementProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { MotionElementProps } from "@butteryui/core";
 import { motion } from "motion/react";
 import { useId, useLayoutEffect, useMemo } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";

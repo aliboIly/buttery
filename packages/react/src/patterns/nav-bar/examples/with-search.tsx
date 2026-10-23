@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, MorphMenu, NavBar, SearchField } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, MorphMenu, NavBar, SearchField } from "@butteryui/react";
 
 /** A guide site's bar with a search after its menus, which narrows first as the bar runs out of room and stays when the menus fold. */
 export function WithSearch(): ReactElement {

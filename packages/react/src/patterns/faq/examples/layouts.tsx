@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Faq, Field, SegmentedControl, Select } from "@buttery/react";
-import type { AccordionVariant, FaqLayout } from "@buttery/react";
+import { Grid, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Faq, Field, SegmentedControl, Select } from "@butteryui/react";
+import type { AccordionVariant, FaqLayout } from "@butteryui/react";
 
 const LAYOUTS: readonly FaqLayout[] = ["stacked", "split", "two-column"];
 const LOOKS: readonly { value: AccordionVariant; label: string }[] = [

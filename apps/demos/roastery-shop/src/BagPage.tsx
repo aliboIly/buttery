@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import { ArrowLink, Button, EmptyState, Section } from "@buttery/react";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import { ArrowLink, Button, EmptyState, Section } from "@butteryui/react";
 import { ShoppingBag } from "lucide-react";
 import { bagCount, useBag } from "./bag.ts";
 import { BagLines, FreeShipping } from "./BagLines.tsx";

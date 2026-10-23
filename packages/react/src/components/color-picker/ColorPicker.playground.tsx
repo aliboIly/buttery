@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { demoChoice, Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ColorPicker } from "@buttery/react";
-import { solids } from "@buttery/core/palettes";
+import { demoChoice, Stack, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ColorPicker } from "@butteryui/react";
+import { solids } from "@butteryui/core/palettes";
 
 export const page: DocsPage = {
   section: "components/inputs",

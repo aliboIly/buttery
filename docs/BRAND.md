@@ -2,7 +2,7 @@
 
 ## Name
 - Always lowercase: **buttery** — in headings, at the start of sentences, beside the logo.
-- npm scope: `@buttery/*`. CLI: `buttery`. CSS prefix: `--bt-` / `.bt-`.
+- npm scope: `@butteryui/*`. CLI: `buttery`. CSS prefix: `--bt-` / `.bt-`.
 - Tagline: **Make anything buttery.**
 
 ## The logo: 🧈

@@ -506,7 +506,7 @@ describe("FloatingLanes", () => {
     );
     await screen.findByText("Four");
     expect(warn).toHaveBeenCalledWith(
-      "[buttery:FloatingLanes] The bottom-end lane holds more than 3 items, so it can run off the screen. Fix: show toasts with toast() from @buttery/react, which keeps the newest three, or take older items out as new ones arrive.",
+      "[buttery:FloatingLanes] The bottom-end lane holds more than 3 items, so it can run off the screen. Fix: show toasts with toast() from @butteryui/react, which keeps the newest three, or take older items out as new ones arrive.",
     );
   });
 

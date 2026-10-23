@@ -152,7 +152,7 @@ function homesIn(docsSite) {
  * Checks the docs site's pages: every page has its metadata, no two pages in a section share an order,
  * every internal link reaches a page (and heading) that exists, and every component has a home in
  * `docs/DOCS_SITE.md`, the examples its page asks for, a live demo on a page of its own, and the keyboard,
- * layout and reduced-motion notes its meta gives the page; and every other export of `@buttery/react` is
+ * layout and reduced-motion notes its meta gives the page; and every other export of `@butteryui/react` is
  * described on a page that lists it in its `exports`; and every release a package's changelog lists, and every
  * release a page says it arrived in, has a What's new entry with two or three highlights. Returns the problems,
  * each saying how to fix it.

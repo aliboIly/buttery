@@ -7,9 +7,9 @@ import {
   Surface,
   Text,
   useApplePlatform,
-} from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ContextMenu } from "@buttery/react";
+} from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ContextMenu } from "@butteryui/react";
 
 const FOLDERS = ["Pitches", "Price lists", "Archive"] as const;
 

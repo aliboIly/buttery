@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Center, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Center, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A short status message in the middle of a panel while its content loads. */
 export function LoadingPanel(): ReactElement {

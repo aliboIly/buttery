@@ -14,8 +14,8 @@ import {
   useControllableState,
   useLayoutAnimation,
   useMotionPreference,
-} from "@buttery/core";
-import type { MotionElementProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { MotionElementProps } from "@butteryui/core";
 import { Maximize2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type { HTMLMotionProps, Transition } from "motion/react";

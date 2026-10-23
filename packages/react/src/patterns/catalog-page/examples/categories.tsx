@@ -1,5 +1,5 @@
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { CatalogPage } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { CatalogPage } from "@butteryui/react";
 import { useState } from "react";
 import type { MouseEvent, ReactElement } from "react";
 

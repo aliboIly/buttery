@@ -15,13 +15,13 @@ import {
   publishSettled,
   spring,
   watchFocusHistory,
-} from "@buttery/core";
+} from "@butteryui/core";
 import type {
   ButteryTheme,
   ColorScheme,
   CssVariables,
   Density,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { Confetti } from "../components/confetti/Confetti.tsx";
 import { Toaster } from "../components/toaster/Toaster.tsx";
 import type { ToasterProps } from "../components/toaster/Toaster.tsx";

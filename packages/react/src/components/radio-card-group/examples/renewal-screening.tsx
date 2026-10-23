@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { RadioCardGroup, Select } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { RadioCardGroup, Select } from "@butteryui/react";
 
 /** A screening choice whose second option opens a select of its own. */
 export function RenewalScreening(): ReactElement {

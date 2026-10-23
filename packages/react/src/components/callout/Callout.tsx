@@ -1,4 +1,4 @@
-import { Icon, cx, hasContent } from "@buttery/core";
+import { Icon, cx, hasContent } from "@butteryui/core";
 import { CircleAlert, CircleCheck, Info, TriangleAlert } from "lucide-react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 

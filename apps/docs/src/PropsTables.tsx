@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import type { ReactElement } from "react";
 import { exportDocs, propsTables, typeTables } from "virtual:buttery-props";
 import type { PropDoc } from "virtual:buttery-props";
-import { Stack, Text } from "@buttery/core";
+import { Stack, Text } from "@butteryui/core";
 import { withInlineCode } from "./inline-code.tsx";
 import { TableScroll } from "./TableScroll.tsx";
 

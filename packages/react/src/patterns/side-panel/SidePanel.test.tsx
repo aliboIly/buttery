@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { FloatingLanes, Menu, publishSettled } from "@buttery/core";
+import { FloatingLanes, Menu, publishSettled } from "@butteryui/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";

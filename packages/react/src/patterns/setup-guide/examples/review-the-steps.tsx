@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SetupGuide } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SetupGuide } from "@butteryui/react";
 
 /** The guide's unfolding kept in state: a button on the page shows it with every step, and its own chevron folds it. */
 export function ReviewTheSteps(): ReactElement {

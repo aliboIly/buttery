@@ -2,14 +2,14 @@ import { writeFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
 import { test } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { createLayoutToolkit, layoutCheckTokens } from "@buttery/core/layout";
+import { createLayoutToolkit, layoutCheckTokens } from "@butteryui/core/layout";
 import type {
   ButteryRule,
   LayoutCheckOptions,
   LayoutRule,
   LayoutViolation,
   MovedOptions,
-} from "@buttery/core/layout";
+} from "@butteryui/core/layout";
 import { formatViolations } from "./format.ts";
 import type { ReportedViolation } from "./format.ts";
 import type { ButteryMatrix, ButteryViewport } from "./matrix.ts";

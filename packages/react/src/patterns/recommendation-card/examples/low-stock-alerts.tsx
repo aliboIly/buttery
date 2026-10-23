@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { RecommendationCard } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { RecommendationCard } from "@butteryui/react";
 
 /** A tip for a page's right rail that stays dismissed on later visits. */
 export function LowStockAlerts(): ReactElement {

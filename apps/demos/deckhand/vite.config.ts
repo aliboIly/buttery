@@ -7,7 +7,7 @@ const { port } = manifest.config;
 
 export default defineConfig({
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
-  resolve: { conditions: ["@buttery/source", ...defaultClientConditions] },
+  resolve: { conditions: ["@butteryui/source", ...defaultClientConditions] },
   server: { port, strictPort: true },
   preview: { port: port + 2000, strictPort: true },
   build: { target: ["es2024", "safari17.5", "chrome130"] },

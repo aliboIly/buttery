@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, SetupGuide } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, SetupGuide } from "@butteryui/react";
 
 /** A new roastery's setup, two of three tasks done, floating at the window's bottom end once it's shown. */
 export function RoasterySetup(): ReactElement {

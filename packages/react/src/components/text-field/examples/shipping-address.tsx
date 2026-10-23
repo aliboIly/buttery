@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, TextField } from "@buttery/react";
+import { Grid, Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, TextField } from "@butteryui/react";
 
 /** A shipping address form: a field for each line, two side by side where they're short, checked on Save. */
 export function ShippingAddress(): ReactElement {

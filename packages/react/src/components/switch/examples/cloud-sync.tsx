@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Switch } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Switch } from "@butteryui/react";
 
 /** A switch with a hint about what it does, which follows it as it's flipped. */
 export function CloudSync(): ReactElement {

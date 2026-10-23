@@ -1,5 +1,5 @@
-import { TextStack, cx } from "@buttery/core";
-import type { TextStackTitleElement } from "@buttery/core";
+import { TextStack, cx } from "@butteryui/core";
+import type { TextStackTitleElement } from "@butteryui/core";
 import { useId, useState } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import { ArrowLink } from "../../components/arrow-link/ArrowLink.tsx";

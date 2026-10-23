@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { publishSettled } from "@buttery/core";
+import { publishSettled } from "@butteryui/core";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { createRef, useEffect, useState } from "react";
 import type { ReactElement } from "react";

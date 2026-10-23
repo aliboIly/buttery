@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SegmentedControl, Sparkline } from "@buttery/react";
+import { Grid, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SegmentedControl, Sparkline } from "@butteryui/react";
 
 type Week = "this" | "last";
 

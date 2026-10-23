@@ -1,7 +1,7 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "./styles.css";
-import { publishSettled } from "@buttery/core";
-import type { ExamplePlay, ExamplePlayContext } from "@buttery/core";
+import { publishSettled } from "@butteryui/core";
+import type { ExamplePlay, ExamplePlayContext } from "@butteryui/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

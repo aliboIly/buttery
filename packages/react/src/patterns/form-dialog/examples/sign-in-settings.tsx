@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   Button,
   FormDialog,
   SettingRow,
   SettingsSection,
   TextField,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** A settings section whose row changes its value through a form dialog, the row's state updating once it's saved. */
 export function SignInSettings(): ReactElement {

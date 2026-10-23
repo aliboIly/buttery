@@ -3,7 +3,7 @@ import {
   hasContent,
   useControllableState,
   useMergedRefs,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 import {

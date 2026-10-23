@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Menu, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   AppPage,
   AppShell,
@@ -11,7 +11,7 @@ import {
   Sidebar,
   TextArea,
   TopBar,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { CircleHelp, Flame, Package } from "lucide-react";
 
 /** A help panel the top bar opens, docked beside the page from 1280px of shell and a sheet under that. */

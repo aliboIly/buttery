@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { InitialsTile } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { InitialsTile } from "@butteryui/react";
 
 const SIZES = [
   { size: "xs", width: "20px" },

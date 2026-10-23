@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { NumberField, Slider } from "@buttery/react";
+import { Grid, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { NumberField, Slider } from "@butteryui/react";
 
 /** A slider with its label on top, beside a number field with its label on top, so the two controls start on one line. */
 export function BesideAField(): ReactElement {

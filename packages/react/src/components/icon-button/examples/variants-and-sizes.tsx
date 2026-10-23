@@ -1,9 +1,9 @@
 import { Bell, HelpCircle, Plus, X } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { IconButton } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { IconButton } from "@butteryui/react";
 
 /** Ghost at 36 and 28px, a dot for something new, and the round primary create button of a top bar. */
 export function VariantsAndSizes(): ReactElement {

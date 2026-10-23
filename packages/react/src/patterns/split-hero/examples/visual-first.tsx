@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { SplitHero } from "@buttery/react";
+import { Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { SplitHero } from "@butteryui/react";
 
 /** The visual on the start side, for a band that answers the one above it. */
 export function VisualFirst(): ReactElement {

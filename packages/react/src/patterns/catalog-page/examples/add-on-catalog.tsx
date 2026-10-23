@@ -1,11 +1,11 @@
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   CatalogPage,
   Checkbox,
   InitialsTile,
   SearchField,
   TagChip,
-} from "@buttery/react";
+} from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

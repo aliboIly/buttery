@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { SearchField, TopBar } from "@buttery/react";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { SearchField, TopBar } from "@butteryui/react";
 import { Bell, CircleHelp, Settings } from "lucide-react";
 
 export const page: DocsPage = {

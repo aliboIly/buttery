@@ -1,5 +1,5 @@
-import { Text, cx, hasContent } from "@buttery/core";
-import type { TextStackTitleElement } from "@buttery/core";
+import { Text, cx, hasContent } from "@butteryui/core";
+import type { TextStackTitleElement } from "@butteryui/core";
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 
 /** Props for `HeroText`. */

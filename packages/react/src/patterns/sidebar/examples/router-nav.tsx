@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Sidebar } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Sidebar } from "@butteryui/react";
 import { House, Receipt, Users } from "lucide-react";
 
 const PAGES: Readonly<Record<string, { title: string; body: string }>> = {

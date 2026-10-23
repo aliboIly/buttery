@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, Footer, Page, Section, TextField } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, Footer, Page, Section, TextField } from "@butteryui/react";
 
 /** The end of a landing page: a brand column with a newsletter signup, two columns of links and the small print. */
 export function SiteFooter(): ReactElement {

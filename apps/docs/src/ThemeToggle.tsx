@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Moon, Sun } from "lucide-react";
-import { Button, IconButton, useButtery } from "@buttery/react";
+import { Button, IconButton, useButtery } from "@butteryui/react";
 import { setSetting } from "./location.ts";
 
 /** Switches the site between the light and dark themes, keeping the choice in the address. */

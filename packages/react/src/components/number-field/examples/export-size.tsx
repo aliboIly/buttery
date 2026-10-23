@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, NumberField } from "@buttery/react";
+import { Grid, Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, NumberField } from "@butteryui/react";
 
 /** An export panel: width and height fields with their labels on top, each filling its column, and the button that uses them. */
 export function ExportSize(): ReactElement {

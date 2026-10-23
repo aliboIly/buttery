@@ -1,6 +1,6 @@
-import { Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Breadcrumbs, Button, DetailPage } from "@buttery/react";
+import { Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Breadcrumbs, Button, DetailPage } from "@butteryui/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ArrowLink, Callout } from "@buttery/react";
+import { Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ArrowLink, Callout } from "@butteryui/react";
 
 /** The four tones, each with its tint and icon: something to know, a result, a warning and an error. */
 export function CalloutTones(): ReactElement {

@@ -16,7 +16,7 @@ function entriesOf(packageName) {
   );
   return Object.values(manifest.exports)
     .map((target) =>
-      typeof target === "object" ? target["@buttery/source"] : undefined,
+      typeof target === "object" ? target["@butteryui/source"] : undefined,
     )
     .filter((source) => typeof source === "string" && source.endsWith(".ts"))
     .map((source) => join(root, "packages", packageName, source));
@@ -125,7 +125,7 @@ function unexportedTypes(packageName) {
 
 describe("public types", () => {
   for (const packageName of ["core", "react"]) {
-    it(`@buttery/${packageName} exports every type its exports name`, () => {
+    it(`@butteryui/${packageName} exports every type its exports name`, () => {
       expect(unexportedTypes(packageName)).toEqual([]);
     });
   }

@@ -1,6 +1,6 @@
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { DateRangeBar } from "@buttery/react";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { DateRangeBar } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/inputs",

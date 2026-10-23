@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Avatar } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Avatar } from "@butteryui/react";
 
 const PORTRAIT = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#f6dcc0"/><circle cx="20" cy="16" r="7" fill="#b2662e"/><path d="M6 40c2-9 8-13 14-13s12 4 14 13z" fill="#b2662e"/></svg>',

@@ -58,7 +58,7 @@ A progress bar that glides to its value on `spring.smooth`, and lands at once wi
 ```tsx
 import type { ReactElement } from "react";
 import { motion } from "motion/react";
-import { useButteryTransition } from "@buttery/core";
+import { useButteryTransition } from "@butteryui/core";
 
 export function Progress({ done }: { readonly done: number }): ReactElement {
   const transition = useButteryTransition("smooth");

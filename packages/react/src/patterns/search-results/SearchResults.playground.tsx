@@ -1,6 +1,6 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { SearchResults, matchesSearch, pageSource } from "@buttery/react";
-import type { LocalSearchSource } from "@buttery/react";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { SearchResults, matchesSearch, pageSource } from "@butteryui/react";
+import type { LocalSearchSource } from "@butteryui/react";
 import { Settings } from "lucide-react";
 
 export const page: DocsPage = {

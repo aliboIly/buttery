@@ -1,4 +1,4 @@
-import { AppPage, BarChart, PageHeader } from "@buttery/react";
+import { AppPage, BarChart, PageHeader } from "@butteryui/react";
 import type { ReactElement } from "react";
 import { STOCK, bagCount, daily, dayLabels, sum } from "./data.ts";
 import { kilograms } from "./format.ts";

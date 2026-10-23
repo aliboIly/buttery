@@ -1,4 +1,4 @@
-import { cx } from "@buttery/core";
+import { cx } from "@butteryui/core";
 import type { ReactElement, ReactNode } from "react";
 import { AppPage } from "../app-page/AppPage.tsx";
 import type { AppPageProps } from "../app-page/AppPage.tsx";

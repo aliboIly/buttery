@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { PreferencesMatrix } from "@buttery/react";
-import type { PreferenceValue } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { PreferencesMatrix } from "@butteryui/react";
+import type { PreferenceValue } from "@butteryui/react";
 
 /** Team notifications across email and push, controlled, with a summary of what's on. */
 export function TeamNotifications(): ReactElement {

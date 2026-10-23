@@ -1,6 +1,6 @@
-import "@buttery/core/styles.css";
+import "@butteryui/core/styles.css";
 import "../../styles.css";
-import { MotionPreferenceContext, publishSettled } from "@buttery/core";
+import { MotionPreferenceContext, publishSettled } from "@butteryui/core";
 import {
   cleanup,
   render,

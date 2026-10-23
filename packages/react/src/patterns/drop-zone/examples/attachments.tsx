@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { DropZone, IconButton } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { DropZone, IconButton } from "@butteryui/react";
 import { X } from "lucide-react";
 
 /** A deck's attachments: PDFs or pictures dropped or pasted onto the list join it, each with a button to remove it. */

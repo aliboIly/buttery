@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
-import { Stack } from "@buttery/core";
+import { Stack } from "@butteryui/core";
 import "./blocks.css";
 
 /**

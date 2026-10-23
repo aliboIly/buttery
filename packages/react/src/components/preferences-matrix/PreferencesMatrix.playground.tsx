@@ -1,7 +1,7 @@
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { PreferencesMatrix } from "@buttery/react";
-import type { PreferenceChannel, PreferenceTab } from "@buttery/react";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { PreferencesMatrix } from "@butteryui/react";
+import type { PreferenceChannel, PreferenceTab } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

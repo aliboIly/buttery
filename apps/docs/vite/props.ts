@@ -156,14 +156,14 @@ function isUndefined(node: ts.TypeNode): boolean {
   );
 }
 
-/** The file a module specifier names: a relative path, or the source of a `@buttery/*` package. */
+/** The file a module specifier names: a relative path, or the source of a `@butteryui/*` package. */
 function moduleFile(
   specifier: string,
   from: ts.SourceFile,
   read: ReadSource,
 ): ts.SourceFile | undefined {
   const packages = from.fileName.lastIndexOf("/packages/");
-  const name = /^@buttery\/([\w-]+)$/.exec(specifier)?.[1];
+  const name = /^@butteryui\/([\w-]+)$/.exec(specifier)?.[1];
   const path = specifier.startsWith(".")
     ? join(dirname(from.fileName), specifier)
     : name !== undefined && packages !== -1

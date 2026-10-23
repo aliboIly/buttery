@@ -3,7 +3,7 @@ import {
   cx,
   useControllableState,
   useMergedRefs,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { useRef } from "react";
 import type {
   ComponentPropsWithRef,

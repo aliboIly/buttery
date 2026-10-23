@@ -1,14 +1,14 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   SearchResults,
   SegmentedControl,
   matchesSearch,
   pageSource,
-} from "@buttery/react";
-import type { LocalSearchSource } from "@buttery/react";
+} from "@butteryui/react";
+import type { LocalSearchSource } from "@butteryui/react";
 
 const PAGES = pageSource({
   pages: [

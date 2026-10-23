@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Inline } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { NumberField, Select } from "@buttery/react";
-import type { SelectOption } from "@buttery/react";
+import { Grid, Inline } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { NumberField, Select } from "@butteryui/react";
+import type { SelectOption } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/selection",

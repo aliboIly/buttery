@@ -87,7 +87,7 @@ const DEMOS = ["roastery", "roastery-shop", "deckhand"] as const;
 function butteryImports(source: string): string[] {
   return [
     ...source.matchAll(
-      /import\s*\{([^}]*)\}\s*from\s*"@buttery\/(?:core|react)"/g,
+      /import\s*\{([^}]*)\}\s*from\s*"@butteryui\/(?:core|react)"/g,
     ),
   ].flatMap(([, names]) =>
     (names ?? "")

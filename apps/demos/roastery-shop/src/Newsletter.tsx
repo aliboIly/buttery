@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { ReactElement, SubmitEvent } from "react";
-import { Stack, Stagger } from "@buttery/core";
+import { Stack, Stagger } from "@butteryui/core";
 import {
   Button,
   CenteredHero,
   TextField,
   looksLikeEmail,
   toast,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** The page's closing band: a letter about new coffees, with an email field that checks what's typed. */
 export function Newsletter(): ReactElement {

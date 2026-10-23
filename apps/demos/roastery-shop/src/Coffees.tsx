@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
+import { Inline, Stack, Text } from "@butteryui/core";
 import {
   Button,
   Catalog,
@@ -10,8 +10,8 @@ import {
   Select,
   StatusBadge,
   TagChip,
-} from "@buttery/react";
-import type { CatalogFilters } from "@buttery/react";
+} from "@butteryui/react";
+import type { CatalogFilters } from "@butteryui/react";
 import { Coffee as CoffeeIcon, Plus } from "lucide-react";
 import { useAddToBag } from "./add-to-bag.ts";
 import { Shelf } from "./BagArt.tsx";

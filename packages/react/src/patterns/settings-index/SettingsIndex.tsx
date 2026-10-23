@@ -1,6 +1,9 @@
-import { Icon, Text, cx, opensElsewhere } from "@buttery/core";
+import { Icon, Text, cx, opensElsewhere } from "@butteryui/core";
 import { Plus } from "lucide-react";
-import type { IconComponentProps, TextStackTitleElement } from "@buttery/core";
+import type {
+  IconComponentProps,
+  TextStackTitleElement,
+} from "@butteryui/core";
 import { useId } from "react";
 import type {
   ComponentPropsWithRef,

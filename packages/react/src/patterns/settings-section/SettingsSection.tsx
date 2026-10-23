@@ -1,5 +1,5 @@
-import { cx } from "@buttery/core";
-import type { MotionElementProps } from "@buttery/core";
+import { cx } from "@butteryui/core";
+import type { MotionElementProps } from "@butteryui/core";
 import { useId } from "react";
 import type { ReactElement, ReactNode, SubmitEvent } from "react";
 import { Button } from "../../components/button/Button.tsx";

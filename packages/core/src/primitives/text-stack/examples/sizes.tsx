@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Stack, Text, TextStack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Stack, Text, TextStack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** The four sizes: a dialog's copy with its tip, an empty state, a page section's heading and lede, and a feature intro. */
 export function Sizes(): ReactElement {

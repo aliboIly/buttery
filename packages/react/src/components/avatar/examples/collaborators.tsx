@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Avatar, Button } from "@buttery/react";
+import { Inline, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Avatar, Button } from "@butteryui/react";
 
 /** Who's working on an order, by avatar alone, so each is named for screen readers; joining adds yours. */
 export function Collaborators(): ReactElement {

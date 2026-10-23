@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Inline, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { InitialsTile } from "@buttery/react";
+import { Inline, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { InitialsTile } from "@butteryui/react";
 
 /** A workspace's tile beside its name, as in a sidebar's workspace switcher. */
 export function WorkspaceName(): ReactElement {

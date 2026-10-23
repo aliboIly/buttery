@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { Page, Section, Stat, StatStrip } from "@buttery/react";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { Page, Section, Stat, StatStrip } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "patterns",

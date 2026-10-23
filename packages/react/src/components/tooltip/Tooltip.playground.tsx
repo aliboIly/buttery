@@ -1,8 +1,8 @@
-import { Inline, Stack, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Button, Tooltip } from "@buttery/react";
-import type { TooltipSide } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Button, Tooltip } from "@butteryui/react";
+import type { TooltipSide } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/overlays",

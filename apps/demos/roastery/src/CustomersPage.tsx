@@ -1,4 +1,4 @@
-import { Menu, Stack } from "@buttery/core";
+import { Menu, Stack } from "@butteryui/core";
 import {
   AppPage,
   Checkbox,
@@ -10,8 +10,8 @@ import {
   SearchField,
   StatusBadge,
   toast,
-} from "@buttery/react";
-import type { DataTableColumn, DataTableSort } from "@buttery/react";
+} from "@butteryui/react";
+import type { DataTableColumn, DataTableSort } from "@butteryui/react";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";

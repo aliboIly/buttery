@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { LineChart } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { LineChart } from "@butteryui/react";
 
 const dollars = new Intl.NumberFormat("en-US", {
   style: "currency",

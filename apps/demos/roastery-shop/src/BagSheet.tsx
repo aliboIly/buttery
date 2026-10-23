@@ -1,6 +1,6 @@
 import type { MouseEvent, ReactElement } from "react";
-import { Grid, opensElsewhere } from "@buttery/core";
-import { Button, Sheet } from "@buttery/react";
+import { Grid, opensElsewhere } from "@butteryui/core";
+import { Button, Sheet } from "@butteryui/react";
 import { bagCount, useBag } from "./bag.ts";
 import { BagLines, FreeShipping } from "./BagLines.tsx";
 import { Totals, orderTotals } from "./Checkout.tsx";

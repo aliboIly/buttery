@@ -1,11 +1,11 @@
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import {
   CommandSearch,
   formatSearch,
   matchesSearch,
   pageSource,
-} from "@buttery/react";
-import type { LocalSearchSource, RemoteSearchSource } from "@buttery/react";
+} from "@butteryui/react";
+import type { LocalSearchSource, RemoteSearchSource } from "@butteryui/react";
 import { CircleHelp, Package, Settings, Users } from "lucide-react";
 
 export const page: DocsPage = {

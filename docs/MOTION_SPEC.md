@@ -29,7 +29,7 @@ Never animate: text values (no number tweening of user-set values), layout durin
 
 ## 2. Motion tokens
 
-Use these names everywhere (`@buttery/core` exports them as `spring` for Motion; CSS vars for transitions).
+Use these names everywhere (`@butteryui/core` exports them as `spring` for Motion; CSS vars for transitions).
 
 ### Springs (Motion `type: "spring"` with `visualDuration` + `bounce`)
 

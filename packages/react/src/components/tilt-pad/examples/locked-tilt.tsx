@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Switch, TiltPad, ValueBadge } from "@buttery/react";
-import type { TiltValue } from "@buttery/react";
+import { Inline, Stack } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Switch, TiltPad, ValueBadge } from "@butteryui/react";
+import type { TiltValue } from "@butteryui/react";
 
 function tiltOf({ x, y }: TiltValue): string {
   const amount = (value: number): string =>

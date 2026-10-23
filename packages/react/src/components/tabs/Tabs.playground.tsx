@@ -1,7 +1,7 @@
-import { Stack, Text } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { Tabs } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { Tabs } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/navigation",

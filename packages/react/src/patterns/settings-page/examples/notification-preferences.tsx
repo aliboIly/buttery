@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   Breadcrumbs,
   Button,
   SettingRow,
   SettingsPage,
   SettingsSection,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 /** A narrow settings page whose one row is turned on or off by its action. */
 export function NotificationPreferences(): ReactElement {

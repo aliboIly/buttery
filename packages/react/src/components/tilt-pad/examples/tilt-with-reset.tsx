@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Chip, TiltPad, ValueBadge } from "@buttery/react";
-import type { TiltValue } from "@buttery/react";
+import { Inline } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Chip, TiltPad, ValueBadge } from "@butteryui/react";
+import type { TiltValue } from "@butteryui/react";
 
 const LEVEL: TiltValue = { x: 0, y: 0 };
 

@@ -15,7 +15,7 @@ import {
   useButteryTransition,
   useMergedRefs,
   useMotionPreference,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { Menu as MenuIcon, X } from "lucide-react";
 import {
   AnimatePresence,

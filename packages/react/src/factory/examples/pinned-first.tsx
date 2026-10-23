@@ -1,9 +1,9 @@
 import { Pin, PinOff } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { buttery, IconButton } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { buttery, IconButton } from "@butteryui/react";
 
 const DECKS = [
   "Quarterly review",

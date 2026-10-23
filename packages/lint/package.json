@@ -1,5 +1,5 @@
 {
-  "name": "@buttery/lint",
+  "name": "@butteryui/lint",
   "version": "0.0.0",
   "private": true,
   "description": "ESLint and stylelint configs that enforce buttery's tokens and layout rules.",
@@ -8,12 +8,12 @@
   "sideEffects": false,
   "exports": {
     "./stylelint": {
-      "@buttery/source": "./src/stylelint/index.ts",
+      "@butteryui/source": "./src/stylelint/index.ts",
       "types": "./dist/stylelint.d.ts",
       "default": "./dist/stylelint.js"
     },
     "./eslint": {
-      "@buttery/source": "./src/eslint/index.ts",
+      "@butteryui/source": "./src/eslint/index.ts",
       "types": "./dist/eslint.d.ts",
       "default": "./dist/eslint.js"
     },

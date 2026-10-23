@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { IconButton, Onboarding } from "@buttery/react";
-import type { OnboardingStep } from "@buttery/react";
+import { Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { IconButton, Onboarding } from "@butteryui/react";
+import type { OnboardingStep } from "@butteryui/react";
 import { CircleHelp } from "lucide-react";
 
 function Slide({ title }: { readonly title: string }): ReactElement {

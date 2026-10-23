@@ -1,5 +1,5 @@
-import { Morph, Skeleton, Text, cx, opensElsewhere } from "@buttery/core";
-import type { TextStackTitleElement } from "@buttery/core";
+import { Morph, Skeleton, Text, cx, opensElsewhere } from "@butteryui/core";
+import type { TextStackTitleElement } from "@butteryui/core";
 import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
 import { useId } from "react";

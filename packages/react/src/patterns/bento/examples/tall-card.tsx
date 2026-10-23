@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { Center, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Bento } from "@buttery/react";
+import { Center, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Bento } from "@butteryui/react";
 
 /** A tall card two rows high beside two short ones. */
 export function TallCard(): ReactElement {

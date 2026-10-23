@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
-import { Stack, Surface, Text, demoChoice } from "@buttery/core";
+import { Stack, Surface, Text, demoChoice } from "@butteryui/core";
 import type {
   DemoSection,
   DemoValues,
   DocsPage,
   LiveDemo,
-} from "@buttery/core";
-import { gradientCss, gradients } from "@buttery/core/palettes";
+} from "@butteryui/core";
+import { gradientCss, gradients } from "@butteryui/core/palettes";
 import {
   ArrowLink,
   Button,
@@ -14,8 +14,8 @@ import {
   NavBar,
   Page,
   Section,
-} from "@buttery/react";
-import type { NavBarBehavior } from "@buttery/react";
+} from "@butteryui/react";
+import type { NavBarBehavior } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/navigation",

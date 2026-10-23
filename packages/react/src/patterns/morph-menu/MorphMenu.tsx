@@ -16,7 +16,7 @@ import {
   useControllableState,
   useMotionPreference,
   widths,
-} from "@buttery/core";
+} from "@butteryui/core";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, cancelFrame, frame, motion } from "motion/react";
 import type { Process, Transition } from "motion/react";

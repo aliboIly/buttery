@@ -8,12 +8,12 @@ since: 0.2.0
 related: [layout/the-layout-contract, foundations/colors]
 ---
 
-`@buttery/lint` holds buttery's stylelint and ESLint configs, which catch breaks from its rules while you write: a hand-written color, a `z-index` that isn't a layer, a length off the scale, a margin on a component. Add both to an app, and its own code keeps to the same rules as buttery's.
+`@butteryui/lint` holds buttery's stylelint and ESLint configs, which catch breaks from its rules while you write: a hand-written color, a `z-index` that isn't a layer, a length off the scale, a margin on a component. Add both to an app, and its own code keeps to the same rules as buttery's.
 
 ## stylelint
 
 ```js title="stylelint.config.mjs"
-import { butteryStylelintConfig } from "@buttery/lint/stylelint";
+import { butteryStylelintConfig } from "@butteryui/lint/stylelint";
 
 export default butteryStylelintConfig();
 ```
@@ -49,7 +49,7 @@ buttery's own rules name the token or primitive to use instead. A component may 
 ## ESLint
 
 ```js title="eslint.config.js"
-import { butteryEslintConfig } from "@buttery/lint/eslint";
+import { butteryEslintConfig } from "@butteryui/lint/eslint";
 
 export default [...butteryEslintConfig()];
 ```

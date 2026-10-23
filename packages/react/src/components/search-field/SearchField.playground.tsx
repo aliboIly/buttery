@@ -1,7 +1,7 @@
-import { Stack } from "@buttery/core";
-import { demoChoice } from "@buttery/core";
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { SearchField } from "@buttery/react";
+import { Stack } from "@butteryui/core";
+import { demoChoice } from "@butteryui/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { SearchField } from "@butteryui/react";
 
 export const page: DocsPage = {
   section: "components/inputs",

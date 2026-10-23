@@ -7,8 +7,8 @@ import {
   Inline,
   useLayoutAnimation,
   useStoredState,
-} from "@buttery/core";
-import { Button, IconButton, buttery } from "@buttery/react";
+} from "@butteryui/core";
+import { Button, IconButton, buttery } from "@butteryui/react";
 import { navigate, siteHref, useSettings } from "../location.ts";
 import { SOURCE_URL } from "../routes.ts";
 import type { DemoInfo } from "../routes.ts";

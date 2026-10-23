@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Grid, Morph, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
-import { gradientCss, gradients, solids } from "@buttery/core/palettes";
+import { Grid, Morph, Pressable, Stack, Surface, Text } from "@butteryui/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
+import { gradientCss, gradients, solids } from "@butteryui/core/palettes";
 
 export const page: DocsPage = {
   section: "motion",

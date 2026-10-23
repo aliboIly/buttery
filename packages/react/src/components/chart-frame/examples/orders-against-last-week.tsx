@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { ChartFrame } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { ChartFrame } from "@butteryui/react";
 
 /** This week's orders as bars with last week's as a line over them, two marks in one frame, so each day shows its change. */
 export function OrdersAgainstLastWeek(): ReactElement {

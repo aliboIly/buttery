@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { lastChanged } from "virtual:buttery-dates";
-import { Grid, Icon, Inline, Stack, Surface, Text } from "@buttery/core";
+import { Grid, Icon, Inline, Stack, Surface, Text } from "@butteryui/core";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { siteHref } from "./location.ts";
 import { SOURCE_URL } from "./routes.ts";

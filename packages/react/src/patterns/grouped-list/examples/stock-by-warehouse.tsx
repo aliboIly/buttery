@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Menu } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 import {
   FormDialog,
   GroupedList,
   InitialsTile,
   TextField,
-} from "@buttery/react";
+} from "@butteryui/react";
 
 interface Lot {
   readonly id: string;

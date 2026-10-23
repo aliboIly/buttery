@@ -1,4 +1,4 @@
-import { useMotionPreference } from "@buttery/core";
+import { useMotionPreference } from "@butteryui/core";
 import type { ReactElement } from "react";
 
 /** A small turning ring centered over a control that's busy. It holds still with reduced motion. */

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import { Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Pressable, Stack, Surface, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
 
 /** A deck's tile that opens the deck on click, with press feedback, a hover lift and a focus ring. */
 export function DeckTile(): ReactElement {

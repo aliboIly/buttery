@@ -4,8 +4,8 @@ import {
   cx,
   opensElsewhere,
   useControllableState,
-} from "@buttery/core";
-import type { IconComponentProps } from "@buttery/core";
+} from "@butteryui/core";
+import type { IconComponentProps } from "@butteryui/core";
 import type {
   CSSProperties,
   ComponentType,

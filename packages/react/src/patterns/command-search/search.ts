@@ -1,4 +1,4 @@
-import type { IconComponentProps } from "@buttery/core";
+import type { IconComponentProps } from "@butteryui/core";
 import type { ComponentType, ReactNode } from "react";
 
 /** A filter people can type into a `CommandSearch` as `key:value`. */

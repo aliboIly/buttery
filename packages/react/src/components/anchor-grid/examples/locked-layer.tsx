@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AnchorGrid, Switch } from "@buttery/react";
+import { Inline, Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AnchorGrid, Switch } from "@butteryui/react";
 
 /** An anchor grid that's disabled while its layer is locked, with the switch that unlocks it. */
 export function LockedLayer(): ReactElement {

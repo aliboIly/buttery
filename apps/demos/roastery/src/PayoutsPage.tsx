@@ -8,8 +8,8 @@ import {
   QuickActions,
   StatusBadge,
   toast,
-} from "@buttery/react";
-import type { DataTableColumn, StatusTone } from "@buttery/react";
+} from "@butteryui/react";
+import type { DataTableColumn, StatusTone } from "@butteryui/react";
 import { CalendarClock, Download, Send } from "lucide-react";
 import type { ReactElement } from "react";
 import { AWAITING_PAYOUT, NEXT_PAYOUT, PAYOUTS, salesTotal } from "./data.ts";

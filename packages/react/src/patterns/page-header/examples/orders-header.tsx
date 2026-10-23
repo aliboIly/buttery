@@ -1,9 +1,9 @@
 import { Download, Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Stack, Text } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { PageHeader } from "@buttery/react";
+import { Stack, Text } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { PageHeader } from "@butteryui/react";
 
 /** An orders page's header: the count after the title, and New order as the main action with its key, N. */
 export function OrdersHeader(): ReactElement {

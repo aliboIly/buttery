@@ -1,4 +1,4 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@butteryui/core";
 
 export const page: DocsPage = {
   section: "components/overlays",

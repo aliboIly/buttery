@@ -1,4 +1,4 @@
-import { Popover, cx, useControllableState } from "@buttery/core";
+import { Popover, cx, useControllableState } from "@butteryui/core";
 import { Info } from "lucide-react";
 import { useId } from "react";
 import type { ComponentPropsWithRef, ReactElement } from "react";

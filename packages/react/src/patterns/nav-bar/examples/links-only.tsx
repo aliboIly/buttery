@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Button, MorphMenu, NavBar } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Button, MorphMenu, NavBar } from "@butteryui/react";
 
 /** A bar of plain links with no menus, and a call to action with the forward arrow. */
 export function LinksOnly(): ReactElement {

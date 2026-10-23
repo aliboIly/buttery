@@ -1,5 +1,5 @@
-import { Kbd, shortcutKeys } from "@buttery/core";
-import { toast } from "@buttery/react";
+import { Kbd, shortcutKeys } from "@butteryui/core";
+import { toast } from "@butteryui/react";
 import type { ReactElement } from "react";
 
 /** The small footer that ends a demo page: a way to send feedback and the search shortcut. */

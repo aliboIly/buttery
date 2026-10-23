@@ -1,5 +1,5 @@
-import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
-import { ArrowLink, Button, EmptyState } from "@buttery/react";
+import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
+import { ArrowLink, Button, EmptyState } from "@butteryui/react";
 import { Receipt } from "lucide-react";
 
 export const page: DocsPage = {

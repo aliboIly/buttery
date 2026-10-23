@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu } from "@buttery/core";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { AppPage, DataTable, PageHeader, StatusBadge } from "@buttery/react";
-import type { DataTableColumn, DataTableSort } from "@buttery/react";
+import { Menu } from "@butteryui/core";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { AppPage, DataTable, PageHeader, StatusBadge } from "@butteryui/react";
+import type { DataTableColumn, DataTableSort } from "@butteryui/react";
 
 interface Order {
   readonly id: string;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Slider } from "@buttery/react";
+import type { ExampleKind, ExamplePlay } from "@butteryui/core";
+import { Slider } from "@butteryui/react";
 
 /** A rotation from -180° to 180° that catches at 0° while dragging and goes back to 0° on a double-click or Backspace. */
 export function RotationRow(): ReactElement {
