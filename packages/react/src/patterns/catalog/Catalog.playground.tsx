@@ -164,7 +164,7 @@ function GearArt({
         placeItems: behind ? "start center" : "center",
         inlineSize: "100%",
         blockSize: "100%",
-        paddingBlockStart: behind ? "24%" : 0,
+        paddingBlockStart: behind ? "10%" : 0,
         backgroundImage: gradientCss(preset(gear.paper)),
       }}
     >
@@ -172,17 +172,13 @@ function GearArt({
         aria-hidden="true"
         strokeWidth={1.5}
         style={{
-          inlineSize: "36%",
-          blockSize: "36%",
+          inlineSize: behind ? "28%" : "36%",
+          blockSize: behind ? "28%" : "36%",
           color: preset(gear.ink).fromHex,
         }}
       />
     </div>
   );
-}
-
-function gearCount(count: number): string {
-  return count === 1 ? "1 piece of gear" : `${String(count)} pieces of gear`;
 }
 
 function addToCart(gear: Gear): void {
@@ -286,7 +282,7 @@ function GearCatalog({
               options={KINDS}
               allLabel="All kinds"
             />
-            <Catalog.Count format={gearCount} />
+            <Catalog.Count />
             <Catalog.Sort options={SORTS} />
             <Catalog.ViewToggle label="Show gear as" />
           </Catalog.Toolbar>

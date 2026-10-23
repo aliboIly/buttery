@@ -25,7 +25,7 @@ const TEMPLATES: readonly Template[] = [
   {
     id: "launch",
     name: "New coffee",
-    kind: "Launches",
+    kind: "News",
     note: "One coffee, one photo, one button",
     paper: "mint",
   },
@@ -39,7 +39,7 @@ const TEMPLATES: readonly Template[] = [
   {
     id: "gifts",
     name: "Gift guide",
-    kind: "Launches",
+    kind: "News",
     note: "Six picks for the holidays",
     paper: "blush",
   },
@@ -67,7 +67,7 @@ const TEMPLATES: readonly Template[] = [
   {
     id: "restock",
     name: "Back in stock",
-    kind: "Launches",
+    kind: "News",
     note: "A short note when a favorite returns",
     paper: "paper",
   },
@@ -127,7 +127,7 @@ export function TemplateGallery(): ReactElement {
             <Catalog.Filter
               name="kind"
               label="Kind"
-              options={["Letters", "Launches", "Events"]}
+              options={["Letters", "News", "Events"]}
             />
             <Catalog.Count
               format={(count) =>
