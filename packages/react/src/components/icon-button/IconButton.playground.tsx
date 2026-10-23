@@ -25,12 +25,21 @@ export const page: DocsPage = {
   since: "0.4.0",
 };
 
-function ToggleDemo(): ReactElement {
-  const [on, setOn] = useState(false);
+function ToggleDemo({
+  variant = "ghost",
+  label = "Show the grid",
+  start = false,
+}: {
+  readonly variant?: "ghost" | "soft";
+  readonly label?: string;
+  readonly start?: boolean;
+}): ReactElement {
+  const [on, setOn] = useState(start);
   return (
     <IconButton
       icon={Grid3x3}
-      label="Show the grid"
+      label={label}
+      variant={variant}
       aria-pressed={on}
       onClick={() => {
         setOn(!on);
@@ -126,9 +135,12 @@ export const demos: readonly DemoSection[] = [
   },
   {
     title: "Toggle and disabled",
+    description:
+      "A toggle holds its background while aria-pressed; a soft toggle fills with the primary color, as a ticked checkbox does.",
     render: () => (
       <Inline gap={1} align="center">
         <ToggleDemo />
+        <ToggleDemo variant="soft" label="Show the rulers" start />
         <IconButton icon={Redo2} label="Redo" disabled />
         <IconButton icon={Redo2} label="Redo, soft" variant="soft" disabled />
         <IconButton

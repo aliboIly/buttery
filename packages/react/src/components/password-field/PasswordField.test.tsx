@@ -4,10 +4,19 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent as browser } from "vitest/browser";
 import { PasswordField } from "./PasswordField.tsx";
 
 afterEach(cleanup);
+
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
 
 function input(): HTMLInputElement {
   const field = document.querySelector('[data-bt-part="input"]');
@@ -139,5 +148,24 @@ describe("PasswordField", () => {
     expect(target.bottom).toBeLessThanOrEqual(outer.bottom);
     await userEvent.click(reveal);
     expect(input().type).toBe("text");
+  });
+
+  it("gives its reveal toggle the next shades in a soft box, so its hover and pressed fills show on bg-control", async () => {
+    render(
+      <PasswordField label="Password" variant="soft" defaultValue="butter" />,
+    );
+    const reveal = screen.getByRole("button", { name: "Show password" });
+    const hover = colorOf("--bt-border");
+    const pressed = colorOf("--bt-border-strong");
+    await browser.hover(reveal);
+    await expect
+      .poll(() => getComputedStyle(reveal).backgroundColor)
+      .toBe(hover);
+    await browser.click(reveal);
+    await browser.hover(document.body, { position: { x: 1, y: 1 } });
+    expect(reveal.getAttribute("aria-pressed")).toBe("true");
+    await expect
+      .poll(() => getComputedStyle(reveal).backgroundColor)
+      .toBe(pressed);
   });
 });

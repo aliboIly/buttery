@@ -210,6 +210,29 @@ describe("IconButton", () => {
     });
   });
 
+  it("fills a pressed soft toggle with the primary color under an on-primary icon, kept under the pointer", async () => {
+    render(
+      <IconButton
+        icon={Undo2}
+        label="Show the grid"
+        variant="soft"
+        aria-pressed
+      />,
+    );
+    const toggle = screen.getByRole("button", { name: "Show the grid" });
+    const hovered = colorIn(document.body, "--bt-primary-hover");
+    expect(getComputedStyle(toggle).backgroundColor).toBe(
+      colorIn(document.body, "--bt-primary"),
+    );
+    expect(getComputedStyle(toggle).color).toBe(
+      colorIn(document.body, "--bt-on-primary"),
+    );
+    await userEvent.hover(toggle);
+    await waitFor(() => {
+      expect(getComputedStyle(toggle).backgroundColor).toBe(hovered);
+    });
+  });
+
   it("draws a 1px border-strong edge when outlined, keeping its size and its icon centered", () => {
     render(
       <>

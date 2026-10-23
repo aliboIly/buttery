@@ -48,8 +48,9 @@
   }
 
   /*
-   * The box every text input types into, and a select's box: its edge, fill, corners, height and focus ring,
-   * from the data-variant, data-size, data-invalid and data-disabled on the box itself.
+   * One box for every text input and a select's box looks, so a field's edge, fill, height and focus ring change
+   * in one place. It reads the data-variant, data-size, data-invalid and data-disabled on itself, since a
+   * search field's box is its root and a labelled field's sits inside it.
    */
   .bt-form-field-box {
     block-size: var(--bt-h-control);
@@ -131,6 +132,21 @@
   .bt-form-field-box[data-size="sm"] > [data-bt-part="end"] > .bt-icon-button {
     inline-size: var(--bt-h-badge);
     block-size: var(--bt-h-badge);
+  }
+
+  /* On a soft box's bg-control the end button's ghost fills vanish, so it takes the next shades, as a soft button does. */
+  @media (hover: hover) {
+    .bt-form-field-box[data-variant="soft"]
+      > [data-bt-part="end"]
+      > .bt-icon-button:not(:disabled, [aria-disabled="true"]):hover {
+      --bt-icon-button-bg: var(--bt-border);
+    }
+  }
+
+  .bt-form-field-box[data-variant="soft"]
+    > [data-bt-part="end"]
+    > .bt-icon-button[aria-pressed="true"] {
+    --bt-icon-button-bg: var(--bt-border-strong);
   }
 
   /* Icons sit over the input's padding and let presses through, so the whole box is the input. */

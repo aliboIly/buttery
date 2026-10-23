@@ -76,18 +76,31 @@
   @media (hover: hover) {
     .bt-icon-button[data-variant="soft"]:not(
         :disabled,
-        [aria-disabled="true"]
+        [aria-disabled="true"],
+        [aria-pressed="true"]
       ):hover {
       --bt-icon-button-bg: var(--bt-border);
       --bt-icon-button-fg: var(--bt-text);
     }
   }
 
-  .bt-icon-button[data-variant="soft"]:is(
-      [aria-pressed="true"],
-      [data-state="open"]
-    ) {
+  .bt-icon-button[data-variant="soft"][data-state="open"] {
     --bt-icon-button-bg: var(--bt-bg-control-active);
+  }
+
+  /* bg-control-active is too close to a soft button's own fill to say on, so a pressed toggle fills as a ticked checkbox does. */
+  .bt-icon-button[data-variant="soft"][aria-pressed="true"] {
+    --bt-icon-button-bg: var(--bt-primary);
+    --bt-icon-button-fg: var(--bt-on-primary);
+  }
+
+  @media (hover: hover) {
+    .bt-icon-button[data-variant="soft"][aria-pressed="true"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-icon-button-bg: var(--bt-primary-hover);
+    }
   }
 
   .bt-icon-button[data-variant="soft"]:is(:disabled, [aria-disabled="true"]) {

@@ -23,8 +23,9 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
   readonly size?: "sm" | "md" | "lg" | undefined;
   /**
    * `"ghost"` (the default), with a background only on hover; `"soft"`, on `bg-control` at rest, for an action
-   * that should read as a button without hovering; `"outline"`, a 1px `border-strong` edge; or `"primary"`, a
-   * round create button on the primary color, as in a top bar.
+   * that should read as a button without hovering, filling with the primary color while `aria-pressed`;
+   * `"outline"`, a 1px `border-strong` edge; or `"primary"`, a round create button on the primary color, as in
+   * a top bar.
    */
   readonly variant?: "ghost" | "soft" | "outline" | "primary" | undefined;
   /** Which side the tooltip opens on. Defaults to `"top"`. */
@@ -46,9 +47,10 @@ export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
  * A square button that shows only an icon, named by a `label` that also appears as its tooltip. The
  * tooltip repeats the name, so it doesn't describe the button to screen readers as well; a description
  * given in `aria-describedby` stays. Ghost by default: the background shows on hover, and `aria-pressed`
- * holds it on for toggles; soft, outline and primary draw it at rest. Use `aria-disabled` instead of `disabled` to keep it focusable while it can't
- * act, such as Undo with nothing left to undo: it looks disabled and ignores presses, and focus stays
- * where it was.
+ * holds it on for toggles; soft, outline and primary draw it at rest, and a pressed soft toggle fills with
+ * the primary color. Use `aria-disabled` instead of `disabled` to keep it focusable while it can't act,
+ * such as Undo with nothing left to undo: it looks disabled and ignores presses, and focus stays where it
+ * was.
  *
  * @example
  * <IconButton icon={Undo2} label="Undo" onClick={undo} />
