@@ -15,7 +15,7 @@ function tiltOf({ x, y }: TiltValue): string {
 }
 
 /** A tilt mapped to a picture's 3D transform: ±20° each way at 1200px of perspective. */
-export function CardTilt(): ReactElement {
+export function PictureTilt(): ReactElement {
   const [tilt, setTilt] = useState<TiltValue>({ x: 0, y: 0 });
   const transform = `perspective(1200px) rotateY(${String(tilt.x * 20)}deg) rotateX(${String(-tilt.y * 20)}deg)`;
   return (

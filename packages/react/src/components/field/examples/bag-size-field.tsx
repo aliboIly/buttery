@@ -6,7 +6,7 @@ import { Field, SegmentedControl } from "@buttery/react";
 type BagSize = "250 g" | "500 g" | "1 kg";
 
 /** A segmented control with a label, a hint and an error, wired by Field: 1 kg shows the error. */
-export function CardSizeField(): ReactElement {
+export function BagSizeField(): ReactElement {
   const [size, setSize] = useState<BagSize>("500 g");
   return (
     <Field

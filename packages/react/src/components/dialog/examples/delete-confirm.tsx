@@ -7,12 +7,12 @@ export function DeleteConfirm(): ReactElement {
   return (
     <Dialog>
       <Dialog.Trigger asChild>
-        <Button variant="soft">Delete card</Button>
+        <Button variant="soft">Delete price list</Button>
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Text
-          title="Delete this card?"
-          body="Subscriptions paid with it move to your other card."
+          title="Delete the holiday price list?"
+          body="The 8 cafés on it go back to your standard prices."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -26,7 +26,7 @@ export function DeleteConfirm(): ReactElement {
               size="cta"
               shape="rounded"
               onClick={() => {
-                toast("Card deleted");
+                toast("Price list deleted");
               }}
             >
               Delete
@@ -41,8 +41,8 @@ export function DeleteConfirm(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Delete card");
-  await see("Delete this card?");
+  await press("button", "Delete price list");
+  await see("Delete the holiday price list?");
   await press("button", "Delete");
-  await see("Card deleted");
+  await see("Price list deleted");
 };

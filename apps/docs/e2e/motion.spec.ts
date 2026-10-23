@@ -444,7 +444,7 @@ test.describe("full motion", () => {
   }) => {
     await page.goto("/components/dialog?chrome=0&motion=full");
     const trigger = page
-      .getByRole("button", { name: "Delete card", exact: true })
+      .getByRole("button", { name: "Delete price list", exact: true })
       .first();
     await trigger.focus();
     await startSampling(page, '[data-bt="Dialog"]');

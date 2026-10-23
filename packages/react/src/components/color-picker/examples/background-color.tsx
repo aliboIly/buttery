@@ -7,7 +7,7 @@ import { Chip, ColorPicker } from "@buttery/react";
 const DEFAULT_BACKGROUND = "#7c9cf5";
 
 /** A slide's background color kept in state as `#rrggbb`; Reset beside it puts the first color back, and the thumbs glide there. */
-export function BackdropColor(): ReactElement {
+export function BackgroundColor(): ReactElement {
   const [color, setColor] = useState(DEFAULT_BACKGROUND);
   return (
     <Stack gap={3}>

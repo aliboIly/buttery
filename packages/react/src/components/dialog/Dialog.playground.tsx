@@ -22,12 +22,12 @@ function Confirm(): ReactElement {
   return (
     <Dialog>
       <Dialog.Trigger asChild>
-        <Button variant="soft">Delete card</Button>
+        <Button variant="soft">Delete price list</Button>
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Text
-          title="Delete this card?"
-          body="Subscriptions paid with the card ending 4242 move to your other card."
+          title="Delete the holiday price list?"
+          body="The 8 cafés on it go back to your standard prices."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -132,7 +132,7 @@ function triggerOf(
 export const live: LiveDemo = {
   controls: {
     trigger: { kind: "choice", options: TRIGGERS, initial: "Button" },
-    triggerText: { kind: "text", initial: "Delete card" },
+    triggerText: { kind: "text", initial: "Delete price list" },
   },
   render: ({ trigger, triggerText }) => (
     <Dialog>
@@ -141,8 +141,8 @@ export const live: LiveDemo = {
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Text
-          title="Delete this card?"
-          body="Subscriptions paid with the card ending 4242 move to your other card."
+          title="Delete the holiday price list?"
+          body="The 8 cafés on it go back to your standard prices."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -165,8 +165,8 @@ export const live: LiveDemo = {
   </Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Text
-      title="Delete this card?"
-      body="Subscriptions paid with the card ending 4242 move to your other card."
+      title="Delete the holiday price list?"
+      body="The 8 cafés on it go back to your standard prices."
     />
     <Dialog.Actions>
       <Dialog.Close asChild>

@@ -18,7 +18,7 @@ const PLACE: Readonly<Record<Anchor, string>> = {
 };
 
 /** An anchor mapped to where a title sits on its slide, through CSS `place-items`, gliding there on `spring.smooth`. */
-export function CardPlacement(): ReactElement {
+export function TitlePlacement(): ReactElement {
   const [anchor, setAnchor] = useState<Anchor>("center");
   return (
     <Inline gap={8} align="center">

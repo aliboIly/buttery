@@ -4,7 +4,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Inspector, Slider } from "@buttery/react";
 
 /** Slider rows in an inspector section, whose Reset puts every row back to its default. */
-export function FinishSection(): ReactElement {
+export function PictureSection(): ReactElement {
   const [scale, setScale] = useState(100);
   const [corners, setCorners] = useState(12);
   return (

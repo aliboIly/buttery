@@ -15,7 +15,7 @@ function tiltOf({ x, y }: TiltValue): string {
 }
 
 /** A disabled pad: the tilt holds while it's locked, dimmed and ignoring drags and keys, and moves once it's unlocked. */
-export function LockedLean(): ReactElement {
+export function LockedTilt(): ReactElement {
   const [locked, setLocked] = useState(true);
   const [tilt, setTilt] = useState<TiltValue>({ x: 0.3, y: 0 });
   return (

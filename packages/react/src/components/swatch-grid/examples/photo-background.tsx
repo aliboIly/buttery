@@ -13,7 +13,7 @@ const SWATCHES: readonly Swatch[] = solids.map((preset) => ({
 }));
 
 /** A disabled grid: no swatch can be chosen while a picture covers the slide's fill. */
-export function PhotoBackdrop(): ReactElement {
+export function PhotoBackground(): ReactElement {
   const [picture, setPicture] = useState(true);
   const [fill, setFill] = useState("paper");
   const name = SWATCHES.find((swatch) => swatch.value === fill)?.label ?? fill;

@@ -5,7 +5,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { TextArea } from "@buttery/react";
 
 /** The message for the back of the card in each box, typed beside a preview of the card that shows it as it's written. */
-export function CardBack(): ReactElement {
+export function ThankYouCard(): ReactElement {
   const [message, setMessage] = useState("Thanks for buying from Halfmoon.");
   return (
     <Grid columns={{ base: 1, md: 2 }} gap={6}>

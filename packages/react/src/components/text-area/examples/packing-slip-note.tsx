@@ -5,7 +5,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { TextArea } from "@buttery/react";
 
 /** A note for the packing slip that grows as it gets longer, with the room it has left counted from its state. */
-export function CardNote(): ReactElement {
+export function PackingSlipNote(): ReactElement {
   const [note, setNote] = useState("");
   return (
     <Stack gap={2}>

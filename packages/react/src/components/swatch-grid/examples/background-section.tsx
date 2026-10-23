@@ -21,7 +21,7 @@ const SOLIDS: readonly Swatch[] = solids.map((preset) => ({
 }));
 
 /** An inspector's background section: the fill type picks the swatches in the grid's row, and Reset puts it all back. */
-export function BackdropSection(): ReactElement {
+export function BackgroundSection(): ReactElement {
   const [fill, setFill] = useState<Fill>("gradient");
   const [gradient, setGradient] = useState("lilac");
   const [solid, setSolid] = useState("stone");

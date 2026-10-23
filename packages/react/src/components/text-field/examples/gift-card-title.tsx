@@ -5,7 +5,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, TextField } from "@buttery/react";
 
 /** A gift card's title with a hint, uncontrolled: the form reads it when it's sent. */
-export function CardTitleField(): ReactElement {
+export function GiftCardTitle(): ReactElement {
   const [title, setTitle] = useState("Happy birthday");
   return (
     <form

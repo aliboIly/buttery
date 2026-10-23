@@ -13,7 +13,7 @@ const FONTS: readonly SelectOption<Font>[] = [
 ];
 
 /** A select that keeps its own value, starting on the deck's sans font; the trigger shows each font picked. */
-export function CoffeeGrind(): ReactElement {
+export function DeckFont(): ReactElement {
   return <Select label="Font" options={FONTS} defaultValue="sans" />;
 }
 

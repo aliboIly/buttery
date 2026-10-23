@@ -5,7 +5,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ColorPicker } from "@buttery/react";
 
 /** A picker that keeps its own color and reports the one each drag, key or typed code settles on. */
-export function CardFill(): ReactElement {
+export function ShapeFill(): ReactElement {
   const [picked, setPicked] = useState("#f5d06f");
   return (
     <Stack gap={3}>

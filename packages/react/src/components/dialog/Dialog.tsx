@@ -523,9 +523,9 @@ export interface DialogComponent {
  *
  * @example
  * <Dialog>
- *   <Dialog.Trigger asChild><Button variant="soft">Delete card</Button></Dialog.Trigger>
+ *   <Dialog.Trigger asChild><Button variant="soft">Delete price list</Button></Dialog.Trigger>
  *   <Dialog.Content>
- *     <Dialog.Text title="Delete this card?" body="Subscriptions paid with it move to your other card." />
+ *     <Dialog.Text title="Delete the holiday price list?" body="The 8 cafés on it go back to your standard prices." />
  *     <Dialog.Actions>
  *       <Dialog.Close asChild><Button variant="soft" size="cta" shape="rounded">Keep it</Button></Dialog.Close>
  *       <Button variant="primary" size="cta" shape="rounded" onClick={remove}>Delete</Button>

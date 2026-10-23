@@ -440,7 +440,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "open the confirm dialog",
       run: async (page: Page) => {
         await page
-          .getByRole("button", { name: "Delete card", exact: true })
+          .getByRole("button", { name: "Delete price list", exact: true })
           .first()
           .click();
         await page.getByRole("dialog").waitFor();
