@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: What to install, the five commands from a clone to a running app, and what an app on buttery is made of.
+description: Adding buttery to an app from npm, the five commands from a clone to a new app, and what an app on buttery is made of.
 section: get-started
 order: 20
 status: beta
@@ -8,7 +8,16 @@ since: 0.9.0
 related: [get-started/quick-start, templates/blank, get-started/desktop-apps]
 ---
 
-An app on buttery starts as a copy of the starter in buttery's repository, which is public on GitHub. Until buttery is on npm, at 1.0, that's the way in: a clone, an install and one command give you an app on the web and in a desktop window, in about five minutes.
+There are two ways in. An app you already have adds buttery's packages from npm. A new app starts as a copy of the starter in buttery's repository, which is public on GitHub: a clone, an install and one command give you an app on the web and in a desktop window, in about five minutes.
+
+## Add it to an app you have
+
+```sh
+pnpm add @butteryui/core @butteryui/react lucide-react
+pnpm add -D @butteryui/test @butteryui/lint
+```
+
+Import `@butteryui/core/styles.css` and `@butteryui/react/styles.css` once at the app's entry and wrap it in `ButteryProvider`, as the starter's entry under [What's in the app](#what-s-in-the-app) does. The app needs React 19; `@butteryui/test` runs in Playwright, and `@butteryui/lint` plugs into ESLint 9 and stylelint 16.
 
 ## What you need
 

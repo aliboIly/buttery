@@ -18,7 +18,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 
 Wrap an app in buttery and it gets the tokens, type, surfaces, motion and layout rules written up in [`docs/`](docs), plus checks that fail when something overlaps, overflows or drifts off the scale. People and coding agents work from the same small vocabulary, and a wrong value fails type-checking instead of shipping.
 
-The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place. Nothing is on npm yet: 1.0, the first release there, brings the command line tool and the MCP server. [ROADMAP.md](ROADMAP.md) shows where things stand.
+The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place, and `@butteryui/core`, `@butteryui/react`, `@butteryui/test` and `@butteryui/lint` are on npm. The command line tool and the MCP server come next, on the way to 1.0. [ROADMAP.md](ROADMAP.md) shows where things stand.
 
 ## What's in it
 
@@ -142,7 +142,13 @@ Springs land at once, fades take 100ms, loops hold still and confetti stays off.
 
 ## A quick look
 
-Nothing is published yet, so for now this works inside the repo, where apps import the workspace packages directly.
+Add the packages to a React 19 app:
+
+```sh
+pnpm add @butteryui/core @butteryui/react
+```
+
+Then import the two stylesheets once at the app's entry and wrap it in `ButteryProvider`:
 
 ```tsx
 import "@butteryui/core/styles.css";
