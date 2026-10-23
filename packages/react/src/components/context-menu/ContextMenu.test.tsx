@@ -1001,6 +1001,27 @@ describe("ContextMenu", () => {
     );
   });
 
+  it("says how to fix a checkbox item whose shortcut has no checked state to flip", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <ContextMenu>
+        <ContextMenu.Trigger tabIndex={0} aria-label="Board" role="region">
+          Board
+        </ContextMenu.Trigger>
+        <ContextMenu.Content aria-label="Board">
+          <ContextMenu.CheckboxItem shortcut="mod+'">
+            Show the grid
+          </ContextMenu.CheckboxItem>
+        </ContextMenu.Content>
+      </ContextMenu>,
+    );
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /^\[buttery:Menu\] The checkbox item "Show the grid" has a shortcut but keeps its own checked state.* Fix: keep it in state and pass checked and onCheckedChange\.$/,
+      ),
+    );
+  });
+
   it("says how to fix a part rendered outside a ContextMenu", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     expect(() =>

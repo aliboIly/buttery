@@ -451,16 +451,16 @@ export function MenuCheckboxItem({
     onChange: onCheckedChange,
   });
   const text = typeof children === "string" ? children : undefined;
-  const unheld =
+  const uncontrolledShortcut =
     shortcuts !== null && shortcut !== undefined && checked === undefined;
 
   useEffect(() => {
-    if (!unheld) return;
+    if (!uncontrolledShortcut) return;
     warnOnce(
       "Menu",
       `The checkbox item${text === undefined ? "" : ` "${text}"`} has a shortcut but keeps its own checked state, which starts again each time the menu opens, so the shortcut and the menu can disagree. Fix: keep it in state and pass checked and onCheckedChange.`,
     );
-  }, [unheld, text]);
+  }, [uncontrolledShortcut, text]);
 
   if (shortcuts) {
     return shortcut === undefined || rest.disabled === true ? null : (
