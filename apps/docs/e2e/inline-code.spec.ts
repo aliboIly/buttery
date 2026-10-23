@@ -29,3 +29,20 @@ test("a code chip leaves the punctuation after it well inside a space's width", 
   });
   expect(room).toBeLessThan(space * 0.75);
 });
+
+test("a component's uses, accessibility and layout notes set their code as chips, without backticks", async ({
+  page,
+}) => {
+  for (const [path, code] of [
+    ["/layout/page-grid-and-containers", "contained={false}"],
+    ["/patterns/marketing-page", "asideLabel"],
+    ["/layout/stack-inline-and-grid", "length={6}"],
+    ["/components/text-field", "announceError={false}"],
+  ] as const) {
+    await page.goto(path);
+    await expect(
+      page.locator("code.docs-code", { hasText: code }).first(),
+    ).toBeVisible();
+    await expect(page.getByText(`\`${code}\``)).toHaveCount(0);
+  }
+});

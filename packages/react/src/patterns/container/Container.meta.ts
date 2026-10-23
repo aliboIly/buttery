@@ -7,7 +7,7 @@ export const meta: ComponentMeta = {
     "The page's content column: at most 1200px wide, centered, with side padding that grows with the page.",
   useWhen: [
     "Content on a page that isn't in a Section, such as a header row",
-    "Your own band of a page with contained={false} on its Section",
+    "Your own band of a page with `contained={false}` on its Section",
   ],
   avoidWhen: [
     "A Section's content: Section already puts it in a Container",

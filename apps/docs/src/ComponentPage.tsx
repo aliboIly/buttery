@@ -34,6 +34,7 @@ import type { ComponentEntry } from "./registry.ts";
 import { minorOf, releaseId } from "./release.ts";
 import { DOCS_VERSION } from "./routes.ts";
 import { slugify } from "./slug.ts";
+import { withInlineCode } from "./inline-code.tsx";
 
 /** How deep a component's parts start: `2` on its own page, `3` under a heading on a written page. */
 type Depth = 2 | 3;
@@ -71,7 +72,7 @@ function Facts({
           <ul className="pg-list">
             {items.map((item) => (
               <Text key={item} variant="body" asChild>
-                <li>{item}</li>
+                <li>{withInlineCode(item)}</li>
               </Text>
             ))}
           </ul>
@@ -318,7 +319,7 @@ export function ComponentBody({
           <HeadingAt depth={depth} id={idFor(entry, depth, "Accessibility")}>
             Accessibility
           </HeadingAt>
-          <Text variant="body">{meta.a11y}</Text>
+          <Text variant="body">{withInlineCode(meta.a11y)}</Text>
           {meta.keyboard === undefined ? null : meta.keyboard.length === 0 ? (
             <Text variant="body">It takes no keyboard input of its own.</Text>
           ) : (
@@ -363,7 +364,7 @@ export function ComponentBody({
             <HeadingAt depth={depth} id={idFor(entry, depth, "Layout")}>
               Layout
             </HeadingAt>
-            <Text variant="body">{meta.layout}</Text>
+            <Text variant="body">{withInlineCode(meta.layout)}</Text>
           </section>
         </Stack>
       )}
