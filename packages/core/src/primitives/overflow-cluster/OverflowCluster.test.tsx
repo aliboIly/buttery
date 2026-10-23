@@ -74,6 +74,10 @@ describe("OverflowCluster", () => {
       .getByRole("button", { name: "Undo" })
       .closest<HTMLElement>("[data-bt=OverflowCluster]");
     expect(cluster && cluster.scrollWidth <= cluster.clientWidth).toBe(true);
+    const folded = [
+      ...(cluster?.querySelectorAll('[data-bt-part="item"][hidden]') ?? []),
+    ];
+    expect(folded.map((item) => item.getClientRects().length)).toEqual([0, 0]);
 
     await userEvent.click(screen.getByRole("button", { name: "More actions" }));
     const items = await screen.findAllByRole("menuitem");

@@ -28,16 +28,22 @@
     flex: none;
   }
 
-  /*
-   * A hidden item stays drawn, out of the row and out of sight, so its width is known when room comes back.
-   * It hangs from the end edge, so one wider than the cluster runs past the start, which never scrolls.
-   */
   .bt-overflow-cluster > [data-bt-part="item"][hidden] {
+    display: none;
+  }
+
+  /*
+   * While the cluster measures, a hidden item is drawn for that one read, out of the row and out of sight,
+   * as wide as it would be in the row. It hangs from the end edge, so one wider than the cluster runs past
+   * the start, which never scrolls.
+   */
+  .bt-overflow-cluster > [data-bt-part="item"][hidden][data-bt-measuring] {
     position: absolute;
     inset-block-start: 0;
     inset-inline-end: 0;
+    display: flex;
+    inline-size: max-content;
     visibility: hidden;
-    pointer-events: none;
   }
 
   .bt-overflow-cluster > [data-bt-part="more"] {

@@ -106,10 +106,16 @@ function OverflowClusterRoot({
     let frame = 0;
     const measure = (): ReadonlySet<string> => {
       const entries = latest.current;
+      const folded = entries.filter((entry) => entry.element.hidden);
+      for (const entry of folded) {
+        entry.element.setAttribute("data-bt-measuring", "");
+      }
       for (const entry of entries) {
         const width = entry.element.getBoundingClientRect().width;
         if (width > 0) widths.current.set(entry.id, width);
       }
+      for (const entry of folded)
+        entry.element.removeAttribute("data-bt-measuring");
       const style = getComputedStyle(element);
       const padding =
         (Number.parseFloat(style.paddingInlineStart) || 0) +
