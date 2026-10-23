@@ -115,7 +115,7 @@ export function Brewing({
   return (
     <Section
       id="brewing"
-      title="Brew it well at home"
+      title="Brew guides"
       body="The recipes we use at the roastery. Choose how many cups you're making and the amounts follow."
     >
       <Tabs

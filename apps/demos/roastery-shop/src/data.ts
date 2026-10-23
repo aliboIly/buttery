@@ -1,4 +1,13 @@
-import { BookOpen, DoorOpen, Leaf, Wheat } from "lucide-react";
+import {
+  BookOpen,
+  DoorOpen,
+  Flame,
+  Leaf,
+  Package,
+  Timer,
+  Truck,
+  Wheat,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 /** How dark a coffee is roasted. */
@@ -221,6 +230,18 @@ export const CAFES: readonly {
   { name: "Little Fern", icon: Leaf },
   { name: "Reading Room", icon: BookOpen },
   { name: "Juniper & Rye", icon: Wheat },
+];
+
+/** A roasting day at the roastery, from the first batch to the parcels going out. */
+export const ROAST_DAY: readonly {
+  readonly icon: LucideIcon;
+  readonly time: string;
+  readonly step: string;
+}[] = [
+  { icon: Flame, time: "7 am", step: "Roast" },
+  { icon: Timer, time: "11 am", step: "Rest" },
+  { icon: Package, time: "2 pm", step: "Pack" },
+  { icon: Truck, time: "4 pm", step: "Ship" },
 ];
 
 /** A way to brew at home, with the recipe the roastery uses for one cup. */

@@ -9,11 +9,9 @@ import {
   Text,
 } from "@buttery/core";
 import { Bento, Section, Stat, StatStrip } from "@buttery/react";
-import { Flame, Package, Timer, Truck } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { BagArt, backdrop, swatch } from "./BagArt.tsx";
 import type { Backdrop } from "./BagArt.tsx";
-import { coffeeOf } from "./data.ts";
+import { ROAST_DAY, coffeeOf } from "./data.ts";
 import type { CoffeeId } from "./data.ts";
 
 /** A picture rising from the bottom of a bento card, inset from its sides, on a backdrop from the palettes. */
@@ -54,17 +52,6 @@ const HARVESTS: readonly {
   { coffee: "huila", harvest: "7th harvest" },
   { coffee: "guji", harvest: "5th harvest" },
   { coffee: "cerrado", harvest: "4th harvest" },
-];
-
-const DAY: readonly {
-  readonly icon: LucideIcon;
-  readonly time: string;
-  readonly step: string;
-}[] = [
-  { icon: Flame, time: "7 am", step: "Roast" },
-  { icon: Timer, time: "11 am", step: "Rest" },
-  { icon: Package, time: "2 pm", step: "Pack" },
-  { icon: Truck, time: "4 pm", step: "Ship" },
 ];
 
 function Dot({ coffee }: { readonly coffee: CoffeeId }): ReactElement {
@@ -168,7 +155,7 @@ export function Story(): ReactElement {
           <Bento.Card title="Out the door by four" span={8}>
             <Picture tint={{ light: "mist", dark: "navy" }}>
               <Grid columns={{ base: 2, md: 4 }} gap={3} className="shop-day">
-                {DAY.map((moment) => (
+                {ROAST_DAY.map((moment) => (
                   <Surface key={moment.step} level="card" pad={3}>
                     <Stack gap={2}>
                       <Icon icon={moment.icon} />

@@ -38,8 +38,8 @@ const SECTIONS = [
   { id: "this-week", label: "This week" },
   { id: "coffees", label: "Coffees" },
   { id: "subscribe", label: "Subscribe" },
-  { id: "story", label: "Our story" },
-  { id: "brewing", label: "Brewing" },
+  { id: "story", label: "How we roast" },
+  { id: "brewing", label: "Brew guides" },
   { id: "questions", label: "Questions" },
 ] as const;
 

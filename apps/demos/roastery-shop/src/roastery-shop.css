@@ -118,6 +118,10 @@
   block-size: var(--bt-roastery-shop-bag-menu);
 }
 
+.shop-menu-day {
+  inline-size: 100%;
+}
+
 .shop-cafes-caption {
   text-align: center;
 }

@@ -1,11 +1,19 @@
 import type { ReactElement } from "react";
-import { Inline, Stack, Text, scrollToSection } from "@buttery/core";
+import {
+  Grid,
+  Icon,
+  Inline,
+  Stack,
+  Surface,
+  Text,
+  scrollToSection,
+} from "@buttery/core";
 import { ArrowLink, Button, MorphMenu, NavBar } from "@buttery/react";
 import { ShoppingBag } from "lucide-react";
 import { AccountAction } from "./Account.tsx";
-import { Shelf } from "./BagArt.tsx";
+import { Shelf, backdrop } from "./BagArt.tsx";
 import type { RoastFilter } from "./Coffees.tsx";
-import { GUIDES, THIS_WEEK, coffeeOf } from "./data.ts";
+import { GUIDES, ROAST_DAY, THIS_WEEK, coffeeOf } from "./data.ts";
 import type { GuideId } from "./data.ts";
 import { items } from "./format.ts";
 import { HalfmoonMark } from "./HalfmoonMark.tsx";
@@ -188,6 +196,46 @@ export function ShopBar({
       </MorphMenu.Item>
       <MorphMenu.Item
         label="Learn"
+        featured={
+          <Stack gap={4} className="shop-menu-feature">
+            <div
+              className="shop-shelf shop-backdrop"
+              style={backdrop({ light: "cream", dark: "espresso" })}
+            >
+              <Surface level="card" pad={3} className="shop-menu-day">
+                <Grid columns={4} gap={2} asChild>
+                  <ul role="list">
+                    {ROAST_DAY.map((moment) => (
+                      <Stack key={moment.step} gap={2} align="center" asChild>
+                        <li>
+                          <Icon icon={moment.icon} />
+                          <Stack gap={1} align="center">
+                            <Text variant="label">{moment.step}</Text>
+                            <Text variant="caption" tone="secondary" tabular>
+                              {moment.time}
+                            </Text>
+                          </Stack>
+                        </li>
+                      </Stack>
+                    ))}
+                  </ul>
+                </Grid>
+              </Surface>
+            </div>
+            <Stack gap={2}>
+              <Text variant="control" tone="secondary">
+                The roastery
+              </Text>
+              <Text variant="title">Out the door by four</Text>
+              <Text variant="body-sm" tone="secondary">
+                Roasted at seven, rested, packed and shipped the same day.
+              </Text>
+            </Stack>
+            <ArrowLink href="#story" onClick={jump("story")}>
+              See how we roast
+            </ArrowLink>
+          </Stack>
+        }
         footer={
           <ArrowLink href="#brewing" onClick={jump("brewing")}>
             All brew guides
@@ -207,21 +255,7 @@ export function ShopBar({
             />
           ))}
         </MorphMenu.Column>
-        <MorphMenu.Column title="The roastery">
-          <MorphMenu.Entry
-            href="#story"
-            onClick={jump("story")}
-            title="How we roast"
-            caption="Small batches, to order"
-          />
-          <MorphMenu.Entry
-            href="#story"
-            onClick={jump("story")}
-            title="Our growers"
-            caption="The people behind each coffee"
-          />
-        </MorphMenu.Column>
-        <MorphMenu.Column title="Help">
+        <MorphMenu.Column title="Questions">
           <MorphMenu.Entry
             href="#questions"
             onClick={jump("questions", () => {
@@ -237,6 +271,14 @@ export function ShopBar({
             })}
             title="Returns"
             caption="If a coffee isn't for you"
+          />
+          <MorphMenu.Entry
+            href="#questions"
+            onClick={jump("questions", () => {
+              onQuestion("storage");
+            })}
+            title="Storing coffee"
+            caption="Keeping a bag at its best"
           />
           <MorphMenu.Entry
             href="mailto:hello@halfmoon.example"
