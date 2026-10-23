@@ -77,7 +77,11 @@ export const PAGE_KINDS: Readonly<
     "subscriptions-intro",
     "a feature someone hasn't turned on, and why to",
   ],
-  "sign-in": ["SignInForm", "sign-in-page", "signing in"],
+  "sign-in": [
+    "AuthFlow",
+    "shop-sign-in",
+    "signing in or signing up with a code sent by email or text, no password",
+  ],
   "sign-up": ["SignUpForm", "sign-up-page", "creating an account"],
   onboarding: [
     "Onboarding",

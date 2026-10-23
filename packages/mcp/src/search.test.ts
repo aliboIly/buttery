@@ -29,9 +29,10 @@ const AGENT_QUERIES: readonly (readonly [string, readonly string[]])[] = [
   ],
   ["pricing page", ["component/PlanComparison"]],
   ["onboarding", ["component/Onboarding"]],
-  ["sign in", ["component/SignInForm"]],
-  ["login form", ["component/SignInForm"]],
-  ["sign up", ["component/SignUpForm"]],
+  ["sign in", ["component/SignInForm", "component/AuthFlow"]],
+  ["login form", ["component/SignInForm", "component/AuthFlow"]],
+  ["sign up", ["component/SignUpForm", "component/AuthFlow"]],
+  ["one-time code", ["component/OneTimeCodeField"]],
   ["empty state", ["component/EmptyState"]],
   ["tabs", ["component/Tabs"]],
   ["search box", ["component/SearchField"]],
@@ -73,6 +74,24 @@ describe("buttery_search", () => {
       expect(top.some((id) => wanted.includes(id ?? ""))).toBe(true);
     },
   );
+
+  it("offers the passwordless sign-in for every sign-in or sign-up request, and first for a passwordless one", () => {
+    for (const query of [
+      "sign in",
+      "sign up",
+      "login page",
+      "login form",
+      "create account",
+    ]) {
+      const top = searcher.search(query, null, 2).items.map((item) => item.id);
+      expect(top, query).toContain("component/AuthFlow");
+    }
+    for (const query of ["passwordless", "magic link", "sign up"]) {
+      expect(searcher.search(query, null, 1).items[0]?.id, query).toBe(
+        "component/AuthFlow",
+      );
+    }
+  });
 
   it("ranks a component above a prop or a token that shares the query's word", () => {
     const [first] = searcher.search("modal", null, 5).items;

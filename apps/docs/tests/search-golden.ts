@@ -37,7 +37,11 @@ export const searchGolden: readonly GoldenQuery[] = [
     first: true,
   },
   { query: "onboarding", expect: ["/patterns/onboarding"], first: true },
-  { query: "login", expect: ["/patterns/forms#signinform"] },
+  {
+    query: "login",
+    expect: ["/patterns/authentication", "/patterns/forms#signinform"],
+  },
+  { query: "passwordless", expect: ["/patterns/authentication"], first: true },
   { query: "onValueChange", expect: ["/components/"] },
   { query: "--bt-r-lg", expect: ["/foundations/radius"] },
   { query: "no overlap", expect: ["/layout/the-layout-contract"] },
