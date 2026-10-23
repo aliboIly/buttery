@@ -30,12 +30,16 @@ A catalog page lays out things to browse, such as add-ons or products: a filter 
 </Card>
 <Card icon="package" title="Items">
 
-`CatalogPage.Item` is one thing in the catalog: its tile, its name as a link, what it is, its offer and its tags.
+`CatalogPage.Item` is one thing in the catalog, a plain `Catalog.Card`: its tile, its name as a link, what it is, its offer and its tags.
 
 </Card>
 </Cards>
 
 The filter column sits beside the catalog from 900px of the page's column in a shell at least 1100px wide, and above it otherwise. The featured block and each section show their items two to a row from 560px of room.
+
+## Other catalogs
+
+`CatalogPage` is one arrangement of [Catalog](/components/catalog)'s parts. For a shop's product grid, a gallery of templates or an app's add-ons, use `Catalog` on its own: a toolbar with a search, filters, a sort and a grid or list toggle, over cards in a grid, a list or rows. `CatalogPage.Item` takes the card's `variant`, `mediaPosition` and `size` for a look other than its plain one.
 
 ## CatalogPage
 
