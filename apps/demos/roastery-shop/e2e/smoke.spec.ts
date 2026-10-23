@@ -65,7 +65,7 @@ test("adding a coffee updates the bag's count and the bag, which a reload keeps"
   await expect(bag).toHaveAccessibleName("Bag, 2 bags");
 });
 
-test("the bag checks out in place, through delivery and payment, and starts again empty", async ({
+test("the bag checks out in place, through shipping and payment, and starts again empty", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
@@ -77,20 +77,21 @@ test("the bag checks out in place, through delivery and payment, and starts agai
   await bagButton(page).click();
   await page.getByRole("button", { name: "Check out" }).click();
 
-  const delivery = page.getByRole("dialog", { name: "Delivery" });
-  await delivery.getByRole("button", { name: "Payment" }).click();
+  const shipping = page.getByRole("dialog", { name: "Shipping" });
+  await shipping.getByRole("button", { name: "Payment" }).click();
   await expect(
-    delivery.getByText("Enter a 5-digit ZIP code.", { exact: true }),
+    shipping.getByText("Enter a 5-digit ZIP code.", { exact: true }),
   ).toBeVisible();
-  await expect(delivery.getByLabel("Email")).toBeFocused();
-  await delivery.getByLabel("Email").fill("ines@example.com");
-  await delivery.getByLabel("Full name").fill("Ines Vale");
-  await delivery.getByLabel("Street address").fill("2210 SE Ankeny St");
-  await delivery.getByLabel("City").fill("Portland");
-  await delivery.getByLabel("State").fill("OR");
-  await delivery.getByLabel("ZIP code").fill("97214");
-  await delivery.getByRole("radio", { name: /^Next day/ }).click();
-  await delivery.getByRole("button", { name: "Payment" }).click();
+  await expect(shipping.getByLabel("Email")).toBeFocused();
+  await shipping.getByLabel("Email").fill("ines@example.com");
+  await shipping.getByLabel("Full name").fill("Ines Vale");
+  await shipping.getByLabel("Street address").fill("2210 SE Ankeny St");
+  await shipping.getByLabel("Apartment, suite (optional)").fill("Apt 4");
+  await shipping.getByLabel("City").fill("Portland");
+  await shipping.getByLabel("State").fill("OR");
+  await shipping.getByLabel("ZIP code").fill("97214");
+  await shipping.getByRole("radio", { name: /^Next day/ }).click();
+  await shipping.getByRole("button", { name: "Payment" }).click();
 
   const payment = page.getByRole("dialog", { name: "Payment" });
   await payment.getByLabel("Card number").fill("4111 1111 1111 1111");

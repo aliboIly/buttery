@@ -130,6 +130,22 @@
   overflow: hidden;
 }
 
+.shop-checkout {
+  container: shop-checkout / inline-size;
+}
+
+.shop-address {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--bt-space-4);
+}
+
+@container shop-checkout (width >= 480px) {
+  .shop-address {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Paragraphs keep at least two words on their last line. */
 :is(.shop-page, .shop-dialog) :is(p, li, dd) {
   text-wrap: pretty;
@@ -249,6 +265,11 @@
 
 .shop-fact {
   padding-block-start: var(--bt-space-3);
+  border-block-start: 1px solid var(--bt-border);
+}
+
+.shop-totals {
+  padding-block-start: var(--bt-space-4);
   border-block-start: 1px solid var(--bt-border);
 }
 

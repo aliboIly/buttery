@@ -269,7 +269,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
     {
-      name: "check out with the delivery form empty, which says what it needs",
+      name: "check out with the shipping form empty, which says what it needs",
       allowMove: ['[role="dialog"]'],
       run: async (page: Page) => {
         await page.getByRole("button", { name: "Check out" }).click();
@@ -1196,18 +1196,18 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
         },
       },
       {
-        name: "go on to the delivery form",
+        name: "go on to the shipping form",
         allowMove: ['[role="dialog"]'],
         run: async (target: Page) => {
           await target.getByRole("button", { name: "Check out" }).click();
-          await target.getByRole("dialog", { name: "Delivery" }).waitFor();
+          await target.getByRole("dialog", { name: "Shipping" }).waitFor();
         },
       },
       {
-        name: "fill in the delivery form and go on to payment",
+        name: "fill in the shipping form and go on to payment",
         allowMove: ['[role="dialog"]'],
         run: async (target: Page) => {
-          const form = target.getByRole("dialog", { name: "Delivery" });
+          const form = target.getByRole("dialog", { name: "Shipping" });
           await form.getByLabel("Full name").fill("Ines Vale");
           await form.getByLabel("Street address").fill("2210 SE Ankeny St");
           await form.getByLabel("City").fill("Portland");

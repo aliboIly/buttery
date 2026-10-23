@@ -11,6 +11,7 @@ const ADDRESS = {
   email: "ines@example.com",
   name: "Ines Vale",
   street: "2210 SE Ankeny St",
+  unit: "",
   city: "Portland",
   state: "OR",
   zip: "97214",
@@ -19,14 +20,15 @@ const ADDRESS = {
 const CARD = { number: "4111 1111 1111 1111", expiry: "08/28", code: "123" };
 
 describe("addressProblems", () => {
-  it("lets a full address through", () => {
+  it("lets a full address through, with or without an apartment line", () => {
     expect(isClear(addressProblems(ADDRESS))).toBe(true);
+    expect(isClear(addressProblems({ ...ADDRESS, unit: "Apt 4" }))).toBe(true);
     expect(isClear(addressProblems({ ...ADDRESS, zip: "97214-1234" }))).toBe(
       true,
     );
   });
 
-  it("asks for every field of an empty form", () => {
+  it("asks for every field of an empty form but the apartment line", () => {
     expect(Object.keys(addressProblems(EMPTY_ADDRESS)).sort()).toEqual(
       ["city", "email", "name", "state", "street", "zip"].sort(),
     );

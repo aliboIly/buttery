@@ -5,6 +5,8 @@ export interface Address {
   readonly email: string;
   readonly name: string;
   readonly street: string;
+  /** The apartment, suite or unit, which many addresses don't have. */
+  readonly unit: string;
   readonly city: string;
   readonly state: string;
   readonly zip: string;
@@ -14,6 +16,7 @@ export const EMPTY_ADDRESS: Address = {
   email: "",
   name: "",
   street: "",
+  unit: "",
   city: "",
   state: "",
   zip: "",

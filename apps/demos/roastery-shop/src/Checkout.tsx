@@ -77,13 +77,14 @@ const ADDRESS_ORDER: readonly (keyof Address)[] = [
   "email",
   "name",
   "street",
+  "unit",
   "city",
   "state",
   "zip",
 ];
 
-/** Where the order goes and how fast: the email for the receipt, the address and the delivery. */
-export function DeliveryStep({
+/** Where the order goes and how fast: the email for the receipt, the address and the delivery speed. */
+export function ShippingStep({
   bag,
   address,
   onAddressChange,
@@ -119,72 +120,88 @@ export function DeliveryStep({
   };
 
   return (
-    <form onSubmit={submit} noValidate>
+    <form onSubmit={submit} noValidate className="shop-checkout">
       <Dialog.Text
-        title="Delivery"
-        body="Where should we send it? We email your receipt now, and again when it ships."
+        title="Shipping"
+        body="We email your receipt now, and again when it ships."
       />
       <Dialog.Body>
-        <TextField
-          ref={email}
-          name="email"
-          label="Email"
-          type="email"
-          autoComplete="email"
-          inputMode="email"
-          value={address.email}
-          error={problems.email}
-          onValueChange={change("email")}
-        />
-        <TextField
-          name="name"
-          label="Full name"
-          autoComplete="name"
-          value={address.name}
-          error={problems.name}
-          onValueChange={change("name")}
-        />
-        <TextField
-          name="street"
-          label="Street address"
-          autoComplete="street-address"
-          value={address.street}
-          error={problems.street}
-          onValueChange={change("street")}
-        />
-        <TextField
-          name="city"
-          label="City"
-          autoComplete="address-level2"
-          value={address.city}
-          error={problems.city}
-          onValueChange={change("city")}
-        />
-        <Grid columns={2} gap={4}>
+        <div className="shop-address">
           <TextField
-            name="state"
-            label="State"
-            autoComplete="address-level1"
-            maxLength={2}
-            value={address.state}
-            error={problems.state}
-            onValueChange={change("state")}
+            ref={email}
+            name="email"
+            label="Email"
+            type="email"
+            size="lg"
+            autoComplete="email"
+            inputMode="email"
+            value={address.email}
+            error={problems.email}
+            onValueChange={change("email")}
           />
           <TextField
-            name="zip"
-            label="ZIP code"
-            autoComplete="postal-code"
-            inputMode="numeric"
-            maxLength={10}
-            value={address.zip}
-            error={problems.zip}
-            onValueChange={change("zip")}
+            name="name"
+            label="Full name"
+            size="lg"
+            autoComplete="name"
+            value={address.name}
+            error={problems.name}
+            onValueChange={change("name")}
           />
-        </Grid>
+          <TextField
+            name="street"
+            label="Street address"
+            size="lg"
+            autoComplete="address-line1"
+            value={address.street}
+            error={problems.street}
+            onValueChange={change("street")}
+          />
+          <TextField
+            name="unit"
+            label="Apartment, suite (optional)"
+            size="lg"
+            autoComplete="address-line2"
+            value={address.unit}
+            onValueChange={change("unit")}
+          />
+          <TextField
+            name="city"
+            label="City"
+            size="lg"
+            autoComplete="address-level2"
+            value={address.city}
+            error={problems.city}
+            onValueChange={change("city")}
+          />
+          <Grid columns={2} gap={4}>
+            <TextField
+              name="state"
+              label="State"
+              size="lg"
+              autoComplete="address-level1"
+              maxLength={2}
+              value={address.state}
+              error={problems.state}
+              onValueChange={change("state")}
+            />
+            <TextField
+              name="zip"
+              label="ZIP code"
+              size="lg"
+              autoComplete="postal-code"
+              inputMode="numeric"
+              maxLength={10}
+              value={address.zip}
+              error={problems.zip}
+              onValueChange={change("zip")}
+            />
+          </Grid>
+        </div>
         <Stack gap={3}>
-          <Text variant="label">Delivery</Text>
+          <Text variant="label">Delivery speed</Text>
           <RadioCardGroup<Delivery>
-            label="Delivery"
+            label="Delivery speed"
             value={delivery}
             onValueChange={onDeliveryChange}
             options={[
@@ -204,7 +221,6 @@ export function DeliveryStep({
             ]}
           />
         </Stack>
-        <Totals rows={orderTotals(bag, delivery)} />
       </Dialog.Body>
       <Dialog.Actions>
         <Button size="cta" shape="rounded" arrow="back" onClick={onBack}>
@@ -260,16 +276,18 @@ export function PaymentStep({
   };
 
   return (
-    <form onSubmit={submit} noValidate>
+    <form onSubmit={submit} noValidate className="shop-checkout">
       <Dialog.Text
         title="Payment"
-        body="This is a demo shop: nothing is charged, and the card isn't kept."
+        body="Nothing is charged in this demo shop, and the card isn't kept."
       />
       <Dialog.Body>
         <TextField
           ref={number}
           name="number"
           label="Card number"
+          hint="Any 16 digits will do."
+          size="lg"
           autoComplete="cc-number"
           inputMode="numeric"
           maxLength={23}
@@ -282,6 +300,7 @@ export function PaymentStep({
             name="expiry"
             label="Expiry"
             hint="MM/YY"
+            size="lg"
             autoComplete="cc-exp"
             inputMode="numeric"
             maxLength={7}
@@ -293,6 +312,7 @@ export function PaymentStep({
             name="code"
             label="Security code"
             hint="On the back"
+            size="lg"
             autoComplete="cc-csc"
             inputMode="numeric"
             maxLength={4}

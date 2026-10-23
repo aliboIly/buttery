@@ -19,7 +19,7 @@ import {
 import type { Bag, CoffeeLine, Plan } from "./bag.ts";
 import { Shelf } from "./BagArt.tsx";
 import { coffeeOf, grindLabel, sizeLabel } from "./data.ts";
-import { DeliveryStep, PaymentStep, Totals, orderTotals } from "./Checkout.tsx";
+import { PaymentStep, ShippingStep, Totals, orderTotals } from "./Checkout.tsx";
 import { EMPTY_ADDRESS, EMPTY_CARD } from "./order-details.ts";
 import type { Address, Card } from "./order-details.ts";
 import { bags, money } from "./format.ts";
@@ -33,7 +33,7 @@ import {
 import type { Delivery } from "./pricing.ts";
 import { STORAGE_PREFIX } from "./storage.ts";
 
-type Step = "bag" | "delivery" | "payment" | "placed";
+type Step = "bag" | "shipping" | "payment" | "placed";
 
 /** An order once it's placed, for the step that thanks the customer. */
 interface PlacedOrder {
@@ -374,16 +374,16 @@ export function BagPanel({
           bag={bag}
           onBagChange={setBag}
           onCheckout={() => {
-            setStep("delivery");
+            setStep("shipping");
           }}
           onShop={onShop}
           onChangePlan={onChangePlan}
         />
       );
       break;
-    case "delivery":
+    case "shipping":
       content = (
-        <DeliveryStep
+        <ShippingStep
           bag={bag}
           address={address}
           onAddressChange={setAddress}
@@ -406,7 +406,7 @@ export function BagPanel({
           card={card}
           onCardChange={setCard}
           onBack={() => {
-            setStep("delivery");
+            setStep("shipping");
           }}
           onPay={() => {
             setPlaced({
