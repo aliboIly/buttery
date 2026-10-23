@@ -224,9 +224,8 @@
   .shop-detail {
     grid-template-areas:
       "shelf buy"
-      "facts buy";
+      "shelf facts";
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto 1fr;
     gap: var(--bt-space-6) var(--bt-space-8);
   }
 }
