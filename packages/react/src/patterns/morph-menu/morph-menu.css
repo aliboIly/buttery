@@ -20,6 +20,11 @@
     container-type: inline-size;
   }
 
+  /* While its panel is out, the menu rises over what follows it on the page, another menu's row included. */
+  .bt-morph-menu:where(:has(> [data-bt-part="panel"])) {
+    z-index: var(--bt-z-floating);
+  }
+
   /* A row too narrow for its triggers scrolls sideways rather than spilling. */
   .bt-morph-menu-list {
     display: flex;
