@@ -1,6 +1,6 @@
 ---
 title: Dashboard
-description: A web app with a sidebar, an overview of the week's numbers, a table of orders with filters, and settings, made from the App kit.
+description: A web app with a sidebar, an overview of the week's numbers, a table of orders with filters, settings and a sign-in screen, made from the App kit.
 section: templates
 order: 20
 status: new
@@ -11,12 +11,13 @@ related:
     patterns/overview,
     patterns/data-table-page,
     patterns/settings-pages,
+    patterns/authentication,
   ]
 ---
 
 import { TemplatePreview } from "../../src/templates/TemplatePreview.tsx";
 
-The dashboard template is a small web app for running something: a sidebar of pages beside a top bar, an overview of metric cards and a chart, a table page with filters, and a settings page. Use it for an admin, a back office or any app whose screens are pages of numbers, lists and settings.
+The dashboard template is a small web app for running something: a sidebar of pages beside a top bar, an overview of metric cards and a chart, a table page with filters, a settings page, and a sign-in screen that the account menu's Sign out leads to. Use it for an admin, a back office or any app whose screens are pages of numbers, lists and settings.
 
 <TemplatePreview name="dashboard" />
 
@@ -75,6 +76,14 @@ Open the address it prints. The template is a web app: for a desktop app, start 
       "A `SettingsPage` with a form section that saves and a `SettingRow` that turns emails on and off",
     ],
     [
+      "`src/pages/SignInPage.tsx`",
+      "An `AuthFlow` on a screen of its own, outside the shell, which goes on to the overview once a code is accepted",
+    ],
+    [
+      "`src/auth.ts`",
+      "Stand-ins for your server's two calls, sending a code and checking it, which accept the demo code 123456; replace them with calls to your server",
+    ],
+    [
       "`src/NewOrderDialog.tsx`",
       "A `FormDialog` that adds an order once its three fields are filled in",
     ],
@@ -94,7 +103,7 @@ Open the address it prints. The template is a web app: for a desktop app, start 
     ],
     [
       "`e2e/smoke.spec.ts`",
-      "Renders every page with no console errors, and drives the sidebar, the filters and New order",
+      "Renders every page with no console errors, and drives the sidebar, the filters, New order, and signing out and back in",
     ],
     [
       "`e2e/layout.spec.ts`",
@@ -103,7 +112,7 @@ Open the address it prints. The template is a web app: for a desktop app, start 
   ]}
 />
 
-It's made from these patterns: the [app shell](/patterns/app-shell), an [overview](/patterns/overview), a [data table page](/patterns/data-table-page) and a [settings page](/patterns/settings-pages).
+It's made from these patterns: the [app shell](/patterns/app-shell), an [overview](/patterns/overview), a [data table page](/patterns/data-table-page), a [settings page](/patterns/settings-pages) and [authentication](/patterns/authentication).
 
 ## The overview screen
 

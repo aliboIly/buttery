@@ -90,6 +90,23 @@ const screens: readonly {
       },
     ],
   },
+  {
+    path: "/sign-in",
+    interactions: [
+      {
+        name: "send a code to an email address",
+        run: async (page: Page) => {
+          await page
+            .getByRole("textbox", { name: "Email or phone number" })
+            .fill("sam@example.com");
+          await page.getByRole("button", { name: "Continue" }).click();
+          await page
+            .getByRole("heading", { name: "Check your email" })
+            .waitFor();
+        },
+      },
+    ],
+  },
 ];
 
 for (const { path, interactions } of screens) {

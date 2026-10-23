@@ -15,6 +15,7 @@ for (const [path, title] of [
   ["/", "Overview"],
   ["/orders", "Orders"],
   ["/settings", "Settings"],
+  ["/sign-in", "Sign in or create an account"],
 ] as const) {
   test(`renders ${path} with the bundled font and no console errors`, async ({
     page,
@@ -97,4 +98,26 @@ test("the status filter and the search narrow the orders", async ({ page }) => {
   await expect(rows).toHaveCount(6);
   await page.getByRole("searchbox", { name: "Search orders" }).fill("throw");
   await expect(rows).toHaveCount(2);
+});
+
+test("signs out from the workspace menu and back in with the demo code", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Workspace: buttery dashboard" })
+    .click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+  await expect(page).toHaveURL(/\/sign-in$/);
+  await page
+    .getByRole("textbox", { name: "Email or phone number" })
+    .fill("sam@example.com");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(
+    page.getByRole("textbox", { name: "One-time code" }),
+  ).toBeFocused();
+  await page.keyboard.type("123456");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Overview");
+  await expect(page).toHaveURL(/\/$/);
 });

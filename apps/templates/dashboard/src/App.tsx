@@ -12,13 +12,14 @@ import {
   TopBar,
   toast,
 } from "@butteryui/react";
-import { House, Receipt, Settings } from "lucide-react";
+import { House, LogOut, Receipt, Settings } from "lucide-react";
 import { NewOrderDialog } from "./NewOrderDialog.tsx";
 import { ORDERS } from "./data.ts";
 import type { Order } from "./data.ts";
 import { OrdersPage } from "./pages/OrdersPage.tsx";
 import { OverviewPage } from "./pages/OverviewPage.tsx";
 import { SettingsPage } from "./pages/SettingsPage.tsx";
+import { SignInPage } from "./pages/SignInPage.tsx";
 import { Router, useLink, useNavigate, useRoute } from "./router.tsx";
 import type { RouterProps } from "./router.tsx";
 import "./app.css";
@@ -29,7 +30,12 @@ const NAME = "buttery dashboard";
 const TODAY = "2026-10-22";
 
 /** The paths the dashboard has a page for, which a static build writes out. */
-export const routes: readonly string[] = ["/", "/orders", "/settings"];
+export const routes: readonly string[] = [
+  "/",
+  "/orders",
+  "/settings",
+  "/sign-in",
+];
 
 function NotFoundPage(): ReactElement {
   const link = useLink();
@@ -75,6 +81,7 @@ function Dashboard(): ReactElement {
   const navigate = useNavigate();
   const [orders, setOrders] = useState(ORDERS);
   const [adding, setAdding] = useState(false);
+  if (path === "/sign-in") return <SignInPage name={NAME} />;
   return (
     <div className="app">
       <AppShell
@@ -90,6 +97,14 @@ function Dashboard(): ReactElement {
                 </Menu.Link>
                 <Menu.Separator />
                 <AccountMenu.User name="Sam Rivera" />
+                <Menu.Item
+                  icon={LogOut}
+                  onSelect={() => {
+                    navigate("/sign-in");
+                  }}
+                >
+                  Sign out
+                </Menu.Item>
               </AccountMenu>
             }
           >
@@ -145,7 +160,7 @@ function Dashboard(): ReactElement {
   );
 }
 
-/** The dashboard: a sidebar of pages beside a top bar and the page its address names. */
+/** The dashboard: a sidebar of pages beside a top bar and the page its address names, and a sign-in screen. */
 export function App(props: RouterProps): ReactElement {
   return (
     <Router {...props}>

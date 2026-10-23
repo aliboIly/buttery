@@ -1,3 +1,9 @@
 .app {
   block-size: 100dvh;
 }
+
+/* The sign-in screen fills the window on the app's background, outside the shell. */
+.sign-in {
+  min-block-size: 100dvh;
+  background-color: var(--bt-bg-app);
+}
