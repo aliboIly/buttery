@@ -17,7 +17,7 @@ export const meta: ComponentMeta = {
   motion: "presence",
   keyboard: [],
   layout:
-    "It fills its parent's width in four equal columns 24px apart (two with columns={2}), each stat behind a 1px hairline, and four fall into two rows of two while the strip is under 640px wide. Numbers are heading-1 in four columns and display in two, in tabular figures with room kept for the final number; one too long for its column breaks rather than spilling, and the strip has no hit areas.",
+    "It fills its parent's width in four equal columns 24px apart (two when columns is 2), each stat behind a 1px hairline, and four fall into two rows of two while the strip is under 640px wide. Numbers are heading-1 in four columns and display in two, in tabular figures with room kept for the final number; one too long for its column breaks rather than spilling, and the strip has no hit areas.",
   reducedMotion:
     "The numbers show their final values at once instead of counting up.",
 };
