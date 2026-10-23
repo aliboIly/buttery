@@ -1,25 +1,17 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Inline, Stack } from "@buttery/core";
+import { Grid, Stack } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
-import { Faq, SegmentedControl } from "@buttery/react";
+import { Faq, Field, SegmentedControl, Select } from "@buttery/react";
 import type { AccordionVariant, FaqLayout } from "@buttery/react";
 
 const LAYOUTS: readonly FaqLayout[] = ["stacked", "split", "two-column"];
-const VARIANTS: readonly AccordionVariant[] = [
-  "divided",
-  "contained",
-  "cards",
-  "plain",
+const LOOKS: readonly { value: AccordionVariant; label: string }[] = [
+  { value: "divided", label: "Divided rows" },
+  { value: "contained", label: "Rows in a card" },
+  { value: "cards", label: "A card each" },
+  { value: "plain", label: "Plain rows" },
 ];
-
-function isLayout(value: string): value is FaqLayout {
-  return LAYOUTS.some((layout) => layout === value);
-}
-
-function isVariant(value: string): value is AccordionVariant {
-  return VARIANTS.some((variant) => variant === value);
-}
 
 /** One set of questions in each layout and each look of its rows. */
 export function Layouts(): ReactElement {
@@ -27,24 +19,31 @@ export function Layouts(): ReactElement {
   const [variant, setVariant] = useState<AccordionVariant>("divided");
   return (
     <Stack gap={8}>
-      <Inline gap={3} wrap>
-        <SegmentedControl
-          label="Layout"
-          options={LAYOUTS}
-          value={layout}
-          onValueChange={(next) => {
-            if (isLayout(next)) setLayout(next);
-          }}
-        />
-        <SegmentedControl
-          label="Look"
-          options={VARIANTS}
-          value={variant}
-          onValueChange={(next) => {
-            if (isVariant(next)) setVariant(next);
-          }}
-        />
-      </Inline>
+      <Grid columns={{ base: 1, md: 2 }} gap={4}>
+        <Field label="Layout">
+          {(control) => (
+            <SegmentedControl<FaqLayout>
+              {...control}
+              label="Layout"
+              options={LAYOUTS}
+              value={layout}
+              onValueChange={setLayout}
+            />
+          )}
+        </Field>
+        <Field label="Look">
+          {(control) => (
+            <Select<AccordionVariant>
+              {...control}
+              label="Look"
+              variant="outline"
+              options={LOOKS}
+              value={variant}
+              onValueChange={setVariant}
+            />
+          )}
+        </Field>
+      </Grid>
       <Faq
         title="Wholesale"
         intro="For cafés and offices that pour our coffee."
@@ -84,7 +83,8 @@ export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("radio", "two-column");
-  await press("radio", "cards");
+  await press("combobox", /^Look/);
+  await press("option", "A card each");
   await press("button", "Do you deliver?");
   await see(/^Around Portland, every Tuesday and Friday morning/);
 };
