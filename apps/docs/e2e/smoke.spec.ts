@@ -95,7 +95,9 @@ for (const { route, name } of componentRoutes) {
 }
 
 const demos = [
-  { route: "roastery-shop", ready: '[data-testid="roastery-shop"] h1' },
+  ...["roastery-shop", "roastery-shop/bag", "roastery-shop/checkout"].map(
+    (route) => ({ route, ready: '[data-testid="roastery-shop"] h1' }),
+  ),
   { route: "deckhand", ready: '[data-testid="deckhand"]' },
   ...[
     "roastery",

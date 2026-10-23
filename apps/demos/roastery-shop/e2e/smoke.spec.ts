@@ -65,7 +65,110 @@ test("adding a coffee updates the bag's count and the bag, which a reload keeps"
   await expect(bag).toHaveAccessibleName("Bag, 2 items");
 });
 
-test("the bag checks out in place, through shipping and payment, and starts again empty", async ({
+test("the bag is a side panel at the window's end on a laptop and a drawer from the bottom on a phone", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await bagButton(page).focus();
+  await page.keyboard.press("Enter");
+  let sheet = page.getByRole("dialog", { name: "Your bag is empty" });
+  await expect(sheet).toBeVisible();
+  await expect
+    .poll(async () => {
+      const box = await sheet.boundingBox();
+      return box && [box.x + box.width, box.y, box.y + box.height];
+    })
+    .toEqual([1272, 8, 792]);
+  expect((await sheet.boundingBox())?.width).toBe(400);
+  await page.keyboard.press("Escape");
+  await expect(sheet).toBeHidden();
+  await expect(bagButton(page)).toBeFocused();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await bagButton(page).click();
+  sheet = page.getByRole("dialog", { name: "Your bag is empty" });
+  await expect
+    .poll(async () => {
+      const box = await sheet.boundingBox();
+      return box && [box.x, box.x + box.width, box.y + box.height];
+    })
+    .toEqual([8, 382, 836]);
+  expect((await sheet.boundingBox())?.y).toBeGreaterThan(422);
+});
+
+test("the bar's bag links to the bag's page, opening it in a new tab with ⌘ or Ctrl and the sheet without", async ({
+  page,
+  context,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  const bag = bagButton(page);
+  await expect(bag).toHaveAttribute("href", "/bag");
+  const [tab] = await Promise.all([
+    context.waitForEvent("page"),
+    bag.click({ modifiers: ["ControlOrMeta"] }),
+  ]);
+  await tab.waitForLoadState();
+  await expect(
+    tab.getByRole("heading", { level: 1, name: "Your bag is empty" }),
+  ).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page).toHaveURL(/\/$/);
+  await bag.click();
+  await expect(
+    page.getByRole("dialog", { name: "Your bag is empty" }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test("the bag's page changes what's in it and goes on to checkout, and the sheet's View bag opens it", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Add to bag · $19.00", exact: true })
+    .click();
+  await bagButton(page).click();
+  await page
+    .getByRole("dialog", { name: "Your bag" })
+    .getByRole("link", { name: "View bag" })
+    .click();
+  await expect(page).toHaveURL(/\/bag$/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const main = page.getByRole("main");
+  await expect(
+    main.getByRole("heading", { level: 1, name: "Your bag" }),
+  ).toBeVisible();
+  await main
+    .getByRole("button", { name: "One bag more of Guji, 12 oz" })
+    .click();
+  await expect(
+    main.getByText("2 bags of coffee, roasted the morning after you order.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    main.getByText("Add $2.00 more for free shipping.", { exact: true }),
+  ).toBeVisible();
+  await expect(bagButton(page)).toHaveAccessibleName("Bag, 2 items");
+  await main.getByRole("link", { name: "Check out" }).click();
+  await expect(page).toHaveURL(/\/checkout$/);
+  await expect(
+    page.getByRole("form", { name: "Shipping" }).getByLabel("Email"),
+  ).toBeFocused();
+  await page.goto("/bag");
+  await main.getByRole("button", { name: "Remove Guji, 12 oz" }).click();
+  await expect(
+    main.getByRole("heading", { level: 1, name: "Your bag is empty" }),
+  ).toBeVisible();
+  await main.getByRole("link", { name: "Shop the coffees" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("#coffees")).toBeInViewport();
+});
+
+test("checkout continues on its own page, through shipping and payment, and the bag starts again empty", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
@@ -75,9 +178,17 @@ test("the bag checks out in place, through shipping and payment, and starts agai
     .first()
     .click();
   await bagButton(page).click();
-  await page.getByRole("button", { name: "Check out" }).click();
+  await page
+    .getByRole("dialog", { name: "Your bag" })
+    .getByRole("link", { name: "Check out" })
+    .click();
+  await expect(page).toHaveURL(/\/checkout$/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Check out" }),
+  ).toBeVisible();
 
-  const shipping = page.getByRole("dialog", { name: "Shipping" });
+  const shipping = page.getByRole("form", { name: "Shipping" });
   await shipping.getByRole("button", { name: "Payment" }).click();
   await expect(
     shipping.getByText("Enter a 5-digit ZIP code.", { exact: true }),
@@ -91,9 +202,16 @@ test("the bag checks out in place, through shipping and payment, and starts agai
   await shipping.getByLabel("State").fill("OR");
   await shipping.getByLabel("ZIP code").fill("97214");
   await shipping.getByRole("radio", { name: /^Next day/ }).click();
+  await expect(
+    page.getByRole("list", { name: "What you're ordering" }),
+  ).toContainText("Guji, 12 oz × 1");
   await shipping.getByRole("button", { name: "Payment" }).click();
 
-  const payment = page.getByRole("dialog", { name: "Payment" });
+  const payment = page.getByRole("form", { name: "Payment" });
+  await expect(payment.getByLabel("Card number")).toBeFocused();
+  await payment.getByRole("button", { name: "Shipping" }).click();
+  await expect(shipping.getByLabel("ZIP code")).toHaveValue("97214");
+  await shipping.getByRole("button", { name: "Payment" }).click();
   await payment.getByLabel("Card number").fill("4111 1111 1111 1111");
   await payment.getByLabel("Expiry").fill("09/26");
   await payment.getByLabel("Security code").fill("123");
@@ -105,10 +223,34 @@ test("the bag checks out in place, through shipping and payment, and starts agai
   await payment.getByRole("button", { name: "Pay $33.00" }).click();
 
   await expect(
-    page.getByRole("dialog", { name: "Thanks, your order is in" }),
-  ).toContainText("Order HM-10482 goes into tomorrow morning's roast");
-  await page.getByRole("button", { name: "Done" }).click();
+    page.getByRole("heading", { level: 1, name: "Thanks, your order is in" }),
+  ).toBeVisible();
+  await expect(page.getByRole("main")).toContainText(
+    "Order HM-10482 goes into tomorrow morning's roast",
+  );
   await expect(bagButton(page)).toHaveAccessibleName("Bag, 0 items");
+  const back = page.getByRole("link", { name: "Back to the shop" });
+  await expect(back).toBeFocused();
+  await back.click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "Coffee roasted the morning it ships.",
+  );
+});
+
+test("the bar and footer reach the front page's sections from the bag's page", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/bag");
+  const brewing = page
+    .getByRole("contentinfo")
+    .getByRole("link", { name: "Brew guides" });
+  await expect(brewing).toHaveAttribute("href", "/#brewing");
+  await brewing.click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("#brewing")).toBeInViewport();
+  await expect(page.locator("#brewing")).toBeFocused();
 });
 
 test("a subscription's price follows how many bags and which coffee", async ({

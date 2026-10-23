@@ -84,6 +84,9 @@ async function fillInMiddle(target: Locator, text: string): Promise<void> {
   await target.fill(text);
 }
 
+/** The Halfmoon shop's footer, which a change to the length of a page above it moves. */
+const SHOP_FOOTER = '[data-bt="Footer"]';
+
 /** What a change to the Halfmoon shop's coffees moves: the cards, everything after them and the pill. */
 const SHOP_BELOW_COFFEES = [
   "#coffees",
@@ -97,6 +100,13 @@ const escape: ButteryInteraction = {
   run: async (page: Page) => {
     await page.keyboard.press("Escape");
   },
+};
+
+/** Escape on a demo's sheet, as the docs pill, which lane items keep above a drawer, goes back down. */
+const closeSheet: ButteryInteraction = {
+  ...escape,
+  name: "press Escape, closing the sheet",
+  allowMove: [PILL],
 };
 
 function opensDialog(trigger: string): ButteryInteraction {
@@ -275,6 +285,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     },
     {
       name: "open the bag with the coffee in it, from the top of the page",
+      allowMove: [PILL],
       run: async (page: Page) => {
         await page.evaluate(() => {
           window.scrollTo(0, 0);
@@ -285,21 +296,20 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
     {
-      name: "check out with the shipping form empty, which says what it needs",
-      allowMove: ['[role="dialog"]'],
+      name: "add a bag more in the sheet, which fills the free-shipping bar",
       run: async (page: Page) => {
-        await page.getByRole("button", { name: "Check out" }).click();
-        await page.getByRole("button", { name: "Payment" }).click();
         await page
-          .getByText("Enter your email address, so we can send your receipt.", {
-            exact: true,
-          })
+          .getByRole("dialog", { name: "Your bag" })
+          .getByRole("button", { name: "One bag more of Guji, 12 oz" })
+          .click();
+        await page
+          .getByText("Add $2.00 more for free shipping.", { exact: true })
           .first()
           .waitFor();
       },
       acrossMatrix: true,
     },
-    escape,
+    closeSheet,
     {
       name: "show only the dark roasts",
       allowMove: SHOP_BELOW_COFFEES,
@@ -1431,6 +1441,7 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
       escape,
       {
         name: "open the empty bag",
+        allowMove: [PILL],
         run: async (target: Page) => {
           await shopBag(target).click();
           await target
@@ -1438,7 +1449,7 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
             .waitFor();
         },
       },
-      escape,
+      closeSheet,
       {
         name: "list the origins",
         run: async (target: Page) => {
@@ -1466,42 +1477,198 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
         },
       },
       {
-        name: "go on to the shipping form",
-        allowMove: ['[role="dialog"]'],
+        name: "check out from the sheet, which opens the checkout page's shipping form",
+        allowMove: [SHOP_FOOTER, PILL],
         run: async (target: Page) => {
-          await target.getByRole("button", { name: "Check out" }).click();
-          await target.getByRole("dialog", { name: "Shipping" }).waitFor();
+          await target
+            .getByRole("dialog", { name: "Your bag" })
+            .getByRole("link", { name: "Check out" })
+            .click();
+          await target.getByRole("form", { name: "Shipping" }).waitFor();
+          await target.getByRole("dialog").waitFor({ state: "detached" });
         },
       },
       {
         name: "fill in the shipping form and go on to payment",
-        allowMove: ['[role="dialog"]'],
+        allowMove: [SHOP_FOOTER, PILL, "main"],
         run: async (target: Page) => {
-          const form = target.getByRole("dialog", { name: "Shipping" });
+          const form = target.getByRole("form", { name: "Shipping" });
           await form.getByLabel("Full name").fill("Ines Vale");
           await form.getByLabel("Street address").fill("2210 SE Ankeny St");
           await form.getByLabel("City").fill("Portland");
           await form.getByLabel("State").fill("OR");
           await form.getByLabel("ZIP code").fill("97214");
           await form.getByRole("button", { name: "Payment" }).click();
-          await target.getByRole("dialog", { name: "Payment" }).waitFor();
+          await target.getByRole("form", { name: "Payment" }).waitFor();
         },
       },
       {
         name: "pay, which places the order",
-        allowMove: ['[role="dialog"]'],
+        allowMove: [SHOP_FOOTER, PILL, "main"],
         run: async (target: Page) => {
-          const form = target.getByRole("dialog", { name: "Payment" });
+          const form = target.getByRole("form", { name: "Payment" });
           await form.getByLabel("Card number").fill("4111 1111 1111 1111");
           await form.getByLabel("Expiry").fill("08/28");
           await form.getByLabel("Security code").fill("123");
           await form.getByRole("button", { name: /^Pay / }).click();
           await target
-            .getByRole("dialog", { name: "Thanks, your order is in" })
+            .getByRole("heading", { name: "Thanks, your order is in" })
             .waitFor();
         },
       },
-      escape,
+    ],
+  });
+});
+
+/** Puts two bags of Guji and a gift subscription in the Halfmoon shop's bag before its page loads. */
+async function shopBagHolds(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "halfmoon-shop:bag",
+      JSON.stringify({
+        lines: [{ coffee: "guji", size: "12oz", grind: "whole", quantity: 2 }],
+        plan: {
+          coffee: "choice",
+          bags: 1,
+          every: "two-weeks",
+          grind: "pour-over",
+          gift: 3,
+          recipient: { name: "Sam Okafor", email: "sam@example.com" },
+        },
+      }),
+    );
+  });
+}
+
+test("demos/roastery-shop/bag is buttery, its sheet open over it and its lines changed", async ({
+  page,
+}) => {
+  await shopBagHolds(page);
+  await page.goto("/demos/roastery-shop/bag");
+  await expectButtery(page, {
+    ...matrix,
+    name: "demos/roastery-shop/bag",
+    interactions: [
+      {
+        name: "open the sheet from the bar's bag",
+        allowMove: [PILL],
+        run: async (target: Page) => {
+          await shopBag(target).click();
+          await target.getByRole("dialog", { name: "Your bag" }).waitFor();
+        },
+        acrossMatrix: true,
+      },
+      closeSheet,
+      {
+        name: "take a bag off the coffee",
+        allowMove: ["main", SHOP_FOOTER, PILL],
+        run: async (target: Page) => {
+          await target
+            .getByRole("main")
+            .getByRole("button", { name: "One bag fewer of Guji, 12 oz" })
+            .click();
+          await target
+            .getByRole("main")
+            .getByText("2 bags of coffee, roasted the morning after you order.")
+            .waitFor();
+        },
+      },
+      {
+        name: "remove everything, leaving the bag empty",
+        allowMove: ["main", SHOP_FOOTER, PILL],
+        run: async (target: Page) => {
+          const main = target.getByRole("main");
+          await main
+            .getByRole("button", { name: "Remove Guji, 12 oz" })
+            .click();
+          await main.getByRole("button", { name: /^Remove / }).click();
+          await main
+            .getByRole("heading", { name: "Your bag is empty" })
+            .waitFor();
+        },
+        acrossMatrix: true,
+      },
+      {
+        name: "open the empty sheet over the empty page",
+        allowMove: [PILL],
+        run: async (target: Page) => {
+          await shopBag(target).click();
+          await target
+            .getByRole("dialog", { name: "Your bag is empty" })
+            .waitFor();
+        },
+      },
+    ],
+  });
+});
+
+test("demos/roastery-shop/checkout is buttery through shipping, payment and the thanks", async ({
+  page,
+}) => {
+  await shopBagHolds(page);
+  await page.goto("/demos/roastery-shop/checkout");
+  await expectButtery(page, {
+    ...matrix,
+    name: "demos/roastery-shop/checkout",
+    interactions: [
+      {
+        name: "go on to payment with the shipping form empty, which says what it needs",
+        allowMove: ["main", SHOP_FOOTER, PILL],
+        run: async (target: Page) => {
+          await target.getByRole("button", { name: "Payment" }).click();
+          await target
+            .getByText(
+              "Enter your email address, so we can send your receipt.",
+              { exact: true },
+            )
+            .first()
+            .waitFor();
+        },
+        acrossMatrix: true,
+      },
+      {
+        name: "fill in the shipping form and go on to payment",
+        allowMove: ["main", SHOP_FOOTER, PILL],
+        run: async (target: Page) => {
+          const form = target.getByRole("form", { name: "Shipping" });
+          await form.getByLabel("Email").fill("ines@example.com");
+          await form.getByLabel("Full name").fill("Ines Vale");
+          await form.getByLabel("Street address").fill("2210 SE Ankeny St");
+          await form.getByLabel("City").fill("Portland");
+          await form.getByLabel("State").fill("OR");
+          await form.getByLabel("ZIP code").fill("97214");
+          await form.getByRole("button", { name: "Payment" }).click();
+          await target.getByRole("form", { name: "Payment" }).waitFor();
+        },
+        acrossMatrix: true,
+      },
+      {
+        name: "pay with an expired card, which says so",
+        allowMove: ["main", SHOP_FOOTER, PILL],
+        run: async (target: Page) => {
+          const form = target.getByRole("form", { name: "Payment" });
+          await form.getByLabel("Card number").fill("4111 1111 1111 1111");
+          await form.getByLabel("Expiry").fill("09/26");
+          await form.getByLabel("Security code").fill("123");
+          await form.getByRole("button", { name: /^Pay / }).click();
+          await form
+            .getByText("This card has expired.", { exact: true })
+            .waitFor();
+        },
+      },
+      {
+        name: "pay, which places the order",
+        allowMove: ["main", SHOP_FOOTER, PILL],
+        run: async (target: Page) => {
+          const form = target.getByRole("form", { name: "Payment" });
+          await form.getByLabel("Expiry").fill("08/28");
+          await form.getByRole("button", { name: /^Pay / }).click();
+          await target
+            .getByRole("heading", { name: "Thanks, your order is in" })
+            .waitFor();
+        },
+        acrossMatrix: true,
+      },
     ],
   });
 });
