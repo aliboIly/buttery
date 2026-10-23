@@ -1,0 +1,260 @@
+@layer bt.components {
+  .bt-accordion {
+    --bt-accordion-line: 1px;
+    --bt-accordion-pad-block: var(--bt-space-4);
+    --bt-accordion-pad-inline: 0;
+    --bt-accordion-gap: var(--bt-space-3);
+    --bt-accordion-item-gap: 0;
+    --bt-accordion-radius: var(--bt-r-sm);
+    --bt-accordion-title-size: var(--bt-text-title-size);
+    --bt-accordion-title-line: var(--bt-text-title-line);
+    --bt-accordion-title-weight: var(--bt-text-title-weight);
+    --bt-accordion-title-tracking: var(--bt-text-title-tracking);
+    --bt-accordion-body-size: var(--bt-text-body-size);
+    --bt-accordion-body-line: var(--bt-text-body-line);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-accordion-item-gap);
+    min-inline-size: 0;
+  }
+
+  .bt-accordion[data-size="sm"] {
+    --bt-accordion-pad-block: var(--bt-space-3);
+    --bt-accordion-gap: var(--bt-space-2);
+    --bt-accordion-title-size: var(--bt-text-label-size);
+    --bt-accordion-title-line: var(--bt-text-label-line);
+    --bt-accordion-title-weight: var(--bt-text-label-weight);
+    --bt-accordion-title-tracking: var(--bt-text-label-tracking);
+    --bt-accordion-body-size: var(--bt-text-body-sm-size);
+    --bt-accordion-body-line: var(--bt-text-body-sm-line);
+  }
+
+  .bt-accordion[data-size="lg"] {
+    --bt-accordion-pad-block: var(--bt-space-5);
+    --bt-accordion-title-size: var(--bt-text-title-md-size);
+    --bt-accordion-title-line: var(--bt-text-title-md-line);
+    --bt-accordion-title-weight: var(--bt-text-title-md-weight);
+    --bt-accordion-title-tracking: var(--bt-text-title-md-tracking);
+    --bt-accordion-body-size: var(--bt-text-body-lg-size-sm);
+    --bt-accordion-body-line: var(--bt-text-body-lg-line-sm);
+  }
+
+  .bt-accordion[data-variant="contained"] {
+    --bt-accordion-pad-inline: var(--bt-space-4);
+    --bt-accordion-radius: 0;
+
+    overflow: clip;
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  .bt-accordion[data-variant="cards"] {
+    --bt-accordion-pad-inline: var(--bt-space-4);
+    --bt-accordion-item-gap: var(--bt-space-2);
+    --bt-accordion-radius: var(--bt-r-lg);
+  }
+
+  .bt-accordion[data-variant="plain"] {
+    --bt-accordion-pad-inline: var(--bt-space-3);
+    --bt-accordion-item-gap: var(--bt-space-0_5);
+    --bt-accordion-radius: var(--bt-r-md);
+  }
+
+  .bt-accordion[data-size="lg"]:is(
+      [data-variant="contained"],
+      [data-variant="cards"]
+    ) {
+    --bt-accordion-pad-inline: var(--bt-space-5);
+  }
+
+  .bt-accordion > [data-bt-part="accordion-item"] {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    scroll-margin-block-start: var(--bt-sticky-top, 0px);
+  }
+
+  .bt-accordion:is([data-variant="divided"], [data-variant="contained"])
+    > [data-bt-part="accordion-item"]
+    + [data-bt-part="accordion-item"] {
+    border-block-start: var(--bt-accordion-line) solid var(--bt-border);
+  }
+
+  .bt-accordion[data-variant="cards"] > [data-bt-part="accordion-item"] {
+    overflow: clip;
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"] {
+    display: flex;
+    min-inline-size: 0;
+    font: inherit;
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"] {
+    display: flex;
+    flex: 1;
+    align-items: flex-start;
+    gap: var(--bt-accordion-gap);
+    min-inline-size: 0;
+    padding: var(--bt-accordion-pad-block) var(--bt-accordion-pad-inline);
+    border: 0;
+    border-radius: var(--bt-accordion-radius);
+    background: none;
+    color: var(--bt-text);
+    text-align: start;
+    appearance: none;
+  }
+
+  .bt-accordion:is(
+      [data-variant="contained"],
+      [data-variant="cards"],
+      [data-variant="plain"]
+    )
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]:focus-visible {
+    outline-offset: calc(-1 * var(--bt-focus-width));
+  }
+
+  @media (hover: hover) {
+    .bt-accordion:is([data-variant="contained"], [data-variant="plain"])
+      > [data-bt-part="accordion-item"]
+      > [data-bt-part="accordion-heading"]
+      > [data-bt-part="accordion-trigger"]:not(:disabled):hover {
+      background-color: var(--bt-bg-item-hover);
+    }
+
+    .bt-accordion
+      > [data-bt-part="accordion-item"]
+      > [data-bt-part="accordion-heading"]
+      > [data-bt-part="accordion-trigger"]:not(:disabled):hover
+      > [data-bt-part="accordion-chevron"] {
+      color: var(--bt-text);
+    }
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]
+    > [data-bt-part="accordion-leading"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--bt-accordion-title-line);
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]
+    > [data-bt-part="accordion-leading"][data-kind="custom"] {
+    align-self: center;
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]
+    > [data-bt-part="accordion-text"] {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--bt-space-0_5);
+    min-inline-size: 0;
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]
+    > [data-bt-part="accordion-text"]
+    > [data-bt-part="accordion-title"] {
+    font-size: var(--bt-accordion-title-size);
+    font-weight: var(--bt-accordion-title-weight);
+    line-height: var(--bt-accordion-title-line);
+    letter-spacing: var(--bt-accordion-title-tracking);
+    overflow-wrap: break-word;
+  }
+
+  .bt-accordion[data-size="lg"]
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"] {
+    color: var(--bt-text-strong);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]
+    > [data-bt-part="accordion-text"]
+    > [data-bt-part="accordion-description"] {
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-text-caption-size);
+    font-weight: var(--bt-text-caption-weight);
+    line-height: var(--bt-text-caption-line);
+    letter-spacing: var(--bt-text-caption-tracking);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]
+    > [data-bt-part="accordion-chevron"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    block-size: var(--bt-accordion-title-line);
+    color: var(--bt-text-secondary);
+    transition: color var(--bt-dur-fast) var(--bt-ease-standard);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]:disabled {
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]:disabled
+    > :is(
+      [data-bt-part="accordion-leading"],
+      [data-bt-part="accordion-chevron"]
+    ) {
+    color: var(--bt-icon-disabled);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    > [data-bt-part="accordion-heading"]
+    > [data-bt-part="accordion-trigger"]:disabled
+    > [data-bt-part="accordion-text"]
+    > [data-bt-part="accordion-description"] {
+    color: var(--bt-text-disabled);
+  }
+
+  .bt-accordion
+    > [data-bt-part="accordion-item"]
+    [data-bt-part="accordion-panel"] {
+    padding: 0 var(--bt-accordion-pad-inline) var(--bt-accordion-pad-block);
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-accordion-body-size);
+    line-height: var(--bt-accordion-body-line);
+  }
+}

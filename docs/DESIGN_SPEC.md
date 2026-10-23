@@ -412,6 +412,14 @@ Keycap: 20h, min-width 20, r5, `bg-surface`, 1px `border-strong` plus a 1px bott
 ### TextStack
 A title over body text and an optional caption, the text block of dialogs, empty states and page sections, measured between trimmed text (§2). `size="dialog"` (the default): `dialog-title`, `body` 16 below, `caption` 20 below. `size="empty"`: `title`, `body-sm` 12 below, `caption` 12 below. `size="section"`: `heading-2`, `body-lg` 16 below, `caption` 16 below. `align="center"` centers it and balances its lines (`text-wrap: balance`), so no word is left alone on a last line. The title is an `h2` unless `titleAs` names another level or `p`.
 
+### Accordion (_derived_)
+A list of items that open in place, on Radix Accordion. Each trigger row is its item's full width: an optional 16px icon (or a `leading` part such as an avatar, centered on the words) 12 before the title, the title in `title` (15/20, 600; `label` 14/20 at `size="sm"`, `title-md` 18/24 at `lg`) wrapping onto more lines, a `caption`-size description in `text-secondary` 2 under it, and a 16px chevron in `text-secondary` at the end (`text` on hover). The icon and the chevron sit on the middle of the title's first line. Rows have 16 above and below (12 at `sm`, 20 at `lg`); the panel's content starts at the row's padding edge with the same room under it, in `body` (14/22; `body-sm` at `sm`, 16/24 at `lg`).
+- `variant="divided"` (the default): a 1px `border` between rows and no side padding, so the words line up with the text around them.
+- `contained`: the rows on one `card` surface (r12, `shadow-card`), padded 16 a side (20 at `lg`) with hairlines between, a row tinting `bg-item-hover` on hover.
+- `cards`: a `card` surface for each item, 8 apart.
+- `plain`: rows padded 12 a side with r10, tinting `bg-item-hover` on hover, 2 apart.
+- Keyboard focus rings the trigger: outside it on divided rows, 2px inside it on the others, whose edges or cards would clip it. A disabled item's words take `text-disabled` and its icons `icon-disabled`.
+
 ---
 
 ## 6. App kit (Phase 6B, _derived_)

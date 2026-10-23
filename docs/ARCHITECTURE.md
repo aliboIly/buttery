@@ -86,7 +86,8 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
 4. Components  Button, IconButton, SplitButton, SegmentedControl, Slider, ValueBadge, Chip,
                SwatchGrid, ColorDot, ColorPicker, TiltPad, AnchorGrid, Select, NumberField,
                Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti,
-               Field, TextField, PasswordField, TextArea, Checkbox, Switch, Callout
+               Field, TextField, PasswordField, TextArea, Checkbox, Switch, Callout,
+               Accordion
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,
                EmptyState/DropZone, FloatingToolbar, Onboarding,
                NavBar + MorphMenu, SubNav, Page/Section/Container, SplitHero, CenteredHero,

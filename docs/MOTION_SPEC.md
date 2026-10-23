@@ -95,6 +95,8 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 | Menu open (select) | Trigger gets active bg; menu fades + scales from trigger origin (0.97 → 1) | scale `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~150–200ms in) |
 | Button press | Scale 0.97 on pointer-down | down `dur-press`, release `dur-fast`, both `ease-out` (a CSS recipe, so no spring); at once with reduced motion |
 | Primary hover | `#1a1a1a` → `#2b2b2b` | `dur-fast` |
+| Accordion item opens (_derived_) | Its panel's height opens through `Morph` while the answer fades in and the chevron turns 180°; in a one-at-a-time accordion the open item closes at the same moment | height and chevron `spring.smooth`, answer `dur-fast` |
+| Accordion item closes (_derived_) | The answer fades out, the height closes and the chevron turns back; the answer is gone before the height is | height and chevron `spring.smooth`, answer `dur-fast` |
 
 ### Onboarding (step dialog)
 

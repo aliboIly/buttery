@@ -651,3 +651,15 @@ export type {
   SearchResultsLabels,
   SearchResultsProps,
 } from "./patterns/search-results/SearchResults.tsx";
+export { Accordion } from "./components/accordion/Accordion.tsx";
+export type {
+  AccordionBaseProps,
+  AccordionComponent,
+  AccordionHeadingLevel,
+  AccordionItemProps,
+  AccordionMultipleProps,
+  AccordionProps,
+  AccordionSingleProps,
+  AccordionSize,
+  AccordionVariant,
+} from "./components/accordion/Accordion.tsx";
