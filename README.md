@@ -203,7 +203,7 @@ With Tailwind v4, import the bridge after Tailwind and keep `@butteryui/core/sty
 | `pnpm dev` | Runs the docs site, with a page for every component |
 | `pnpm build` | Builds every package and app |
 | `pnpm tokens` | Regenerates the CSS, JSON and Tailwind files from the token source |
-| `pnpm check` | Authorship and private-path checks, typecheck, lint, stylelint, format check, unit, browser and smoke tests, and layout checks on every playground page and the starter at 390 and 1280 |
+| `pnpm check` | Authorship and private-path checks, typecheck, lint, stylelint, format check, the packages' build, unit, browser and smoke tests, and layout checks on every playground page and the starter at 390 and 1280 |
 | `pnpm test:layout` | Layout checks across the full viewport, theme and density matrix; `--reporter=json` prints one report |
 | `pnpm new-component <Name> --purpose "…"` | Scaffolds a component folder that passes the contract once it's filled in |
 | `pnpm --filter starter tauri dev` | Runs the starter as a desktop app |
