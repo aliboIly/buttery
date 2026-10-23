@@ -150,8 +150,10 @@ export function createLayoutToolkit(): LayoutToolkit {
   const LAYER_FURNITURE = "[data-bt-layer], .bt-scrim, .bt-floating-lanes";
   const FOCUS_CONTAINERS =
     "dialog, [role=dialog], [role=alertdialog], [role=tabpanel], [role=region], [role=document], [role=group], [role=application], [role=log], [role=feed]";
+  // A header inside an article or a section heads that piece of content and scrolls with it, so only a page's
+  // own header counts, as HTML makes only that one a banner.
   const PAGE_CHROME =
-    "header, nav, [role=banner], [role=navigation], .bt-sticky";
+    "header:not(:is(article, aside, main, nav, section) header), nav, [role=banner], [role=navigation], .bt-sticky";
   let styles = new Map<Element, CSSStyleDeclaration>();
   let positions = new Map<Element, Position>();
   let inkContext: CanvasRenderingContext2D | null | undefined;

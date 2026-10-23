@@ -395,6 +395,17 @@ describe("floating UI over page chrome", () => {
   it("passes a lane item that sits below the header", () => {
     expect(check(page(84), ["overlap"])).toEqual([]);
   });
+
+  it("passes a lane item over a card's own header, which scrolls with the page", () => {
+    expect(
+      check(
+        page(24)
+          .replace("<header", "<article><header")
+          .replace("</header>", "</header></article>"),
+        ["overlap"],
+      ),
+    ).toEqual([]);
+  });
 });
 
 describe("clipping", () => {
