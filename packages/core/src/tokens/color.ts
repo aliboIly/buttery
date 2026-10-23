@@ -61,6 +61,12 @@ export const colors = {
     dark: "#2a2a2d",
     description: "Ghost trigger while its menu is open.",
   },
+  "bg-tint": {
+    light: "#fbf4da",
+    dark: "#2d1e14",
+    description:
+      "A tinted card or page band: the cream gradient's first stop in light, the espresso family at OKLCH L 0.25 in dark, so every text color holds 4.5:1 on it and every chart series 3:1.",
+  },
   border: {
     light: "#ebebeb",
     dark: "#2a2a2e",
@@ -426,6 +432,7 @@ const TEXT_SURFACES: readonly ColorToken[] = [
   "bg-control",
   "bg-item-hover",
   "bg-control-active",
+  "bg-tint",
 ];
 
 export const contrastPairs: readonly ContrastPair[] = [
@@ -465,6 +472,7 @@ export const contrastPairs: readonly ContrastPair[] = [
   ]),
   { text: "accent-text", on: "accent-subtle", minimum: 4.5 },
   { text: "accent-text", on: "bg-surface", minimum: 4.5 },
+  { text: "accent-text", on: "bg-tint", minimum: 4.5 },
   ...TEXT_SURFACES.map((on): ContrastPair => ({
     text: "control-border",
     on,
@@ -482,9 +490,9 @@ export const contrastPairs: readonly ContrastPair[] = [
       "chart-muted",
     ] as const
   ).flatMap((series) =>
-    (["bg-surface", "bg-section", "bg-app", "bg-floating"] as const).map(
-      (on): ContrastPair => ({ text: series, on, minimum: 3 }),
-    ),
+    (
+      ["bg-surface", "bg-section", "bg-app", "bg-floating", "bg-tint"] as const
+    ).map((on): ContrastPair => ({ text: series, on, minimum: 3 })),
   ),
   { text: "dot-active", on: "bg-surface", minimum: 3 },
 ];

@@ -28,6 +28,7 @@ Never copy either product's branding, names, icons, illustrations, copy or gradi
 | `--bt-bg-control-subtle` | `#f9f9f9` | Disabled soft button, disabled chip |
 | `--bt-bg-item-hover` | `#f7f7f7` | Menu item hover |
 | `--bt-bg-control-active` | `#ececec` | Ghost trigger while its menu is open |
+| `--bt-bg-tint` | `#fbf4da` | The `tinted` look of a card, a metric or a hero band: the cream gradient's first stop from the palettes, where every text color keeps 4.5:1 and every chart series 3:1 (_derived_) |
 | `--bt-border` | `#ebebeb` | Row dividers, section border, footer divider, header separator |
 | `--bt-border-strong` | `#e3e3e3` | Slider track, anchor-grid box, tilt pad, a disabled input's edge (inputs were measured with it; they now take `control-border`) |
 | `--bt-text-strong` | `#1a1a1a` | Dialog titles |
@@ -103,6 +104,7 @@ buttery's own set, derived in OKLCH rather than taken from the references: 24 tw
 | skeleton / skeleton-strong (Phase 1) | `#232326` / `#2a2a2d` |
 | control-border (Phase 4.5) | `#75757c`: 3:1 on every surface, the raised one included |
 | danger, success, warning and their `-subtle` backgrounds, accent-subtle, accent-text (Phase 4.5) | `#ff7a6e` / `#3a1916`, `#4cc38a` / `#132c20`, `#f2a33a` / `#33230f`, `#16223b`, `#4f89ff`: each tone passes 4.5:1 on every surface and on its own background, and text passes on each background |
+| bg-tint | `#2d1e14`: the espresso family, the cream row's column in the deep row, at OKLCH L 0.25 with chroma 0.03, so `text-tertiary` keeps 4.5:1 and `chart-muted` 3:1 |
 | shadow-card (Phase 1, ring raised in Phase 7) | `0 0 0 1px rgba(255,255,255,.09), 0 1px 2px rgba(0,0,0,.24)`: a light ring replaces the black one, which disappears on `#19191b`, and the drop stays soft so a card's well reads evenly. The dark pass raised the ring from 6% to 9%, as raised and floating have, because a card on the surface, where it has the surface's own fill, showed no edge at 6% |
 | shadow-raised / floating / dialog (Phase 1) | light ring at 9%, 9% and 10% over drops at 60%, 50% + 30%, and 60% black |
 | shadow-inset (Phase 1) | `inset 0 0 0 1px rgba(255,255,255,.06)` |

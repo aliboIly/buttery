@@ -13,6 +13,7 @@
     --bt-bg-control-subtle: #f9f9f9;
     --bt-bg-item-hover: #f7f7f7;
     --bt-bg-control-active: #ececec;
+    --bt-bg-tint: #fbf4da;
     --bt-border: #ebebeb;
     --bt-border-strong: #e3e3e3;
     --bt-control-border: #858585;
@@ -327,6 +328,7 @@
     --bt-bg-control-subtle: #1e1e20;
     --bt-bg-item-hover: #202023;
     --bt-bg-control-active: #2a2a2d;
+    --bt-bg-tint: #2d1e14;
     --bt-border: #2a2a2e;
     --bt-border-strong: #333338;
     --bt-control-border: #75757c;
@@ -414,6 +416,7 @@
       --bt-bg-control-subtle: #1e1e20;
       --bt-bg-item-hover: #202023;
       --bt-bg-control-active: #2a2a2d;
+      --bt-bg-tint: #2d1e14;
       --bt-border: #2a2a2e;
       --bt-border-strong: #333338;
       --bt-control-border: #75757c;
