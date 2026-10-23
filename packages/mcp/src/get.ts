@@ -190,7 +190,7 @@ function typeNotes(
     .filter((type) => used.has(type.name))
     .map(
       (type) =>
-        `- \`${type.name}\` (${type.note}): ${clip(type.values.join(" | "), 400)}`,
+        `- \`${type.name}\`${type.note === "" ? "" : ` (${type.note})`}: ${clip(type.values.join(" | "), 400)}`,
     );
 }
 
@@ -250,7 +250,7 @@ function componentText(
       : []),
   ];
   const types = typeNotes(knowledge, shownTables);
-  if (types.length > 0) lines.push("Token types:", ...types, "");
+  if (types.length > 0) lines.push("Types its props use:", ...types, "");
   if (detail === "full") {
     lines.push(
       `Accessibility: ${component.a11y}`,
