@@ -194,11 +194,17 @@ function typeNotes(
     );
 }
 
+/** How long an example a summary shows in full; past it, the shortest of a component's examples. */
+const SUMMARY_EXAMPLE = 2_000;
+
 function chosenExample(component: ComponentEntry): ExampleEntry | undefined {
-  return (
+  const basic =
     component.examples.find((example) => example.kind === "basic") ??
-    component.examples[0]
-  );
+    component.examples[0];
+  if (basic === undefined || basic.code.length <= SUMMARY_EXAMPLE) return basic;
+  return [...component.examples].sort(
+    (a, b) => a.code.length - b.code.length,
+  )[0];
 }
 
 function componentText(
@@ -282,6 +288,13 @@ function componentText(
       "```",
       "",
     );
+    const others = component.examples.filter((other) => other !== example);
+    if (detail === "summary" && others.length > 0) {
+      lines.push(
+        `More examples: ${others.map((other) => `example/${component.name}/${other.name}`).join(", ")}`,
+        "",
+      );
+    }
   }
   lines.push(
     `Docs: ${knowledge.site}${component.href}${detail === "summary" ? ` · More: buttery_get({"ids":["component/${component.name}"],"detail":"full"})` : ""}`,
@@ -403,13 +416,11 @@ export function entryText(
 }
 
 /**
- * `text` cut to `room` characters at a line break, with what was left out and how to get it: for a page, its
- * sections by id.
+ * `text` cut so that it and a note on what was left out, and how to get it, fit in `room` characters: for a
+ * page, its sections by id.
  */
 export function fitted(text: string, room: number, entry: Entry): string {
   if (text.length <= room) return text;
-  const cut = text.lastIndexOf("\n", room);
-  const kept = text.slice(0, cut > 0 ? cut : room).trimEnd();
   const more =
     entry.type === "page"
       ? `Get one section at a time: ${headingsOf(entry.page.markdown)
@@ -418,5 +429,8 @@ export function fitted(text: string, room: number, entry: Entry): string {
       : entry.type === "component"
         ? `Get its examples one at a time with example/${entry.component.name}/<name>, or its page at ${entry.component.href}.`
         : "Ask for less at once.";
-  return `${kept}\n\n[Cut at ${String(room)} characters. ${more}]`;
+  const note = `\n\n[Cut at ${String(room)} characters. ${more}]`;
+  const space = Math.max(0, room - note.length);
+  const cut = text.lastIndexOf("\n", space);
+  return `${text.slice(0, cut > 0 ? cut : space).trimEnd()}${note}`;
 }
