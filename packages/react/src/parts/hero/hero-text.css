@@ -20,8 +20,10 @@
     color: var(--bt-text-secondary);
   }
 
+  /* 16px of gap and 8 more: the body sits 24px under the headline, clear of its descenders at display size. */
   .bt-hero-text > [data-bt-part="body"] {
     max-inline-size: 60ch;
+    padding-block-start: var(--bt-space-2);
   }
 
   /* 16px of gap and 8 more: the actions sit 24px under the body. */
