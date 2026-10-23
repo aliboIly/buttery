@@ -137,7 +137,7 @@ describe("AuthFlow", () => {
     });
   });
 
-  it("clears a wrong code, says what to do next and keeps focus in the field", async () => {
+  it("clears a wrong code, says what to do next and keeps focus in the field, until typing starts again", async () => {
     render(<Flow />);
     await toCodeStep();
     await browser.type(code(), "111111");
@@ -146,6 +146,15 @@ describe("AuthFlow", () => {
     );
     expect(code().value).toBe("");
     expect(document.activeElement).toBe(code());
+    await browser.keyboard("2");
+    expect(
+      screen.queryAllByText(
+        "That code isn't right. Check your latest message and type it again.",
+      ),
+    ).toHaveLength(0);
+    expect(
+      screen.getAllByText("The code works for 10 minutes.").length,
+    ).toBeGreaterThan(0);
   });
 
   it("counts down to a new code, then offers one and sends it", async () => {

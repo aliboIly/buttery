@@ -78,7 +78,7 @@ export interface OtpFlow {
   readonly destination: string;
   /** The code's digits typed so far. */
   readonly code: string;
-  /** Changes the code, such as from `OneTimeCodeField`'s `onValueChange`; typing after an error clears its color. */
+  /** Changes the code, such as from `OneTimeCodeField`'s `onValueChange`; typing after an error clears it. */
   readonly setCode: (value: string) => void;
   /** Where checking the code stands, for `OneTimeCodeField`'s `status`. */
   readonly status: CodeStatus;
@@ -266,7 +266,10 @@ export function useOtpFlow<Session>(options: OtpFlowOptions<Session>): OtpFlow {
     code,
     setCode: (value) => {
       setCode(value);
-      if (status === "error" && value !== "") setStatus("idle");
+      if (status === "error" && value !== "") {
+        setStatus("idle");
+        setCodeError(null);
+      }
     },
     status,
     codeError,

@@ -145,7 +145,7 @@ describe("useOtpFlow", () => {
     expect(onVerify).toHaveBeenCalledTimes(1);
   });
 
-  it("clears a wrong code and says what to do, and ignores one that isn't full", async () => {
+  it("clears a wrong code and says what to do until typing starts again, and ignores one that isn't full", async () => {
     const onVerify = vi.fn<
       (
         identifier: string,
@@ -169,6 +169,11 @@ describe("useOtpFlow", () => {
     expect(result.current.codeError).toBe(
       "That code has expired. Send a new one.",
     );
+    act(() => {
+      result.current.setCode("9");
+    });
+    expect(result.current.status).toBe("idle");
+    expect(result.current.codeError).toBeNull();
   });
 
   it("goes back with the identifier still filled in", async () => {
