@@ -54,7 +54,9 @@ function failuresOf(suite, titles = []) {
           test: [...path, spec.title].join(" › "),
           project: entry.projectName,
           status: result.status,
-          error: (result.error?.message ?? "").split("\n")[0],
+          error: (result.error?.message ?? "")
+            .split("\n")[0]
+            .replace(/^Error: /, ""),
         }))
         .filter((failure) => !failure.error.startsWith("buttery found")),
     ),
