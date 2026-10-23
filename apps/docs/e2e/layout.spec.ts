@@ -12,6 +12,12 @@ import { routes, url } from "./routes.ts";
 const matrix =
   process.env["BUTTERY_MATRIX"] === "full" ? fullMatrix : quickMatrix;
 
+/**
+ * Whether this run is the quick matrix. A long page's states are checked at every size only then: its demos
+ * show each layout at every size of the full matrix already, and its states there would outlast a test's time.
+ */
+const quick = matrix === quickMatrix;
+
 function press(
   name: string,
   role: "button" | "combobox" = "button",
@@ -611,7 +617,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
         );
         await page.getByRole("dialog", { name: "Pour-over dripper" }).waitFor();
       },
-      acrossMatrix: true,
+      acrossMatrix: quick,
     },
     escape,
     {
@@ -637,7 +643,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "lay the live demo out as rows of an outline list",
       allowMove: ["main"],
       run: liveControls({ layout: "rows", variant: "outline" }),
-      acrossMatrix: true,
+      acrossMatrix: quick,
     },
     {
       name: "draw the live demo's rows as a soft list",
@@ -648,7 +654,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       name: "lay the live demo out as a list of plain cards",
       allowMove: ["main"],
       run: liveControls({ layout: "list", variant: "plain" }),
-      acrossMatrix: true,
+      acrossMatrix: quick,
     },
     {
       name: "put the media behind the live demo's soft cards in a grid of four",
@@ -659,7 +665,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
         mediaPosition: "background",
         columns: "4",
       }),
-      acrossMatrix: true,
+      acrossMatrix: quick,
     },
     {
       name: "search the live demo for something it doesn't hold",
@@ -674,7 +680,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           .getByText("No gear matches", { exact: true })
           .waitFor();
       },
-      acrossMatrix: true,
+      acrossMatrix: quick,
     },
   ],
   "app-shell": [
