@@ -247,6 +247,70 @@ export function tokenTypes(): TypeEntry[] {
   }));
 }
 
+/**
+ * Every exported type in the packages that is a union of literals or of such types, such as `FlowAlign` or
+ * `TextVariant` (`TextRole | DisplayRole`), with its values, after the token types it may name.
+ */
+export function literalTypes(
+  root: string,
+  known: readonly TypeEntry[],
+): TypeEntry[] {
+  const written = new Map<string, readonly string[]>();
+  for (const file of globSync("packages/{core,react}/src/**/*.{ts,tsx}", {
+    cwd: root,
+  })) {
+    if (/\.test\.tsx?$/.test(file)) continue;
+    const source = readFileSync(join(root, file), "utf8");
+    for (const match of source.matchAll(
+      /^export type (\w+)\s*=\s*([^;]+);/gm,
+    )) {
+      const parts = (match[2] ?? "")
+        .replace(/\s+/g, " ")
+        .split("|")
+        .map((part) => part.trim())
+        .filter((part) => part !== "");
+      if (
+        parts.length > 0 &&
+        parts.every((part) =>
+          /^(?:"[^"]*"|-?\d+(?:\.\d+)?|[A-Z]\w*)$/.test(part),
+        )
+      ) {
+        written.set(match[1] ?? "", parts);
+      }
+    }
+  }
+  const types = new Map(known.map((type) => [type.name, type]));
+  const resolve = (
+    name: string,
+    seen: ReadonlySet<string>,
+  ): readonly string[] | null => {
+    const token = types.get(name);
+    if (token) return token.values;
+    const parts = written.get(name);
+    if (parts === undefined || seen.has(name)) return null;
+    const values: string[] = [];
+    for (const part of parts) {
+      if (/^[A-Z]/.test(part)) {
+        const inner = resolve(part, new Set([...seen, name]));
+        if (inner === null) return null;
+        values.push(...inner);
+      } else {
+        values.push(part);
+      }
+    }
+    return values;
+  };
+  return [...written.keys()]
+    .filter((name) => !types.has(name))
+    .sort()
+    .flatMap((name) => {
+      const values = resolve(name, new Set());
+      return values === null
+        ? []
+        : [{ name, values: [...new Set(values)], note: "" }];
+    });
+}
+
 function slugOf(text: string): string {
   return text
     .toLowerCase()
@@ -295,6 +359,7 @@ function withoutFrontmatter(markdown: string): string {
 /** Everything the server answers from, read from the repository at `root` the way the docs site reads it. */
 export function buildKnowledge(root: string): Knowledge {
   const components = componentSources(root);
+  const tokens = tokenTypes();
   const { titles, text } = buildSearchIndexes(searchDocsIn(root));
   const version: unknown = JSON.parse(
     readFileSync(join(root, "packages/react/package.json"), "utf8"),
@@ -313,7 +378,7 @@ export function buildKnowledge(root: string): Knowledge {
       pageEntry(root, route, components),
     ),
     tokens: tokenGroups(root),
-    types: tokenTypes(),
+    types: [...tokens, ...literalTypes(root, tokens)],
     rules: rulesIn(readFileSync(join(root, "docs/LAYOUT_RULES.md"), "utf8")),
     search: { titles: JSON.stringify(titles), text: JSON.stringify(text) },
     llms: absoluteLinks(llmsText(root, components, "/")),
