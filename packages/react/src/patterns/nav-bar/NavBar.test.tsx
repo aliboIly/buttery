@@ -11,6 +11,7 @@ import {
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
+import type { ReactElement } from "react";
 import {
   afterEach,
   beforeEach,
@@ -253,6 +254,45 @@ describe("NavBar", () => {
     await waitFor(() => {
       expect(follower.contains(onTop())).toBe(true);
     });
+  });
+
+  it("keeps its pinned actions in the bar when it folds, just before the menu button", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1200, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    function Bar({ width }: { readonly width: number }): ReactElement {
+      return (
+        <div style={{ inlineSize: `${String(width)}px` }}>
+          <NavBar
+            brand={<a href="#top">Halfmoon</a>}
+            actions={<Button variant="secondary">Sign in</Button>}
+            pinned={<Button variant="secondary">Bag</Button>}
+          >
+            <MorphMenu.Link href="#coffee">Coffee</MorphMenu.Link>
+          </NavBar>
+        </div>
+      );
+    }
+    const { rerender } = render(<Bar width={1100} />);
+    expect(
+      screen.getByRole("button", { name: "Bag" }).getBoundingClientRect().left,
+    ).toBeGreaterThan(
+      screen.getByRole("button", { name: "Sign in" }).getBoundingClientRect()
+        .right,
+    );
+    rerender(<Bar width={400} />);
+    const menu = await screen.findByRole("button", { name: "Menu" });
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: "Sign in" })).toBeNull();
+    });
+    const bag = screen
+      .getByRole("button", { name: "Bag" })
+      .getBoundingClientRect();
+    const button = menu.getBoundingClientRect();
+    expect(button.left).toBeGreaterThan(bag.right);
+    expect(button.left - bag.right).toBeLessThanOrEqual(24);
   });
 
   it("opens a menu's card 8px under the bar, leaving the brand, menus and actions uncovered", async () => {

@@ -146,7 +146,8 @@
     justify-content: flex-end;
   }
 
-  .bt-nav-bar [data-bt-part="nav-bar-actions"] {
+  .bt-nav-bar
+    :is([data-bt-part="nav-bar-actions"], [data-bt-part="nav-bar-pinned"]) {
     display: flex;
     flex: none;
     align-items: center;
@@ -159,6 +160,14 @@
 
   .bt-nav-bar [data-bt-part="nav-bar-bar"][data-folded] {
     justify-content: space-between;
+  }
+
+  /* Folded without a search, the brand takes the room between, so pinned actions sit by the menu button. */
+  .bt-nav-bar
+    [data-folded]:not(:has(> [data-bt-part="nav-bar-search"]))
+    > [data-bt-part="nav-bar-brand"] {
+    flex-grow: 1;
+    min-inline-size: 0;
   }
 
   .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-search"] {

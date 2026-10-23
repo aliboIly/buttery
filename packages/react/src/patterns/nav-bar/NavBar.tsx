@@ -55,6 +55,11 @@ export interface NavBarProps extends Omit<
   /** The end of the bar: a `secondary` pill and a `primary` call to action with `arrow="forward"`. */
   readonly actions?: ReactNode;
   /**
+   * Actions that stay in the bar when it folds, just before the menu button, such as a store's bag or a
+   * notification bell, as icon buttons or small pills. Unfolded, they follow `actions`.
+   */
+  readonly pinned?: ReactNode;
+  /**
    * `"static"` (the default) scrolls away with the page; `"sticky"` stays pinned; `"auto-hide"` slides away
    * as the page scrolls down and comes back as it scrolls up. Pinned and scrolled, it takes the `panel`
    * surface with `shadow-card`.
@@ -102,6 +107,7 @@ function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
     const groups = [
       row.querySelector(':scope > [data-bt-part="nav-bar-brand"]'),
       row.querySelector(':scope > [data-bt-part="nav-bar-actions"]'),
+      row.querySelector(':scope > [data-bt-part="nav-bar-pinned"]'),
     ].filter((group) => group !== null);
     const search = row.querySelector(
       ':scope > [data-bt-part="nav-bar-search"]',
@@ -358,6 +364,7 @@ export function NavBar({
   brand,
   search,
   actions,
+  pinned,
   behavior = "static",
   label = "Main",
   menuLabel = "Menu",
@@ -436,6 +443,9 @@ export function NavBar({
       ) : null}
       {hasContent(actions) ? (
         <div data-bt-part="nav-bar-actions">{actions}</div>
+      ) : null}
+      {hasContent(pinned) ? (
+        <div data-bt-part="nav-bar-pinned">{pinned}</div>
       ) : null}
       <PhoneMenu
         label={label}
