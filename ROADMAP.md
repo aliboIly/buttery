@@ -11,7 +11,7 @@ Kept up to date as items finish.
 - Up next in this phase: style options (`variant`, `size`, `layout`) for the main controls, badges and page patterns
 - Then the Phase 7 gate (`pnpm check` and the full layout matrix), `v0.9.0` and its release, and the phase report
 
-Done since the last update: a right-click `ContextMenu` that also opens from the keyboard, on Deckhand's slides; a `Sheet` (a side panel on a laptop, a drawer on a phone) with the shop's bag on it and `/bag` and `/checkout` pages; an `Accordion` and an `Faq` pattern with the shop's questions on them; `NavBar`'s pinned actions; `OverflowCluster` refitting when its gap or size changes; Deckhand's big numbers kept to one line; core and react published one module per file. Earlier: the docs went live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` are GitHub releases.
+Done since the last update: a right-click `ContextMenu` that also opens from the keyboard, on Deckhand's slides; a `Sheet` (a side panel on a laptop, a drawer on a phone) with the shop's bag on it and `/bag` and `/checkout` pages; an `Accordion` and an `Faq` pattern with the shop's questions on them; `NavBar`'s pinned actions; `OverflowCluster` refitting when its gap or size changes; Deckhand's big numbers kept to one line; core and react built one module per file for npm. Earlier: the docs went live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` are GitHub releases.
 
 **Next**, in order:
 1. `@buttery/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
@@ -109,6 +109,7 @@ Done since the last update: a right-click `ContextMenu` that also opens from the
 - [x] Deckhand, a slide editor, and the Halfmoon shop, the roastery's online store, replace Card Studio and its site as the editor and marketing demos
 - [x] `Sheet`, a side panel on a laptop and a drawer on a phone, with the shop's bag on it and pages of its own for the bag and checkout
 - [x] `Accordion` and the `Faq` pattern (groups, a search, deep links, three layouts), with the shop's questions on them
+- [x] `ContextMenu`, a right-click menu that also opens from the keyboard, with Deckhand's slide actions on it
 - [ ] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
 - [x] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
 
