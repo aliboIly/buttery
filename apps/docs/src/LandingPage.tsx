@@ -100,6 +100,7 @@ function TryIt(): ReactElement {
           <Stack gap={2}>
             <Text variant="label">Notify me about</Text>
             <SegmentedControl
+              layout="fill"
               label="Notify me about"
               options={NOTIFY}
               value={notify}

@@ -40,6 +40,7 @@ function Setting<Value extends string>({
     <Field label={label}>
       {(control) => (
         <SegmentedControl
+          layout="fill"
           label={label}
           aria-labelledby={control["aria-labelledby"]}
           options={options}

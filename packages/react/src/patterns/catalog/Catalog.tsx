@@ -432,6 +432,7 @@ export function CatalogFilter({
     >
       {control === "segmented" ? (
         <SegmentedControl
+          layout="fill"
           label={label}
           options={choices}
           value={value}

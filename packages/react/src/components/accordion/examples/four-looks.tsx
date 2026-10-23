@@ -36,6 +36,7 @@ export function FourLooks(): ReactElement {
           {(control) => (
             <SegmentedControl<AccordionSize>
               {...control}
+              layout="fill"
               label="Size"
               options={SIZES}
               value={size}

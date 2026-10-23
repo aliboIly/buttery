@@ -33,6 +33,7 @@ function Recipe({ guide }: { readonly guide: Guide }): ReactElement {
             {(control) => (
               <SegmentedControl
                 {...control}
+                layout="fill"
                 label="How many cups"
                 options={CUPS.map((value) => ({
                   value,

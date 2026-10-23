@@ -76,6 +76,7 @@ function ChoiceControl({
       {(control) =>
         few && fits ? (
           <SegmentedControl
+            layout="fill"
             label={name}
             aria-labelledby={control["aria-labelledby"]}
             options={options}

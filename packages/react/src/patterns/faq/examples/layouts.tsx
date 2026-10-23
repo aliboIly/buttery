@@ -24,6 +24,7 @@ export function Layouts(): ReactElement {
           {(control) => (
             <SegmentedControl<FaqLayout>
               {...control}
+              layout="fill"
               label="Layout"
               options={LAYOUTS}
               value={layout}

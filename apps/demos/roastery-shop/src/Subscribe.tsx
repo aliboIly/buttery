@@ -150,6 +150,7 @@ export function Subscribe({
                 {(control) => (
                   <SegmentedControl<PlanFor>
                     {...control}
+                    layout="fill"
                     label="Who it's for"
                     options={[
                       { value: "me", label: "For me" },
@@ -201,6 +202,7 @@ export function Subscribe({
                       {(control) => (
                         <SegmentedControl
                           {...control}
+                          layout="fill"
                           label="Deliveries in the gift"
                           options={GIFT_LENGTHS.map((option) => ({
                             value: String(option),
@@ -221,6 +223,7 @@ export function Subscribe({
               {(control) => (
                 <SegmentedControl<Frequency>
                   {...control}
+                  layout="fill"
                   label="Delivered every"
                   options={FREQUENCIES}
                   value={every}
@@ -235,6 +238,7 @@ export function Subscribe({
               {(control) => (
                 <SegmentedControl
                   {...control}
+                  layout="fill"
                   label="Bags each time"
                   options={BAG_COUNTS.map((option) => ({
                     value: String(option),

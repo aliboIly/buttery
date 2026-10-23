@@ -161,6 +161,7 @@ function LaunchChecklist(): ReactElement {
           valueText={`${String(done.size)} of ${String(TASKS.length)} done`}
         />
         <SegmentedControl
+          layout="fill"
           label="Show"
           options={VIEWS}
           value={view}
@@ -277,6 +278,7 @@ export function Showcase(): ReactElement {
           <Field label="Theme">
             {(control) => (
               <SegmentedControl
+                layout="fill"
                 label="Theme"
                 aria-labelledby={control["aria-labelledby"]}
                 options={SCHEMES}
@@ -288,6 +290,7 @@ export function Showcase(): ReactElement {
           <Field label="Density">
             {(control) => (
               <SegmentedControl
+                layout="fill"
                 label="Density"
                 aria-labelledby={control["aria-labelledby"]}
                 options={DENSITIES}
@@ -311,6 +314,7 @@ export function Showcase(): ReactElement {
           <Field label="Corners">
             {(control) => (
               <SegmentedControl
+                layout="fill"
                 label="Corners"
                 aria-labelledby={control["aria-labelledby"]}
                 options={CORNERS}

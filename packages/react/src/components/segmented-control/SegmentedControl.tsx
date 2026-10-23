@@ -42,6 +42,16 @@ export interface SegmentedControlProps<
   readonly disabled?: boolean | undefined;
   /** Shows each option's icon in place of its label, which becomes its tooltip and name. Give every option an icon. */
   readonly iconOnly?: boolean | undefined;
+  /**
+   * The track's height: `"md"` (34px, 30 compact, the default), `"sm"` (28px) for a toolbar or a dense panel, or
+   * `"lg"` (48px, 40 compact) beside 48px buttons and fields.
+   */
+  readonly size?: "sm" | "md" | "lg" | undefined;
+  /**
+   * `"hug"` (the default) keeps the control as wide as its segments wherever it's placed, even in a `Stack` or a
+   * grid cell that stretches its children; `"fill"` spans the width it's given, its segments sharing it equally.
+   */
+  readonly layout?: "hug" | "fill" | undefined;
 }
 
 function optionOf<Value extends string>(
@@ -52,7 +62,8 @@ function optionOf<Value extends string>(
 
 /**
  * One choice out of a few, shown side by side in a track, with the selection sliding between them. One
- * segment is always chosen; arrow keys move the choice. Segments share one width, the widest label's.
+ * segment is always chosen; arrow keys move the choice. Segments share one width, the widest label's, and the
+ * track hugs them unless `layout="fill"` spreads them across the width it's given.
  *
  * @example
  * <SegmentedControl label="Fill" options={["Gradient", "Color"]} value={fill} onValueChange={setFill} />
@@ -65,6 +76,8 @@ export function SegmentedControl<Value extends string = string>({
   label,
   disabled,
   iconOnly = false,
+  size = "md",
+  layout = "hug",
   className,
   ...rest
 }: SegmentedControlProps<Value>): ReactElement {
@@ -91,6 +104,8 @@ export function SegmentedControl<Value extends string = string>({
       disabled={disabled}
       className={cx("bt-segmented-control", className)}
       data-bt-control=""
+      data-size={size}
+      data-layout={layout}
       data-icon-only={iconOnly ? "" : undefined}
     >
       <SharedIndicator.Group>

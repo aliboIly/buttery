@@ -51,6 +51,7 @@ export function ThisWeek(): ReactElement {
               {(control) => (
                 <SegmentedControl<SizeId>
                   {...control}
+                  layout="fill"
                   label="Size"
                   options={SIZES.map((option) => ({
                     value: option.id,
