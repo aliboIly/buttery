@@ -403,7 +403,7 @@ test.describe("full motion", () => {
     const menu = '[data-bt="Menu"]';
     await page.goto("/components/menu?chrome=0&motion=full");
     const trigger = page
-      .getByRole("button", { name: "Card actions", exact: true })
+      .getByRole("button", { name: "Manage card", exact: true })
       .first();
     await trigger.focus();
     await startSampling(page, menu);

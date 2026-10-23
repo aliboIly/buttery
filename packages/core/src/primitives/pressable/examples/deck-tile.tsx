@@ -2,8 +2,8 @@ import type { ReactElement } from "react";
 import { Pressable, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A whole card that opens on click, with press feedback, a hover lift and a focus ring. */
-export function ClickableCard(): ReactElement {
+/** A deck's tile that opens the deck on click, with press feedback, a hover lift and a focus ring. */
+export function DeckTile(): ReactElement {
   return (
     <Stack style={{ maxInlineSize: "var(--bt-w-inspector)" }}>
       <Surface asChild level="card" pad={4}>

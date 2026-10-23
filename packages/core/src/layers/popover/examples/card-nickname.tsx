@@ -12,7 +12,7 @@ import {
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A popover whose open state lives in the example, so the form inside can close it once the saved card has a nickname. */
-export function RenameCard(): ReactElement {
+export function CardNickname(): ReactElement {
   const [open, setOpen] = useState(false);
   const [nickname, setNickname] = useState("Card ending 4242");
   const inputId = useId();

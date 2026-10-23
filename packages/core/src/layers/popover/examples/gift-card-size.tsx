@@ -15,7 +15,7 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 const SIZES = ["Wallet", "Postcard", "Square"] as const;
 
 /** A trigger that opens the gift card's printed sizes; picking one closes the popover and shows on the trigger. */
-export function CanvasSize(): ReactElement {
+export function GiftCardSize(): ReactElement {
   const [size, setSize] = useState<(typeof SIZES)[number]>("Wallet");
   return (
     <Popover>

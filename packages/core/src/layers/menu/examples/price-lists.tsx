@@ -25,7 +25,7 @@ const FIRST_LISTS: readonly PriceList[] = [
 ];
 
 /** Wholesale price lists, each with an actions menu at the end of its row that duplicates or deletes it. */
-export function CardList(): ReactElement {
+export function PriceLists(): ReactElement {
   const [lists, setLists] = useState<readonly PriceList[]>(FIRST_LISTS);
   return (
     <Stack gap={3}>

@@ -126,7 +126,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     { name: "show the blur scrim", run: press("Show blur") },
   ],
   menu: [
-    { name: "open the actions menu", run: press("Card actions") },
+    { name: "open the actions menu", run: press("Manage card") },
     escape,
     { name: "open the view menu", run: press("View") },
   ],

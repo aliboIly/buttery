@@ -743,7 +743,7 @@ export interface MenuComponent {
  * @example
  * <Menu>
  *   <Menu.Trigger asChild>
- *     <IconButton icon={Ellipsis} label="Card actions" />
+ *     <IconButton icon={Ellipsis} label="Manage card" />
  *   </Menu.Trigger>
  *   <Menu.Content>
  *     <Menu.Item icon={Star} onSelect={makeDefault}>Make default</Menu.Item>

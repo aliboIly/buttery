@@ -4,7 +4,7 @@ import { Inline, Menu, Pressable, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A saved payment card's less common actions behind one trigger, with the destructive one set apart in danger. */
-export function CardActions(): ReactElement {
+export function SavedCardActions(): ReactElement {
   const [last, setLast] = useState("Nothing chosen yet");
   return (
     <Inline gap={3} align="center">
@@ -12,7 +12,7 @@ export function CardActions(): ReactElement {
         <Surface asChild level="raised" padX={4} padY={2} radius="full">
           <Menu.Trigger asChild>
             <Pressable>
-              <Text variant="button">Card actions</Text>
+              <Text variant="button">Manage card</Text>
             </Pressable>
           </Menu.Trigger>
         </Surface>
@@ -50,7 +50,7 @@ export function CardActions(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Card actions");
+  await press("button", "Manage card");
   await press("menuitem", "Make default");
   await see("Card ending 4242 is now your default");
 };

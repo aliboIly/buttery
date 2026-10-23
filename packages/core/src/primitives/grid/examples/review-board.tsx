@@ -8,7 +8,7 @@ function decks(count: number): string {
 }
 
 /** A review board's three columns of decks as equal cards with the 16px card gap: stacked when narrow, three across from 640px. */
-export function CardGrid(): ReactElement {
+export function ReviewBoard(): ReactElement {
   const [inReview, setInReview] = useState(1);
   const columns = [
     { title: "Draft", count: 3 },

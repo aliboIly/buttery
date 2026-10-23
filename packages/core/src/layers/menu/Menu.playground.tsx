@@ -37,7 +37,7 @@ export const live: LiveDemo = {
   controls: {
     align: { kind: "choice", options: ALIGNS, initial: "end" },
     disabled: { kind: "toggle", initial: false },
-    children: { kind: "text", initial: "Card actions" },
+    children: { kind: "text", initial: "Manage card" },
     open: { kind: "toggle", initial: false },
     dot: { kind: "toggle", initial: false },
   },
@@ -95,7 +95,7 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Inline justify="end">
         <Menu>
-          <Trigger label="Card actions" />
+          <Trigger label="Manage card" />
           <Menu.Content>
             <Menu.Item>Make default</Menu.Item>
             <Menu.Item>Use for subscriptions</Menu.Item>
