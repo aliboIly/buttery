@@ -1766,19 +1766,19 @@ test.describe("Tilt and crop on their docs pages (MOTION_SPEC §3)", () => {
     const example = page
       .getByRole("region", { name: "TiltPad examples" })
       .locator("[data-docs-example]")
-      .filter({ has: page.getByRole("status", { name: "Card preview" }) });
+      .filter({ has: page.getByRole("status", { name: "Picture preview" }) });
     await example.scrollIntoViewIfNeeded();
     await example.locator('[data-bt-part="knob"]').evaluate((element) => {
       element.setAttribute("data-follow-control", "");
     });
     await example
-      .getByRole("status", { name: "Card preview" })
+      .getByRole("status", { name: "Picture preview" })
       .evaluate((element) => {
         element.setAttribute("data-follow-card", "");
       });
     const { moved, delay, trailing } = await followDrag(
       page,
-      example.getByRole("group", { name: "Lean" }),
+      example.getByRole("group", { name: "Tilt" }),
       "[data-follow-control]",
       "[data-follow-card]",
       { x: 24, y: -12 },
