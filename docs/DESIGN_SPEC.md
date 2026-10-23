@@ -420,6 +420,13 @@ A list of items that open in place, on Radix Accordion. Each trigger row is its 
 - `plain`: rows padded 12 a side with r10, tinting `bg-item-hover` on hover, 2 apart.
 - Keyboard focus rings the trigger: outside it on divided rows, 2px inside it on the others, whose edges or cards would clip it. A disabled item's words take `text-disabled` and its icons `icon-disabled`.
 
+### Faq (_derived_)
+A section of questions on `Accordion` (several open at once): a `TextStack size="section"` intro, the questions, and an optional `contact`. It's its own size container. `layout="stacked"` (the default) keeps to 720 (`--bt-w-prose`): the questions 48 under the intro (64 on a page from 1024px), the contact 32 under them. From 640px of its own width, `split` puts the intro and the contact in a column a third wide and at least 240 (`--bt-faq-intro-min`), 48 from the questions, and `two-column` lays the questions out in two columns, 32 apart (16 for `cards` and `contained`). Under 640 both stack as `stacked` does.
+- The search (`search`): an outline `SearchField` over the questions, 16 above the tabs or the list (at most 600 wide in two columns). It matches every group's questions, answers and keywords, marks the words found (`SearchHighlight`) and names each match's group under it. With nothing found, an `EmptyState` (a search tile, a title, a line and a soft "Show all questions" button) takes the list's place, 32 above and below.
+- Groups: with two or more, `Tabs` switch between them; they fold into More on a narrow column as any tabs do.
+- Answers given as words are `<p>`s that wrap at 60ch, in the accordion's body size.
+- `Faq.Contact`: a `card` surface padded 24 holding a `TextStack size="empty"` (the title defaults to "Still have a question?") and its actions 16 under it, or beside it and centered from 480px of its own width.
+
 ---
 
 ## 6. App kit (Phase 6B, _derived_)

@@ -663,3 +663,13 @@ export type {
   AccordionSize,
   AccordionVariant,
 } from "./components/accordion/Accordion.tsx";
+export { Faq } from "./patterns/faq/Faq.tsx";
+export type {
+  FaqComponent,
+  FaqContactProps,
+  FaqGroup,
+  FaqLabels,
+  FaqLayout,
+  FaqProps,
+  FaqQuestion,
+} from "./patterns/faq/Faq.tsx";

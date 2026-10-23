@@ -97,6 +97,7 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 | Primary hover | `#1a1a1a` → `#2b2b2b` | `dur-fast` |
 | Accordion item opens (_derived_) | Its panel's height opens through `Morph` while the answer fades in and the chevron turns 180°; in a one-at-a-time accordion the open item closes at the same moment | height and chevron `spring.smooth`, answer `dur-fast` |
 | Accordion item closes (_derived_) | The answer fades out, the height closes and the chevron turns back; the answer is gone before the height is | height and chevron `spring.smooth`, answer `dur-fast` |
+| FAQ search, tab or `#id` link (_derived_) | Matching questions swap in the frame the search changes and a tab shows its group in the frame it's chosen; a link to a question opens it as above and scrolls it under the sticky bars | one frame; opening `spring.smooth` |
 
 ### Onboarding (step dialog)
 

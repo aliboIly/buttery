@@ -1,0 +1,176 @@
+@layer bt.patterns {
+  .bt-faq {
+    --bt-faq-line: 1px;
+    --bt-faq-intro-min: 240px;
+
+    container: bt-faq / inline-size;
+    min-inline-size: 0;
+  }
+
+  .bt-faq > [data-bt-part="faq-grid"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-8) var(--bt-space-12);
+    min-inline-size: 0;
+  }
+
+  .bt-faq[data-layout="stacked"] > [data-bt-part="faq-grid"] {
+    max-inline-size: var(--bt-w-prose);
+  }
+
+  /* With the grid's 32, the intro sits 48 above the questions, as a section's intro does. */
+  .bt-faq > [data-bt-part="faq-grid"] > [data-bt-part="faq-intro"] {
+    min-inline-size: 0;
+    padding-block-end: var(--bt-space-4);
+  }
+
+  @container bt-page (width >= 1024px) {
+    .bt-faq > [data-bt-part="faq-grid"] > [data-bt-part="faq-intro"] {
+      padding-block-end: var(--bt-space-8);
+    }
+  }
+
+  .bt-faq > [data-bt-part="faq-grid"] > [data-bt-part="faq-body"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-faq > [data-bt-part="faq-grid"] > [data-bt-part="faq-contact"] {
+    min-inline-size: 0;
+  }
+
+  .bt-faq[data-layout="two-column"]
+    > [data-bt-part="faq-grid"]
+    > [data-bt-part="faq-body"]
+    > .bt-search-field {
+    max-inline-size: var(--bt-w-search-open);
+  }
+
+  .bt-faq [data-bt-part="faq-lead"] {
+    max-inline-size: 60ch;
+    color: var(--bt-text-secondary);
+    font-size: var(--bt-text-body-lg-size-sm);
+    line-height: var(--bt-text-body-lg-line-sm);
+  }
+
+  .bt-faq [data-bt-part="faq-answer"] {
+    max-inline-size: 60ch;
+  }
+
+  .bt-faq [data-bt-part="faq-empty"] {
+    padding-block: var(--bt-space-8);
+  }
+
+  .bt-faq [data-bt-part="faq-columns"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 0 var(--bt-space-8);
+    min-inline-size: 0;
+  }
+
+  .bt-faq[data-variant="contained"] [data-bt-part="faq-columns"] {
+    gap: var(--bt-space-4);
+  }
+
+  .bt-faq[data-variant="cards"] [data-bt-part="faq-columns"] {
+    gap: var(--bt-space-2) var(--bt-space-4);
+  }
+
+  .bt-faq[data-variant="plain"] [data-bt-part="faq-columns"] {
+    row-gap: var(--bt-space-0_5);
+  }
+
+  /* Stacked, the second column carries on the first's list, so a divided one keeps its hairline between them. */
+  .bt-faq[data-variant="divided"]
+    [data-bt-part="faq-columns"]
+    > .bt-accordion
+    + .bt-accordion {
+    border-block-start: var(--bt-faq-line) solid var(--bt-border);
+  }
+
+  @container bt-faq (width >= 640px) {
+    .bt-faq[data-layout="split"]
+      > [data-bt-part="faq-grid"]:has(
+        > [data-bt-part="faq-intro"],
+        > [data-bt-part="faq-contact"]
+      ) {
+      grid-template-columns: minmax(var(--bt-faq-intro-min), 1fr) minmax(0, 2fr);
+      grid-template-rows: auto 1fr;
+      row-gap: var(--bt-space-6);
+    }
+
+    .bt-faq[data-layout="split"]
+      > [data-bt-part="faq-grid"]
+      > [data-bt-part="faq-intro"] {
+      grid-area: 1 / 1;
+      padding-block-end: 0;
+    }
+
+    .bt-faq[data-layout="split"]
+      > [data-bt-part="faq-grid"]
+      > [data-bt-part="faq-contact"] {
+      grid-area: 2 / 1;
+      align-self: start;
+    }
+
+    .bt-faq[data-layout="split"]
+      > [data-bt-part="faq-grid"]:not(:has(> [data-bt-part="faq-intro"]))
+      > [data-bt-part="faq-contact"] {
+      grid-area: 1 / 1 / span 2;
+    }
+
+    .bt-faq[data-layout="split"]
+      > [data-bt-part="faq-grid"]:has(
+        > [data-bt-part="faq-intro"],
+        > [data-bt-part="faq-contact"]
+      )
+      > [data-bt-part="faq-body"] {
+      grid-area: 1 / 2 / span 2;
+    }
+
+    .bt-faq [data-bt-part="faq-columns"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .bt-faq[data-variant="divided"]
+      [data-bt-part="faq-columns"]
+      > .bt-accordion
+      + .bt-accordion {
+      border-block-start: 0;
+    }
+  }
+
+  .bt-faq-contact {
+    container: bt-faq-contact / inline-size;
+    min-inline-size: 0;
+    padding: var(--bt-space-6);
+    border-radius: var(--bt-r-lg);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  .bt-faq-contact > [data-bt-part="faq-contact-inner"] {
+    display: grid;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-faq-contact
+    > [data-bt-part="faq-contact-inner"]
+    > [data-bt-part="faq-contact-actions"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bt-space-2);
+  }
+
+  @container bt-faq-contact (width >= 480px) {
+    .bt-faq-contact > [data-bt-part="faq-contact-inner"] {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--bt-space-6);
+    }
+  }
+}
