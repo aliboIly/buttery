@@ -12,6 +12,7 @@
     --bt-catalog-tile-lg: 64px;
     --bt-catalog-ratio-top: 4 / 3;
     --bt-catalog-ratio-background: 3 / 4;
+    --bt-catalog-backdrop-strip: 45%;
     --bt-catalog-search: 240px;
     --bt-catalog-select: 200px;
     --bt-catalog-hit: 24px;
@@ -44,13 +45,15 @@
     min-inline-size: 0;
   }
 
-  /* It grows into whatever row it ends up on, so its controls keep to the toolbar's end. */
+  /* It grows into whatever row it ends up on, so its controls keep to the toolbar's end, and a control that
+     doesn't fit beside the rest takes a row of its own rather than squeezing the sort's value away. */
   .bt-catalog-toolbar > [data-bt-part="catalog-toolbar-end"] {
     display: flex;
     flex: 1 0 auto;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--bt-space-3);
+    gap: var(--bt-space-2) var(--bt-space-3);
     min-inline-size: 0;
   }
 
@@ -352,11 +355,13 @@
     border-radius: var(--bt-catalog-tile-radius);
   }
 
+  /* However tall its words grow, the picture keeps a strip above them, 45% of the card's width. */
   .bt-catalog-card[data-media="background"] {
     position: relative;
     justify-content: flex-end;
     aspect-ratio: var(--bt-catalog-ratio, var(--bt-catalog-ratio-background));
-    padding: var(--bt-space-2);
+    padding: var(--bt-catalog-backdrop-strip) var(--bt-space-2)
+      var(--bt-space-2);
   }
 
   .bt-catalog-card[data-media="background"]
