@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { expectButtery } from "../src/index.ts";
+import { checkButtery, expectButtery } from "../src/index.ts";
 import type { ReportedViolation } from "../src/index.ts";
 
 const tokens = readFileSync(
@@ -152,6 +152,24 @@ test("fails each broken element under its rule, with a fix", async ({
   expect(
     reportedViolations().every((violation) => violation.fix.length > 20),
   ).toBe(true);
+});
+
+test("returns the same violations from checkButtery without failing, and none for a page that passes", async ({
+  page,
+}) => {
+  await page.setContent(FIXED);
+  expect(
+    await checkButtery(page, {
+      name: "fixed",
+      interactions: [{ name: "load more", run: loadMore }],
+    }),
+  ).toEqual([]);
+  await page.setContent(BROKEN);
+  const found = await checkButtery(page, { name: "broken" });
+  expect(found.map(({ rule }) => rule)).toEqual(
+    expect.arrayContaining(["overlap", "overflow", "scale", "target-size"]),
+  );
+  expect(found.every((violation) => violation.page === "broken")).toBe(true);
 });
 
 test("passes the fixed fixture in both themes and densities", async ({

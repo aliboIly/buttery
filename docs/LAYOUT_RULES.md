@@ -185,7 +185,7 @@ Weight 600 for display/headings, letter-spacing −0.02em at ≥ 32px. Two-tone 
 ## 5. Automated checks
 
 ### `@butteryui/test` — `expectButtery(page, options)`
-Runs in Playwright against every playground route and every app built on buttery.
+Runs in Playwright against every playground route and every app built on buttery. `checkButtery(page, options)` runs the same checks and returns the violations instead of failing, for tools that report them.
 
 | Check | Fails when |
 |---|---|

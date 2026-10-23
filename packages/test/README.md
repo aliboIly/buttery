@@ -26,6 +26,8 @@ test("the settings page is buttery", async ({ page }) => {
 });
 ```
 
+`checkButtery(page, options)` runs the same checks and returns the problems instead of failing, for scripts and tools that report them.
+
 [Check your layout](https://aliboily.github.io/buttery/guides/check-your-layout) on the docs site covers the options, interactions and the JSON report.
 
 ## License

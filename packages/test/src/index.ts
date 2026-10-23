@@ -1,4 +1,8 @@
-export { expectButtery, watchResizeLoops } from "./expect-buttery.ts";
+export {
+  checkButtery,
+  expectButtery,
+  watchResizeLoops,
+} from "./expect-buttery.ts";
 export type {
   ButteryInteraction,
   ExpectButteryOptions,

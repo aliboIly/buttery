@@ -129,3 +129,13 @@ Interactions run once, in order, at the first viewport, theme and density. An in
 A failed run prints each problem with the element, the rule, what it measured and a fix. The test's results also get `buttery-violations.json`, the problems as JSON, and an annotated screenshot for each viewport, theme and density where it found one.
 
 [Reading a report](/guides/check-your-layout#reading-a-report) shows a report and what to do with it.
+
+## Reporting without failing
+
+`checkButtery` runs the same checks with the same options and returns the problems instead of failing, an empty list when the page passes. It's for tools that report what they find, such as a script that checks a list of pages or an agent's layout check.
+
+```ts
+import { checkButtery, quickMatrix } from "@butteryui/test";
+
+const problems = await checkButtery(page, { ...quickMatrix, name: "orders" });
+```

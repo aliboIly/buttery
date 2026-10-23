@@ -338,18 +338,13 @@ async function takeResizeLoops(page: Page): Promise<number> {
 
 /**
  * Checks a page against buttery's layout rules (LAYOUT_RULES §5) in every requested viewport, theme and
- * density, and fails with a report of every problem and how to fix it. Static checks emulate reduced
- * motion and wait for buttery to report settled. When it's done, the page goes back to the viewport it
- * started at, so set the viewport first to keep checking a page at that size. Inside a Playwright test,
- * the report is also attached as JSON (`buttery-violations.json`) with annotated screenshots.
+ * density, as `expectButtery` does, and returns every problem with how to fix it instead of failing: for
+ * tools that report them, such as a command line or an agent's check. An empty list means the page passed.
  *
  * @example
- * test("the settings page is buttery", async ({ page }) => {
- *   await page.goto("/settings");
- *   await expectButtery(page, { ...quickMatrix, name: "settings" });
- * });
+ * const violations = await checkButtery(page, { ...quickMatrix, name: "settings" });
  */
-export async function expectButtery(
+export async function checkButtery(
   page: Page,
   options: ExpectButteryOptions = {},
 ): Promise<readonly ReportedViolation[]> {
@@ -538,6 +533,27 @@ export async function expectButtery(
       });
     }
   }
+  return reported;
+}
+
+/**
+ * Checks a page against buttery's layout rules (LAYOUT_RULES §5) in every requested viewport, theme and
+ * density, and fails with a report of every problem and how to fix it. Static checks emulate reduced
+ * motion and wait for buttery to report settled. When it's done, the page goes back to the viewport it
+ * started at, so set the viewport first to keep checking a page at that size. Inside a Playwright test,
+ * the report is also attached as JSON (`buttery-violations.json`) with annotated screenshots.
+ *
+ * @example
+ * test("the settings page is buttery", async ({ page }) => {
+ *   await page.goto("/settings");
+ *   await expectButtery(page, { ...quickMatrix, name: "settings" });
+ * });
+ */
+export async function expectButtery(
+  page: Page,
+  options: ExpectButteryOptions = {},
+): Promise<readonly ReportedViolation[]> {
+  const reported = await checkButtery(page, options);
   if (reported.length > 0) throw new Error(formatViolations(reported));
   return reported;
 }
