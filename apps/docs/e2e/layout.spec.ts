@@ -172,7 +172,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   "data-table": [
     { name: "reload, showing skeleton rows", run: press("Reload") },
     {
-      name: "stripe the live demo's rows",
+      name: "shade every second row of the live demo",
       allowMove: ["main"],
       run: liveControls({ variant: "striped" }),
       acrossMatrix: true,

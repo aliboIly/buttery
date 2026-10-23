@@ -671,7 +671,7 @@ describe("DataTable", () => {
     expect(getComputedStyle(cell).backgroundColor).toBe(resting);
   });
 
-  it("stripes every second body row on the section's gray when striped, selection and a hover still painting over it", async () => {
+  it("shades every second body row with the section's gray when striped, selection and a hover still painting over it", async () => {
     render(
       <Orders
         variant="striped"
