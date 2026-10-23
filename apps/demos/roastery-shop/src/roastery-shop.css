@@ -5,7 +5,6 @@
   --bt-roastery-shop-bag-feature: 176px;
   --bt-roastery-shop-bag-detail: 216px;
   --bt-roastery-shop-bag-story: 112px;
-  --bt-roastery-shop-filter: 200px;
   --bt-roastery-shop-bar: 6px;
   --bt-roastery-shop-dot: 8px;
   --bt-roastery-shop-plan: 360px;
@@ -188,58 +187,16 @@
   border-block-start: 0;
 }
 
-.shop-filters {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--bt-space-4);
-  min-inline-size: 0;
-}
-
-.shop-filter-controls {
-  display: flex;
-  align-items: center;
-  gap: var(--bt-space-3);
-  min-inline-size: 0;
-}
-
-.shop-filter-origin {
-  flex: none;
-  inline-size: var(--bt-roastery-shop-filter);
-}
-
-@container bt-page (width < 640px) {
-  .shop-filters,
-  .shop-filter-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .shop-filter-origin {
-    inline-size: auto;
-  }
-}
-
-/* A coffee card's words over its shelf, which rises from the card's bottom edge. */
-.shop-card-visual {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: var(--bt-space-4);
-  block-size: 100%;
-  min-block-size: 0;
-}
-
-.shop-card-shelf-frame {
-  display: grid;
-  min-block-size: 0;
-  padding-inline: var(--bt-space-6);
-}
-
+/* A coffee's bag fills its card's picture, and its tile once the coffees show as a list. */
 .shop-card-shelf {
-  place-items: end center;
-  padding-block-end: var(--bt-space-2);
-  border-end-start-radius: 0;
-  border-end-end-radius: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  padding: 0;
+  border-radius: 0;
+}
+
+.shop-card-shelf > .shop-bag-art {
+  block-size: 76%;
 }
 
 /* A coffee's details: its bag, then what to buy, then the facts; beside each other once there's room. */

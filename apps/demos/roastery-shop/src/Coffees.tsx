@@ -2,10 +2,8 @@ import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
 import {
-  Bento,
   Button,
-  EmptyState,
-  ExpandableCard,
+  Catalog,
   Field,
   Section,
   SegmentedControl,
@@ -13,6 +11,7 @@ import {
   StatusBadge,
   TagChip,
 } from "@buttery/react";
+import type { CatalogFilters } from "@buttery/react";
 import { Coffee as CoffeeIcon, Plus } from "lucide-react";
 import { useAddToBag } from "./add-to-bag.ts";
 import { Shelf } from "./BagArt.tsx";
@@ -28,16 +27,6 @@ export type RoastFilter = Roast | "all";
 export type OriginFilter = string;
 
 const ALL_ORIGINS = "all";
-
-const ROAST_OPTIONS: readonly { value: RoastFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  ...ROASTS.map((roast) => ({ value: roast, label: roast })),
-];
-
-const ORIGIN_OPTIONS = [
-  { value: ALL_ORIGINS, label: "All origins" },
-  ...ORIGINS.map((origin) => ({ value: origin, label: origin })),
-];
 
 function CoffeeDetail({
   coffee,
@@ -142,11 +131,33 @@ function CoffeeCard({
   const [grind, setGrind] = useState<GrindId>("whole");
   const { addCoffee } = useAddToBag();
   return (
-    <ExpandableCard
+    <Catalog.Card
       title={coffee.name}
-      span={4}
-      open={open}
-      onOpenChange={onOpenChange}
+      size="lg"
+      media={<Shelf label={coffee.label} className="shop-card-shelf" />}
+      mediaRatio={3 / 2}
+      eyebrow={`${coffee.origin} · ${coffee.process} · ${coffee.roast} roast`}
+      badges={
+        coffee.flag === undefined ? null : (
+          <StatusBadge tone={coffee.id === "nyeri" ? "warning" : "success"}>
+            {coffee.flag}
+          </StatusBadge>
+        )
+      }
+      meta={notesOf(coffee)}
+      price={`From ${dollars(bagPrice(coffee.id, "12oz"))}`}
+      actions={
+        <Button
+          size="sm"
+          iconStart={Plus}
+          aria-label={`Add to bag: ${coffee.name}, 12 oz, whole bean`}
+          onClick={() => {
+            addCoffee({ coffee: coffee.id, size: "12oz", grind: "whole" });
+          }}
+        >
+          Add to bag
+        </Button>
+      }
       detail={
         <CoffeeDetail
           coffee={coffee}
@@ -156,45 +167,30 @@ function CoffeeCard({
           onGrindChange={setGrind}
         />
       }
-    >
-      <div className="shop-card-visual">
-        <Stack gap={3} padX={6}>
-          <Inline gap={3} justify="between">
-            <Text variant="body-sm" tone="secondary" truncate>
-              {`${coffee.origin} · ${coffee.process} · ${coffee.roast} roast`}
-            </Text>
-            {coffee.flag === undefined ? null : (
-              <StatusBadge tone={coffee.id === "nyeri" ? "warning" : "success"}>
-                {coffee.flag}
-              </StatusBadge>
-            )}
-          </Inline>
-          <Text variant="label" truncate>
-            {notesOf(coffee)}
-          </Text>
-          <Inline gap={3} justify="between">
-            <Text variant="label" tabular tone="secondary">
-              {`From ${dollars(bagPrice(coffee.id, "12oz"))}`}
-            </Text>
-            <Button
-              size="sm"
-              iconStart={Plus}
-              aria-label={`Add to bag: ${coffee.name}, 12 oz, whole bean`}
-              onClick={(event) => {
-                event.preventDefault();
-                addCoffee({ coffee: coffee.id, size: "12oz", grind: "whole" });
-              }}
-            >
-              Add to bag
-            </Button>
-          </Inline>
-        </Stack>
-        <div className="shop-card-shelf-frame">
-          <Shelf label={coffee.label} className="shop-card-shelf" />
-        </div>
-      </div>
-    </ExpandableCard>
+      open={open}
+      onOpenChange={onOpenChange}
+    />
   );
+}
+
+const FILTER_BY = {
+  roast: (coffee: Coffee) => coffee.roast,
+  origin: (coffee: Coffee) => coffee.origin,
+};
+
+const SORT_BY = {
+  low: (a: Coffee, b: Coffee) => a.price - b.price,
+  high: (a: Coffee, b: Coffee) => b.price - a.price,
+};
+
+const SORTS = [
+  { value: "featured", label: "Featured" },
+  { value: "low", label: "Price, low to high" },
+  { value: "high", label: "Price, high to low" },
+];
+
+function coffeeCount(count: number): string {
+  return count === 1 ? "1 coffee" : `${String(count)} coffees`;
 }
 
 /** The coffees, filtered by roast and origin, each opening into its details with a size, a grind and Add to bag. */
@@ -214,74 +210,63 @@ export function Coffees({
   readonly open: CoffeeId | null;
   readonly onOpenChange: (open: CoffeeId | null) => void;
 }): ReactElement {
-  const shown = COFFEES.filter(
-    (coffee) =>
-      (roast === "all" || coffee.roast === roast) &&
-      (origin === ALL_ORIGINS || coffee.origin === origin),
-  );
+  const filters: CatalogFilters = {
+    ...(roast === "all" ? {} : { roast }),
+    ...(origin === ALL_ORIGINS ? {} : { origin }),
+  };
   return (
     <Section
       id="coffees"
       title="The coffees"
       body="Every one roasted to order. The light roasts are bright and fruity; the medium and dark ones lean toward chocolate and nuts."
     >
-      <Stack gap={6}>
-        <div className="shop-filters">
-          <div className="shop-filter-controls">
-            <SegmentedControl<RoastFilter>
-              label="Roast"
-              options={ROAST_OPTIONS}
-              value={roast}
-              onValueChange={onRoastChange}
-            />
-            <div className="shop-filter-origin">
-              <Select
+      <Catalog
+        items={COFFEES}
+        filterBy={FILTER_BY}
+        filters={filters}
+        onFiltersChange={(next) => {
+          onRoastChange(
+            ROASTS.find((candidate) => candidate === next["roast"]) ?? "all",
+          );
+          onOriginChange(next["origin"] ?? ALL_ORIGINS);
+        }}
+        sortBy={SORT_BY}
+      >
+        {(coffees) => (
+          <>
+            <Catalog.Toolbar label="Choose a coffee">
+              <Catalog.Filter name="roast" label="Roast" options={ROASTS} />
+              <Catalog.Filter
+                name="origin"
                 label="Origin"
-                variant="outline"
-                options={ORIGIN_OPTIONS}
-                value={origin}
-                onValueChange={onOriginChange}
+                options={ORIGINS}
+                allLabel="All origins"
               />
-            </div>
-          </div>
-          <Text variant="label" tone="secondary" tabular aria-live="polite">
-            {shown.length === 1
-              ? "1 coffee"
-              : `${String(shown.length)} coffees`}
-          </Text>
-        </div>
-        {shown.length === 0 ? (
-          <EmptyState
-            icon={CoffeeIcon}
-            title="No coffee matches both"
-            description="Try another roast or origin, or see them all."
-            actions={
-              <Button
-                variant="primary"
-                onClick={() => {
-                  onRoastChange("all");
-                  onOriginChange(ALL_ORIGINS);
-                }}
-              >
-                Show all six coffees
-              </Button>
-            }
-          />
-        ) : (
-          <Bento>
-            {shown.map((coffee) => (
-              <CoffeeCard
-                key={coffee.id}
-                coffee={coffee}
-                open={open === coffee.id}
-                onOpenChange={(next) => {
-                  onOpenChange(next ? coffee.id : null);
-                }}
-              />
-            ))}
-          </Bento>
+              <Catalog.Count format={coffeeCount} />
+              <Catalog.Sort options={SORTS} />
+              <Catalog.ViewToggle label="Show coffees as" />
+            </Catalog.Toolbar>
+            <Catalog.Items columns={3}>
+              {coffees.map((coffee) => (
+                <CoffeeCard
+                  key={coffee.id}
+                  coffee={coffee}
+                  open={open === coffee.id}
+                  onOpenChange={(next) => {
+                    onOpenChange(next ? coffee.id : null);
+                  }}
+                />
+              ))}
+            </Catalog.Items>
+            <Catalog.NoResults
+              icon={CoffeeIcon}
+              title="No coffee matches both"
+              description="Try another roast or origin, or see them all."
+              clearLabel="Show all six coffees"
+            />
+          </>
         )}
-      </Stack>
+      </Catalog>
     </Section>
   );
 }
