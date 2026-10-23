@@ -4,25 +4,25 @@ import { Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, FormDialog, TextField } from "@buttery/react";
 
-interface Card {
+interface PriceList {
   readonly id: number;
   readonly name: string;
 }
 
 /** A dialog opened from code with open: Duplicate makes the copy, then asks what to call it. */
 export function NameTheCopy(): ReactElement {
-  const [cards, setCards] = useState<readonly Card[]>([
-    { id: 1, name: "Spring launch" },
+  const [lists, setLists] = useState<readonly PriceList[]>([
+    { id: 1, name: "Café price list" },
   ]);
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
-  const copy = cards.at(-1);
+  const copy = lists.at(-1);
   return (
     <Stack gap={3} align="start">
       <Button
         onClick={() => {
           const name = `${copy?.name ?? "Untitled"} copy`;
-          setCards([...cards, { id: cards.length + 1, name }]);
+          setLists([...lists, { id: lists.length + 1, name }]);
           setDraft(name);
           setOpen(true);
         }}
@@ -30,9 +30,9 @@ export function NameTheCopy(): ReactElement {
         Duplicate
       </Button>
       <Stack gap={1}>
-        {cards.map((card) => (
-          <Text key={card.id} variant="body-sm">
-            {card.name}
+        {lists.map((list) => (
+          <Text key={list.id} variant="body-sm">
+            {list.name}
           </Text>
         ))}
       </Stack>
@@ -42,16 +42,16 @@ export function NameTheCopy(): ReactElement {
         title="Name the copy"
         valid={draft.trim() !== ""}
         onSubmit={() => {
-          setCards(
-            cards.map((card) =>
-              card.id === copy?.id ? { ...card, name: draft.trim() } : card,
+          setLists(
+            lists.map((list) =>
+              list.id === copy?.id ? { ...list, name: draft.trim() } : list,
             ),
           );
         }}
         submitLabel="Save name"
         cancelLabel="Keep this name"
       >
-        <TextField label="Card name" value={draft} onValueChange={setDraft} />
+        <TextField label="List name" value={draft} onValueChange={setDraft} />
       </FormDialog>
     </Stack>
   );
@@ -61,7 +61,7 @@ export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("button", "Duplicate");
-  await type("Card name", " for May");
+  await type("List name", " for May");
   await press("button", "Save name");
-  await see("Spring launch copy for May");
+  await see("Café price list copy for May");
 };

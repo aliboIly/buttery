@@ -35,7 +35,7 @@ export function Guide(): ReactElement {
       aside={
         <Stack gap={1}>
           <SectionLink href="#title">Start with a title</SectionLink>
-          <SectionLink href="#finish">Pick a finish</SectionLink>
+          <SectionLink href="#theme">Pick a theme</SectionLink>
         </Stack>
       }
     >
@@ -45,13 +45,13 @@ export function Guide(): ReactElement {
             Start with a title
           </h2>
           <Text variant="body-lg">
-            Type the title in the inspector and it lands on the card.
+            Type the title in the inspector and it lands on the slide.
           </Text>
-          <h2 id="finish" className="bt-text" data-role="heading-2">
-            Pick a finish
+          <h2 id="theme" className="bt-text" data-role="heading-2">
+            Pick a theme
           </h2>
           <Text variant="body-lg">
-            Clear, Paper or Ink, each readable on any backdrop.
+            Plain, Paper or Ink, each readable on any background.
           </Text>
         </Stack>
       </article>
@@ -62,6 +62,6 @@ export function Guide(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Type the title in the inspector and it lands on the card.");
-  await see("Clear, Paper or Ink, each readable on any backdrop.");
+  await see("Type the title in the inspector and it lands on the slide.");
+  await see("Plain, Paper or Ink, each readable on any background.");
 };

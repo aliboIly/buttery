@@ -35,12 +35,12 @@ function CropDemo(): ReactElement {
       </Inline>
       <Center>
         <Surface ref={frame} level="card" padX={10} padY={8}>
-          <Text variant="title">Launch card</Text>
+          <Text variant="title">Title slide</Text>
         </Surface>
       </Center>
       <FloatingToolbar
         anchor={frame}
-        label="Canvas size"
+        label="Slide size"
         meta="1920 × 1080"
         open={cropping}
         delayed
@@ -82,15 +82,15 @@ function LiveToolbar({
     <Center>
       <Surface ref={frame} level="card" padX={10} padY={8}>
         <Stack gap={2}>
-          <Text variant="title">Launch card</Text>
+          <Text variant="title">Title slide</Text>
           <Text variant="caption">
-            {showing && meta !== "" ? `Resizing to ${meta}` : `Canvas ${size}`}
+            {showing && meta !== "" ? `Resizing to ${meta}` : `Slide ${size}`}
           </Text>
         </Stack>
       </Surface>
       <FloatingToolbar
         anchor={frame}
-        label="Canvas size"
+        label="Slide size"
         meta={meta === "" ? undefined : meta}
         open={showing}
       >
@@ -121,7 +121,7 @@ function LiveToolbar({
 function toolbarCode({ open, meta }: DemoValues): string {
   const props = [
     "anchor={frame}",
-    'label="Canvas size"',
+    'label="Slide size"',
     ...(meta === "" ? [] : [`meta="${String(meta)}"`]),
     ...(open === true ? [] : ["open={false}"]),
   ];
@@ -153,7 +153,7 @@ export const demos: readonly DemoSection[] = [
   {
     title: "Resize mode",
     description:
-      "12px under the card, centered and kept inside the viewport; it rises in a beat after resize mode starts and follows the card as the page scrolls.",
+      "12px under the slide, centered and kept inside the viewport; it rises in a beat after resize mode starts and follows the slide as the page scrolls.",
     render: () => <CropDemo />,
   },
 ];

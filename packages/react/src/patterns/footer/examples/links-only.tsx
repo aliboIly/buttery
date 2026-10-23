@@ -7,12 +7,12 @@ export function LinksOnly(): ReactElement {
   return (
     <Footer>
       <Footer.Column title="Getting started">
-        <Footer.Link href="#first-card">Your first card</Footer.Link>
+        <Footer.Link href="#first-deck">Your first deck</Footer.Link>
         <Footer.Link href="#shortcuts">Shortcuts</Footer.Link>
       </Footer.Column>
       <Footer.Column title="Exporting">
         <Footer.Link href="#sizes">Sizes</Footer.Link>
-        <Footer.Link href="#formats">PNG or JPG</Footer.Link>
+        <Footer.Link href="#formats">PDF or PNG</Footer.Link>
       </Footer.Column>
     </Footer>
   );
@@ -22,6 +22,6 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
   await see("Getting started");
-  await see("Your first card");
-  await see("PNG or JPG");
+  await see("Your first deck");
+  await see("PDF or PNG");
 };

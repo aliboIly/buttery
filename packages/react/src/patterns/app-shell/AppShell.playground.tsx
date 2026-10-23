@@ -26,18 +26,18 @@ export const page: DocsPage = {
 
 export const width: DemoWidth = "desktop";
 
-const BACKDROP = gradients.find((preset) => preset.id === "mint");
+const DESIGN = gradients.find((preset) => preset.id === "mint");
 
 function Editor(): ReactElement {
-  const [scale, setScale] = useState(80);
+  const [size, setSize] = useState(80);
   return (
     <div style={{ blockSize: "calc(var(--bt-bento-row) * 2)" }}>
       <AppShell
         inspectorLabel="Card settings"
         header={
-          <HeaderBar title="Launch card">
+          <HeaderBar title="Gift card for Rosa">
             <HeaderBar.Actions>
-              <HeaderBar.Action label="Crop" onSelect={() => undefined} />
+              <HeaderBar.Action label="Preview" onSelect={() => undefined} />
               <HeaderBar.Action label="Duplicate" onSelect={() => undefined} />
             </HeaderBar.Actions>
             <HeaderBar.Separator />
@@ -48,21 +48,21 @@ function Editor(): ReactElement {
         inspector={
           <Inspector label="Card settings">
             <Inspector.Section
-              title="Card"
-              resettable={scale !== 80}
+              title="Message"
+              resettable={size !== 80}
               onReset={() => {
-                setScale(80);
+                setSize(80);
               }}
             >
               <Inspector.Row>
                 <Slider
-                  label="Scale"
+                  label="Text size"
                   format="%"
                   min={20}
                   max={100}
                   resetValue={80}
-                  value={scale}
-                  onValueChange={setScale}
+                  value={size}
+                  onValueChange={setSize}
                 />
               </Inspector.Row>
             </Inspector.Section>
@@ -70,13 +70,13 @@ function Editor(): ReactElement {
         }
       >
         <Stage
-          label="Card preview"
+          label="Gift card preview"
           size={{ width: 1600, height: 900 }}
-          background={BACKDROP ? gradientCss(BACKDROP) : undefined}
+          background={DESIGN ? gradientCss(DESIGN) : undefined}
         >
           <Center>
-            <Text variant="title" style={{ scale: String(scale / 80) }}>
-              Launch card
+            <Text variant="title" style={{ scale: String(size / 80) }}>
+              Happy birthday, Rosa
             </Text>
           </Center>
         </Stage>

@@ -10,42 +10,42 @@ import {
   Section,
 } from "@buttery/react";
 
-type Lean = "flat" | "toward";
+type Tilt = "flat" | "toward";
 
 /** A features section whose large card opens into a dialog with a setting to try, beside a plain card. */
 export function FeaturesSection(): ReactElement {
-  const [lean, setLean] = useState<Lean>("flat");
+  const [tilt, setTilt] = useState<Tilt>("flat");
   return (
     <Page>
-      <Section size="sm" title="Made to be shared">
+      <Section size="sm" title="Made to be presented">
         <Bento>
           <ExpandableCard
-            title="Lean it in 3D"
+            title="Tilt it in 3D"
             span={8}
             detail={
               <Stack gap={4}>
                 <Text variant="body-lg">
-                  Steer the card toward you, up to 20 degrees each way. The
-                  export draws the same turn, shadow and all.
+                  Tip the picture toward you, up to 20 degrees each way. The PDF
+                  draws the same turn, shadow and all.
                 </Text>
-                <SegmentedControl<Lean>
-                  label="Lean"
+                <SegmentedControl<Tilt>
+                  label="Tilt"
                   options={[
                     { value: "flat", label: "Flat" },
                     { value: "toward", label: "Toward you" },
                   ]}
-                  value={lean}
-                  onValueChange={setLean}
+                  value={tilt}
+                  onValueChange={setTilt}
                 />
                 <Text variant="body" tone="secondary">
-                  {lean === "flat" ? "Lying flat" : "Leaning 12° toward you"}
+                  {tilt === "flat" ? "Lying flat" : "Tilted 12° toward you"}
                 </Text>
               </Stack>
             }
           >
             <Center style={{ blockSize: "100%" }}>
               <Surface level="section" padX={6} padY={4}>
-                <Text variant="title">Launch card</Text>
+                <Text variant="title">Product shot</Text>
               </Surface>
             </Center>
           </ExpandableCard>
@@ -63,8 +63,8 @@ export function FeaturesSection(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Open Lean it in 3D");
+  await press("button", "Open Tilt it in 3D");
   await press("radio", "Toward you");
-  await see("Leaning 12° toward you");
+  await see("Tilted 12° toward you");
   await press("button", "Close");
 };

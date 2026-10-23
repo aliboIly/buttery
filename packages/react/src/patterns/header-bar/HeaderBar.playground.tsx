@@ -44,10 +44,10 @@ function DemoMark(): ReactElement {
 function Editor(): ReactElement {
   const [shape, setShape] = useState<Shape>("16:9");
   return (
-    <HeaderBar mark={<DemoMark />} title="Launch card" dragRegion>
+    <HeaderBar mark={<DemoMark />} title="Quarterly review" dragRegion>
       <HeaderBar.Actions>
         <HeaderBar.Action
-          label="Crop"
+          label="Present"
           priority={2}
           onSelect={() => undefined}
         />

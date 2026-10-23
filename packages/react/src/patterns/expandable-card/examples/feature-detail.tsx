@@ -12,7 +12,7 @@ export function FeatureDetail(): ReactElement {
         span={6}
         detail={
           <Text variant="body-lg">
-            Undo and redo remember every change you make to a card, up to 100
+            Undo and redo remember every change you make to a deck, up to 100
             steps back.
           </Text>
         }
@@ -35,7 +35,7 @@ export const kind: ExampleKind = "basic";
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Open Every change kept");
   await see(
-    "Undo and redo remember every change you make to a card, up to 100 steps back.",
+    "Undo and redo remember every change you make to a deck, up to 100 steps back.",
   );
   await press("button", "Close");
 };

@@ -35,8 +35,8 @@ export function RelatedLinks(): ReactElement {
                   What's new in 2.4
                 </h2>
                 <Text variant="body-lg">
-                  Cards lean further, exports keep their shadow, and Undo
-                  remembers every change you make.
+                  Pictures tilt further, PDF exports keep their shadows, and
+                  Undo remembers every change you make.
                 </Text>
               </Stack>
               <Inline gap={2} align="center" wrap>

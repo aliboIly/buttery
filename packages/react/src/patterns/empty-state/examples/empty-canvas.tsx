@@ -4,31 +4,31 @@ import { Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, EmptyState } from "@buttery/react";
 
-/** An empty canvas with the two ways to begin, a primary and a secondary pill. */
+/** The gift card builder's empty canvas, with the two ways to begin: a primary and a secondary pill. */
 export function EmptyCanvas(): ReactElement {
-  const [status, setStatus] = useState("Nothing open yet");
+  const [status, setStatus] = useState("No design picked yet");
   return (
     <Stack gap={4} align="center">
       <EmptyState
-        title="An empty canvas"
-        description="Start a fresh card, or open one from your library."
+        title="An empty gift card"
+        description="Pick one of the shop's designs, or upload a photo of your own."
         actions={
           <>
             <Button
               variant="primary"
               onClick={() => {
-                setStatus("Started a new card");
+                setStatus("Opened the designs");
               }}
             >
-              New card
+              Pick a design
             </Button>
             <Button
               variant="secondary"
               onClick={() => {
-                setStatus("Opened your library");
+                setStatus("Opened your photos");
               }}
             >
-              Open library
+              Upload a photo
             </Button>
           </>
         }
@@ -41,8 +41,8 @@ export function EmptyCanvas(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Open library");
-  await see("Opened your library");
-  await press("button", "New card");
-  await see("Started a new card");
+  await press("button", "Upload a photo");
+  await see("Opened your photos");
+  await press("button", "Pick a design");
+  await see("Opened the designs");
 };

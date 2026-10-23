@@ -18,22 +18,22 @@ const SECTIONS = [
   {
     id: "start",
     title: "Start with a title",
-    body: "Type the title in the inspector and it lands on the card with every key. A long title wraps onto a second line rather than shrinking.",
+    body: "Type the title in the inspector and it lands on the slide with every key. A long title wraps onto a second line rather than shrinking.",
   },
   {
-    id: "finish",
-    title: "Pick a finish",
-    body: "Clear lets the backdrop through, Paper is a soft white and Ink a deep near-black. Each keeps the title readable on any backdrop.",
+    id: "theme",
+    title: "Pick a theme",
+    body: "Plain lets the background show through, Paper is a soft white and Ink a deep near-black. Each keeps the title readable on any background.",
   },
   {
-    id: "lean",
-    title: "Lean it in",
-    body: "Steer the lean pad and the card tips toward you, up to 20 degrees each way. Flat lays it back down.",
+    id: "tilt",
+    title: "Tilt a picture",
+    body: "Steer the tilt pad and the picture tips toward you, up to 20 degrees each way. Flat lays it back down.",
   },
   {
     id: "export",
     title: "Take it with you",
-    body: "Save a PNG or a JPG at the canvas's size, or press Copy and paste it wherever it's going. The export draws the lean and the shadow just as the studio shows them.",
+    body: "Save the deck as a PDF or one slide as a PNG, or press Copy and paste the slide wherever it's going. The export draws the tilt and the shadow just as the editor shows them.",
   },
 ] as const;
 
@@ -43,8 +43,8 @@ function Guide(): ReactElement {
       <Stack gap={12}>
         <TextStack
           size="section"
-          title="Making a launch card"
-          body="Four steps from a blank canvas to a card in your announcement."
+          title="Making your first deck"
+          body="Four steps from a blank slide to a deck you can present."
         />
         {SECTIONS.map((section) => (
           <Stack key={section.id} gap={4}>

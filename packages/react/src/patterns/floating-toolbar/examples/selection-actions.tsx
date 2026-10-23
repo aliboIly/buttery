@@ -4,48 +4,48 @@ import { Inline } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Chip, FloatingToolbar } from "@buttery/react";
 
-interface Card {
+interface Slide {
   readonly id: number;
   readonly title: string;
 }
 
-const CARDS: readonly Card[] = [
-  { id: 1, title: "Launch" },
+const SLIDES: readonly Slide[] = [
+  { id: 1, title: "Agenda" },
   { id: 2, title: "Recap" },
   { id: 3, title: "Roadmap" },
 ];
 
-/** Actions for the cards picked, shown while any are: how many, then Clear and Duplicate. */
+/** Actions for the slides picked, shown while any are: how many, then Clear and Duplicate. */
 export function SelectionActions(): ReactElement {
   const row = useRef<HTMLDivElement>(null);
-  const [cards, setCards] = useState<readonly Card[]>(CARDS);
+  const [slides, setSlides] = useState<readonly Slide[]>(SLIDES);
   const [picked, setPicked] = useState<ReadonlySet<number>>(new Set());
   const duplicate = (): void => {
-    const next = Math.max(...cards.map((card) => card.id)) + 1;
-    const copies = cards
-      .filter((card) => picked.has(card.id))
-      .map((card, index) => ({
+    const next = Math.max(...slides.map((slide) => slide.id)) + 1;
+    const copies = slides
+      .filter((slide) => picked.has(slide.id))
+      .map((slide, index) => ({
         id: next + index,
-        title: `${card.title} copy`,
+        title: `${slide.title} copy`,
       }));
-    setCards([...cards, ...copies]);
+    setSlides([...slides, ...copies]);
     setPicked(new Set());
   };
   return (
     <>
       <Inline ref={row} gap={2} wrap>
-        {cards.map((card) => (
+        {slides.map((slide) => (
           <Chip
-            key={card.id}
-            aria-pressed={picked.has(card.id)}
+            key={slide.id}
+            aria-pressed={picked.has(slide.id)}
             onClick={() => {
               const next = new Set(picked);
-              if (next.has(card.id)) next.delete(card.id);
-              else next.add(card.id);
+              if (next.has(slide.id)) next.delete(slide.id);
+              else next.add(slide.id);
               setPicked(next);
             }}
           >
-            {card.title}
+            {slide.title}
           </Chip>
         ))}
       </Inline>

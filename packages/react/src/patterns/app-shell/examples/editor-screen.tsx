@@ -26,10 +26,10 @@ export function EditorScreen(): ReactElement {
     <div style={{ blockSize: "calc(var(--bt-bento-row) * 1.5)" }}>
       <AppShell
         inspectorLabel="Card settings"
-        header={<HeaderBar title="Spring launch" />}
+        header={<HeaderBar title="Spring gift card" />}
         inspector={
           <Inspector label="Card settings">
-            <Inspector.Section title="Canvas">
+            <Inspector.Section title="Format">
               <Inspector.Row
                 label="Shape"
                 extra={
@@ -53,11 +53,11 @@ export function EditorScreen(): ReactElement {
         }
       >
         <Stage
-          label="Card preview"
+          label="Gift card preview"
           size={{ width: size.width, height: size.height }}
         >
           <Center>
-            <Text variant="title">Spring launch</Text>
+            <Text variant="title">$40 of Halfmoon coffee</Text>
           </Center>
         </Stage>
       </AppShell>

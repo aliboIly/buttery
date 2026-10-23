@@ -36,7 +36,7 @@ export interface FloatingToolbarProps extends Omit<
   readonly dir?: "ltr" | "rtl" | undefined;
   /** The element it sits under, such as the crop frame. It follows the element as it moves. */
   readonly anchor: RefObject<HTMLElement | null>;
-  /** Names the toolbar, such as "Canvas size". */
+  /** Names the toolbar, such as "Slide size". */
   readonly label: string;
   /** Whether it shows. Hiding it plays its exit. Defaults to `true`. */
   readonly open?: boolean | undefined;
@@ -247,7 +247,7 @@ export interface FloatingToolbarComponent {
  * (`focusOnOpen`), and focus inside it goes back where it came from as it closes.
  *
  * @example
- * <FloatingToolbar anchor={frame} label="Canvas size" meta="1920 × 1080" delayed focusOnOpen>
+ * <FloatingToolbar anchor={frame} label="Slide size" meta="1920 × 1080" delayed focusOnOpen>
  *   <FloatingToolbar.Button variant="ghost" onClick={revert}>Revert</FloatingToolbar.Button>
  *   <FloatingToolbar.Button onClick={discard}>Discard</FloatingToolbar.Button>
  *   <FloatingToolbar.Button variant="primary" onClick={keep}>Keep size</FloatingToolbar.Button>

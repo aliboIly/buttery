@@ -20,13 +20,13 @@ export function CropBar(): ReactElement {
       </Button>
       <Surface ref={frame} level="card" padX={8} padY={6}>
         <Stack gap={1}>
-          <Text variant="label">Launch card</Text>
-          <Text variant="caption">{`Canvas ${size}`}</Text>
+          <Text variant="label">Title slide</Text>
+          <Text variant="caption">{`Slide ${size}`}</Text>
         </Stack>
       </Surface>
       <FloatingToolbar
         anchor={frame}
-        label="Canvas size"
+        label="Slide size"
         meta="1920 × 1080"
         open={cropping}
         delayed
@@ -59,8 +59,8 @@ export function CropBar(): ReactElement {
 export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("Canvas 1600 × 900");
+  await see("Slide 1600 × 900");
   await press("button", "Resize");
   await press("button", "Keep size");
-  await see("Canvas 1920 × 1080");
+  await see("Slide 1920 × 1080");
 };

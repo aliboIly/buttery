@@ -23,10 +23,10 @@ function fill(id: string): string | undefined {
 
 /** A picture rising from the bottom of a card, inset from its sides. */
 function Picture({
-  backdrop,
+  background,
   children,
 }: {
-  readonly backdrop: string;
+  readonly background: string;
   readonly children: ReactNode;
 }): ReactElement {
   return (
@@ -34,7 +34,7 @@ function Picture({
       <Center
         style={{
           blockSize: "100%",
-          background: fill(backdrop),
+          background: fill(background),
           borderStartStartRadius: "var(--bt-r-lg)",
           borderStartEndRadius: "var(--bt-r-lg)",
         }}
@@ -81,7 +81,7 @@ function spanOf(value: unknown): BentoSpan {
 
 export const live: LiveDemo = {
   controls: {
-    title: { kind: "text", initial: "Lean it in 3D" },
+    title: { kind: "text", initial: "Tilt it in 3D" },
     span: { kind: "choice", options: ["4", "6", "8", "12"], initial: "8" },
   },
   render: ({ title, span }) => (
@@ -91,13 +91,13 @@ export const live: LiveDemo = {
         span={spanOf(span)}
         detail={
           <Text variant="body-lg">
-            Steer the lean pad and the card tips toward you, up to 20 degrees
+            Steer the tilt pad and the picture tips toward you, up to 20 degrees
             each way.
           </Text>
         }
       >
-        <Picture backdrop="lilac">
-          <Chip label="Launch card" tilt={-6} />
+        <Picture background="lilac">
+          <Chip label="Product shot" tilt={-6} />
         </Picture>
       </ExpandableCard>
       <ExpandableCard
@@ -105,11 +105,11 @@ export const live: LiveDemo = {
         span={4}
         detail={
           <Text variant="body-lg">
-            Square, classic, photo, wide or tall, or a size of your own.
+            Wide, standard, square or tall, or a size of your own.
           </Text>
         }
       >
-        <Picture backdrop="cream">
+        <Picture background="cream">
           <Chip label="16:9" />
         </Picture>
       </ExpandableCard>
@@ -121,9 +121,9 @@ export const live: LiveDemo = {
       "  <ExpandableCard",
       `    title="${String(title)}"`,
       `    span={${String(span)}}`,
-      '    detail={<Text variant="body-lg">Steer the lean pad and the card tips toward you, up to 20 degrees each way.</Text>}',
+      '    detail={<Text variant="body-lg">Steer the tilt pad and the picture tips toward you, up to 20 degrees each way.</Text>}',
       "  >",
-      "    <LeanPreview />",
+      "    <TiltPreview />",
       "  </ExpandableCard>",
       '  <ExpandableCard title="Any size" span={4} detail={<SizesDetail />}>',
       "    <SizesPreview />",
@@ -142,32 +142,32 @@ export const demos: readonly DemoSection[] = [
         <Section size="sm" tone="muted">
           <Bento>
             <ExpandableCard
-              title="Lean it in 3D"
+              title="Tilt it in 3D"
               span={8}
               detail={
                 <Stack gap={4}>
                   <Surface radius="lg" style={{ background: fill("lilac") }}>
                     <Center style={{ paddingBlock: "var(--bt-space-16)" }}>
-                      <Chip label="Launch card" tilt={-12} />
+                      <Chip label="Product shot" tilt={-12} />
                     </Center>
                   </Surface>
                   <Text variant="body-lg">
-                    Steer the lean pad and the card tips toward you, up to 20
+                    Steer the tilt pad and the picture tips toward you, up to 20
                     degrees each way.
                   </Text>
                   <Text variant="body">
-                    The export draws the same turn, shadow and all.
+                    The PDF draws the same turn, shadow and all.
                   </Text>
                   <Inline>
                     <Button variant="soft" arrow="forward">
-                      Try the lean pad
+                      Try the tilt pad
                     </Button>
                   </Inline>
                 </Stack>
               }
             >
-              <Picture backdrop="lilac">
-                <Chip label="Launch card" tilt={-6} />
+              <Picture background="lilac">
+                <Chip label="Product shot" tilt={-6} />
               </Picture>
             </ExpandableCard>
             <ExpandableCard
@@ -176,17 +176,17 @@ export const demos: readonly DemoSection[] = [
               detail={
                 <Stack gap={4}>
                   <Text variant="body-lg">
-                    Square, classic, photo, wide or tall, or a size of your own.
+                    Wide, standard, square or tall, or a size of your own.
                   </Text>
                   <Inline gap={2}>
-                    {["1:1", "4:3", "3:2", "16:9", "9:16"].map((shape) => (
+                    {["16:9", "4:3", "1:1", "9:16"].map((shape) => (
                       <Chip key={shape} label={shape} level="section" />
                     ))}
                   </Inline>
                 </Stack>
               }
             >
-              <Picture backdrop="cream">
+              <Picture background="cream">
                 <Inline gap={2}>
                   <Chip label="1:1" />
                   <Chip label="16:9" />

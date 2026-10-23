@@ -35,8 +35,8 @@ function ImageDrop({
       style={{ blockSize: "var(--bt-bento-row)" }}
     >
       <EmptyState
-        title={names.length === 0 ? "Add a backdrop" : names.join(", ")}
-        description="Drag a picture onto the canvas, paste it from your clipboard, or open one with ⌘O."
+        title={names.length === 0 ? "Add a background" : names.join(", ")}
+        description="Drag a picture onto the slide, paste it from your clipboard, or open one with ⌘O."
         actions={
           <DropZone.Open>
             <Button variant="primary">Pick a picture</Button>
@@ -77,8 +77,8 @@ export const live: LiveDemo = {
       "  onFiles={(files) => setNames(files.map((file) => file.name))}",
       ">",
       "  <EmptyState",
-      '    title="Add a backdrop"',
-      '    description="Drag a picture onto the canvas, paste it from your clipboard, or open one with ⌘O."',
+      '    title="Add a background"',
+      '    description="Drag a picture onto the slide, paste it from your clipboard, or open one with ⌘O."',
       '    actions={<DropZone.Open><Button variant="primary">Pick a picture</Button></DropZone.Open>}',
       "  />",
       "</DropZone>",

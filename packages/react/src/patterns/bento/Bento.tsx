@@ -114,7 +114,7 @@ export interface BentoComponent {
  *
  * @example
  * <Bento>
- *   <Bento.Card title="Lean in 3D" span={8}><LeanPreview /></Bento.Card>
+ *   <Bento.Card title="Tilt it in 3D" span={8}><TiltPreview /></Bento.Card>
  *   <Bento.Card title="Any size" span={4}><ShapeList /></Bento.Card>
  * </Bento>
  */

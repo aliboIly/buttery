@@ -7,7 +7,7 @@ import { Bento } from "@buttery/react";
 export function TallCard(): ReactElement {
   return (
     <Bento>
-      <Bento.Card title="Made for stories" span={4} rows={2}>
+      <Bento.Card title="Tall for phones" span={4} rows={2}>
         <Center style={{ blockSize: "100%" }}>
           <Surface level="section" padX={4} padY={8}>
             <Text variant="title">9:16</Text>
@@ -31,6 +31,6 @@ export function TallCard(): ReactElement {
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Made for stories");
+  await see("Tall for phones");
   await see("9:16");
 };

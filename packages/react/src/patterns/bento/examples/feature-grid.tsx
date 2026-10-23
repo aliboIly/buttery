@@ -17,8 +17,8 @@ function Picture({ label }: { readonly label: string }): ReactElement {
 export function FeatureGrid(): ReactElement {
   return (
     <Bento>
-      <Bento.Card title="Lean it in 3D" span={8}>
-        <Picture label="Launch card" />
+      <Bento.Card title="Tilt it in 3D" span={8}>
+        <Picture label="Product shot" />
       </Bento.Card>
       <Bento.Card title="Any size" span={4}>
         <Picture label="16:9" />
@@ -30,6 +30,6 @@ export function FeatureGrid(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Lean it in 3D");
+  await see("Tilt it in 3D");
   await see("16:9");
 };

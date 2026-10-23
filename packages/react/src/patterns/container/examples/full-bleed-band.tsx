@@ -9,7 +9,7 @@ export function FullBleedBand(): ReactElement {
     <Section tone="muted" contained={false}>
       <Container>
         <Text variant="body-lg">
-          Every card you make keeps its own history.
+          Every deck you make keeps its own history.
         </Text>
       </Container>
     </Section>
@@ -19,5 +19,5 @@ export function FullBleedBand(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Every card you make keeps its own history.");
+  await see("Every deck you make keeps its own history.");
 };

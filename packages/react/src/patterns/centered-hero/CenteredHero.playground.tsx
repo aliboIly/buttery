@@ -21,17 +21,17 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Page>
         <CenteredHero
-          title="One card."
-          titleMore="Every size it needs."
-          body="Square for a post, wide for a talk, tall for a story."
+          title="One deck."
+          titleMore="Every screen it plays on."
+          body="Wide for a talk, square for a post, tall for a phone."
           actions={
             <Button variant="primary" arrow="forward">
-              Start a card
+              Start a deck
             </Button>
           }
           visual={
             <Surface level="section" pad={12}>
-              <Text variant="title">Your card here</Text>
+              <Text variant="title">Your title slide here</Text>
             </Surface>
           }
         />

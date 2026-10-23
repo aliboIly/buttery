@@ -48,12 +48,12 @@ export const demos: readonly DemoSection[] = [
       "The title, its line 12px under it, and two pills 24px under the text.",
     render: () => (
       <EmptyState
-        title="An empty canvas"
-        description="Start a fresh card, or open one from your library."
+        title="An empty gift card"
+        description="Pick one of the shop's designs, or upload a photo of your own."
         actions={
           <>
-            <Button variant="primary">New card</Button>
-            <Button variant="secondary">Open library</Button>
+            <Button variant="primary">Pick a design</Button>
+            <Button variant="secondary">Upload a photo</Button>
           </>
         }
       />
@@ -63,8 +63,8 @@ export const demos: readonly DemoSection[] = [
     title: "Text only",
     render: () => (
       <EmptyState
-        title="No exports yet"
-        description="Cards you export show up here."
+        title="No refunds yet"
+        description="Refunds you give show up here."
       />
     ),
   },

@@ -6,8 +6,8 @@ import { EmptyState } from "@buttery/react";
 export function EmptyList(): ReactElement {
   return (
     <EmptyState
-      title="No exports yet"
-      description="Cards you export show up here."
+      title="No refunds yet"
+      description="Refunds you give show up here."
       titleAs="h3"
     />
   );
@@ -16,6 +16,6 @@ export function EmptyList(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("No exports yet");
-  await see("Cards you export show up here.");
+  await see("No refunds yet");
+  await see("Refunds you give show up here.");
 };

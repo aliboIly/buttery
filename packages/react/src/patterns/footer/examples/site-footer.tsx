@@ -76,7 +76,7 @@ export function SiteFooter(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
-  await type("Email", "rosa@halfmoon.example");
+  await type("Email", "rosa@example.com");
   await press("button", "Subscribe");
   await see("Thanks. The next letter goes out on Friday.");
 };

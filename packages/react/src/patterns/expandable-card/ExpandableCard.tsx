@@ -94,8 +94,8 @@ export interface ExpandableCardProps extends Omit<
  *
  * @example
  * <Bento>
- *   <ExpandableCard title="Lean in 3D" span={8} detail={<LeanDetail />}>
- *     <LeanPreview />
+ *   <ExpandableCard title="Tilt it in 3D" span={8} detail={<TiltDetail />}>
+ *     <TiltPreview />
  *   </ExpandableCard>
  * </Bento>
  */

@@ -22,10 +22,10 @@ function fill(id: string): string | undefined {
 
 /** A picture rising from the bottom of a card, inset from its sides. */
 function Picture({
-  backdrop,
+  background,
   children,
 }: {
-  readonly backdrop: string;
+  readonly background: string;
   readonly children: ReactNode;
 }): ReactElement {
   return (
@@ -33,7 +33,7 @@ function Picture({
       <Center
         style={{
           blockSize: "100%",
-          background: fill(backdrop),
+          background: fill(background),
           borderStartStartRadius: "var(--bt-r-lg)",
           borderStartEndRadius: "var(--bt-r-lg)",
         }}
@@ -72,26 +72,26 @@ export const demos: readonly DemoSection[] = [
       <Page>
         <Section size="sm" tone="muted">
           <Bento>
-            <Bento.Card title="Lean it in 3D" span={8}>
-              <Picture backdrop="lilac">
-                <Chip label="Launch card" tilt={-6} />
+            <Bento.Card title="Tilt it in 3D" span={8}>
+              <Picture background="lilac">
+                <Chip label="Product shot" tilt={-6} />
               </Picture>
             </Bento.Card>
             <Bento.Card title="Any size" span={4}>
-              <Picture backdrop="cream">
+              <Picture background="cream">
                 <Inline gap={2}>
                   <Chip label="1:1" />
                   <Chip label="16:9" />
                 </Inline>
               </Picture>
             </Bento.Card>
-            <Bento.Card title="A backdrop for every mood" span={4}>
-              <Picture backdrop="sky">
-                <Chip label="Blend" />
+            <Bento.Card title="A background for every talk" span={4}>
+              <Picture background="sky">
+                <Chip label="Gradient" />
               </Picture>
             </Bento.Card>
             <Bento.Card title="Every change kept" span={8}>
-              <Picture backdrop="mint">
+              <Picture background="mint">
                 <Chip label="Undo · Redo" />
               </Picture>
             </Bento.Card>

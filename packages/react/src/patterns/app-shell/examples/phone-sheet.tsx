@@ -14,7 +14,7 @@ import {
 /** At phone width the inspector opens as a sheet; with open kept in useState, Done in the sheet closes it. */
 export function PhoneSheet(): ReactElement {
   const [open, setOpen] = useState(false);
-  const [showDate, setShowDate] = useState(false);
+  const [showAmount, setShowAmount] = useState(false);
   return (
     <div
       style={{
@@ -27,7 +27,7 @@ export function PhoneSheet(): ReactElement {
         openInspectorLabel="Adjust card"
         open={open}
         onOpenChange={setOpen}
-        header={<HeaderBar title="Spring launch" />}
+        header={<HeaderBar title="Gift card for Theo" />}
         inspector={
           <Inspector
             label="Card settings"
@@ -44,24 +44,24 @@ export function PhoneSheet(): ReactElement {
               </Inspector.Footer>
             }
           >
-            <Inspector.Section title="Card">
+            <Inspector.Section title="Front">
               <Inspector.Row>
                 <Switch
-                  label="Show the date"
-                  checked={showDate}
-                  onCheckedChange={setShowDate}
+                  label="Show the amount"
+                  checked={showAmount}
+                  onCheckedChange={setShowAmount}
                 />
               </Inspector.Row>
             </Inspector.Section>
           </Inspector>
         }
       >
-        <Stage label="Card preview" size={{ width: 1080, height: 1350 }}>
+        <Stage label="Gift card preview" size={{ width: 1080, height: 1350 }}>
           <Center>
             <Stack gap={1} align="center">
-              <Text variant="title">Spring launch</Text>
-              {showDate ? (
-                <Text variant="caption">Saturday, May 12</Text>
+              <Text variant="title">Happy birthday, Theo</Text>
+              {showAmount ? (
+                <Text variant="caption">$40 of Halfmoon coffee</Text>
               ) : null}
             </Stack>
           </Center>
@@ -75,7 +75,7 @@ export const kind: ExampleKind = "controlled";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Adjust card");
-  await press("switch", "Show the date");
+  await press("switch", "Show the amount");
   await press("button", "Done");
-  await see("Saturday, May 12");
+  await see("$40 of Halfmoon coffee");
 };

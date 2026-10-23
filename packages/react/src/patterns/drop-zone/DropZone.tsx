@@ -210,8 +210,8 @@ export interface DropZoneComponent {
  * @example
  * <DropZone accept="image/*" onFiles={([image]) => setBackground(image)}>
  *   <EmptyState
- *     title="Add a card"
- *     description="Drag a picture onto the canvas, or paste it from your clipboard."
+ *     title="Add a background"
+ *     description="Drag a picture onto the slide, or paste it from your clipboard."
  *     actions={<DropZone.Open><Button variant="primary">Pick a picture</Button></DropZone.Open>}
  *   />
  * </DropZone>

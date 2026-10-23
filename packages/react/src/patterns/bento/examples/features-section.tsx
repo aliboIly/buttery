@@ -19,15 +19,15 @@ export function FeaturesSection(): ReactElement {
     <Page>
       <Section
         size="sm"
-        title="Everything a launch card needs"
-        body="Pick a shape, lean it in, and take it with you."
+        title="Everything a deck needs"
+        body="Pick a shape, tilt a picture, and take it with you."
       >
         <Bento>
           <Bento.Card title="Any size" span={6}>
             <Center style={{ blockSize: "100%" }}>
               <Stack gap={4} align="center">
                 <SegmentedControl<Shape>
-                  label="Card shape"
+                  label="Slide shape"
                   options={[
                     { value: "wide", label: "Wide" },
                     { value: "square", label: "Square" },
@@ -42,10 +42,10 @@ export function FeaturesSection(): ReactElement {
               </Stack>
             </Center>
           </Bento.Card>
-          <Bento.Card title="Lean it in 3D" span={6}>
+          <Bento.Card title="Tilt it in 3D" span={6}>
             <Center style={{ blockSize: "100%" }}>
               <Surface level="section" padX={6} padY={4}>
-                <Text variant="title">Launch card</Text>
+                <Text variant="title">Product shot</Text>
               </Surface>
             </Center>
           </Bento.Card>

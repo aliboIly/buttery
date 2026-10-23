@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, DropZone, EmptyState } from "@buttery/react";
 
-/** An empty canvas that takes a picture for its backdrop: dropped, pasted, opened with ⌘O or picked with the button. */
+/** An empty slide that takes a picture for its background: dropped, pasted, opened with ⌘O or picked with the button. */
 export function BackgroundDrop(): ReactElement {
   const [image, setImage] = useState<string | null>(null);
   return (
@@ -14,8 +14,8 @@ export function BackgroundDrop(): ReactElement {
       }}
     >
       <EmptyState
-        title={image ?? "Add a backdrop"}
-        description="Drag a picture onto the canvas, or paste it from your clipboard."
+        title={image ?? "Add a background"}
+        description="Drag a picture onto the slide, or paste it from your clipboard."
         actions={
           <DropZone.Open>
             <Button variant="primary">Pick a picture</Button>
@@ -29,6 +29,6 @@ export function BackgroundDrop(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Add a backdrop");
-  await see("Drag a picture onto the canvas, or paste it from your clipboard.");
+  await see("Add a background");
+  await see("Drag a picture onto the slide, or paste it from your clipboard.");
 };

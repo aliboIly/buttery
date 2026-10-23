@@ -537,8 +537,8 @@ function SidebarShell({
  * inside it arrive instantly, as app chrome does.
  *
  * @example
- * <AppShell header={<HeaderBar title="Launch card" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">
- *   <Stage label="Card preview" size={size}>…</Stage>
+ * <AppShell header={<HeaderBar title="Gift card for Rosa" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">
+ *   <Stage label="Gift card preview" size={size}>…</Stage>
  * </AppShell>
  * <AppShell layout="sidebar" sidebar={<Sidebar label="Main">…</Sidebar>} topBar={<TopBar />}>
  *   <AppPage header={<PageHeader title="Orders" />}>…</AppPage>

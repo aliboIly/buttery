@@ -48,7 +48,7 @@ export function DocumentHeader(): ReactElement {
       <FormDialog
         open={open}
         onOpenChange={setOpen}
-        title="Rename the card"
+        title="Rename the deck"
         valid={draft.trim() !== "" && draft.trim() !== name}
         onSubmit={() => {
           setNames([...names.slice(0, at + 1), draft.trim()]);
@@ -56,7 +56,7 @@ export function DocumentHeader(): ReactElement {
         }}
         submitLabel="Save name"
       >
-        <TextField label="Card name" value={draft} onValueChange={setDraft} />
+        <TextField label="Deck name" value={draft} onValueChange={setDraft} />
       </FormDialog>
     </Stack>
   );
@@ -66,7 +66,7 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("button", "Rename");
-  await type("Card name", " 2026");
+  await type("Deck name", " 2026");
   await press("button", "Save name");
   await see("Spring launch 2026");
 };

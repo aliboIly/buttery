@@ -538,7 +538,7 @@ test.describe("full motion", () => {
     await page.goto("/components/expandable-card?chrome=0&motion=full");
     const card = '[data-bt="ExpandableCard"]';
     const expand = page
-      .getByRole("button", { name: "Open Lean it in 3D", exact: true })
+      .getByRole("button", { name: "Open Tilt it in 3D", exact: true })
       .first();
     const resting = await peek(page, card);
     if (!resting) throw new Error("There's no card to open.");
@@ -1026,7 +1026,7 @@ test.describe("reduced motion", () => {
   }) => {
     await page.goto("/components/expandable-card?chrome=0&motion=reduced");
     await page
-      .getByRole("button", { name: "Open Lean it in 3D", exact: true })
+      .getByRole("button", { name: "Open Tilt it in 3D", exact: true })
       .first()
       .focus();
     await startSampling(page, '[data-bt-part="panel"]');

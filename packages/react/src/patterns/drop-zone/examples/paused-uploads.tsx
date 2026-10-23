@@ -11,7 +11,7 @@ export function PausedUploads(): ReactElement {
   return (
     <Stack gap={3}>
       <Switch
-        label="Take new photos"
+        label="Take new pictures"
         checked={taking}
         onCheckedChange={setTaking}
       />
@@ -24,10 +24,12 @@ export function PausedUploads(): ReactElement {
       >
         <Stack gap={1} padY={6} align="center">
           <Text variant="label">
-            {taking ? "Drop a photo of the bag" : "Photos are switched off"}
+            {taking
+              ? "Drop a picture for the title slide"
+              : "Pictures are switched off"}
           </Text>
           <Text variant="caption">
-            {last === null ? "No photo yet" : `Last added: ${last}`}
+            {last === null ? "No picture yet" : `Last added: ${last}`}
           </Text>
         </Stack>
       </DropZone>
@@ -38,7 +40,7 @@ export function PausedUploads(): ReactElement {
 export const kind: ExampleKind = "states";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("Drop a photo of the bag");
-  await press("switch", "Take new photos");
-  await see("Photos are switched off");
+  await see("Drop a picture for the title slide");
+  await press("switch", "Take new pictures");
+  await see("Pictures are switched off");
 };

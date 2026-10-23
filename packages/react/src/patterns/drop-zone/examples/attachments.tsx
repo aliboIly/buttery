@@ -5,11 +5,11 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { DropZone, IconButton } from "@buttery/react";
 import { X } from "lucide-react";
 
-/** An order's attachments: PDFs or images dropped or pasted onto the list join it, each with a button to remove it. */
+/** A deck's attachments: PDFs or pictures dropped or pasted onto the list join it, each with a button to remove it. */
 export function Attachments(): ReactElement {
   const [files, setFiles] = useState<readonly string[]>([
-    "invoice-1042.pdf",
-    "label-1042.png",
+    "q3-handout.pdf",
+    "q3-chart.png",
   ]);
   return (
     <DropZone
@@ -45,7 +45,9 @@ export function Attachments(): ReactElement {
             />
           </Inline>
         ))}
-        <Text variant="caption">Drop PDFs or images here, or paste them.</Text>
+        <Text variant="caption">
+          Drop PDFs or pictures here, or paste them.
+        </Text>
       </Stack>
     </DropZone>
   );
@@ -55,6 +57,6 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("2 attachments");
-  await press("button", "Remove label-1042.png");
+  await press("button", "Remove q3-chart.png");
   await see("1 attachment");
 };
