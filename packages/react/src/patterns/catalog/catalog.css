@@ -1,0 +1,739 @@
+@layer bt.patterns {
+  .bt-catalog,
+  .bt-catalog-toolbar,
+  .bt-catalog-items,
+  .bt-catalog-card,
+  .bt-catalog-detail[data-bt-part="catalog-detail"] {
+    --bt-catalog-track-sm: 136px;
+    --bt-catalog-track-md: 160px;
+    --bt-catalog-track-lg: 248px;
+    --bt-catalog-tile-sm: 40px;
+    --bt-catalog-tile-md: 48px;
+    --bt-catalog-tile-lg: 64px;
+    --bt-catalog-ratio-top: 4 / 3;
+    --bt-catalog-ratio-background: 3 / 4;
+    --bt-catalog-search: 240px;
+    --bt-catalog-select: 200px;
+    --bt-catalog-hit: 24px;
+    --bt-catalog-cap: 1cap;
+  }
+
+  .bt-catalog {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-6);
+    min-inline-size: 0;
+  }
+
+  /* The toolbar is a size container: under 640px its search and filters stack. */
+  .bt-catalog-toolbar {
+    container: bt-catalog-toolbar / inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--bt-space-3) var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-toolbar > [data-bt-part="catalog-toolbar-start"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
+  /* It grows into whatever row it ends up on, so its controls keep to the toolbar's end. */
+  .bt-catalog-toolbar > [data-bt-part="catalog-toolbar-end"] {
+    display: flex;
+    flex: 1 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-toolbar
+    > [data-bt-part="catalog-toolbar-start"]
+    > .bt-catalog-search {
+    flex: 1 1 var(--bt-catalog-search);
+    inline-size: auto;
+    max-inline-size: var(--bt-w-search);
+  }
+
+  .bt-catalog-filter {
+    display: grid;
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-filter[data-variant="select"] {
+    inline-size: var(--bt-catalog-select);
+  }
+
+  .bt-catalog-sort {
+    display: flex;
+    align-items: baseline;
+    gap: var(--bt-space-1);
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-sort > [data-bt-part="catalog-sort-label"] {
+    flex: none;
+    color: var(--bt-text-secondary);
+  }
+
+  .bt-catalog-count {
+    color: var(--bt-text-secondary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  @container bt-catalog-toolbar (width < 640px) {
+    .bt-catalog-toolbar > [data-bt-part="catalog-toolbar-start"] {
+      flex-basis: 100%;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .bt-catalog-toolbar
+      > [data-bt-part="catalog-toolbar-start"]
+      > .bt-catalog-search {
+      flex-basis: auto;
+      max-inline-size: none;
+    }
+
+    .bt-catalog-toolbar
+      > [data-bt-part="catalog-toolbar-start"]
+      > .bt-catalog-filter[data-variant="select"] {
+      inline-size: auto;
+    }
+
+    .bt-catalog-toolbar > [data-bt-part="catalog-toolbar-end"] {
+      flex-basis: 100%;
+    }
+
+    .bt-catalog-toolbar
+      > [data-bt-part="catalog-toolbar-end"]
+      > [data-bt-part="catalog-count"] {
+      flex: 1 1 auto;
+    }
+  }
+
+  .bt-catalog-items {
+    --bt-catalog-columns: 3;
+    --bt-catalog-track: var(--bt-catalog-track-md);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-items:empty {
+    display: none;
+  }
+
+  /* As many equal columns as fit at the track's width, never more than the columns asked for. */
+  .bt-catalog-items[data-layout="grid"] {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(
+        min(
+          100%,
+          max(
+            var(--bt-catalog-track),
+            calc(
+              (100% - (var(--bt-catalog-columns) - 1) * var(--bt-space-4)) /
+                var(--bt-catalog-columns)
+            )
+          )
+        ),
+        1fr
+      )
+    );
+  }
+
+  .bt-catalog-items[data-columns="1"] {
+    --bt-catalog-columns: 1;
+  }
+
+  .bt-catalog-items[data-columns="2"] {
+    --bt-catalog-columns: 2;
+  }
+
+  .bt-catalog-items[data-columns="4"] {
+    --bt-catalog-columns: 4;
+  }
+
+  .bt-catalog-items[data-columns="5"] {
+    --bt-catalog-columns: 5;
+  }
+
+  .bt-catalog-items[data-columns="6"] {
+    --bt-catalog-columns: 6;
+  }
+
+  .bt-catalog-items:has(> .bt-catalog-card[data-size="sm"]) {
+    --bt-catalog-track: var(--bt-catalog-track-sm);
+  }
+
+  .bt-catalog-items:has(> .bt-catalog-card[data-size="lg"]) {
+    --bt-catalog-track: var(--bt-catalog-track-lg);
+  }
+
+  /* Plain cards have no edge to part them, so their rows sit further apart. */
+  .bt-catalog-items[data-layout="grid"]:has(
+      > .bt-catalog-card[data-variant="plain"]
+    ) {
+    row-gap: var(--bt-space-6);
+  }
+
+  .bt-catalog-items[data-layout="list"] {
+    gap: var(--bt-space-3);
+  }
+
+  .bt-catalog-items[data-layout="rows"] {
+    gap: 0;
+  }
+
+  .bt-catalog-items[data-layout="rows"]:has(
+      > .bt-catalog-card[data-variant="elevated"]
+    ) {
+    padding-inline: var(--bt-space-4);
+    border-radius: var(--bt-r-2xl);
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  .bt-catalog-items[data-layout="rows"]:has(
+      > .bt-catalog-card[data-variant="outline"]
+    ) {
+    padding-inline: var(--bt-space-4);
+    border: 1px solid var(--bt-border);
+    border-radius: var(--bt-r-2xl);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-catalog-items[data-layout="rows"]:has(
+      > .bt-catalog-card[data-variant="soft"]
+    ) {
+    padding-inline: var(--bt-space-4);
+    border-radius: var(--bt-r-2xl);
+    background-color: var(--bt-bg-control);
+  }
+
+  .bt-catalog-card {
+    --bt-catalog-pad: var(--bt-space-4);
+    --bt-catalog-row-pad: var(--bt-space-3);
+    --bt-catalog-tile: var(--bt-catalog-tile-md);
+    --bt-catalog-tile-radius: var(--bt-r-md);
+    --bt-catalog-radius: var(--bt-r-2xl);
+
+    container: bt-catalog-card / inline-size;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    overflow: clip;
+    border-radius: var(--bt-catalog-radius);
+    color: var(--bt-text);
+    transition:
+      translate calc(var(--bt-dur-fast) * var(--bt-motion)) var(--bt-ease-out),
+      box-shadow var(--bt-dur-fast) var(--bt-ease-out),
+      background-color var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  .bt-catalog-card[data-size="sm"] {
+    --bt-catalog-pad: var(--bt-space-3);
+    --bt-catalog-row-pad: var(--bt-space-2);
+    --bt-catalog-tile: var(--bt-catalog-tile-sm);
+    --bt-catalog-tile-radius: var(--bt-r-sm);
+    --bt-catalog-radius: var(--bt-r-lg);
+  }
+
+  .bt-catalog-card[data-size="lg"] {
+    --bt-catalog-pad: var(--bt-space-5);
+    --bt-catalog-row-pad: var(--bt-space-4);
+    --bt-catalog-tile: var(--bt-catalog-tile-lg);
+    --bt-catalog-tile-radius: var(--bt-r-lg);
+  }
+
+  .bt-catalog-card[data-variant="elevated"] {
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  .bt-catalog-card[data-variant="outline"] {
+    border: 1px solid var(--bt-border);
+    background-color: var(--bt-bg-surface);
+  }
+
+  .bt-catalog-card[data-variant="soft"] {
+    background-color: var(--bt-bg-control);
+  }
+
+  /* A soft button shares a soft card's fill, so on one it takes the raised pill a control track's choice does. */
+  .bt-catalog-card[data-variant="soft"] .bt-button[data-variant="soft"],
+  .bt-catalog-items[data-layout="rows"]:has(
+      > .bt-catalog-card[data-variant="soft"]
+    )
+    .bt-button[data-variant="soft"] {
+    --bt-button-bg: var(--bt-bg-raised);
+  }
+
+  /* A plain card's media carries its shape, so focus rings at its edges stay whole. */
+  .bt-catalog-card[data-variant="plain"] {
+    --bt-catalog-pad: 0;
+
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .bt-catalog-card[data-interactive] {
+    cursor: pointer;
+  }
+
+  /* Going back into its place, the card passes over its neighbours as they return. */
+  .bt-catalog-card[data-travelling] {
+    z-index: var(--bt-z-raised);
+  }
+
+  /* One cell the frame's own size, so a picture sized in percentages fills it and never stretches it. */
+  .bt-catalog-card > [data-bt-part="catalog-card-media"] {
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    place-items: center;
+    min-block-size: 0;
+    min-inline-size: 0;
+    overflow: clip;
+    transition:
+      translate calc(var(--bt-dur-fast) * var(--bt-motion)) var(--bt-ease-out),
+      box-shadow var(--bt-dur-fast) var(--bt-ease-out);
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-media"]
+    > :is(img, picture, video) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  /* A picture with clear parts shows the section's gray behind it at the top or behind the card, as a photo would. */
+  .bt-catalog-card:is([data-media="top"], [data-media="background"])
+    > [data-bt-part="catalog-card-media"] {
+    background-color: var(--bt-bg-section);
+  }
+
+  .bt-catalog-card[data-media="top"] > [data-bt-part="catalog-card-media"] {
+    aspect-ratio: var(--bt-catalog-ratio, var(--bt-catalog-ratio-top));
+  }
+
+  .bt-catalog-card[data-media="top"][data-variant="plain"]
+    > [data-bt-part="catalog-card-media"] {
+    border-radius: var(--bt-catalog-radius);
+  }
+
+  .bt-catalog-card[data-media="start"] {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--bt-catalog-pad);
+    padding: var(--bt-catalog-pad);
+  }
+
+  .bt-catalog-card[data-media="start"][data-variant="plain"] {
+    gap: var(--bt-space-4);
+  }
+
+  .bt-catalog-card[data-media="start"] > [data-bt-part="catalog-card-media"] {
+    flex: none;
+    inline-size: var(--bt-catalog-tile);
+    block-size: var(--bt-catalog-tile);
+    border-radius: var(--bt-catalog-tile-radius);
+  }
+
+  .bt-catalog-card[data-media="background"] {
+    position: relative;
+    justify-content: flex-end;
+    aspect-ratio: var(--bt-catalog-ratio, var(--bt-catalog-ratio-background));
+    padding: var(--bt-space-2);
+  }
+
+  .bt-catalog-card[data-media="background"]
+    > [data-bt-part="catalog-card-media"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bt-catalog-card[data-media="background"][data-variant="plain"]
+    > [data-bt-part="catalog-card-media"] {
+    border-radius: var(--bt-catalog-radius);
+  }
+
+  .bt-catalog-card > [data-bt-part="catalog-card-body"] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+    padding: var(--bt-catalog-pad);
+  }
+
+  .bt-catalog-card[data-media="top"][data-variant="plain"]
+    > [data-bt-part="catalog-card-body"] {
+    padding-block-start: var(--bt-space-3);
+  }
+
+  .bt-catalog-card[data-media="start"] > [data-bt-part="catalog-card-body"] {
+    padding: 0;
+  }
+
+  /* Over the media, the words sit on a plate whose corners follow the card's, 8px in. */
+  .bt-catalog-card[data-media="background"]
+    > [data-bt-part="catalog-card-body"] {
+    position: relative;
+    flex: none;
+    padding: var(--bt-space-3);
+    border-radius: calc(var(--bt-catalog-radius) - var(--bt-space-2));
+    background-color: var(--bt-bg-surface);
+    box-shadow: var(--bt-shadow-card);
+  }
+
+  .bt-catalog-card[data-media="background"][data-variant="soft"]
+    > [data-bt-part="catalog-card-body"] {
+    background-color: var(--bt-bg-control);
+    box-shadow: none;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"] {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--bt-space-2);
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-head"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-self: stretch;
+    justify-content: space-between;
+    gap: var(--bt-space-1) var(--bt-space-2);
+    min-block-size: var(--bt-h-badge);
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-head"]
+    > [data-bt-part="catalog-card-eyebrow"] {
+    min-inline-size: 0;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-head"]
+    > [data-bt-part="catalog-card-badges"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-1);
+  }
+
+  /* The title hugs its words, so it travels into an open card's dialog at one scale. */
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-title"] {
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    color: var(--bt-text-strong);
+    text-box: normal;
+  }
+
+  .bt-catalog-card[data-size="lg"]
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-title"] {
+    padding-block-end: var(--bt-space-1);
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-title"]
+    > :is(
+      [data-bt-part="catalog-card-link"],
+      [data-bt-part="catalog-card-open"]
+    ) {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--bt-catalog-hit);
+    padding: 0;
+    border: 0;
+    border-radius: var(--bt-r-xs);
+    background: none;
+    color: var(--bt-primary);
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* The title's button is words in a line, so its target reaches a standalone button's 28px without moving them. */
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-title"]
+    > [data-bt-part="catalog-card-open"] {
+    position: relative;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > [data-bt-part="catalog-card-title"]
+    > [data-bt-part="catalog-card-open"]
+    > [data-bt-part="catalog-card-hit"] {
+    position: absolute;
+    inset: calc((var(--bt-catalog-hit) - var(--bt-h-sm)) / 2) 0;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-text"]
+    > :is(
+      [data-bt-part="catalog-card-meta"],
+      [data-bt-part="catalog-card-description"]
+    ) {
+    max-inline-size: 60ch;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-foot"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--bt-space-2) var(--bt-space-3);
+    min-inline-size: 0;
+    padding-block-start: var(--bt-space-2);
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-foot"]
+    > [data-bt-part="catalog-card-price"] {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bt-catalog-card
+    > [data-bt-part="catalog-card-body"]
+    > [data-bt-part="catalog-card-foot"]
+    > [data-bt-part="catalog-card-actions"] {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--bt-space-2);
+  }
+
+  /* With room, a card that isn't stacked puts its price and actions at the end of its words' row. */
+  @container bt-catalog-card (width >= 560px) {
+    .bt-catalog-card:not([data-media="top"], [data-media="background"])
+      > [data-bt-part="catalog-card-body"] {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--bt-space-6);
+    }
+
+    .bt-catalog-card:not([data-media="top"], [data-media="background"])
+      > [data-bt-part="catalog-card-body"]
+      > [data-bt-part="catalog-card-text"] {
+      flex: 1 1 auto;
+    }
+
+    .bt-catalog-card:not([data-media="top"], [data-media="background"])
+      > [data-bt-part="catalog-card-body"]
+      > [data-bt-part="catalog-card-text"]
+      > [data-bt-part="catalog-card-head"] {
+      justify-content: flex-start;
+    }
+
+    .bt-catalog-card:not([data-media="top"], [data-media="background"])
+      > [data-bt-part="catalog-card-body"]
+      > [data-bt-part="catalog-card-foot"] {
+      flex: none;
+      gap: var(--bt-space-4);
+      padding-block-start: 0;
+    }
+  }
+
+  .bt-catalog-items[data-layout="rows"] > .bt-catalog-card {
+    padding-block: var(--bt-catalog-row-pad);
+    padding-inline: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .bt-catalog-items[data-layout="rows"]
+    > .bt-catalog-card
+    > [data-bt-part="catalog-card-body"] {
+    padding: 0;
+  }
+
+  .bt-catalog-items[data-layout="rows"] > .bt-catalog-card + .bt-catalog-card {
+    border-block-start: 1px solid var(--bt-border);
+  }
+
+  @media (hover: hover) {
+    .bt-catalog-card[data-interactive]:not([data-layout="rows"]):is(
+        [data-variant="elevated"],
+        [data-variant="outline"],
+        [data-variant="soft"],
+        [data-variant="plain"][data-media="background"]
+      ):hover {
+      translate: 0 calc(var(--bt-space-0_5) * -1 * var(--bt-motion));
+    }
+
+    .bt-catalog-card[data-interactive]:not([data-layout="rows"]):is(
+        [data-variant="elevated"],
+        [data-variant="outline"]
+      ):hover {
+      box-shadow: var(--bt-shadow-raised);
+    }
+
+    .bt-catalog-card[data-interactive]:not(
+        [data-layout="rows"]
+      )[data-variant="soft"]:hover {
+      background-color: var(--bt-bg-control-active);
+    }
+
+    .bt-catalog-card[data-interactive]:not(
+        [data-layout="rows"]
+      )[data-variant="plain"][data-media="top"]:hover
+      > [data-bt-part="catalog-card-media"] {
+      box-shadow: var(--bt-shadow-raised);
+      translate: 0 calc(var(--bt-space-0_5) * -1 * var(--bt-motion));
+    }
+
+    .bt-catalog-card[data-variant="soft"]
+      .bt-button[data-variant="soft"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover,
+    .bt-catalog-items[data-layout="rows"]:has(
+        > .bt-catalog-card[data-variant="soft"]
+      )
+      .bt-button[data-variant="soft"]:not(
+        :disabled,
+        [aria-disabled="true"]
+      ):hover {
+      --bt-button-shadow: var(--bt-shadow-raised);
+    }
+
+    .bt-catalog-card[data-interactive]:hover
+      > [data-bt-part="catalog-card-body"]
+      > [data-bt-part="catalog-card-text"]
+      > [data-bt-part="catalog-card-title"]
+      > :is(
+        [data-bt-part="catalog-card-link"],
+        [data-bt-part="catalog-card-open"]
+      ) {
+      color: var(--bt-primary-hover);
+    }
+
+    .bt-catalog-card[data-interactive][data-layout="rows"]:hover
+      > [data-bt-part="catalog-card-body"]
+      > [data-bt-part="catalog-card-text"]
+      > [data-bt-part="catalog-card-title"]
+      > :is(
+        [data-bt-part="catalog-card-link"],
+        [data-bt-part="catalog-card-open"]
+      ) {
+      text-decoration: underline;
+    }
+  }
+
+  .bt-catalog-empty {
+    padding-block: var(--bt-space-12);
+  }
+
+  .bt-catalog-more {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--bt-space-3);
+  }
+
+  /* The scrim and the frame render in the modal layer, away from the card, so they carry their own classes. */
+  .bt-catalog-detail-scrim[data-bt-part="catalog-detail-scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The frame is a size container, so the dialog's title steps with the room it has. */
+  .bt-catalog-detail-frame[data-bt-part="catalog-detail-frame"] {
+    container-type: inline-size;
+    display: grid;
+    place-items: center;
+    block-size: 100%;
+    padding: var(--bt-space-4);
+    overflow: hidden;
+  }
+
+  .bt-catalog-detail[data-bt-part="catalog-detail"] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    inline-size: min(var(--bt-w-dialog-lg), 100%);
+    max-block-size: 100%;
+    min-inline-size: 0;
+    padding: 0;
+    border-radius: var(--bt-r-3xl);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    outline: none;
+  }
+
+  .bt-catalog-detail > [data-bt-part="catalog-detail-head"] {
+    display: flex;
+    flex: none;
+    padding: calc(var(--bt-space-6) - var(--bt-space-1_5)) var(--bt-space-12) 0
+      var(--bt-space-6);
+  }
+
+  .bt-catalog-detail
+    > [data-bt-part="catalog-detail-head"]
+    > [data-bt-part="catalog-detail-title"] {
+    min-inline-size: 0;
+    max-inline-size: 22ch;
+    padding-block-start: calc((var(--bt-h-sm) - var(--bt-catalog-cap)) / 2);
+  }
+
+  .bt-catalog-detail > [data-bt-part="catalog-detail-body"] {
+    min-inline-size: 0;
+    padding: var(--bt-space-4) var(--bt-space-6) var(--bt-space-6);
+  }
+
+  .bt-catalog-detail > [data-bt-part="catalog-detail-close"] {
+    position: absolute;
+    inset-block-start: calc(var(--bt-space-6) - var(--bt-h-sm) / 2);
+    inset-inline-end: calc(var(--bt-space-6) - var(--bt-h-sm) / 2);
+  }
+}

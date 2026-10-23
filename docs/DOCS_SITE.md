@@ -38,7 +38,7 @@ Every component, primitive and layer has one home. Component-scale parts get a c
 | Components › Selection | `AnchorGrid`, `Checkbox`, `ColorDot`, `FilterBar`, `OptionTiles`†, `PreferencesMatrix`†, `RadioCardGroup`†, `SegmentedControl`, `Select`, `SwatchGrid`, `Switch`, `ViewToggle` |
 | Components › Navigation | `AccountMenu`, `Breadcrumbs`†, `CommandSearch`†, `MorphMenu`, `NavBar`, `PageDots`, `SavedViews`, `SettingsIndex`, `Sidebar`, `StatTabs`, `SubNav`, `TabNav`, `Tabs`, `TopBar` |
 | Components › Overlays | `AnnouncementDialog`, `ChoiceDialog`, `ConsequenceDialog`†, `ContextMenu`, `Dialog`, `ExpandableCard`, `FormDialog`†, `FullscreenDialog`†, `Menu`, `NotificationNudge`, `Popover`, `Sheet`, `SidePanel`†, `Tooltip` |
-| Components › Data display | `Accordion`, `AreaChart`, `Avatar`, `BarChart`, `ChartFrame`, `ColumnSettings`, `DataTable`, `GroupedList`, `HoverActions`†, `InitialsTile`, `Kbd`, `LineChart`, `MetricCard`, `ScopeBadge`†, `Sparkline`, `TagChip`†, `ValueBadge` |
+| Components › Data display | `Accordion`, `AreaChart`, `Avatar`, `BarChart`, `Catalog`, `ChartFrame`, `ColumnSettings`, `DataTable`, `GroupedList`, `HoverActions`†, `InitialsTile`, `Kbd`, `LineChart`, `MetricCard`, `ScopeBadge`†, `Sparkline`, `TagChip`†, `ValueBadge` |
 | Components › Feedback and status | `Banner`, `Callout`, `Confetti`, `EmptyState`, `FeatureIntro`, `LoadingPill`, `RecommendationCard`, `SetupGuide`, `Skeleton`, `StatusBadge`, `Toaster` |
 | Foundations | `Text` and `TextStack` (Typography), `Icon` (Icons), `Layer`, `Scrim`, `Sticky` and `FloatingLanes` (Layers) |
 | Layout | `Center`, `Container`, `Divider`, `FitBox`, `Grid`, `Inline`, `OverflowCluster`, `Page`, `Section`, `Stack`, `Surface` |

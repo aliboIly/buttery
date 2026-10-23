@@ -601,6 +601,30 @@ export type {
 } from "./patterns/detail-page/DetailPage.tsx";
 export { TagChip } from "./components/tag-chip/TagChip.tsx";
 export type { TagChipProps } from "./components/tag-chip/TagChip.tsx";
+export { Catalog, useCatalog } from "./patterns/catalog/Catalog.tsx";
+export type {
+  CatalogApi,
+  CatalogCardProps,
+  CatalogCardSize,
+  CatalogCardVariant,
+  CatalogColumns,
+  CatalogComponent,
+  CatalogCountProps,
+  CatalogEmptyProps,
+  CatalogFilterProps,
+  CatalogFilters,
+  CatalogItemsProps,
+  CatalogLayout,
+  CatalogMediaPosition,
+  CatalogMoreProps,
+  CatalogNoResultsProps,
+  CatalogOption,
+  CatalogProps,
+  CatalogSearchProps,
+  CatalogSortProps,
+  CatalogToolbarProps,
+  CatalogViewToggleProps,
+} from "./patterns/catalog/Catalog.tsx";
 export { CatalogPage } from "./patterns/catalog-page/CatalogPage.tsx";
 export type {
   CatalogCategory,
