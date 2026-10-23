@@ -11,8 +11,8 @@ import {
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const VIEWS = [
-  { label: "Canvas", body: "The card as people will see it." },
-  { label: "Layers", body: "Everything on the card, top to bottom." },
+  { label: "Canvas", body: "The slide as people will see it." },
+  { label: "Layers", body: "Everything on the slide, top to bottom." },
   { label: "History", body: "Every change since you opened it." },
 ] as const;
 
@@ -87,9 +87,9 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, key, see }) => {
   await press("radio", "Layers");
-  await see("Everything on the card, top to bottom.");
+  await see("Everything on the slide, top to bottom.");
   await key("ArrowRight");
   await see("Every change since you opened it.");
   await key("ArrowRight");
-  await see("The card as people will see it.");
+  await see("The slide as people will see it.");
 };

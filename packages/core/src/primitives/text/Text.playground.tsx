@@ -39,7 +39,7 @@ export const demos: readonly DemoSection[] = [
         {ROLES.map((role) => (
           <Stack key={role} gap={3}>
             <Text variant="caption">{role}</Text>
-            <Text variant={role}>Round the corners and add depth</Text>
+            <Text variant={role}>Pick a theme for every slide</Text>
           </Stack>
         ))}
       </Stack>

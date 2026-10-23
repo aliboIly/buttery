@@ -15,7 +15,7 @@ export function TickingTotal(): ReactElement {
               {TOTALS[step]}
             </Text>
           </Morph>
-          <Text variant="caption">cards made today</Text>
+          <Text variant="caption">slides made today</Text>
         </Stack>
       )}
     </Loop>
@@ -26,5 +26,5 @@ export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
   await see("1,204");
-  await see("cards made today");
+  await see("slides made today");
 };

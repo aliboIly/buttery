@@ -248,7 +248,7 @@ describe("runLayoutChecks", () => {
     const grid = (opacity: string): string =>
       `<div data-bt="Grid" data-testid="grid" style="inline-size: 300px; block-size: 100px">
          <article style="block-size: 100px; opacity: ${opacity}; transform: translateY(180px)">
-           <h3 style="margin: 0">Lean it in 3D</h3>
+           <h3 style="margin: 0">Tilt it in 3D</h3>
          </article>
        </div>`;
     expect(check(grid("0"), ["overflow"])).toEqual([]);

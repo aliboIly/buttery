@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { Center, Inline, Pressable, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-const STEPS = ["Pick a size", "Choose a backdrop", "Share your card"] as const;
+const STEPS = ["Pick a size", "Choose a theme", "Share your deck"] as const;
 
 /** A tour's step buttons sharing the width equally, whatever their labels. */
 export function EqualButtons(): ReactElement {
@@ -54,9 +54,9 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Previous");
-  await see("Step 2 of 3: Choose a backdrop");
+  await see("Step 2 of 3: Choose a theme");
   await press("button", "Next step");
-  await see("Step 3 of 3: Share your card");
+  await see("Step 3 of 3: Share your deck");
   await press("button", "Finish the tour");
   await see("Tour finished");
 };

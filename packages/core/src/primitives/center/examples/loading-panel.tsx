@@ -8,7 +8,7 @@ export function LoadingPanel(): ReactElement {
     <Surface level="panel" style={{ blockSize: "var(--bt-bento-row)" }}>
       <Center style={{ blockSize: "100%" }}>
         <Text variant="body-sm" role="status">
-          Loading your cards…
+          Loading your decks…
         </Text>
       </Center>
     </Surface>
@@ -18,5 +18,5 @@ export function LoadingPanel(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Loading your cards…");
+  await see("Loading your decks…");
 };

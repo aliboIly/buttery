@@ -27,7 +27,9 @@ export function SwatchButton(): ReactElement {
             : "var(--bt-shadow-inset)",
         }}
       />
-      <Text variant="body-sm">{picked ? "Lilac backdrop" : "No backdrop"}</Text>
+      <Text variant="body-sm">
+        {picked ? "Lilac background" : "No background"}
+      </Text>
     </Inline>
   );
 }
@@ -35,7 +37,7 @@ export function SwatchButton(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("Lilac backdrop");
+  await see("Lilac background");
   await press("button", "Lilac");
-  await see("No backdrop");
+  await see("No background");
 };

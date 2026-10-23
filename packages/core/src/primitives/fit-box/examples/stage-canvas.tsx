@@ -12,12 +12,12 @@ import {
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const SHAPES = [
-  { name: "Landscape", ratio: 4 / 3, label: "4:3" },
+  { name: "Wide", ratio: 16 / 9, label: "16:9" },
   { name: "Square", ratio: 1, label: "1:1" },
-  { name: "Story", ratio: 9 / 16, label: "9:16" },
+  { name: "Tall", ratio: 9 / 16, label: "9:16" },
 ] as const;
 
-/** An editor's stage: the canvas takes the shape you pick and stays centered, 32px clear of the edges. */
+/** A slide editor's stage: the slide takes the shape you pick and stays centered, 32px clear of the edges. */
 export function StageCanvas(): ReactElement {
   const [shape, setShape] = useState<(typeof SHAPES)[number]>(SHAPES[0]);
   return (
@@ -59,9 +59,9 @@ export function StageCanvas(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await see("Landscape, 4:3");
-  await press("button", "Story");
-  await see("Story, 9:16");
+  await see("Wide, 16:9");
+  await press("button", "Tall");
+  await see("Tall, 9:16");
   await press("button", "Square");
   await see("Square, 1:1");
 };

@@ -14,8 +14,8 @@ export const page: DocsPage = {
 
 const CARDS = [
   "Templates",
-  "Brand kits",
-  "Photos",
+  "Themes",
+  "Pictures",
   "Exports",
   "Sharing",
   "History",

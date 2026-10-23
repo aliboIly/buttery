@@ -2,15 +2,15 @@ import type { ReactElement } from "react";
 import { Divider, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** An order's bags and its delivery in one card, split into two groups by a divider. */
+/** A deck's slides and who it's shared with in one card, split into two groups by a divider. */
 export function GroupedList(): ReactElement {
   return (
     <Surface level="card" pad={4}>
       <Stack gap={3}>
-        <Text variant="label">Ethiopia Guji, 250 g</Text>
-        <Text variant="label">Colombia Huila, 1 kg</Text>
+        <Text variant="label">Title slide</Text>
+        <Text variant="label">Q3 in numbers</Text>
         <Divider />
-        <Text variant="label">Ships on Friday</Text>
+        <Text variant="label">Shared with the design team</Text>
       </Stack>
     </Surface>
   );
@@ -19,5 +19,5 @@ export function GroupedList(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Ships on Friday");
+  await see("Shared with the design team");
 };

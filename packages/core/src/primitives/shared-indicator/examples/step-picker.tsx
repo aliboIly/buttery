@@ -12,9 +12,9 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const STEPS = [
   "Pick a size",
-  "Choose a backdrop",
+  "Choose a theme",
   "Add your title",
-  "Share the card",
+  "Share the deck",
 ] as const;
 
 /** Numbered steps in one track; the highlight travels to the step you pick, which says it's the current one. */

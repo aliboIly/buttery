@@ -11,7 +11,7 @@ import {
 } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-const CARDS = ["Spring launch", "Summer menu", "Autumn tasting"] as const;
+const DECKS = ["Spring launch", "Team offsite", "Board update"] as const;
 
 /** A panel's empty state, centered, with its title as a paragraph because the panel already has its heading. */
 export function EmptyCopy(): ReactElement {
@@ -21,16 +21,16 @@ export function EmptyCopy(): ReactElement {
       <Stack gap={4}>
         <Inline gap={2} justify="between">
           <Text variant="title" asChild>
-            <h3>Saved cards</h3>
+            <h3>Saved decks</h3>
           </Text>
           <Surface asChild level="raised" padX={4} padY={2} radius="full">
             <Pressable
-              aria-disabled={saved === CARDS.length}
+              aria-disabled={saved === DECKS.length}
               onClick={() => {
                 setSaved(saved + 1);
               }}
             >
-              <Text variant="button">Save a card</Text>
+              <Text variant="button">Save a deck</Text>
             </Pressable>
           </Surface>
         </Inline>
@@ -41,13 +41,13 @@ export function EmptyCopy(): ReactElement {
               align="center"
               titleAs="p"
               title="Nothing saved yet"
-              body="Cards you save show up here, ready to print or share."
+              body="Decks you save show up here, ready to present or share."
             />
           </Center>
         ) : (
           <Stack gap={2}>
-            {CARDS.slice(0, saved).map((card) => (
-              <Text key={card}>{card}</Text>
+            {DECKS.slice(0, saved).map((deck) => (
+              <Text key={deck}>{deck}</Text>
             ))}
           </Stack>
         )}
@@ -60,6 +60,6 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Nothing saved yet");
-  await press("button", "Save a card");
+  await press("button", "Save a deck");
   await see("Spring launch");
 };

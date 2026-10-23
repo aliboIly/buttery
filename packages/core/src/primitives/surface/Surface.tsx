@@ -64,7 +64,7 @@ export interface SurfaceProps extends ComponentPropsWithRef<"div"> {
  * @example
  * <Surface level="panel">
  *   <Surface level="card" radius="auto" pad={4}>
- *     <Text variant="label">Backdrop</Text>
+ *     <Text variant="label">Background</Text>
  *   </Surface>
  * </Surface>
  */

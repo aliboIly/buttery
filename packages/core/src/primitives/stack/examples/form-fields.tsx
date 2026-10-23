@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { Pressable, Stack, Surface, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A card's details as label and value pairs: the column keeps its rhythm as a note joins, and each pair keeps its tighter gap. */
+/** A deck's details as label and value pairs: the column keeps its rhythm as a note joins, and each pair keeps its tighter gap. */
 export function FormFields(): ReactElement {
   const [note, setNote] = useState(false);
   return (
@@ -14,13 +14,15 @@ export function FormFields(): ReactElement {
           <Text variant="body">Spring launch</Text>
         </Stack>
         <Stack gap={1}>
-          <Text variant="label">Canvas</Text>
-          <Text variant="body">Square, 1080 × 1080</Text>
+          <Text variant="label">Slide size</Text>
+          <Text variant="body">Wide, 1920 × 1080</Text>
         </Stack>
         {note ? (
           <Stack gap={1}>
             <Text variant="label">Note</Text>
-            <Text variant="body">Print a second copy for the shop window.</Text>
+            <Text variant="body">
+              Send the PDF to the board after the meeting.
+            </Text>
           </Stack>
         ) : null}
         <Surface asChild level="raised" padX={4} padY={2} radius="full">
@@ -43,7 +45,7 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Add a note");
-  await see("Print a second copy for the shop window.");
+  await see("Send the PDF to the board after the meeting.");
   await press("button", "Remove the note");
   await see("Add a note");
 };

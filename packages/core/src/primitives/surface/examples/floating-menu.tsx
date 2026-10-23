@@ -7,9 +7,9 @@ export function FloatingMenu(): ReactElement {
   return (
     <Surface level="floating" style={{ inlineSize: "var(--bt-w-menu-min)" }}>
       <Stack gap={1} padX={3} padY={2}>
+        <Text variant="menu">Wide</Text>
         <Text variant="menu">Square</Text>
-        <Text variant="menu">Portrait</Text>
-        <Text variant="menu">Story</Text>
+        <Text variant="menu">Tall</Text>
       </Stack>
     </Surface>
   );
@@ -18,5 +18,5 @@ export function FloatingMenu(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Portrait");
+  await see("Square");
 };

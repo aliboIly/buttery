@@ -28,7 +28,7 @@ export function MenuShortcut(): ReactElement {
   useShortcut("mod+d", duplicate, { enabled: focused });
   useShortcut("mod+backspace", remove, { enabled: focused });
   const commands = [
-    { label: "Duplicate card", shortcut: "mod+d", run: duplicate },
+    { label: "Duplicate slide", shortcut: "mod+d", run: duplicate },
     { label: "Remove a copy", shortcut: "mod+backspace", run: remove },
   ];
   return (
@@ -36,7 +36,7 @@ export function MenuShortcut(): ReactElement {
       <Surface
         level="floating"
         role="group"
-        aria-label="Card commands"
+        aria-label="Slide commands"
         style={{ minInlineSize: "var(--bt-w-menu-min)" }}
         onFocus={() => {
           setFocused(true);
@@ -69,8 +69,8 @@ export function MenuShortcut(): ReactElement {
       </Surface>
       <Text variant="body-sm" role="status">
         {copies === 1
-          ? "1 copy of the card"
-          : `${String(copies)} copies of the card`}
+          ? "1 copy of the slide"
+          : `${String(copies)} copies of the slide`}
       </Text>
     </Stack>
   );
@@ -79,8 +79,8 @@ export function MenuShortcut(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
-  await press("button", "Duplicate card");
-  await see("2 copies of the card");
+  await press("button", "Duplicate slide");
+  await see("2 copies of the slide");
   await press("button", "Remove a copy");
-  await see("1 copy of the card");
+  await see("1 copy of the slide");
 };

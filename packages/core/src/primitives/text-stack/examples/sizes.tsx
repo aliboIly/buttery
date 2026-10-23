@@ -11,8 +11,8 @@ export function Sizes(): ReactElement {
         <TextStack
           titleAs="p"
           title="Make it yours"
-          body="Pick a backdrop, round the corners and add depth."
-          caption="Tip: hold Shift for finer steps."
+          body="Pick a theme, choose a background and set the fonts."
+          caption="Tip: press T to try the next theme."
         />
       </Stack>
       <Stack gap={3}>
@@ -21,7 +21,7 @@ export function Sizes(): ReactElement {
           size="empty"
           titleAs="p"
           title="Your canvas is empty"
-          body="Start a fresh card, or open one from your library."
+          body="Add a slide, or open a deck from your library."
         />
       </Stack>
       <Stack gap={3}>
@@ -29,8 +29,8 @@ export function Sizes(): ReactElement {
         <TextStack
           size="section"
           titleAs="p"
-          title="Every card, one place"
-          body="Keep your designs together and pick up where you left off."
+          title="Every deck, one place"
+          body="Find any deck in seconds and pick up where you left off."
         />
       </Stack>
       <Stack gap={3}>
@@ -38,8 +38,8 @@ export function Sizes(): ReactElement {
         <TextStack
           size="feature"
           titleAs="p"
-          title="Print at the counter"
-          body="Send any card to the shop's printer from wherever you are."
+          title="Present from any screen"
+          body="Open a deck on the room's screen and keep your notes on your laptop."
         />
       </Stack>
     </Stack>
@@ -49,6 +49,6 @@ export function Sizes(): ReactElement {
 export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Every card, one place");
-  await see("Print at the counter");
+  await see("Every deck, one place");
+  await see("Present from any screen");
 };

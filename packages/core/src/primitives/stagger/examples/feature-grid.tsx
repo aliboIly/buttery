@@ -4,8 +4,8 @@ import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const FEATURES = [
   { title: "Templates", body: "Start from a layout that already works." },
-  { title: "Brand kits", body: "Your colors and fonts, one click away." },
-  { title: "Exports", body: "Sharp images in every size you need." },
+  { title: "Themes", body: "Your colors and fonts on every slide." },
+  { title: "Exports", body: "A PDF of the deck or a PNG of each slide." },
 ] as const;
 
 /** A landing page's features, stacked when narrow and three across from 640px, arriving one after another. */
@@ -31,6 +31,6 @@ export function FeatureGrid(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Brand kits");
-  await see("Sharp images in every size you need.");
+  await see("Themes");
+  await see("A PDF of the deck or a PNG of each slide.");
 };

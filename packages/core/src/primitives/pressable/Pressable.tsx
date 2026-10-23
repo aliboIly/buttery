@@ -33,7 +33,7 @@ export interface PressableProps extends ComponentPropsWithRef<"button"> {
  *
  * @example
  * <Surface asChild level="card" pad={4}>
- *   <Pressable onClick={openCard}>Spring launch</Pressable>
+ *   <Pressable onClick={openDeck}>Spring launch</Pressable>
  * </Surface>
  */
 export function Pressable({

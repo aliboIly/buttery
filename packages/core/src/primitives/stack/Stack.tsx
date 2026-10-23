@@ -25,7 +25,7 @@ export interface StackProps extends ComponentPropsWithRef<"div">, SpacingProps {
  * @example
  * <Stack gap={3}>
  *   <Text variant="title">Your canvas is empty</Text>
- *   <Text variant="body-sm">Start a fresh card, or open one from your library.</Text>
+ *   <Text variant="body-sm">Add a slide, or open a deck from your library.</Text>
  * </Stack>
  */
 export function Stack({

@@ -3,16 +3,19 @@ import { Inline, Stack, Text } from "@buttery/core";
 import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const ROLES = [
-  { role: "title-lg", sample: "Orders this week" },
-  { role: "title-md", sample: "Wholesale" },
+  { role: "title-lg", sample: "Quarterly review" },
+  { role: "title-md", sample: "Themes" },
   { role: "title", sample: "Your canvas is empty" },
-  { role: "label", sample: "Grind size" },
-  { role: "body", sample: "Roasted on Tuesday, shipped the same afternoon." },
+  { role: "label", sample: "Slide size" },
+  {
+    role: "body",
+    sample: "Shared with the team on Tuesday, presented on Friday.",
+  },
   {
     role: "body-sm",
-    sample: "Start a fresh card, or open one from your library.",
+    sample: "Add a slide, or open a deck from your library.",
   },
-  { role: "caption", sample: "Updated 4 min ago" },
+  { role: "caption", sample: "Edited 4 min ago" },
 ] as const;
 
 const TONES = ["strong", "default", "secondary", "tertiary"] as const;
@@ -42,6 +45,6 @@ export const kind: ExampleKind = "variants";
 
 export const play: ExamplePlay = async ({ see }) => {
   await see("title-md");
-  await see("Wholesale");
+  await see("Themes");
   await see("tertiary");
 };

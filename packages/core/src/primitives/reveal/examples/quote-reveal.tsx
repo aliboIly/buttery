@@ -9,10 +9,12 @@ export function QuoteReveal(): ReactElement {
       <Stack gap={2} asChild>
         <figure>
           <Text variant="body-lg" asChild>
-            <blockquote>We made our launch cards in an afternoon.</blockquote>
+            <blockquote>
+              We built the whole launch deck in an afternoon.
+            </blockquote>
           </Text>
           <Text variant="caption" asChild>
-            <figcaption>A small studio in Lisbon</figcaption>
+            <figcaption>A product team in Lisbon</figcaption>
           </Text>
         </figure>
       </Stack>
@@ -23,5 +25,5 @@ export function QuoteReveal(): ReactElement {
 export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("We made our launch cards in an afternoon.");
+  await see("We built the whole launch deck in an afternoon.");
 };

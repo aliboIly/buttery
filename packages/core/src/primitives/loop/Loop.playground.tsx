@@ -36,7 +36,7 @@ export const demos: readonly DemoSection[] = [
         <Loop steps={3}>
           {(step) => (
             <Stack gap={3}>
-              <Text variant="caption">Cards exported this week</Text>
+              <Text variant="caption">Decks exported this week</Text>
               <Morph contentKey={step}>
                 <Text variant="heading-2" tabular>
                   {TOTALS[step]}

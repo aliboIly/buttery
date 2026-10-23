@@ -54,8 +54,8 @@ const ROLES: Readonly<
  * @example
  * <TextStack
  *   title="Make it yours"
- *   body="Pick a backdrop, round the corners and add depth."
- *   caption="Tip: hold Shift for finer steps."
+ *   body="Pick a theme, choose a background and set the fonts."
+ *   caption="Tip: press T to try the next theme."
  * />
  */
 export function TextStack({

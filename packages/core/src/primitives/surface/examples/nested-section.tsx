@@ -10,7 +10,7 @@ export function NestedSection(): ReactElement {
         <Stack>
           <Inline padX={4} padY={2}>
             <Text variant="control" tone="secondary">
-              Backdrop
+              Background
             </Text>
           </Inline>
           <Surface radius="auto" padX={4} padY={4}>
@@ -25,6 +25,6 @@ export function NestedSection(): ReactElement {
 export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ see }) => {
-  await see("Backdrop");
+  await see("Background");
   await see("Fill");
 };

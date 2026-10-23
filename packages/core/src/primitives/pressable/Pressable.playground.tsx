@@ -13,7 +13,7 @@ export const page: DocsPage = {
 
 export const live: LiveDemo = {
   controls: {
-    children: { kind: "text", initial: "Add to order" },
+    children: { kind: "text", initial: "New slide" },
     disabled: { kind: "toggle", initial: false },
   },
   render: ({ children, disabled }) => (

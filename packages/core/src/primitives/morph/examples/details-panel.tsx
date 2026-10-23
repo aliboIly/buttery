@@ -13,7 +13,7 @@ export function DetailsPanel(): ReactElement {
           <Text variant="label">Spring launch</Text>
           {open ? (
             <Text variant="body">
-              Square card, blend backdrop, soft edge. Edited today by you.
+              12 slides, Paper theme, 16:9. Edited today by you.
             </Text>
           ) : null}
           <Surface asChild level="raised" padX={4} padY={2} radius="full">
@@ -38,7 +38,7 @@ export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "More details");
-  await see("Square card, blend backdrop, soft edge. Edited today by you.");
+  await see("12 slides, Paper theme, 16:9. Edited today by you.");
   await press("button", "Fewer details");
   await see("More details");
 };

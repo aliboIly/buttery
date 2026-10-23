@@ -8,7 +8,7 @@ export function EmptyStateCopy(): ReactElement {
     <Stack gap={3} align="center">
       <Text variant="title">Your canvas is empty</Text>
       <Text variant="body-sm">
-        Start a fresh card, or open one from your library.
+        Add a slide, or open a deck from your library.
       </Text>
     </Stack>
   );

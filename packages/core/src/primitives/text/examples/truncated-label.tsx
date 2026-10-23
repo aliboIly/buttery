@@ -10,7 +10,9 @@ export function TruncatedLabel(): ReactElement {
     <Stack gap={3} style={{ maxInlineSize: "var(--bt-w-inspector)" }}>
       <Surface level="card" padX={4} padY={3}>
         <Inline gap={2}>
-          <Text truncate>Background angle for the spring launch card</Text>
+          <Text truncate>
+            Background angle for the Spring launch title slide
+          </Text>
           <Text variant="badge" tabular>
             {`${String(angle)}°`}
           </Text>

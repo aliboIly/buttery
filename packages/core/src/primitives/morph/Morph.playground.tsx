@@ -16,17 +16,21 @@ export const page: DocsPage = {
 };
 
 function FillDemo(): ReactElement {
-  const [fill, setFill] = useState<"blend" | "flat">("blend");
+  const [fill, setFill] = useState<"gradient" | "solid">("gradient");
   return (
     <Stack gap={3} align="start">
       <Surface asChild level="raised" padX={4} padY={2} radius="full">
         <Pressable
           onClick={() => {
-            setFill((current) => (current === "blend" ? "flat" : "blend"));
+            setFill((current) =>
+              current === "gradient" ? "solid" : "gradient",
+            );
           }}
         >
           <Text variant="button">
-            {fill === "blend" ? "Switch to flat" : "Switch to blend"}
+            {fill === "gradient"
+              ? "Switch to solid colors"
+              : "Switch to gradients"}
           </Text>
         </Pressable>
       </Surface>
@@ -36,7 +40,7 @@ function FillDemo(): ReactElement {
         style={{ inlineSize: "var(--bt-w-dialog)", maxInlineSize: "100%" }}
       >
         <Morph contentKey={fill} data-testid="morph-fill">
-          {fill === "blend" ? (
+          {fill === "gradient" ? (
             <Grid columns={6} gap={2}>
               {gradients.slice(0, 12).map((preset) => (
                 <Surface

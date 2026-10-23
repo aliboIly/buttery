@@ -20,7 +20,7 @@ const ACTIONS = [
     label: "Share",
     icon: Share2,
     priority: 1,
-    done: "Copied a link to the card",
+    done: "Copied a link to the deck",
   },
   { label: "Help", icon: CircleHelp, priority: 0, done: "Opened the help" },
 ] as const;
