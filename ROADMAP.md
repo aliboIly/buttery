@@ -2,7 +2,22 @@
 
 Tick boxes as work lands (agents do this too). Details and acceptance criteria per phase: `docs/BUILD_PLAN.md`.
 
-**Now:** Phase 7 (hardening, brand and the docs site) is closing: every written page is laid out, and what's left is the full gate, the push, the GitHub releases and the deploy to GitHub Pages. Phase 8 (developer and agent experience) is next.
+## Now / Next
+
+Kept up to date as items finish.
+
+**Now**, finishing Phase 7's open items:
+- In progress: a `Sheet` (a side panel on a laptop, a drawer on a phone), with the Halfmoon shop's bag moved onto it and a bag page of its own
+- In progress: a modular catalog component, with the shop's coffees rebuilt on it
+- In progress: an `Accordion` and an FAQ pattern, with the shop's questions rebuilt on them
+- In progress: a right-click `ContextMenu` that works from the keyboard, on Deckhand's slides
+- Up next in this phase: style options (`variant`, `size`, `layout`) for the main controls, badges and page patterns
+- Then the Phase 7 gate (`pnpm check` and the full layout matrix), the push, the GitHub releases, the docs on GitHub Pages and the phase report
+
+**Next**, in order:
+1. `@buttery/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
+2. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
+3. Everything else that's left: the rest of 1.0 below, and the follow-ups the demos turned up
 
 ---
 
@@ -106,6 +121,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 - [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper), and Tools pages for the command line tool and the MCP server with real output
 - [ ] `@buttery/mcp`, an MCP server with `scaffold_page`, `scaffold_component` and `search_docs` (on the docs search's index), and configs for the common coding agents (`docs/DX_AND_AI.md`)
 - [ ] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed
+- [ ] A passwordless sign-in pattern: an identifier field (email or phone), a one-time code field, an `AuthFlow` with a headless `useOtpFlow` hook, a docs page, `buttery add page sign-in`, and a sign-in screen in the dashboard template and the roastery demo
 - [ ] The `buttery` npm org claimed, or a scope of buttery's own chosen, and the first publish
 
 ## Later (ideas, not commitments)
