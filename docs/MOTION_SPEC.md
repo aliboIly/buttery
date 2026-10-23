@@ -93,6 +93,7 @@ Never use `transition: all`. Transition only `opacity`, transforms (`transform`,
 | Toast joins a stack | The new toast rises a whole step (its height and the gap) at the bottom while the stack moves up one step, as one column; a fourth lets the oldest fade out at the top | rise and stack both `spring.snappy`, so the 8px gaps hold every frame; fade `dur-base` in, `dur-fast` out |
 | Toast leaves the middle | It fades where it is, then the toasts above it close the gap | fade `dur-fast`, then `spring.snappy`; with reduced motion, a 100ms fade and the stack jumps |
 | Menu open (select) | Trigger gets active bg; menu fades + scales from trigger origin (0.97 → 1) | scale `spring.snappy` + fade `dur-base` in, fade `dur-fast` out (measured ~150–200ms in) |
+| Context menu open (_derived_) | `ContextMenu` opens with its corner at the pointer, or at the middle of the focused element, and fades + scales from that corner as a menu does from its trigger | as a menu: scale `spring.snappy` + fade `dur-base` in, fade `dur-fast` out |
 | Button press | Scale 0.97 on pointer-down | down `dur-press`, release `dur-fast`, both `ease-out` (a CSS recipe, so no spring); at once with reduced motion |
 | Primary hover | `#1a1a1a` → `#2b2b2b` | `dur-fast` |
 | Accordion item opens (_derived_) | Its panel's height opens through `Morph` while the answer fades in and the chevron turns 180°; in a one-at-a-time accordion the open item closes at the same moment | height and chevron `spring.smooth`, answer `dur-fast` |
