@@ -1,6 +1,7 @@
 import { Mail } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { TextField } from "@buttery/react";
 
 /** An email address checked when you leave the field, with the browser's autofill. */
@@ -26,3 +27,11 @@ export function EmailField(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "states";
+
+export const play: ExamplePlay = async ({ type, key, see }) => {
+  await type("Email", "sam@");
+  await key("Tab");
+  await see("Enter an email address like name@example.com.");
+};

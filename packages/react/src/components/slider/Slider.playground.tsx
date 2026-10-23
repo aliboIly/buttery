@@ -1,8 +1,19 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Slider } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "Slider",
+  description:
+    "A labeled slider row: the label and its value badge beside a track you drag, click or step with the keyboard.",
+  order: 90,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function RotationDemo(): ReactElement {
   const [angle, setAngle] = useState(-8);
@@ -19,6 +30,34 @@ function RotationDemo(): ReactElement {
     />
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Opacity" },
+    format: { kind: "choice", options: ["%", "°", "px"], initial: "%" },
+    showRange: { kind: "toggle", initial: false },
+    disabled: { kind: "toggle", initial: false },
+  },
+  render: ({ label, format, showRange, disabled }) => (
+    <Slider
+      label={String(label)}
+      defaultValue={40}
+      format={demoChoice(format, ["%", "°", "px"])}
+      showRange={showRange === true}
+      disabled={disabled === true}
+    />
+  ),
+  code: ({ label, format, showRange, disabled }) =>
+    [
+      "<Slider",
+      `  label="${String(label)}"`,
+      "  defaultValue={40}",
+      `  format="${demoChoice(format, ["%", "°", "px"])}"`,
+      ...(showRange === true ? ["  showRange"] : []),
+      ...(disabled === true ? ["  disabled"] : []),
+      "/>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {

@@ -1,4 +1,5 @@
 import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { DateRangeBar } from "@buttery/react";
@@ -33,3 +34,13 @@ export function OverviewPeriod(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "controlled";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("combobox", "Interval, Weekly");
+  await press("option", "Monthly");
+  await see(
+    "Fetching /api/overview?range=last-4-weeks&interval=monthly&compare=previous-period",
+  );
+};

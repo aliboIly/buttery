@@ -1,8 +1,9 @@
 import "@buttery/core/styles.css";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { colors, createTheme, useMotionPreference } from "@buttery/core";
+import { toast } from "../components/toaster/Toaster.tsx";
 import { ButteryProvider } from "./ButteryProvider.tsx";
 import { useButtery } from "./context.ts";
 
@@ -56,6 +57,30 @@ describe("ButteryProvider", () => {
     unmount();
     expect(root.hasAttribute("data-bt-settled")).toBe(false);
     expect(document.querySelector('[data-bt="FloatingLanes"]')).toBeNull();
+  });
+
+  it("gives the toasts' region and messages the labels in toaster, so an app can translate them", async () => {
+    render(
+      <ButteryProvider
+        toaster={{
+          label: "Hinweis",
+          regionLabel: "Hinweise ({hotkey})",
+          toneLabels: { success: "Erledigt" },
+        }}
+      />,
+    );
+    toast.success("Karte gespeichert");
+    expect(
+      await screen.findByRole("region", { name: "Hinweise (F8)" }),
+    ).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        [...document.querySelectorAll('[role="status"]')].map(
+          (status) => status.textContent,
+        ),
+      ).toContain("Hinweis Erledigt: Karte gespeichert");
+    });
+    toast.dismiss();
   });
 
   it("leaves LayoutGuard out when asked", () => {
@@ -154,6 +179,30 @@ describe("ButteryProvider", () => {
     ).toEqual(["reduced", "full"]);
   });
 
+  it("gives a nested provider the settings it doesn't set from the provider around it", () => {
+    stubMatchMedia([]);
+    function Motion(): ReactElement {
+      return <output aria-label="motion">{useMotionPreference()}</output>;
+    }
+    render(
+      <ButteryProvider
+        colorScheme="dark"
+        density="compact"
+        platform="desktop"
+        reducedMotion="always"
+      >
+        <ButteryProvider>
+          <Probe />
+          <Motion />
+        </ButteryProvider>
+      </ButteryProvider>,
+    );
+    expect(screen.getByRole("status", { name: "Settings" }).textContent).toBe(
+      "dark compact desktop true",
+    );
+    expect(screen.getByLabelText("motion").textContent).toBe("reduced");
+  });
+
   it("detects the desktop app", () => {
     Object.defineProperty(window, "__TAURI_INTERNALS__", {
       value: {},
@@ -200,6 +249,22 @@ describe("ButteryProvider", () => {
       getComputedStyle(root).getPropertyValue("--bt-bg-surface").trim(),
     ).toBe(colors["bg-surface"].light);
     expect(inside.parentElement?.style.display).toBe("contents");
+  });
+
+  it("colors text in a nested provider with its own theme, even text that sets no color", () => {
+    render(
+      <ButteryProvider colorScheme="dark">
+        <ButteryProvider colorScheme="light">
+          <span data-testid="plain">plain</span>
+          <span data-testid="probe" style={{ color: "var(--bt-text)" }}>
+            probe
+          </span>
+        </ButteryProvider>
+      </ButteryProvider>,
+    );
+    expect(getComputedStyle(screen.getByTestId("plain")).color).toBe(
+      getComputedStyle(screen.getByTestId("probe")).color,
+    );
   });
 
   it("explains what's missing when used outside a provider", () => {

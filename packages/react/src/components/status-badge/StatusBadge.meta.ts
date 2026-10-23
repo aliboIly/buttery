@@ -18,4 +18,7 @@ export const meta: ComponentMeta = {
   related: ["ValueBadge", "DataTable", "MetricCard"],
   a11y: "Plain text: the label says the state, so it reads the same to screen readers and without color. Its icon is decorative.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It's --bt-h-badge (20px) tall and as wide as its label, its padding and its 12px icon. It's never wider than its container, where a long label truncates with an ellipsis and shows in full as its title, and it takes no input, so it has no hit area.",
 };

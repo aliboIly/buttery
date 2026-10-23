@@ -1,0 +1,134 @@
+---
+title: Marketing page
+description: The bands a marketing page is made of, from heroes and bento grids to the footer.
+section: patterns
+order: 130
+status: stable
+since: 0.7.0
+exports: [HeroText]
+related: [layout/page-grid-and-containers, components/nav-bar]
+---
+
+A marketing page is a `Page` of bands on the page grid: a hero, a strip of logos or numbers, a bento grid of features, an article, and a footer. Use these patterns for a product's site. Each band lays itself out by the room it has, in a window or a narrow frame.
+
+## The bands
+
+<Cards columns={2}>
+<Card icon="monitor" title="Heroes">
+
+`SplitHero` and `CenteredHero` open the page: a two-tone headline, a line and actions beside or above a visual that assembles as it arrives.
+
+</Card>
+<Card icon="template" title="Strips">
+
+`LogoStrip` lines up partner marks in equal cells, quietly, and `StatStrip` shows headline numbers that count up once.
+
+</Card>
+<Card icon="blocks" title="A bento grid">
+
+`Bento` lays feature cards on a 12-column grid, each spanning 4, 6, 8 or 12 columns. A card can open into a dialog.
+
+</Card>
+<Card icon="book" title="An article and a footer">
+
+`ArticleLayout` sets an article beside a sticky aside, and `Footer` ends the page with links and small print.
+
+</Card>
+</Cards>
+
+A home page that opens with a split hero:
+
+```tsx title="src/Home.tsx"
+import type { ReactElement } from "react";
+import { Button, Page, SplitHero } from "@buttery/react";
+
+export function Home(): ReactElement {
+  return (
+    <Page>
+      <SplitHero
+        title="Coffee roasted to order."
+        titleMore="Every bag ships the week it's roasted."
+        actions={
+          <Button variant="primary" arrow="forward">
+            Shop coffee
+          </Button>
+        }
+        visual={<div className="bag-photo" />}
+      />
+    </Page>
+  );
+}
+```
+
+## SplitHero
+
+<ComponentDocs of="SplitHero" />
+
+## CenteredHero
+
+<ComponentDocs of="CenteredHero" />
+
+## HeroText
+
+`SplitHero` and `CenteredHero` both lay out `HeroText`, a hero's words, and you can use it in a hero of your own. It takes these props:
+
+<DocsTable
+  columns={["Prop", "What it is"]}
+  rows={[
+    ["`eyebrow`", "An optional short line over the headline"],
+    [
+      "`title`",
+      "The headline's first clause, in `display` and the strong color",
+    ],
+    ["`titleMore`", "The rest of the headline, in the secondary color"],
+    ["`body`", "A line under the headline, at most 60 characters wide"],
+    ["`actions`", "Buttons 24px under the body, 8px apart"],
+    ["`align`", '`"start"`, the default, or `"center"`'],
+    [
+      "`titleAs`",
+      '`"h1"` by default; `"h2"` suits a band further down the page',
+    ],
+    ["`titleId`", "The headline's id, so the band it opens can be named by it"],
+  ]}
+/>
+
+```tsx title="src/RoasteryHero.tsx"
+import type { ReactElement } from "react";
+import { Button, HeroText } from "@buttery/react";
+
+export function RoasteryHero(): ReactElement {
+  return (
+    <HeroText
+      eyebrow="Halfmoon Roastery"
+      title="Coffee roasted on Thursday."
+      titleMore="At your door by Saturday."
+      body="Small batches from three farms we visit every year."
+      actions={
+        <Button variant="primary" size="cta" arrow="forward">
+          Choose a coffee
+        </Button>
+      }
+    />
+  );
+}
+```
+
+## LogoStrip
+
+<ComponentDocs of="LogoStrip" />
+
+## StatStrip
+
+<ComponentDocs of="StatStrip" />
+
+## Bento
+
+<ComponentDocs of="Bento" />
+
+## ArticleLayout
+
+<ComponentDocs of="ArticleLayout" />
+
+## Footer
+
+<ComponentDocs of="Footer" />

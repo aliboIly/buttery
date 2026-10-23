@@ -1,0 +1,21 @@
+:root {
+  --bt-logo-xs: 16px;
+  --bt-logo-sm: 22px;
+  --bt-logo-lg: 64px;
+}
+
+/* An emoji's glyph reaches past 1em, so the box takes the font's own line height to hold all of it. */
+.docs-logo {
+  display: inline-block;
+  flex: none;
+  font-size: var(--bt-logo-sm);
+  line-height: normal;
+}
+
+.docs-logo[data-size="lg"] {
+  font-size: var(--bt-logo-lg);
+}
+
+.docs-logo[data-size="xs"] {
+  font-size: var(--bt-logo-xs);
+}

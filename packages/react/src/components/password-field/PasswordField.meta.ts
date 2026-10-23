@@ -15,4 +15,20 @@ export const meta: ComponentMeta = {
   related: ["TextField", "SignInForm", "SignUpForm"],
   a11y: 'The reveal button is a toggle with a fixed name ("Show password") and aria-pressed, in the tab order after the input. Requirements are a list that describes the input; each rule has a tick named "Met" or a circle named "Not met", so its state doesn\'t rest on color. A shown password is never corrected, capitalized or spell-checked, and hides again when its form is submitted.',
   motion: "none",
+  keyboard: [
+    {
+      keys: "Tab",
+      does: "Moves from the password box to the button that shows the password",
+    },
+    {
+      keys: "Enter or Space",
+      does: "Shows or hides the password, from that button",
+    },
+    {
+      keys: "Enter",
+      does: "Sends its form from the password box, and a shown password hides again",
+    },
+  ],
+  layout:
+    'It fills its container. Its box is 34px tall (--bt-h-control) at size="md", the default, and 48px (--bt-h-cta) with 16px text at "lg", with the 28px reveal button inside its end. The label, with its hint 6px under it, sits 8px above the box, and the error and the requirements follow 8px apart under it, the rules 6px from one another; all of them wrap.',
 };

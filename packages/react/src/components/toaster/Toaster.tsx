@@ -58,8 +58,8 @@ export interface ToasterProps {
   /** Read before each message, so screen readers say what it is. Defaults to `"Notification"`. */
   readonly label?: string | undefined;
   /**
-   * Names the region the toasts stack in. `{hotkey}` becomes F8, the key that moves focus there. Defaults
-   * to `"Notifications ({hotkey})"`.
+   * Names the region the toasts stack in. `{hotkey}` becomes F8, the key that moves focus there.
+   * Defaults to `"Notifications ({hotkey})"`.
    */
   readonly regionLabel?: string | undefined;
   /** The words for each tone, read before its message and naming its icon. Defaults to Success, Warning and Error. */
@@ -381,8 +381,8 @@ function useWindowAway(): boolean {
  * The host for `toast()` messages: a stack in the bottom-center floating lane, above dialogs, that shows
  * three toasts at most. New toasts rise in at the bottom and the others make room; a toast leaving fades
  * where it is before the others close the gap. F8 moves focus to the toasts, and focus goes back where
- * it was when the last one leaves. `ButteryProvider` mounts one; render it yourself only without the
- * provider.
+ * it was when the last one leaves. `ButteryProvider` mounts one, taking these props as its `toaster`;
+ * render it yourself only without the provider.
  *
  * @example
  * <Toaster label="Benachrichtigung" regionLabel="Benachrichtigungen ({hotkey})" />
@@ -581,20 +581,27 @@ function showToast(message: string, options: ToastOptions = {}): string {
 }
 
 /**
- * Shows a short message in a toast at the bottom of the window and returns its id. Three show at once at
- * most: a fourth lets the one shown longest ago go, and a toast with the same `id` updates the earlier one
- * in its place, with its time started over, instead of stacking a copy. It leaves after 3s, or 5s with an
- * action or as a warning or danger, counting only while the pointer and focus are elsewhere. Screen readers
- * read it out, its tone first, F8 moves focus to the toasts, and Escape on a toast or a swipe down closes
- * it. `toast.success()`, `toast.warning()` and `toast.danger()` add a tone's icon and tint. Needs a
- * `Toaster`; `ButteryProvider` mounts one.
+ * `toast(message, options?)` shows `message` in a toast at the bottom of the window and returns the toast's
+ * id: `options.id`, or one it makes up. Its options: `id` names the toast, so a later toast with the same
+ * id updates it in place, with its time started over, instead of stacking a copy; `action`,
+ * `{ label, onAction, altText }`, adds a button after the message, and `altText` is another way to do the
+ * same, which screen readers hear; `tone` is `"neutral"` (the default), `"success"`, `"warning"` or
+ * `"danger"`, and `toast.success()`, `toast.warning()` and `toast.danger()` set it, with the tone's icon
+ * and tint; `duration` is how long it stays, in ms: 3000 by default, 5000 with an action or as a warning
+ * or danger, counted only while the pointer and focus are elsewhere and the window is in front, and
+ * `Infinity` keeps it until it's dismissed; `background: true` marks news the person didn't just cause,
+ * which screen readers read at the next pause. Three toasts show at once at most: a fourth lets the one
+ * shown longest ago go. A toast closes when its time is up, when its action is pressed, on Escape or a
+ * swipe down, and with `toast.dismiss(id)`; `toast.dismiss()` closes them all. F8 moves focus to the
+ * toasts. It shows in the `Toaster` that `ButteryProvider` mounts, so inside the provider there's nothing
+ * to render; without the provider, render one `<Toaster />` near the root.
  *
  * @example
- * toast("Card deleted", {
+ * toast("Slide deleted", {
  *   action: { label: "Undo", onAction: restore, altText: "Undo with Command Z" },
  * });
- * toast.success("Order shipped");
- * toast.danger("Couldn't export the card", { id: "export" });
+ * toast.success("Deck published");
+ * toast.danger("Couldn't export the deck", { id: "export" });
  */
 export const toast: ToastFunction = Object.assign(showToast, {
   success: (message: string, options: ToneToastOptions = {}): string =>

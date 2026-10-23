@@ -1,8 +1,20 @@
+import { Trash2 } from "lucide-react";
 import type { ReactElement } from "react";
 import { Center, Inline, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
-import { Button, Dialog } from "@buttery/react";
+import { Button, Dialog, IconButton } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "Dialog",
+  description:
+    "A modal dialog that dims the page, traps focus and hands it back when it closes.",
+  order: 40,
+  status: "stable",
+  since: "0.7.0",
+};
 
 const LILAC = gradients.find((preset) => preset.id === "lilac");
 
@@ -10,12 +22,12 @@ function Confirm(): ReactElement {
   return (
     <Dialog>
       <Dialog.Trigger asChild>
-        <Button variant="soft">Delete card</Button>
+        <Button variant="soft">Delete price list</Button>
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Text
-          title="Delete this card?"
-          body="It stays in the trash for 30 days, then it's gone for good."
+          title="Delete the holiday price list?"
+          body="The 8 cafés on it go back to your standard prices."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -44,7 +56,7 @@ function Scene(): ReactElement {
       }}
     >
       <Surface level="card" padX={6} padY={4}>
-        <Text variant="title">Launch card</Text>
+        <Text variant="title">Guji, Ethiopia</Text>
       </Surface>
     </Center>
   );
@@ -61,9 +73,9 @@ function WithMedia(): ReactElement {
           <Scene />
         </Dialog.Media>
         <Dialog.Text
-          title="Share your card"
-          body="Anyone with the link can see it, but only you can change it."
-          caption="Links stay on until you turn them off."
+          title="Give a friend 20% off"
+          body="They get 20% off their first bag, and you get a bag on us once they order."
+          caption="The link works for 30 days."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -85,9 +97,7 @@ function Sized({ size }: { readonly size: "md" | "lg" }): ReactElement {
       </Dialog.Trigger>
       <Dialog.Content size={size}>
         <Dialog.Text
-          title={
-            size === "md" ? "Pick a starting point" : "What's in this release"
-          }
+          title={size === "md" ? "Pick a grind" : "What's new this season"}
           body="Wider dialogs hold a list of choices or copy beside an illustration."
         />
         <Dialog.Actions>
@@ -101,6 +111,74 @@ function Sized({ size }: { readonly size: "md" | "lg" }): ReactElement {
     </Dialog>
   );
 }
+
+const TRIGGERS = ["Button", "IconButton"] as const;
+
+function triggerOf(
+  trigger: (typeof TRIGGERS)[number],
+  text: string,
+): { readonly element: ReactElement; readonly code: string } {
+  return trigger === "IconButton"
+    ? {
+        element: <IconButton icon={Trash2} label={text} />,
+        code: `<IconButton icon={Trash2} label="${text}" />`,
+      }
+    : {
+        element: <Button variant="soft">{text}</Button>,
+        code: `<Button variant="soft">${text}</Button>`,
+      };
+}
+
+export const live: LiveDemo = {
+  controls: {
+    trigger: { kind: "choice", options: TRIGGERS, initial: "Button" },
+    triggerText: { kind: "text", initial: "Delete price list" },
+  },
+  render: ({ trigger, triggerText }) => (
+    <Dialog>
+      <Dialog.Trigger asChild>
+        {triggerOf(demoChoice(trigger, TRIGGERS), String(triggerText)).element}
+      </Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Text
+          title="Delete the holiday price list?"
+          body="The 8 cafés on it go back to your standard prices."
+        />
+        <Dialog.Actions>
+          <Dialog.Close asChild>
+            <Button variant="soft" size="cta" shape="rounded">
+              Keep it
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close asChild>
+            <Button variant="primary" size="cta" shape="rounded">
+              Delete
+            </Button>
+          </Dialog.Close>
+        </Dialog.Actions>
+      </Dialog.Content>
+    </Dialog>
+  ),
+  code: ({ trigger, triggerText }) => `<Dialog>
+  <Dialog.Trigger asChild>
+    ${triggerOf(demoChoice(trigger, TRIGGERS), String(triggerText)).code}
+  </Dialog.Trigger>
+  <Dialog.Content>
+    <Dialog.Text
+      title="Delete the holiday price list?"
+      body="The 8 cafés on it go back to your standard prices."
+    />
+    <Dialog.Actions>
+      <Dialog.Close asChild>
+        <Button variant="soft" size="cta" shape="rounded">Keep it</Button>
+      </Dialog.Close>
+      <Dialog.Close asChild>
+        <Button variant="primary" size="cta" shape="rounded">Delete</Button>
+      </Dialog.Close>
+    </Dialog.Actions>
+  </Dialog.Content>
+</Dialog>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

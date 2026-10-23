@@ -1,26 +1,34 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Field, SegmentedControl, Select } from "@buttery/react";
 
-type Format = "png" | "jpg" | "webp";
+export const page: DocsPage = {
+  section: "components/inputs",
+  title: "Field",
+  description:
+    "A label, an optional hint and an error message wired to any form control by id.",
+  order: 50,
+  status: "stable",
+  since: "0.5.0",
+};
+
+type Format = "csv" | "pdf" | "json";
 
 const FORMATS = [
-  { value: "png", label: "PNG" },
-  { value: "jpg", label: "JPG" },
-  { value: "webp", label: "WebP" },
+  { value: "csv", label: "CSV" },
+  { value: "pdf", label: "PDF" },
+  { value: "json", label: "JSON" },
 ] as const;
 
 function ExportFormat(): ReactElement {
-  const [format, setFormat] = useState<Format>("jpg");
+  const [format, setFormat] = useState<Format>("pdf");
   return (
     <Field
       label="Export as"
-      hint="PNG and WebP keep transparent corners."
+      hint="CSV and JSON hold every order."
       error={
-        format === "jpg"
-          ? "JPG fills transparent corners with white."
-          : undefined
+        format === "pdf" ? "PDF holds the first 500 orders only." : undefined
       }
     >
       {(control) => (
@@ -37,6 +45,49 @@ function ExportFormat(): ReactElement {
   );
 }
 
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Export as" },
+    hint: { kind: "text", initial: "CSV and JSON hold every order." },
+    error: { kind: "text", initial: "" },
+  },
+  render: ({ label, hint, error }) => (
+    <Field label={String(label)} hint={String(hint)} error={String(error)}>
+      {(control) => (
+        <Select<Format>
+          {...control}
+          label={String(label)}
+          variant="outline"
+          options={FORMATS}
+          defaultValue="csv"
+        />
+      )}
+    </Field>
+  ),
+  code: ({ label, hint, error }) => {
+    const props = [
+      `label="${String(label)}"`,
+      ...(hint === "" ? [] : [`hint="${String(hint)}"`]),
+      ...(error === "" ? [] : [`error="${String(error)}"`]),
+    ];
+    return `<Field ${props.join(" ")}>
+  {(control) => (
+    <Select
+      {...control}
+      label="${String(label)}"
+      variant="outline"
+      options={[
+        { value: "csv", label: "CSV" },
+        { value: "pdf", label: "PDF" },
+        { value: "json", label: "JSON" },
+      ]}
+      defaultValue="csv"
+    />
+  )}
+</Field>`;
+  },
+};
+
 export const demos: readonly DemoSection[] = [
   {
     title: "Any control",
@@ -47,13 +98,13 @@ export const demos: readonly DemoSection[] = [
   {
     title: "A segmented control",
     render: () => (
-      <Field label="Card size" hint="Medium fits a story and a post.">
+      <Field label="Bag size" hint="500 g lasts about two weeks.">
         {(control) => (
           <SegmentedControl
             {...control}
-            label="Card size"
-            options={["Small", "Medium", "Large"]}
-            defaultValue="Medium"
+            label="Bag size"
+            options={["250 g", "500 g", "1 kg"]}
+            defaultValue="500 g"
           />
         )}
       </Field>

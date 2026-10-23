@@ -49,6 +49,47 @@ describe("Section", () => {
     }
   });
 
+  it("keeps 48px under its intro before content, 64 past 1024px, and none with nothing after it", () => {
+    for (const [width, gap] of [
+      [800, 48],
+      [1100, 64],
+    ] as const) {
+      for (const content of [<div key="grid" />, "Fresh beans"]) {
+        render(
+          <div style={{ inlineSize: `${String(width)}px` }}>
+            <Page>
+              <Section title="Roasted on Mondays">{content}</Section>
+            </Page>
+          </div>,
+        );
+        const intro = screen
+          .getByRole("heading", { level: 2 })
+          .closest<HTMLElement>('[data-bt-part="section-intro"]');
+        if (!intro) throw new Error("no intro");
+        expect(Number.parseFloat(getComputedStyle(intro).paddingBlockEnd)).toBe(
+          gap,
+        );
+        cleanup();
+      }
+      render(
+        <div style={{ inlineSize: `${String(width)}px` }}>
+          <Page>
+            <Section title="Roasted on Mondays" data-testid="band" />
+          </Page>
+        </div>,
+      );
+      const band = screen.getByTestId("band").getBoundingClientRect();
+      const heading = screen
+        .getByRole("heading", { level: 2 })
+        .getBoundingClientRect();
+      expect(heading.top - band.top).toBeCloseTo(
+        band.bottom - heading.bottom,
+        0,
+      );
+      cleanup();
+    }
+  });
+
   it("puts its content in a Container unless told not to", () => {
     render(<Section data-testid="band">Content</Section>);
     expect(

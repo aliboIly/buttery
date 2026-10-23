@@ -1,7 +1,7 @@
-import { Inline, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { ScopeBadge } from "@buttery/react";
 import type { ReactElement } from "react";
+import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { ScopeBadge } from "@buttery/react";
 
 /** A settings title that says its changes reach every shop, with the details a press away. */
 export function SettingsForEveryShop(): ReactElement {
@@ -17,6 +17,8 @@ export function SettingsForEveryShop(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "All shops");

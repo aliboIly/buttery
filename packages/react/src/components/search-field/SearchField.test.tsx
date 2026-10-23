@@ -4,6 +4,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import type { ReactElement } from "react";
+import { Inline, Text } from "@buttery/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SearchField } from "./SearchField.tsx";
 
@@ -94,6 +95,22 @@ describe("SearchField", () => {
     const input = screen.getByRole("searchbox");
     expect(input.scrollWidth).toBeGreaterThan(input.clientWidth);
     expect(getComputedStyle(input).textOverflow).toBe("ellipsis");
+  });
+
+  it("takes the room a title beside it in an Inline leaves, keeping the title whole", () => {
+    render(
+      <Inline gap={4} style={{ inlineSize: "240px" }}>
+        <Text variant="title-sm">Orders</Text>
+        <SearchField label="Search orders" />
+      </Inline>,
+    );
+    const title = screen.getByText("Orders");
+    expect(title.scrollWidth).toBeLessThanOrEqual(title.clientWidth);
+    expect(
+      title.getBoundingClientRect().width +
+        16 +
+        box().getBoundingClientRect().width,
+    ).toBeCloseTo(240, 0);
   });
 
   it("sits on bg-control with no edge when soft, with a 1px edge when outlined", () => {

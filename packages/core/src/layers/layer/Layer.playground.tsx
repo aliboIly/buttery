@@ -11,7 +11,18 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "Layer",
+  description:
+    "Renders its children above the page in a z band from the tokens.",
+  order: 130,
+  status: "stable",
+  since: "0.2.0",
+  home: "foundations/layers",
+};
 
 function NestedLayers(): ReactElement {
   const [open, setOpen] = useState(false);

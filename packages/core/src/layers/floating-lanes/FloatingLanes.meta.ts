@@ -17,4 +17,9 @@ export const meta: ComponentMeta = {
   related: ["Toaster", "Layer", "Sticky", "Popover"],
   a11y: 'Lanes are plain containers and items bring their own semantics. To announce an item, keep a live region (role="status") mounted outside the lane and change its text: a region that mounts along with its content often goes unannounced.',
   motion: "presence",
+  keyboard: [],
+  layout:
+    "Each lane stacks its items in a column 8px apart, 24px in from the window's edges and clear of sticky bars, registered obstacles and a docked side panel. An item is never wider than its lane, the window less 24px a side, so its text wraps or truncates inside it; the lanes let the pointer through and only the items take it.",
+  reducedMotion:
+    "The lanes place items without animating; an item that arrives with a presence, such as a toast, fades in and out over 100ms without rising, and the items around it take their new places at once.",
 };

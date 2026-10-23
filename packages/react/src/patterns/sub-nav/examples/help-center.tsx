@@ -1,14 +1,30 @@
 import type { ReactElement } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { SubNav } from "@buttery/react";
 
 const TOPICS = [
-  { id: "help-start", label: "Getting started" },
-  { id: "help-export", label: "Exporting" },
-  { id: "help-account", label: "Your account" },
+  {
+    id: "help-brewing",
+    label: "Brewing",
+    title: "Brewing at home",
+    body: "Start with 15 grams of coffee to 250 of water, then adjust to taste.",
+  },
+  {
+    id: "help-plans",
+    label: "Plans",
+    title: "Subscriptions",
+    body: "Pause, skip a bag or change your coffee any time before it's roasted.",
+  },
+  {
+    id: "help-shipping",
+    label: "Shipping",
+    title: "Shipping",
+    body: "Bags ship the day after they're roasted, free on orders over $40.",
+  },
 ] as const;
 
-/** A help page whose sub nav follows the reader down. */
+/** A help page whose sub nav follows the reader down and jumps to a topic when its link is pressed. */
 export function HelpCenter(): ReactElement {
   return (
     <Surface
@@ -18,15 +34,24 @@ export function HelpCenter(): ReactElement {
       tabIndex={0}
       style={{ blockSize: "var(--bt-bento-row)", overflowY: "auto" }}
     >
-      <SubNav title="Help" items={TOPICS} />
+      <SubNav items={TOPICS} />
       {TOPICS.map((topic) => (
         <Stack key={topic.id} id={topic.id} gap={2} padX={6} padY={8}>
-          <Text variant="title">{topic.label}</Text>
+          <Text variant="title">{topic.title}</Text>
           <Text variant="body" tone="secondary">
-            Short answers to the questions people ask most.
+            {topic.body}
           </Text>
         </Stack>
       ))}
     </Surface>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("link", "Shipping");
+  await see(
+    "Bags ship the day after they're roasted, free on orders over $40.",
+  );
+};

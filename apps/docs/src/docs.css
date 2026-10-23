@@ -1,0 +1,369 @@
+/*
+ * A content page: prose at most 720 wide, and code colored from buttery's tokens through the variables
+ * shiki's theme writes.
+ */
+.docs-prose,
+.docs-code-block,
+.docs-page-footer {
+  --bt-docs-line: 1px;
+  --docs-code-foreground: var(--bt-text);
+  --docs-code-background: var(--bt-bg-section);
+  --docs-code-token-comment: var(--bt-text-tertiary);
+  --docs-code-token-keyword: var(--bt-accent-text);
+  --docs-code-token-string: var(--bt-success);
+  --docs-code-token-string-expression: var(--bt-success);
+  --docs-code-token-constant: var(--bt-warning);
+  --docs-code-token-function: var(--bt-text-strong);
+  --docs-code-token-parameter: var(--bt-text);
+  --docs-code-token-punctuation: var(--bt-text-secondary);
+  --docs-code-token-link: var(--bt-accent-text);
+}
+
+.docs-prose {
+  min-inline-size: 0;
+  max-inline-size: var(--bt-w-prose);
+}
+
+.docs-pre {
+  margin: 0;
+  padding: var(--bt-space-4) var(--bt-space-5);
+  overflow-x: auto;
+  border-radius: var(--bt-r-lg);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-body-sm-size);
+  line-height: var(--bt-text-body-line);
+  tab-size: 2;
+}
+
+/* A block's code is shiki's, inside the block: it takes none of inline code's look. */
+.docs-pre code {
+  padding: 0;
+  border-radius: 0;
+  background-color: transparent;
+  font: inherit;
+}
+
+/* A 2px side leaves punctuation after a chip closer than a space, so "`Stack`," doesn't read as "Stack ,". */
+/* A chip that wraps at a hyphen keeps its padding and corners on each line. */
+.docs-code {
+  padding-inline: var(--bt-space-0_5);
+  border-radius: var(--bt-r-xs);
+  background-color: var(--bt-bg-control);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-body-sm-size);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* A line of code on its own, such as an import, sits in a padded box; inside a sentence a chip keeps to 2px. */
+.docs-code-line {
+  display: inline-block;
+  padding: var(--bt-space-1) var(--bt-space-2);
+  border-radius: var(--bt-r-sm);
+}
+
+.docs-list {
+  margin: 0;
+  padding-inline-start: var(--bt-space-5);
+}
+
+.docs-link {
+  color: var(--bt-accent-text);
+  text-decoration: underline;
+  text-underline-offset: var(--bt-space-1);
+}
+
+/*
+ * A page's heading opens a part of it, so it sits further from what's above it than paragraphs do. Only the
+ * page's own headings: a component shown on the page keeps its own.
+ */
+.docs-h2 {
+  max-inline-size: none;
+  padding-block-start: var(--bt-space-6);
+}
+
+.docs-h3 {
+  padding-block-start: var(--bt-space-3);
+}
+
+/* A smaller heading's link reaches 24px tall through padding, which leaves its line where it is. */
+.docs-h3 > .docs-anchor {
+  padding-block: var(--bt-space-1);
+}
+
+/*
+ * A heading links to itself: its text keeps the heading's look, and a link icon shows while it's pointed at
+ * or focused. Both stay inline, inside the heading's trimmed text box.
+ */
+.docs-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.docs-anchor-icon {
+  padding-inline-start: var(--bt-space-2);
+  color: var(--bt-text-tertiary);
+  opacity: 0;
+  transition: opacity var(--bt-dur-fast) var(--bt-ease-out);
+}
+
+.docs-anchor-icon .bt-icon {
+  display: inline;
+  vertical-align: baseline;
+}
+
+.docs-anchor:is(:hover, :focus-visible) .docs-anchor-icon {
+  opacity: 1;
+}
+
+/* A code block that scrolls sideways takes keyboard focus; its ring sits inside the rounded block. */
+.docs-pre:focus-visible,
+.docs-code-html pre:focus-visible {
+  outline: var(--bt-focus-width) solid var(--bt-accent);
+  outline-offset: calc(-1 * var(--bt-focus-width));
+}
+
+/*
+ * A link that stands on its own, such as "Edit this page", a related page or a component in the overview's
+ * tables, takes a 28px target.
+ */
+.docs-page-footer .docs-link,
+.docs-related .docs-link,
+.docs-component-list .docs-link,
+.docs-release-arrivals .docs-link,
+.docs-link.docs-since {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--bt-h-sm);
+}
+
+/* A component's name, in its taller target, stays on the line of its description's first words. */
+.tk-table.docs-component-list td {
+  vertical-align: baseline;
+}
+
+.docs-code-block {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  overflow: hidden;
+  border-radius: var(--bt-r-lg);
+  background-color: var(--docs-code-background);
+}
+
+.docs-code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bt-space-2);
+  min-block-size: var(--bt-h-control);
+  padding-inline: var(--bt-space-5) var(--bt-space-2);
+  border-block-end: var(--bt-docs-line) solid var(--bt-border);
+}
+
+.docs-code-block .docs-pre {
+  border-radius: 0;
+}
+
+/* Shiki's own block, inside an example's code: it takes the code block's padding and type. */
+.docs-code-html pre {
+  margin: 0;
+  padding: var(--bt-space-4) var(--bt-space-5);
+  overflow-x: auto;
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-body-sm-size);
+  line-height: var(--bt-text-body-line);
+  tab-size: 2;
+}
+
+/*
+ * A props table keeps each name on one line and breaks types and defaults only at their spaces. Its
+ * descriptions keep room to read, so in a narrow column the table scrolls sideways instead of squeezing them.
+ */
+.docs-word {
+  white-space: nowrap;
+}
+
+.docs-props th:last-child {
+  min-inline-size: 30ch;
+}
+
+.docs-kbd {
+  display: inline-flex;
+  padding-inline: var(--bt-space-1_5);
+  border-radius: var(--bt-r-kbd);
+  background-color: var(--bt-bg-control);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-kbd-size);
+  line-height: var(--bt-text-kbd-line);
+  white-space: nowrap;
+}
+
+.docs-copy-line {
+  min-inline-size: 0;
+}
+
+/* A template's live preview: the template's app in a frame as tall as two bento rows. */
+.docs-template-frame {
+  overflow: clip;
+}
+
+.docs-template-preview {
+  display: block;
+  inline-size: 100%;
+  block-size: calc(var(--bt-bento-row) * 2);
+  border: 0;
+}
+
+/* From 640px of frame, the template draws at an app page's width with a desktop's proportions, scaled down to fit. */
+.docs-template-frame[data-scaled] {
+  block-size: calc(var(--bt-w-app-page) * 0.625 * var(--bt-docs-preview-scale));
+}
+
+.docs-template-frame[data-scaled] > .docs-template-preview {
+  inline-size: var(--bt-w-app-page);
+  block-size: calc(var(--bt-w-app-page) * 0.625);
+  transform-origin: 0 0;
+  scale: var(--bt-docs-preview-scale);
+}
+
+/*
+ * A page-scale component's example: from 640px of frame it lays out at an app page's width, scaled down to
+ * fit as a template's preview is, its box as tall as the scaled drawing. It's the shell and column an app
+ * shell would give it, as a demo's stage is.
+ */
+.docs-desktop {
+  min-inline-size: 0;
+}
+
+.docs-desktop-content {
+  container: bt-shell bt-column / inline-size;
+}
+
+.docs-desktop[data-scaled] {
+  block-size: calc(
+    var(--bt-docs-preview-height) * var(--bt-docs-preview-scale)
+  );
+}
+
+.docs-desktop[data-scaled] > .docs-desktop-content {
+  inline-size: var(--bt-w-app-page);
+  transform-origin: 0 0;
+  scale: var(--bt-docs-preview-scale);
+}
+
+/* A demo's picture on the demos page, drawn from the demo by scripts/demo-previews.mjs. */
+.docs-demo-preview {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 8 / 5;
+  border: var(--bt-docs-line) solid var(--bt-border);
+  border-radius: var(--bt-r-md);
+}
+
+.docs-page-footer {
+  padding-block-start: var(--bt-space-8);
+  border-block-start: var(--bt-docs-line) solid var(--bt-border);
+}
+
+/* The landing hero's command takes its own line under the buttons, centered with them. */
+.docs-landing-command {
+  display: flex;
+  flex-basis: 100%;
+  justify-content: center;
+  min-inline-size: 0;
+}
+
+/*
+ * Plain text on the column's edge, its chevron after it: a padded button's label would sit 12px in from the
+ * content above. "Show code" and other toggles that unfold what's under them.
+ */
+.docs-code-toggle,
+.docs-disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bt-space-1);
+  min-block-size: var(--bt-h-sm);
+  color: var(--bt-text-secondary);
+  transition: color calc(var(--bt-dur-fast) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.docs-code-toggle:hover,
+.docs-disclosure:hover {
+  color: var(--bt-text);
+}
+
+.docs-code-toggle > svg,
+.docs-disclosure > svg {
+  transition: transform calc(var(--bt-dur-fast) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.docs-code-toggle > svg[data-open],
+.docs-disclosure > svg[data-open] {
+  transform: rotate(180deg);
+}
+
+/* A caption's last line keeps a few words rather than one. */
+.docs-caption {
+  text-wrap: pretty;
+}
+
+/* A bar that fills from the start as something gets done, such as a checklist or a release's items. */
+.docs-progress {
+  overflow: hidden;
+  block-size: var(--bt-space-1_5);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-control);
+}
+
+.docs-progress-fill {
+  display: block;
+  block-size: 100%;
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-accent);
+  transform-origin: left center;
+}
+
+.docs-progress-fill:dir(rtl) {
+  transform-origin: right center;
+}
+
+/* The pages before and after this one: whole cards to press, the next one set from the far edge. */
+.docs-neighbor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-1);
+  min-inline-size: 0;
+  color: var(--bt-text);
+  text-decoration: none;
+  transition: background-color calc(var(--bt-dur-fast) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.docs-neighbor:hover {
+  background-color: var(--bt-bg-item-hover);
+}
+
+.docs-neighbor[data-direction="next"] {
+  align-items: end;
+  text-align: end;
+}
+
+/* The file a block of code belongs in, named in the code face where its language would be. */
+.docs-code-title {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-text);
+}
+
+/* A token's name stays on one line; its values and its use wrap beside it. */
+.docs-token {
+  white-space: nowrap;
+}
+
+/* A short chip, such as `z-index`, stays on one line; a code block's own code keeps its line breaks. */
+:not(pre) > .docs-code-whole {
+  white-space: nowrap;
+}

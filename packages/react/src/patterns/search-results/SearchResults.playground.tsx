@@ -8,9 +8,10 @@ export const page: DocsPage = {
   title: "SearchResults",
   description:
     "Every result for a search on one page, a section for each place it looked.",
-  order: 70,
+  order: 250,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
+  home: "patterns/search-and-results",
 };
 
 const PAGES = pageSource({

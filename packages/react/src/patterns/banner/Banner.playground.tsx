@@ -1,10 +1,20 @@
 import { Inline, ReflowGroup, Stack, Text, useReflow } from "@buttery/core";
-import type { DemoFrame, DemoSection } from "@buttery/core";
+import type { DemoFrame, DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Banner, Button } from "@buttery/react";
 import { Printer } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "Banner",
+  description:
+    "A one-line suggestion across a page: an icon, the message, an action and how long it takes, dismissed for good once closed.",
+  order: 10,
+  status: "new",
+  since: "0.8.0",
+};
 
 function Below(): ReactElement {
   return (
@@ -51,6 +61,45 @@ function DismissDemo(): ReactElement {
 }
 
 export const frame: DemoFrame = "page";
+
+export const live: LiveDemo = {
+  controls: {
+    children: {
+      kind: "text",
+      initial:
+        "Print a shipping label from any order without leaving the page.",
+    },
+    action: { kind: "text", initial: "Connect a label printer" },
+    estimate: { kind: "text", initial: "3 min" },
+  },
+  render: ({ children, action, estimate }) => (
+    <Banner
+      icon={Printer}
+      action={
+        String(action) === ""
+          ? undefined
+          : { label: String(action), href: "#settings-printing" }
+      }
+      estimate={String(estimate) === "" ? undefined : String(estimate)}
+    >
+      {String(children)}
+    </Banner>
+  ),
+  code: ({ children, action, estimate }) =>
+    [
+      "<Banner",
+      "  icon={Printer}",
+      ...(String(action) === ""
+        ? []
+        : [
+            `  action={{ label: "${String(action)}", href: "/settings/printing" }}`,
+          ]),
+      ...(String(estimate) === "" ? [] : [`  estimate="${String(estimate)}"`]),
+      ">",
+      `  ${String(children)}`,
+      "</Banner>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {

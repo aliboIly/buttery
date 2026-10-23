@@ -39,8 +39,9 @@ function laneRef(
 }
 
 /**
- * How far in from the window's end edge the lanes keep, past any obstacle that runs at least half the
- * window's height along that edge, such as a docked side panel.
+ * How far in from the window's end edge the lanes keep, past any obstacle at least half the window's
+ * height that meets that edge, such as a docked side panel, or stands in the window's end half, such as
+ * an editor's inspector in from the edge of a centered app.
  */
 function endInset(blockers: readonly HTMLElement[]): number {
   const width = document.documentElement.clientWidth;
@@ -49,8 +50,10 @@ function endInset(blockers: readonly HTMLElement[]): number {
   for (const blocker of blockers) {
     const rect = blocker.getBoundingClientRect();
     if (rect.width === 0 || rect.height < window.innerHeight / 2) continue;
-    if (rtl ? rect.left <= 1 : rect.right >= width - 1)
-      inset = Math.max(inset, rtl ? rect.right : width - rect.left);
+    const atEnd = rtl
+      ? rect.left <= 1 || rect.right <= width / 2
+      : rect.right >= width - 1 || rect.left >= width / 2;
+    if (atEnd) inset = Math.max(inset, rtl ? rect.right : width - rect.left);
   }
   return inset;
 }
@@ -159,12 +162,17 @@ function useLanePlacement(): void {
       frame = requestAnimationFrame(apply);
     };
     const observer = new ResizeObserver(schedule);
-    for (const element of [...elements, ...blockers]) observer.observe(element);
+    // This runs while an app shell's layout changes inside a ResizeObserver callback, where observing loops.
+    const watching = requestAnimationFrame(() => {
+      for (const element of [...elements, ...blockers])
+        observer.observe(element);
+    });
     window.addEventListener("resize", schedule);
     window.addEventListener("scroll", schedule, true);
     const stopFollowing = onObstacleMoved(schedule);
     apply();
     return () => {
+      cancelAnimationFrame(watching);
       cancelAnimationFrame(frame);
       stopFollowing();
       observer.disconnect();
@@ -223,7 +231,7 @@ function FloatingLanesHost(): ReactElement {
 }
 
 /** Props for `FloatingLanes.Item`. */
-export interface FloatingLaneItemProps {
+export interface FloatingLanesItemProps {
   /** Which lane to stack in. Defaults to `"bottom-center"`, where toasts go. */
   readonly lane?: LaneName | undefined;
   /** The item, such as a toast. Menus and tooltips it opens stack above the lane. */
@@ -235,10 +243,10 @@ export interface FloatingLaneItemProps {
  * element of its own: the children go straight into the lane. A lane has room for three items; in
  * development, a fourth logs a warning.
  */
-export function FloatingLaneItem({
+export function FloatingLanesItem({
   lane = "bottom-center",
   children,
-}: FloatingLaneItemProps): ReactElement | null {
+}: FloatingLanesItemProps): ReactElement | null {
   const lanes = useSyncExternalStore(subscribe, getLanes, getServerLanes);
   useEffect(() => (isDevelopment ? countLaneItem(lane) : undefined), [lane]);
   const target = lanes[lane];
@@ -270,7 +278,7 @@ export function useFloatingObstacle(): RefCallback<HTMLElement> {
 export interface FloatingLanesComponent {
   (): ReactElement;
   /** Renders its children into a lane. */
-  readonly Item: typeof FloatingLaneItem;
+  readonly Item: typeof FloatingLanesItem;
 }
 
 /**
@@ -279,7 +287,8 @@ export interface FloatingLanesComponent {
  * back under dialogs with the rest of the page.
  * Items stack with an 8px gap, never grow wider than their lane, keep clear of sticky headers and footers,
  * and move out of the way of registered obstacles: up from one at the bottom, and in from the end past one
- * that runs the window's height along its end edge, such as a docked side panel. When the bottom lanes
+ * at least half the window's height that meets the end edge or stands in the window's end half, such as
+ * a docked side panel or an editor's inspector. When the bottom lanes
  * would touch, in a narrow window,
  * the center lane moves above the end lane as one column. It publishes how far the bottom lanes reach,
  * plus 8px, as `--bt-lane-clearance` on `<html>`, for scroll areas to add at their end. `ButteryProvider`
@@ -289,11 +298,11 @@ export interface FloatingLanesComponent {
  * @example
  * <FloatingLanes.Item lane="bottom-end">
  *   <Surface level="floating" padX={4} padY={3}>
- *     <Text variant="label">Exporting 12 cards</Text>
+ *     <Text variant="label">Exporting 12 orders</Text>
  *   </Surface>
  * </FloatingLanes.Item>
  */
 export const FloatingLanes: FloatingLanesComponent = Object.assign(
   FloatingLanesHost,
-  { Item: FloatingLaneItem },
+  { Item: FloatingLanesItem },
 );

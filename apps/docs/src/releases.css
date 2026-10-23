@@ -1,0 +1,137 @@
+:root {
+  --bt-releases-rail: 12px;
+  --bt-releases-dot: 12px;
+  --bt-releases-line: 1px;
+}
+
+/*
+ * Releases on a timeline: a dot for each on a line that runs down to the next one, the newest at the top.
+ * The line belongs to each release's rail, so the space between releases is padding under each body.
+ */
+.docs-releases {
+  display: grid;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.docs-release {
+  display: grid;
+  grid-template-columns: var(--bt-releases-rail) minmax(0, 1fr);
+  column-gap: var(--bt-space-5);
+  min-inline-size: 0;
+}
+
+.docs-release-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block-start: var(--bt-space-1_5);
+}
+
+.docs-release-dot {
+  flex: none;
+  inline-size: var(--bt-releases-dot);
+  block-size: var(--bt-releases-dot);
+  border: var(--bt-releases-line) solid var(--bt-border-strong);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-surface);
+}
+
+.docs-release-dot[data-stage="latest"] {
+  border-color: var(--bt-accent);
+  background-color: var(--bt-accent);
+}
+
+.docs-release-dot[data-stage="building"] {
+  border-color: var(--bt-warning);
+  background-color: var(--bt-warning-subtle);
+}
+
+.docs-release-line {
+  flex: 1 1 auto;
+  inline-size: var(--bt-releases-line);
+  margin-block-start: var(--bt-space-2);
+  background-color: var(--bt-border);
+}
+
+.docs-release:last-child .docs-release-line {
+  visibility: hidden;
+}
+
+.docs-release-body {
+  min-inline-size: 0;
+  padding-block-end: var(--bt-space-16);
+}
+
+.docs-release[data-compact] .docs-release-body {
+  padding-block-end: var(--bt-space-8);
+}
+
+.docs-release:last-child .docs-release-body {
+  padding-block-end: 0;
+}
+
+/* A release's number, in the code face on a chip. */
+.docs-release-version {
+  padding: var(--bt-space-0_5) var(--bt-space-2);
+  border-radius: var(--bt-r-sm);
+  background-color: var(--bt-bg-control);
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-body-sm-size);
+  line-height: var(--bt-text-body-sm-line);
+  color: var(--bt-text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.docs-release-arrivals {
+  margin: 0;
+  padding: 0;
+}
+
+/* A roadmap item: its tick, or the ring of one still to do, beside its words. */
+.docs-roadmap-items {
+  margin: 0;
+  padding: 0;
+}
+
+.docs-roadmap-items > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--bt-space-3);
+  align-items: start;
+}
+
+/* Untrimmed, an item's lines are body's 22px, and the leading they carry spaces the items as a 12px gap
+   between trimmed ones would. */
+.docs-roadmap-items > li > .bt-text {
+  text-box: normal;
+}
+
+/* As tall as the first line, which centers the icon on it however the item wraps. */
+.docs-roadmap-items > li > .bt-icon {
+  block-size: var(--bt-text-body-line);
+  color: var(--bt-text-tertiary);
+}
+
+.docs-roadmap-items > li[data-done] > .bt-icon {
+  color: var(--bt-success);
+}
+
+/* A landed item's circle fills, its tick knocked out of it, as a setup guide's done step does. */
+.docs-roadmap-items > li[data-done] > .bt-icon circle {
+  fill: currentcolor;
+}
+
+.docs-roadmap-items > li[data-done] > .bt-icon path {
+  stroke: var(--bt-bg-surface);
+}
+
+.docs-roadmap-ideas {
+  margin: 0;
+  padding: 0;
+}
+
+.docs-roadmap-ideas .bt-icon {
+  color: var(--bt-warning);
+}

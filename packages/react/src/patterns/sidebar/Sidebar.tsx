@@ -24,6 +24,8 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
+  useRef,
 } from "react";
 import type {
   ComponentPropsWithRef,
@@ -35,6 +37,7 @@ import type {
 } from "react";
 import { Tooltip } from "../../components/tooltip/Tooltip.tsx";
 import { useAppShell } from "../app-shell/app-shell-context.ts";
+import type { SidebarMode } from "../app-shell/app-shell-context.ts";
 
 /** A page the sidebar remembers having shown. */
 interface RecentPage {
@@ -76,7 +79,7 @@ function isRemembered(value: unknown): value is Remembered {
 }
 
 interface SidebarState {
-  readonly mode: "full" | "rail";
+  readonly mode: Exclude<SidebarMode, "sheet">;
   readonly navigate: (
     href: string,
     event: MouseEvent<HTMLAnchorElement>,
@@ -109,7 +112,7 @@ function useSidebar(part: string): SidebarState {
  * How the `Sidebar` around a component shows: `"full"`, or `"rail"` while the shell has made it an icon
  * rail; `undefined` outside a sidebar. A workspace switcher reads it to show its tile alone in a rail.
  */
-export function useSidebarMode(): SidebarState["mode"] | undefined {
+export function useSidebarMode(): Exclude<SidebarMode, "sheet"> | undefined {
   return use(SidebarContext)?.mode;
 }
 
@@ -218,6 +221,37 @@ function SidebarRoot({
     visit({ label: unseenLabel, href: unseenHref });
   }, [unseenLabel, unseenHref, visit]);
 
+  // A list that holds on to the wheel while it can't scroll leaves Chromium scrolling nothing at all, so it
+  // only does while it overflows; inside a column that scrolls it, the wheel goes on to that column.
+  const list = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const element = list.current;
+    if (hidden || !element) return undefined;
+    const measure = (): void => {
+      element.toggleAttribute(
+        "data-scrolls",
+        element.scrollHeight > element.clientHeight,
+      );
+    };
+    const sizes = new ResizeObserver(measure);
+    const watch = (): void => {
+      sizes.disconnect();
+      sizes.observe(element);
+      for (const child of element.children) sizes.observe(child);
+    };
+    const items = new MutationObserver(() => {
+      watch();
+      measure();
+    });
+    watch();
+    items.observe(element, { childList: true });
+    measure();
+    return () => {
+      sizes.disconnect();
+      items.disconnect();
+    };
+  }, [hidden]);
+
   // Under 640px the shell keeps this copy mounted out of sight only so Recent sees the page change; drawn,
   // its menus and shortcuts would go on working behind the sheet.
   if (hidden) return null;
@@ -234,7 +268,7 @@ function SidebarRoot({
         {hasContent(switcher) ? (
           <div data-bt-part="switcher">{switcher}</div>
         ) : null}
-        <div data-bt-part="nav" className="bt-scroll-fade">
+        <div ref={list} data-bt-part="nav" className="bt-scroll-fade">
           {children}
         </div>
       </nav>

@@ -1,0 +1,83 @@
+---
+title: Typography
+description: buttery's type roles, the fonts behind them, and the Text and TextStack primitives that set them.
+section: foundations
+order: 20
+status: stable
+since: 0.2.0
+related: [foundations/colors, foundations/spacing-and-sizing]
+---
+
+import { DisplayRoles, TextRoles } from "../../src/foundations/blocks.tsx";
+import { TextStacksDemo } from "../../src/foundations/text-stacks.tsx";
+
+A type role is a named size, line height, weight, tracking and color, such as `label` or `title-md`. Use a role for every piece of text, through `Text`, so text lines up from screen to screen and follows density and theme.
+
+## Set text with Text
+
+`Text` renders text in the role its `variant` names, `"label"` by default. Block roles, such as `title`, `body` and `caption`, render a `p`; the rest render a `span`. With `asChild` it styles the element you give it, which is how a heading keeps its level and takes a role:
+
+```tsx
+import type { ReactElement } from "react";
+import { Text } from "@buttery/core";
+
+export function SectionTitle(): ReactElement {
+  return (
+    <Text variant="title-md" asChild>
+      <h2>Payouts</h2>
+    </Text>
+  );
+}
+```
+
+A block role trims its line box to the text, so the gap you set between two pieces of text is the gap you see. Body text wraps at 60 characters and display headings at 22, which keeps lines readable at any width.
+
+Three more props cover the cases a role doesn't:
+
+<DocsTable
+  columns={["Prop", "What it does"]}
+  rows={[
+    [
+      "`tone`",
+      "Changes the color: `strong`, `default`, `secondary`, `tertiary` or `disabled`. Without it, text takes its role's color",
+    ],
+    [
+      "`truncate`",
+      "Keeps text to one line with an ellipsis and, when the text is a string, puts the whole of it in a tooltip",
+    ],
+    [
+      "`tabular`",
+      "Gives numbers that change equal widths, so a counter doesn't shift its neighbors",
+    ],
+  ]}
+/>
+
+## The roles
+
+Interface roles have one size at every width:
+
+<TextRoles />
+
+## Display roles
+
+Page and marketing headings use display roles, which step up in size as their container grows, at 640px and 1024px:
+
+<DisplayRoles />
+
+## Stacks of text
+
+`TextStack` sets a title over body text and an optional caption, with the spacing a dialog, an empty state, a page section or a feature intro uses. `size` picks the stack: `dialog` (the default), `empty`, `section` or `feature`.
+
+<TextStacksDemo />
+
+## Fonts
+
+buttery sets text in Inter Variable, bundled with `@buttery/core` so desktop apps work offline, and code in the system's monospace font. Until Inter loads, a local Arial adjusted to Inter's metrics stands in, so text doesn't move when the font swaps.
+
+## Text
+
+<ComponentDocs of="Text" />
+
+## TextStack
+
+<ComponentDocs of="TextStack" />

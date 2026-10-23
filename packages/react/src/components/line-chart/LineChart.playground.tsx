@@ -1,5 +1,16 @@
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { LineChart } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "LineChart",
+  description:
+    "Values over time as smooth lines, the comparison in gray beneath, with a crosshair and tooltip that follow the pointer.",
+  order: 110,
+  status: "new",
+  since: "0.8.0",
+};
 
 const DAYS = Array.from({ length: 14 }, (_, day) => `Oct ${String(day + 1)}`);
 const dollars = new Intl.NumberFormat("en-US", {
@@ -11,6 +22,56 @@ const shortDollars = new Intl.NumberFormat("en-US", {
   currency: "USD",
   notation: "compact",
 });
+
+const WEEK = [
+  "Oct 8",
+  "Oct 9",
+  "Oct 10",
+  "Oct 11",
+  "Oct 12",
+  "Oct 13",
+  "Oct 14",
+];
+const THIS_WEEK = [1420, 1560, 1490, 1710, 1880, 2240, 2105];
+const LAST_WEEK = [1350, 1410, 1380, 1550, 1700, 1960, 1890];
+
+export const live: LiveDemo = {
+  controls: {
+    size: { kind: "choice", options: ["sm", "md", "lg"], initial: "md" },
+    loading: { kind: "toggle", initial: false },
+  },
+  render: ({ size, loading }) => (
+    <LineChart
+      label="Sales"
+      labels={WEEK}
+      series={[
+        { key: "now", label: "This week", values: THIS_WEEK },
+        {
+          key: "before",
+          label: "Last week",
+          values: LAST_WEEK,
+          comparison: true,
+        },
+      ]}
+      size={demoChoice(size, ["md", "sm", "lg"])}
+      loading={loading === true}
+    />
+  ),
+  code: ({ size, loading }) => `<LineChart
+  label="Sales"
+  labels={[${WEEK.map((day) => `"${day}"`).join(", ")}]}
+  series={[
+    { key: "now", label: "This week", values: [${THIS_WEEK.join(", ")}] },
+    {
+      key: "before",
+      label: "Last week",
+      values: [${LAST_WEEK.join(", ")}],
+      comparison: true,
+    },
+  ]}
+  size="${String(size)}"${loading === true ? "\n  loading" : ""}
+/>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

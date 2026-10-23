@@ -1,9 +1,10 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button } from "@buttery/react";
 
-const STEPS = ["Pick a size", "Choose a background", "Add your title"];
+const STEPS = ["Pick a coffee", "Choose how often", "Add your address"];
 
 /** Back and Next with arrows in equal columns; the last step finishes, so its button drops the arrow. */
 export function StepButtons(): ReactElement {
@@ -35,3 +36,12 @@ export function StepButtons(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Next");
+  await see("Choose how often");
+  await press("button", "Back");
+  await see("Pick a coffee");
+};

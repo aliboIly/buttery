@@ -1,8 +1,8 @@
-import type { ExamplePlay } from "@buttery/core";
+import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { SearchResults, matchesSearch } from "@buttery/react";
 import type { RemoteSearchSource } from "@buttery/react";
 import { CircleHelp } from "lucide-react";
-import type { ReactElement } from "react";
 
 const ARTICLES = [
   "When payouts arrive",
@@ -46,6 +46,9 @@ export function HelpResults(): ReactElement {
   );
 }
 
+export const kind: ExampleKind = "states";
+
 export const play: ExamplePlay = async ({ see }) => {
+  await see("Searching");
   await see("2 results");
 };

@@ -1,0 +1,62 @@
+---
+title: Using coding agents
+description: How buttery helps coding agents build with it: instructions, a skill, every page as Markdown, and checks that say how to fix what fails.
+section: get-started
+order: 60
+status: beta
+since: 0.9.0
+related: [get-started/make-anything-buttery, tools/testing, layout/the-layout-contract]
+---
+
+buttery is built so coding agents get its rules right the first time: one vocabulary of props, types that reject wrong values, and checks whose messages say how to fix the problem. Point an agent at the files below before it writes any UI.
+
+## What an agent reads
+
+<Cards>
+<Card icon="file" title="AGENTS.md">
+
+At a project's root, it tells agents which docs to read, the rules that are never broken (tokens only, flow layout, the component contract, the motion rules) and the commands that check their work. Agents that read `CLAUDE.md` find it imported from there.
+
+</Card>
+<Card icon="wrench" title="The make-it-buttery skill">
+
+`.claude/skills/make-it-buttery/SKILL.md` walks an agent through building or restyling a screen: read the system, list what's on the screen, map it to buttery from the top down, apply motion by rule, then check the result. `AGENTS.md` points agents without skills to the file.
+
+</Card>
+<Card icon="book" title="Every page as Markdown">
+
+Each page of this site is Markdown at its address plus `.md`, and `llms.txt` lists them all in the sidebar's order. A component's page gives an agent its props, examples and rules in one file.
+
+</Card>
+<Card icon="bot" title="An MCP server, in 1.0">
+
+`@buttery/mcp` will answer questions about components and tokens, scaffold pages and search these docs. It's on the [roadmap](/resources/roadmap) for 1.0, with the command line tool.
+
+</Card>
+</Cards>
+
+## When a check fails
+
+When something's wrong, the checks say what and how to fix it:
+
+- `expectButtery` reports each layout problem with the element, the rule, the measurement and a fix, and `pnpm test:layout --reporter=json` writes them as JSON for an agent to read.
+- Components warn in development with the fix in the message, such as a dialog without a name.
+- buttery's stylelint config names the token to use instead of a raw value.
+
+This is one problem as `expectButtery` writes it, a link too small to tap on a phone:
+
+```json title="buttery-violations.json"
+[
+  {
+    "rule": "target-size",
+    "a": "#settings > a",
+    "message": "hit area is 146.3px × 19px, under 24 × 24",
+    "fix": "Make the hit area at least 24 × 24: use a 28px or larger control size, or give small visuals a [data-bt-hit] child that extends the target without changing layout. Only links inside a sentence can be smaller.",
+    "page": "settings",
+    "viewport": "390x844",
+    "theme": "light",
+    "density": "comfortable",
+    "engine": "chromium"
+  }
+]
+```

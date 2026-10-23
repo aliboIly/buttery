@@ -1,0 +1,292 @@
+import type { ReactElement } from "react";
+import {
+  Grid,
+  Icon,
+  Inline,
+  Stack,
+  Surface,
+  Text,
+  scrollToSection,
+} from "@buttery/core";
+import { ArrowLink, Button, MorphMenu, NavBar } from "@buttery/react";
+import { ShoppingBag } from "lucide-react";
+import { AccountAction } from "./Account.tsx";
+import { Shelf, backdrop } from "./BagArt.tsx";
+import type { RoastFilter } from "./Coffees.tsx";
+import { GUIDES, ROAST_DAY, THIS_WEEK, coffeeOf } from "./data.ts";
+import type { GuideId } from "./data.ts";
+import { items } from "./format.ts";
+import { HalfmoonMark } from "./HalfmoonMark.tsx";
+import { jump } from "./jump.ts";
+import { useLink } from "./router.tsx";
+import type { PlanFor } from "./Subscribe.tsx";
+
+/**
+ * The bag, its count in tabular figures. In the actions it's a link, so the bar's sheet closes before the
+ * bag opens; compact, beside the brand of a folded bar, it's a button, which keeps its own colors there.
+ */
+function BagButton({
+  count,
+  compact = false,
+  onOpen,
+}: {
+  readonly count: number;
+  /** Drops the word, leaving the icon and the count, for a narrow bar. */
+  readonly compact?: boolean;
+  readonly onOpen: () => void;
+}): ReactElement {
+  const name = `Bag, ${items(count)}`;
+  const amount = <span className="shop-count">{count}</span>;
+  if (compact)
+    return (
+      <Button
+        variant="primary"
+        iconStart={ShoppingBag}
+        aria-label={name}
+        onClick={onOpen}
+      >
+        {amount}
+      </Button>
+    );
+  return (
+    <Button variant="primary" iconStart={ShoppingBag} asChild>
+      <a
+        href="#bag"
+        aria-label={name}
+        onClick={(event) => {
+          event.preventDefault();
+          onOpen();
+        }}
+      >
+        Bag {amount}
+      </a>
+    </Button>
+  );
+}
+
+/**
+ * The shop's bar: the brand, the Shop and Learn menus, and the account and bag actions. Folded on a phone,
+ * the bag stays in the bar, at its end beside the menu button, while the rest moves into the menu sheet.
+ */
+export function ShopBar({
+  count,
+  onOpenBag,
+  onSignIn,
+  onCoffees,
+  onPlan,
+  onGuide,
+  onQuestion,
+}: {
+  /** How many bags of coffee the bag holds. */
+  readonly count: number;
+  readonly onOpenBag: () => void;
+  readonly onSignIn: () => void;
+  /** Shows the coffees of one roast, or all of them. */
+  readonly onCoffees: (roast: RoastFilter) => void;
+  /** Sets the subscription builder up for the customer or for a gift. */
+  readonly onPlan: (planFor: PlanFor) => void;
+  readonly onGuide: (guide: GuideId) => void;
+  /** Opens one of the questions customers ask, by id. */
+  readonly onQuestion: (question: string) => void;
+}): ReactElement {
+  const link = useLink();
+  const thisWeek = coffeeOf(THIS_WEEK);
+  return (
+    <NavBar
+      skipTo="main"
+      behavior="sticky"
+      brand={
+        <Inline gap={2} className="shop-brand">
+          <a href={link("/")}>
+            <HalfmoonMark />
+            Halfmoon
+          </a>
+          <span className="shop-brand-bag">
+            <BagButton count={count} compact onOpen={onOpenBag} />
+          </span>
+        </Inline>
+      }
+      actions={
+        <>
+          <AccountAction
+            onSignIn={onSignIn}
+            onSubscription={() => {
+              onPlan("me");
+              scrollToSection("subscribe");
+            }}
+          />
+          <BagButton count={count} onOpen={onOpenBag} />
+        </>
+      }
+    >
+      <MorphMenu.Item
+        label="Shop"
+        featured={
+          <Stack gap={4} className="shop-menu-feature">
+            <Shelf label={thisWeek.label} className="shop-menu-shelf" />
+            <Stack gap={2}>
+              <Text variant="control" tone="secondary">
+                This week
+              </Text>
+              <Text variant="title">{`${thisWeek.name}, ${thisWeek.origin}`}</Text>
+              <Text variant="body-sm" tone="secondary">
+                A new harvest, just landed: peach, jasmine and bergamot.
+              </Text>
+            </Stack>
+            <ArrowLink href="#this-week" onClick={jump("this-week")}>
+              See this week's coffee
+            </ArrowLink>
+          </Stack>
+        }
+        footer={
+          <ArrowLink
+            href="#coffees"
+            onClick={jump("coffees", () => {
+              onCoffees("all");
+            })}
+          >
+            See all six coffees
+          </ArrowLink>
+        }
+      >
+        <MorphMenu.Column title="Coffee">
+          <MorphMenu.Entry
+            href="#coffees"
+            onClick={jump("coffees", () => {
+              onCoffees("Light");
+            })}
+            title="Light roasts"
+            caption="Bright and fruity"
+          />
+          <MorphMenu.Entry
+            href="#coffees"
+            onClick={jump("coffees", () => {
+              onCoffees("Medium");
+            })}
+            title="Medium roasts"
+            caption="Caramel and chocolate"
+          />
+          <MorphMenu.Entry
+            href="#coffees"
+            onClick={jump("coffees", () => {
+              onCoffees("Dark");
+            })}
+            title="Dark roasts"
+            caption="Made for milk"
+          />
+        </MorphMenu.Column>
+        <MorphMenu.Column title="Subscribe">
+          <MorphMenu.Entry
+            href="#subscribe"
+            onClick={jump("subscribe", () => {
+              onPlan("me");
+            })}
+            title="Start a subscription"
+            caption="10% off, shipped free"
+          />
+          <MorphMenu.Entry
+            href="#subscribe"
+            onClick={jump("subscribe", () => {
+              onPlan("gift");
+            })}
+            title="Give a subscription"
+            caption="3, 6 or 12 deliveries"
+          />
+        </MorphMenu.Column>
+      </MorphMenu.Item>
+      <MorphMenu.Item
+        label="Learn"
+        featured={
+          <Stack gap={4} className="shop-menu-feature">
+            <div
+              className="shop-shelf shop-backdrop"
+              style={backdrop({ light: "cream", dark: "espresso" })}
+            >
+              <Surface level="card" pad={3} className="shop-menu-day">
+                <Grid columns={4} gap={2} asChild>
+                  <ul role="list">
+                    {ROAST_DAY.map((moment) => (
+                      <Stack key={moment.step} gap={2} align="center" asChild>
+                        <li>
+                          <Icon icon={moment.icon} />
+                          <Stack gap={1} align="center">
+                            <Text variant="label">{moment.step}</Text>
+                            <Text variant="caption" tone="secondary" tabular>
+                              {moment.time}
+                            </Text>
+                          </Stack>
+                        </li>
+                      </Stack>
+                    ))}
+                  </ul>
+                </Grid>
+              </Surface>
+            </div>
+            <Stack gap={2}>
+              <Text variant="control" tone="secondary">
+                The roastery
+              </Text>
+              <Text variant="title">Out the door by four</Text>
+              <Text variant="body-sm" tone="secondary">
+                Roasted at seven, rested, packed and shipped the same day.
+              </Text>
+            </Stack>
+            <ArrowLink href="#story" onClick={jump("story")}>
+              See how we roast
+            </ArrowLink>
+          </Stack>
+        }
+        footer={
+          <ArrowLink href="#brewing" onClick={jump("brewing")}>
+            All brew guides
+          </ArrowLink>
+        }
+      >
+        <MorphMenu.Column title="Brew guides">
+          {GUIDES.map((guide) => (
+            <MorphMenu.Entry
+              key={guide.id}
+              href="#brewing"
+              onClick={jump("brewing", () => {
+                onGuide(guide.id);
+              })}
+              title={guide.name}
+              caption={`${String(guide.coffee)} g coffee, ${String(guide.water)} g water`}
+            />
+          ))}
+        </MorphMenu.Column>
+        <MorphMenu.Column title="Questions">
+          <MorphMenu.Entry
+            href="#questions"
+            onClick={jump("questions", () => {
+              onQuestion("arrival");
+            })}
+            title="Shipping"
+            caption="When your coffee arrives"
+          />
+          <MorphMenu.Entry
+            href="#questions"
+            onClick={jump("questions", () => {
+              onQuestion("returns");
+            })}
+            title="Returns"
+            caption="If a coffee isn't for you"
+          />
+          <MorphMenu.Entry
+            href="#questions"
+            onClick={jump("questions", () => {
+              onQuestion("storage");
+            })}
+            title="Storing coffee"
+            caption="Keeping a bag at its best"
+          />
+          <MorphMenu.Entry
+            href="mailto:hello@halfmoon.example"
+            title="Write to us"
+            caption="hello@halfmoon.example"
+          />
+        </MorphMenu.Column>
+      </MorphMenu.Item>
+    </NavBar>
+  );
+}

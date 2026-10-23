@@ -56,7 +56,7 @@ const FIXED = fixture(`
     </div>
     <div data-bt="Card" style="inline-size: 100px"><div style="inline-size: 100%; block-size: 10px"></div></div>
     <div data-bt="Row" style="display: flex; gap: 8px"><span>One</span><span>Two</span></div>
-    <button type="button" id="tiny" aria-label="Close" style="position: relative; inline-size: 16px; block-size: 16px; padding: 0; border: 0"><svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" /></svg><span data-bt-hit style="position: absolute; inset: -6px"></span></button>
+    <button type="button" id="tiny" aria-label="Close" style="position: relative; display: grid; place-items: center; inline-size: 16px; block-size: 16px; padding: 0; border: 0"><svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" /></svg><span data-bt-hit style="position: absolute; inset: -6px"></span></button>
     <button type="button" id="unnamed" aria-label="Add a row" style="inline-size: 40px; block-size: 40px"></button>
     <div id="raised" style="position: relative; z-index: var(--bt-z-raised)">Raised with a token</div>
     <span id="clipped" data-bt-truncate title="A label much longer than its box" style="display: block; inline-size: 40px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">A label much longer than its box</span>
@@ -267,4 +267,32 @@ test("says how to fix a page that never reports settled", async ({ page }) => {
   ).rejects.toThrow(
     /didn't report settled.*Fix: wrap the app in <ButteryProvider>/,
   );
+});
+
+/** A row of square buttons laid out at full size and drawn at half, marked as a preview or not. */
+function scaledButtons(mark: string): string {
+  return fixture(`
+    <main style="display: block; padding: 16px">
+      <div ${mark} style="inline-size: 200px; block-size: 40px; overflow: clip">
+        <div style="display: flex; gap: 4px; inline-size: 400px; transform-origin: 0 0; scale: 0.5">
+          <button type="button" aria-label="Undo" style="inline-size: var(--bt-h-sm); block-size: var(--bt-h-sm)"></button>
+          <button type="button" aria-label="Redo" style="inline-size: var(--bt-h-sm); block-size: var(--bt-h-sm)"></button>
+          <button type="button" aria-label="Share" style="inline-size: var(--bt-h-sm); block-size: var(--bt-h-sm)"></button>
+        </div>
+      </div>
+    </main>`);
+}
+
+test("measures a preview drawn scaled down at the size it lays out at, axe's target size too", async ({
+  page,
+}) => {
+  await page.setContent(scaledButtons('data-bt-preview="0.5"'));
+  await expectButtery(page, { name: "preview" });
+  await page.setContent(scaledButtons(""));
+  await failure(expectButtery(page, { name: "drawn small" }));
+  const rules = reportedViolations().map(({ rule, message }) =>
+    rule === "accessibility" ? message : rule,
+  );
+  expect(rules).toContain("target-size");
+  expect(rules.some((rule) => rule.includes("(target-size)"))).toBe(true);
 });

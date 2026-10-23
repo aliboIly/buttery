@@ -36,10 +36,10 @@ export interface SplitHeroProps extends Omit<
  *
  * @example
  * <SplitHero
- *   title="Cards that look finished."
- *   titleMore="Write a title, pick a finish, and export it at any size."
- *   actions={<Button variant="primary" arrow="forward">Open the studio</Button>}
- *   visual={<StudioPreview />}
+ *   title="Decks that look designed."
+ *   titleMore="Write the slides, pick a theme, and present from any screen."
+ *   actions={<Button variant="primary" arrow="forward">Start a deck</Button>}
+ *   visual={<DeckPreview />}
  * />
  */
 export function SplitHero({

@@ -1,0 +1,98 @@
+---
+title: Blank
+description: The starter on its own, a Vite and React app wired up for buttery with a desktop shell, and nothing on the screen yet.
+section: templates
+order: 10
+status: new
+since: 0.9.0
+related:
+  [get-started/installation, get-started/quick-start, get-started/desktop-apps]
+---
+
+import { TemplatePreview } from "../../src/templates/TemplatePreview.tsx";
+
+The blank template is buttery's starter app: the provider, the styles, the bundled font, the layout checks and a Tauri v2 desktop shell, with a page header and a Next steps section on an otherwise empty page. Use it when none of the other templates is close to what you're building, or when you want the desktop app.
+
+<TemplatePreview name="blank" />
+
+## Start from it
+
+<Steps>
+<Step>
+
+### Copy the template
+
+```bash
+pnpm new-app my-app --template blank
+```
+
+This works inside the buttery repository today. It copies `apps/starter` to `apps/my-app`, gives the copy its name and the next free port, adds it to the root `tsconfig.json` and installs it. `blank` is the default, so `pnpm new-app my-app` does the same.
+
+Once `create-buttery` is published, this starts the same app in any folder:
+
+```bash
+npx create-buttery my-app --template blank
+```
+
+</Step>
+<Step>
+
+### Start it
+
+```bash
+pnpm --filter my-app dev
+```
+
+Open the address it prints.
+
+</Step>
+<Step>
+
+### Open it as a desktop app
+
+```bash
+pnpm --filter my-app tauri dev
+```
+
+The same app opens in a window of its own.
+
+</Step>
+</Steps>
+
+## What's inside
+
+<DocsTable
+  columns={["File", "What it does"]}
+  rows={[
+    [
+      "`index.html`",
+      "The page the app mounts in, with the favicon and the app's title",
+    ],
+    [
+      "`src/main.tsx`",
+      "Imports buttery's two stylesheets and renders the app inside `ButteryProvider`",
+    ],
+    [
+      "`src/App.tsx`",
+      "The app: an `AppPage` with a `PageHeader` and a Next steps section, ready to replace",
+    ],
+    [
+      "`vite.config.ts`",
+      "Vite with React and the React Compiler, the dev server on the port in `package.json`",
+    ],
+    [
+      "`e2e/smoke.spec.ts`",
+      "Checks the page renders with the bundled font and no console errors",
+    ],
+    [
+      "`e2e/layout.spec.ts`",
+      "Runs `expectButtery` on the page at a phone's and a laptop's width, light and dark",
+    ],
+    [
+      "`src-tauri/`",
+      "The desktop shell: a 1280 by 820 window with the title bar laid over the app",
+    ],
+  ]}
+/>
+
+Its one screen is an `AppPage` with a `PageHeader`, from the [app shell](/patterns/app-shell) and [page header](/patterns/page-header) patterns. The [quick start](/get-started/quick-start) builds a first screen in it, and [desktop apps](/get-started/desktop-apps) covers the Tauri shell.

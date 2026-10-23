@@ -99,9 +99,14 @@
     padding-inline-end: var(--bt-form-field-end);
   }
 
+  /*
+   * A percentage width zeroes an input's least width (its size attribute's 20 characters), so a field in a
+   * card that fits its content shrinks with the card; it still asks for those 20 characters where there's room.
+   */
   .bt-form-field > [data-bt-part="box"] > [data-bt-part="input"] {
     flex: 1;
     align-self: stretch;
+    inline-size: 100%;
     min-inline-size: 0;
     padding-block: 0;
     padding-inline: var(--bt-form-field-inset);

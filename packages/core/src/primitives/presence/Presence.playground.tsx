@@ -1,7 +1,18 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Presence, Pressable, Stack, Surface, Text } from "@buttery/core";
-import type { DemoSection, PresencePreset } from "@buttery/core";
+import type { DemoSection, DocsPage, PresencePreset } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "Presence",
+  description:
+    "Shows and hides its content with an enter and an exit preset; exits are quicker than entrances.",
+  order: 130,
+  status: "stable",
+  since: "0.3.0",
+  home: "motion/presets",
+};
 
 const PRESETS: readonly PresencePreset[] = [
   "fade",

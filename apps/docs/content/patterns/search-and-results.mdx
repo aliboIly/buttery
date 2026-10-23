@@ -1,0 +1,57 @@
+---
+title: Search and results
+description: The search in an app's top bar, and the page of every result it leads to.
+section: patterns
+order: 70
+status: new
+since: 0.8.0
+related: [components/command-search, patterns/app-shell]
+---
+
+Search in a buttery app has two parts: a field in the top bar, and the page of every result it leads to. Use both, so a search that's more than a quick jump has somewhere to go.
+
+## The two parts
+
+<Cards columns={2}>
+<Card icon="terminal" title="The field">
+
+`CommandSearch` is the search in the top bar. As a person types, it suggests filters and shows grouped results, with a link to every result.
+
+</Card>
+<Card icon="template" title="The results page">
+
+`SearchResults` is the page of every result, grouped by where each was found: a section for each source, with every result rather than the panel's five.
+
+</Card>
+</Cards>
+
+## From the field to the page
+
+Sending a search from the field opens the results page with the same query. `parseSearch(value, filters, { sent: true })` reads the field's text and its finished filters, such as `status:shipped`, into one query both parts understand:
+
+```tsx title="src/pages/ResultsPage.tsx"
+import type { ReactElement } from "react";
+import { SearchResults, parseSearch } from "@buttery/react";
+import type { SearchFilter, SearchSource } from "@buttery/react";
+
+export function ResultsPage({
+  search,
+  filters,
+  sources,
+}: {
+  readonly search: string;
+  readonly filters: readonly SearchFilter[];
+  readonly sources: readonly SearchSource[];
+}): ReactElement {
+  return (
+    <SearchResults
+      query={parseSearch(search, filters, { sent: true })}
+      sources={sources}
+    />
+  );
+}
+```
+
+## SearchResults
+
+<ComponentDocs of="SearchResults" />

@@ -4,7 +4,7 @@ export const meta: ComponentMeta = {
   name: "PageDots",
   kind: "component",
   purpose:
-    "A row of dots showing which step of a few is current, the current one a pill that slides on spring.snappy.",
+    "A row of dots showing which step of a few is current, the current one a pill that moves on spring.snappy.",
   useWhen: [
     "Showing progress through a few steps, such as an onboarding dialog's",
   ],
@@ -15,4 +15,9 @@ export const meta: ComponentMeta = {
   related: ["SegmentedControl", "Dialog", "SharedIndicator"],
   a11y: 'One image named by the current step, "Step 2 of 4" (label changes the words). The dots take no presses or focus; the controls beside them move between steps.',
   motion: "indicator",
+  keyboard: [],
+  layout:
+    "A row of 6px dots 6px apart, the current one an 18px pill. It's as wide as its dots and never shrinks or wraps. It takes no presses or focus, so it has no hit area.",
+  reducedMotion:
+    "The pill moves to the new step at once, its color changing with it.",
 };

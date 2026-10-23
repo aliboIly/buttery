@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { StatusBadge } from "@buttery/react";
 import { ArrowUpRight } from "lucide-react";
 
@@ -16,3 +17,10 @@ export function MetricChange(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("$18,240");
+  await see("12.4%");
+};

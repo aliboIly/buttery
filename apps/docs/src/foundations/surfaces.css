@@ -1,0 +1,266 @@
+.sf-app {
+  --bt-surfaces-knob-highlight: inset 0 1px 0 var(--bt-knob-highlight);
+  --bt-surfaces-dot: 22px;
+  --bt-surfaces-tilt: 32px;
+  --bt-surfaces-knob: 24px;
+  --bt-surfaces-anchor: 43px;
+  --bt-surfaces-anchor-dot: 6px;
+  --bt-surfaces-anchor-active: 10px;
+  --bt-surfaces-anchor-gap: 5.5px;
+  --bt-surfaces-mark: 24px;
+  --bt-surfaces-stage: 360px;
+
+  padding: var(--bt-space-4);
+  container-type: inline-size;
+}
+
+.sf-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--bt-w-inspector);
+  gap: var(--bt-space-2);
+  max-inline-size: var(--bt-w-shell-max);
+  block-size: calc(100dvh - 2 * var(--bt-space-4));
+  margin-inline: auto;
+}
+
+.sf-workspace {
+  display: grid;
+  grid-template-rows: var(--bt-h-header) minmax(0, 1fr);
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.sf-header {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-space-3);
+  min-inline-size: 0;
+}
+
+.sf-mark {
+  flex: none;
+  inline-size: var(--bt-surfaces-mark);
+  block-size: var(--bt-surfaces-mark);
+  border-radius: var(--bt-r-thumb);
+  background: linear-gradient(
+    135deg in oklab,
+    var(--bt-brand-cream),
+    var(--bt-brand-butter-deep)
+  );
+  box-shadow: var(--bt-shadow-inset);
+}
+
+.sf-title {
+  flex: 0 1 auto;
+}
+
+.sf-select {
+  --bt-transition-hover: background-color var(--bt-dur-fast)
+    var(--bt-ease-standard);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bt-space-1);
+  block-size: var(--bt-h-button);
+  padding-inline: var(--bt-space-3);
+  border-radius: var(--bt-r-full);
+  color: var(--bt-text-secondary);
+}
+
+.sf-select:hover {
+  background-color: var(--bt-bg-control);
+}
+
+.sf-stage {
+  display: grid;
+  place-items: center;
+  min-block-size: 0;
+}
+
+.sf-inspector {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.sf-inspector-body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sf-section {
+  flex: none;
+}
+
+.sf-section-header {
+  block-size: var(--bt-h-button);
+}
+
+.sf-link {
+  --bt-transition-hover: color var(--bt-dur-fast) var(--bt-ease-standard);
+
+  padding-block: var(--bt-space-1_5);
+  color: var(--bt-text-secondary);
+}
+
+.sf-link:hover > * {
+  color: var(--bt-text);
+}
+
+.sf-card > :not(:last-child) {
+  border-block-end: 1px solid var(--bt-border);
+}
+
+.sf-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--bt-space-4);
+  block-size: var(--bt-h-row);
+  padding-inline: var(--bt-space-4);
+}
+
+.sf-row-slider {
+  display: flex;
+  align-items: center;
+}
+
+.sf-row-slider > .bt-slider {
+  flex: 1;
+}
+
+.sf-row-full {
+  display: block;
+  block-size: auto;
+  padding: var(--bt-space-4);
+}
+
+.sf-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  block-size: var(--bt-h-row-split);
+}
+
+.sf-split-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bt-space-2);
+  min-inline-size: 0;
+  padding-inline: var(--bt-space-4);
+}
+
+.sf-split-cell + .sf-split-cell {
+  border-inline-start: 1px solid var(--bt-border);
+}
+
+.sf-tilt {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: var(--bt-surfaces-tilt);
+  block-size: var(--bt-surfaces-tilt);
+  border: 1px solid var(--bt-border-strong);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-inset);
+}
+
+.sf-knob {
+  inline-size: var(--bt-surfaces-knob);
+  block-size: var(--bt-surfaces-knob);
+  border: 1px solid var(--bt-knob-border);
+  border-radius: var(--bt-r-full);
+  background: radial-gradient(
+    circle farthest-side at 50% 30%,
+    var(--bt-knob-center),
+    var(--bt-knob-edge)
+  );
+  box-shadow: var(--bt-shadow-knob);
+}
+
+.sf-anchor {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(3, var(--bt-surfaces-anchor-dot));
+  place-content: center;
+  gap: var(--bt-surfaces-anchor-gap);
+  inline-size: var(--bt-surfaces-anchor);
+  block-size: var(--bt-surfaces-anchor);
+  border: 1px solid var(--bt-border-strong);
+  border-radius: var(--bt-r-md);
+  background-color: var(--bt-bg-inset);
+}
+
+.sf-anchor-dot {
+  place-self: center;
+  inline-size: var(--bt-surfaces-anchor-dot);
+  block-size: var(--bt-surfaces-anchor-dot);
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-dot);
+}
+
+.sf-anchor-dot[data-active] {
+  inline-size: var(--bt-surfaces-anchor-active);
+  block-size: var(--bt-surfaces-anchor-active);
+  background: radial-gradient(
+    circle farthest-side at 50% 30%,
+    var(--bt-knob-center),
+    var(--bt-knob-edge)
+  );
+}
+
+.sf-swatches {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--bt-space-2);
+}
+
+.sf-swatch {
+  aspect-ratio: 1;
+  border-radius: var(--bt-r-sm);
+  box-shadow: var(--bt-shadow-inset);
+}
+
+.sf-swatch[data-selected] {
+  box-shadow: var(--bt-ring-select);
+}
+
+.sf-dot {
+  inline-size: var(--bt-surfaces-dot);
+  block-size: var(--bt-surfaces-dot);
+  border-radius: var(--bt-r-full);
+  box-shadow: var(--bt-shadow-inset);
+}
+
+.sf-footer {
+  flex: none;
+  border-block-start: 1px solid var(--bt-border);
+}
+
+.sf-copy {
+  --bt-button-padding: var(--bt-space-8);
+}
+
+.sf-export {
+  flex: 1 1 auto;
+}
+
+@container (width < 900px) {
+  .sf-shell {
+    grid-template-columns: minmax(0, 1fr);
+    block-size: auto;
+  }
+
+  .sf-workspace {
+    grid-template-rows: var(--bt-h-header) var(--bt-surfaces-stage);
+  }
+
+  .sf-inspector,
+  .sf-inspector-body {
+    overflow: visible;
+  }
+}

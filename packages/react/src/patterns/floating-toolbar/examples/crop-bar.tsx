@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, FloatingToolbar } from "@buttery/react";
 
-/** Resize mode's bar under the frame: the size, then Revert, Discard and Keep size. */
+/** Resize mode's bar under the frame, shown from state: the size, then Revert, Discard and Keep size. */
 export function CropBar(): ReactElement {
   const frame = useRef<HTMLDivElement>(null);
   const [cropping, setCropping] = useState(false);
+  const [size, setSize] = useState("1600 × 900");
   return (
     <Stack gap={3} align="start">
       <Button
@@ -17,14 +19,18 @@ export function CropBar(): ReactElement {
         Resize
       </Button>
       <Surface ref={frame} level="card" padX={8} padY={6}>
-        <Text variant="label">Launch card</Text>
+        <Stack gap={1}>
+          <Text variant="label">Title slide</Text>
+          <Text variant="caption">{`Slide ${size}`}</Text>
+        </Stack>
       </Surface>
       <FloatingToolbar
         anchor={frame}
-        label="Canvas size"
+        label="Slide size"
         meta="1920 × 1080"
         open={cropping}
         delayed
+        focusOnOpen
       >
         <FloatingToolbar.Button variant="ghost" aria-disabled>
           Revert
@@ -39,6 +45,7 @@ export function CropBar(): ReactElement {
         <FloatingToolbar.Button
           variant="primary"
           onClick={() => {
+            setSize("1920 × 1080");
             setCropping(false);
           }}
         >
@@ -48,3 +55,12 @@ export function CropBar(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "controlled";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Slide 1600 × 900");
+  await press("button", "Resize");
+  await press("button", "Keep size");
+  await see("Slide 1920 × 1080");
+};

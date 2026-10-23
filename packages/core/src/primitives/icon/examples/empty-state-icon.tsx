@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { ImagePlus } from "lucide-react";
 import { Icon, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** The larger icon size above an empty state's title. */
 export function EmptyStateIcon(): ReactElement {
@@ -11,3 +12,9 @@ export function EmptyStateIcon(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Add your first photo");
+};

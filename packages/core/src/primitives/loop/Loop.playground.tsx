@@ -7,7 +7,18 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "motion",
+  title: "Loop",
+  description:
+    "Cycles a living demo through its steps, pausing off screen and under reduced motion.",
+  order: 110,
+  status: "stable",
+  since: "0.3.0",
+  home: "motion/presets",
+};
 
 const TOTALS = ["1,204", "1,318", "1,472"] as const;
 
@@ -25,7 +36,7 @@ export const demos: readonly DemoSection[] = [
         <Loop steps={3}>
           {(step) => (
             <Stack gap={3}>
-              <Text variant="caption">Cards exported this week</Text>
+              <Text variant="caption">Decks exported this week</Text>
               <Morph contentKey={step}>
                 <Text variant="heading-2" tabular>
                   {TOTALS[step]}

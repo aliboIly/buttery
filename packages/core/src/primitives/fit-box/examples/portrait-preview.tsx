@@ -1,13 +1,24 @@
 import type { ReactElement } from "react";
-import { FitBox, Surface } from "@buttery/core";
+import { Center, FitBox, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
-/** A 9:16 story preview that fills the height of a wide area without overflowing it. */
+/** A tall 9:16 slide's preview that fills the height of a wide area without overflowing it. */
 export function PortraitPreview(): ReactElement {
   return (
     <Surface level="section" style={{ blockSize: "var(--bt-bento-row)" }}>
       <FitBox ratio={9 / 16} inset={4}>
-        <Surface level="raised" />
+        <Surface asChild level="raised">
+          <Center>
+            <Text variant="label">Tall, 9:16</Text>
+          </Center>
+        </Surface>
       </FitBox>
     </Surface>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Tall, 9:16");
+};

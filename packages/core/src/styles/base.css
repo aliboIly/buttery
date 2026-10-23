@@ -24,6 +24,20 @@
     line-height: var(--bt-text-label-line);
   }
 
+  /*
+   * A list marked role="list" is laid out rather than bulleted, as a Stack, Inline or Grid lays it out: no
+   * markers and no indent. The role keeps it announced as a list in Safari, which drops that without markers.
+   */
+  :where(ul, ol)[role="list"] {
+    padding-inline-start: 0;
+    list-style: none;
+  }
+
+  /* A nested provider's theme reaches text that sets no color of its own, which would keep the outer theme's. */
+  [data-bt-theme] {
+    color: var(--bt-text);
+  }
+
   ::selection {
     background-color: var(--bt-selection);
   }

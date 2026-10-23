@@ -25,8 +25,11 @@
     min-block-size: 0;
     padding-inline: var(--bt-space-3);
     overflow-y: auto;
-    overscroll-behavior: contain;
     scrollbar-gutter: stable;
+  }
+
+  .bt-sidebar > [data-bt-part="nav"][data-scrolls] {
+    overscroll-behavior: contain;
   }
 
   /* A 56px rail has no room for a scrollbar beside its icons; it still scrolls by wheel, touch and keys. */

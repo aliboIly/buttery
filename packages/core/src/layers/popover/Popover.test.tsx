@@ -4,7 +4,11 @@ import { userEvent } from "@testing-library/user-event";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MotionPreferenceContext } from "../../motion/preference.ts";
+import type { MotionPreference } from "../../motion/preference.ts";
 import { publishSettled } from "../../motion/settle.ts";
+import { durations, easingCurves } from "../../tokens/motion.ts";
+import type { FloatingEntrance } from "../floating-motion.tsx";
 import { Popover } from "./Popover.tsx";
 
 beforeEach(() => {
@@ -26,6 +30,66 @@ async function gone(role: string): Promise<void> {
   await waitFor(() => {
     expect(screen.queryByRole(role)).toBeNull();
   });
+}
+
+function scrim(): Element | null {
+  return document.querySelector('[data-bt="Scrim"]');
+}
+
+/** How opaque `element` draws: its own opacity times its ancestors'. */
+function drawnOpacity(element: Element | null): number {
+  let opacity = 1;
+  for (let node = element; node; node = node.parentElement)
+    opacity *= Number(getComputedStyle(node).opacity);
+  return opacity;
+}
+
+/** The timing of the fade running on the scrim, or on the element around it that fades it. */
+function scrimFade(): { readonly duration: unknown; readonly easing: string } {
+  const covered = scrim();
+  const fade = document.getAnimations().find((animation) => {
+    const { effect } = animation;
+    return (
+      effect instanceof KeyframeEffect &&
+      covered !== null &&
+      effect.target?.contains(covered) === true
+    );
+  });
+  const timing = fade?.effect?.getTiming();
+  return { duration: timing?.duration, easing: timing?.easing ?? "none" };
+}
+
+async function nextFrame(): Promise<void> {
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+}
+
+/** What's drawn at the window's bottom-right corner, where a press would land. */
+function underCorner(): Element | null {
+  return document.elementFromPoint(
+    window.innerWidth - 4,
+    window.innerHeight - 4,
+  );
+}
+
+function Products({
+  open,
+  motion = "full",
+  entrance,
+}: {
+  readonly open: boolean;
+  readonly motion?: MotionPreference;
+  readonly entrance?: FloatingEntrance;
+}): ReactElement {
+  return (
+    <MotionPreferenceContext value={motion}>
+      <Popover open={open} entrance={entrance}>
+        <Popover.Trigger>Products</Popover.Trigger>
+        <Popover.Content scrim="blur" aria-label="Products">
+          <p>Deckhand</p>
+        </Popover.Content>
+      </Popover>
+    </MotionPreferenceContext>
+  );
 }
 
 function Sizes({
@@ -152,7 +216,7 @@ describe("Popover", () => {
       <Popover defaultOpen>
         <Popover.Trigger>Products</Popover.Trigger>
         <Popover.Content scrim="blur" aria-label="Products">
-          <p>Card Studio</p>
+          <p>Deckhand</p>
         </Popover.Content>
       </Popover>,
     );
@@ -172,10 +236,67 @@ describe("Popover", () => {
     };
     expect(document.elementFromPoint(corner.x, corner.y)).toBe(scrim);
     await userEvent.pointer({ keys: "[MouseLeft]", coords: corner });
-    expect(
-      content.closest("[data-bt-layer]")?.querySelector('[data-bt="Scrim"]'),
-    ).toBeNull();
+    expect(document.elementFromPoint(corner.x, corner.y)).not.toBe(scrim);
     await gone("dialog");
+    expect(document.querySelector('[data-bt="Scrim"]')).toBeNull();
+  });
+
+  it("fades its scrim in over dur-fast and out over dur-fast, letting presses through as it goes", async () => {
+    const { rerender } = render(<Products open={false} />);
+    rerender(<Products open />);
+    await nextFrame();
+    expect(drawnOpacity(scrim())).toBeLessThan(1);
+    expect(scrimFade()).toEqual({
+      duration: durations.fast,
+      easing: `cubic-bezier(${easingCurves.out.join(", ")})`,
+    });
+    await waitFor(() => {
+      expect(drawnOpacity(scrim())).toBe(1);
+    });
+    rerender(<Products open={false} />);
+    await nextFrame();
+    expect(scrim()).not.toBeNull();
+    expect(drawnOpacity(scrim())).toBeGreaterThan(0);
+    expect(underCorner()).not.toBe(scrim());
+    expect(scrimFade()).toEqual({
+      duration: durations.fast,
+      easing: `cubic-bezier(${easingCurves.in.join(", ")})`,
+    });
+    await waitFor(() => {
+      expect(scrim()).toBeNull();
+    });
+  });
+
+  it("fades its scrim over 100ms with reduced motion, and shows and drops it at once with an instant entrance", async () => {
+    const { rerender } = render(<Products open={false} motion="reduced" />);
+    rerender(<Products open motion="reduced" />);
+    await nextFrame();
+    expect(drawnOpacity(scrim())).toBeLessThan(1);
+    expect(scrimFade()).toEqual({
+      duration: durations.reduced,
+      easing: "linear",
+    });
+    await waitFor(() => {
+      expect(drawnOpacity(scrim())).toBe(1);
+    });
+    rerender(<Products open={false} motion="reduced" />);
+    await nextFrame();
+    expect(drawnOpacity(scrim())).toBeGreaterThan(0);
+    expect(scrimFade()).toEqual({
+      duration: durations.reduced,
+      easing: "linear",
+    });
+    await waitFor(() => {
+      expect(scrim()).toBeNull();
+    });
+    cleanup();
+
+    const instant = render(<Products open={false} entrance="instant" />);
+    instant.rerender(<Products open entrance="instant" />);
+    await nextFrame();
+    expect(drawnOpacity(scrim())).toBe(1);
+    instant.rerender(<Products open={false} entrance="instant" />);
+    expect(scrim()).toBeNull();
   });
 
   it("says how to fix content rendered outside a Popover", () => {

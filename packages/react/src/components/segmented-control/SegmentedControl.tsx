@@ -31,7 +31,7 @@ export interface SegmentedControlProps<
   readonly defaultValue?: Value | undefined;
   /** Called with the new value when the user picks another segment. */
   readonly onValueChange?: ((value: Value) => void) | undefined;
-  /** What the choice is about, for screen readers, such as "Canvas fit". */
+  /** What the choice is about, for screen readers, such as "Picture fit". */
   readonly label: string;
   /** Keeps every segment from being chosen. */
   readonly disabled?: boolean | undefined;
@@ -50,7 +50,7 @@ function optionOf<Value extends string>(
  * segment is always chosen; arrow keys move the choice. Segments share one width, the widest label's.
  *
  * @example
- * <SegmentedControl label="Fill" options={["Blend", "Color"]} value={fill} onValueChange={setFill} />
+ * <SegmentedControl label="Fill" options={["Gradient", "Color"]} value={fill} onValueChange={setFill} />
  */
 export function SegmentedControl<Value extends string = string>({
   options,

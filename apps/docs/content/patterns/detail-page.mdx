@@ -1,0 +1,63 @@
+---
+title: Detail page
+description: A page about one thing, with its main column and an aside holding its one primary action.
+section: patterns
+order: 40
+status: new
+since: 0.8.0
+related: [patterns/page-header, components/data-table]
+---
+
+A detail page is about one thing, such as a customer or a price list: its title over a hairline, the main column, and an aside with the one primary action and lists of links. Use `DetailPage` for any page that shows and acts on a single record.
+
+## The parts
+
+<Cards columns={3}>
+<Card icon="template" title="The title">
+
+`title` over a hairline, with optional `breadcrumbs`, a `badge` and a one-line `description`, laid out by a `PageHeader`.
+
+</Card>
+<Card icon="file" title="The main column">
+
+The page's `children`: the record itself, such as the coffees and prices on a price list.
+
+</Card>
+<Card icon="blocks" title="The aside">
+
+The one primary `action`, full width at its top, then lists of links: `DetailPage.Links` in `aside`.
+
+</Card>
+</Cards>
+
+The aside sits beside the main column from 1100px of the page's column and drops below it under that, so the primary action is never more than a scroll away.
+
+A price list for cafés, with its one action and a list of resources:
+
+```tsx title="src/pages/PriceList.tsx"
+import type { ReactElement } from "react";
+import { Text } from "@buttery/core";
+import { Button, DetailPage } from "@buttery/react";
+
+export function PriceList(): ReactElement {
+  return (
+    <DetailPage
+      title="Café price list"
+      description="Wholesale, by the 5 kg bag"
+      action={<Button variant="primary">Send to cafés</Button>}
+      aside={
+        <DetailPage.Links
+          title="Resources"
+          links={[{ label: "How prices are set", href: "/help/prices" }]}
+        />
+      }
+    >
+      <Text variant="body">Twelve coffees, from 42 to 58 dollars a bag.</Text>
+    </DetailPage>
+  );
+}
+```
+
+## DetailPage
+
+<ComponentDocs of="DetailPage" />

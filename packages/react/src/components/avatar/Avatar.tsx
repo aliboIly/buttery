@@ -13,7 +13,7 @@ export interface AvatarProps extends Omit<
   readonly name: string;
   /** The picture's address. */
   readonly src?: string | undefined;
-  /** How big it is: `xs` 20, `sm` 24 (the default), `md` 32 or `lg` 40. */
+  /** How big it is: `xs` 20, `sm` 24, `md` 32 or `lg` 40. Defaults to `"sm"`. */
   readonly size?: AvatarSize | undefined;
   /** Names the avatar for screen readers when the person's name isn't written beside it. Without one, it's decorative. */
   readonly label?: string | undefined;

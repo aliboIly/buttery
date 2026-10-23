@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Presence, Pressable, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A note that rises in after saving and fades out a moment later. */
 export function SavedNote(): ReactElement {
@@ -24,7 +25,7 @@ export function SavedNote(): ReactElement {
             setSaved(true);
           }}
         >
-          <Text variant="button">Save the card</Text>
+          <Text variant="button">Save the deck</Text>
         </Pressable>
       </Surface>
       <div role="status">
@@ -35,3 +36,10 @@ export function SavedNote(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Save the deck");
+  await see("Saved");
+};

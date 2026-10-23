@@ -9,7 +9,18 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection, LaneName } from "@buttery/core";
+import type { DemoSection, DocsPage, LaneName } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "FloatingLanes",
+  description:
+    "Hosts free-floating UI in lanes that stack items and keep clear of sticky bars and anchored toolbars.",
+  order: 110,
+  status: "stable",
+  since: "0.2.0",
+  home: "foundations/layers",
+};
 
 interface LaneItem {
   readonly id: number;

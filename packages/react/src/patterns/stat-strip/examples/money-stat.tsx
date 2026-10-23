@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Stat, StatStrip } from "@buttery/react";
 
 const dollars = new Intl.NumberFormat("en-US", {
@@ -6,7 +7,7 @@ const dollars = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
 
-/** Numbers written your own way: a currency sign and compact figures. */
+/** Two columns of numbers written your own way: a currency sign and compact figures. */
 export function MoneyStat(): ReactElement {
   return (
     <StatStrip columns={2}>
@@ -20,3 +21,10 @@ export function MoneyStat(): ReactElement {
     </StatStrip>
   );
 }
+
+export const kind: ExampleKind = "variants";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("paid to creators");
+  await see("creators");
+};

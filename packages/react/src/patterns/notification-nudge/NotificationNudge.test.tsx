@@ -96,6 +96,23 @@ describe("NotificationNudge", () => {
     expect(await screen.findByRole("dialog")).toBeTruthy();
   });
 
+  it("waits to open by itself while it isn't allowed to, and goes, still unseen, when it stops being", async () => {
+    const { rerender } = render(
+      <Bar storageKey="test-delivery" opensItself={false} />,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(screen.queryByRole("dialog")).toBeNull();
+    rerender(<Bar storageKey="test-delivery" />);
+    expect(await screen.findByRole("dialog")).toBeTruthy();
+    rerender(<Bar storageKey="test-delivery" opensItself={false} />);
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(window.localStorage.getItem(KEY)).toBeNull();
+    await userEvent.click(bell());
+    expect(await screen.findByRole("dialog")).toBeTruthy();
+  });
+
   it("waits for a modal dialog to close before it opens by itself", async () => {
     function Page({ modal }: { readonly modal: boolean }): ReactElement {
       return (

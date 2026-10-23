@@ -19,6 +19,23 @@ function tile(name: string): HTMLElement {
   return screen.getByRole("checkbox", { name });
 }
 
+function colorIn(scope: Element, variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  scope.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
+
+function partOf(element: HTMLElement, part: string): HTMLElement {
+  const found = element.querySelector<HTMLElement>(
+    `[data-bt-part="${part}"], [data-role="${part}"]`,
+  );
+  if (!found) throw new Error(`No ${part}.`);
+  return found;
+}
+
 describe("OptionTiles", () => {
   it("is a group named by its label that takes the ref, class and other props", () => {
     const ref = createRef<HTMLDivElement>();
@@ -64,6 +81,63 @@ describe("OptionTiles", () => {
     expect(getComputedStyle(tile("Sell online")).boxShadow).not.toBe(resting);
     await userEvent.click(tile("Run subscriptions"));
     expect(onValueChange).toHaveBeenLastCalledWith(["shop"]);
+  });
+
+  it("draws a disabled tile disabled in both themes: its words in text-disabled on bg-control-subtle, its box as a disabled checkbox's", () => {
+    for (const theme of ["light", "dark"] as const) {
+      render(
+        <div data-bt-theme={theme} data-testid="scope">
+          <OptionTiles
+            label="Roast days"
+            defaultValue={["sunday"]}
+            options={[
+              {
+                value: "monday",
+                label: "Monday",
+                description: "Espresso blends",
+              },
+              {
+                value: "saturday",
+                label: "Saturday",
+                description: "Closed for cleaning",
+                disabled: true,
+              },
+              {
+                value: "sunday",
+                label: "Sunday",
+                description: "Kept for wholesale",
+                disabled: true,
+              },
+            ]}
+          />
+        </div>,
+      );
+      const scope = screen.getByTestId("scope");
+      const disabledText = colorIn(scope, "--bt-text-disabled");
+      const enabled = tile("Monday");
+      for (const name of ["Saturday", "Sunday"]) {
+        const off = tile(name);
+        expect(getComputedStyle(off).backgroundColor).toBe(
+          colorIn(scope, "--bt-bg-control-subtle"),
+        );
+        expect(getComputedStyle(off).boxShadow).toBe("none");
+        expect(getComputedStyle(partOf(off, "label")).color).toBe(disabledText);
+        expect(getComputedStyle(partOf(off, "description")).color).toBe(
+          disabledText,
+        );
+        expect(getComputedStyle(partOf(off, "label")).color).not.toBe(
+          getComputedStyle(partOf(enabled, "label")).color,
+        );
+        const box = getComputedStyle(partOf(off, "box"));
+        expect(box.borderTopColor).toBe(colorIn(scope, "--bt-border-strong"));
+        expect(box.backgroundColor).toBe(
+          colorIn(scope, "--bt-bg-control-subtle"),
+        );
+        expect(box.color).toBe(disabledText);
+      }
+      expect(partOf(tile("Sunday"), "mark")).toBeTruthy();
+      cleanup();
+    }
   });
 
   it("lays tiles in two columns from 480px of room, a one-line tile 40 tall", () => {

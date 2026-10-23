@@ -1,5 +1,16 @@
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { AreaChart } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "AreaChart",
+  description:
+    "Values over time as lines with their area filled in faintly, for totals that build up, with a crosshair and tooltip.",
+  order: 10,
+  status: "new",
+  since: "0.8.0",
+};
 
 const MONTHS = [
   "Nov",
@@ -25,6 +36,42 @@ const shortDollars = new Intl.NumberFormat("en-US", {
   currency: "USD",
   notation: "compact",
 });
+
+const REVENUE = [
+  8200, 8650, 9100, 8900, 9400, 9850, 10300, 10100, 10750, 11200, 11600, 12150,
+];
+
+export const live: LiveDemo = {
+  controls: {
+    size: { kind: "choice", options: ["sm", "md", "lg"], initial: "md" },
+    loading: { kind: "toggle", initial: false },
+  },
+  render: ({ size, loading }) => (
+    <AreaChart
+      label="Subscription revenue"
+      labels={MONTHS}
+      labelsHeading="Month"
+      series={[{ key: "revenue", label: "Revenue", values: REVENUE }]}
+      formatValue={(value) => dollars.format(value)}
+      formatTick={(value) => shortDollars.format(value)}
+      size={demoChoice(size, ["md", "sm", "lg"])}
+      loading={loading === true}
+    />
+  ),
+  code: ({ size, loading }) =>
+    [
+      "<AreaChart",
+      '  label="Subscription revenue"',
+      `  labels={${JSON.stringify(MONTHS)}}`,
+      '  labelsHeading="Month"',
+      `  series={[{ key: "revenue", label: "Revenue", values: ${JSON.stringify(REVENUE)} }]}`,
+      "  formatValue={(value) => dollars.format(value)}",
+      "  formatTick={(value) => shortDollars.format(value)}",
+      `  size="${demoChoice(size, ["md", "sm", "lg"])}"`,
+      ...(loading === true ? ["  loading"] : []),
+      "/>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {

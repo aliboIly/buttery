@@ -47,7 +47,11 @@ function TabNavRoot({
   );
 }
 
-interface TabNavLinkBase extends Omit<ComponentPropsWithRef<"a">, "children"> {
+/** The props every `TabNav.Link` takes, whichever children it has. */
+export interface TabNavLinkBase extends Omit<
+  ComponentPropsWithRef<"a">,
+  "children"
+> {
   /** Whether this link is the page shown. */
   readonly current?: boolean | undefined;
 }

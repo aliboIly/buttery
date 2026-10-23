@@ -14,4 +14,7 @@ export const meta: ComponentMeta = {
   related: ["Center", "Surface"],
   a11y: "No role of its own; the content box is a plain div.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It fills its parent, which needs a definite height (a sized grid or flex cell, or an explicit block size), and draws its content in the largest box of its ratio that fits inside the inset, centered. The content box follows resizes without JavaScript and never overflows, and its child fills it. It has no hit area of its own.",
 };

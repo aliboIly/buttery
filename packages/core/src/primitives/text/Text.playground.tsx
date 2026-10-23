@@ -1,5 +1,21 @@
 import { displayRoles, Stack, Surface, Text, textRoles } from "@buttery/core";
-import type { DemoSection, TextTone, TextVariant } from "@buttery/core";
+import type {
+  DemoSection,
+  DocsPage,
+  TextTone,
+  TextVariant,
+} from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "Text",
+  description:
+    "Text in one of buttery's type roles, with size, line height, weight, tracking and color from the tokens.",
+  order: 160,
+  status: "stable",
+  since: "0.2.0",
+  home: "foundations/typography",
+};
 
 const ROLES = [
   ...Object.keys(textRoles),
@@ -23,7 +39,7 @@ export const demos: readonly DemoSection[] = [
         {ROLES.map((role) => (
           <Stack key={role} gap={3}>
             <Text variant="caption">{role}</Text>
-            <Text variant={role}>Round the corners and add depth</Text>
+            <Text variant={role}>Pick a theme for every slide</Text>
           </Stack>
         ))}
       </Stack>

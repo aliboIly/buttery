@@ -1,5 +1,7 @@
+import { useState } from "react";
+import type { ReactElement } from "react";
 import { Menu, Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import {
   AppPage,
   AppShell,
@@ -11,8 +13,6 @@ import {
   TopBar,
 } from "@buttery/react";
 import { CircleHelp, Flame, Package } from "lucide-react";
-import { useState } from "react";
-import type { ReactElement } from "react";
 
 /** A help panel the top bar opens, docked beside the page from 1280px of shell and a sheet under that. */
 export function HelpPanel(): ReactElement {
@@ -97,6 +97,8 @@ export function HelpPanel(): ReactElement {
     </div>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("button", "Help");

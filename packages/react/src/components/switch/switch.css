@@ -46,8 +46,7 @@
     inline-size: calc(var(--bt-h-badge) - 2 * var(--bt-space-0_5));
     block-size: calc(var(--bt-h-badge) - 2 * var(--bt-space-0_5));
     border-radius: var(--bt-r-full);
-    background-color: var(--bt-bg-raised);
-    box-shadow: var(--bt-shadow-raised);
+    background-color: var(--bt-control-border);
   }
 
   .bt-switch
@@ -55,11 +54,20 @@
     > [data-bt-part="track"][data-state="checked"]
     > [data-bt-part="thumb"] {
     background-color: var(--bt-on-primary);
+    box-shadow: var(--bt-shadow-raised);
   }
 
   .bt-switch > [data-bt-part="row"] > [data-bt-part="track"]:disabled {
     background-color: var(--bt-bg-control-subtle);
     box-shadow: inset 0 0 0 var(--bt-switch-line) var(--bt-border-strong);
+  }
+
+  .bt-switch
+    > [data-bt-part="row"]
+    > [data-bt-part="track"]:disabled
+    > [data-bt-part="thumb"] {
+    background-color: var(--bt-icon-disabled);
+    box-shadow: none;
   }
 
   .bt-switch

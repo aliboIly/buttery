@@ -6,9 +6,10 @@ export const page: DocsPage = {
   title: "SettingRow",
   description:
     "One setting: what it is, its current state, and its one action.",
-  order: 32,
+  order: 260,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
+  home: "patterns/settings-pages",
 };
 
 export const demos: readonly DemoSection[] = [

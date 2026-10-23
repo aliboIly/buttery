@@ -1,0 +1,99 @@
+---
+title: App shell
+description: The frame of a whole app, as an editor or a dashboard, and the page that goes in it.
+section: patterns
+order: 120
+status: stable
+since: 0.6.0
+related:
+  [
+    patterns/page-header,
+    components/sidebar,
+    components/top-bar,
+    patterns/inspector,
+  ]
+---
+
+The app shell is the frame of a whole app screen, an editor's or a dashboard's. Use `AppShell` for the screen and `AppPage` for each page inside a dashboard.
+
+<Cards columns={2}>
+<Card icon="monitor" title="An editor">
+
+The default, `layout="inspector"`: a header and a stage beside an inspector, which becomes a sheet on a narrow screen. The [Inspector](/patterns/inspector) pattern has its parts.
+
+</Card>
+<Card icon="template" title="A dashboard">
+
+With `layout="sidebar"`: a sidebar beside a top bar and the page, an `AppPage`, and an optional `SidePanel` at the shell's end.
+
+</Card>
+</Cards>
+
+## The dashboard
+
+The shell never scrolls; the sidebar and the page each scroll on their own. The sidebar and a `SidePanel` change with the shell's width:
+
+<DocsTable
+  columns={["Shell width", "Sidebar", "SidePanel"]}
+  rows={[
+    ["1280px and wider", "In full", "Docked at the shell's end"],
+    ["1100px to 1280px", "In full", "Opens as a sheet"],
+    ["640px to 1100px", "An icon rail", "Opens as a sheet"],
+    [
+      "Under 640px",
+      "A sheet, opened from the top bar's menu button",
+      "Opens as a sheet",
+    ],
+  ]}
+/>
+
+> **Give the shell a height.** `AppShell` fills its container's height, so the element around it needs one. In an app that's the window's height, which the templates give their root element in `src/app.css`. In a container with no height of its own, the shell grows with its content, and the sidebar and the page stop scrolling on their own.
+
+```css title="src/app.css"
+.app {
+  block-size: 100dvh;
+}
+```
+
+A dashboard with two pages in its sidebar:
+
+```tsx title="src/Dashboard.tsx"
+import type { ReactElement } from "react";
+import { Package, Receipt } from "lucide-react";
+import { AppPage, AppShell, PageHeader, Sidebar, TopBar } from "@buttery/react";
+import "./app.css";
+
+export function Dashboard(): ReactElement {
+  return (
+    <div className="app">
+      <AppShell
+        layout="sidebar"
+        sidebar={
+          <Sidebar label="Main">
+            <Sidebar.Item
+              label="Orders"
+              href="/orders"
+              icon={Receipt}
+              current
+            />
+            <Sidebar.Item label="Stock" href="/stock" icon={Package} />
+          </Sidebar>
+        }
+        topBar={<TopBar />}
+      >
+        <AppPage header={<PageHeader title="Orders" />}>
+          <AppPage.Section>Today's orders</AppPage.Section>
+        </AppPage>
+      </AppShell>
+    </div>
+  );
+}
+```
+
+## AppShell
+
+<ComponentDocs of="AppShell" />
+
+## AppPage
+
+<ComponentDocs of="AppPage" />

@@ -15,5 +15,20 @@ export const meta: ComponentMeta = {
   ],
   related: ["DataTable", "InitialsTile", "Avatar", "Menu", "AppPage"],
   a11y: "Each group's rows are a list named by its title. A row with href is a link and one with onClick a button, named by its text; the … button is named Actions for the group. The add row is a button named by its label.",
-  motion: "none",
+  motion: "presence",
+  keyboard: [
+    { keys: "Enter", does: "Follows a row that's a link" },
+    {
+      keys: "Enter or Space",
+      does: "Presses a row that's a button or the add row, or opens a group's … menu",
+    },
+    {
+      keys: "Escape",
+      does: "Closes the open … menu and puts focus back on its button",
+    },
+  ],
+  layout:
+    "It takes its container's width as a well padded 4px, its groups and rows 4px apart. Each row is a card at least 48px tall, the whole card its hit area: its title truncates with the full text in its title, its line wraps under it, and its value keeps its width in tabular figures; a group's title truncates the same way beside its 28px … button, and the add row is 48px tall.",
+  reducedMotion:
+    "A group's … button still shrinks to 97% while it's pressed, but at once instead of easing, and its menu fades in and out over 100ms without growing from the button.",
 };

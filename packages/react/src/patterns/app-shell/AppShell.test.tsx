@@ -11,7 +11,7 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import type { ReactElement } from "react";
-import { Menu } from "@buttery/core";
+import { FloatingLanes, Menu } from "@buttery/core";
 import {
   afterEach,
   beforeEach,
@@ -21,7 +21,7 @@ import {
   onTestFinished,
   vi,
 } from "vitest";
-import { userEvent as browser } from "vitest/browser";
+import { userEvent as browser, page } from "vitest/browser";
 import { HeaderBar } from "../header-bar/HeaderBar.tsx";
 import { Inspector } from "../inspector/Inspector.tsx";
 import { Sidebar } from "../sidebar/Sidebar.tsx";
@@ -103,6 +103,16 @@ describe("AppShell", () => {
     expect(Math.round(inspector.bottom)).toBe(Math.round(stage.bottom));
   });
 
+  it("makes the stage the page's main landmark, with the header and the inspector beside it", () => {
+    render(<Editor width="1100px" />);
+    const main = screen.getByRole("main");
+    expect(main.contains(screen.getByTestId("stage"))).toBe(true);
+    expect(within(main).queryByText("Launch card")).toBeNull();
+    expect(
+      within(main).queryByRole("region", { name: "Card settings" }),
+    ).toBeNull();
+  });
+
   it("keeps its work at most 1380px wide, centered", () => {
     render(<Editor width="1700px" />);
     const header = document
@@ -132,6 +142,22 @@ describe("AppShell", () => {
     expect(document.activeElement).toBe(edit);
   });
 
+  it("rises its sheet at the window's end, no wider than a dialog, when the shell is narrow in a wide window", async () => {
+    const { innerWidth, innerHeight } = window;
+    await page.viewport(1280, 800);
+    onTestFinished(async () => {
+      await page.viewport(innerWidth, innerHeight);
+    });
+    render(<Editor width="600px" />);
+    await userEvent.click(screen.getByRole("button", { name: "Edit" }));
+    const sheet = await screen.findByRole("dialog", { name: "Card settings" });
+    const box = sheet.getBoundingClientRect();
+    expect(box.width).toBeLessThanOrEqual(400);
+    expect(Math.round(document.documentElement.clientWidth - box.right)).toBe(
+      8,
+    );
+  });
+
   it("closes the sheet when the screen widens, takes focus along to the inspector beside the stage, and leaves it closed when it narrows again", async () => {
     const onOpenChange = vi.fn();
     const { rerender } = render(
@@ -152,6 +178,51 @@ describe("AppShell", () => {
     await screen.findByRole("button", { name: "Edit" });
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("keeps the floating lanes clear of the inspector beside the stage, and of the button under it when narrow", async () => {
+    const [width, height] = [window.innerWidth, window.innerHeight];
+    onTestFinished(async () => {
+      await page.viewport(width, height);
+    });
+    const { rerender } = render(
+      <>
+        <FloatingLanes />
+        <div style={{ inlineSize: "1200px", blockSize: "100vh" }}>
+          <Editor width="1200px" />
+        </div>
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "120px", blockSize: "36px" }}>Guide</div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await page.viewport(1200, 700);
+    const inspector = document.querySelector('[data-bt-part="inspector"]');
+    await waitFor(() => {
+      const guide = screen.getByText("Guide").getBoundingClientRect();
+      expect(guide.right).toBeLessThanOrEqual(
+        inspector?.getBoundingClientRect().left ?? 0,
+      );
+    });
+    await page.viewport(600, 700);
+    rerender(
+      <>
+        <FloatingLanes />
+        <div style={{ inlineSize: "600px", blockSize: "100vh" }}>
+          <Editor width="600px" />
+        </div>
+        <FloatingLanes.Item lane="bottom-end">
+          <div style={{ inlineSize: "120px", blockSize: "36px" }}>Guide</div>
+        </FloatingLanes.Item>
+      </>,
+    );
+    await waitFor(() => {
+      const bar = document
+        .querySelector('[data-bt-part="sheet-bar"]')
+        ?.getBoundingClientRect();
+      const guide = screen.getByText("Guide").getBoundingClientRect();
+      expect(guide.bottom).toBeLessThanOrEqual(bar?.top ?? 0);
+    });
   });
 
   it("can be controlled", async () => {
@@ -247,6 +318,23 @@ function part(name: string): HTMLElement {
 }
 
 describe("AppShell layout=sidebar", () => {
+  it("starts with a skip button, out of sight until it has focus, that moves focus past the sidebar to the page", async () => {
+    render(<Dashboard width={1280} />);
+    const skip = screen.getByRole("button", { name: "Skip to content" });
+    const shell = screen.getByTestId("shell");
+    expect(shell.firstElementChild).toBe(skip);
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+    skip.focus();
+    expect(skip.getBoundingClientRect().width).toBeGreaterThan(48);
+    expect(skip.getBoundingClientRect().left).toBeLessThan(
+      shell.getBoundingClientRect().left + 16,
+    );
+    await userEvent.click(skip);
+    const page = shell.querySelector('[data-bt-part="page"]');
+    expect(document.activeElement).toBe(page);
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+  });
+
   it("lays the sidebar beside the top bar and the page, each scrolling on its own while the shell doesn't", () => {
     render(<Dashboard width={1280} />);
     expect(part("sidebar").getBoundingClientRect().width).toBe(240);

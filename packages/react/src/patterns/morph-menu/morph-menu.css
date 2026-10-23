@@ -20,6 +20,11 @@
     container-type: inline-size;
   }
 
+  /* While its panel is out, the menu rises over what follows it on the page, another menu's row included. */
+  .bt-morph-menu:where(:has(> [data-bt-part="panel"])) {
+    z-index: var(--bt-z-floating);
+  }
+
   /* A row too narrow for its triggers scrolls sideways rather than spilling. */
   .bt-morph-menu-list {
     display: flex;
@@ -180,8 +185,11 @@
     min-inline-size: 0;
   }
 
+  /* Inset as the column headings and entries are, so its link lines up with their words; the rule above it
+     still runs the column's whole width. */
   .bt-morph-menu-content [data-bt-part="morph-menu-footer"] {
     padding-block-start: var(--bt-space-4);
+    padding-inline: var(--bt-space-3);
     border-block-start: var(--bt-morph-menu-line) solid var(--bt-border);
   }
 

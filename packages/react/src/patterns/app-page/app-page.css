@@ -3,13 +3,19 @@
     --bt-app-page-line: 1px;
     --bt-app-page-hit: 24px;
 
+    container: bt-column / inline-size;
     display: flex;
     flex-direction: column;
     align-items: center;
+    inline-size: 100%;
     min-inline-size: 0;
   }
 
-  /* The shell's scroll area adds 12px of fade at each end, so the header starts 24px under the top bar. */
+  /* In an AppShell its padding steps follow the shell's column, which holds the page beside a docked panel. */
+  .bt-app-shell .bt-app-page {
+    container: none;
+  }
+
   .bt-app-page > [data-bt-part="frame"] {
     display: flex;
     flex-direction: column;
@@ -17,9 +23,18 @@
     inline-size: 100%;
     max-inline-size: var(--bt-w-app-page);
     min-inline-size: 0;
+    padding-block: var(--bt-space-6)
+      calc(var(--bt-space-6) + var(--bt-lane-clearance, 0px));
+    padding-inline: var(--bt-space-4);
+  }
+
+  /*
+   * The shell's scroll area adds 12px of fade at each end, so the header still starts 24px under the top bar,
+   * and the page it scrolls ends with 48px of room past its last section.
+   */
+  .bt-app-shell .bt-app-page > [data-bt-part="frame"] {
     padding-block: var(--bt-space-3)
       calc(var(--bt-space-12) + var(--bt-lane-clearance, 0px));
-    padding-inline: var(--bt-space-4);
   }
 
   .bt-app-page[data-width="medium"] > [data-bt-part="frame"] {
@@ -130,6 +145,10 @@
   .bt-app-page[data-fill] > [data-bt-part="frame"] {
     flex: 1 1 auto;
     min-block-size: 0;
+    padding-block-end: var(--bt-space-6);
+  }
+
+  .bt-app-shell .bt-app-page[data-fill] > [data-bt-part="frame"] {
     padding-block-end: var(--bt-space-3);
   }
 

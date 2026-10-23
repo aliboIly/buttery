@@ -22,4 +22,7 @@ export const meta: ComponentMeta = {
   ],
   a11y: "The page's main landmark. Breadcrumbs come first as their own navigation; the title is the h1, each section a region named by its h2, and the footer a footer element after the sections.",
   motion: "none",
+  keyboard: [],
+  layout:
+    'An AppPage at most 960px wide (820 with width="narrow"), centered, with 16, 24 or 32px of side padding as its column widens: the header first, its sections 24 under it and 32 apart, then a footer under a hairline. A long title truncates once the actions have folded into "…" and shows in full on hover; its hit areas are the breadcrumbs\' and actions\' own.',
 };

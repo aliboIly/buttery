@@ -1,0 +1,140 @@
+import type { ComponentType } from "react";
+import type {
+  ComponentMeta,
+  DemoFrame,
+  DemoSection,
+  DemoWidth,
+  DocsPage,
+  LiveDemo,
+} from "@buttery/core";
+import { exampleTitle } from "./anatomy.ts";
+import { rootOf } from "./nav.ts";
+import { componentRoute } from "./routes.ts";
+import { slugify } from "./slug.ts";
+
+interface MetaModule {
+  readonly meta: ComponentMeta;
+}
+
+interface DemoModule {
+  readonly demos: readonly DemoSection[];
+  readonly frame?: DemoFrame;
+  readonly width?: DemoWidth;
+  readonly page?: DocsPage;
+  readonly live?: LiveDemo;
+}
+
+const metaModules = import.meta.glob<MetaModule>(
+  "../../../packages/*/src/**/*.meta.ts",
+  { eager: true },
+);
+const demoModules = import.meta.glob<DemoModule>(
+  "../../../packages/*/src/**/*.playground.tsx",
+  { eager: true },
+);
+const exampleModules = import.meta.glob<Readonly<Record<string, unknown>>>(
+  "../../../packages/*/src/**/examples/*.tsx",
+  { eager: true },
+);
+const exampleCode = import.meta.glob<ExampleCode>(
+  "../../../packages/*/src/**/examples/*.tsx",
+  { eager: true, query: "?code", import: "default" },
+);
+
+/** An example file's source, highlighted at build time, and the caption its JSDoc gives it. */
+export interface ExampleCode {
+  readonly source: string;
+  readonly html: string;
+  readonly caption: string;
+}
+
+export interface Example {
+  /** Its file's name without the extension, such as `basic`. */
+  readonly name: string;
+  readonly title: string;
+  readonly Component: ComponentType;
+  readonly code: ExampleCode;
+}
+
+export interface ComponentEntry {
+  /** Its name in kebab case, such as `fit-box`; its page's path adds its section in front. */
+  readonly route: string;
+  /** Where its page sits on the site, from its `*.playground.tsx`; undefined until it has one. */
+  readonly page: DocsPage | undefined;
+  /** Its folder from the repository's root, such as `packages/react/src/components/button`. */
+  readonly folder: string;
+  readonly meta: ComponentMeta;
+  readonly demos: readonly DemoSection[];
+  readonly frame: DemoFrame;
+  /** Whether its demos and examples lay out at their frame's width or a desktop's, from its `*.playground.tsx`. */
+  readonly width: DemoWidth;
+  readonly examples: readonly Example[];
+  /** Its page's live demo with prop controls, from its `*.playground.tsx`; undefined until it has one. */
+  readonly live: LiveDemo | undefined;
+}
+
+function folderOf(path: string): string {
+  return path.slice(0, path.lastIndexOf("/"));
+}
+
+function isComponent(value: unknown): value is ComponentType {
+  return typeof value === "function";
+}
+
+function examplesIn(folder: string): Example[] {
+  return Object.entries(exampleModules)
+    .filter(([path]) => folderOf(folderOf(path)) === folder)
+    .flatMap(([path, module]) => {
+      const Component = Object.entries(module).find(
+        ([name, value]) => name !== "play" && isComponent(value),
+      )?.[1];
+      const code = exampleCode[path];
+      return isComponent(Component) && code
+        ? [
+            {
+              name: path.slice(path.lastIndexOf("/") + 1, -".tsx".length),
+              title: exampleTitle(path),
+              Component,
+              code,
+            },
+          ]
+        : [];
+    });
+}
+
+/** Every component with a manifest entry, its demos and its examples, by name. */
+export const components: readonly ComponentEntry[] = Object.entries(metaModules)
+  .map(([path, { meta }]) => {
+    const folder = folderOf(path);
+    const page = Object.entries(demoModules).find(
+      ([demoPath]) => folderOf(demoPath) === folder,
+    )?.[1];
+    return {
+      route: componentRoute(meta.name),
+      page: page?.page,
+      folder: folder.replace(/^(\.\.\/)+/, ""),
+      meta,
+      demos: page?.demos ?? [],
+      live: page?.live,
+      frame: page?.frame ?? "section",
+      width: page?.width ?? "frame",
+      examples: examplesIn(folder),
+    };
+  })
+  .sort((a, b) => a.meta.name.localeCompare(b.meta.name));
+
+/** The package a component is imported from, by its folder. */
+export function packageOf(entry: ComponentEntry): string {
+  return entry.folder.startsWith("packages/core/")
+    ? "@buttery/core"
+    : "@buttery/react";
+}
+
+/** Where a component's docs are: its own page, or its section on the written page that's its home. */
+export function docsRouteOf(entry: ComponentEntry): string | undefined {
+  const { page } = entry;
+  if (!page) return undefined;
+  return page.home === undefined
+    ? `${rootOf(page.section)}/${entry.route}`
+    : `${page.home}#${slugify(entry.meta.name)}`;
+}

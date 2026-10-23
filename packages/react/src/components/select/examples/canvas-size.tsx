@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { NumberField, Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
 
@@ -67,3 +68,11 @@ export function CanvasSize(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, type, see }) => {
+  await press("combobox", "Canvas shape, 16:9");
+  await type("Width", "{selectall}1200{Enter}");
+  await see("1200 × 900");
+};

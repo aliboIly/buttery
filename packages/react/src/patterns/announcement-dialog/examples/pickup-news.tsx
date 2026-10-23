@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { AnnouncementDialog, Button } from "@buttery/react";
 
 /** A text-only announcement opened from a button, with a closing paragraph after its sections. */
@@ -18,3 +19,11 @@ export function PickupNews(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Local pickup");
+  await see("Choose it at checkout");
+  await press("button", "Sounds good");
+};

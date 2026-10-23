@@ -1,9 +1,20 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import { Menu, Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { Inline, Menu, Stack } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, DataTable, StatusBadge } from "@buttery/react";
 import type { DataTableColumn, DataTableSort } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "DataTable",
+  description:
+    "A table of records: columns with minimum widths and shares, selection, sorting, row actions, a sticky header and first column, skeleton rows and pagination.",
+  order: 60,
+  status: "new",
+  since: "0.8.0",
+};
 
 interface Order {
   readonly id: string;
@@ -64,6 +75,47 @@ const COLUMNS: readonly DataTableColumn<Order>[] = [
 
 const PAGE = 8;
 
+const LIVE_COLUMNS: readonly DataTableColumn<Order>[] = COLUMNS.map(
+  (column) => ({ ...column, sortable: false }),
+);
+
+export const live: LiveDemo = {
+  controls: {
+    selectable: { kind: "toggle", initial: false },
+    loading: { kind: "toggle", initial: false },
+    size: {
+      kind: "choice",
+      options: ["default", "compact"],
+      initial: "default",
+    },
+  },
+  render: ({ selectable, loading, size }) => (
+    <DataTable
+      label="Orders"
+      columns={LIVE_COLUMNS}
+      rows={ORDERS.slice(0, 4)}
+      rowKey={(order) => order.id}
+      rowLabel={(order) => order.id}
+      selectable={selectable === true}
+      loading={loading === true}
+      size={demoChoice(size, ["default", "compact"])}
+    />
+  ),
+  code: ({ selectable, loading, size }) =>
+    [
+      "<DataTable",
+      '  label="Orders"',
+      "  columns={columns}",
+      "  rows={orders}",
+      "  rowKey={(order) => order.id}",
+      "  rowLabel={(order) => order.id}",
+      ...(selectable === true ? ["  selectable"] : []),
+      ...(loading === true ? ["  loading"] : []),
+      ...(size === "compact" ? ['  size="compact"'] : []),
+      "/>",
+    ].join("\n"),
+};
+
 function Orders(): ReactElement {
   const [sort, setSort] = useState<DataTableSort | null>(null);
   const [page, setPage] = useState(1);
@@ -79,17 +131,19 @@ function Orders(): ReactElement {
         });
   return (
     <Stack gap={3}>
-      <Button
-        size="sm"
-        onClick={() => {
-          setLoading(true);
-          window.setTimeout(() => {
-            setLoading(false);
-          }, 1200);
-        }}
-      >
-        Reload
-      </Button>
+      <Inline>
+        <Button
+          size="sm"
+          onClick={() => {
+            setLoading(true);
+            window.setTimeout(() => {
+              setLoading(false);
+            }, 1200);
+          }}
+        >
+          Reload
+        </Button>
+      </Inline>
       <DataTable
         label="Orders"
         columns={COLUMNS}

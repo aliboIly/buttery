@@ -33,6 +33,8 @@ export interface SignInLabels {
   readonly email: string;
   /** The password field's label. */
   readonly password: string;
+  /** Names the button that shows the password. */
+  readonly showPassword: string;
   /** The keep-me-signed-in box. */
   readonly remember: string;
   /** The submit button. */
@@ -61,6 +63,7 @@ const LABELS: SignInLabels = {
   title: "Sign in",
   email: "Email",
   password: "Password",
+  showPassword: "Show password",
   remember: "Keep me signed in",
   submit: "Sign in",
   forgotPassword: "Forgot your password?",
@@ -108,7 +111,7 @@ export interface SignInFormProps extends Omit<
  *
  * @example
  * <SignInForm
- *   description="Welcome back to Card Studio."
+ *   description="Welcome back to Deckhand."
  *   forgotPasswordHref="/forgot"
  *   signUpHref="/sign-up"
  *   onSubmit={async ({ email, password }) => (await signIn(email, password)) ? undefined : "That email and password don't match."}
@@ -178,6 +181,7 @@ export function SignInForm({
           id={passwordId}
           name="password"
           label={words.password}
+          revealLabel={words.showPassword}
           size="lg"
           value={password}
           onValueChange={setPassword}

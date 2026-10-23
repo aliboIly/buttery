@@ -16,4 +16,7 @@ export const meta: ComponentMeta = {
   related: ["LineChart", "MetricCard", "DataTable"],
   a11y: "An image named by its label. It has no tooltip or Tab stop, so write the numbers it summarizes beside it.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It fills its container's width (in an `Inline`, the room its siblings leave) at a fixed 24px tall, drawing its 2px line inside 4px of padding so the stroke and the 6px dot on the last value stay inside its box. It holds no text and takes no input, so it has nothing to truncate and no hit area.",
 };

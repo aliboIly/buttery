@@ -19,6 +19,7 @@ export default defineConfig(
     "apps/*/src-tauri/",
     "reference/",
     "notes/",
+    "apps/docs/lab/docs-check/",
   ]),
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
@@ -87,6 +88,11 @@ export default defineConfig(
       "jsx-a11y/no-noninteractive-tabindex": [
         "error",
         { tags: [], roles: ["tabpanel", "region"] },
+      ],
+      // A list that's laid out keeps role="list": Safari drops a list's role along with its markers.
+      "jsx-a11y/no-redundant-roles": [
+        "error",
+        { nav: ["navigation"], ul: ["list"], ol: ["list"] },
       ],
     },
   },

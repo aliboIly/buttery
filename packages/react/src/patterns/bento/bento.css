@@ -1,4 +1,10 @@
 @layer bt.patterns {
+  /* The height of the capitals of whatever uses it: a card title's. */
+  .bt-bento,
+  .bt-bento-card {
+    --bt-bento-cap: 1cap;
+  }
+
   /* The bento is its own size container, so its columns follow the room it has. */
   .bt-bento {
     min-inline-size: 0;
@@ -80,22 +86,31 @@
     }
   }
 
+  /* The head's first row is as tall as a 28px affordance, and the head gives back the room the title's first
+     line takes to center in it, so the title sits where it would without one. */
   .bt-bento-card > [data-bt-part="head"] {
     display: flex;
     flex: none;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--bt-space-4);
-    padding: var(--bt-space-6);
+    padding: calc(var(--bt-space-6) - var(--bt-space-1_5)) var(--bt-space-6)
+      var(--bt-space-6);
   }
 
+  /* Its capitals, the first line of the trimmed title, centered in the 28px first row however it wraps. */
   .bt-bento-card > [data-bt-part="head"] > [data-bt-part="title"] {
     min-inline-size: 0;
     max-inline-size: 22ch;
+    padding-block-start: calc((var(--bt-h-sm) - var(--bt-bento-cap)) / 2);
   }
 
   .bt-bento-card > [data-bt-part="head"] > [data-bt-part="affordance"] {
+    display: flex;
     flex: none;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--bt-h-sm);
   }
 
   /* The visual sits at the bottom and runs to the card's edges, which clip it. */

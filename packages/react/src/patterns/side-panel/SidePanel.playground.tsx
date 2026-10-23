@@ -1,9 +1,10 @@
 import { Menu, Stack, Text } from "@buttery/core";
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import {
   AppPage,
   AppShell,
   ArrowLink,
+  Button,
   PageHeader,
   SidePanel,
   Sidebar,
@@ -19,9 +20,101 @@ export const page: DocsPage = {
   title: "SidePanel",
   description:
     "A panel beside the page, such as help, that narrows the page instead of covering it.",
-  order: 60,
+  order: 110,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
+};
+
+function LivePanel({
+  title,
+  expanded,
+  footer,
+}: {
+  readonly title: string;
+  readonly expanded: boolean;
+  readonly footer: boolean;
+}): ReactElement {
+  const [open, setOpen] = useState(true);
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        blockSize: "calc(var(--bt-bento-row) * 2)",
+      }}
+    >
+      {open ? null : (
+        <Button
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          Show the panel
+        </Button>
+      )}
+      <SidePanel
+        key={String(expanded)}
+        title={title}
+        open={open}
+        onOpenChange={setOpen}
+        defaultExpanded={expanded}
+        menu={
+          <>
+            <Menu.Item>Open the roasting guide</Menu.Item>
+            <Menu.Item>Contact support</Menu.Item>
+          </>
+        }
+        footer={
+          footer ? <TextArea label="Ask a question" rows={2} /> : undefined
+        }
+      >
+        <Stack gap={3}>
+          <Text variant="title-sm">Popular this week</Text>
+          <ArrowLink href="#side-panel">Change a roast profile</ArrowLink>
+          <ArrowLink href="#side-panel">When payouts arrive</ArrowLink>
+        </Stack>
+      </SidePanel>
+    </div>
+  );
+}
+
+export const live: LiveDemo = {
+  controls: {
+    title: { kind: "text", initial: "Roasting help" },
+    defaultExpanded: { kind: "toggle", initial: false },
+    footer: { kind: "toggle", initial: true },
+  },
+  render: ({ title, defaultExpanded, footer }) => (
+    <LivePanel
+      title={String(title)}
+      expanded={defaultExpanded === true}
+      footer={footer === true}
+    />
+  ),
+  code: ({ title, defaultExpanded, footer }) =>
+    [
+      "<SidePanel",
+      `  title="${String(title)}"`,
+      "  open={open}",
+      "  onOpenChange={setOpen}",
+      ...(defaultExpanded === true ? ["  defaultExpanded"] : []),
+      "  menu={",
+      "    <>",
+      "      <Menu.Item>Open the roasting guide</Menu.Item>",
+      "      <Menu.Item>Contact support</Menu.Item>",
+      "    </>",
+      "  }",
+      ...(footer === true
+        ? ['  footer={<TextArea label="Ask a question" rows={2} />}']
+        : []),
+      ">",
+      "  <Stack gap={3}>",
+      '    <Text variant="title-sm">Popular this week</Text>',
+      '    <ArrowLink href="/help/roast-profiles">Change a roast profile</ArrowLink>',
+      '    <ArrowLink href="/help/payouts">When payouts arrive</ArrowLink>',
+      "  </Stack>",
+      "</SidePanel>",
+    ].join("\n"),
 };
 
 function NarrowShell(): ReactElement {

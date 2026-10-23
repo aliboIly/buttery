@@ -1,14 +1,15 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, MorphMenu, NavBar } from "@buttery/react";
 
-/** A bar of plain links with no menus. */
+/** A bar of plain links with no menus, and a call to action with the forward arrow. */
 export function LinksOnly(): ReactElement {
   return (
     <NavBar
-      brand={<a href="#home">Card Studio</a>}
+      brand={<a href="#home">Deckhand</a>}
       actions={
-        <Button variant="primary" arrow="forward">
-          Get started
+        <Button asChild variant="primary" arrow="forward">
+          <a href="#get-started">Get started</a>
         </Button>
       }
     >
@@ -18,3 +19,11 @@ export function LinksOnly(): ReactElement {
     </NavBar>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Menu");
+  await see("Pricing");
+  await see("Get started");
+};

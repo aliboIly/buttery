@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { SearchField } from "@buttery/react";
 
 const ORIGINS = [
@@ -24,7 +25,10 @@ export function FilterList(): ReactElement {
         value={query}
         onValueChange={setQuery}
       />
-      <Stack gap={1}>
+      <Text variant="caption" tone="secondary">
+        {`${String(shown.length)} of ${String(ORIGINS.length)} origins`}
+      </Text>
+      <Stack gap={3}>
         {shown.length === 0 ? (
           <Text variant="body-sm">No origins match.</Text>
         ) : (
@@ -38,3 +42,11 @@ export function FilterList(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ type, see }) => {
+  await see("5 of 5 origins");
+  await type("Filter origins", "kenya");
+  await see("1 of 5 origins");
+};

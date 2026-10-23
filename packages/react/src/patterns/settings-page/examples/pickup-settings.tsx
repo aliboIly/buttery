@@ -1,4 +1,6 @@
-import type { ExamplePlay } from "@buttery/core";
+import { useState } from "react";
+import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import {
   Breadcrumbs,
   ScopeBadge,
@@ -6,8 +8,6 @@ import {
   SettingsSection,
   TextField,
 } from "@buttery/react";
-import { useState } from "react";
-import type { ReactElement } from "react";
 
 /** A settings page in the page grammar, its one section a form that saves a change. */
 export function PickupSettings(): ReactElement {
@@ -47,6 +47,8 @@ export function PickupSettings(): ReactElement {
     </SettingsPage>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ type, press, see }) => {
   await type("Pickup hours", ", Saturdays 9:00 to 12:00");

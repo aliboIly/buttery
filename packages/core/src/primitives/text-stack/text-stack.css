@@ -34,5 +34,6 @@
   .bt-text-stack[data-align="center"] > [data-bt-part="head"] {
     align-items: center;
     text-align: center;
+    text-wrap: balance;
   }
 }

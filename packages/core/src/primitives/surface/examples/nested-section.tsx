@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Inline, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A panel holding a section whose card nests with concentric corners. */
 export function NestedSection(): ReactElement {
@@ -9,7 +10,7 @@ export function NestedSection(): ReactElement {
         <Stack>
           <Inline padX={4} padY={2}>
             <Text variant="control" tone="secondary">
-              Backdrop
+              Background
             </Text>
           </Inline>
           <Surface radius="auto" padX={4} padY={4}>
@@ -20,3 +21,10 @@ export function NestedSection(): ReactElement {
     </Surface>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Background");
+  await see("Fill");
+};

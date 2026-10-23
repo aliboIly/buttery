@@ -1,9 +1,9 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { HoverActions, IconButton } from "@buttery/react";
 import { Settings } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { HoverActions, IconButton } from "@buttery/react";
 
 const TOPICS = ["Orders waiting on payment", "Payouts", "Low green coffee"];
 
@@ -37,6 +37,8 @@ export function NotificationRows(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Settings for Payouts");

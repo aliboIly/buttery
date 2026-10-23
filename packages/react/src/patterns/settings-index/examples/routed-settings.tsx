@@ -1,9 +1,9 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { Breadcrumbs, SettingsIndex } from "@buttery/react";
-import { Bell, User } from "lucide-react";
 import { useState } from "react";
 import type { MouseEvent, ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Breadcrumbs, SettingsIndex } from "@buttery/react";
+import { Bell, User } from "lucide-react";
 
 const PAGES: Readonly<Record<string, { title: string; body: string }>> = {
   "/settings/profile": {
@@ -58,6 +58,8 @@ export function RoutedSettings(): ReactElement {
     </SettingsIndex>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("link", /^Notifications/);

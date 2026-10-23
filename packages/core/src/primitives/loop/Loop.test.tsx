@@ -57,15 +57,17 @@ describe("Loop", () => {
       </Loop>,
     );
     expect(screen.getByText("Step 0")).toBeTruthy();
+    // A busy test machine can hold timers back well past the 60ms steps; the order is what's checked.
+    const busy = { timeout: 3000 };
     await waitFor(() => {
       expect(step()).toBe("1");
-    });
+    }, busy);
     await waitFor(() => {
       expect(step()).toBe("2");
-    });
+    }, busy);
     await waitFor(() => {
       expect(step()).toBe("0");
-    });
+    }, busy);
   });
 
   it("holds still while the pointer is over it or focus is inside it", async () => {

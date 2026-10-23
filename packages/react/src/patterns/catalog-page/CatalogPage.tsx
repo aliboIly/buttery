@@ -10,9 +10,6 @@ import { AppPage } from "../app-page/AppPage.tsx";
 import type { AppPageProps } from "../app-page/AppPage.tsx";
 import { PageHeader } from "../page-header/PageHeader.tsx";
 
-/** A link router hook, as every buttery link takes it. */
-type Navigate = (href: string, event: MouseEvent<HTMLAnchorElement>) => void;
-
 /** Props for `CatalogPage`. */
 export interface CatalogPageProps extends Omit<
   AppPageProps,
@@ -90,7 +87,8 @@ export interface CatalogPageCategoriesProps extends Omit<
   /** The `href` of the category shown, marked current and drawn in `primary`. */
   readonly current?: string | undefined;
   /** Runs as a link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
-  readonly onNavigate?: Navigate | undefined;
+  readonly onNavigate?:
+    ((href: string, event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
 }
 
 /** The catalog's categories, as a navigation list of links in the filter column, the shown one marked current. */
@@ -232,7 +230,8 @@ export interface CatalogPageItemProps extends Omit<
   /** Its `TagChip`s, under the rest. */
   readonly tags?: ReactNode;
   /** Runs as its link is followed, where a router can take over. A click that opens the page elsewhere, in a new tab or window, is left to the browser. */
-  readonly onNavigate?: Navigate | undefined;
+  readonly onNavigate?:
+    ((href: string, event: MouseEvent<HTMLAnchorElement>) => void) | undefined;
 }
 
 /** One thing in the catalog: its tile, its name as a link, what it is, its offer and its tags. */

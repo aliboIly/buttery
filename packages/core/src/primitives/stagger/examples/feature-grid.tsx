@@ -1,16 +1,17 @@
 import type { ReactElement } from "react";
 import { Grid, Stack, Stagger, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const FEATURES = [
   { title: "Templates", body: "Start from a layout that already works." },
-  { title: "Brand kits", body: "Your colors and fonts, one click away." },
-  { title: "Exports", body: "Sharp images in every size you need." },
+  { title: "Themes", body: "Your colors and fonts on every slide." },
+  { title: "Exports", body: "A PDF of the deck or a PNG of each slide." },
 ] as const;
 
-/** A grid of features that arrive one after another. */
+/** A landing page's features, stacked when narrow and three across from 640px, arriving one after another. */
 export function FeatureGrid(): ReactElement {
   return (
-    <Grid columns={3} gap={4} asChild>
+    <Grid columns={{ base: 1, md: 3 }} gap={4} asChild>
       <Stagger>
         {FEATURES.map((feature) => (
           <Stagger.Item key={feature.title}>
@@ -26,3 +27,10 @@ export function FeatureGrid(): ReactElement {
     </Grid>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Themes");
+  await see("A PDF of the deck or a PNG of each slide.");
+};

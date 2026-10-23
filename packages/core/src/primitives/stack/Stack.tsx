@@ -11,7 +11,10 @@ export interface StackProps extends ComponentPropsWithRef<"div">, SpacingProps {
   readonly align?: FlowAlign | undefined;
   /** Main-axis (vertical) distribution. Defaults to `"start"`. */
   readonly justify?: FlowJustify | undefined;
-  /** Render the single child element instead of a `div`, with Stack's props merged onto it. */
+  /**
+   * Render the single child element instead of a `div`, with Stack's props merged onto it. Give a `ul` or
+   * `ol` laid out this way `role="list"` yourself, which drops its bullets and indent.
+   */
   readonly asChild?: boolean | undefined;
 }
 
@@ -22,7 +25,7 @@ export interface StackProps extends ComponentPropsWithRef<"div">, SpacingProps {
  * @example
  * <Stack gap={3}>
  *   <Text variant="title">Your canvas is empty</Text>
- *   <Text variant="body-sm">Start a fresh card, or open one from your library.</Text>
+ *   <Text variant="body-sm">Add a slide, or open a deck from your library.</Text>
  * </Stack>
  */
 export function Stack({

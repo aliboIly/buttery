@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import type { ReactElement } from "react";
 import { Presence, Pressable, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** Extra options that rise in under the button that shows them, and fade as they go. */
 export function MoreOptions(): ReactElement {
@@ -32,3 +33,11 @@ export function MoreOptions(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "More options");
+  await see("Export at twice the size");
+  await see("Fewer options");
+};

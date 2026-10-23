@@ -1,0 +1,65 @@
+---
+title: Tokens
+description: The springs, durations, easings and delays every buttery animation is made of.
+section: motion
+order: 20
+status: stable
+since: 0.3.0
+related: [motion/principles, motion/presets]
+---
+
+import { MotionTokens, TimingTokens } from "../../src/foundations/blocks.tsx";
+
+Motion tokens are the named springs, durations, easings and delays buttery animates with, such as `spring.smooth` or `--bt-dur-fast`. Use a token for every animation, so timings stay consistent and reduced motion can turn them all down at once.
+
+## Springs
+
+Springs move things: positions, sizes and layouts. `spring` from `@buttery/core` holds them for Motion, and `useButteryTransition(name)` returns one with reduced motion already applied.
+
+<DocsTable
+  columns={["Token", "Settles in", "Use"]}
+  rows={[
+    [
+      "`spring.instant`",
+      "the next frame",
+      "Reduced motion, and snaps nobody is driving",
+    ],
+    [
+      "`spring.snappy`",
+      "about 165ms",
+      "Selection indicators, and a menu switching sections",
+    ],
+    [
+      "`spring.smooth`",
+      "about 230ms",
+      "The default: positions, resets, layout and height changes, dialogs",
+    ],
+    [
+      "`spring.morph`",
+      "about 345ms",
+      "A big surface changing shape, such as a card becoming a dialog",
+    ],
+    ["`spring.gentle`", "about 360ms", "Choreographed entrances only"],
+  ]}
+/>
+
+```tsx
+import type { ReactElement } from "react";
+import { motion } from "motion/react";
+import { useButteryTransition } from "@buttery/core";
+
+export function SelectedMark({ x }: { readonly x: number }): ReactElement {
+  const transition = useButteryTransition("snappy");
+  return <motion.span animate={{ x }} transition={transition} />;
+}
+```
+
+## Durations, easings and delays
+
+CSS transitions fade and recolor: opacity, colors and shadows. Each duration and easing is a CSS variable. Enters use `--bt-ease-out`, and exits `--bt-ease-in`.
+
+<MotionTokens />
+
+The timing tokens hold the delays and lifetimes around a transition, such as how long the pointer rests before a menu opens, or how long a toast stays:
+
+<TimingTokens />

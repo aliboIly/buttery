@@ -82,6 +82,27 @@ describe("SplitHero", () => {
     );
   });
 
+  it("sets its body's words 24px under the headline and its actions 24px under the body", () => {
+    render(
+      <SplitHero
+        title="Slides that look finished."
+        body="Pick a theme and every slide takes it."
+        actions={<button type="button">Open the editor</button>}
+        visual={<div>Visual</div>}
+      />,
+    );
+    const contentTop = (part: string): number => {
+      const element = document.querySelector(`[data-bt-part="${part}"]`);
+      if (!element) throw new Error(`no ${part}`);
+      return (
+        element.getBoundingClientRect().top +
+        Number.parseFloat(getComputedStyle(element).paddingTop)
+      );
+    };
+    expect(contentTop("body") - box("title").bottom).toBe(24);
+    expect(contentTop("actions") - box("body").bottom).toBe(24);
+  });
+
   it("spaces the visual's pieces 12px apart when they come as a fragment", () => {
     render(
       <SplitHero

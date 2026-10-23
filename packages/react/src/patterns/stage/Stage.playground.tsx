@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { Center, Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   Button,
@@ -11,6 +11,17 @@ import {
 } from "@buttery/react";
 import type { StageSize } from "@buttery/react";
 
+export const page: DocsPage = {
+  section: "patterns",
+  title: "Stage",
+  description:
+    "The canvas an editor works on: fitted to the space at its shape, with artwork that may overlap its edges and a crop mode.",
+  order: 320,
+  status: "stable",
+  since: "0.6.0",
+  home: "patterns/inspector",
+};
+
 type Shape = "16:9" | "1:1" | "9:16";
 
 const SIZES: Readonly<Record<Shape, StageSize>> = {
@@ -19,7 +30,7 @@ const SIZES: Readonly<Record<Shape, StageSize>> = {
   "9:16": { width: 900, height: 1600 },
 };
 
-const BACKDROP = gradients.find((preset) => preset.id === "lilac");
+const BACKGROUND = gradients.find((preset) => preset.id === "lilac");
 
 function Preview(): ReactElement {
   const canvas = useRef<HTMLDivElement>(null);
@@ -50,15 +61,15 @@ function Preview(): ReactElement {
       </Inline>
       <div style={{ blockSize: "var(--bt-bento-row)", display: "grid" }}>
         <Stage
-          label="Card preview"
+          label="Slide preview"
           size={size}
-          background={BACKDROP ? gradientCss(BACKDROP) : undefined}
+          background={BACKGROUND ? gradientCss(BACKGROUND) : undefined}
           cropping={cropping}
           onSizeChange={setSize}
           canvasRef={canvas}
         >
           <Center>
-            <Text variant="title">Launch card</Text>
+            <Text variant="title">Quarterly review</Text>
           </Center>
         </Stage>
       </div>

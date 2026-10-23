@@ -1,4 +1,4 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import {
   CommandSearch,
   formatSearch,
@@ -13,9 +13,9 @@ export const page: DocsPage = {
   title: "CommandSearch",
   description:
     "The top bar's search: grouped results from typed sources, filters and recent searches.",
-  order: 20,
+  order: 30,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
 };
 
 const PAGES = pageSource({
@@ -87,6 +87,30 @@ const HELP: RemoteSearchSource = {
         reject(new DOMException("The search moved on.", "AbortError"));
       });
     }),
+};
+
+export const live: LiveDemo = {
+  controls: {
+    label: { kind: "text", initial: "Search orders and customers" },
+    shortcut: { kind: "toggle", initial: true },
+  },
+  render: ({ label, shortcut }) => (
+    <CommandSearch
+      label={String(label)}
+      shortcut={shortcut === true}
+      sources={[PAGES, CUSTOMERS, HELP]}
+      emptyHint="Try another word, or a customer's email."
+    />
+  ),
+  code: ({ label, shortcut }) =>
+    [
+      "<CommandSearch",
+      `  label="${String(label)}"`,
+      ...(shortcut === true ? [] : ["  shortcut={false}"]),
+      "  sources={[pageSource({ pages }), customers, help]}",
+      '  emptyHint="Try another word, or a customer\'s email."',
+      "/>",
+    ].join("\n"),
 };
 
 export const demos: readonly DemoSection[] = [

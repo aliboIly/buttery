@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Grid, Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** Two equal columns of label and value pairs. */
 export function SettingsPairs(): ReactElement {
@@ -20,3 +21,9 @@ export function SettingsPairs(): ReactElement {
     </Grid>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("1350 px");
+};

@@ -13,6 +13,11 @@
     padding: var(--bt-sparkline-inset);
   }
 
+  /* In an Inline it takes the room its siblings leave, rather than the whole row, which would squeeze them. */
+  .bt-inline > .bt-sparkline {
+    flex: 1;
+  }
+
   .bt-sparkline > svg {
     inline-size: 100%;
     block-size: 100%;

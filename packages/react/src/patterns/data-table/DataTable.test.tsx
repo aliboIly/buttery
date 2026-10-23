@@ -254,6 +254,46 @@ describe("DataTable", () => {
     expect(onRefund).toHaveBeenCalledWith("ORD-1042");
   });
 
+  it("leaves a row's last cell empty when its actions come back empty", () => {
+    render(
+      <Orders
+        rowActions={(order) =>
+          order.id === "ORD-1042" ? <Menu.Item>Refund</Menu.Item> : null
+        }
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Actions for ORD-1042" }),
+    ).toBeTruthy();
+    expect(
+      screen.getAllByRole("button", { name: /^Actions for/ }),
+    ).toHaveLength(1);
+    for (const row of rows()) {
+      expect(within(row).getAllByRole("cell")).toHaveLength(COLUMNS.length + 1);
+    }
+  });
+
+  it("fades its end edge while more of it lies to the side, and stops once scrolled to the end", async () => {
+    render(<Orders width={300} />);
+    const scroll = document.querySelector<HTMLElement>(
+      '[data-bt-part="scroll"]',
+    );
+    if (!scroll) throw new Error("No scroll area.");
+    await waitFor(() => {
+      expect(scroll.hasAttribute("data-more-aside")).toBe(true);
+    });
+    expect(getComputedStyle(scroll).maskImage).toContain("linear-gradient");
+    scroll.scrollLeft = scroll.scrollWidth;
+    await waitFor(() => {
+      expect(scroll.hasAttribute("data-more-aside")).toBe(false);
+    });
+    expect(getComputedStyle(scroll).maskImage).toBe("none");
+    cleanup();
+    render(<Orders width={900} />);
+    const wide = document.querySelector<HTMLElement>('[data-bt-part="scroll"]');
+    expect(wide?.hasAttribute("data-more-aside")).toBe(false);
+  });
+
   it("links a row to its own page from a cell, in the row's text color, tall enough to hit", () => {
     render(
       <Orders
@@ -344,6 +384,23 @@ describe("DataTable", () => {
     expect(screen.getByText("No orders yet")).toBeTruthy();
   });
 
+  it("lines its no-results row up with the columns, its text over the first one's and Clear all ending with the last one's", () => {
+    render(<Orders rows={[]} onClearAll={() => undefined} />);
+    const headers = screen.getAllByRole("columnheader");
+    const label = (header: HTMLElement | undefined): DOMRect => {
+      const text = header?.querySelector(".bt-truncate");
+      if (!text) throw new Error("No header text.");
+      return text.getBoundingClientRect();
+    };
+    const words = document.createRange();
+    words.selectNodeContents(screen.getByText("No results"));
+    expect(words.getBoundingClientRect().left).toBe(label(headers[0]).left);
+    expect(
+      screen.getByRole("button", { name: "Clear all" }).getBoundingClientRect()
+        .right,
+    ).toBe(label(headers.at(-1)).right);
+  });
+
   it("drops selection and pagination when compact", () => {
     render(
       <Orders
@@ -359,6 +416,19 @@ describe("DataTable", () => {
     );
     expect(screen.queryByRole("checkbox")).toBeNull();
     expect(screen.queryByRole("button", { name: "Next" })).toBeNull();
+  });
+
+  it("takes compact density's shorter rows when compact, in a comfortable app", () => {
+    render(<Orders />);
+    expect(rows()[0]?.getBoundingClientRect().height).toBe(36);
+    cleanup();
+    render(<Orders size="compact" />);
+    expect(rows()[0]?.getBoundingClientRect().height).toBe(32);
+    expect(
+      screen
+        .getAllByRole("columnheader")[0]
+        ?.parentElement?.getBoundingClientRect().height,
+    ).toBe(32);
   });
 
   it("keeps the floating lanes above its pagination in a filled page, and its end clear of them", async () => {
@@ -730,5 +800,27 @@ describe("DataTable", () => {
     expect(
       document.querySelector(".bt-data-table")?.hasAttribute("data-pinned"),
     ).toBe(false);
+  });
+});
+
+describe("DataTable size compact", () => {
+  it("warns, with the fix, when it's given pagination or selection, which a compact table leaves out", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <Orders
+        label="Recent orders"
+        size="compact"
+        pagination={{
+          page: 1,
+          pageSize: 2,
+          total: ORDERS.length,
+          onPageChange: () => undefined,
+        }}
+      />,
+    );
+    expect(warn).toHaveBeenCalledWith(
+      '[buttery:DataTable] The "Recent orders" table is size="compact", which leaves out pagination, so its later pages can\'t be reached. Fix: use size="default" for a table people page through, or show every row without pagination.',
+    );
+    warn.mockRestore();
   });
 });

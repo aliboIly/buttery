@@ -11,7 +11,7 @@ function footer(width: number): void {
   render(
     <div style={{ inlineSize: `${String(width)}px` }}>
       <Footer
-        brand={<p data-testid="brand">Card Studio</p>}
+        brand={<p data-testid="brand">Deckhand</p>}
         legal={
           <p>
             © 2026 <Footer.Link href="#terms">Terms</Footer.Link>

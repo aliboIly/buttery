@@ -1,0 +1,117 @@
+---
+title: Make anything buttery
+description: The four ways to bring buttery into an app, from wiring up the provider to whole-page patterns.
+section: get-started
+order: 40
+status: stable
+since: 0.9.0
+related:
+  [
+    get-started/quick-start,
+    guides/make-an-existing-app-buttery,
+    layout/the-layout-contract,
+  ]
+---
+
+There are four levels of effort for making an app buttery, numbered 0 to 3, and each adds to the one before. Start at the first and stop wherever the app feels right: nothing at a higher level is required.
+
+## The four levels
+
+<Steps start={0}>
+<Step>
+
+### Wire it up
+
+Import the stylesheets once at the entry and wrap the app in `ButteryProvider`:
+
+```tsx title="src/main.tsx"
+import "@buttery/core/styles.css";
+import "@buttery/react/styles.css";
+import type { ReactElement } from "react";
+import { ButteryProvider } from "@buttery/react";
+import { App } from "./App.tsx";
+
+export function Root(): ReactElement {
+  return (
+    <ButteryProvider>
+      <App />
+    </ButteryProvider>
+  );
+}
+```
+
+That alone gives the whole app the tokens, Inter, focus rings, the selection color and scrollbars in light and dark, the layers and lanes that menus and toasts open into, motion presets that follow reduced motion, and `LayoutGuard` in development.
+
+</Step>
+<Step>
+
+### Wrap what you have
+
+The [`buttery` factory](/motion/presets#buttery) turns any element or component into a buttery one, with token-typed props for its surface, padding, gap, press feedback and entrance:
+
+```tsx
+import type { ReactElement } from "react";
+import { buttery } from "@buttery/react";
+
+export function Receipt(): ReactElement {
+  return (
+    <buttery.div surface="card" pad={4} stack gap={3} enter="rise">
+      Order 1042 is on its way.
+    </buttery.div>
+  );
+}
+```
+
+`buttery(Component, { surface: "raised", hover: "lift" })` does the same for a component from another library. Plain HTML can use the recipes as classes and attributes, such as `class="bt-surface" data-level="card"`.
+
+</Step>
+<Step>
+
+### Compose components
+
+Build screens from buttery's components and primitives, as the [quick start](/get-started/quick-start) does: `Stack`, `Inline` and `Grid` for layout, and controls such as `Button`, `Slider` and `SegmentedControl` that already follow the layout and motion rules. [All components](/components/overview) lists every one by the job it does.
+
+</Step>
+<Step>
+
+### Start from a pattern
+
+Patterns are whole screens that already follow the rules, and templates are whole apps made from them:
+
+<Cards>
+<Card icon="template" title="An app">
+
+`AppShell` with `Sidebar`, `TopBar` and `AppPage`, the [App shell](/patterns/app-shell) pattern, or the dashboard template.
+
+</Card>
+<Card icon="blocks" title="A marketing page">
+
+`Page` with a hero, a bento grid and a footer, the [Marketing page](/patterns/marketing-page) pattern, or the marketing template.
+
+</Card>
+</Cards>
+
+</Step>
+</Steps>
+
+## Where to start
+
+<DocsTable
+  columns={["If your app is…", "Start at"]}
+  rows={[
+    [
+      "New",
+      "Level 3: copy a template with `pnpm new-app my-app --template dashboard`, and change what it shows",
+    ],
+    [
+      "Built, and you'd like it to look and move better",
+      "Level 0, then level 1 for its parts, one screen at a time",
+    ],
+    [
+      "Built with another component library",
+      "Level 1: wrap its components with `buttery()`, and swap them for buttery's as you touch each screen",
+    ],
+  ]}
+/>
+
+[Make an existing app buttery](/guides/make-an-existing-app-buttery) walks through bringing a working app across, one screen at a time.

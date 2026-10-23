@@ -1,68 +1,81 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
-import {
-  Button,
-  Inspector,
-  SegmentedControl,
-  Slider,
-  toast,
-} from "@buttery/react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Button, Inspector, SegmentedControl, Slider } from "@buttery/react";
 
-type Format = "png" | "jpg";
+const FORMATS = [
+  { value: "png", label: "PNG" },
+  { value: "jpg", label: "JPG" },
+] as const;
 
-/** A small inspector: one section of rows that resets, and a footer with the main action. */
+type Format = (typeof FORMATS)[number]["value"];
+
+/** A small inspector: one section of rows that resets to its defaults, and a footer with the main action. */
 export function ExportSettings(): ReactElement {
   const [format, setFormat] = useState<Format>("png");
   const [quality, setQuality] = useState(90);
+  const [exported, setExported] = useState<string | undefined>(undefined);
   return (
-    <Inspector
-      label="Export settings"
-      footer={
-        <Inspector.Footer>
-          <Button
-            variant="primary"
-            onClick={() => {
-              toast(
-                `Exported a ${format.toUpperCase()} at ${String(quality)}%`,
-                {
-                  id: "export",
-                },
-              );
-            }}
-          >
-            Export
-          </Button>
-        </Inspector.Footer>
-      }
-    >
-      <Inspector.Section
-        title="Image"
-        resettable={format !== "png" || quality !== 90}
-        onReset={() => {
-          setFormat("png");
-          setQuality(90);
-        }}
+    <Stack gap={3} align="start">
+      <Inspector
+        label="Export settings"
+        footer={
+          <Inspector.Footer>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setExported(
+                  `Exported a ${format.toUpperCase()} at ${String(quality)}%`,
+                );
+              }}
+            >
+              Export
+            </Button>
+          </Inspector.Footer>
+        }
       >
-        <Inspector.Row label="Format">
-          <SegmentedControl<Format>
-            label="Format"
-            options={["png", "jpg"]}
-            value={format}
-            onValueChange={setFormat}
-          />
-        </Inspector.Row>
-        <Inspector.Row>
-          <Slider
-            label="Quality"
-            format="%"
-            min={10}
-            max={100}
-            resetValue={90}
-            value={quality}
-            onValueChange={setQuality}
-          />
-        </Inspector.Row>
-      </Inspector.Section>
-    </Inspector>
+        <Inspector.Section
+          title="Image"
+          resettable={format !== "png" || quality !== 90}
+          onReset={() => {
+            setFormat("png");
+            setQuality(90);
+          }}
+        >
+          <Inspector.Row label="Format">
+            <SegmentedControl
+              label="Format"
+              options={FORMATS}
+              value={format}
+              onValueChange={setFormat}
+            />
+          </Inspector.Row>
+          <Inspector.Row>
+            <Slider
+              label="Quality"
+              format="%"
+              min={10}
+              max={100}
+              resetValue={90}
+              value={quality}
+              onValueChange={setQuality}
+            />
+          </Inspector.Row>
+        </Inspector.Section>
+      </Inspector>
+      <Text variant="caption">{exported ?? "Nothing exported yet"}</Text>
+    </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("radio", "JPG");
+  await press("button", "Export");
+  await see("Exported a JPG at 90%");
+  await press("button", "Reset Image");
+  await press("button", "Export");
+  await see("Exported a PNG at 90%");
+};

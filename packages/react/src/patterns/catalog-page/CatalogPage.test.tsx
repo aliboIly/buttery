@@ -168,7 +168,8 @@ describe("CatalogPage", () => {
       expect(screen.queryByRole("button", { name })).toBeNull();
     for (const button of screen.getAllByRole("button")) {
       const shown = button.getBoundingClientRect();
-      if (shown.width === 0 || shown.top >= title.bottom) continue;
+      // The shell's skip button is a 1px box until Tab reaches it.
+      if (shown.width <= 1 || shown.top >= title.bottom) continue;
       expect(shown.left).toBeGreaterThanOrEqual(title.right);
     }
     const folded = document.querySelectorAll(

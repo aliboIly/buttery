@@ -1,0 +1,235 @@
+---
+title: Dashboard
+description: A web app with a sidebar, an overview of the week's numbers, a table of orders with filters, and settings, made from the App kit.
+section: templates
+order: 20
+status: new
+since: 0.9.0
+related:
+  [
+    patterns/app-shell,
+    patterns/overview,
+    patterns/data-table-page,
+    patterns/settings-pages,
+  ]
+---
+
+import { TemplatePreview } from "../../src/templates/TemplatePreview.tsx";
+
+The dashboard template is a small web app for running something: a sidebar of pages beside a top bar, an overview of metric cards and a chart, a table page with filters, and a settings page. Use it for an admin, a back office or any app whose screens are pages of numbers, lists and settings.
+
+<TemplatePreview name="dashboard" />
+
+## Start from it
+
+<Steps>
+<Step>
+
+### Copy the template
+
+```bash
+pnpm new-app my-app --template dashboard
+```
+
+This works inside the buttery repository today. It copies `apps/templates/dashboard` to `apps/my-app`, gives the copy its name, which also replaces "buttery dashboard" in the sidebar, and the next free port, then installs it.
+
+Once `create-buttery` is published, this starts the same app in any folder:
+
+```bash
+npx create-buttery my-app --template dashboard
+```
+
+</Step>
+<Step>
+
+### Start it
+
+```bash
+pnpm --filter my-app dev
+```
+
+Open the address it prints. The template is a web app: for a desktop app, start from [blank](/templates/blank), which has the Tauri shell.
+
+</Step>
+</Steps>
+
+## What's inside
+
+<DocsTable
+  columns={["File", "What it does"]}
+  rows={[
+    [
+      "`src/App.tsx`",
+      "The shell: `AppShell` with a `Sidebar`, an `AccountMenu` and a `TopBar` whose New order button opens a dialog, and the page the address names",
+    ],
+    [
+      "`src/pages/OverviewPage.tsx`",
+      "Two `MetricCard`s for the week and a `BarChart` of sales each day",
+    ],
+    [
+      "`src/pages/OrdersPage.tsx`",
+      "A `DataTable` of orders, sorted by a column, with a status filter and a search in a `FilterBar`",
+    ],
+    [
+      "`src/pages/SettingsPage.tsx`",
+      "A `SettingsPage` with a form section that saves and a `SettingRow` that turns emails on and off",
+    ],
+    [
+      "`src/NewOrderDialog.tsx`",
+      "A `FormDialog` that adds an order once its three fields are filled in",
+    ],
+    [
+      "`src/data.ts`",
+      "Made-up orders and numbers, and the helpers that format them",
+    ],
+    ["`src/app.css`", "Makes the app as tall as the window"],
+    ["`src/router.tsx`", "The router every template has; see Routing below"],
+    [
+      "`src/main.tsx`",
+      "Follows links, then renders the app inside `ButteryProvider`",
+    ],
+    [
+      "`src/index.ts`",
+      "What another app imports to show this one, as the docs site does for the preview",
+    ],
+    [
+      "`e2e/smoke.spec.ts`",
+      "Renders every page with no console errors, and drives the sidebar, the filters and New order",
+    ],
+    [
+      "`e2e/layout.spec.ts`",
+      "Runs `expectButtery` on every page, with its menus and dialogs open",
+    ],
+  ]}
+/>
+
+It's made from these patterns: the [app shell](/patterns/app-shell), an [overview](/patterns/overview), a [data table page](/patterns/data-table-page) and a [settings page](/patterns/settings-pages).
+
+## The overview screen
+
+The app opens on `src/pages/OverviewPage.tsx`, its main screen: the week's sales and orders in two `MetricCard`s, then sales each day in a `BarChart`.
+
+```tsx
+import type { ReactElement } from "react";
+import { Grid } from "@buttery/core";
+import {
+  AppPage,
+  ArrowLink,
+  BarChart,
+  MetricCard,
+  PageHeader,
+} from "@buttery/react";
+import { ORDER_COUNTS, SALES, WEEK, change, money, total } from "../data.ts";
+import { useLink } from "../router.tsx";
+
+/** The dashboard's front page: the week's numbers, then sales day by day. */
+export function OverviewPage(): ReactElement {
+  const link = useLink();
+  const sales = total(SALES.now);
+  const orders = total(ORDER_COUNTS.now);
+  return (
+    <AppPage
+      header={
+        <PageHeader
+          title="Overview"
+          description="How the shop did over the last seven days."
+        />
+      }
+    >
+      <AppPage.Section title="This week">
+        <Grid columns={{ base: 1, md: 2 }} gap={4}>
+          <MetricCard
+            title="Sales"
+            info="Every sale, before refunds and fees."
+            value={money(sales)}
+            delta={change(sales, total(SALES.before))}
+            labels={WEEK}
+            series={[
+              { key: "now", label: "This week", values: SALES.now },
+              {
+                key: "before",
+                label: "Last week",
+                values: SALES.before,
+                comparison: true,
+              },
+            ]}
+            formatValue={money}
+            updated="Updated just now"
+            href={link("/orders")}
+          />
+          <MetricCard
+            title="Orders"
+            value={String(orders)}
+            delta={change(orders, total(ORDER_COUNTS.before))}
+            labels={WEEK}
+            series={[
+              { key: "now", label: "This week", values: ORDER_COUNTS.now },
+              {
+                key: "before",
+                label: "Last week",
+                values: ORDER_COUNTS.before,
+                comparison: true,
+              },
+            ]}
+            updated="Updated just now"
+            href={link("/orders")}
+          />
+        </Grid>
+      </AppPage.Section>
+      <AppPage.Section
+        title="Sales each day"
+        actions={<ArrowLink href={link("/orders")}>See orders</ArrowLink>}
+      >
+        <BarChart
+          label="Sales each day this week"
+          summary={`${money(sales)} this week, against ${money(total(SALES.before))} the week before.`}
+          labels={WEEK}
+          labelsHeading="Day"
+          series={[
+            { key: "now", label: "This week", values: SALES.now },
+            {
+              key: "before",
+              label: "Last week",
+              values: SALES.before,
+              comparison: true,
+            },
+          ]}
+          formatValue={money}
+        />
+      </AppPage.Section>
+    </AppPage>
+  );
+}
+```
+
+`src/App.tsx` shows it inside the `AppShell`, beside the sidebar and under the top bar, as it does every page. `useLink` comes from the template's router, and the numbers from `src/data.ts`.
+
+## Routing
+
+Each template has a small router of its own in `src/router.tsx`, with no dependency, so its pages have real addresses, such as `/orders` and `/settings`. The app uses four of its exports:
+
+<DocsTable
+  columns={["Export", "What it does"]}
+  rows={[
+    [
+      "`useRoute()`",
+      "Reads the path and the query from the address, and follows it as it changes",
+    ],
+    ["`useLink()`", "Turns a path in the app into its address"],
+    ["`useNavigate()`", "Goes to a path in the app"],
+    [
+      "`followLinks()`",
+      "Makes a click on any link to the app a move within the page, so buttery's link components, which render a plain `<a href>`, work as they are; `src/main.tsx` calls it",
+    ],
+  ]}
+/>
+
+An app served under a path of its own takes it as `base`, and every link and deep link keeps that start. The docs site shows this template at `/templates/dashboard/preview` with:
+
+```tsx
+<App base="/templates/dashboard/preview" />
+```
+
+## A demo made from it
+
+[Halfmoon Roastery](/demos/roastery) is this template with a coffee roaster's pages in place of the template's: orders, customers, wholesale, settings and a search across all of it.

@@ -1,0 +1,65 @@
+---
+title: Radius
+description: The corner radius scale, and how nested surfaces keep their corners concentric.
+section: foundations
+order: 40
+status: stable
+since: 0.2.0
+related: [foundations/elevation, layout/surface-and-nesting]
+---
+
+import { RadiusScale } from "../../src/foundations/blocks.tsx";
+
+The radius scale names the corner radii buttery uses, from `xs` (6px) to `full`, and a few named for the part they round, such as `kbd` (5px) for keycaps. Use a radius token for every rounded corner, and let nested surfaces work out their own.
+
+<RadiusScale />
+
+## Use a radius token
+
+Each radius is a CSS variable, `--bt-r-<name>`. Read it with `var()`, never a length of your own:
+
+<DoDont>
+<Do>
+
+```css
+.tile {
+  border-radius: var(--bt-r-lg);
+}
+```
+
+A radius from the scale, which follows the theme when `createTheme`'s `radius` makes corners rounder or tighter.
+
+</Do>
+<Dont>
+
+```css
+.tile {
+  border-radius: 11px;
+}
+```
+
+A radius off the scale, which won't nest and fails buttery's stylelint config.
+
+</Dont>
+</DoDont>
+
+## Concentric corners
+
+A card inside a panel looks right when its corners follow the panel's: the inner radius is the outer radius less the padding between them. `Surface` does this for you with `radius="auto"`, never going below 4px.
+
+```tsx
+import type { ReactElement } from "react";
+import { Surface, Text } from "@buttery/core";
+
+export function SettingsGroup(): ReactElement {
+  return (
+    <Surface level="section" pad={2}>
+      <Surface level="card" radius="auto" pad={4}>
+        <Text variant="body">Notifications</Text>
+      </Surface>
+    </Surface>
+  );
+}
+```
+
+<Example of="Surface" name="nested-section" />

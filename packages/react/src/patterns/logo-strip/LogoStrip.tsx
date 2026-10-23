@@ -3,7 +3,7 @@ import type { ComponentPropsWithRef, ReactElement } from "react";
 
 /** Props for `LogoStrip`. */
 export interface LogoStripProps extends ComponentPropsWithRef<"ul"> {
-  /** Names the row for screen readers, such as "Teams that make cards with us". */
+  /** Names the row for screen readers, such as "Teams that present with Deckhand". */
   readonly label: string;
 }
 
@@ -55,7 +55,7 @@ export interface LogoStripComponent {
  * rows as the page narrows.
  *
  * @example
- * <LogoStrip label="Teams that make cards with us">
+ * <LogoStrip label="Teams that present with Deckhand">
  *   <LogoStrip.Mark><img src={tidewater} alt="Tidewater" /></LogoStrip.Mark>
  *   <LogoStrip.Mark><BrambleMark aria-label="Bramble" /></LogoStrip.Mark>
  * </LogoStrip>

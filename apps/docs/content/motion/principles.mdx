@@ -1,0 +1,101 @@
+---
+title: Principles
+description: The ten rules every buttery animation follows, and the few things it never animates.
+section: motion
+order: 10
+status: stable
+since: 0.3.0
+related: [motion/tokens, motion/presets]
+---
+
+buttery's motion follows ten rules, measured from apps that feel smooth to use. Use them to decide whether something should move at all, and how, before reaching for a preset.
+
+## The ten rules
+
+<Rules>
+<Rule title="Direct manipulation is instant">
+
+Dragging a slider or picking a swatch updates the result in the same frame. A value the person is driving is set, never tweened.
+
+</Rule>
+<Rule title="Discrete changes settle in about 250ms">
+
+A change of state settles with no overshoot, on `spring.smooth`. Small selection indicators, such as a segmented control's pill, are quicker, on `spring.snappy`.
+
+</Rule>
+<Rule title="One surface morphs">
+
+A surface changes shape instead of closing and reopening: a menu that switches sections resizes, and a card that opens becomes its dialog.
+
+</Rule>
+<Rule title="Containers follow their content">
+
+A container animates its height when what's inside it changes, and the content crossfades.
+
+</Rule>
+<Rule title="New context dims">
+
+Rather than blacking out, a menu over content blurs the page behind, and a dialog darkens it.
+
+</Rule>
+<Rule title="Arrivals are choreographed">
+
+A hero or a grid enters with a short rise and fade, staggered about 50ms, in 900ms at most, once.
+
+</Rule>
+<Rule title="Exits are faster than entrances">
+
+An exit takes about 60% as long as its entrance, because the person has already decided.
+
+</Rule>
+<Rule title="Hover answers within 150ms">
+
+An arrow extends, a card lifts 2px. Nothing is shown only on hover.
+
+</Rule>
+<Rule title="Celebrations are rare">
+
+Confetti fires only for a real finish, such as completing onboarding.
+
+</Rule>
+<Rule title="Reduced motion is a mode of its own">
+
+Springs become instant, reveals become plain fades of 100ms at most, loops stop and confetti is off. Layout still updates.
+
+</Rule>
+</Rules>
+
+## What never animates
+
+- Numbers a person typed or set.
+- Layout during a drag.
+- Anything longer than 400ms, apart from choreographed entrances and ambient loops.
+
+## CSS transitions
+
+CSS transitions move only `opacity`, transforms, colors, shadows, `filter` and `backdrop-filter`. A change of size or position goes through Motion's `layout`.
+
+<DoDont>
+<Do>
+
+```css
+.chip {
+  transition: background-color var(--bt-dur-fast) var(--bt-ease-out);
+}
+```
+
+Transition the property that changes, on a token.
+
+</Do>
+<Dont>
+
+```css
+.chip {
+  transition: all 120ms;
+}
+```
+
+`transition: all` animates layout too, and buttery's stylelint config fails it.
+
+</Dont>
+</DoDont>

@@ -11,7 +11,7 @@ buttery is a React design system + layout/motion framework for web and desktop (
 - `docs/MOTION_SPEC.md` — motion rules, tokens, measured timings
 - `docs/LAYOUT_RULES.md` — the no-overlap / sizing / uniformity contract and its automated checks
 - `docs/DX_AND_AI.md` — developer and agent experience requirements
-- `docs/BRAND.md` — name, 🧈 usage, the mark
+- `docs/BRAND.md` — name, the 🧈 logo, voice
 - `docs/DECISIONS.md` — judgment calls already made
 - `reference/README.md` — what each reference image shows (local only; `reference/` is never committed)
 
@@ -20,7 +20,7 @@ buttery is a React design system + layout/motion framework for web and desktop (
 2. **Layout rules are law.** Follow all 13 rules in `docs/LAYOUT_RULES.md` §1: flow layout with `gap`; no outer margins on components; no negative margins; absolute/fixed/sticky only in layer primitives and component-internal parts; heights from tokens; `min-width: 0`; declared truncation; container queries; `OverflowCluster` instead of wrapping.
 3. **Component contract.** Every component follows `docs/ARCHITECTURE.md` → "Component contract": accepts `ref` as a prop, controlled + uncontrolled, one shared prop vocabulary, `data-bt*` attributes, JSDoc on every export and prop, keyboard + screen reader, works with motion off, no outer margin. Create components with `pnpm new-component <Name>` once it exists.
 4. **Motion rules.** Direct manipulation is instant; discrete changes use `spring.smooth`; indicators use `spring.snappy`; one surface morphs instead of closing and reopening; exits faster than entrances; reduced motion via `useButteryTransition`. Animate only transform, opacity, color, shadow, filter and backdrop-filter. Layout changes go through Motion `layout`, spread from `useLayoutAnimation` (or `buttery.div layout`) so reduced motion turns it off; the two sanctioned size animations are `Morph`'s height and the `MorphMenu` viewport's size and position. No `transition: all`.
-5. **buttery has its own identity.** References are inspiration. Never copy the reference products' branding, names, logos, icons, illustrations, copy or brand gradients. The repo is public: `reference/` and `PROMPTS.md` stay local and untracked, and tracked files never name the reference products or quote their UI copy (describe patterns generically and write original example copy). Never use Apple's (or any vendor's) emoji artwork as an image — use the 🧈 character in text and the original `BrandMark` elsewhere. Demo apps are original.
+5. **buttery has its own identity.** References are inspiration. Never copy the reference products' branding, names, logos, icons, illustrations, copy or brand gradients. The repo is public: `reference/` and `PROMPTS.md` stay local and untracked, and tracked files never name the reference products or quote their UI copy (describe patterns generically and write original example copy). buttery's logo is the 🧈 character, set in text: in the docs' header, the favicons and the README, where each platform draws its own butter. Never ship Apple's (or any vendor's) emoji artwork as an image or bundle an emoji font. Demo apps are original.
 6. **Accessibility is part of done.** Radix for behavior, visible `:focus-visible` ring, AA contrast for active text, hit areas ≥ 24×24 (standalone buttons ≥ 28 tall), full keyboard support.
 7. **Agent-friendly by construction.** Token-typed props, one vocabulary, warnings that say how to fix, generated `manifest.json` / `tokens.json` / `llms.txt`, canonical examples. If an agent (including you) gets something wrong twice, improve the API, example, warning or doc — note it in `docs/DECISIONS.md`.
 8. **No CSS-in-JS runtime, no network fonts or CDNs** (desktop apps must work offline). Ask before adding any dependency not listed in `docs/ARCHITECTURE.md`.
@@ -47,7 +47,7 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 - **Comments: default to none.** Names and structure carry the meaning. Allowed: short, factual JSDoc on exported public API (what, when, default), and rare one-line *why* comments for non-obvious constraints (a browser bug, a spec quirk). Banned: comments that narrate what the code does, change-log comments (`// added`, `// updated`, `// fixed`, `// new`), comments addressed to the reader, step numbers, section banners, emoji, commented-out code, TODOs without an issue link, `console.log`.
 - **Commits:** conventional prefix, imperative subject ≤ 72 chars, a body only when the why isn't obvious. No bullet-list essays, no "This commit…".
 - **Prose** (README, docs, PRs, changelogs): plain and specific, the way the maintainer would write it. No filler ("seamless", "robust", "leverage", "comprehensive", "delve", "elevate"), no em-dash-heavy sentences, no bold-label bullet lists, no recap of what was just said.
-- **Enforced:** `scripts/check-ai-tells.mjs` runs in `pnpm check` and in a `commit-msg` hook. It fails on attribution, agent tool names outside the paths above, banned phrases, narrating, change-log or reader-addressed comments, banners, emoji in comments, TODOs without an issue link, and commented-out code (JSDoc `@example` blocks are skipped). Its prose-style checks cover new public-facing text (README, package docs, changesets, commit messages) until the Phase 7 docs rewrite. 🧈 is fine in text. A `pre-commit` hook and `pnpm check` also fail if anything under `reference/`, or `PROMPTS.md`, is tracked, and, where the local list `reference/.private-names` exists, if a tracked file names a reference product.
+- **Enforced:** `scripts/check-ai-tells.mjs` runs in `pnpm check` and in a `commit-msg` hook. It fails on attribution, agent tool names outside the paths above, banned phrases, narrating, change-log or reader-addressed comments, banners, emoji in comments, TODOs without an issue link, and commented-out code (JSDoc `@example` blocks are skipped). Its prose-style checks cover the public-facing text: the README, `ROADMAP.md`, `docs/`, the docs site's pages, package docs, changesets and commit messages. 🧈 is fine in text. A `pre-commit` hook and `pnpm check` also fail if anything under `reference/`, or `PROMPTS.md`, is tracked, and, where the local list `reference/.private-names` exists, if a tracked file names a reference product.
 
 ## How to work
 - Work **one phase at a time** from `docs/BUILD_PLAN.md`; tick items in `ROADMAP.md` as they land. At the end of each phase, stop, show screenshots and a short summary, and wait for the go-ahead.
@@ -62,13 +62,14 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 - Commits: small and focused, conventional prefixes (`feat(core):`, `fix(react):`, `docs:`), one phase item per commit where practical, following "Authorship and no AI tells" above.
 
 ## Commands
-- `pnpm dev` — playground
+- `pnpm dev` — the docs site (`apps/docs`), where every component has its page
 - `pnpm build` — all packages and apps
-- `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, unit and browser tests, app smoke tests, and `expectButtery` on every playground page and the starter at 390 and 1280
+- `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, the docs check (`pnpm check:docs`) and the examples build (`pnpm check:examples`), unit and browser tests, app smoke tests, and `expectButtery` on every docs page and the starter at 390 and 1280
 - `pnpm test:layout` — `expectButtery` across the full matrix (from Phase 2)
 - `pnpm new-component <Name>` — scaffold a compliant component (from Phase 2)
-- `pnpm new-app <name>` — new app from `apps/starter`
+- `pnpm new-app <name> [--template blank|dashboard|editor|marketing]` — new app from a template: `apps/starter` for `blank` (the default), `apps/templates/<template>` for the others
 - `pnpm --filter starter tauri dev` — desktop app
+- `pnpm --filter demo-<name> dev` — a demo on its own (`roastery`, `roastery-shop`, `deckhand`); the docs site serves them at `/demos/<name>`
 
 ## Making things buttery
 To build or restyle any UI with buttery, follow `.claude/skills/make-it-buttery/SKILL.md` step by step (Claude Code loads it as a skill; other agents read the file directly).

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Chip } from "@buttery/react";
 
 /** A reset beside a value, unavailable while the value is already the default, keeping focus after a reset. */
@@ -20,3 +21,11 @@ export function ResetRotation(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Rotation -8°");
+  await press("button", "Reset");
+  await see("Rotation 0°");
+};

@@ -1,5 +1,5 @@
 import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, ConsequenceDialog } from "@buttery/react";
 import { CalendarClock, Gift } from "lucide-react";
 import { useState } from "react";
@@ -40,6 +40,8 @@ export function StartATrial(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Try Roaster");

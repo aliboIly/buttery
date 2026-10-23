@@ -114,7 +114,7 @@ export interface FooterComponent {
  * small print under a divider. It's its own size container.
  *
  * @example
- * <Footer brand={<ProductLine />} legal={<Text variant="caption">© 2026 Card Studio</Text>}>
+ * <Footer brand={<ProductLine />} legal={<Text variant="caption">© 2026 Deckhand</Text>}>
  *   <Footer.Column title="Product">
  *     <Footer.Link href="/features">Features</Footer.Link>
  *   </Footer.Column>

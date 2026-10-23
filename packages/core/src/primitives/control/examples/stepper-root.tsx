@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Control, Icon, Pressable, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Minus, Plus } from "lucide-react";
 
 /** A stepper built from public parts: a raised Control holding two 28px pressable Controls and the count between them. */
@@ -35,3 +36,12 @@ export function StepperRoot(): ReactElement {
     </Surface>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "One cup more");
+  await see("3 cups");
+  await press("button", "One cup fewer");
+  await see("2 cups");
+};

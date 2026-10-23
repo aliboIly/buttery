@@ -10,6 +10,7 @@
     --bt-command-search-max: 480px;
     --bt-command-search-line: 1px;
     --bt-command-search-held: 0px;
+    --bt-command-search-room: var(--bt-command-search-max);
   }
 
   .bt-command-search {
@@ -52,6 +53,13 @@
   .bt-command-search > [data-bt-part="end"] {
     min-inline-size: var(--bt-h-sm);
     justify-content: center;
+  }
+
+  /* The `/` hint is for a keyboard, which a touchscreen seldom has beside it. */
+  @media not ((hover: hover) and (pointer: fine)) {
+    .bt-command-search > [data-bt-part="end"] > [data-bt-part="shortcut"] {
+      display: none;
+    }
   }
 
   .bt-command-search > [data-bt-part="chips"] {
@@ -140,17 +148,11 @@
     flex-direction: column;
     min-block-size: min(
       max(var(--bt-command-search-min), var(--bt-command-search-held)),
-      var(
-        --radix-popover-content-available-height,
-        var(--bt-command-search-max)
-      )
+      var(--bt-command-search-room)
     );
     max-block-size: min(
       var(--bt-command-search-max),
-      var(
-        --radix-popover-content-available-height,
-        var(--bt-command-search-max)
-      )
+      var(--bt-command-search-room)
     );
     padding: 0;
     overflow: hidden;
@@ -160,10 +162,7 @@
   .bt-command-search-panel.bt-popover[data-side="top"] {
     block-size: min(
       var(--bt-command-search-max),
-      var(
-        --radix-popover-content-available-height,
-        var(--bt-command-search-max)
-      )
+      var(--bt-command-search-room)
     );
   }
 
@@ -240,11 +239,15 @@
   .bt-search-match {
     border-radius: var(--bt-r-xs);
     background-color: var(--bt-accent-subtle);
-    color: inherit;
+    color: var(--bt-accent-text);
   }
 
+  /*
+   * A long detail gives up all its room before the row's path and label shrink at all: flex shrinks every
+   * item in proportion, and even a fraction of a pixel taken from the label would end it in an ellipsis.
+   */
   .bt-command-search-panel [data-bt-part="command-search-detail"] {
-    flex: 0 1 auto;
+    flex: 0 1000000 auto;
     min-inline-size: 0;
     color: var(--bt-text-secondary);
   }
@@ -292,6 +295,7 @@
     gap: var(--bt-space-2);
     padding: var(--bt-space-8) var(--bt-space-4);
     text-align: center;
+    text-wrap: balance;
   }
 
   .bt-command-search-panel [data-bt-part="empty-icon"] {
@@ -305,6 +309,49 @@
 
   .bt-command-search-panel [data-bt-part="empty-hint"] {
     color: var(--bt-text-secondary);
+  }
+
+  /* With a preview, the rows and their footer keep the field's width and the pane takes an inspector's beside them. */
+  .bt-command-search-panel.bt-popover[data-preview] {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) var(--bt-w-inspector);
+  }
+
+  .bt-command-search-panel[data-preview] > [data-bt-part="scroll"],
+  .bt-command-search-panel[data-preview]
+    > [data-bt-part="command-search-footer"] {
+    grid-column: 1;
+  }
+
+  .bt-command-search-panel [data-bt-part="command-search-preview"] {
+    display: flex;
+    flex-direction: column;
+    grid-row: 1 / -1;
+    grid-column: 2;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+    padding: var(--bt-space-4);
+    border-inline-start: var(--bt-command-search-line) solid var(--bt-border);
+    background-color: var(--bt-bg-section);
+    overflow-y: auto;
+  }
+
+  .bt-command-search-panel.bt-popover[data-preview="start"] {
+    grid-template-columns: var(--bt-w-inspector) minmax(0, 1fr);
+  }
+
+  .bt-command-search-panel[data-preview="start"] > [data-bt-part="scroll"],
+  .bt-command-search-panel[data-preview="start"]
+    > [data-bt-part="command-search-footer"] {
+    grid-column: 2;
+  }
+
+  .bt-command-search-panel[data-preview="start"]
+    > [data-bt-part="command-search-preview"] {
+    grid-column: 1;
+    border-inline-start: 0;
+    border-inline-end: var(--bt-command-search-line) solid var(--bt-border);
   }
 
   .bt-command-search-panel [data-bt-part="command-search-footer"] {

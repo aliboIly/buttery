@@ -15,4 +15,8 @@ export const meta: ComponentMeta = {
   related: ["Checkbox", "SegmentedControl"],
   a11y: "A real switch (role switch) named by its label, which takes presses too; Space and Enter flip it. The track has a 3:1 edge while off and a 24px target. The thumb slides on spring.snappy and jumps with reduced motion. In forced colors it draws itself in system colors.",
   motion: "indicator",
+  keyboard: [{ keys: "Space or Enter", does: "Turns it on or off" }],
+  layout:
+    "The track is 32px wide and --bt-h-badge (20px) tall, with a hit area 24px tall, and its label sits 8px after it; a press on the label flips it too. The label and the hint wrap rather than truncate, and the hint lines up under the label.",
+  reducedMotion: "The thumb lands at its new end at once instead of sliding.",
 };

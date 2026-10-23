@@ -1,0 +1,44 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "config": {
+    "port": 5173
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@buttery/core": "workspace:*",
+    "@buttery/react": "workspace:*",
+    "demo-deckhand": "workspace:*",
+    "demo-roastery": "workspace:*",
+    "demo-roastery-shop": "workspace:*",
+    "lucide-react": "catalog:",
+    "minisearch": "catalog:",
+    "motion": "catalog:",
+    "radix-ui": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "starter": "workspace:*",
+    "template-dashboard": "workspace:*",
+    "template-editor": "workspace:*",
+    "template-marketing": "workspace:*"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "catalog:",
+    "@babel/core": "catalog:",
+    "@buttery/test": "workspace:*",
+    "@mdx-js/rollup": "catalog:",
+    "@rolldown/plugin-babel": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "babel-plugin-react-compiler": "catalog:",
+    "shiki": "catalog:",
+    "vite": "catalog:"
+  }
+}

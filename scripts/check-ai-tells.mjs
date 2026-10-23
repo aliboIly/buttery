@@ -25,6 +25,9 @@ const POLICY_FILES = new Set(["AGENTS.md"]);
 
 const PROSE_FILES = [
   /^README\.md$/,
+  /^ROADMAP\.md$/,
+  /^docs\/[^/]+\.md$/,
+  /^apps\/docs\/content\/.+\.mdx?$/,
   /^(?:apps|packages)\/[^/]+\/README\.md$/,
   /^packages\/[^/]+\/docs\/.+\.md$/,
   /(?:^|\/)CHANGELOG\.md$/,

@@ -146,6 +146,57 @@ describe("FilterBar", () => {
     expect(bar.scrollWidth).toBeLessThanOrEqual(bar.clientWidth);
   });
 
+  it("centers a line of pills on taller actions, folded or not, and keeps the actions on the first line once the pills wrap", () => {
+    const middle = (box: DOMRect): number => box.top + box.height / 2;
+    const bar = (width: number, pills: number): ReactElement => (
+      <div style={{ inlineSize: `${String(width)}px` }}>
+        <FilterBar
+          actions={<SearchField label="Search orders" variant="outline" />}
+        >
+          {Array.from({ length: pills }, (_, index) => (
+            <FilterPill
+              key={index}
+              label={`Field ${String(index + 1)}`}
+              value="Some value"
+              onRemove={() => undefined}
+            />
+          ))}
+        </FilterBar>
+      </div>
+    );
+    const search = (): DOMRect => {
+      const box = screen
+        .getByRole("searchbox", { name: "Search orders" })
+        .closest('[data-bt="SearchField"]');
+      if (!box) throw new Error("No search box.");
+      return box.getBoundingClientRect();
+    };
+    render(bar(900, 1));
+    const field = search();
+    expect(field.height).toBe(34);
+    const pill = screen
+      .getByRole("button", { name: "Field 1: Some value" })
+      .closest('[data-bt="FilterPill"]');
+    if (!pill) throw new Error("No pill.");
+    expect(middle(pill.getBoundingClientRect())).toBe(middle(field));
+    cleanup();
+    render(bar(500, 1));
+    expect(
+      middle(
+        screen
+          .getByRole("button", { name: "Filters · 1" })
+          .getBoundingClientRect(),
+      ),
+    ).toBe(middle(search()));
+    cleanup();
+    render(bar(700, 6));
+    const pills = document.querySelector('[data-bt-part="pills"]');
+    if (!pills) throw new Error("No pills.");
+    const block = pills.getBoundingClientRect();
+    expect(block.height).toBeGreaterThan(2 * search().height);
+    expect(search().top).toBe(block.top);
+  });
+
   it("keeps a remove button's press area 24px square", () => {
     const onRemove = vi.fn();
     render(

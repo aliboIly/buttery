@@ -1,7 +1,8 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { BarChart } from "@buttery/react";
 
-/** Bags roasted each day this week, beside last week. */
+/** Bags roasted each day this week beside last week; pointing at a day, or stepping with the arrow keys, shows the change. */
 export function BagsPerDay(): ReactElement {
   return (
     <BarChart
@@ -24,3 +25,13 @@ export function BagsPerDay(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, key, see }) => {
+  await press("slider", "Bags roasted");
+  await key("End");
+  await see("+8.2%");
+  await key("ArrowLeft");
+  await see("+5.7%");
+};

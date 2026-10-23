@@ -43,6 +43,12 @@ export interface SignUpLabels {
   readonly email: string;
   /** The password field's label. */
   readonly password: string;
+  /** Names the button that shows the password. */
+  readonly showPassword: string;
+  /** Read beside a password rule that's met. */
+  readonly met: string;
+  /** Read beside a password rule that isn't met yet. */
+  readonly unmet: string;
   /** The terms box, before the link to `termsHref`. */
   readonly terms: string;
   /** The link to the terms. */
@@ -76,6 +82,9 @@ const LABELS: SignUpLabels = {
   name: "Name",
   email: "Email",
   password: "Password",
+  showPassword: "Show password",
+  met: "Met",
+  unmet: "Not met",
   terms: "I agree to the",
   termsLink: "terms",
   submit: "Create account",
@@ -117,7 +126,10 @@ export interface SignUpFormProps extends Omit<
    * or a promise of one, to show it over the form, such as "There's already an account for that email".
    */
   readonly onSubmit: AuthSubmit<SignUpValues>;
-  /** The rules a password has to meet, listed under it. Defaults to 8 characters with a number. */
+  /**
+   * The rules a password has to meet, listed under it, each a `{ label, test }`. They replace the defaults, 8
+   * characters with a number: to add one, spread `defaultPasswordRules` first.
+   */
   readonly passwordRules?: readonly PasswordRule[] | undefined;
   /** Where the terms link goes. Left out, the terms box isn't shown. */
   readonly termsHref?: string | undefined;
@@ -224,6 +236,9 @@ export function SignUpForm({
           id={passwordId}
           name="password"
           label={words.password}
+          revealLabel={words.showPassword}
+          metLabel={words.met}
+          unmetLabel={words.unmet}
           autoComplete="new-password"
           size="lg"
           value={password}

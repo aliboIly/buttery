@@ -1,7 +1,7 @@
-import type { ExamplePlay } from "@buttery/core";
-import { Button, SettingRow } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Button, SettingRow } from "@buttery/react";
 
 const SCHEDULES = ["Every Friday", "Every day", "On the 1st of each month"];
 
@@ -26,7 +26,10 @@ export function PayoutSchedule(): ReactElement {
   );
 }
 
+export const kind: ExampleKind = "basic";
+
 export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Every Friday");
   await press("button", "Change schedule");
   await see("Every day");
 };

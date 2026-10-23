@@ -7,11 +7,12 @@ import {
   hasContent,
   useControllableState,
   useFloatingObstacle,
+  warnOnce,
 } from "@buttery/core";
 import type { CssVariables } from "@buttery/core";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { VisuallyHidden } from "radix-ui";
-import { isValidElement, useCallback, useState } from "react";
+import { isValidElement, useCallback, useEffect, useState } from "react";
 import type {
   AnimationEvent,
   CSSProperties,
@@ -142,7 +143,10 @@ export interface DataTableProps<Row> extends Omit<
   readonly sort?: DataTableSort | null | undefined;
   /** Called when a sortable header is pressed: ascending, then descending, then none. */
   readonly onSortChange?: ((sort: DataTableSort | null) => void) | undefined;
-  /** A row's actions, as `Menu.Item`s, behind a "…" button in its last cell. */
+  /**
+   * A row's actions, as `Menu.Item`s, behind a "…" button in its last cell. Return `null` for a row with
+   * nothing to do: its cell stays empty, with no button.
+   */
   readonly rowActions?: ((row: Row) => ReactNode) | undefined;
   /** Shows skeleton rows shaped like each column while the rows load. */
   readonly loading?: boolean | undefined;
@@ -152,7 +156,10 @@ export interface DataTableProps<Row> extends Omit<
   readonly empty?: ReactNode;
   /** When filters leave no rows: a row across the table with "Clear all", which calls this. */
   readonly onClearAll?: (() => void) | undefined;
-  /** `"default"` or `"compact"`, without selection and pagination, for short lists such as recent activity. */
+  /**
+   * `"default"`, or `"compact"` for short lists such as recent activity: the table takes compact density's
+   * heights, so its rows are 32px whatever the app's density, and has no selection or pagination.
+   */
   readonly size?: "default" | "compact" | undefined;
   /** Words to use instead of the English ones. */
   readonly labels?: Partial<DataTableLabels> | undefined;
@@ -233,6 +240,21 @@ function DataTableRoot<Row>({
   const words = { ...LABELS, ...labels };
   const compact = size === "compact";
   const withSelection = selectable && !compact;
+  const paged = pagination !== undefined;
+
+  useEffect(() => {
+    if (!compact) return;
+    if (paged)
+      warnOnce(
+        "DataTable",
+        `The "${label}" table is size="compact", which leaves out pagination, so its later pages can't be reached. Fix: use size="default" for a table people page through, or show every row without pagination.`,
+      );
+    if (selectable)
+      warnOnce(
+        "DataTable",
+        `The "${label}" table is size="compact", which leaves out the checkbox column, so selectable does nothing. Fix: use size="default" for a table people select rows in, or drop selectable.`,
+      );
+  }, [compact, paged, selectable, label]);
   const withActions = rowActions !== undefined;
   const pinned = useAppPage()?.fill === true;
   const obstacle = useFloatingObstacle();
@@ -242,6 +264,7 @@ function DataTableRoot<Row>({
     onChange: onSelectedChange,
   });
   const [scrolledAside, setScrolledAside] = useState(false);
+  const [moreAside, setMoreAside] = useState(false);
   const [overflows, setOverflows] = useState(false);
   const [arrived, setArrived] = useState(false);
   const [wasLoading, setWasLoading] = useState(loading);
@@ -258,9 +281,12 @@ function DataTableRoot<Row>({
   const watchScroll = useCallback((element: HTMLDivElement | null) => {
     if (!element) return undefined;
     const scrolled = (): void => {
-      setScrolledAside(Math.abs(element.scrollLeft) > 0);
+      const along = Math.abs(element.scrollLeft);
+      setScrolledAside(along > 0);
+      setMoreAside(along + element.clientWidth < element.scrollWidth - 1);
     };
     const measure = (): void => {
+      scrolled();
       setOverflows(
         element.scrollWidth > element.clientWidth ||
           element.scrollHeight > element.clientHeight,
@@ -354,6 +380,7 @@ function DataTableRoot<Row>({
       className={cx("bt-data-table", className)}
       data-bt="DataTable"
       data-size={size}
+      data-bt-density={compact ? "compact" : undefined}
     >
       <div
         ref={watchScroll}
@@ -362,6 +389,7 @@ function DataTableRoot<Row>({
         tabIndex={overflows ? 0 : undefined}
         data-bt-part="scroll"
         data-scrolled-aside={scrolledAside ? "" : undefined}
+        data-more-aside={moreAside ? "" : undefined}
       >
         <div
           role="table"
@@ -584,16 +612,10 @@ function DataTableRoot<Row>({
                         data-bt-part="data-table-cell"
                         data-check=""
                       >
-                        <Menu>
-                          <Menu.Trigger asChild>
-                            <IconButton
-                              icon={Ellipsis}
-                              label={words.actionsFor(nameOf(row))}
-                              size="sm"
-                            />
-                          </Menu.Trigger>
-                          <Menu.Content>{rowActions(row)}</Menu.Content>
-                        </Menu>
+                        <RowActions
+                          label={words.actionsFor(nameOf(row))}
+                          actions={rowActions(row)}
+                        />
                       </div>
                     ) : null}
                   </div>
@@ -646,6 +668,24 @@ function DataTableRoot<Row>({
   );
 }
 
+/** A row's "…" menu, or nothing for a row whose actions came back empty. */
+function RowActions({
+  label,
+  actions,
+}: {
+  readonly label: string;
+  readonly actions: ReactNode;
+}): ReactElement | null {
+  return hasContent(actions) ? (
+    <Menu>
+      <Menu.Trigger asChild>
+        <IconButton icon={Ellipsis} label={label} size="sm" />
+      </Menu.Trigger>
+      <Menu.Content>{actions}</Menu.Content>
+    </Menu>
+  ) : null;
+}
+
 /** Props for `DataTable.Amount`. */
 export interface DataTableAmountProps extends Omit<
   ComponentPropsWithRef<"span">,
@@ -653,7 +693,10 @@ export interface DataTableAmountProps extends Omit<
 > {
   /** The amount. */
   readonly value: number;
-  /** Its ISO 4217 currency, such as `"USD"`, written after the number in `text-tertiary`. */
+  /**
+   * Its ISO 4217 currency, such as `"USD"`: the number shows with the currency's symbol, and the code after
+   * it in `text-tertiary`, as in "$14.50 USD".
+   */
   readonly currency: string;
 }
 

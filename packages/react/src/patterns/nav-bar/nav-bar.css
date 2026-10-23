@@ -1,6 +1,9 @@
 @layer bt.patterns {
   /* The bar stacks at the sticky band whatever its behavior, so its menu panel stays over the blur. */
   .bt-nav-bar {
+    --bt-nav-bar-search-min: 160px;
+    --bt-nav-bar-skip-hidden: 1px;
+
     z-index: var(--bt-z-sticky);
     min-inline-size: 0;
     transition:
@@ -17,6 +20,12 @@
     z-index: var(--bt-z-floating);
   }
 
+  /* Those sticky bars step down to the blur's band, which the blur, coming later in the page, covers. */
+  :root:has(.bt-nav-bar[data-raised])
+    .bt-sticky:not(.bt-nav-bar, :has(.bt-nav-bar)) {
+    z-index: var(--bt-z-scrim-nav);
+  }
+
   .bt-nav-bar[data-scrolled] {
     background-color: var(--bt-bg-surface);
     box-shadow: var(--bt-shadow-card);
@@ -31,6 +40,36 @@
     gap: var(--bt-space-6);
     block-size: var(--bt-h-nav-bar);
     min-inline-size: 0;
+  }
+
+  /* The skip link is out of sight until Tab reaches it, then a raised pill over the start of the bar. */
+  .bt-nav-bar [data-bt-part="nav-bar-skip"] {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    z-index: var(--bt-z-raised);
+    display: inline-flex;
+    align-items: center;
+    block-size: var(--bt-h-button);
+    padding-inline: var(--bt-space-4);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-bg-raised);
+    box-shadow: var(--bt-shadow-raised);
+    color: var(--bt-text-strong);
+    font-size: var(--bt-text-label-size);
+    font-weight: var(--bt-text-label-weight);
+    line-height: var(--bt-text-label-line);
+    text-decoration: none;
+    white-space: nowrap;
+    translate: 0 -50%;
+  }
+
+  .bt-nav-bar [data-bt-part="nav-bar-skip"]:not(:focus) {
+    inline-size: var(--bt-nav-bar-skip-hidden);
+    block-size: var(--bt-nav-bar-skip-hidden);
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
 
   .bt-nav-bar [data-bt-part="nav-bar-brand"],
@@ -58,14 +97,15 @@
 
   /*
    * In a bar the menu sets no stacking context or size container of its own, so its card opens under the
-   * whole bar and may take the bar's width. The bar folds rather than scrolling its row.
+   * whole bar and may take the bar's width. It never narrows past its menus: a search gives way first, and
+   * then the bar folds rather than scrolling its row.
    */
   .bt-nav-bar .bt-morph-menu {
     --bt-morph-menu-reach: var(--bt-h-nav-bar);
 
     position: static;
     z-index: auto;
-    flex: 1 1 auto;
+    flex: 1 0 auto;
     container-type: normal;
   }
 
@@ -74,7 +114,40 @@
     overflow: visible;
   }
 
-  .bt-nav-bar [data-bt-part="nav-bar-actions"] {
+  /* The search narrows to its least before the menus fold, and outlasts them in the bar. */
+  .bt-nav-bar [data-bt-part="nav-bar-search"] {
+    display: flex;
+    flex: 0 1 var(--bt-w-search);
+    align-items: center;
+    min-inline-size: var(--bt-nav-bar-search-min);
+  }
+
+  .bt-nav-bar [data-bt-part="nav-bar-search"] > * {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+  }
+
+  /* With focus, the search takes the menus' room, and the brand's too while folded, ending where it did. */
+  .bt-nav-bar
+    [data-bt-part="nav-bar-bar"]:has(
+      > [data-bt-part="nav-bar-search"]:focus-within
+    )
+    > .bt-morph-menu,
+  .bt-nav-bar
+    [data-bt-part="nav-bar-bar"][data-folded]:has(
+      > [data-bt-part="nav-bar-search"]:focus-within
+    )
+    > [data-bt-part="nav-bar-brand"] {
+    display: none;
+  }
+
+  .bt-nav-bar [data-bt-part="nav-bar-search"]:focus-within {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+
+  .bt-nav-bar
+    :is([data-bt-part="nav-bar-actions"], [data-bt-part="nav-bar-pinned"]) {
     display: flex;
     flex: none;
     align-items: center;
@@ -89,13 +162,27 @@
     justify-content: space-between;
   }
 
+  /* Folded without a search, the brand takes the room between, so pinned actions sit by the menu button. */
+  .bt-nav-bar
+    [data-folded]:not(:has(> [data-bt-part="nav-bar-search"]))
+    > [data-bt-part="nav-bar-brand"] {
+    flex-grow: 1;
+    min-inline-size: 0;
+  }
+
+  .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-search"] {
+    flex-grow: 1;
+    min-inline-size: 0;
+  }
+
   .bt-nav-bar [data-folded] > .bt-morph-menu,
   .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-actions"] {
     display: none;
   }
 
+  /* Shown, the button takes IconButton's own display back, the grid that centers its icon. */
   .bt-nav-bar [data-folded] > [data-bt-part="nav-bar-menu-button"] {
-    display: inline-flex;
+    display: revert-layer;
   }
 
   /* Before the bar has measured itself, a narrow one already hides what it will fold. */
@@ -106,7 +193,7 @@
     }
 
     .bt-nav-bar [data-bt-part="nav-bar-menu-button"] {
-      display: inline-flex;
+      display: revert-layer;
     }
   }
 
@@ -115,9 +202,15 @@
     inset: 0;
   }
 
+  /*
+   * The sheet sits at the window's end, 8px inside it and as tall as it, at most a dialog's width: a phone's
+   * whole width, and a drawer on a wide window whose bar folded in a narrow column.
+   */
   .bt-nav-bar-sheet[data-bt-part="sheet"] {
     position: absolute;
-    inset: var(--bt-space-2);
+    inset-block: var(--bt-space-2);
+    inset-inline-end: var(--bt-space-2);
+    inline-size: min(var(--bt-w-dialog), calc(100% - 2 * var(--bt-space-2)));
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -125,6 +218,7 @@
     outline: none;
   }
 
+  /* The brand starts where the menus' words do, and the close button's cross sits over their chevrons. */
   .bt-nav-bar-sheet > [data-bt-part="sheet-bar"] {
     display: flex;
     flex: none;
@@ -132,7 +226,7 @@
     justify-content: space-between;
     gap: var(--bt-space-4);
     block-size: var(--bt-h-nav-bar);
-    padding-inline: var(--bt-space-2) var(--bt-space-4);
+    padding-inline: var(--bt-space-8) var(--bt-space-6);
   }
 
   .bt-nav-bar-sheet > [data-bt-part="sheet-body"] {
@@ -141,14 +235,17 @@
     flex-direction: column;
     gap: var(--bt-space-6);
     min-block-size: 0;
-    padding: var(--bt-space-2) var(--bt-space-4) var(--bt-space-8);
+    padding: var(--bt-space-2) var(--bt-space-4) var(--bt-space-4);
     overflow-y: auto;
     overscroll-behavior: contain;
   }
 
-  .bt-nav-bar-sheet [data-bt-part="sheet-actions"] {
+  /* The actions stay at the sheet's foot while the menus above them scroll. */
+  .bt-nav-bar-sheet > [data-bt-part="sheet-actions"] {
     display: flex;
+    flex: none;
     flex-direction: column;
     gap: var(--bt-space-2);
+    padding: var(--bt-space-4);
   }
 }

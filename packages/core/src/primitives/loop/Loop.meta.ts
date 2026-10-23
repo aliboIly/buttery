@@ -17,4 +17,8 @@ export const meta: ComponentMeta = {
   related: ["Morph", "Presence", "Reveal"],
   a11y: "Keep looping content decorative or announce nothing: it changes on its own every few seconds. It holds still under the pointer, with focus inside, while the page is hidden and when paused, and stops on the first step with reduced motion. Beside content people read, give them a pause button that sets paused (WCAG 2.2.2).",
   motion: "loop",
+  keyboard: [],
+  layout:
+    "It renders a div as wide as its parent, which can shrink below its content's width, and as tall as the step it shows. It has no hit area of its own.",
+  reducedMotion: "It stays on its first step and doesn't cycle.",
 };

@@ -6,6 +6,7 @@ import type { ReactElement } from "react";
 import { Inbox } from "lucide-react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OverflowCluster } from "./OverflowCluster.tsx";
+import { meta } from "./OverflowCluster.meta.ts";
 
 afterEach(() => {
   cleanup();
@@ -79,6 +80,23 @@ describe("OverflowCluster", () => {
     expect(items.map((item) => item.textContent)).toEqual(["Share", "Help"]);
     await userEvent.click(screen.getByRole("menuitem", { name: "Help" }));
     expect(onSelect).toHaveBeenCalledWith("Help");
+  });
+
+  it("presses its More button and grows its menu in, so its meta doesn't say it stays still", async () => {
+    render(<Toolbar width={200} onSelect={vi.fn()} />);
+    const more = await screen.findByRole("button", { name: "More actions" });
+    expect(more.classList.contains("bt-press")).toBe(true);
+    await userEvent.click(more);
+    let drawn = 1;
+    for (
+      let node: Element | null = screen.getByRole("menu");
+      node;
+      node = node.parentElement
+    )
+      drawn *= Number(getComputedStyle(node).opacity);
+    expect(drawn).toBeLessThan(1);
+    expect(meta.motion).toBe("presence");
+    expect(meta.reducedMotion).toBeDefined();
   });
 
   it("sizes the More button to match its items", async () => {
@@ -192,6 +210,77 @@ describe("OverflowCluster", () => {
     ).toThrow(
       /\[buttery:OverflowCluster\] OverflowCluster\.Item has to be inside an <OverflowCluster>\. Fix:/,
     );
+  });
+
+  it("fits its row again when its gap or its size changes, its More button inside", async () => {
+    function Cluster({
+      gap,
+      itemWidth,
+    }: {
+      readonly gap: 1 | 3;
+      readonly itemWidth: number;
+    }): ReactElement {
+      return (
+        <div style={{ display: "flex", inlineSize: "300px" }}>
+          <OverflowCluster gap={gap} moreLabel="More actions">
+            {ACTIONS.map(({ label, priority }) => (
+              <OverflowCluster.Item
+                key={label}
+                priority={priority}
+                menuItem={{ label, onSelect: () => undefined }}
+              >
+                <button
+                  type="button"
+                  style={{
+                    inlineSize: `${String(itemWidth)}px`,
+                    blockSize: "36px",
+                  }}
+                >
+                  {label}
+                </button>
+              </OverflowCluster.Item>
+            ))}
+          </OverflowCluster>
+        </div>
+      );
+    }
+    const cluster = (): HTMLElement => {
+      const element = document.querySelector<HTMLElement>(
+        '[data-bt="OverflowCluster"]',
+      );
+      if (!element) throw new Error("No cluster.");
+      return element;
+    };
+    const fits = (): void => {
+      const box = cluster().getBoundingClientRect();
+      for (const child of cluster().children) {
+        if (getComputedStyle(child).visibility === "hidden") continue;
+        expect(child.getBoundingClientRect().right).toBeLessThanOrEqual(
+          box.right + 0.5,
+        );
+      }
+    };
+    const shown = (): number =>
+      ACTIONS.filter(({ label }) =>
+        screen.queryByRole("button", { name: label }),
+      ).length;
+    const { rerender } = render(<Cluster gap={1} itemWidth={68} />);
+    await waitFor(() => {
+      expect(shown()).toBe(4);
+    });
+    rerender(<Cluster gap={3} itemWidth={68} />);
+    await waitFor(fits);
+    expect(shown()).toBeLessThan(4);
+    rerender(<Cluster gap={1} itemWidth={68} />);
+    await waitFor(() => {
+      expect(shown()).toBe(4);
+    });
+    rerender(<Cluster gap={1} itemWidth={120} />);
+    await waitFor(fits);
+    rerender(<Cluster gap={1} itemWidth={68} />);
+    await waitFor(() => {
+      expect(shown()).toBe(4);
+    });
   });
 
   it("brings items back as the row grows", async () => {

@@ -37,6 +37,12 @@ export interface NotificationNudgeProps {
   readonly onLater?: (() => void) | undefined;
   /** It opens by itself once per key, and not again once it has closed. Without one it opens by itself on every visit. */
   readonly storageKey?: string | undefined;
+  /**
+   * Whether it may open by itself once its button is in view. Defaults to `true`. Pass `false` where it would
+   * cover something people need, such as a page header's actions under its button: one that opened by itself
+   * closes, still unseen, and it opens by itself once this is `true` again.
+   */
+  readonly opensItself?: boolean | undefined;
   /** Whether it's open, when you control it. */
   readonly open?: boolean | undefined;
   /**
@@ -87,6 +93,7 @@ export function NotificationNudge({
   laterLabel = "Later",
   onLater,
   storageKey,
+  opensItself = true,
   open,
   defaultOpen = false,
   onOpenChange,
@@ -116,6 +123,10 @@ export function NotificationNudge({
   useEffect(() => {
     const button = trigger.current;
     if (seen || open !== undefined || button === null) return undefined;
+    if (!opensItself) {
+      if (byItself.current) setOpen(false);
+      return undefined;
+    }
     let waiting: MutationObserver | null = null;
     const behindModal = (): boolean =>
       document.querySelector('[aria-modal="true"]') !== null;
@@ -150,7 +161,7 @@ export function NotificationNudge({
       observer.disconnect();
       waiting?.disconnect();
     };
-  }, [seen, open, title, setOpen]);
+  }, [seen, opensItself, open, title, setOpen]);
 
   const change = (next: boolean): void => {
     byItself.current = false;

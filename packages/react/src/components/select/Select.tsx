@@ -64,7 +64,7 @@ export interface SelectProps<Value extends string = string> extends Omit<
    * box like a text field's that fills its column, for forms. An outline list is at least as wide as its box.
    */
   readonly variant?: "ghost" | "outline" | undefined;
-  /** The trigger's height: `"sm"` (28px) or `"md"`, the default (36px as a pill, 34px as a box). */
+  /** The trigger's height: `"sm"` (28px) or `"md"` (36px as a pill, 34px as a box). Defaults to `"md"`. */
   readonly size?: "sm" | "md" | undefined;
 }
 
@@ -231,8 +231,10 @@ export function Select<Value extends string = string>({
       {...rest}
       ref={triggerRefs}
       type="button"
+      role="combobox"
       disabled={disabled}
       aria-haspopup="listbox"
+      aria-expanded={isOpen}
       aria-controls={isOpen ? listId : undefined}
       onKeyDown={(event) => {
         onKeyDown?.(event);

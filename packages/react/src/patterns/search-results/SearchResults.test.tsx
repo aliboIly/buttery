@@ -42,6 +42,26 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
+/** How far `element`'s text runs past its own end edge, in px: past zero, it ends in an ellipsis. */
+function overrun(element: HTMLElement): number {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return (
+    range.getBoundingClientRect().right - element.getBoundingClientRect().right
+  );
+}
+
+/** The room between a highlighted match and the text after it, in px: none while they read as one word. */
+function gapAfter(mark: HTMLElement): number {
+  const rest = mark.nextSibling;
+  if (rest?.nodeType !== Node.TEXT_NODE) throw new Error("No text after it.");
+  const range = document.createRange();
+  range.selectNodeContents(rest);
+  return (
+    range.getBoundingClientRect().left - mark.getBoundingClientRect().right
+  );
+}
+
 describe("SearchResults", () => {
   it("is a page that stamps its class and data-bt, forwards its ref and spreads props", () => {
     const ref = createRef<HTMLElement>();
@@ -86,6 +106,68 @@ describe("SearchResults", () => {
     expect(
       within(customers).getByText("Set", { selector: "mark" }),
     ).toBeTruthy();
+  });
+
+  it("cuts a long detail before a row's path and label", () => {
+    const guides: LocalSearchSource = {
+      id: "guides",
+      label: "Guides",
+      search: () => [
+        {
+          id: "dialog",
+          label: "FullscreenDialog",
+          path: ["Overlays"],
+          detail:
+            "A dialog that takes the whole window for one big question, such as what someone wants to build first.",
+          href: "#fullscreen-dialog",
+        },
+      ],
+    };
+    render(
+      <div style={{ inlineSize: "420px" }}>
+        <SearchResults
+          query={{ text: "dialog", filters: [] }}
+          sources={[guides]}
+        />
+      </div>,
+    );
+    const row = within(
+      screen.getByRole("region", { name: "Guides" }),
+    ).getByRole("link");
+    const label = row.querySelector<HTMLElement>(
+      '[data-bt-part="search-results-label"]',
+    );
+    const detail = row.querySelector<HTMLElement>(
+      '[data-bt-part="search-results-detail"]',
+    );
+    if (!label || !detail) throw new Error("No label or detail.");
+    expect(overrun(label)).toBeLessThanOrEqual(0.001);
+    expect(detail.scrollWidth).toBeGreaterThan(detail.clientWidth);
+  });
+
+  it("keeps a match in a row's path joined to the rest of its word", () => {
+    render(
+      <SearchResults
+        query={{ text: "install", filters: [] }}
+        sources={[
+          pageSource({
+            pages: [
+              {
+                label: "Start a new app",
+                path: ["Installation"],
+                href: "#install",
+              },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const mark = within(
+      screen.getByRole("region", { name: "Go to" }),
+    ).getByText("Install", {
+      selector: '[data-bt-part="search-results-path"] mark',
+    });
+    expect(gapAfter(mark)).toBeCloseTo(0, 1);
   });
 
   it("keeps a remote source's section waiting until it answers", async () => {

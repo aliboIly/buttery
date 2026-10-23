@@ -13,10 +13,12 @@
     min-inline-size: 0;
   }
 
+  /* Centered, one line of pills sits level with taller actions; wrapped, it fills the bar, so the actions keep to its first line. */
   .bt-filter-bar > [data-bt-part="pills"] {
     display: flex;
     flex: 1 1 auto;
     flex-wrap: wrap;
+    align-self: center;
     align-items: center;
     gap: var(--bt-space-2);
     min-inline-size: 0;
@@ -25,6 +27,7 @@
   .bt-filter-bar > [data-bt-part="actions"] {
     display: flex;
     flex: none;
+    align-items: center;
     gap: var(--bt-space-2);
   }
 

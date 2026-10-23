@@ -7,6 +7,7 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 const TOOLS = [
   "Crop",
@@ -17,11 +18,11 @@ const TOOLS = [
   "Remove background",
 ] as const;
 
-/** Text actions that keep their full labels and fold into the menu from the end. */
+/** Photo tools that keep their full labels and fold into the More menu from the end when the row runs out of room. */
 export function TextToolbar(): ReactElement {
   const [last, setLast] = useState("None yet");
   return (
-    <Stack gap={3}>
+    <Stack gap={3} style={{ maxInlineSize: "var(--bt-w-dialog)" }}>
       <OverflowCluster gap={2} moreLabel="More tools">
         {TOOLS.map((tool, index) => (
           <OverflowCluster.Item
@@ -50,3 +51,13 @@ export function TextToolbar(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Crop");
+  await see("Last tool: Crop");
+  await press("button", "More tools");
+  await press("menuitem", "Remove background");
+  await see("Last tool: Remove background");
+};

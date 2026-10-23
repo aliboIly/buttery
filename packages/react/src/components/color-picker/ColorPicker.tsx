@@ -46,7 +46,7 @@ export interface ColorPickerProps extends Omit<
   ComponentPropsWithRef<"div">,
   "defaultValue" | "onChange" | "children"
 > {
-  /** What the color is for, such as "Backdrop hue". It names the picker. */
+  /** What the color is for, such as "Background hue". It names the picker. */
   readonly label: string;
   /** The color, as `#rrggbb`. Pair with `onValueChange` to control it. */
   readonly value?: string | undefined;
@@ -124,7 +124,7 @@ function percent(amount: number): string {
  * Down ten steps, Home and End to the ends. `ColorDot` opens one in a popover.
  *
  * @example
- * <ColorPicker label="Backdrop hue" value={color} onValueChange={setColor} />
+ * <ColorPicker label="Background hue" value={color} onValueChange={setColor} />
  */
 export function ColorPicker({
   label,

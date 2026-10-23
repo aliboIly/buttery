@@ -1,5 +1,16 @@
 import { Inline, Stack, Sticky, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "Sticky",
+  description:
+    "Keeps content at the top or bottom of its scroll container and publishes the height it takes.",
+  order: 150,
+  status: "stable",
+  since: "0.2.0",
+  home: "foundations/layers",
+};
 
 export const demos: readonly DemoSection[] = [
   {

@@ -15,4 +15,7 @@ export const meta: ComponentMeta = {
   related: ["Stack", "Inline"],
   a11y: 'Announced as a separator with its orientation; decorative dividers use role="none" and are skipped.',
   motion: "none",
+  keyboard: [],
+  layout:
+    "A horizontal divider runs across its column's full width; a vertical one runs its row's full height, or the length you give it on the spacing scale, centered, such as length={6} for 24px. Either way it takes up only its 1px line, never growing or shrinking with the space around it, and it has no hit area.",
 };

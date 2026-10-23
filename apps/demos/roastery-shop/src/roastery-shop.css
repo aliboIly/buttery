@@ -1,0 +1,506 @@
+:root {
+  --bt-roastery-shop-thumb: 56px;
+  --bt-roastery-shop-bag-thumb: 44px;
+  --bt-roastery-shop-bag-card: 112px;
+  --bt-roastery-shop-bag-feature: 176px;
+  --bt-roastery-shop-bag-detail: 216px;
+  --bt-roastery-shop-bag-story: 112px;
+  --bt-roastery-shop-filter: 200px;
+  --bt-roastery-shop-bar: 6px;
+  --bt-roastery-shop-dot: 8px;
+  --bt-roastery-shop-plan: 360px;
+  --bt-roastery-shop-plan-art: 88px;
+  --bt-roastery-shop-bag-plan: 72px;
+  --bt-roastery-shop-menu-feature: 240px;
+  --bt-roastery-shop-bag-menu: 96px;
+}
+
+.shop-backdrop {
+  background-image: linear-gradient(
+    135deg in oklab,
+    var(--bt-roastery-shop-from),
+    var(--bt-roastery-shop-to)
+  );
+}
+
+[data-bt-theme="dark"] .shop-backdrop {
+  background-image: linear-gradient(
+    135deg in oklab,
+    var(--bt-roastery-shop-dark-from),
+    var(--bt-roastery-shop-dark-to)
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-bt-theme="light"]) .shop-backdrop {
+    background-image: linear-gradient(
+      135deg in oklab,
+      var(--bt-roastery-shop-dark-from),
+      var(--bt-roastery-shop-dark-to)
+    );
+  }
+}
+
+/* A bag keeps the 3:4 shape it's drawn in, sized by its height. */
+.shop-bag-art {
+  display: block;
+  flex: none;
+  block-size: var(--bt-roastery-shop-bag-card);
+  inline-size: auto;
+  aspect-ratio: 3 / 4;
+}
+
+.shop-shelf {
+  display: grid;
+  place-items: center;
+  min-inline-size: 0;
+  padding: var(--bt-space-4);
+  border-radius: var(--bt-r-lg);
+}
+
+/*
+ * Under 640px of bar the actions fold into the menu sheet. The bag stays: the brand's row then reaches
+ * the menu button (its width and the bar's gap short of the bar), with the bag at its end.
+ */
+.shop-brand-bag {
+  display: none;
+}
+
+@container (width < 640px) {
+  .shop-brand {
+    justify-content: space-between;
+    min-inline-size: calc(100cqi - var(--bt-h-button) - var(--bt-space-6));
+  }
+
+  .shop-brand-bag {
+    display: contents;
+  }
+}
+
+.shop-count {
+  display: inline-block;
+  min-inline-size: 2ch;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.shop-price {
+  flex: none;
+}
+
+.shop-feature {
+  inline-size: 100%;
+  max-inline-size: var(--bt-w-dialog-md);
+}
+
+.shop-feature-shelf {
+  padding-block: var(--bt-space-8);
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.shop-feature-shelf > .shop-bag-art {
+  block-size: var(--bt-roastery-shop-bag-feature);
+}
+
+.shop-menu-feature {
+  max-inline-size: var(--bt-roastery-shop-menu-feature);
+}
+
+/* In the bar's sheet a menu is its own narrow container, and its feature takes the sheet's width. */
+@container (width < 640px) {
+  .shop-menu-feature {
+    max-inline-size: none;
+  }
+}
+
+.shop-menu-shelf > .shop-bag-art {
+  block-size: var(--bt-roastery-shop-bag-menu);
+}
+
+.shop-menu-day {
+  inline-size: 100%;
+}
+
+.shop-cafes-caption {
+  text-align: center;
+}
+
+.shop-checkout {
+  container: shop-checkout / inline-size;
+}
+
+.shop-address {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--bt-space-4);
+}
+
+@container shop-checkout (width >= 480px) {
+  .shop-address {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Paragraphs keep at least two words on their last line. */
+:is(.shop-page, .shop-dialog) :is(p, li, dd) {
+  text-wrap: pretty;
+}
+
+.shop-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bt-space-4);
+  min-inline-size: 0;
+}
+
+.shop-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-space-3);
+  min-inline-size: 0;
+}
+
+.shop-filter-origin {
+  flex: none;
+  inline-size: var(--bt-roastery-shop-filter);
+}
+
+@container bt-page (width < 640px) {
+  .shop-filters,
+  .shop-filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .shop-filter-origin {
+    inline-size: auto;
+  }
+}
+
+/* A coffee card's words over its shelf, which rises from the card's bottom edge. */
+.shop-card-visual {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--bt-space-4);
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+.shop-card-shelf-frame {
+  display: grid;
+  min-block-size: 0;
+  padding-inline: var(--bt-space-6);
+}
+
+.shop-card-shelf {
+  place-items: end center;
+  padding-block-end: var(--bt-space-2);
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* A coffee's details: its bag, then what to buy, then the facts; beside each other once there's room. */
+.shop-detail {
+  display: grid;
+  grid-template-areas:
+    "shelf"
+    "buy"
+    "facts";
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--bt-space-6);
+}
+
+@container (width >= 640px) {
+  .shop-detail {
+    grid-template-areas:
+      "shelf buy"
+      "shelf facts";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--bt-space-6) var(--bt-space-8);
+  }
+}
+
+.shop-detail > .shop-detail-shelf {
+  grid-area: shelf;
+}
+
+.shop-detail > .shop-detail-buy {
+  grid-area: buy;
+}
+
+.shop-detail > .shop-facts {
+  grid-area: facts;
+}
+
+.shop-detail-shelf > .shop-bag-art {
+  block-size: var(--bt-roastery-shop-bag-detail);
+}
+
+.shop-detail-shelf {
+  padding-block: var(--bt-space-8);
+}
+
+.shop-facts,
+.shop-totals,
+.shop-recipe {
+  display: grid;
+  align-content: start;
+  gap: var(--bt-space-3);
+}
+
+.shop-fact,
+.shop-total {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  align-items: baseline;
+  gap: var(--bt-space-4);
+}
+
+.shop-fact {
+  padding-block-start: var(--bt-space-3);
+  border-block-start: 1px solid var(--bt-border);
+}
+
+.shop-totals {
+  padding-block-start: var(--bt-space-4);
+  border-block-start: 1px solid var(--bt-border);
+}
+
+.shop-total {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.shop-total[data-grand] {
+  padding-block-start: var(--bt-space-3);
+  border-block-start: 1px solid var(--bt-border);
+}
+
+.shop-lines {
+  display: grid;
+  align-content: start;
+  gap: var(--bt-space-4);
+}
+
+/* A line in the bag: its bag, what it is with its stepper, and what it costs at the end. */
+.shop-line {
+  display: grid;
+  grid-template-columns: var(--bt-roastery-shop-thumb) minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--bt-space-4);
+}
+
+.shop-line-art {
+  block-size: var(--bt-roastery-shop-thumb);
+  padding: var(--bt-space-1);
+  border-radius: var(--bt-r-md);
+}
+
+.shop-line-art > .shop-bag-art {
+  block-size: var(--bt-roastery-shop-bag-thumb);
+}
+
+.shop-line-total {
+  font-variant-numeric: tabular-nums;
+}
+
+.shop-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-space-1);
+}
+
+.shop-quantity {
+  min-inline-size: 2ch;
+  text-align: center;
+}
+
+.shop-progress {
+  block-size: var(--bt-roastery-shop-bar);
+  overflow: hidden;
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-control);
+}
+
+.shop-progress-fill {
+  block-size: 100%;
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-success);
+  transform-origin: left center;
+  transition: transform calc(var(--bt-dur-base) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.shop-progress-fill:dir(rtl) {
+  transform-origin: right center;
+}
+
+.shop-gift {
+  padding-block-start: var(--bt-space-5);
+}
+
+.shop-plan-summary {
+  block-size: 100%;
+}
+
+.shop-plan-head {
+  display: grid;
+  grid-template-columns: var(--bt-roastery-shop-plan-art) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--bt-space-4);
+}
+
+.shop-plan-art {
+  block-size: var(--bt-roastery-shop-plan-art);
+  padding: var(--bt-space-2);
+}
+
+.shop-plan-art > .shop-bag-art {
+  block-size: var(--bt-roastery-shop-bag-plan);
+}
+
+/* An icon in a box as tall as the line beside it, so it sits on that line however the text wraps. */
+.shop-perk {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bt-space-2);
+}
+
+.shop-icon-line {
+  display: grid;
+  flex: none;
+  place-items: center;
+  block-size: var(--bt-text-label-line);
+  color: var(--bt-text-secondary);
+}
+
+/* A bento picture rises from the card's bottom edge, inset from its sides. */
+.shop-picture {
+  display: grid;
+  block-size: 100%;
+  padding-inline: var(--bt-space-6);
+}
+
+.shop-picture-panel {
+  min-block-size: 0;
+  padding: var(--bt-space-6);
+  border-start-start-radius: var(--bt-r-lg);
+  border-start-end-radius: var(--bt-r-lg);
+}
+
+@container bt-page (width < 640px) {
+  .shop-picture-panel {
+    padding: var(--bt-space-4);
+  }
+}
+
+.shop-roast-plan {
+  inline-size: 100%;
+  max-inline-size: var(--bt-roastery-shop-plan);
+}
+
+.shop-roast-row {
+  display: grid;
+  grid-template-columns: 5ch minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--bt-space-3);
+}
+
+.shop-harvests {
+  inline-size: 100%;
+}
+
+.shop-harvest {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--bt-space-3);
+}
+
+.shop-story-bag {
+  block-size: var(--bt-roastery-shop-bag-story);
+}
+
+.shop-day {
+  inline-size: 100%;
+}
+
+.shop-dot {
+  flex: none;
+  inline-size: var(--bt-roastery-shop-dot);
+  block-size: var(--bt-roastery-shop-dot);
+  border-radius: var(--bt-r-full);
+}
+
+.shop-recipe {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bt-space-5) var(--bt-space-4);
+}
+
+.shop-recipe-amount,
+.shop-recipe-detail {
+  display: grid;
+  align-content: start;
+  gap: var(--bt-space-2);
+}
+
+.shop-steps {
+  display: grid;
+  align-content: start;
+  gap: var(--bt-space-6);
+}
+
+.shop-step {
+  display: grid;
+  grid-template-columns: 2ch minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--bt-space-3);
+}
+
+.shop-faq {
+  display: grid;
+  gap: var(--bt-space-4);
+  align-items: start;
+}
+
+@container bt-page (width >= 1024px) {
+  .shop-faq {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.shop-question + .shop-question {
+  border-block-start: 1px solid var(--bt-border);
+}
+
+.shop-question-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bt-space-4);
+  inline-size: 100%;
+  padding: var(--bt-space-4) var(--bt-space-6);
+  border-radius: var(--bt-r-lg);
+  text-align: start;
+}
+
+.shop-chevron {
+  flex: none;
+  color: var(--bt-text-secondary);
+  transition: transform calc(var(--bt-dur-fast) * var(--bt-motion))
+    var(--bt-ease-standard);
+}
+
+.shop-question-button[aria-expanded="true"] .shop-chevron {
+  transform: rotate(180deg);
+}
+
+.shop-answer {
+  padding: 0 var(--bt-space-6) var(--bt-space-5);
+}
+
+.shop-letter {
+  justify-self: center;
+  inline-size: min(var(--bt-w-dialog), 100%);
+}

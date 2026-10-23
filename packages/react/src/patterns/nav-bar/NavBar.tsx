@@ -47,8 +47,18 @@ export interface NavBarProps extends Omit<
 > {
   /** The start of the bar: the product's mark and name, usually a link home. */
   readonly brand?: ReactNode;
+  /**
+   * A search after the menus, before the actions: a `CommandSearch` or a soft `SearchField`, at most 360px,
+   * narrowing before the menus fold. It stays in the bar, before the menu button, when they do.
+   */
+  readonly search?: ReactNode;
   /** The end of the bar: a `secondary` pill and a `primary` call to action with `arrow="forward"`. */
   readonly actions?: ReactNode;
+  /**
+   * Actions that stay in the bar when it folds, just before the menu button, such as a store's bag or a
+   * notification bell, as icon buttons or small pills. Unfolded, they follow `actions`.
+   */
+  readonly pinned?: ReactNode;
   /**
    * `"static"` (the default) scrolls away with the page; `"sticky"` stays pinned; `"auto-hide"` slides away
    * as the page scrolls down and comes back as it scrolls up. Pinned and scrolled, it takes the `panel`
@@ -66,6 +76,13 @@ export interface NavBarProps extends Omit<
   readonly menuLabel?: string | undefined;
   /** Names the button that closes it. Defaults to `"Close menu"`. */
   readonly closeLabel?: string | undefined;
+  /**
+   * The id of the page's main content. With it, the first thing Tab reaches is a link there, shown over the
+   * bar's start only while it has focus, so keyboard users can skip the bar and any navigation after it.
+   */
+  readonly skipTo?: string | undefined;
+  /** Names the link `skipTo` adds. Defaults to `"Skip to content"`. */
+  readonly skipLabel?: string | undefined;
   /** The menus and links: `MorphMenu.Item`s and `MorphMenu.Link`s. */
   readonly children?: ReactNode;
   /** Inline styles, which can include motion values. */
@@ -90,12 +107,19 @@ function shouldFold(row: HTMLElement, needed: RefObject<number>): boolean {
     const groups = [
       row.querySelector(':scope > [data-bt-part="nav-bar-brand"]'),
       row.querySelector(':scope > [data-bt-part="nav-bar-actions"]'),
+      row.querySelector(':scope > [data-bt-part="nav-bar-pinned"]'),
     ].filter((group) => group !== null);
+    const search = row.querySelector(
+      ':scope > [data-bt-part="nav-bar-search"]',
+    );
     const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
     needed.current =
       items +
       groups.reduce((sum, group) => sum + widthOf(group), 0) +
-      gap * groups.length;
+      gap * groups.length +
+      (search
+        ? (Number.parseFloat(getComputedStyle(search).minWidth) || 0) + gap
+        : 0);
   }
   return (
     row.clientWidth < displayBreakpoints.md || needed.current > row.clientWidth
@@ -303,10 +327,10 @@ function PhoneMenu({
                   <MorphMenu label={label} layout="stack">
                     {children}
                   </MorphMenu>
-                  {hasContent(actions) ? (
-                    <div data-bt-part="sheet-actions">{actions}</div>
-                  ) : null}
                 </div>
+                {hasContent(actions) ? (
+                  <div data-bt-part="sheet-actions">{actions}</div>
+                ) : null}
               </motion.div>
             </RadixDialog.Content>
           </Layer>
@@ -323,11 +347,12 @@ function PhoneMenu({
  * pinned and scrolled it takes the `panel` surface. It stacks at `--bt-z-sticky` whatever its `behavior`,
  * and while it can stay on screen it publishes its height as `--bt-sticky-top`; an auto-hiding bar also
  * publishes how far it has slid away as `--bt-sticky-shift`, for sticky followers such as `SubNav`. With
- * less than 640px of room, the menus and actions fold into a menu button that opens a full-height sheet.
+ * less than 640px of room, or once they don't fit, the menus and actions fold into a menu button that opens
+ * a full-height sheet; a `search` narrows first, and stays in the bar when they fold.
  *
  * @example
  * <NavBar
- *   brand={<a href="/">Card Studio</a>}
+ *   brand={<a href="/">Deckhand</a>}
  *   actions={<Button arrow="forward">Get started</Button>}
  *   behavior="sticky"
  * >
@@ -337,11 +362,15 @@ function PhoneMenu({
  */
 export function NavBar({
   brand,
+  search,
   actions,
+  pinned,
   behavior = "static",
   label = "Main",
   menuLabel = "Menu",
   closeLabel = "Close menu",
+  skipTo,
+  skipLabel = "Skip to content",
   contained = true,
   ref,
   className,
@@ -390,6 +419,11 @@ export function NavBar({
       data-bt-part="nav-bar-bar"
       data-folded={folded ? "" : undefined}
     >
+      {skipTo === undefined ? null : (
+        <a href={`#${skipTo}`} className="bt-focus" data-bt-part="nav-bar-skip">
+          {skipLabel}
+        </a>
+      )}
       {hasContent(brand) ? (
         <div data-bt-part="nav-bar-brand">{brand}</div>
       ) : null}
@@ -404,8 +438,14 @@ export function NavBar({
       >
         {children}
       </MorphMenu>
+      {hasContent(search) ? (
+        <div data-bt-part="nav-bar-search">{search}</div>
+      ) : null}
       {hasContent(actions) ? (
         <div data-bt-part="nav-bar-actions">{actions}</div>
+      ) : null}
+      {hasContent(pinned) ? (
+        <div data-bt-part="nav-bar-pinned">{pinned}</div>
       ) : null}
       <PhoneMenu
         label={label}

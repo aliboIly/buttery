@@ -28,7 +28,7 @@ export interface StatStripProps extends ComponentPropsWithRef<"div"> {
  *
  * @example
  * <StatStrip>
- *   <Stat value={1200000} suffix="+" label="cards exported" />
+ *   <Stat value={1200000} suffix="+" label="decks presented" />
  *   <Stat value={48} label="countries" />
  * </StatStrip>
  */

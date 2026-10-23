@@ -54,7 +54,10 @@ export type {
   SegmentedControlProps,
 } from "./components/segmented-control/SegmentedControl.tsx";
 export { SplitButton } from "./components/split-button/SplitButton.tsx";
-export type { SplitButtonProps } from "./components/split-button/SplitButton.tsx";
+export type {
+  SplitButtonItem,
+  SplitButtonProps,
+} from "./components/split-button/SplitButton.tsx";
 export { ValueBadge } from "./components/value-badge/ValueBadge.tsx";
 export type { ValueBadgeProps } from "./components/value-badge/ValueBadge.tsx";
 export { Slider } from "./components/slider/Slider.tsx";
@@ -249,6 +252,7 @@ export {
   DialogBody,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogMedia,
   DialogText,
   DialogTrigger,
@@ -259,6 +263,7 @@ export type {
   DialogCloseProps,
   DialogComponent,
   DialogContentProps,
+  DialogDescriptionProps,
   DialogMediaProps,
   DialogProps,
   DialogSize,
@@ -282,7 +287,7 @@ export type {
 export { Page } from "./patterns/page/Page.tsx";
 export type { PageProps } from "./patterns/page/Page.tsx";
 export { Section } from "./patterns/section/Section.tsx";
-export type { SectionProps } from "./patterns/section/Section.tsx";
+export type { SectionProps, SectionSize } from "./patterns/section/Section.tsx";
 export { Container } from "./patterns/container/Container.tsx";
 export type { ContainerProps } from "./patterns/container/Container.tsx";
 export { SplitHero } from "./patterns/split-hero/SplitHero.tsx";
@@ -374,6 +379,7 @@ export type {
 export { TabNav } from "./components/tab-nav/TabNav.tsx";
 export type {
   TabNavComponent,
+  TabNavLinkBase,
   TabNavLinkProps,
   TabNavProps,
 } from "./components/tab-nav/TabNav.tsx";
@@ -508,7 +514,10 @@ export type { BannerProps } from "./patterns/banner/Banner.tsx";
 export { RecommendationCard } from "./patterns/recommendation-card/RecommendationCard.tsx";
 export type { RecommendationCardProps } from "./patterns/recommendation-card/RecommendationCard.tsx";
 export { FeatureIntro } from "./patterns/feature-intro/FeatureIntro.tsx";
-export type { FeatureIntroProps } from "./patterns/feature-intro/FeatureIntro.tsx";
+export type {
+  FeatureBenefit,
+  FeatureIntroProps,
+} from "./patterns/feature-intro/FeatureIntro.tsx";
 export { NotificationNudge } from "./patterns/notification-nudge/NotificationNudge.tsx";
 export type { NotificationNudgeProps } from "./patterns/notification-nudge/NotificationNudge.tsx";
 export { SetupGuide } from "./patterns/setup-guide/SetupGuide.tsx";
@@ -518,11 +527,18 @@ export type {
   SetupTask,
 } from "./patterns/setup-guide/SetupGuide.tsx";
 export { ChoiceDialog } from "./patterns/choice-dialog/ChoiceDialog.tsx";
-export type { ChoiceDialogProps } from "./patterns/choice-dialog/ChoiceDialog.tsx";
+export type {
+  ChoiceDialogProps,
+  DialogChoice,
+} from "./patterns/choice-dialog/ChoiceDialog.tsx";
 export { AnnouncementDialog } from "./patterns/announcement-dialog/AnnouncementDialog.tsx";
-export type { AnnouncementDialogProps } from "./patterns/announcement-dialog/AnnouncementDialog.tsx";
+export type {
+  AnnouncementDialogProps,
+  AnnouncementSection,
+} from "./patterns/announcement-dialog/AnnouncementDialog.tsx";
 export { SettingsIndex } from "./patterns/settings-index/SettingsIndex.tsx";
 export type {
+  SettingsIndexComponent,
   SettingsIndexLinkProps,
   SettingsIndexMoreProps,
   SettingsIndexProps,
@@ -556,6 +572,7 @@ export type {
 } from "./components/preferences-matrix/PreferencesMatrix.tsx";
 export { DetailPage } from "./patterns/detail-page/DetailPage.tsx";
 export type {
+  DetailPageComponent,
   DetailPageLink,
   DetailPageLinksProps,
   DetailPageProps,
@@ -566,6 +583,7 @@ export { CatalogPage } from "./patterns/catalog-page/CatalogPage.tsx";
 export type {
   CatalogCategory,
   CatalogPageCategoriesProps,
+  CatalogPageComponent,
   CatalogPageGroupProps,
   CatalogPageItemProps,
   CatalogPageProps,
@@ -573,6 +591,7 @@ export type {
 } from "./patterns/catalog-page/CatalogPage.tsx";
 export { PlanComparison } from "./patterns/plan-comparison/PlanComparison.tsx";
 export type {
+  PlanComparisonComponent,
   PlanComparisonOptionProps,
   PlanComparisonPlan,
   PlanComparisonProps,
@@ -624,6 +643,7 @@ export type {
   SearchPage,
   SearchQuery,
   SearchSource,
+  SearchSourceBase,
   SearchToken,
 } from "./patterns/command-search/search.ts";
 export { SearchResults } from "./patterns/search-results/SearchResults.tsx";

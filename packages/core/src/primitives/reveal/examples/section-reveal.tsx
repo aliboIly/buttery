@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Reveal, Stack, Surface, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 
 /** A page section that rises into place the first time the reader reaches it. */
 export function SectionReveal(): ReactElement {
@@ -8,13 +9,19 @@ export function SectionReveal(): ReactElement {
       <Surface level="card" pad={6}>
         <Stack gap={3}>
           <Text variant="heading-2" asChild>
-            <h2>Every card, one click from done</h2>
+            <h2>Every deck, one click from presenting</h2>
           </Text>
           <Text variant="body-lg">
-            Write a title, pick a backdrop, and send the card off.
+            Write the slides, pick a theme, and present from any screen.
           </Text>
         </Stack>
       </Surface>
     </Reveal>
   );
 }
+
+export const kind: ExampleKind = "composition";
+
+export const play: ExamplePlay = async ({ see }) => {
+  await see("Every deck, one click from presenting");
+};

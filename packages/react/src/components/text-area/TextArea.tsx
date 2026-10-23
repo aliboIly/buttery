@@ -46,7 +46,7 @@ export interface TextAreaProps extends Omit<
  * animates its height.
  *
  * @example
- * <TextArea label="Note" hint="Shown under the card" value={note} onValueChange={setNote} />
+ * <TextArea label="Note" hint="Printed on the packing slip" value={note} onValueChange={setNote} />
  */
 export function TextArea({
   label,

@@ -16,4 +16,7 @@ export const meta: ComponentMeta = {
   related: ["InitialsTile", "AccountMenu"],
   a11y: "Decorative by default, since the person's name is usually written beside it; give it a label when it stands alone, and it becomes an image named by it. The picture's own alt is empty, so the name is never read twice.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "A circle of a fixed size that never grows or shrinks in a row: 20px at xs, 24px at sm (the default), 32px at md or 40px at lg. The picture covers the same circle the initials sit in, so nothing moves when it loads, and it takes no presses of its own.",
 };

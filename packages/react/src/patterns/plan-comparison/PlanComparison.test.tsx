@@ -114,7 +114,9 @@ describe("PlanComparison", () => {
       within(group).getByRole("radiogroup", { name: "Billing period" }),
     ).toBeTruthy();
     expect(
-      within(group).getByRole("button", { name: /^Volume, Up to 200 orders/ }),
+      within(group).getByRole("combobox", {
+        name: /^Volume, Up to 200 orders/,
+      }),
     ).toBeTruthy();
     expect(getComputedStyle(group).borderTopWidth).toBe("1px");
     await userEvent.click(within(group).getByRole("radio", { name: "Yearly" }));
@@ -150,7 +152,7 @@ describe("PlanComparison", () => {
     );
     expect(
       within(card("Roaster")).getByRole("heading", {
-        level: 4,
+        level: 3,
         name: "Everything in Starter, and",
       }),
     ).toBeTruthy();
@@ -159,6 +161,25 @@ describe("PlanComparison", () => {
         .getAllByRole("listitem")
         .map((item) => item.textContent),
     ).toEqual(["Wholesale accounts", "Price lists", "Roast planning"]);
+  });
+
+  it("names its plans at the level of its Other plans heading, so it can follow a page's h1", () => {
+    render(<Plans />);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Starter" }),
+    ).toBeTruthy();
+    expect(
+      within(card("Starter")).getByRole("heading", {
+        level: 3,
+        name: "Includes",
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Other plans" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Enterprise" }),
+    ).toBeTruthy();
   });
 
   it("lists other plans under a heading after the cards", () => {

@@ -45,7 +45,7 @@ async function settled(): Promise<void> {
 }
 
 function trigger(): HTMLElement {
-  return screen.getByRole("button", { name: /^Canvas shape/ });
+  return screen.getByRole("combobox", { name: /^Canvas shape/ });
 }
 
 function option(name: string): HTMLElement {
@@ -89,10 +89,12 @@ describe("Select", () => {
     expect(ref.current?.dataset["testid"]).toBe("shape");
   });
 
-  it("is a button named by its label and value that opens a listbox", async () => {
+  it("is a select-only combobox named by its label and value that opens a listbox", async () => {
     render(<Shapes />);
     await expect
-      .element(page.getByRole("button", { name: "Canvas shape, Wide · 16:9" }))
+      .element(
+        page.getByRole("combobox", { name: "Canvas shape, Wide · 16:9" }),
+      )
       .toBeInTheDocument();
     expect(trigger().getAttribute("aria-haspopup")).toBe("listbox");
     expect(trigger().getAttribute("aria-expanded")).toBe("false");
@@ -159,7 +161,7 @@ describe("Select", () => {
 
   it("keeps a typed match while more letters still fit it, and cycles on one letter typed again", async () => {
     render(<Select label="Format" options={FORMATS} defaultValue="png" />);
-    await userEvent.click(screen.getByRole("button", { name: /^Format/ }));
+    await userEvent.click(screen.getByRole("combobox", { name: /^Format/ }));
     await settled();
     await userEvent.keyboard("jp");
     expect(document.activeElement).toBe(option("JPG"));
@@ -369,7 +371,7 @@ describe("Select", () => {
         </Field>
       </Stack>,
     );
-    const box = screen.getByRole("button", { name: "Export as JPG" });
+    const box = screen.getByRole("combobox", { name: "Export as JPG" });
     expect(box.dataset["variant"]).toBe("outline");
     expect(box.getAttribute("aria-invalid")).toBe("true");
     expect(box.getAttribute("aria-describedby")).not.toBeNull();
@@ -388,6 +390,33 @@ describe("Select", () => {
       box.getBoundingClientRect().width - 1,
     );
     await userEvent.click(option("WebP"));
-    expect(screen.getByRole("button", { name: "Export as WebP" })).toBeTruthy();
+    expect(
+      screen.getByRole("combobox", { name: "Export as WebP" }),
+    ).toBeTruthy();
+  });
+
+  it("in a required Field, is a select-only combobox that says it needs an answer", async () => {
+    render(
+      <Field label="Export as" required>
+        {(control) => (
+          <Select
+            {...control}
+            label="Export as"
+            variant="outline"
+            options={FORMATS}
+          />
+        )}
+      </Field>,
+    );
+    const box = screen.getByRole("combobox", { name: "Export as Choose" });
+    expect(box.getAttribute("aria-required")).toBe("true");
+    expect(box.getAttribute("aria-haspopup")).toBe("listbox");
+    expect(box.getAttribute("aria-expanded")).toBe("false");
+    await userEvent.click(box);
+    await settled();
+    expect(box.getAttribute("aria-expanded")).toBe("true");
+    expect(box.getAttribute("aria-controls")).toBe(
+      screen.getByRole("listbox", { name: "Export as" }).id,
+    );
   });
 });

@@ -8,6 +8,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
@@ -80,20 +81,20 @@ function menu(layout: MorphMenuLayout = "bar"): void {
         >
           <MorphMenu.Column title="Make">
             <MorphMenu.Entry
-              href="#cards"
-              title="Cards"
-              caption="Titles, finishes and leans"
+              href="#slides"
+              title="Slides"
+              caption="Layouts and notes"
             />
             <MorphMenu.Entry
-              href="#backdrops"
-              title="Backdrops"
-              caption="Blends and pictures"
+              href="#themes"
+              title="Themes"
+              caption="Fonts and colors"
             />
           </MorphMenu.Column>
         </MorphMenu.Item>
         <MorphMenu.Item label="Guides" value="guides">
           <MorphMenu.Column title="Learn">
-            <MorphMenu.Entry href="#first" title="Your first card" />
+            <MorphMenu.Entry href="#first" title="Your first deck" />
           </MorphMenu.Column>
           <MorphMenu.Column title="Ideas">
             <MorphMenu.Entry href="#launch" title="Launch day" />
@@ -147,7 +148,7 @@ describe("MorphMenu", () => {
     expect(screen.getByRole("navigation", { name: "Main" })).toBeTruthy();
     await userEvent.click(trigger("Product"));
     expect(trigger("Product").getAttribute("aria-expanded")).toBe("true");
-    expect(await screen.findByRole("link", { name: /Cards/ })).toBeTruthy();
+    expect(await screen.findByRole("link", { name: /Slides/ })).toBeTruthy();
     await userEvent.keyboard("{Escape}");
     expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
     expect(document.activeElement).toBe(trigger("Product"));
@@ -158,6 +159,21 @@ describe("MorphMenu", () => {
       },
       { timeout: 3000 },
     );
+  });
+
+  it("opens a closed menu with the Down arrow, and the next Down arrow goes into it", async () => {
+    menu();
+    trigger("Guides").focus();
+    await userEvent.keyboard("{ArrowDown}");
+    expect(trigger("Guides").getAttribute("aria-expanded")).toBe("true");
+    expect(document.activeElement).toBe(trigger("Guides"));
+    await screen.findByRole("link", { name: /Your first deck/ });
+    await userEvent.keyboard("{ArrowDown}");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("link", { name: /Your first deck/ }),
+      );
+    });
   });
 
   it("opens once the pointer has rested on a trigger for 150ms", () => {
@@ -306,9 +322,9 @@ describe("MorphMenu", () => {
     onTestFinished(watchFocusHistory());
     menu();
     await userEvent.click(trigger("Product"));
-    const cards = await screen.findByRole("link", { name: /Cards/ });
+    const slides = await screen.findByRole("link", { name: /Slides/ });
     await browser.keyboard("{Shift}");
-    cards.focus();
+    slides.focus();
     const pricing = screen.getByRole("link", { name: "Pricing" });
     pointTo(trigger("Product"));
     pointTo(pricing, trigger("Product"));
@@ -317,7 +333,7 @@ describe("MorphMenu", () => {
     await wait(200);
     expect(trigger("Product").getAttribute("aria-expanded")).toBe("true");
     expect(trigger("Guides").getAttribute("aria-expanded")).toBe("false");
-    expect(document.activeElement).toBe(cards);
+    expect(document.activeElement).toBe(slides);
   });
 
   it("hands focus a click left in the menu back to its trigger when the pointer closes it", async () => {
@@ -398,6 +414,19 @@ describe("MorphMenu", () => {
     }
   });
 
+  it("lines its footer link up with the words of the entries above it", async () => {
+    menu();
+    const card = await openCard("Product");
+    const startOf = (element: Element): number => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getClientRects()[0]?.left ?? Number.NaN;
+    };
+    const entry = within(card).getByText("Slides");
+    const footer = within(card).getByRole("link", { name: "See all" });
+    expect(Math.abs(startOf(footer) - startOf(entry))).toBeLessThanOrEqual(1);
+  });
+
   it("keeps the pointer inside the menu all the way from its trigger down to the card", async () => {
     menu();
     const card = await openCard("Guides");
@@ -437,11 +466,11 @@ describe("MorphMenu", () => {
     menu();
     const user = userEvent.setup();
     await user.click(trigger("Product"));
-    await screen.findByRole("link", { name: /Cards/ });
+    await screen.findByRole("link", { name: /Slides/ });
     trigger("Product").focus();
     await user.tab();
     expect(document.activeElement).toBe(
-      screen.getByRole("link", { name: /Cards/ }),
+      screen.getByRole("link", { name: /Slides/ }),
     );
     await user.tab({ shift: true });
     expect(document.activeElement).toBe(trigger("Product"));
@@ -461,7 +490,7 @@ describe("MorphMenu", () => {
         <MorphMenu>
           <MorphMenu.Item label="Guides" value="guides">
             <MorphMenu.Column>
-              <MorphMenu.Entry href="#first" title="Your first card" />
+              <MorphMenu.Entry href="#first" title="Your first deck" />
             </MorphMenu.Column>
           </MorphMenu.Item>
         </MorphMenu>
@@ -469,12 +498,12 @@ describe("MorphMenu", () => {
       </div>,
     );
     await userEvent.click(trigger("Guides"));
-    await screen.findByRole("link", { name: /Your first card/ });
+    await screen.findByRole("link", { name: /Your first deck/ });
     trigger("Guides").focus();
     // The browser's own Tab, so its tab order (not a simulation of it) decides where focus goes.
     await browser.keyboard("{Tab}");
     expect(document.activeElement).toBe(
-      screen.getByRole("link", { name: /Your first card/ }),
+      screen.getByRole("link", { name: /Your first deck/ }),
     );
     await browser.keyboard("{Tab}");
     expect(document.activeElement).toBe(
@@ -485,7 +514,7 @@ describe("MorphMenu", () => {
   it("keeps Radix's hidden focus sentinel out of the tab order", async () => {
     menu();
     await userEvent.click(trigger("Product"));
-    await screen.findByRole("link", { name: /Cards/ });
+    await screen.findByRole("link", { name: /Slides/ });
     const sentinel = trigger("Product").nextElementSibling;
     expect(sentinel?.getAttribute("aria-hidden")).toBe("true");
     expect(sentinel?.getAttribute("tabindex")).toBe("-1");
@@ -494,9 +523,7 @@ describe("MorphMenu", () => {
   it("closes when an entry is chosen", async () => {
     menu();
     await userEvent.click(trigger("Product"));
-    await userEvent.click(
-      await screen.findByRole("link", { name: /Backdrops/ }),
-    );
+    await userEvent.click(await screen.findByRole("link", { name: /Themes/ }));
     await waitFor(() => {
       expect(trigger("Product").getAttribute("aria-expanded")).toBe("false");
     });
@@ -508,7 +535,7 @@ describe("MorphMenu", () => {
     expect(section.getAttribute("aria-expanded")).toBe("false");
     await userEvent.click(section);
     expect(section.getAttribute("aria-expanded")).toBe("true");
-    expect(screen.getByRole("link", { name: /Cards/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Slides/ })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Pricing" })).toBeTruthy();
     await userEvent.click(trigger("Guides"));
     expect(section.getAttribute("aria-expanded")).toBe("false");

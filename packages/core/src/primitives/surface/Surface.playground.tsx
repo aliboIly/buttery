@@ -1,5 +1,16 @@
 import { Grid, Stack, Surface, surfaceLevels, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "layout",
+  title: "Surface",
+  description:
+    "One of buttery's surface levels, with background, edge, shadow, radius and padding from the tokens.",
+  order: 210,
+  status: "stable",
+  since: "0.2.0",
+  home: "layout/surface-and-nesting",
+};
 
 export const demos: readonly DemoSection[] = [
   {

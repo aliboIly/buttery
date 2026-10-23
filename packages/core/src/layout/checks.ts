@@ -8,7 +8,10 @@ export type LayoutRule =
   | "viewport-fit"
   | "layering"
   | "reach"
-  | "emphasis";
+  | "emphasis"
+  | "crowding"
+  | "wrapping"
+  | "alignment";
 
 /** Every rule `expectButtery` reports. */
 export type ButteryRule = LayoutRule | "accessibility" | "stability";
@@ -147,8 +150,10 @@ export function createLayoutToolkit(): LayoutToolkit {
   const LAYER_FURNITURE = "[data-bt-layer], .bt-scrim, .bt-floating-lanes";
   const FOCUS_CONTAINERS =
     "dialog, [role=dialog], [role=alertdialog], [role=tabpanel], [role=region], [role=document], [role=group], [role=application], [role=log], [role=feed]";
+  // A header inside an article or a section heads that piece of content and scrolls with it, so only a page's
+  // own header counts, as HTML makes only that one a banner.
   const PAGE_CHROME =
-    "header, nav, [role=banner], [role=navigation], .bt-sticky";
+    "header:not(:is(article, aside, main, nav, section) header), nav, [role=banner], [role=navigation], .bt-sticky";
   let styles = new Map<Element, CSSStyleDeclaration>();
   let positions = new Map<Element, Position>();
   let inkContext: CanvasRenderingContext2D | null | undefined;
@@ -234,6 +239,17 @@ export function createLayoutToolkit(): LayoutToolkit {
     return false;
   }
 
+  /**
+   * How far a preview draws `element` from its own size: the factor a `[data-bt-preview]` around it gives,
+   * such as a docs page's scaled-down desktop example, or 1. Sizes it lays out at are measured drawn / factor.
+   */
+  function drawnScale(element: Element): number {
+    const factor = Number(
+      element.closest("[data-bt-preview]")?.getAttribute("data-bt-preview"),
+    );
+    return factor > 0 ? factor : 1;
+  }
+
   function isTooling(element: Element): boolean {
     return (
       element.closest('[data-bt-layer="dev"], [data-bt-annotations]') !== null
@@ -280,7 +296,8 @@ export function createLayoutToolkit(): LayoutToolkit {
   function lineBoxes({ node, parent }: TextRun): Box[] {
     const range = document.createRange();
     range.selectNodeContents(node);
-    const lineHeight = Number.parseFloat(styleOf(parent).lineHeight);
+    const factor = drawnScale(parent);
+    const lineHeight = Number.parseFloat(styleOf(parent).lineHeight) * factor;
     const trimmed = trimmedBoxOf(parent);
     const boxes: Box[] = [];
     for (const rect of range.getClientRects()) {
@@ -297,7 +314,7 @@ export function createLayoutToolkit(): LayoutToolkit {
         if (lastLine) {
           bottom = Math.max(
             bottom,
-            trimmed.bottom + inkDescent(node.data, parent),
+            trimmed.bottom + inkDescent(node.data, parent) * factor,
           );
         }
       }
@@ -400,6 +417,61 @@ export function createLayoutToolkit(): LayoutToolkit {
     return `${String(Math.round(value * 10) / 10)}px`;
   }
 
+  /** The element a run of text lays out in: its nearest ancestor that isn't inline. */
+  function blockOf(element: Element): Element {
+    let block = element;
+    while (isInline(block) && block.parentElement) block = block.parentElement;
+    return block;
+  }
+
+  /** How far below the top of `element`'s glyph boxes its capitals start: its font's ascent less its cap height. */
+  function capInset(element: Element): number {
+    inkContext ??= document.createElement("canvas").getContext("2d");
+    if (!inkContext) return 0;
+    const { fontStyle, fontWeight, fontSize, fontFamily } = styleOf(element);
+    inkContext.font = `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`;
+    const metrics = inkContext.measureText("H");
+    return Math.max(
+      0,
+      metrics.fontBoundingBoxAscent - metrics.actualBoundingBoxAscent,
+    );
+  }
+
+  /** A text node's glyph boxes (its font's ascent to descent), one per line fragment, kept to what shows. */
+  function inkBoxes(run: TextRun): Box[] {
+    const range = document.createRange();
+    range.selectNodeContents(run.node);
+    const boxes: Box[] = [];
+    for (const rect of range.getClientRects()) {
+      if (rect.width < 0.5 || rect.height < 0.5) continue;
+      const box = visibleBox(run.parent, toBox(rect), true);
+      if (box) boxes.push(box);
+    }
+    return boxes;
+  }
+
+  /** Whether `a` or `b` is placed out of the flow below the element holding both: a badge, an overlay, a sticky bar. */
+  function placedApart(a: Element, b: Element): boolean {
+    let common = a.parentElement;
+    while (common && !common.contains(b)) common = common.parentElement;
+    for (const start of [a, b]) {
+      for (
+        let node: Element | null = start;
+        node && node !== common;
+        node = node.parentElement
+      ) {
+        const { position } = styleOf(node);
+        if (
+          position === "absolute" ||
+          position === "fixed" ||
+          position === "sticky"
+        )
+          return true;
+      }
+    }
+    return false;
+  }
+
   function check(options: LayoutCheckOptions): LayoutViolation[] {
     styles = new Map();
     const allRules: readonly LayoutRule[] = [
@@ -412,14 +484,22 @@ export function createLayoutToolkit(): LayoutToolkit {
       "layering",
       "reach",
       "emphasis",
+      "crowding",
+      "wrapping",
+      "alignment",
     ];
     const enabled = new Set(options.rules ?? allRules);
     const { tokens } = options;
     const violations: LayoutViolation[] = [];
     const viewportWidth = html.clientWidth;
     const viewportHeight = html.clientHeight;
-    const runs =
-      enabled.has("overlap") || enabled.has("clipping") ? textRuns() : [];
+    const textRules: readonly LayoutRule[] = [
+      "overlap",
+      "clipping",
+      "crowding",
+      "wrapping",
+    ];
+    const runs = textRules.some((rule) => enabled.has(rule)) ? textRuns() : [];
 
     function report(violation: LayoutViolation): void {
       violations.push(violation);
@@ -549,6 +629,9 @@ export function createLayoutToolkit(): LayoutToolkit {
         "EMBED",
         "PICTURE",
       ]);
+      /** A box with opacity 0 draws nothing, nor does anything inside it, so it can't overflow. */
+      const transparent = (style: CSSStyleDeclaration): boolean =>
+        Number(style.opacity) === 0;
       const hiddenWithin = (node: Element, container: Element): boolean => {
         for (
           let current: Element | null = node;
@@ -560,6 +643,7 @@ export function createLayoutToolkit(): LayoutToolkit {
             style.overflowX !== "visible" ||
             style.overflowY !== "visible" ||
             style.position === "fixed" ||
+            transparent(style) ||
             current.hasAttribute("data-bt-hit") ||
             current.hasAttribute("data-bt-allow-overlap")
           ) {
@@ -597,8 +681,13 @@ export function createLayoutToolkit(): LayoutToolkit {
               continue;
             }
             const style = styleOf(child);
-            if (style.display === "none" || style.position === "fixed")
+            if (
+              style.display === "none" ||
+              style.position === "fixed" ||
+              transparent(style)
+            ) {
               continue;
+            }
             const box = child.getBoundingClientRect();
             if (box.width > 0 || box.height > 0) {
               right = Math.max(right, box.right);
@@ -842,7 +931,13 @@ export function createLayoutToolkit(): LayoutToolkit {
           });
         }
         if (element.hasAttribute("data-bt-control")) {
-          const height = element.getBoundingClientRect().height;
+          const drawn =
+            element.getBoundingClientRect().height / drawnScale(element);
+          const laidOut =
+            element instanceof HTMLElement ? element.offsetHeight : drawn;
+          // A control being pressed is drawn at 97%, so within 5% it's measured at the height it lays out at.
+          const height =
+            Math.abs(drawn - laidOut) <= laidOut * 0.05 ? laidOut : drawn;
           const allowed = tokens.heightVars
             .map((name) => Number.parseFloat(style.getPropertyValue(name)))
             .filter((value) => !Number.isNaN(value));
@@ -889,20 +984,21 @@ export function createLayoutToolkit(): LayoutToolkit {
         ) {
           continue;
         }
+        const factor = drawnScale(element);
         const rect = element.getBoundingClientRect();
-        let width = rect.width;
-        let height = rect.height;
+        let width = rect.width / factor;
+        let height = rect.height / factor;
         const hit = element.querySelector("[data-bt-hit]");
         if (hit) {
           const area = hit.getBoundingClientRect();
-          width = Math.max(width, area.width);
-          height = Math.max(height, area.height);
+          width = Math.max(width, area.width / factor);
+          height = Math.max(height, area.height / factor);
         }
         if (element instanceof HTMLInputElement && element.labels) {
           for (const label of element.labels) {
             const area = label.getBoundingClientRect();
-            width = Math.max(width, area.width);
-            height = Math.max(height, area.height);
+            width = Math.max(width, area.width / factor);
+            height = Math.max(height, area.height / factor);
           }
         }
         if (width < 23.5 || height < 23.5) {
@@ -920,12 +1016,12 @@ export function createLayoutToolkit(): LayoutToolkit {
         const isButton =
           role === "button" ||
           (element.tagName === "BUTTON" && !ITEM_ROLES.has(role ?? ""));
-        if (isButton && !hit && rect.height < 27.5) {
+        if (isButton && !hit && rect.height / factor < 27.5) {
           report({
             rule: "target-size",
             a: selectorFor(element),
-            px: Math.round(rect.height),
-            message: `standalone button is ${px(rect.height)} tall, under 28`,
+            px: Math.round(rect.height / factor),
+            message: `standalone button is ${px(rect.height / factor)} tall, under 28`,
             fix: 'Standalone buttons are at least 28 tall: use size "sm" (28) or larger. Small inline actions like chips get a [data-bt-hit] child instead.',
           });
         }
@@ -1101,6 +1197,79 @@ export function createLayoutToolkit(): LayoutToolkit {
           fix: "Use a z token, such as var(--bt-z-dropdown), or render the element in a Layer, which picks the band for you.",
         });
       }
+
+      for (const float of document.querySelectorAll("[data-bt-float]")) {
+        if (isTooling(float) || !isVisible(float)) continue;
+        const owner = float.parentElement?.closest("[data-bt]") ?? null;
+        const painted = [float, ...float.querySelectorAll("*")].filter(
+          (element) =>
+            isVisible(element) &&
+            isPainted(element) &&
+            styleOf(element).pointerEvents !== "none",
+        );
+        const covering = new Map<Element, Element>();
+        for (const surface of painted) {
+          if (
+            painted.some(
+              (other) => other !== surface && other.contains(surface),
+            )
+          )
+            continue;
+          const box = visibleBox(
+            surface,
+            toBox(surface.getBoundingClientRect()),
+          );
+          if (!box) continue;
+          const style = styleOf(surface);
+          // Hit tests miss a surface's rounded corners, so the samples stay inside them.
+          const inset = Math.max(
+            2,
+            ...[
+              style.borderTopLeftRadius,
+              style.borderTopRightRadius,
+              style.borderBottomRightRadius,
+              style.borderBottomLeftRadius,
+            ].map((radius) => Number.parseFloat(radius) || 0),
+          );
+          const left = Math.max(box.left + inset, 0);
+          const right = Math.min(box.right - inset, viewportWidth);
+          const top = Math.max(box.top + inset, 0);
+          const bottom = Math.min(box.bottom - inset, viewportHeight);
+          if (right <= left || bottom <= top) continue;
+          const step = Math.max(
+            8,
+            Math.sqrt(((right - left) * (bottom - top)) / 4000),
+          );
+          for (let y = top + step / 2; y < bottom; y += step) {
+            for (let x = left + step / 2; x < right; x += step) {
+              const hit = document.elementFromPoint(x, y);
+              if (
+                !hit ||
+                hit === html ||
+                hit === document.body ||
+                float.contains(hit) ||
+                owner?.contains(hit) === true ||
+                isTooling(hit) ||
+                layerOf(hit) !== null
+              ) {
+                continue;
+              }
+              const culprit = hit.closest("[data-bt], [data-bt-part]") ?? hit;
+              if (!covering.has(culprit)) covering.set(culprit, surface);
+            }
+          }
+        }
+        for (const [culprit, surface] of covering) {
+          const under = selectorFor(surface);
+          report({
+            rule: "layering",
+            a: selectorFor(culprit),
+            b: under,
+            message: `draws over ${under}, a floating surface that should cover it`,
+            fix: "While the surface is out, lift the component it opens from over what follows it with a z token, such as var(--bt-z-floating), as MorphMenu and NavBar do.",
+          });
+        }
+      }
     }
 
     if (enabled.has("emphasis")) {
@@ -1126,6 +1295,367 @@ export function createLayoutToolkit(): LayoutToolkit {
           a: selectorFor(region),
           message: `${String(buttons.length)} primary buttons in one region: ${names}`,
           fix: "Keep one primary button per region (a page header, a section, a dialog, a panel, a plan); make the others secondary, ghost or a link.",
+        });
+      }
+    }
+
+    if (enabled.has("crowding")) {
+      interface TextBlock {
+        box: Box;
+        capTop: number;
+      }
+      const blocks = new Map<Element, TextBlock>();
+      for (const run of runs) {
+        if (run.parent.closest("[data-bt-allow-overlap]")) continue;
+        const block = blockOf(run.parent);
+        const inset = capInset(run.parent) * drawnScale(run.parent);
+        for (const box of inkBoxes(run)) {
+          const known = blocks.get(block);
+          blocks.set(
+            block,
+            known
+              ? {
+                  box: {
+                    left: Math.min(known.box.left, box.left),
+                    top: Math.min(known.box.top, box.top),
+                    right: Math.max(known.box.right, box.right),
+                    bottom: Math.max(known.box.bottom, box.bottom),
+                  },
+                  capTop: Math.min(known.capTop, box.top + inset),
+                }
+              : { box, capTop: box.top + inset },
+          );
+        }
+      }
+      const texts = [...blocks].map(([element, { box, capTop }]) => ({
+        element,
+        box,
+        capTop,
+        layer: layerOf(element),
+      }));
+      for (const upper of texts) {
+        for (const lower of texts) {
+          if (lower === upper || lower.layer !== upper.layer) continue;
+          if (
+            upper.element.contains(lower.element) ||
+            lower.element.contains(upper.element)
+          )
+            continue;
+          if (lower.box.top <= upper.box.top) continue;
+          // From the bottom of the upper text's descenders to the top of the lower text's capitals.
+          const room =
+            (lower.capTop - upper.box.bottom) / drawnScale(upper.element);
+          if (room >= 2 || room < -12) continue;
+          const across =
+            Math.min(upper.box.right, lower.box.right) -
+            Math.max(upper.box.left, lower.box.left);
+          const narrower = Math.min(
+            upper.box.right - upper.box.left,
+            lower.box.right - lower.box.left,
+          );
+          if (across < 0.3 * narrower) continue;
+          if (placedApart(upper.element, lower.element)) continue;
+          report({
+            rule: "crowding",
+            a: selectorFor(upper.element),
+            b: selectorFor(lower.element),
+            px: Math.round((2 - room) * 10) / 10,
+            message: `text leaves ${px(room)} between its descenders and the capitals of the text under it`,
+            fix: "Put at least 8px between stacked text up to 16px, and 12px under a larger title (the Heading ↔ body relationship), or stack it with TextStack, whose gaps clear descenders.",
+          });
+        }
+      }
+    }
+
+    if (enabled.has("wrapping")) {
+      for (const run of runs) {
+        if (run.parent.closest("[data-bt-truncate]")) continue;
+        const range = document.createRange();
+        range.selectNodeContents(run.node);
+        const lines = [...range.getClientRects()].filter(
+          (rect) => rect.width > 0.5,
+        );
+        const first = lines[0];
+        if (
+          !first ||
+          lines.every((rect) => Math.abs(rect.top - first.top) <= 2)
+        )
+          continue;
+        const block = blockOf(run.parent);
+        const blockStyle = styleOf(block);
+        const room =
+          block.clientWidth -
+          Number.parseFloat(blockStyle.paddingLeft) -
+          Number.parseFloat(blockStyle.paddingRight);
+        // A word runs from space to space, as "40%" or "don't" does, and may break only after a hyphen, a dash
+        // or a slash. Text in scripts written without spaces breaks between its characters, so it's left out.
+        for (const match of run.node.data.matchAll(
+          /[^\s/\u2010-\u2014-]+[/\u2010-\u2014-]*/gu,
+        )) {
+          if (match[0].length < 2) continue;
+          if (
+            /[\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}\p{sc=Thai}]/u.test(
+              match[0],
+            )
+          )
+            continue;
+          const start = match.index;
+          range.setStart(run.node, start);
+          range.setEnd(run.node, start + match[0].length);
+          const pieces = [...range.getClientRects()].filter(
+            (rect) => rect.width > 0.5,
+          );
+          const head = pieces[0];
+          if (
+            !head ||
+            pieces.every((rect) => Math.abs(rect.top - head.top) <= 2)
+          )
+            continue;
+          const width = pieces.reduce((sum, rect) => sum + rect.width, 0);
+          // A long address or hash wider than its box has to break; a short word never does, however the
+          // box was squeezed, because a column cut down to it is what's wrong.
+          if (width > room && match[0].length > 12) continue;
+          report({
+            rule: "wrapping",
+            a: selectorFor(block),
+            px: Math.round(width),
+            message:
+              width > room
+                ? `"${match[0]}" breaks across lines in a box squeezed to ${px(room)}, narrower than the word`
+                : `"${match[0]}" breaks across lines, though at ${px(width)} it fits on one`,
+            fix: "Let text wrap between words: drop word-break: break-all and overflow-wrap: anywhere, give the column room for its longest word (a min-width, or let the table scroll sideways), or truncate it with data-bt-truncate and a title.",
+          });
+          break;
+        }
+      }
+    }
+
+    if (enabled.has("alignment")) {
+      const controls = [
+        ...document.querySelectorAll("[data-bt-control]"),
+      ].filter(
+        (element) =>
+          !isTooling(element) &&
+          isVisible(element) &&
+          visibleBox(element, toBox(element.getBoundingClientRect())) !== null,
+      );
+      const outermost = controls.filter(
+        (element) =>
+          !controls.some(
+            (other) => other !== element && other.contains(element),
+          ),
+      );
+      for (let i = 0; i < outermost.length; i += 1) {
+        const first = outermost[i];
+        if (!first) continue;
+        const a = first.getBoundingClientRect();
+        for (let j = i + 1; j < outermost.length; j += 1) {
+          const second = outermost[j];
+          if (!second || layerOf(first) !== layerOf(second)) continue;
+          const b = second.getBoundingClientRect();
+          if (Math.abs(a.height - b.height) > 2) continue;
+          const shared = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (shared < 0.3 * Math.min(a.height, b.height)) continue;
+          if (Math.min(a.right, b.right) > Math.max(a.left, b.left)) continue;
+          let common = first.parentElement;
+          while (common && !common.contains(second))
+            common = common.parentElement;
+          if (!common) continue;
+          // Fields in a row sit within two levels of it; controls deeper down belong to components of their own.
+          const levels = (control: Element): number => {
+            let count = 0;
+            for (
+              let node = control.parentElement;
+              node && node !== common;
+              node = node.parentElement
+            )
+              count += 1;
+            return count;
+          };
+          if (levels(first) > 1 || levels(second) > 1) continue;
+          const { display } = styleOf(common);
+          if (!display.includes("grid") && !display.includes("flex")) continue;
+          // Controls in two cards side by side follow their cards, which line up on their own terms.
+          const inOwnSurface = (control: Element): boolean => {
+            for (
+              let node = control.parentElement;
+              node && node !== common;
+              node = node.parentElement
+            )
+              if (node.classList.contains("bt-surface")) return true;
+            return false;
+          };
+          if (inOwnSurface(first) || inOwnSurface(second)) continue;
+          const offset = (b.top - a.top) / drawnScale(first);
+          if (Math.abs(offset) <= 1) continue;
+          report({
+            rule: "alignment",
+            a: selectorFor(first),
+            b: selectorFor(second),
+            px: Math.round(Math.abs(offset) * 10) / 10,
+            message: `two controls ${px(a.height)} tall side by side start ${px(Math.abs(offset))} apart`,
+            fix: "Line up controls that share a row: label them alike (each in a Field, or none), or align the row to its controls (align-items: end).",
+          });
+        }
+      }
+
+      // A control that shows only an icon, such as an IconButton, draws it at its center.
+      const hasVisibleText = (control: Element): boolean => {
+        const walker = document.createTreeWalker(control, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const parent = node.parentElement;
+          if (
+            node.textContent?.trim() &&
+            parent &&
+            isVisible(parent) &&
+            !isVisuallyHidden(parent)
+          )
+            return true;
+        }
+        return false;
+      };
+      for (const control of document.querySelectorAll(
+        'button, a[href], [role="button"]',
+      )) {
+        if (isTooling(control) || !isVisible(control)) continue;
+        if (hasVisibleText(control)) continue;
+        const icons = [...control.querySelectorAll("svg")].filter((icon) => {
+          const box = icon.getBoundingClientRect();
+          return box.width > 0 && box.height > 0 && isVisible(icon);
+        });
+        const [icon] = icons;
+        if (!icon || icons.length !== 1) continue;
+        const box = control.getBoundingClientRect();
+        if (box.width < 12 || box.height < 12) continue;
+        const mark = icon.getBoundingClientRect();
+        const scale = drawnScale(control);
+        const across =
+          (mark.left + mark.width / 2 - (box.left + box.width / 2)) / scale;
+        const down =
+          (mark.top + mark.height / 2 - (box.top + box.height / 2)) / scale;
+        const off = Math.max(Math.abs(across), Math.abs(down));
+        if (off <= 1) continue;
+        report({
+          rule: "alignment",
+          a: selectorFor(control),
+          px: Math.round(off * 10) / 10,
+          message: `its icon sits ${px(Math.abs(across))} across and ${px(Math.abs(down))} down from its center`,
+          fix: "Center an icon-only control's icon: keep the component's own display (IconButton is a grid with place-items: center) rather than setting another, and give the icon no margin.",
+        });
+      }
+
+      // A small icon beside words, as in a callout, a menu item or a button, sits on the middle of their first line.
+      const linesOf = (
+        node: Node,
+      ): { readonly rect: DOMRect; readonly block: Element }[] => {
+        const range = document.createRange();
+        const lines: { readonly rect: DOMRect; readonly block: Element }[] = [];
+        const texts: Text[] = [];
+        if (node instanceof Text) texts.push(node);
+        else {
+          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+          for (let text = walker.nextNode(); text; text = walker.nextNode())
+            if (text instanceof Text) texts.push(text);
+        }
+        for (const text of texts) {
+          const parent = text.parentElement;
+          if (!text.data.trim() || !parent || parent.closest("svg")) continue;
+          if (!isVisible(parent) || withinVisuallyHidden(parent)) continue;
+          const block = blockOf(parent);
+          range.selectNodeContents(text);
+          for (const rect of range.getClientRects())
+            if (rect.width > 0.5 && rect.height > 0.5)
+              lines.push({ rect, block });
+        }
+        return lines;
+      };
+      const isRow = (element: Element): boolean => {
+        const { display, flexDirection } = styleOf(element);
+        if (display.includes("grid")) return true;
+        return display.includes("flex") && flexDirection.startsWith("row");
+      };
+      const sibling = (
+        item: Element,
+        forward: boolean,
+      ): {
+        readonly node: Node;
+        readonly lines: ReturnType<typeof linesOf>;
+      } | null => {
+        for (
+          let node = forward ? item.nextSibling : item.previousSibling;
+          node;
+          node = forward ? node.nextSibling : node.previousSibling
+        ) {
+          if (node instanceof Text && !node.data.trim()) continue;
+          if (node instanceof Element && !isVisible(node)) continue;
+          const lines = linesOf(node);
+          return lines.length > 0 ? { node, lines } : null;
+        }
+        return null;
+      };
+      for (const icon of document.querySelectorAll("svg")) {
+        if (icon.parentElement?.closest("svg")) continue;
+        if (isTooling(icon) || !isVisible(icon)) continue;
+        const scale = drawnScale(icon);
+        const mark = icon.getBoundingClientRect();
+        if (mark.width / scale > 32 || mark.height / scale > 32) continue;
+        if (mark.height / scale < 8) continue;
+        let item: Element = icon;
+        let beside: ReturnType<typeof sibling> = null;
+        let leading = true;
+        for (let depth = 0; depth < 3 && item.parentElement; depth += 1) {
+          const row = item.parentElement;
+          if (isRow(row)) {
+            beside = sibling(item, true);
+            if (!beside) {
+              beside = sibling(item, false);
+              leading = false;
+            }
+            if (beside) break;
+          }
+          if (linesOf(row).length > 0 || row === document.body) break;
+          item = row;
+        }
+        if (!beside) continue;
+        const { lines, node } = beside;
+        const line = lines[0]?.rect;
+        if (!line) continue;
+        const box =
+          node instanceof Element
+            ? node.getBoundingClientRect()
+            : {
+                top: Math.min(...lines.map((entry) => entry.rect.top)),
+                bottom: Math.max(...lines.map((entry) => entry.rect.bottom)),
+              };
+        if (Math.min(box.bottom, mark.bottom) <= Math.max(box.top, mark.top))
+          continue;
+        // An icon in a box larger than a line, such as a tinted tile, lines up with its text by the tile.
+        const host = node instanceof Element ? node : item.parentElement;
+        const lineHeight =
+          (host ? Number.parseFloat(styleOf(host).lineHeight) : Number.NaN) ||
+          line.height / scale;
+        if (
+          item !== icon &&
+          item.getBoundingClientRect().height / scale >
+            Math.max(mark.height / scale, lineHeight) + 2
+        )
+          continue;
+        const center = mark.top + mark.height / 2;
+        const off = (center - (line.top + line.height / 2)) / scale;
+        if (Math.abs(off) <= 1) continue;
+        // Centered on a title and its description together, or a mark after the words centered on them all.
+        const blocks = new Set(lines.map((entry) => entry.block));
+        if (
+          (blocks.size > 1 || !leading) &&
+          Math.abs(center - (box.top + box.bottom) / 2) / scale <= 1
+        )
+          continue;
+        report({
+          rule: "alignment",
+          a: selectorFor(item),
+          px: Math.round(Math.abs(off) * 10) / 10,
+          message: `its icon sits ${px(Math.abs(off))} ${off > 0 ? "below" : "above"} the middle of the first line beside it`,
+          fix: "Center a small icon on the first line of the text beside it: center the row (align-items: center) when the text is one line, or give the icon a box as tall as that line and leave the text untrimmed (text-box: normal) so the two match.",
         });
       }
     }

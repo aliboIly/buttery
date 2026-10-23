@@ -3,19 +3,19 @@
 buttery should be **the easiest correct way to build UI** — for a developer in VS Code and for a coding agent (Claude Code, Codex, Gemini CLI, Cursor, Copilot) in a terminal. If either one has to guess, buttery failed, not them.
 
 ## Principles
-1. **Zero-config start.** One provider, two CSS imports, and it already looks and moves right.
-2. **One vocabulary.** The same prop names everywhere (`value`/`defaultValue`/`onValueChange`, `checked`/`defaultChecked`/`onCheckedChange` for something on or off, `open`/`defaultOpen`/`onOpenChange`, `size`, `variant`, `disabled`, `label`, `asChild`). No synonyms, no per-component dialects. Predictable APIs are what make agents reliable.
-3. **Wrong is a type error.** Spacing, sizes, surfaces, motion presets and variants are string/number unions of tokens, so a bad value fails `tsc` before anyone sees it.
-4. **Errors teach.** Every dev warning names the problem, the fix and a docs link, in one line:
+1. Zero-config start. One provider, two CSS imports, and it already looks and moves right.
+2. One vocabulary. The same prop names everywhere (`value`/`defaultValue`/`onValueChange`, `checked`/`defaultChecked`/`onCheckedChange` for something on or off, `open`/`defaultOpen`/`onOpenChange`, `size`, `variant`, `disabled`, `label`, `asChild`). No synonyms, no per-component dialects. Predictable APIs are what make agents reliable.
+3. Wrong is a type error. Spacing, sizes, surfaces, motion presets and variants are string/number unions of tokens, so a bad value fails `tsc` before anyone sees it.
+4. Errors teach. Every dev warning names the problem, the fix and a docs link, in one line:
    `[buttery:IconButton] needs a "label" (tooltip + screen readers). Fix: <IconButton label="Undo" …/> → docs/icon-button#label`
-5. **Machine-readable everything.** Anything a human reads in the docs, an agent can read as structured data.
-6. **Checks close the loop.** Layout/motion/a11y problems come back as JSON with a suggested fix, so an agent can fix its own work without a human pointing at screenshots.
+5. Machine-readable everything. Anything a human reads in the docs, an agent can read as structured data.
+6. Checks close the loop. Layout/motion/a11y problems come back as JSON with a suggested fix, so an agent can fix its own work without a human pointing at screenshots.
 
 ## For developers
 
 | Tool | What it does |
 |---|---|
-| `npx create-buttery my-app --template blank\|dashboard\|editor\|marketing` | New Vite + React (+ optional Tauri) app, fully wired, with agent files. `dashboard` starts from the App kit (sidebar shell, overview, a table page, settings), `editor` from the inspector shell, `marketing` from the page patterns. Each passes `buttery check` with zero edits. |
+| `npx create-buttery my-app --template blank\|dashboard\|editor\|marketing` | New Vite + React (+ optional Tauri) app, fully wired, with agent files. `dashboard` starts from the App kit (sidebar shell, overview, a table page, settings), `editor` from the inspector shell, `marketing` from the page patterns. Each passes `buttery check` with zero edits. Until it's published, `pnpm new-app my-app --template <name>` makes the same apps inside the buttery repository, from `apps/starter` (`blank`) and `apps/templates/<name>`. |
 | `npx buttery init` | Adds buttery to an existing React app: packages, provider, styles, font, lint config, `AGENTS.md` section, `CLAUDE.md` import, skill. Idempotent. |
 | `buttery add <pattern>` | Scaffolds a screen from a pattern (`app-shell`, `settings`, `onboarding`, `marketing-page`, `article`). |
 | `buttery add page table\|detail\|overview\|settings\|empty\|feature-intro` | Adds an App kit page to a dashboard app: a filtered table, a detail page with a right rail, an overview of metric cards and charts, a settings index, an empty state, a feature intro. Each passes `buttery check` with zero edits. |
@@ -48,7 +48,7 @@ Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from th
 - `llms.txt` (index with one line per doc/component) and `llms-full.txt` (everything concatenated) — in `@buttery/core` and on the docs site.
 - `manifest.json` (generated at build from types + JSDoc): every primitive/component/pattern → purpose, use when / don't use when, props (type, default, required, allowed token values), compound parts, examples, related components, a11y notes, motion class.
 - `tokens.json` — every token with its value per theme and density and what it's for.
-- `examples/` — 2–4 canonical, copy-pasteable snippets per component. Agents copy examples more reliably than they follow prose.
+- `examples/` — 2–6 canonical, copy-pasteable snippets per component. Agents copy examples more reliably than they follow prose.
 - `docs/*.md` — the specs themselves.
 
 ### 3. `@buttery/mcp` — MCP server

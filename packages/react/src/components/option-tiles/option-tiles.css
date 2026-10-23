@@ -40,6 +40,15 @@
   }
 
   .bt-option-tiles [data-bt-part="tile"]:disabled {
+    background-color: var(--bt-bg-control-subtle);
+    box-shadow: none;
+    color: var(--bt-text-disabled);
+  }
+
+  /* The text roles set their own color, so the tile's doesn't reach them. */
+  .bt-option-tiles
+    [data-bt-part="tile"]:disabled
+    :is(.bt-text[data-role="label"], [data-bt-part="description"]) {
     color: var(--bt-text-disabled);
   }
 
@@ -58,6 +67,12 @@
   .bt-option-tiles [data-state="checked"] > [data-bt-part="box"] {
     border-color: var(--bt-primary);
     background-color: var(--bt-primary);
+  }
+
+  .bt-option-tiles [data-bt-part="tile"]:disabled > [data-bt-part="box"] {
+    border-color: var(--bt-border-strong);
+    background-color: var(--bt-bg-control-subtle);
+    color: var(--bt-text-disabled);
   }
 
   .bt-option-tiles [data-bt-part="mark"] {

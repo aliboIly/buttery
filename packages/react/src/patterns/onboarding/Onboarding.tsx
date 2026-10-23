@@ -357,10 +357,10 @@ export interface OnboardingComponent {
  *
  * @example
  * <Onboarding
- *   storageKey="card-studio"
+ *   storageKey="deckhand"
  *   steps={[
- *     { title: "Start with a title", body: "Type it right on the card.", media: <TitleScene /> },
- *     { title: "Dress the card", body: "Pick a finish and a backdrop.", media: <FinishScene /> },
+ *     { title: "Start with a title", body: "Type it right on the first slide.", media: <TitleScene /> },
+ *     { title: "Pick a theme", body: "Its fonts and colors go on every slide.", media: <ThemeScene /> },
  *   ]}
  * />
  */

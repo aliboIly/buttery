@@ -2,7 +2,7 @@
 
 ## What buttery is
 
-A React design system + layout/motion framework. Its job: **anything built with it — or wrapped in it — comes out buttery** (the look in `DESIGN_SPEC.md`, the motion in `MOTION_SPEC.md`, the layout guarantees in `LAYOUT_RULES.md`) with very little effort — whether the builder is a developer or a coding agent. See `DX_AND_AI.md`.
+A React design system + layout/motion framework. Its job: anything built with it, or wrapped in it, comes out buttery (the look in `DESIGN_SPEC.md`, the motion in `MOTION_SPEC.md`, the layout guarantees in `LAYOUT_RULES.md`) with very little effort, whether a developer or a coding agent builds it. See `DX_AND_AI.md`.
 
 Targets: web apps and desktop apps (Tauri v2 wraps the same web code).
 
@@ -51,15 +51,19 @@ buttery/
 │  ├─ cli/     buttery CLI       # `npx create-buttery`, `buttery init | add | create | doctor | check`
 │  └─ mcp/     @buttery/mcp      # MCP server so any agent can query components, tokens and run layout checks
 ├─ apps/
-│  ├─ playground/                # every component × state × theme × density; demo screens; docs pages; Playwright target
-│  └─ starter/                   # template for new apps: Vite + React + Tauri v2, wired up, with agent files + skill
+│  ├─ docs/                      # the docs site: every component × state × theme × density; serves the demos; Playwright target
+│  ├─ starter/                   # the blank template for new apps: Vite + React + Tauri v2, wired up, with agent files + skill
+│  ├─ templates/                 # the dashboard, editor and marketing templates: web apps on the starter's shell, built from the patterns
+│  └─ demos/                     # roastery, roastery-shop, deckhand: each a template plus its own content, served at /demos/<name>
 ├─ scripts/
 │  ├─ check-ai-tells.mjs         # authorship checks (pnpm check + commit-msg hook)
 │  ├─ check-private-paths.mjs    # fails if reference/ or PROMPTS.md is tracked
 │  ├─ new-component.mjs          # scaffolds a component that already follows every rule
 │  ├─ component-contract.test.mjs # fails until every component folder is complete
 │  ├─ test-layout.mjs            # expectButtery across the full matrix (--reporter=json)
-│  └─ new-app.mjs                # copies apps/starter → apps/<name>
+│  ├─ demo-previews.mjs          # pictures of each demo for the docs site's demos page
+│  ├─ demo-templates.test.mjs    # each demo keeps its template's shell files
+│  └─ new-app.mjs                # copies a template (apps/starter or apps/templates/<name>) → apps/<name>
 ├─ .githooks/                    # commit-msg and pre-commit, installed by pnpm install
 └─ tooling/                      # shared tsconfig presets
 ```
@@ -81,7 +85,7 @@ Each layer only depends on the ones above it. That's what makes buttery modular 
                Menu, FloatingLanes
 4. Components  Button, IconButton, SplitButton, SegmentedControl, Slider, ValueBadge, Chip,
                SwatchGrid, ColorDot, ColorPicker, TiltPad, AnchorGrid, Select, NumberField,
-               Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti, BrandMark,
+               Tooltip, Dialog, Toaster (toast()), PageDots, ArrowLink, Stat, Confetti,
                Field, TextField, PasswordField, TextArea, Checkbox, Switch, Callout
 5. Patterns    AppShell, HeaderBar, Inspector (Section/Row/Row.Split/Footer), Stage,
                EmptyState/DropZone, FloatingToolbar, Onboarding,
@@ -129,7 +133,7 @@ The generated files are committed and Prettier skips them; a unit test fails whe
 
 ## "Make anything buttery" — four levels of effort
 
-### Level 0 — zero effort
+### Level 0: zero effort
 ```tsx
 import "@buttery/core/styles.css";
 import "@buttery/react/styles.css";
@@ -139,7 +143,7 @@ import { ButteryProvider } from "@buttery/react";
 ```
 You get: tokens, Inter, base typography, focus rings, selection color, scrollbars, motion presets with reduced-motion handling, light/dark, the floating lanes with the `Toaster` and `Confetti` hosts, the layer stack, and `LayoutGuard` in dev. (`npx buttery init` does this wiring for you.)
 
-### Level 1 — wrap anything
+### Level 1: wrap anything
 The `buttery` factory (like `motion.div`) turns any element or component into a buttery one:
 ```tsx
 import { buttery } from "@buttery/react";
@@ -156,9 +160,9 @@ Same thing without React — recipes are plain classes/attributes:
 <button class="bt-press bt-focus">…</button>
 ```
 
-### Level 2 — compose components
+### Level 2: compose components
 ```tsx
-<Inspector label="Card settings">
+<Inspector label="Slide settings">
   <Inspector.Section title="Card" resettable={changed} onReset={reset}>
     <Inspector.Row>
       <Slider label="Scale" value={scale} onValueChange={setScale} resetValue={100} format="%" />
@@ -171,8 +175,8 @@ Same thing without React — recipes are plain classes/attributes:
 ```
 A slider labels itself, with its value badge, so its row takes no `label`; a segmented control sits beside the row's label and still names itself for screen readers.
 
-### Level 3 — patterns
-`<AppShell header={…} inspector={…}>{stage}</AppShell>`, `<Page><SplitHero …/><Bento>…</Bento></Page>` — whole screens that already obey the layout rules.
+### Level 3: patterns
+`<AppShell header={…} inspector={…}>{stage}</AppShell>`, `<Page><SplitHero …/><Bento>…</Bento></Page>`: whole screens that already obey the layout rules.
 
 ## Component contract (every component, no exceptions)
 
@@ -187,7 +191,7 @@ A slider labels itself, with its value badge, so its row takes no `label`; a seg
 - Keyboard complete, screen-reader labelled, `:focus-visible` ring, works with motion disabled.
 - No outer margin. Height from tokens. Text truncation declared.
 - Every exported component and prop has a short, factual JSDoc comment (what it is, when to use it, the default). No other comments unless a non-obvious *why* needs one — see the authorship section of `AGENTS.md`.
-- Ships with: playground page (variants × states × themes × densities), 2–4 canonical examples in `examples/`, Vitest behavior tests, `expectButtery` coverage, and an entry in `manifest.json` (generated).
+- Ships with: playground page (variants × states × themes × densities), 2–6 canonical examples in `examples/`, Vitest behavior tests, `expectButtery` coverage, and an entry in `manifest.json` (generated).
 
 Each component lives in its own folder, which is what the playground, the manifest generator and the contract test read:
 
@@ -196,16 +200,16 @@ Each component lives in its own folder, which is what the playground, the manife
 | `Name.tsx` | The component, with JSDoc on the export and every prop |
 | `name.css` | Its styles in its cascade layer, component variables (`--bt-name-*`) on top |
 | `Name.test.tsx` | Behavior tests, run in Chromium and WebKit |
-| `Name.meta.ts` | What the types can't say: purpose, use and avoid lists, related components, keyboard and screen-reader behavior, motion class |
-| `Name.playground.tsx` | `export const demos`: titled demos the playground renders on the component's page |
-| `examples/*.tsx` | 2–4 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would |
+| `Name.meta.ts` | What the types can't say: purpose, use and avoid lists, related components, keyboard and screen-reader behavior, motion class, and the keyboard table, layout note and reduced-motion note its docs page shows |
+| `Name.playground.tsx` | `page`, its place on the docs site; `live`, its live demo's controls; and `demos`, the titled demos its page shows under Variants and states |
+| `examples/*.tsx` | 2–6 copy-paste examples, each one named export with a one-line JSDoc, importing from the package like an app would, with its `kind` and a `play` script |
 
-`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer` and `--package react|core`) writes that folder and wires the exports and stylesheet. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, the `bt-<name>` class behind its CSS, JSDoc on the export and on every prop, tests, demos, 2–4 examples and a filled-in manifest entry.
+`pnpm new-component <Name> --purpose "…"` (with `--kind component|pattern|primitive|layer`, `--package react|core` and `--section`, the docs section its page goes in) writes that folder, with a basic and a composition example and the page, live demo, keyboard and layout notes the docs check asks for, and wires the exports and stylesheet. The docs check passes on what it writes once `docs/DOCS_SITE.md` gives the component a home. `scripts/component-contract.test.mjs` runs in `pnpm check` and fails until the folder is complete: the `data-bt` stamp, the `bt-<name>` class behind its CSS, JSDoc on the export and on every prop, tests, demos, 2–6 examples and a filled-in manifest entry.
 
 ## Theming & extension
 
 - `createTheme({ accent, primary, neutral: "gray" | "warm" | "cool", radius: "soft" | "default" | "crisp", density, overrides })` returns `{ light, dark, shared, density }`, holding only the `--bt-*` variables that differ from the defaults; `ButteryProvider theme={…}` applies it. Dark values are derived (the accent is lightened until it clears 4.5:1 on the dark surface), and `overrides.light` / `overrides.dark` win token by token.
-- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`, default `system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion` (`user | always | never`, default `user`). The outermost provider writes `data-bt-theme`, `data-bt-density`, `data-bt-platform`, `data-bt-motion` and the theme's variables onto `<html>`, so portals and scrollbars follow; a nested provider scopes them to a `display: contents` wrapper. `useButtery()` returns the resolved values. The outermost provider also hosts the floating lanes and `Confetti`, publishes `data-bt-settled`, and shows `LayoutGuard` in Vite development builds (`layoutGuard={false}` turns it off; production builds never include it). Every provider wraps its children in Motion's `MotionConfig` (reduced motion and the default `spring.smooth` transition) and buttery's `MotionPreferenceContext`.
+- `ButteryProvider` props: `theme`, `colorScheme` (`light | dark | system`, default `system`), `density` (`comfortable | compact`), `platform` (`web | desktop`, auto-detected under Tauri — desktop uses the default cursor on controls, not the pointer hand), `reducedMotion` (`user | always | never`, default `user`). The outermost provider writes `data-bt-theme`, `data-bt-density`, `data-bt-platform`, `data-bt-motion` and the theme's variables onto `<html>`, so portals and scrollbars follow; a nested provider scopes them to a `display: contents` wrapper and takes any setting it doesn't pass from the provider around it (the defaults above apply to the outermost one). `useButtery()` returns the resolved values. The outermost provider also hosts the floating lanes, the `Toaster` (its labels from the `toaster` prop, so an app can translate them) and `Confetti`, publishes `data-bt-settled`, and shows `LayoutGuard` in Vite development builds (`layoutGuard={false}` turns it off; production builds never include it). Every provider wraps its children in Motion's `MotionConfig` (reduced motion and the default `spring.smooth` transition) and buttery's `MotionPreferenceContext`.
 - The stylesheet works without a provider: it follows the OS color scheme until `data-bt-theme` says otherwise.
 - Tailwind v4 users: `@import "@buttery/core/tailwind.css";` after `@import "tailwindcss";` maps tokens to `@theme` (e.g. `bg-surface`, `rounded-card`, `shadow-floating`, `h-control`, `ease-buttery`). It uses `@theme inline`, so the utilities read the live `--bt-*` variables and follow the theme and density. Text colors are named `fg` (`text-fg`, `text-fg-secondary`).
 - Palettes (gradient + solid presets) are data in `@buttery/core/palettes` — swap or extend per app. Colors are defined in OKLCH with gamut-mapped hex beside them, and `gradientCss(preset)` renders a gradient blended in OKLab.
@@ -225,7 +229,9 @@ Inside the monorepo:
 pnpm new-app my-app              # copies apps/starter → apps/my-app, renames, installs
 pnpm --filter my-app dev         # web
 pnpm --filter my-app tauri dev   # desktop
+pnpm new-app my-shop --template dashboard   # copies apps/templates/dashboard instead: a web app
 ```
+`--template` takes `blank` (the default), `dashboard`, `editor` or `marketing`. The three besides `blank` are web apps built from the patterns, without the starter's desktop shell.
 Outside the monorepo (after publishing): `npx create-buttery my-app`, or `npx buttery init` in an existing React app (adds packages, provider, styles, lint config, agent instructions and the skill).
 
 ## Publishing (later)

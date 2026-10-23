@@ -230,7 +230,7 @@ describe("PreferencesMatrix", () => {
     ).toBeLessThanOrEqual(0.5);
   });
 
-  it("sets a row's line 4px under its label", () => {
+  it("sets a row's line 8px under its label, clear of its descenders", () => {
     render(<Matrix />);
     const label = screen.getByText("Payouts", {
       selector: '[data-bt-part="topic-text"] > span',
@@ -238,6 +238,6 @@ describe("PreferencesMatrix", () => {
     const line = screen.getByText("When one is sent");
     expect(
       line.getBoundingClientRect().top - label.getBoundingClientRect().bottom,
-    ).toBe(4);
+    ).toBe(8);
   });
 });

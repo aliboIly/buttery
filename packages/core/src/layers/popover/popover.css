@@ -14,4 +14,13 @@
   .bt-popover[data-state="closed"] {
     pointer-events: none;
   }
+
+  .bt-popover-scrim[data-bt-part="scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bt-popover-scrim[data-state="closed"] {
+    pointer-events: none;
+  }
 }

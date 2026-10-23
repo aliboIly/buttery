@@ -1,7 +1,17 @@
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice, Inline } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Avatar } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "Avatar",
+  description:
+    "A person's round picture, or their initials when there's none or it fails to load.",
+  order: 20,
+  status: "new",
+  since: "0.8.0",
+};
 
 const PORTRAIT = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#dbe7f7"/><circle cx="20" cy="16" r="7" fill="#2862e0"/><path d="M6 40c2-9 8-13 14-13s12 4 14 13z" fill="#2862e0"/></svg>',
@@ -22,6 +32,19 @@ function Sizes({ src }: { readonly src?: string }): ReactElement {
     </Inline>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    size: { kind: "choice", options: ["xs", "sm", "md", "lg"], initial: "sm" },
+    name: { kind: "text", initial: "Mira Okafor" },
+  },
+  render: ({ size, name }) => (
+    <Avatar
+      name={String(name)}
+      size={demoChoice(size, ["sm", "xs", "md", "lg"])}
+    />
+  ),
+};
 
 export const demos: readonly DemoSection[] = [
   {

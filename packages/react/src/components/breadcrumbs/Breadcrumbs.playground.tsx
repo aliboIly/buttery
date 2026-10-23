@@ -1,4 +1,4 @@
-import type { DemoSection, DocsPage } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Breadcrumbs } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -6,9 +6,33 @@ export const page: DocsPage = {
   title: "Breadcrumbs",
   description:
     "The trail of pages above a nested page, as links above its title.",
-  order: 10,
+  order: 20,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
+};
+
+const TRAIL = [
+  { label: "Settings", href: "/settings" },
+  { label: "Plans and billing", href: "/settings/plans" },
+  { label: "Roaster plan", href: "/settings/plans/roaster" },
+  { label: "Invoices", href: "/settings/plans/roaster/invoices" },
+];
+
+export const live: LiveDemo = {
+  controls: {
+    items: { kind: "number", initial: 2, min: 1, max: 4 },
+  },
+  render: ({ items }) => <Breadcrumbs items={TRAIL.slice(0, Number(items))} />,
+  code: ({ items }) =>
+    [
+      "<Breadcrumbs",
+      "  items={[",
+      ...TRAIL.slice(0, Number(items)).map(
+        (item) => `    { label: "${item.label}", href: "${item.href}" },`,
+      ),
+      "  ]}",
+      "/>",
+    ].join("\n"),
 };
 
 export const demos: readonly DemoSection[] = [

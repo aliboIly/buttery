@@ -1,6 +1,23 @@
 import type { ReactElement } from "react";
-import { Inline, Menu, Pressable, Surface, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import {
+  demoChoice,
+  Inline,
+  Menu,
+  Pressable,
+  Surface,
+  Text,
+} from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "Menu",
+  description:
+    "A list of actions that opens from a trigger, on the floating surface in the dropdown layer.",
+  order: 80,
+  status: "stable",
+  since: "0.6.0",
+};
 
 function Trigger({ label }: { readonly label: string }): ReactElement {
   return (
@@ -14,6 +31,62 @@ function Trigger({ label }: { readonly label: string }): ReactElement {
   );
 }
 
+const ALIGNS = ["end", "start", "center"] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    align: { kind: "choice", options: ALIGNS, initial: "end" },
+    disabled: { kind: "toggle", initial: false },
+    children: { kind: "text", initial: "Manage card" },
+    open: { kind: "toggle", initial: false },
+    dot: { kind: "toggle", initial: false },
+  },
+  render: ({ align, disabled, children, open, dot }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return (
+      <Inline justify={edge}>
+        <Menu open={open === true ? true : undefined}>
+          <Surface asChild level="raised" padX={4} padY={2} radius="full">
+            <Menu.Trigger asChild disabled={disabled === true}>
+              <Pressable>
+                <Text variant="button">{String(children)}</Text>
+              </Pressable>
+            </Menu.Trigger>
+          </Surface>
+          <Menu.Content align={edge}>
+            <Menu.Item>Make default</Menu.Item>
+            <Menu.Item dot={dot === true}>Use for subscriptions</Menu.Item>
+            <Menu.Separator />
+            <Menu.Item tone="danger">Remove card</Menu.Item>
+          </Menu.Content>
+        </Menu>
+      </Inline>
+    );
+  },
+  code: ({ align, disabled, children, open, dot }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return [
+      `<Inline justify="${edge}">`,
+      `  <Menu${open === true ? " open" : ""}>`,
+      '    <Surface asChild level="raised" padX={4} padY={2} radius="full">',
+      `      <Menu.Trigger asChild${disabled === true ? " disabled" : ""}>`,
+      "        <Pressable>",
+      `          <Text variant="button">${String(children)}</Text>`,
+      "        </Pressable>",
+      "      </Menu.Trigger>",
+      "    </Surface>",
+      `    <Menu.Content align="${edge}">`,
+      "      <Menu.Item>Make default</Menu.Item>",
+      `      <Menu.Item${dot === true ? " dot" : ""}>Use for subscriptions</Menu.Item>`,
+      "      <Menu.Separator />",
+      '      <Menu.Item tone="danger">Remove card</Menu.Item>',
+      "    </Menu.Content>",
+      "  </Menu>",
+      "</Inline>",
+    ].join("\n");
+  },
+};
+
 export const demos: readonly DemoSection[] = [
   {
     title: "Actions",
@@ -22,13 +95,13 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Inline justify="end">
         <Menu>
-          <Trigger label="Card actions" />
+          <Trigger label="Manage card" />
           <Menu.Content>
-            <Menu.Item>Duplicate</Menu.Item>
-            <Menu.Item>Rename</Menu.Item>
-            <Menu.Item disabled>Move to folder</Menu.Item>
+            <Menu.Item>Make default</Menu.Item>
+            <Menu.Item>Use for subscriptions</Menu.Item>
+            <Menu.Item disabled>Update expiry date</Menu.Item>
             <Menu.Separator />
-            <Menu.Item>Delete</Menu.Item>
+            <Menu.Item>Remove card</Menu.Item>
           </Menu.Content>
         </Menu>
       </Inline>
@@ -90,7 +163,7 @@ export const demos: readonly DemoSection[] = [
             </Menu.RadioGroup>
             <Menu.Separator />
             <Menu.Group label="Show">
-              <Menu.Item>Archived cards</Menu.Item>
+              <Menu.Item>Archived orders</Menu.Item>
             </Menu.Group>
           </Menu.Content>
         </Menu>

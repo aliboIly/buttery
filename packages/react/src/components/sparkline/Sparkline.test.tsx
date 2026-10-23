@@ -1,6 +1,7 @@
 import "@buttery/core/styles.css";
 import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
+import { Inline, Text } from "@buttery/core";
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Sparkline } from "./Sparkline.tsx";
@@ -41,6 +42,23 @@ describe("Sparkline", () => {
       .getBoundingClientRect();
     expect(image.height).toBe(24);
     expect(image.width).toBe(160);
+  });
+
+  it("takes the room a label beside it in an Inline leaves, keeping the label whole", () => {
+    render(
+      <Inline gap={3} style={{ inlineSize: "200px" }}>
+        <Text>Refunds</Text>
+        <Sparkline label="Refunds" values={[3, 1, 2, 0]} />
+      </Inline>,
+    );
+    const label = screen.getByText("Refunds");
+    const image = screen.getByRole("img", { name: "Refunds" });
+    expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth);
+    expect(
+      label.getBoundingClientRect().width +
+        12 +
+        image.getBoundingClientRect().width,
+    ).toBeCloseTo(200, 0);
   });
 
   it("marks its last value at the end, inside its 4px padding", () => {

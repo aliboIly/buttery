@@ -1,6 +1,39 @@
 import { Inline, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { InfoButton } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "InfoButton",
+  description:
+    "An info button that explains a value: on hover and focus in a tooltip, and on a press or a tap in a popover that stays.",
+  order: 60,
+  status: "new",
+  since: "0.8.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    info: {
+      kind: "text",
+      initial: "Bags that left the roaster since Monday.",
+    },
+    open: { kind: "toggle", initial: false },
+    side: {
+      kind: "choice",
+      options: ["top", "right", "bottom", "left"],
+      initial: "bottom",
+    },
+  },
+  render: ({ info, open, side }) => (
+    <InfoButton
+      info={String(info)}
+      open={open === true ? true : undefined}
+      side={demoChoice(side, ["bottom", "top", "right", "left"])}
+    />
+  ),
+};
 
 export const demos: readonly DemoSection[] = [
   {

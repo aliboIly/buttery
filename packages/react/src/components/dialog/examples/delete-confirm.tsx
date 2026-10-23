@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, Dialog, toast } from "@buttery/react";
 
 /** A confirmation before something can't be undone, with the safe choice first, where focus lands. */
@@ -6,12 +7,12 @@ export function DeleteConfirm(): ReactElement {
   return (
     <Dialog>
       <Dialog.Trigger asChild>
-        <Button variant="soft">Delete card</Button>
+        <Button variant="soft">Delete price list</Button>
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Text
-          title="Delete this card?"
-          body="It stays in the trash for 30 days."
+          title="Delete the holiday price list?"
+          body="The 8 cafés on it go back to your standard prices."
         />
         <Dialog.Actions>
           <Dialog.Close asChild>
@@ -25,7 +26,7 @@ export function DeleteConfirm(): ReactElement {
               size="cta"
               shape="rounded"
               onClick={() => {
-                toast("Card deleted");
+                toast("Price list deleted");
               }}
             >
               Delete
@@ -36,3 +37,12 @@ export function DeleteConfirm(): ReactElement {
     </Dialog>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Delete price list");
+  await see("Delete the holiday price list?");
+  await press("button", "Delete");
+  await see("Price list deleted");
+};

@@ -1,9 +1,20 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { NumberField, Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/selection",
+  title: "Select",
+  description:
+    "A trigger that shows the chosen value and opens a list to pick another, with an optional footer for custom values.",
+  order: 90,
+  status: "stable",
+  since: "0.6.0",
+};
 
 type Shape = "match" | "16:9" | "4:3" | "1:1" | "3:2" | "9:16";
 
@@ -13,7 +24,7 @@ const SHAPES: readonly SelectOption<Shape>[] = [
   { value: "3:2", label: "Photo · 3:2" },
   { value: "16:9", label: "Wide · 16:9" },
   { value: "9:16", label: "Tall · 9:16" },
-  { value: "match", label: "Fit to card" },
+  { value: "match", label: "Fit to picture" },
 ];
 
 function CanvasSize(): ReactElement {
@@ -52,6 +63,50 @@ function CanvasSize(): ReactElement {
     </Inline>
   );
 }
+
+const THEMES: readonly SelectOption[] = [
+  { value: "plain", label: "Plain" },
+  { value: "paper", label: "Paper" },
+  { value: "ink", label: "Ink" },
+];
+
+export const live: LiveDemo = {
+  controls: {
+    variant: {
+      kind: "choice",
+      options: ["ghost", "outline"],
+      initial: "ghost",
+    },
+    size: { kind: "choice", options: ["md", "sm"], initial: "md" },
+    disabled: { kind: "toggle", initial: false },
+    placeholder: { kind: "text", initial: "Choose a theme" },
+  },
+  render: ({ variant, size, disabled, placeholder }) => (
+    <Select
+      label="Theme"
+      options={THEMES}
+      variant={demoChoice(variant, ["ghost", "outline"])}
+      size={demoChoice(size, ["md", "sm"])}
+      disabled={disabled === true}
+      placeholder={String(placeholder)}
+    />
+  ),
+  code: ({ variant, size, disabled, placeholder }) =>
+    [
+      "<Select",
+      '  label="Theme"',
+      "  options={[",
+      ...THEMES.map(
+        (theme) => `    { value: "${theme.value}", label: "${theme.label}" },`,
+      ),
+      "  ]}",
+      `  variant="${demoChoice(variant, ["ghost", "outline"])}"`,
+      `  size="${demoChoice(size, ["md", "sm"])}"`,
+      ...(disabled === true ? ["  disabled"] : []),
+      `  placeholder="${String(placeholder)}"`,
+      "/>",
+    ].join("\n"),
+};
 
 export const demos: readonly DemoSection[] = [
   {

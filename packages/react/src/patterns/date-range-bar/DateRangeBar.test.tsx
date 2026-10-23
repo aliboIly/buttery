@@ -25,13 +25,13 @@ describe("DateRangeBar", () => {
     render(<DateRangeBar />);
     expect(screen.getByRole("group", { name: "Period" })).toBeTruthy();
     expect(
-      screen.getByRole("button", { name: "Date range, Last 7 days" }),
+      screen.getByRole("combobox", { name: "Date range, Last 7 days" }),
     ).toBeTruthy();
     expect(
-      screen.getByRole("button", { name: "Interval, Daily" }),
+      screen.getByRole("combobox", { name: "Interval, Daily" }),
     ).toBeTruthy();
     expect(
-      screen.getByRole("button", { name: "Comparison, Previous period" }),
+      screen.getByRole("combobox", { name: "Comparison, Previous period" }),
     ).toBeTruthy();
     expect(screen.getByText("compared to").getAttribute("aria-hidden")).toBe(
       "true",
@@ -42,7 +42,7 @@ describe("DateRangeBar", () => {
     const onValueChange = vi.fn();
     render(<DateRangeBar onValueChange={onValueChange} />);
     await userEvent.click(
-      screen.getByRole("button", { name: "Date range, Last 7 days" }),
+      screen.getByRole("combobox", { name: "Date range, Last 7 days" }),
     );
     await userEvent.click(
       screen.getByRole("option", { name: "Last 3 months" }),
@@ -53,7 +53,7 @@ describe("DateRangeBar", () => {
       comparison: "previous-period",
     });
     await userEvent.click(
-      screen.getByRole("button", { name: "Comparison, Previous period" }),
+      screen.getByRole("combobox", { name: "Comparison, Previous period" }),
     );
     await userEvent.click(
       screen.getByRole("option", { name: "No comparison" }),
@@ -69,7 +69,7 @@ describe("DateRangeBar", () => {
     const onValueChange = vi.fn();
     render(<DateRangeBar onValueChange={onValueChange} />);
     await userEvent.click(
-      screen.getByRole("button", { name: "Date range, Last 7 days" }),
+      screen.getByRole("combobox", { name: "Date range, Last 7 days" }),
     );
     fireEvent.change(screen.getByLabelText("Start"), {
       target: { value: "2026-10-01" },
@@ -86,7 +86,7 @@ describe("DateRangeBar", () => {
     });
     expect(screen.getByLabelText("End").getAttribute("min")).toBe("2026-10-01");
     expect(
-      screen.getByRole("button", { name: /^Date range, Oct 1\s–\s14$/ }),
+      screen.getByRole("combobox", { name: /^Date range, Oct 1\s–\s14$/ }),
     ).toBeTruthy();
   });
 
@@ -94,7 +94,7 @@ describe("DateRangeBar", () => {
     const onValueChange = vi.fn();
     render(<DateRangeBar onValueChange={onValueChange} />);
     await userEvent.click(
-      screen.getByRole("button", { name: "Date range, Last 7 days" }),
+      screen.getByRole("combobox", { name: "Date range, Last 7 days" }),
     );
     fireEvent.change(screen.getByLabelText("Start"), {
       target: { value: "2026-10-20" },
@@ -112,7 +112,7 @@ describe("DateRangeBar", () => {
       "2026-10-20",
     );
     expect(
-      screen.getByRole("button", { name: /^Date range, Oct 1\s–\s20$/ }),
+      screen.getByRole("combobox", { name: /^Date range, Oct 1\s–\s20$/ }),
     ).toBeTruthy();
   });
 
@@ -130,7 +130,7 @@ describe("DateRangeBar", () => {
       />,
     );
     await userEvent.click(
-      screen.getByRole("button", { name: /^Date range, Oct 1\s–\s14$/ }),
+      screen.getByRole("combobox", { name: /^Date range, Oct 1\s–\s14$/ }),
     );
     fireEvent.change(screen.getByLabelText("End"), {
       target: { value: "2026-09-20" },
@@ -182,7 +182,7 @@ describe("DateRangeBar", () => {
       screen.getByRole("heading", { level: 2 }).getBoundingClientRect().height,
     ).toBe(24);
     const top = (name: RegExp): number =>
-      screen.getByRole("button", { name }).getBoundingClientRect().top;
+      screen.getByRole("combobox", { name }).getBoundingClientRect().top;
     expect(top(/^Comparison/)).toBe(top(/^Date range/));
   });
 
@@ -194,15 +194,15 @@ describe("DateRangeBar", () => {
     );
     const edge = (): number =>
       screen
-        .getByRole("button", { name: /^Date range/ })
+        .getByRole("combobox", { name: /^Date range/ })
         .getBoundingClientRect().right;
     const before = edge();
     await userEvent.click(
-      screen.getByRole("button", { name: "Interval, Daily" }),
+      screen.getByRole("combobox", { name: "Interval, Daily" }),
     );
     await userEvent.click(screen.getByRole("option", { name: "Monthly" }));
     expect(
-      screen.getByRole("button", { name: "Interval, Monthly" }),
+      screen.getByRole("combobox", { name: "Interval, Monthly" }),
     ).toBeTruthy();
     expect(edge()).toBe(before);
   });
@@ -211,7 +211,7 @@ describe("DateRangeBar", () => {
     const onValueChange = vi.fn();
     render(<DateRangeBar onValueChange={onValueChange} />);
     await userEvent.click(
-      screen.getByRole("button", { name: "Date range, Last 7 days" }),
+      screen.getByRole("combobox", { name: "Date range, Last 7 days" }),
     );
     await userEvent.click(screen.getByRole("option", { name: "Custom" }));
     const end = new Date();
@@ -236,7 +236,7 @@ describe("DateRangeBar", () => {
         }}
       />,
     );
-    const trigger = screen.getByRole("button", {
+    const trigger = screen.getByRole("combobox", {
       name: /^Date range, Dec 20, 2025\s–\sJan 5, 2026$/,
     });
     rerender(
@@ -265,7 +265,7 @@ describe("DateRangeBar", () => {
       </div>,
     );
     const top = (name: RegExp): number =>
-      screen.getByRole("button", { name }).getBoundingClientRect().top;
+      screen.getByRole("combobox", { name }).getBoundingClientRect().top;
     expect(top(/^Comparison/)).toBe(top(/^Date range/));
     rerender(
       <div style={{ inlineSize: "360px" }}>
@@ -275,10 +275,10 @@ describe("DateRangeBar", () => {
     expect(top(/^Interval/)).toBe(top(/^Date range/));
     expect(top(/^Comparison/)).toBeGreaterThan(top(/^Date range/));
     const range = screen
-      .getByRole("button", { name: /^Date range/ })
+      .getByRole("combobox", { name: /^Date range/ })
       .getBoundingClientRect();
     const interval = screen
-      .getByRole("button", { name: /^Interval/ })
+      .getByRole("combobox", { name: /^Interval/ })
       .getBoundingClientRect();
     expect(interval.left - range.right).toBeCloseTo(8, 0);
   });

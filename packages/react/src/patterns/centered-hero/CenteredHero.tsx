@@ -33,9 +33,9 @@ export interface CenteredHeroProps extends Omit<
  *
  * @example
  * <CenteredHero
- *   title="One card."
- *   titleMore="Every size it needs."
- *   visual={<Stage label="Card preview" size={{ width: 1920, height: 1080 }}>…</Stage>}
+ *   title="One deck."
+ *   titleMore="Ready for the room and the inbox."
+ *   visual={<Stage label="Slide preview" size={{ width: 1920, height: 1080 }}>…</Stage>}
  * />
  */
 export function CenteredHero({

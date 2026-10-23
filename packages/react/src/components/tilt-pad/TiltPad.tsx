@@ -51,7 +51,7 @@ export interface TiltPadProps extends Omit<
   ComponentPropsWithRef<"div">,
   "defaultValue" | "onChange" | "children"
 > {
-  /** What is tilted, such as "Lean". It names the control. */
+  /** What is tilted, such as "Tilt". It names the control. */
   readonly label: string;
   /** The tilt. Pair with `onValueChange` to control it. */
   readonly value?: TiltValue | undefined;
@@ -105,14 +105,14 @@ function clampTilt({ x, y }: TiltValue): TiltValue {
 }
 
 /**
- * A 32px pad with a knob for tilting something in 3D, such as a card. Drag the knob, or use the arrow keys
+ * A 32px pad with a knob for tilting something in 3D, such as a picture. Drag the knob, or use the arrow keys
  * (Shift for bigger steps): left and right tilt sideways, up and down tilt up and down, and Backspace,
  * Delete or Home set it level, and Page Up and Page Down take big steps. An accent arc shows on the knob's
  * edge in the direction it's tilted, stronger the further it goes. Dragging moves the knob with the
  * pointer in the same frame; other changes glide on `spring.smooth`. Pair it with a `Chip` that resets it.
  *
  * @example
- * <TiltPad label="Lean" value={tilt} onValueChange={setTilt} />
+ * <TiltPad label="Tilt" value={tilt} onValueChange={setTilt} />
  */
 export function TiltPad({
   label,

@@ -1,0 +1,194 @@
+:root {
+  --bt-docs-shell-tile: 220px;
+  --bt-docs-shell-toc: 200px;
+  --bt-docs-shell-line: 1px;
+}
+
+/* A content site sits on the surface, as Page does, so fills made for a surface, such as bg-control, show. */
+.docs-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-block-size: 100dvh;
+  container: docs-shell / inline-size;
+  background-color: var(--bt-bg-surface);
+}
+
+/*
+ * The shell's header spans the window's whole width, square, on the surface with a hairline under it,
+ * scrolled or not, and stays over whatever a demo stacks, nav bars and their menus included. Its brand lines
+ * up with the sidebar's items under it.
+ */
+.docs-top {
+  z-index: var(--bt-z-dropdown);
+  padding-inline: var(--bt-space-6);
+  border-block-end: var(--bt-docs-shell-line) solid var(--bt-border);
+  background-color: var(--bt-bg-surface);
+}
+
+.docs-top[data-scrolled] {
+  box-shadow: none;
+}
+
+/*
+ * In the bar the display settings button shows only its icon; in the phone sheet it says what it is. With
+ * its words hidden it drops the gap after its icon, which would set the icon 3px off its center.
+ */
+.docs-top .pg-display {
+  inline-size: var(--bt-h-button);
+  padding-inline: 0;
+  gap: 0;
+}
+
+.docs-top .pg-display-text {
+  display: none;
+}
+
+/*
+ * The bar's tools are icons beside the version; in the phone's menu sheet they're labelled rows instead,
+ * starting where the menus above them start, with the version under them.
+ */
+.docs-top .docs-sheet-only,
+.docs-bar-only:not(.docs-top *) {
+  display: none;
+}
+
+.docs-tool:not(.docs-top *) {
+  --bt-button-padding: var(--bt-space-4);
+
+  justify-content: flex-start;
+  border-radius: var(--bt-r-md);
+}
+
+.docs-sheet-version {
+  padding-inline: var(--bt-space-4);
+}
+
+.docs-body {
+  padding-inline: var(--bt-space-3);
+  display: grid;
+  grid-template-columns:
+    var(--bt-w-sidebar) minmax(0, 1fr)
+    var(--bt-docs-shell-toc);
+  align-items: start;
+  gap: var(--bt-space-8);
+  min-inline-size: 0;
+}
+
+.docs-toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-toc li[data-depth="3"] {
+  padding-inline-start: var(--bt-space-3);
+}
+
+/* Each heading's link is a 28px target, the sidebar items' height, in either density. */
+.docs-toc-link {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+  min-block-size: var(--bt-h-sm);
+  padding-inline-start: var(--bt-space-3);
+  color: var(--bt-text-secondary);
+  text-decoration: none;
+  box-shadow: inset var(--bt-space-0_5) 0 0 var(--bt-border);
+}
+
+.docs-toc-link:hover {
+  color: var(--bt-text);
+}
+
+/* The heading being read: its text strong, the bar beside it in the accent. */
+.docs-toc-link[aria-current="location"] {
+  color: var(--bt-text-strong);
+  box-shadow: inset var(--bt-space-0_5) 0 0 var(--bt-accent);
+}
+
+/* The display settings take an aside's width, room for every option's full label. */
+.docs-display-panel {
+  inline-size: var(--bt-w-aside);
+  max-inline-size: 100%;
+  padding: var(--bt-space-4);
+}
+
+/* A wide page brings its own containers, so it takes the whole width under the bar. */
+.docs-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
+.docs-main {
+  padding-block-start: var(--bt-space-6);
+  display: grid;
+  grid-template-columns: minmax(0, var(--bt-w-page));
+  min-inline-size: 0;
+  padding-block-end: var(--bt-space-4);
+}
+
+.pg-list {
+  padding-inline-start: var(--bt-space-5);
+}
+
+.pg-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-8);
+  container-type: inline-size;
+}
+
+.pg-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-4);
+}
+
+.pg-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, var(--bt-docs-shell-tile)), 1fr)
+  );
+  gap: var(--bt-space-4);
+}
+
+.pg-mono {
+  font-family: var(--bt-font-mono);
+  font-size: var(--bt-text-badge-size);
+  line-height: var(--bt-text-badge-line);
+  color: var(--bt-text-tertiary);
+  overflow-wrap: break-word;
+}
+
+@container docs-shell (width < 1100px) {
+  .docs-aside {
+    display: none;
+  }
+
+  .docs-body {
+    grid-template-columns: var(--bt-w-sidebar) minmax(0, 1fr);
+  }
+}
+
+@container docs-shell (width < 768px) {
+  .docs-sidebar {
+    display: none;
+  }
+
+  .docs-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (width < 640px) {
+  .pg-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* A demo's stage is the shell and column an app shell would give it, so page templates lay out by its width. */
+.pg-stage {
+  container: bt-shell bt-column / inline-size;
+}

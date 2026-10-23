@@ -18,4 +18,12 @@ export const meta: ComponentMeta = {
   related: ["SettingsPage", "SettingRow", "AppPage", "LoadingPill"],
   a11y: "A region named by its h2, its description a paragraph under it. While loading it's marked busy and its loading pill isn't read out. As a form, its content is a form element: Save is its submit button, Enter in a field saves while there's a change, and Save and Cancel stay focusable but disabled (aria-disabled) until something changes.",
   motion: "none",
+  keyboard: [
+    {
+      keys: "Enter",
+      does: "Saves, from a text field in a form section, while something has changed",
+    },
+  ],
+  layout:
+    "It fills its column. The heading's row runs the full width: the h2 truncates and shows in full on hover, the description wraps under it, and the action, or Save and Cancel, keeps its size at the row's end. The content starts 16px under the row and a loading pill takes a 64px-tall place while it loads; Save and Cancel are 28px tall, and the only hit areas are the buttons' own.",
 };

@@ -1,0 +1,144 @@
+---
+title: Installation
+description: What to install, the five commands from a clone to a running app, and what an app on buttery is made of.
+section: get-started
+order: 20
+status: beta
+since: 0.9.0
+related: [get-started/quick-start, templates/blank, get-started/desktop-apps]
+---
+
+An app on buttery starts as a copy of the starter in buttery's repository, which is public on GitHub. Until buttery is on npm, at 1.0, that's the way in: a clone, an install and one command give you an app on the web and in a desktop window, in about five minutes.
+
+## What you need
+
+<Cards columns={3}>
+<Card icon="node" title="Node 22.18 or later">
+
+Or 24.11 and later on the 24 line, or 26 and later: the `engines` range in the root `package.json`.
+
+</Card>
+<Card icon="package" title="pnpm 12">
+
+On Node 22 and 24, `corepack enable` installs the pinned 12.14.0. Node 26 has no Corepack, so run `npm install -g pnpm@12.14.0`.
+
+</Card>
+<Card icon="git" title="Git">
+
+To clone the repository. It's public, so you don't need an account or a key.
+
+</Card>
+</Cards>
+
+For the desktop app you also need Rust, through `rustup`, and on macOS the Xcode Command Line Tools (`xcode-select --install`), which Tauri v2 builds with.
+
+## Create an app
+
+<Steps>
+<Step>
+
+### Clone the repository
+
+```bash
+git clone https://github.com/aliboIly/buttery.git
+cd buttery
+```
+
+</Step>
+<Step>
+
+### Install everything
+
+```bash
+pnpm install
+```
+
+This installs every package and app in the repository and turns on its git hooks.
+
+</Step>
+<Step>
+
+### Copy the starter
+
+```bash
+pnpm new-app my-app
+```
+
+`pnpm new-app` copies `apps/starter` to `apps/my-app`, gives the copy its name and the next free port, and installs it. To start from a template instead, add its flag:
+
+<TemplateCards />
+
+</Step>
+<Step>
+
+### Start it
+
+```bash
+pnpm --filter my-app dev
+```
+
+Open the address it prints. The app already loads buttery's styles and sits in `ButteryProvider`, and in development `LayoutGuard` outlines anything that overlaps or overflows.
+
+</Step>
+<Step>
+
+### Open it as a desktop app
+
+```bash
+pnpm --filter my-app tauri dev
+```
+
+The starter is also a Tauri v2 app, so the same code opens in a window of its own. [Desktop apps](/get-started/desktop-apps) says what changes there.
+
+</Step>
+</Steps>
+
+## What's in the app
+
+An app on buttery needs two stylesheets, imported once at its entry, and `ButteryProvider` around everything. This is the starter's entry, as `pnpm new-app` copies it:
+
+<StarterEntry />
+
+`ButteryProvider` sets the color scheme, the density and the motion preference for everything inside it, and mounts the layers that menus, dialogs and toasts open into.
+
+These are the packages in the starter's `package.json`. Inside the repository, the `@buttery/*` packages come from the workspace.
+
+<DocsTable
+  columns={["Package", "Kind", "What it's for"]}
+  rows={[
+    [
+      "`@buttery/core`",
+      "Dependency",
+      "The tokens, the stylesheet with the Inter font, the layout primitives, the layers and the motion presets",
+    ],
+    [
+      "`@buttery/react`",
+      "Dependency",
+      "`ButteryProvider`, the components and the patterns, and their stylesheet",
+    ],
+    [
+      "`lucide-react`",
+      "Dependency",
+      "The icons: components take them as props, such as `iconStart={Plus}` on a `Button`, and draw some of their own with them",
+    ],
+    ["`react` and `react-dom`", "Dependency", "React 19"],
+    [
+      "`@buttery/test`",
+      "Dev tool",
+      "`expectButtery`, the layout, accessibility and stability checks for Playwright, which the starter's `e2e/layout.spec.ts` runs",
+    ],
+    [
+      "`@buttery/lint`",
+      "Dev tool",
+      "buttery's stylelint and ESLint configs; in the repository, the root `eslint.config.js` and `stylelint.config.mjs` already apply them to every app",
+    ],
+    [
+      "`vite` and `@vitejs/plugin-react`",
+      "Dev tool",
+      "The dev server and the build, with the React Compiler through `babel-plugin-react-compiler`",
+    ],
+    ["`@tauri-apps/cli`", "Dev tool", "The desktop app's build and dev window"],
+  ]}
+/>
+
+> **Server rendering.** The components render to HTML with `react-dom/server`, which this site uses to prerender every page. They use state and effects, so with React Server Components, render them from your own client components.

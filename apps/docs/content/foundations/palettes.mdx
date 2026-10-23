@@ -1,0 +1,56 @@
+---
+title: Palettes
+description: buttery's gradient and solid color presets, for backdrops, covers and anything a person picks a color for.
+section: foundations
+order: 80
+status: stable
+since: 0.2.0
+related: [components/swatch-grid, foundations/colors]
+---
+
+import { PaletteGrids } from "../../src/foundations/palettes.tsx";
+
+The palettes are 24 gradient presets and the solid colors taken from them, made to sit well together. Use them where a person picks a color, such as a card's backdrop or a workspace's cover, rather than for interface colors, which come from the [color tokens](/foundations/colors).
+
+## Use a preset
+
+Import them from `@buttery/core/palettes`. `gradientCss` turns a gradient into a CSS background, blended in OKLab at 135° unless you pass another angle:
+
+```tsx
+import type { ReactElement } from "react";
+import { gradientCss, gradients } from "@buttery/core/palettes";
+
+const LILAC = gradients.find((preset) => preset.id === "lilac");
+
+export function Cover(): ReactElement {
+  return (
+    <div
+      className="cover"
+      style={{ background: LILAC ? gradientCss(LILAC) : undefined }}
+    />
+  );
+}
+```
+
+`SwatchGrid` shows the presets as a picker.
+
+## The presets
+
+The gradients come in four rows of six. The first three share six hue families, one to a column: butter, apricot, rose, lilac, sky and mint. Every stop shifts lightness, chroma and hue a little toward its neighbor, so the blends stay soft.
+
+<DocsTable
+  columns={["Row", "Presets, by id"]}
+  rows={[
+    ["Cream pastels", "`cream`, `peach`, `blush`, `lilac`, `mist`, `mint`"],
+    ["Fresh mids", "`honey`, `apricot`, `rose`, `violet`, `sky`, `sea`"],
+    ["Deep tones", "`espresso`, `rust`, `plum`, `ink`, `navy`, `forest`"],
+    [
+      "Neutrals, from paper to graphite",
+      "`paper`, `fog`, `stone`, `sand`, `slate`, `graphite`",
+    ],
+  ]}
+/>
+
+The 18 solids are the midpoints of the cream, deep and neutral gradients, mixed in OKLab. Every preset, with its OKLCH and hex values:
+
+<PaletteGrids />

@@ -1,0 +1,242 @@
+---
+title: Forms
+description: Sign-in and sign-up forms that check as you go and sum up errors where they can be fixed.
+section: patterns
+order: 20
+status: stable
+since: 0.4.0
+exports:
+  [
+    FormFieldCaption,
+    FormFieldError,
+    useFormFieldIds,
+    AuthErrorSummary,
+    AuthProviders,
+    looksLikeEmail,
+    useAuthForm,
+  ]
+related: [components/text-field, components/password-field]
+---
+
+The form patterns are complete sign-in and sign-up forms: the fields at their large size, a full-width submit, other ways in, and errors summed up at the top with links to the fields that have them. Use them as they are for an app's account screens, and their parts as a model for any form.
+
+## How a buttery form behaves
+
+<Cards columns={2}>
+<Card icon="template" title="Labels sit above their fields">
+
+Every field is labelled above, with a hint under the label when the format matters.
+
+</Card>
+<Card icon="shield" title="A field checks itself as it's left">
+
+Fields check themselves when a person leaves them, not on every key.
+
+</Card>
+<Card icon="file" title="Errors are summed up at the top">
+
+Submitting a form with errors puts a summary at its top, says how many there are and moves focus to it. Each item links to its field, and the summary holds still until the next submit.
+
+</Card>
+<Card icon="code" title="Your server's errors show too">
+
+An error from your server, such as a wrong password, comes back from `onSubmit` as a message or a promise of one. `SignInForm` and `SignUpForm` show it over the form, the button busy until it settles. Return nothing when it worked.
+
+</Card>
+</Cards>
+
+## Parts for forms of your own
+
+The forms are built from parts you can use in a form of your own: three for each field, and four for the form around them.
+
+### Field parts
+
+`useFormFieldIds({ id, describedBy, hint, error }): FormFieldIds` makes the ids that tie a field together. `id` and `describedBy` are the control's own id and `aria-describedby`, or `undefined`, and `hint` and `error` say whether each one is showing.
+
+It returns `control`, the control's id (its own `id` when it has one), `label`, `hint`, `error`, and `describedBy`, which joins the control's own description with the hint and the error while they show.
+
+Two components draw the field with those ids:
+
+<Cards columns={2}>
+<Card icon="file" title="The label and the hint">
+
+`FormFieldCaption` takes `htmlFor`, `label`, `hint`, `hintId` and an optional `labelId`, and renders the top of every buttery field: the label and, under it, the hint, when there is one. `labelId` is for a control named through `aria-labelledby`, as the `Select` below is.
+
+</Card>
+<Card icon="shield" title="The error">
+
+`FormFieldError` takes `id`, `name`, `announce` and the error as its children, and renders the error under the control with an icon, so it doesn't rest on color alone, or nothing while there's no error. With `announce`, a new error is also read out politely with `name` in front, as in "Email: Enter an email address"; turn it off when an error summary reads the errors.
+
+</Card>
+</Cards>
+
+> **Laying out a field.** An element with the `bt-form-field` class lays out the caption, the control and the error 8px apart, as buttery's own fields are. For one control, `Field` does all of this in one component.
+
+### Form parts
+
+`useAuthForm(values, check, onSubmit, failed): AuthForm` runs a form's submit. `check(values)` returns the fields that need fixing, each a `{ field, message }` whose `field` is its control's id. The hook either shows them, with focus on the summary, or passes the values to `onSubmit` and shows the message it returns, if any.
+
+When `onSubmit` throws, the hook shows `failed` and hands the error to `reportError`, so error tracking still sees it. The `AuthForm` it returns holds:
+
+<DocsTable
+  columns={["Property", "What it is"]}
+  rows={[
+    ["`submit`", "The handler for the form's `onSubmit`"],
+    ["`errorFor(field)`", "A field's own error, if it needs fixing"],
+    [
+      "`reported`",
+      "The fields that needed fixing at the last submit, for the summary",
+    ],
+    [
+      "`failure`",
+      "The message from a submit that didn't work, for the summary",
+    ],
+    ["`pending`", "Whether `onSubmit` is running"],
+    [
+      "`problems`",
+      "The fields that need fixing now, once a submit has been tried",
+    ],
+    [
+      "`summary`",
+      "The summary's ref, which takes focus when the summary appears",
+    ],
+  ]}
+/>
+
+Three more parts finish the form:
+
+<Cards columns={3}>
+<Card icon="book" title="The error summary">
+
+`AuthErrorSummary` takes a `title` and the `form` from `useAuthForm`, and renders the summary over the form: a danger callout that's read out, with a link to each field in `form.reported` that moves focus to it.
+
+</Card>
+<Card icon="blocks" title="Other ways in">
+
+`AuthProviders` takes `or`, the word on its rule, and `providers`, and lists other ways in under the rule: a full-width soft button for each, with a generic icon, never someone's brand mark.
+
+</Card>
+<Card icon="code" title="The email check">
+
+`looksLikeEmail(value)` is the check the forms use for an email address: something, an @, then something with a dot.
+
+</Card>
+</Cards>
+
+### Putting them together
+
+Here they make a small wholesale request form. The email is a `TextField`, which puts the same parts together itself, and the delivery day is a field of your own around a `Select`, in an element with the `bt-form-field` class.
+
+```tsx title="src/WholesaleRequest.tsx"
+import { useId, useState } from "react";
+import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import {
+  AuthErrorSummary,
+  Button,
+  FormFieldCaption,
+  FormFieldError,
+  Select,
+  TextField,
+  looksLikeEmail,
+  useAuthForm,
+  useFormFieldIds,
+} from "@buttery/react";
+
+type Day = "tuesday" | "friday";
+
+const DAYS = [
+  { value: "tuesday", label: "Tuesday" },
+  { value: "friday", label: "Friday" },
+] as const;
+
+export function WholesaleRequest(): ReactElement {
+  const emailId = useId();
+  const dayId = useId();
+  const [email, setEmail] = useState("");
+  const [day, setDay] = useState<Day | undefined>(undefined);
+  const [sent, setSent] = useState("");
+  const form = useAuthForm(
+    { email: email.trim(), day },
+    (values) => [
+      ...(looksLikeEmail(values.email)
+        ? []
+        : [
+            { field: emailId, message: "Enter an email like name@example.com" },
+          ]),
+      ...(values.day === undefined
+        ? [{ field: dayId, message: "Choose a delivery day" }]
+        : []),
+    ],
+    (values) => {
+      setSent(values.email);
+      return undefined;
+    },
+    "Couldn't send the request. Try again in a moment.",
+  );
+  const dayError = form.errorFor(dayId);
+  const ids = useFormFieldIds({
+    id: dayId,
+    describedBy: undefined,
+    hint: true,
+    error: dayError !== undefined,
+  });
+  return (
+    <form noValidate onSubmit={form.submit}>
+      <Stack gap={5}>
+        <AuthErrorSummary title="Check these fields" form={form} />
+        <TextField
+          id={emailId}
+          label="Café email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onValueChange={setEmail}
+          error={form.errorFor(emailId)}
+          announceError={false}
+        />
+        <div className="bt-form-field">
+          <FormFieldCaption
+            htmlFor={ids.control}
+            labelId={ids.label}
+            label="Delivery day"
+            hint="We roast the day before."
+            hintId={ids.hint}
+          />
+          <Select<Day>
+            id={ids.control}
+            aria-labelledby={ids.label}
+            aria-describedby={ids.describedBy}
+            aria-invalid={dayError === undefined ? undefined : true}
+            label="Delivery day"
+            variant="outline"
+            placeholder="Choose a day"
+            options={DAYS}
+            value={day}
+            onValueChange={setDay}
+          />
+          <FormFieldError id={ids.error} name="Delivery day" announce={false}>
+            {dayError}
+          </FormFieldError>
+        </div>
+        <Button type="submit" variant="primary" loading={form.pending}>
+          Send request
+        </Button>
+        {sent === "" ? null : (
+          <Text variant="body-sm" tone="secondary">
+            {`We'll write to ${sent} within a day.`}
+          </Text>
+        )}
+      </Stack>
+    </form>
+  );
+}
+```
+
+## SignInForm
+
+<ComponentDocs of="SignInForm" />
+
+## SignUpForm
+
+<ComponentDocs of="SignUpForm" />

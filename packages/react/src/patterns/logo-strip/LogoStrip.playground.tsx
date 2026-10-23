@@ -1,6 +1,17 @@
 import type { ReactElement } from "react";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { LogoStrip, Page, Section } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "LogoStrip",
+  description:
+    "A row of partner or customer marks in equal cells, each fitted into a 120 by 24 box and drawn in one quiet color.",
+  order: 210,
+  status: "stable",
+  since: "0.7.0",
+  home: "patterns/marketing-page",
+};
 
 function Wordmark({
   name,
@@ -50,7 +61,7 @@ export const demos: readonly DemoSection[] = [
     render: () => (
       <Page>
         <Section size="sm">
-          <LogoStrip label="Teams that make cards with us">
+          <LogoStrip label="Teams that present with Deckhand">
             {MARKS.map(([name, shape]) => (
               <LogoStrip.Mark key={name}>
                 <Wordmark name={name} shape={shape} />

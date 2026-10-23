@@ -17,6 +17,7 @@ import {
 import { page, userEvent as browser } from "vitest/browser";
 import { Button } from "../button/Button.tsx";
 import { Dialog } from "./Dialog.tsx";
+import { DeleteFromList } from "./examples/delete-from-list.tsx";
 import type { DialogSize } from "./Dialog.tsx";
 
 beforeEach(() => {
@@ -78,6 +79,22 @@ async function openConfirm(): Promise<HTMLElement> {
 }
 
 describe("Dialog", () => {
+  it("lets onCloseAutoFocus send focus on when what opened it is gone, as the list example does", async () => {
+    render(<DeleteFromList />);
+    await userEvent.click(
+      screen.getByRole("button", { name: "Delete Harbor Fog" }),
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Delete" }),
+    );
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Delete Ironwood Night" }),
+      );
+    });
+    expect(screen.getByText("2 roasts on the shelf")).toBeTruthy();
+  });
+
   it("stamps its class and data-bt on the dialog, forwards its ref and spreads props", async () => {
     const ref = createRef<HTMLDivElement>();
     render(
@@ -347,6 +364,24 @@ describe("Dialog", () => {
     expect(window.innerWidth - box.right).toBe(16);
   });
 
+  it("stays 16px inside a short window and scrolls inside when its content is taller", async () => {
+    await page.viewport(1200, 400);
+    render(
+      <Confirm>
+        <Dialog.Text
+          title="Delivery terms"
+          body={"Every order ships the morning after it's roasted. ".repeat(40)}
+        />
+      </Confirm>,
+    );
+    const dialog = await openConfirm();
+    const box = dialog.getBoundingClientRect();
+    expect(box.top).toBe(16);
+    expect(window.innerHeight - box.bottom).toBe(16);
+    const scroll = dialog.querySelector('[data-bt-part="scroll"]');
+    expect(scroll?.scrollHeight).toBeGreaterThan(scroll?.clientHeight ?? 0);
+  });
+
   it("fills the window less 16px at size full, and fades in without growing", async () => {
     await page.viewport(1200, 800);
     render(<Confirm size="full" />);
@@ -396,6 +431,37 @@ describe("Dialog", () => {
     expect(box.right - (close.left + close.width / 2)).toBe(24);
     const title = screen.getByText("Delete this card?").getBoundingClientRect();
     expect(title.right).toBeLessThanOrEqual(close.left);
+  });
+
+  it("sets its close button on a raised disc over media, whose colors aren't the theme's, and leaves it bare otherwise", async () => {
+    const probe = document.createElement("div");
+    probe.style.backgroundColor = "var(--bt-bg-raised)";
+    document.body.append(probe);
+    const raised = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    render(
+      <Confirm>
+        <Dialog.Media aria-hidden="true">
+          <div style={{ blockSize: "120px" }} />
+        </Dialog.Media>
+        <Dialog.Text
+          title="Plans you can share"
+          body="Send a plan with a link."
+        />
+      </Confirm>,
+    );
+    await openConfirm();
+    expect(
+      getComputedStyle(screen.getByRole("button", { name: "Close" }))
+        .backgroundColor,
+    ).toBe(raised);
+    cleanup();
+    render(<Confirm />);
+    await openConfirm();
+    expect(
+      getComputedStyle(screen.getByRole("button", { name: "Close" }))
+        .backgroundColor,
+    ).toBe("rgba(0, 0, 0, 0)");
   });
 
   it("keeps a full-size dialog's long title clear of its close button once the button moves in", async () => {

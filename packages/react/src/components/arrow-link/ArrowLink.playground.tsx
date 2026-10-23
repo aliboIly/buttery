@@ -1,6 +1,37 @@
-import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice, Inline } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { ArrowLink } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "ArrowLink",
+  description:
+    "A text link with the navigation arrow, for See all, Learn more and moving through content.",
+  order: 10,
+  status: "stable",
+  since: "0.4.0",
+};
+
+export const live: LiveDemo = {
+  controls: {
+    arrow: {
+      kind: "choice",
+      options: ["forward", "back", "external"],
+      initial: "forward",
+    },
+    children: { kind: "text", initial: "See all templates" },
+  },
+  render: ({ arrow, children }) => (
+    <ArrowLink
+      href="#templates"
+      arrow={demoChoice(arrow, ["forward", "back", "external"])}
+    >
+      {String(children)}
+    </ArrowLink>
+  ),
+  code: ({ arrow, children }) =>
+    `<ArrowLink href="#templates" arrow="${demoChoice(arrow, ["forward", "back", "external"])}">${String(children)}</ArrowLink>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

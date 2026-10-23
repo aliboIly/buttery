@@ -1,8 +1,9 @@
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Sidebar } from "@buttery/react";
 import { ChartLine, Coffee, House, Receipt, Repeat, Users } from "lucide-react";
 
-/** A dashboard's navigation: top pages, Recent, a reports group and More at the end. */
+/** A dashboard's navigation: top pages, Recent, a titled section and a reports group that folds. */
 export function DashboardNav(): ReactElement {
   return (
     <Sidebar label="Main" storageKey="example-dashboard">
@@ -21,3 +22,11 @@ export function DashboardNav(): ReactElement {
     </Sidebar>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Roastery");
+  await press("button", "Reports");
+  await see("Retention");
+};

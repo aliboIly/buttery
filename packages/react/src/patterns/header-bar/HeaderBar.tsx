@@ -157,7 +157,7 @@ export interface HeaderBarComponent {
  * `dragRegion`, the desktop app's window drags from it.
  *
  * @example
- * <HeaderBar mark={<AppMark />} title="Launch card" dragRegion>
+ * <HeaderBar mark={<AppMark />} title="Quarterly review" dragRegion>
  *   <HeaderBar.Actions>
  *     <HeaderBar.Action label="Crop" onSelect={crop} />
  *     <HeaderBar.Action label="Delete" icon={Trash2} iconOnly onSelect={remove} />

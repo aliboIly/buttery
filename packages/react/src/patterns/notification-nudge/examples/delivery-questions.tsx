@@ -1,8 +1,9 @@
-import type { ReactElement } from "react";
-import { IconButton, NotificationNudge } from "@buttery/react";
 import { Bell } from "lucide-react";
+import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { IconButton, NotificationNudge } from "@buttery/react";
 
-/** A nudge on the notifications bell that opens by itself on the first visit only. */
+/** A nudge on the notifications bell that opens by itself on the first visit only, and from the bell after that. */
 export function DeliveryQuestions(): ReactElement {
   return (
     <NotificationNudge
@@ -15,3 +16,12 @@ export function DeliveryQuestions(): ReactElement {
     </NotificationNudge>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("2 customers asked about delivery");
+  await press("button", "Later");
+  await press("button", "Notifications, new");
+  await see("Reply before Tuesday's roast ships.");
+};

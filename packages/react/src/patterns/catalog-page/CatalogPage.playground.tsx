@@ -1,4 +1,9 @@
-import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DemoWidth,
+  DocsPage,
+} from "@buttery/core";
 import {
   Button,
   CatalogPage,
@@ -13,12 +18,15 @@ export const page: DocsPage = {
   title: "Catalog page",
   description:
     "A page of things to browse: filters beside a featured block and grids of cards.",
-  order: 50,
+  order: 150,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
+  home: "patterns/catalog-page",
 };
 
 export const frame: DemoFrame = "page";
+
+export const width: DemoWidth = "desktop";
 
 export const demos: readonly DemoSection[] = [
   {

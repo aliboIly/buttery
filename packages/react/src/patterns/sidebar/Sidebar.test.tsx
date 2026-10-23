@@ -157,6 +157,35 @@ describe("Sidebar", () => {
     expect(ref.current?.className).toBe("bt-sidebar custom");
   });
 
+  it("keeps the wheel in its list only while the list scrolls, so a column that scrolls it still can", async () => {
+    const list = (): HTMLElement => {
+      const element = document.querySelector<HTMLElement>(
+        '.bt-sidebar > [data-bt-part="nav"]',
+      );
+      if (!element) throw new Error("No list.");
+      return element;
+    };
+    const { unmount } = render(
+      <div style={{ blockSize: "120px" }}>
+        <Nav />
+      </div>,
+    );
+    await waitFor(() => {
+      expect(getComputedStyle(list()).overscrollBehaviorY).toBe("contain");
+    });
+    unmount();
+    render(
+      <div style={{ blockSize: "120px", overflowY: "auto" }}>
+        <div>
+          <Nav />
+        </div>
+      </div>,
+    );
+    await waitFor(() => {
+      expect(getComputedStyle(list()).overscrollBehaviorY).toBe("auto");
+    });
+  });
+
   it("is a navigation named Main whose items are 28px links, the current page marked", () => {
     render(<Nav current="/orders" />);
     const nav = screen.getByRole("navigation", { name: "Main" });

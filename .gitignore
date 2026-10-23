@@ -25,3 +25,6 @@ apps/*/src-tauri/gen/schemas/
 .env.*
 .claude/settings.local.json
 .vitest/
+
+/apps/starter/src/examples-check/
+/apps/docs/dist-server*/

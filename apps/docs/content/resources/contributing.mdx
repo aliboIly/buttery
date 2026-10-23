@@ -1,0 +1,129 @@
+---
+title: Contributing
+description: How to work on buttery itself: setting up, the commands, the rules a change follows, and how to commit it.
+section: resources
+order: 40
+status: stable
+since: 0.9.0
+related: [resources/roadmap, layout/the-layout-contract]
+---
+
+buttery is a pnpm monorepo: the packages under `packages/`, and this site, the starter, the templates and the demos under `apps/`. This page covers what a change needs before it's ready; `AGENTS.md` in the repository has the full rules, for people and coding agents alike.
+
+## Set up
+
+<Steps>
+<Step>
+
+### Clone and install
+
+```bash
+git clone https://github.com/aliboIly/buttery.git
+cd buttery
+pnpm install
+```
+
+[Installation](/get-started/installation#what-you-need) lists the Node and pnpm versions it needs.
+
+</Step>
+<Step>
+
+### Run this site
+
+```bash
+pnpm dev
+```
+
+It has a page for every component, with the examples and checks you'll change. A change to a package shows on its page as you save.
+
+</Step>
+</Steps>
+
+## Commands
+
+<DocsTable
+  columns={["Command", "What it does"]}
+  rows={[
+    ["`pnpm dev`", "Runs this site, with a page for every component"],
+    [
+      "`pnpm check`",
+      "Everything a change has to pass: the authorship and private-path checks, types, lint, formatting, unit and browser tests, the docs check and the layout checks at two widths",
+    ],
+    [
+      "`pnpm test:layout`",
+      "The layout checks across every width, theme and density, in Chromium and WebKit",
+    ],
+    [
+      "`pnpm docs:build`",
+      "This site as static files in `apps/docs/dist`, which each push to `main` deploys to GitHub Pages",
+    ],
+    [
+      "`pnpm new-component Name`",
+      "A new component folder that already follows the component contract",
+    ],
+    [
+      "`pnpm new-app name --template dashboard`",
+      "A new app copied from a template: `blank` (the starter, the default), `dashboard`, `editor` or `marketing`",
+    ],
+  ]}
+/>
+
+## The rules a change follows
+
+<Cards>
+<Card icon="palette" title="Tokens only">
+
+No raw colors, sizes, radii, shadows, durations or z-indexes outside the token source. [Colors](/foundations/colors) and the other Foundations pages list them.
+
+</Card>
+<Card icon="template" title="The layout contract">
+
+Flow layout with gaps, no outer margins, sizes from tokens and container queries. [The layout contract](/layout/the-layout-contract) has all thirteen rules.
+
+</Card>
+<Card icon="blocks" title="The component contract">
+
+`ref` as a prop, controlled and uncontrolled, one prop vocabulary, JSDoc on every export and prop, keyboard and screen reader support, and it works with motion off.
+
+</Card>
+<Card icon="code" title="The motion rules">
+
+Direct manipulation is instant, discrete changes spring and exits are faster than entrances. [Motion principles](/motion/principles) has the rest.
+
+</Card>
+</Cards>
+
+A change to a component changes its page, examples and metadata with it, and the docs check fails when they don't agree.
+
+## Commits
+
+One focused change per commit, with a conventional prefix and a subject of 72 characters at most, in the imperative:
+
+```bash
+git commit -m "feat(react): give Slider a label on top"
+git commit -m "fix(core): keep a Morph's height while its content swaps"
+```
+
+## Releasing
+
+<Steps>
+<Step>
+
+### Write its notes
+
+Add `apps/docs/content/whats-new/<version>.md` with the release's `version`, `date`, `title`, a one-sentence `summary`, the `examples` that show it, and two or three highlights. The docs check holds every field.
+
+</Step>
+<Step>
+
+### Tag it and push the tag
+
+```bash
+git tag -a v1.0.0 -m "v1.0.0: Developer and agent experience"
+git push origin v1.0.0
+```
+
+The release workflow publishes the GitHub release from the tag, with the same notes as What's new and a link to them.
+
+</Step>
+</Steps>

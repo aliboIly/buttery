@@ -23,4 +23,24 @@ export const meta: ComponentMeta = {
   ],
   a11y: "A group named by its title, which is an h3 by default. The info button is named by the explanation its tooltip shows. The chart is a slider over its points, described by the change. The footer's link is named Details for and the title; the expand button repeats it for the pointer only, so it's hidden from screen readers and Tab. While loading the card is marked busy, its skeletons are hidden and its chart's pill isn't read out, so a page of loading cards isn't announced once per card.",
   motion: "morph",
+  keyboard: [
+    {
+      keys: "Enter or Space",
+      does: "Opens what the metric means from the info button, in a popover that Tab or a press elsewhere also closes",
+    },
+    {
+      keys: "Left and Right arrows",
+      does: "Step through the chart's points, announcing each one's label, values and change",
+    },
+    { keys: "Home or End", does: "Jumps to the chart's first or last point" },
+    {
+      keys: "Escape",
+      does: "Closes the info popover, or hides the chart's tooltip",
+    },
+    { keys: "Enter", does: "Follows the Details link" },
+  ],
+  layout:
+    "It takes its container's width on a card padded 16px: the title truncates with its full text in its title, the value is title-lg in tabular figures, the change wraps under it, and the chart is 160px tall. While it loads, each part's skeleton holds that part's place, so nothing moves when the numbers arrive; the info button is 28px square.",
+  reducedMotion:
+    "Its skeletons don't shimmer, and they crossfade into the numbers in 100ms.",
 };

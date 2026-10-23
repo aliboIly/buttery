@@ -16,4 +16,9 @@ export const meta: ComponentMeta = {
   related: ["Layer", "Popover"],
   a11y: "Hidden from assistive technology (aria-hidden). The component inside the layer (a Radix Dialog, or Popover with its scrim prop) moves focus in, closes on Escape and treats a click on the scrim as a click outside.",
   motion: "presence",
+  keyboard: [],
+  layout:
+    "It covers the whole window inside its layer and draws only a fill: --bt-overlay for dim, or --bt-wash over a 10px backdrop blur (--bt-blur-scrim) for blur. The whole scrim takes presses, which reach the component it sits under as a press outside.",
+  reducedMotion:
+    "It has no motion of its own: a dialog, sheet, nav bar or popover fades it with its layer, over 100ms with reduced motion, and a popover with an instant entrance shows and drops it at once.",
 };

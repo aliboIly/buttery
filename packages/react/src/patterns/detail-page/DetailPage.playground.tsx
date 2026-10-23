@@ -1,5 +1,10 @@
 import { Text } from "@buttery/core";
-import type { DemoFrame, DemoSection, DocsPage } from "@buttery/core";
+import type {
+  DemoFrame,
+  DemoSection,
+  DemoWidth,
+  DocsPage,
+} from "@buttery/core";
 import { Breadcrumbs, Button, DetailPage } from "@buttery/react";
 
 export const page: DocsPage = {
@@ -7,12 +12,15 @@ export const page: DocsPage = {
   title: "Detail page",
   description:
     "A page about one thing: the main column and an aside with its action and links.",
-  order: 40,
+  order: 170,
   status: "new",
-  since: "0.7.0",
+  since: "0.8.0",
+  home: "patterns/detail-page",
 };
 
 export const frame: DemoFrame = "page";
+
+export const width: DemoWidth = "desktop";
 
 export const demos: readonly DemoSection[] = [
   {

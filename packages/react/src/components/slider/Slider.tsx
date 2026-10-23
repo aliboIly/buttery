@@ -41,6 +41,11 @@ export interface SliderProps extends Omit<
   readonly showRange?: boolean | undefined;
   /** Keeps the value from changing. */
   readonly disabled?: boolean | undefined;
+  /**
+   * Where the label and its value sit: `"side"` (the default), before a 160px track, as in an inspector
+   * row, or `"top"`, on a line above a track that fills the column, as a field's label sits.
+   */
+  readonly labelPosition?: "side" | "top" | undefined;
 }
 
 const DETENT_PULL = 0.02;
@@ -77,6 +82,7 @@ export function Slider({
   format,
   showRange = false,
   disabled = false,
+  labelPosition = "side",
   className,
   ...rest
 }: SliderProps): ReactElement {
@@ -86,6 +92,7 @@ export function Slider({
     defaultValue: defaultValue ?? min,
     onChange: onValueChange,
   });
+  const thumbRef = useRef<HTMLSpanElement>(null);
   const dragging = useRef(false);
   const latest = useRef(current);
   const keyCommit = useRef<number | null>(null);
@@ -116,6 +123,7 @@ export function Slider({
       className={cx("bt-slider", className)}
       data-bt="Slider"
       data-disabled={disabled ? "" : undefined}
+      data-label-position={labelPosition}
     >
       <div data-bt-part="caption">
         <Text id={labelId} truncate data-bt-part="label" onDoubleClick={reset}>
@@ -131,10 +139,24 @@ export function Slider({
         max={max}
         step={step}
         disabled={disabled}
-        onPointerDown={() => {
+        onPointerDown={(event) => {
           if (disabled) return;
           dragging.current = true;
           latest.current = current;
+          const thumb = thumbRef.current;
+          if (!thumb) return;
+          // Radix focuses the thumb only when a press changes the value.
+          thumb.focus({ preventScroll: true, focusVisible: false });
+          const { target } = event;
+          if (
+            target !== thumb &&
+            target instanceof Node &&
+            thumb.contains(target)
+          ) {
+            // Radix would take a press on the grip or hit area for one on the track; a prevented press skips its handler.
+            event.preventDefault();
+            thumb.setPointerCapture(event.pointerId);
+          }
         }}
         onLostPointerCapture={() => {
           if (disabled || !dragging.current) return;
@@ -165,6 +187,7 @@ export function Slider({
           {showRange ? <RadixSlider.Range data-bt-part="range" /> : null}
         </RadixSlider.Track>
         <RadixSlider.Thumb
+          ref={thumbRef}
           aria-labelledby={labelId}
           aria-valuetext={write(current)}
           onKeyDown={(event) => {

@@ -17,6 +17,9 @@ const GUARD_RULES: readonly LayoutRule[] = [
   "overflow",
   "scale",
   "reach",
+  "crowding",
+  "wrapping",
+  "alignment",
 ];
 const QUIET_MS = 300;
 const MAX_WAIT_MS = 1000;

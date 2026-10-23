@@ -12,7 +12,18 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "foundations",
+  title: "Scrim",
+  description:
+    "Covers the viewport behind a layer's content, dimmed for modals or blurred for menus over content.",
+  order: 140,
+  status: "stable",
+  since: "0.2.0",
+  home: "foundations/layers",
+};
 
 function DimDemo(): ReactElement {
   const [open, setOpen] = useState(false);

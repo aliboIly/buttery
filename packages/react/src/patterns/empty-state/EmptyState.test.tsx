@@ -57,6 +57,28 @@ describe("EmptyState", () => {
     expect(Math.round(secondary.left - primary.right)).toBe(8);
   });
 
+  it("balances its centered description's lines, so none is left with one word", async () => {
+    render(
+      <div style={{ inlineSize: "480px" }}>
+        <EmptyState
+          title="No orders yet"
+          description="Orders show up here once a customer checks out, or when you add one by hand."
+        />
+      </div>,
+    );
+    await document.fonts.ready;
+    const words = document.createRange();
+    words.selectNodeContents(screen.getByText(/^Orders show up here/));
+    const lines = new Map<number, number>();
+    for (const box of words.getClientRects()) {
+      const top = Math.round(box.top);
+      lines.set(top, (lines.get(top) ?? 0) + box.width);
+    }
+    const widths = [...lines.values()];
+    expect(widths).toHaveLength(2);
+    expect(Math.min(...widths)).toBeGreaterThan(Math.max(...widths) / 2);
+  });
+
   it("leaves out the actions row when there are none", () => {
     render(<EmptyState title="Nothing here yet" />);
     expect(document.querySelector('[data-bt-part="actions"]')).toBeNull();

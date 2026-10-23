@@ -27,8 +27,21 @@ function arrowState(button: HTMLElement): readonly [number, number] {
   return [scale, offset];
 }
 
-async function afterTransitions(): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 250));
+/** Waits for the button's transitions to end (not a spinner's endless turn): they start a frame after the change, later on a busy machine. */
+async function afterTransitions(button: HTMLElement): Promise<void> {
+  await new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+  await Promise.all(
+    button
+      .getAnimations({ subtree: true })
+      .filter((animation) =>
+        Number.isFinite(
+          Number(animation.effect?.getComputedTiming().endTime ?? Infinity),
+        ),
+      )
+      .map((animation) => animation.finished),
+  );
 }
 
 describe("Button", () => {
@@ -143,11 +156,11 @@ describe("Button", () => {
     const width = button.getBoundingClientRect().width;
     expect(arrowState(button)).toEqual([0, -3]);
     await userEvent.hover(button);
-    await afterTransitions();
+    await afterTransitions(button);
     expect(arrowState(button)).toEqual([1, 0]);
     expect(button.getBoundingClientRect().width).toBe(width);
     await userEvent.unhover(button);
-    await afterTransitions();
+    await afterTransitions(button);
     expect(arrowState(button)).toEqual([0, -3]);
   });
 
@@ -157,7 +170,7 @@ describe("Button", () => {
     await userEvent.keyboard("{Shift}");
     button.focus();
     expect(button.matches(":focus-visible")).toBe(true);
-    await afterTransitions();
+    await afterTransitions(button);
     expect(arrowState(button)).toEqual([1, 0]);
   });
 
@@ -213,14 +226,14 @@ describe("Button", () => {
     await user.keyboard("{Enter}");
     expect(press).not.toHaveBeenCalled();
     expect(document.activeElement).toBe(button);
-    await afterTransitions();
+    await afterTransitions(button);
     expect(getComputedStyle(button).backgroundColor).not.toBe(enabled);
     rerender(
       <Button aria-disabled loading onClick={press}>
         Back
       </Button>,
     );
-    await afterTransitions();
+    await afterTransitions(button);
     expect(getComputedStyle(button).backgroundColor).toBe(enabled);
   });
 
@@ -245,7 +258,7 @@ describe("Button", () => {
     );
     const button = screen.getByRole("button", { name: "Continue" });
     await userEvent.hover(button, { force: true });
-    await afterTransitions();
+    await afterTransitions(button);
     expect(arrowState(button)).toEqual([0, -3]);
   });
 

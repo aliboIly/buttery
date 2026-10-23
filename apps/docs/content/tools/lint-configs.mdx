@@ -1,0 +1,76 @@
+---
+title: Lint configs
+description: buttery's stylelint and ESLint configs, which fail raw values, owned positioning and other breaks from the rules.
+section: tools
+order: 30
+status: stable
+since: 0.2.0
+related: [layout/the-layout-contract, foundations/colors]
+---
+
+`@buttery/lint` holds buttery's stylelint and ESLint configs, which catch breaks from its rules while you write: a hand-written color, a `z-index` that isn't a layer, a length off the scale, a margin on a component. Add both to an app, and its own code keeps to the same rules as buttery's.
+
+## stylelint
+
+```js title="stylelint.config.mjs"
+import { butteryStylelintConfig } from "@buttery/lint/stylelint";
+
+export default butteryStylelintConfig();
+```
+
+<DocsTable
+  columns={["Rule", "What it fails"]}
+  rows={[
+    ["`buttery/no-raw-color`", "A color written by hand instead of a token"],
+    [
+      "`buttery/raw-length`",
+      "A length or a duration written by hand instead of a token",
+    ],
+    [
+      "`buttery/z-index-token`",
+      "A `z-index` that isn't one of the layer bands",
+    ],
+    ["`buttery/no-negative-margin`", "A negative margin"],
+    [
+      "`buttery/position-owned`",
+      "`position: absolute`, `fixed` or `sticky` outside the layers and a component's own parts",
+    ],
+    [
+      "`buttery/tailwind-tokens`",
+      "A Tailwind class in an `@apply` that bypasses the tokens",
+    ],
+    ["`declaration-no-important`", "`!important`"],
+    ["`declaration-property-value-disallowed-list`", "`transition: all`"],
+  ]}
+/>
+
+buttery's own rules name the token or primitive to use instead. A component may hold raw values in variables named after it, declared at the top of its own stylesheet, such as `--bt-slider-thumb: 24px` in `slider.css`.
+
+## ESLint
+
+```js title="eslint.config.js"
+import { butteryEslintConfig } from "@buttery/lint/eslint";
+
+export default [...butteryEslintConfig()];
+```
+
+<DocsTable
+  columns={["Rule", "What it fails"]}
+  rows={[
+    [
+      "`buttery/no-literal-layout-style`",
+      "Literal margins, `z-index`, positions and sizes in inline styles",
+    ],
+    [
+      "`buttery/no-raw-motion-layout`",
+      "A layout animation that skips reduced motion: `layout` or `layoutId` written on a Motion element instead of spread from `useLayoutAnimation()`",
+    ],
+    ["`buttery/tailwind-tokens`", "Tailwind classes that bypass the tokens"],
+    [
+      "`buttery/spread-rest-props`",
+      "A component that takes DOM props without passing the rest to its root element",
+    ],
+  ]}
+/>
+
+`butteryEslintConfig({ tailwind: false })` turns the Tailwind rule off, for an app whose own class names collide with Tailwind's.

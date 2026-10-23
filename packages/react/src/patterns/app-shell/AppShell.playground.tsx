@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Center, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DemoWidth, DocsPage } from "@buttery/core";
 import { gradientCss, gradients } from "@buttery/core/palettes";
 import {
   AppShell,
@@ -13,18 +13,31 @@ import {
 } from "@buttery/react";
 import { Redo2, Undo2 } from "lucide-react";
 
-const BACKDROP = gradients.find((preset) => preset.id === "mint");
+export const page: DocsPage = {
+  section: "patterns",
+  title: "AppShell",
+  description:
+    'A whole app screen: an editor (a header and a stage beside an inspector that becomes a sheet on narrow screens) or, with layout="sidebar", a dashboard (a sidebar beside a top bar and the page).',
+  order: 120,
+  status: "stable",
+  since: "0.6.0",
+  home: "patterns/app-shell",
+};
+
+export const width: DemoWidth = "desktop";
+
+const DESIGN = gradients.find((preset) => preset.id === "mint");
 
 function Editor(): ReactElement {
-  const [scale, setScale] = useState(80);
+  const [size, setSize] = useState(80);
   return (
     <div style={{ blockSize: "calc(var(--bt-bento-row) * 2)" }}>
       <AppShell
-        inspectorLabel="Card settings"
+        inspectorLabel="Gift card settings"
         header={
-          <HeaderBar title="Launch card">
+          <HeaderBar title="Gift card for Rosa">
             <HeaderBar.Actions>
-              <HeaderBar.Action label="Crop" onSelect={() => undefined} />
+              <HeaderBar.Action label="Preview" onSelect={() => undefined} />
               <HeaderBar.Action label="Duplicate" onSelect={() => undefined} />
             </HeaderBar.Actions>
             <HeaderBar.Separator />
@@ -33,23 +46,23 @@ function Editor(): ReactElement {
           </HeaderBar>
         }
         inspector={
-          <Inspector label="Card settings">
+          <Inspector label="Gift card settings">
             <Inspector.Section
-              title="Card"
-              resettable={scale !== 80}
+              title="Message"
+              resettable={size !== 80}
               onReset={() => {
-                setScale(80);
+                setSize(80);
               }}
             >
               <Inspector.Row>
                 <Slider
-                  label="Scale"
+                  label="Text size"
                   format="%"
                   min={20}
                   max={100}
                   resetValue={80}
-                  value={scale}
-                  onValueChange={setScale}
+                  value={size}
+                  onValueChange={setSize}
                 />
               </Inspector.Row>
             </Inspector.Section>
@@ -57,13 +70,13 @@ function Editor(): ReactElement {
         }
       >
         <Stage
-          label="Card preview"
+          label="Gift card preview"
           size={{ width: 1600, height: 900 }}
-          background={BACKDROP ? gradientCss(BACKDROP) : undefined}
+          background={DESIGN ? gradientCss(DESIGN) : undefined}
         >
           <Center>
-            <Text variant="title" style={{ scale: String(scale / 80) }}>
-              Launch card
+            <Text variant="title" style={{ scale: String(size / 80) }}>
+              Happy birthday, Rosa
             </Text>
           </Center>
         </Stage>

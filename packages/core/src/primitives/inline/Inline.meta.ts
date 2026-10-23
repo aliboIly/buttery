@@ -16,4 +16,7 @@ export const meta: ComponentMeta = {
   related: ["Stack", "Grid", "OverflowCluster"],
   a11y: "No role of its own; reading order follows source order, so keep the visual and DOM order the same.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "It's as wide as its parent and as tall as its tallest child, with its children in one row a gap apart, vertically centered unless align says otherwise. Children can shrink below their content's width, the row wraps only with wrap, and uniform gives every child the same width. It has no hit area of its own.",
 };

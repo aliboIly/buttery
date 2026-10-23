@@ -1,8 +1,9 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { RecommendationCard } from "@buttery/react";
 
-/** A tip whose action opens something in place, through a button rather than a link. */
+/** A tip with its own badge, whose action does its work in place through a button rather than a link. */
 export function SubscriptionDiscount(): ReactElement {
   const [started, setStarted] = useState(false);
   return (
@@ -15,8 +16,16 @@ export function SubscriptionDiscount(): ReactElement {
           setStarted(true);
         },
       }}
+      estimate="1 min"
     >
       Subscribers who start with a discount stay twice as long.
     </RecommendationCard>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await press("button", "Draft a discount");
+  await see("Discount drafted");
+};

@@ -1,7 +1,18 @@
 import { KeyRound, Mail } from "lucide-react";
 import { Surface } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { SignInForm, toast } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "SignInForm",
+  description:
+    "A sign-in form: email, password, keep me signed in, other ways to sign in, and errors summed up where they can be fixed.",
+  order: 290,
+  status: "stable",
+  since: "0.5.0",
+  home: "patterns/forms",
+};
 
 /** Waits a moment, as a server would, then lets sam@example.com in with any password over 7 characters. */
 async function signIn({
@@ -21,15 +32,15 @@ async function signIn({
 
 export const demos: readonly DemoSection[] = [
   {
-    title: "Card Studio sign-in",
+    title: "Deckhand sign-in",
     description:
       "Submit it empty to see the summary and the field errors; sam@example.com with any 8-character password signs in.",
     render: () => (
       <Surface level="card" pad={6}>
         <SignInForm
           titleAs="h2"
-          title="Sign in to Card Studio"
-          description="Pick up where you left off."
+          title="Sign in to Deckhand"
+          description="Your decks are where you left them."
           forgotPasswordHref="#/sign-in-form"
           signUpHref="#/sign-up-form"
           providers={[

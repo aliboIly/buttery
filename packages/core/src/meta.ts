@@ -38,6 +38,24 @@ export interface ComponentMeta {
   readonly a11y: string;
   /** Its motion class, from MOTION_SPEC. */
   readonly motion: MotionClass;
+  /**
+   * What each key does while it has focus, for its page's keyboard table, such as
+   * `{ keys: "Enter or Space", does: "Presses it" }`. Empty for a component that takes no keyboard input of
+   * its own; the docs check asks every component to say which.
+   */
+  readonly keyboard?: readonly KeyboardRow[] | undefined;
+  /** How it sizes itself, what it truncates and how large its hit areas are, for its page's Layout part. */
+  readonly layout?: string | undefined;
+  /** What it does with reduced motion, for its page's Motion part. Leave it out for motion `"none"`. */
+  readonly reducedMotion?: string | undefined;
+}
+
+/** One row of a component's keyboard table. */
+export interface KeyboardRow {
+  /** The keys, as a person reads them, such as `"Arrow keys"` or `"Escape"`. */
+  readonly keys: string;
+  /** What they do, as a sentence that starts with a verb, such as `"Moves to the next option"`. */
+  readonly does: string;
 }
 
 /**
@@ -47,14 +65,23 @@ export interface ComponentMeta {
 export type DemoFrame = "section" | "page";
 
 /**
+ * How wide a playground page's demos and examples lay out: at their frame's width (`"frame"`, the default) or,
+ * for a page-scale component whose layout changes at desktop widths, such as `AppShell`, at an app page's
+ * width (`"desktop"`), drawn scaled down to fit a frame from 640px wide and at the frame's own width under it.
+ */
+export type DemoWidth = "frame" | "desktop";
+
+/**
  * Where a page sits on the docs site (`docs/DOCS_SITE.md`): its section, and for a component the group
- * that says what it's for.
+ * that says what it's for. `"components"` alone is for a written page about the components as a whole,
+ * such as the overview that lists them.
  */
 export type DocsSection =
   | "get-started"
   | "foundations"
   | "layout"
   | "motion"
+  | "components"
   | "components/actions"
   | "components/inputs"
   | "components/selection"
@@ -88,17 +115,38 @@ export interface DocsPage {
   readonly status: DocsStatus;
   /** The version it arrived in, such as `"0.7.0"`. */
   readonly since: string;
+  /**
+   * For a component documented on a written page rather than a page of its own: that page's path, such as
+   * `"layout/stack-inline-and-grid"`, which shows it with `<ComponentDocs of="…" />`.
+   */
+  readonly home?: string | undefined;
 }
 
 /** What an example's play script drives it with: actions found by role and accessible name, as a person would. */
 export interface ExamplePlayContext {
   /** Presses the element with this role and name, such as `press("button", "Next")`. */
   readonly press: (role: string, name: string | RegExp) => Promise<void>;
+  /**
+   * Rests the pointer on the element with this role and name, such as `hover("button", "Export")`, which
+   * opens its tooltip once the tooltip's delay has passed.
+   */
+  readonly hover: (role: string, name: string | RegExp) => Promise<void>;
+  /**
+   * Moves keyboard focus to the element with this role and name, as Tab would, which opens its tooltip at
+   * once. It reaches a button in WebKit too, where neither a click nor Tab focuses one.
+   */
+  readonly focus: (role: string, name: string | RegExp) => Promise<void>;
   /** Types into the field with this label. */
   readonly type: (label: string | RegExp, text: string) => Promise<void>;
-  /** Presses a key on whatever has focus, such as `"ArrowRight"`. */
+  /**
+   * Presses a key on whatever has focus, such as `"ArrowRight"`, holding it down for two frames as a person
+   * does, so a radio group that moves focus a moment later still sees the key and picks the option.
+   */
   readonly key: (key: string) => Promise<void>;
-  /** Waits for this text to show, failing if it doesn't. */
+  /**
+   * Waits for this text to show where a sighted person can see it, failing if it doesn't. Text only screen
+   * readers get, such as a chart's data table, and text clipped away or transparent don't count.
+   */
   readonly see: (text: string | RegExp) => Promise<void>;
 }
 
@@ -113,6 +161,75 @@ export interface ExamplePlayContext {
  * };
  */
 export type ExamplePlay = (play: ExamplePlayContext) => Promise<void>;
+
+/**
+ * What an example shows, exported from its file as `kind`, for the kinds DOCS_SITE asks every component
+ * page to have: `"basic"`, `"controlled"` (its state kept by the example), `"variants"` (its variants and
+ * sizes), `"states"` (disabled, loading, error or empty) and `"composition"` (it in a real piece of UI).
+ */
+export type ExampleKind =
+  "basic" | "controlled" | "variants" | "states" | "composition";
+
+/** One control on a component page's live demo, for one prop. */
+export type DemoControl =
+  | {
+      /** One of a few values, such as a variant. */
+      readonly kind: "choice";
+      readonly options: readonly string[];
+      readonly initial: string;
+    }
+  | {
+      /** On or off, such as `disabled`. */
+      readonly kind: "toggle";
+      readonly initial: boolean;
+    }
+  | {
+      /** Words, such as a label. */
+      readonly kind: "text";
+      readonly initial: string;
+    }
+  | {
+      /** A number in a range. */
+      readonly kind: "number";
+      readonly initial: number;
+      readonly min: number;
+      readonly max: number;
+      readonly step?: number | undefined;
+    };
+
+/** The values a live demo's controls hold, by prop name. */
+export type DemoValues = Readonly<Record<string, string | number | boolean>>;
+
+/**
+ * A component page's live demo, exported from its `*.playground.tsx` as `live`: controls for some of its
+ * props, how to render it with their values, and, for a component JSX can't be generated for, the code that
+ * renders it so.
+ *
+ * @example
+ * export const live: LiveDemo = {
+ *   controls: {
+ *     variant: { kind: "choice", options: ["primary", "soft"], initial: "primary" },
+ *     disabled: { kind: "toggle", initial: false },
+ *     children: { kind: "text", initial: "Save" },
+ *   },
+ *   render: ({ variant, disabled, children }) => (
+ *     <Button variant={variant === "soft" ? "soft" : "primary"} disabled={disabled === true}>
+ *       {String(children)}
+ *     </Button>
+ *   ),
+ * };
+ */
+export interface LiveDemo {
+  /** The controls, by the prop each one sets; `children` sets what's between the tags. */
+  readonly controls: Readonly<Record<string, DemoControl>>;
+  /** Renders the component with the controls' values. */
+  readonly render: (values: DemoValues) => ReactElement;
+  /**
+   * The code the demo shows under "Show code". Defaults to JSX of the component with each control's value
+   * as a prop and `children` between the tags.
+   */
+  readonly code?: ((values: DemoValues) => string) | undefined;
+}
 
 /** One titled demo on a component's playground page. */
 export interface DemoSection {

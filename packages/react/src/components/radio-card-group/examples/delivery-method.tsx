@@ -1,15 +1,16 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { RadioCardGroup, TextField } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { RadioCardGroup, TextField } from "@buttery/react";
 
-/** How a café gets its order, shipping asking for an address of its own. */
+/** A wholesale order's delivery step: how a café gets its order, shipping asking for an address of its own. */
 export function DeliveryMethod(): ReactElement {
   const [method, setMethod] = useState("pickup");
   const [address, setAddress] = useState("");
   return (
-    <Stack gap={3}>
+    <Stack gap={4}>
+      <Text variant="title-sm">Delivery</Text>
       <RadioCardGroup
         label="Delivery"
         value={method}
@@ -42,6 +43,8 @@ export function DeliveryMethod(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, type, see }) => {
   await press("radio", "Ship to the café");

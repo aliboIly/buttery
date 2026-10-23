@@ -13,11 +13,13 @@ export interface PageProps extends ComponentPropsWithRef<"div"> {
  * of headline as it passes 640 and 1024px), so a page reads the same in a window and in a panel.
  *
  * @example
- * <Page asChild>
- *   <main>
- *     <SplitHero title="Cards that look finished." visual={<Preview />} />
+ * <Page>
+ *   <NavBar skipTo="main" brand={<Brand />}>…</NavBar>
+ *   <main id="main">
+ *     <SplitHero title="Decks that look designed." visual={<Preview />} />
  *     <Section title="Everything in one place">…</Section>
  *   </main>
+ *   <Footer brand={<Brand />}>…</Footer>
  * </Page>
  */
 export function Page({

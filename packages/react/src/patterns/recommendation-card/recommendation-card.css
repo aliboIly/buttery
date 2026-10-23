@@ -25,6 +25,14 @@
     min-block-size: var(--bt-h-sm);
   }
 
+  /* Text under a title larger than 16px starts 12px down, further than a wrapped title's own lines are apart. */
+  .bt-recommendation-card [data-bt-part="recommendation-card-text"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+  }
+
   .bt-recommendation-card [data-bt-part="recommendation-card-foot"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

@@ -1,5 +1,5 @@
 import { Inline, Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { Button, TagChip } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -34,6 +34,8 @@ export function AddOnTags(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("Free trial");

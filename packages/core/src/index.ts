@@ -34,12 +34,12 @@ export type {
   ControllableStateSetter,
 } from "./hooks/use-controllable-state.ts";
 export {
-  FloatingLaneItem,
+  FloatingLanesItem,
   FloatingLanes,
   useFloatingObstacle,
 } from "./layers/floating-lanes/FloatingLanes.tsx";
 export type {
-  FloatingLaneItemProps,
+  FloatingLanesItemProps,
   FloatingLanesComponent,
 } from "./layers/floating-lanes/FloatingLanes.tsx";
 export {
@@ -115,16 +115,23 @@ export type {
 } from "./layers/sticky/sticky-stack.ts";
 export { LayoutGuard } from "./layout/LayoutGuard.tsx";
 export type { LayoutGuardProps } from "./layout/LayoutGuard.tsx";
+export { demoChoice } from "./meta-values.ts";
 export type {
   ComponentKind,
   ComponentMeta,
+  DemoControl,
   DemoFrame,
   DemoSection,
+  DemoValues,
+  DemoWidth,
   DocsPage,
   DocsSection,
   DocsStatus,
+  ExampleKind,
   ExamplePlay,
   ExamplePlayContext,
+  KeyboardRow,
+  LiveDemo,
   MotionClass,
 } from "./meta.ts";
 export {

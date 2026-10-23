@@ -1,8 +1,8 @@
-import { Stack, Text } from "@buttery/core";
-import type { ExamplePlay } from "@buttery/core";
-import { Breadcrumbs } from "@buttery/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { Stack, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
+import { Breadcrumbs } from "@buttery/react";
 
 /** In a narrow column the trail shows only the page one level up, so going back stays one tap away. */
 export function TrailOnAPhone(): ReactElement {
@@ -25,6 +25,8 @@ export function TrailOnAPhone(): ReactElement {
     </Stack>
   );
 }
+
+export const kind: ExampleKind = "composition";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("link", "Team");

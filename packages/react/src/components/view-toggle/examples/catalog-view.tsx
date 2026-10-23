@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline, Text } from "@buttery/core";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { ViewToggle } from "@buttery/react";
 import type { ViewMode } from "@buttery/react";
 
@@ -18,3 +19,11 @@ export function CatalogView(): ReactElement {
     </Inline>
   );
 }
+
+export const kind: ExampleKind = "basic";
+
+export const play: ExamplePlay = async ({ press, see }) => {
+  await see("Cards");
+  await press("radio", "List");
+  await see("Rows");
+};

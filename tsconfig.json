@@ -20,10 +20,28 @@
       "path": "./packages/lint"
     },
     {
-      "path": "./apps/playground"
+      "path": "./apps/docs"
     },
     {
       "path": "./apps/starter"
+    },
+    {
+      "path": "./apps/templates/dashboard"
+    },
+    {
+      "path": "./apps/templates/editor"
+    },
+    {
+      "path": "./apps/templates/marketing"
+    },
+    {
+      "path": "./apps/demos/roastery"
+    },
+    {
+      "path": "./apps/demos/deckhand"
+    },
+    {
+      "path": "./apps/demos/roastery-shop"
     }
   ]
 }

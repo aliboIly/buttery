@@ -44,6 +44,15 @@ const BROKEN = `
       <button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)">Publish</button>
     </section>
     <nav data-testid="pinned" style="position: sticky; inset-block-start: 0; block-size: 3000px">Pages</nav>
+    <div data-testid="crowded" style="display: flex; flex-direction: column; gap: 2px; inline-size: 300px">
+      <p class="bt-text" data-role="title">Spring launch</p>
+      <p class="bt-text" data-role="body-sm">Goes out on Friday</p>
+    </div>
+    <p data-testid="broken" style="inline-size: 64px; word-break: break-all; margin: 0">Two variants here</p>
+    <div data-testid="misaligned" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+      <div><span style="display: block; block-size: 20px">Label</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+      <div><span style="display: block; block-size: 8px">Side</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+    </div>
   </main>`;
 
 const FIXED = `
@@ -69,6 +78,17 @@ const FIXED = `
       <button type="button" data-bt="Button" data-variant="secondary" style="block-size: var(--bt-h-sm)">Cancel</button>
       <button type="button" data-bt="Button" data-variant="primary" style="block-size: var(--bt-h-sm)">Save</button>
     </section>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 8px; inline-size: 300px">
+        <p class="bt-text" data-role="title">Spring launch</p>
+        <p class="bt-text" data-role="body-sm">Goes out on Friday</p>
+      </div>
+      <p style="inline-size: 90px; margin: 0">Two variants here</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+        <div><span style="display: block; block-size: 20px">Label</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+        <div><span style="display: block; block-size: 20px">Side</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+      </div>
+    </div>
   </main>`;
 
 describe("runLayoutChecks", () => {
@@ -79,7 +99,9 @@ describe("runLayoutChecks", () => {
   it("fails every rule on the broken fixture, each with a message and a fix", () => {
     const violations = check(BROKEN);
     expect(rulesOf(violations)).toEqual([
+      "alignment",
       "clipping",
+      "crowding",
       "emphasis",
       "layering",
       "overflow",
@@ -88,6 +110,7 @@ describe("runLayoutChecks", () => {
       "scale",
       "target-size",
       "viewport-fit",
+      "wrapping",
     ]);
     for (const violation of violations) {
       expect(violation.message.length).toBeGreaterThan(10);
@@ -219,6 +242,19 @@ describe("runLayoutChecks", () => {
         ["overflow"],
       ),
     ).toEqual([]);
+  });
+
+  it("doesn't flag a box with opacity 0 or the text in it, such as a card a shared layout has handed to a dialog", () => {
+    const grid = (opacity: string): string =>
+      `<div data-bt="Grid" data-testid="grid" style="inline-size: 300px; block-size: 100px">
+         <article style="block-size: 100px; opacity: ${opacity}; transform: translateY(180px)">
+           <h3 style="margin: 0">Tilt it in 3D</h3>
+         </article>
+       </div>`;
+    expect(check(grid("0"), ["overflow"])).toEqual([]);
+    expect(
+      check(grid("1"), ["overflow"]).map((violation) => violation.a),
+    ).toEqual(['[data-testid="grid"]']);
   });
 
   it("doesn't flag text trimmed to its cap height as overflow", () => {
@@ -359,6 +395,17 @@ describe("floating UI over page chrome", () => {
   it("passes a lane item that sits below the header", () => {
     expect(check(page(84), ["overlap"])).toEqual([]);
   });
+
+  it("passes a lane item over a card's own header, which scrolls with the page", () => {
+    expect(
+      check(
+        page(24)
+          .replace("<header", "<article><header")
+          .replace("</header>", "</header></article>"),
+        ["overlap"],
+      ),
+    ).toEqual([]);
+  });
 });
 
 describe("clipping", () => {
@@ -437,6 +484,43 @@ describe("target size", () => {
         ["target-size"],
       ),
     ).toEqual([]);
+  });
+});
+
+describe("scaled previews", () => {
+  const SCALED = (preview: string): string => `
+    <div ${preview} style="inline-size: 200px; block-size: 120px; overflow: clip">
+      <div style="inline-size: 400px; transform-origin: 0 0; scale: 0.5">
+        <button type="button" style="inline-size: 80px; block-size: var(--bt-h-sm)">Save</button>
+        <div data-bt="Control" data-bt-control style="block-size: var(--bt-h-control)"></div>
+        <p data-bt="Text" style="font-size: 13px; line-height: 20px">Roasted today</p>
+        <p data-bt="Text" style="font-size: 13px; line-height: 20px">Shipped tomorrow</p>
+      </div>
+    </div>`;
+
+  it("measures what a preview draws scaled down at the size it lays out at", () => {
+    expect(
+      check(SCALED('data-bt-preview="0.5"'), [
+        "target-size",
+        "scale",
+        "overlap",
+      ]),
+    ).toEqual([]);
+  });
+
+  it("measures a control drawn at 97% while it's pressed at the height it lays out at", () => {
+    expect(
+      check(
+        `<div data-bt="Control" data-bt-control style="block-size: var(--bt-h-control); scale: 0.97"></div>`,
+        ["scale"],
+      ),
+    ).toEqual([]);
+  });
+
+  it("measures the same drawing at its drawn size without the preview's mark", () => {
+    expect(
+      rulesOf(check(SCALED(""), ["target-size", "scale", "overlap"])),
+    ).toEqual(["overlap", "scale", "target-size"]);
   });
 });
 
@@ -554,6 +638,36 @@ describe("viewport fit", () => {
   });
 });
 
+describe("layering", () => {
+  const menus = (z: string): string =>
+    `<main style="display: flex; flex-direction: column; gap: 16px; padding: 16px">
+       <nav data-bt="MorphMenu" data-testid="menu" style="position: relative; z-index: ${z}; block-size: 40px">
+         <button type="button" style="block-size: var(--bt-h-sm)">Product</button>
+         <div data-bt-part="panel" data-bt-float style="position: absolute; inset-block-start: 0; inset-inline-start: 0; z-index: var(--bt-z-behind); inline-size: 240px">
+           <div data-bt-part="reach" style="block-size: 48px"></div>
+           <div data-bt-part="body" data-testid="card" style="block-size: 160px; border-radius: 12px; background: white">Slides</div>
+         </div>
+       </nav>
+       <nav data-bt="MorphMenu" data-testid="next" style="position: relative; z-index: var(--bt-z-raised)">
+         <button type="button" style="block-size: var(--bt-h-sm)">Support</button>
+       </nav>
+     </main>`;
+
+  it("flags page content drawn over a floating surface that opens over it", () => {
+    expect(check(menus("var(--bt-z-raised)"), ["layering"])).toEqual([
+      expect.objectContaining({
+        rule: "layering",
+        a: '[data-testid="next"]',
+        b: '[data-testid="card"]',
+      }),
+    ]);
+  });
+
+  it("passes a floating surface lifted over what follows it, and leaves the strip it doesn't draw alone", () => {
+    expect(check(menus("var(--bt-z-floating)"), ["layering"])).toEqual([]);
+  });
+});
+
 describe("moved", () => {
   it("reports buttery elements that shifted, once per moving group, and skips allowed ones", () => {
     document.body.innerHTML = `
@@ -663,5 +777,209 @@ describe("moved", () => {
         message: "moved 0px across and 24px down after Load more",
       }),
     ]);
+  });
+});
+
+describe("crowding", () => {
+  it("leaves a small caption over a large heading alone, though the heading's glyph box reaches up toward it", () => {
+    expect(
+      check(
+        `<div style="display: flex; flex-direction: column; gap: 12px; inline-size: 400px">
+          <p class="bt-text" data-role="caption">display</p>
+          <p class="bt-text" data-role="heading-1">Round the corners</p>
+        </div>`,
+        ["crowding"],
+      ),
+    ).toEqual([]);
+  });
+
+  const pair = (gap: number, extra = ""): string => `
+    <div style="display: flex; flex-direction: column; gap: ${String(gap)}px; inline-size: 300px">
+      <p class="bt-text" data-role="title">Spring launch</p>
+      <p class="bt-text" data-role="body-sm" ${extra}>Goes out on Friday</p>
+    </div>`;
+
+  it("flags text stacked so close its descenders reach the next line, and passes the pair 8px apart", () => {
+    const [found] = check(pair(4), ["crowding"]);
+    expect(found?.message).toMatch(/capitals of the text under it/);
+    expect(found?.b).toBeDefined();
+    expect(check(pair(8), ["crowding"])).toEqual([]);
+  });
+
+  it("leaves text placed over other text out of flow alone, such as a badge", () => {
+    expect(
+      check(
+        `<div style="position: relative; inline-size: 300px">
+          <p class="bt-text" data-role="title">Spring launch</p>
+          <p class="bt-text" data-role="caption" style="position: absolute; inset-block-start: 14px">New</p>
+        </div>`,
+        ["crowding"],
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("wrapping", () => {
+  it("flags a number broken from its unit, as 40% with its % on the next line", () => {
+    const [found] = check(
+      `<p style="inline-size: 30px; overflow-wrap: anywhere; font-size: 20px; margin: 0">40%</p>`,
+      ["wrapping"],
+    );
+    expect(found?.message).toMatch(/^"40%" breaks across lines/);
+  });
+
+  it("passes a compound broken at its hyphen", () => {
+    expect(
+      check(
+        `<p style="inline-size: 80px; font-size: 16px; margin: 0">roast-to-door</p>`,
+        ["wrapping"],
+      ),
+    ).toEqual([]);
+  });
+
+  it("flags a word broken across lines though it fits on one", () => {
+    const [found] = check(
+      `<p style="inline-size: 64px; word-break: break-all; margin: 0">Two variants here</p>`,
+      ["wrapping"],
+    );
+    expect(found?.message).toMatch(/breaks across lines/);
+  });
+
+  it("flags a short word broken in a box squeezed narrower than it, as a table column can be", () => {
+    const [found] = check(
+      `<p style="inline-size: 30px; overflow-wrap: anywhere; margin: 0">variant</p>`,
+      ["wrapping"],
+    );
+    expect(found?.message).toMatch(/"variant" breaks across lines/);
+  });
+
+  it("lets a word longer than its line break, as a long address must", () => {
+    expect(
+      check(
+        `<p style="inline-size: 60px; overflow-wrap: anywhere; margin: 0">abcdefghijklmnopqrstuvwxyz</p>`,
+        ["wrapping"],
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("alignment", () => {
+  const row = (
+    first: number,
+    second: number,
+    height = "var(--bt-h-control)",
+  ): string => `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+      <div><span style="display: block; block-size: ${String(first)}px">Label</span><div data-bt-control style="block-size: var(--bt-h-control)"></div></div>
+      <div><span style="display: block; block-size: ${String(second)}px">Side</span><div data-bt-control style="block-size: ${height}"></div></div>
+    </div>`;
+
+  it("flags controls of one height side by side that start at different heights", () => {
+    const [found] = check(row(20, 8), ["alignment"]);
+    expect(found?.px).toBe(12);
+    expect(check(row(20, 20), ["alignment"])).toEqual([]);
+  });
+
+  it("leaves controls in two cards side by side alone, which follow their cards", () => {
+    expect(
+      check(
+        `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; inline-size: 280px">
+          <div class="bt-surface" style="padding: 4px"><div data-bt-control style="block-size: var(--bt-h-sm)"></div></div>
+          <div class="bt-surface" style="padding: 12px"><div data-bt-control style="block-size: var(--bt-h-sm)"></div></div>
+        </div>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
+  });
+
+  it("leaves controls of different heights alone, such as a switch beside a field", () => {
+    expect(check(row(20, 8, "var(--bt-h-sm)"), ["alignment"])).toEqual([]);
+  });
+
+  const iconButton = (display: string, label = ""): string => `
+    <button aria-label="Menu" style="display: ${display}; place-items: center; inline-size: 36px; block-size: 36px; padding: 0; border: 0">
+      <svg width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" /></svg>${label}
+    </button>`;
+
+  it("flags an icon-only button whose icon sits off its center, as a flex box over a grid's centering leaves it", () => {
+    const [found] = check(iconButton("inline-flex"), ["alignment"]);
+    expect(found?.message).toBe(
+      "its icon sits 10px across and 0px down from its center",
+    );
+    expect(found?.px).toBe(10);
+  });
+
+  it("passes an icon-only button with its icon centered, and a button with words beside its icon", () => {
+    expect(check(iconButton("inline-grid"), ["alignment"])).toEqual([]);
+    expect(check(iconButton("inline-flex", "Menu"), ["alignment"])).toEqual([]);
+  });
+
+  const icon = `<svg width="16" height="16" viewBox="0 0 16 16" style="flex: none"><rect width="16" height="16" /></svg>`;
+  const beside = (align: string, iconBox = ""): string => `
+    <div style="display: flex; align-items: ${align}; gap: 12px; inline-size: 400px; line-height: 40px">
+      ${iconBox ? `<span style="display: flex; align-items: center; block-size: ${iconBox}">${icon}</span>` : icon}
+      <p style="margin: 0">Seeing the columns</p>
+    </div>`;
+
+  it("flags a small icon off the middle of the line beside it, before the words or after them", () => {
+    const [leading] = check(beside("flex-start"), ["alignment"]);
+    expect(leading?.message).toMatch(
+      /^its icon sits [\d.]+px above the middle of the first line beside it$/,
+    );
+    expect(leading?.px).toBeGreaterThan(10);
+    const [trailing] = check(
+      `<button type="button" style="display: inline-flex; align-items: flex-end; line-height: 40px; padding: 0; border: 0">Next ${icon}</button>`,
+      ["alignment"],
+    );
+    expect(trailing?.message).toMatch(
+      /^its icon sits [\d.]+px below the middle of the first line beside it$/,
+    );
+    expect(trailing?.px).toBeGreaterThan(10);
+  });
+
+  it("flags an icon centered on a wrapped paragraph instead of its first line", () => {
+    const [found] = check(
+      `<div style="display: flex; align-items: center; gap: 12px; inline-size: 200px; line-height: 20px">
+        ${icon}
+        <p style="margin: 0">Roasted on Monday and at your door by Wednesday, every week</p>
+      </div>`,
+      ["alignment"],
+    );
+    expect(found?.message).toMatch(/^its icon sits [\d.]+px below/);
+  });
+
+  it("passes an icon centered on its line, by the row or by a box as tall as the line", () => {
+    expect(check(beside("center"), ["alignment"])).toEqual([]);
+    expect(check(beside("flex-start", "40px"), ["alignment"])).toEqual([]);
+  });
+
+  it("leaves an icon centered on a title and its description, a mark after wrapped words, and an icon in a tinted tile", () => {
+    expect(
+      check(
+        `<div style="display: flex; align-items: center; gap: 12px; line-height: 20px">
+          ${icon}
+          <div><p style="margin: 0">Payouts</p><p style="margin: 0">Every Friday</p></div>
+        </div>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
+    expect(
+      check(
+        `<button type="button" style="display: flex; align-items: center; gap: 12px; inline-size: 200px; line-height: 20px; padding: 0; border: 0">
+          <span>How fresh is the coffee when it arrives at my door?</span>
+          ${icon}
+        </button>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
+    expect(
+      check(
+        `<div style="display: flex; align-items: flex-start; gap: 12px; line-height: 20px">
+          <span style="display: grid; place-items: center; inline-size: 40px; block-size: 40px">${icon}</span>
+          <p style="margin: 0">Payouts</p>
+        </div>`,
+        ["alignment"],
+      ),
+    ).toEqual([]);
   });
 });

@@ -45,9 +45,12 @@
     inset: 0;
   }
 
-  /* Fills the layer and centers the dialog, 16px inside the window; a press on it is a press outside. */
+  /* Fills the layer and centers the dialog, 16px inside the window; a press on it is a press outside. Its one
+     cell is the frame's height, so a taller dialog stops at it and scrolls inside. */
   .bt-dialog-frame[data-bt-part="frame"] {
     display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     place-items: center;
     block-size: 100%;
     padding: var(--bt-space-4);
@@ -67,6 +70,20 @@
     position: absolute;
     inset-block-start: calc(var(--bt-dialog-close-center) - var(--bt-h-sm) / 2);
     inset-inline-end: calc(var(--bt-dialog-close-center) - var(--bt-h-sm) / 2);
+  }
+
+  /* Over media it sits on a picture whose colors don't follow the theme, so it brings a raised disc to read on. */
+  .bt-dialog:has(.bt-dialog-media) > [data-bt-part="close"] {
+    --bt-icon-button-bg: var(--bt-bg-raised);
+
+    box-shadow: var(--bt-shadow-raised);
+  }
+
+  @media (hover: hover) {
+    .bt-dialog:has(.bt-dialog-media)
+      > [data-bt-part="close"]:not(:disabled, [aria-disabled="true"]):hover {
+      --bt-icon-button-bg: var(--bt-bg-control);
+    }
   }
 
   /* The parts work directly in the dialog or inside a form that wraps them. */

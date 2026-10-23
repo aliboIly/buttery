@@ -35,6 +35,11 @@
     appearance: none;
   }
 
+  /* Centered, the label would take its whole text's width; capped at its segment's, it truncates instead. */
+  .bt-segmented-control > [data-bt-part="segment"] > [data-bt-part="label"] {
+    max-inline-size: 100%;
+  }
+
   .bt-segmented-control > [data-bt-part="segment"][data-state="checked"] {
     color: var(--bt-text);
   }

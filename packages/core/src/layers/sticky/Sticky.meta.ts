@@ -17,4 +17,7 @@ export const meta: ComponentMeta = {
   related: ["Layer", "FloatingLanes"],
   a11y: "No role of its own; keep sticky content in source order so it's read where it appears.",
   motion: "none",
+  keyboard: [],
+  layout:
+    "A bar takes its parent's width and its content's height; bars on one edge stack, and the scroll container publishes their total as --bt-sticky-top or --bt-sticky-bottom. An aside sticks under the bars without counting toward them and fits between them, scrolling inside when its content is taller. It adds no hit area of its own.",
 };

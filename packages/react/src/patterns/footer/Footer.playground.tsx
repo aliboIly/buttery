@@ -1,12 +1,23 @@
 import type { ReactElement } from "react";
 import { Inline, Stack, Text } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { Footer, Page } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "Footer",
+  description:
+    "The foot of a page: a brand column and columns of links on the page grid, then small print under a divider.",
+  order: 180,
+  status: "stable",
+  since: "0.7.0",
+  home: "patterns/marketing-page",
+};
 
 const COLUMNS = [
   {
     title: "Product",
-    links: ["Features", "Backdrops", "Export", "What's new"],
+    links: ["Features", "Themes", "Export", "What's new"],
   },
   { title: "Help", links: ["Guides", "Shortcuts", "Contact"] },
   { title: "Company", links: ["About", "Careers", "Press kit"] },
@@ -20,9 +31,9 @@ function slug(label: string): string {
 function Brand(): ReactElement {
   return (
     <Stack gap={2}>
-      <Text variant="title">Card Studio</Text>
+      <Text variant="title">Deckhand</Text>
       <Text variant="body-sm" tone="secondary">
-        Cards for launch days, made in a minute.
+        Slide decks for every meeting, made in an afternoon.
       </Text>
     </Stack>
   );
@@ -32,7 +43,7 @@ function Legal(): ReactElement {
   return (
     <Inline gap={4} justify="between">
       <Text variant="caption" tone="secondary">
-        © 2026 Card Studio
+        © 2026 Deckhand
       </Text>
       <Inline gap={4}>
         <Footer.Link href="#privacy">Privacy</Footer.Link>

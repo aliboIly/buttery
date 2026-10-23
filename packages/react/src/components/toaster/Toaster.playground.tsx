@@ -1,8 +1,20 @@
 import { useRef } from "react";
 import type { ReactElement } from "react";
-import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { Inline, Text } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, toast } from "@buttery/react";
+import type { ToastTone } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/feedback",
+  title: "Toaster",
+  description:
+    "Shows short messages from toast() at the bottom of the window, three at most, each leaving on its own after a few seconds; ButteryProvider mounts one, so an app only calls toast().",
+  order: 110,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function StackDemo(): ReactElement {
   const exported = useRef(0);
@@ -11,7 +23,7 @@ function StackDemo(): ReactElement {
       <Button
         onClick={() => {
           exported.current += 1;
-          toast(`Card ${String(exported.current)} exported`);
+          toast(`Slide ${String(exported.current)} exported`);
         }}
       >
         Show a toast
@@ -58,7 +70,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast("Roast profile saved");
+          toast("Speaker notes saved");
         }}
       >
         Plain
@@ -66,7 +78,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast.success("Order shipped");
+          toast.success("Deck published");
         }}
       >
         Success
@@ -74,7 +86,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast.warning("Beans for 2 days left");
+          toast.warning("3 slides have no title");
         }}
       >
         Warning
@@ -82,7 +94,7 @@ function TonesDemo(): ReactElement {
       <Button
         variant="soft"
         onClick={() => {
-          toast.danger("Couldn't export the card", {
+          toast.danger("Couldn't export the deck", {
             action: {
               label: "Retry",
               onAction: () => undefined,
@@ -96,6 +108,54 @@ function TonesDemo(): ReactElement {
     </Inline>
   );
 }
+
+const TONES: readonly [ToastTone, ...ToastTone[]] = [
+  "neutral",
+  "success",
+  "warning",
+  "danger",
+];
+
+function callFor(tone: ToastTone, message: string): string {
+  return tone === "neutral"
+    ? `toast("${message}")`
+    : `toast.${tone}("${message}")`;
+}
+
+function LiveToast({
+  tone,
+  message,
+}: {
+  readonly tone: ToastTone;
+  readonly message: string;
+}): ReactElement {
+  return (
+    <Inline gap={3}>
+      <Button
+        onClick={() => {
+          toast(message, { tone });
+        }}
+      >
+        Show the toast
+      </Button>
+      <Text variant="body" tone="secondary" truncate>
+        {callFor(tone, message)}
+      </Text>
+    </Inline>
+  );
+}
+
+export const live: LiveDemo = {
+  controls: {
+    tone: { kind: "choice", options: TONES, initial: "success" },
+    message: { kind: "text", initial: "Deck published" },
+  },
+  render: ({ tone, message }) => (
+    <LiveToast tone={demoChoice(tone, TONES)} message={String(message)} />
+  ),
+  code: ({ tone, message }) =>
+    `<Button onClick={() => ${callFor(demoChoice(tone, TONES), String(message))}}>Show the toast</Button>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

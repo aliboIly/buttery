@@ -11,6 +11,7 @@ import {
   useAnimationTracking,
   useCloseFocus,
   useControllableState,
+  useFloatingObstacle,
   useMergedRefs,
   useMotionPreference,
   warnOnce,
@@ -53,7 +54,7 @@ export interface AppShellInspectorProps extends Omit<
   readonly header: ReactNode;
   /** The settings beside the work area, such as an `Inspector`. On narrow screens it opens as a sheet. */
   readonly inspector: ReactNode;
-  /** Names the inspector's sheet on narrow screens, such as "Card settings". */
+  /** Names the inspector's sheet on narrow screens, such as "Gift card settings". */
   readonly inspectorLabel: string;
   /** The button that opens the sheet on narrow screens. Defaults to `"Edit"`. */
   readonly openInspectorLabel?: string | undefined;
@@ -85,6 +86,11 @@ export interface AppShellSidebarProps extends Omit<
   readonly panel?: ReactNode;
   /** Names the sidebar's sheet on narrow screens. Defaults to `"Navigation"`. */
   readonly sidebarLabel?: string | undefined;
+  /**
+   * Names the button that is the first thing Tab reaches, shown only while it has focus, which moves focus
+   * past the sidebar and the top bar to the page. Defaults to `"Skip to content"`.
+   */
+  readonly skipLabel?: string | undefined;
   /** Whether the sidebar's sheet is open on a narrow screen. Pair with `onOpenChange` to control it. */
   readonly open?: boolean | undefined;
   /** Whether the sheet starts open when uncontrolled. Defaults to `false`. */
@@ -174,6 +180,8 @@ function InspectorShell({
   const refs = useMergedRefs(ref, root);
   const sheet = useRef<HTMLDivElement>(null);
   const inline = useRef<HTMLDivElement>(null);
+  const obstacle = useFloatingObstacle();
+  const inspectorRefs = useMergedRefs(inline, obstacle);
   const refocus = useRef(false);
   const [narrow, setNarrow] = useState(false);
   const [sheetOpen, setSheetOpen] = useControllableState({
@@ -227,11 +235,13 @@ function InspectorShell({
       data-layout={layout}
       data-narrow={narrow ? "" : undefined}
     >
-      <div data-bt-part="header">{header}</div>
-      <div data-bt-part="stage">{children}</div>
+      <div ref={obstacle} data-bt-part="header">
+        {header}
+      </div>
+      <main data-bt-part="stage">{children}</main>
       {narrow ? (
         <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
-          <div data-bt-part="sheet-bar">
+          <div ref={obstacle} data-bt-part="sheet-bar">
             <Dialog.Trigger asChild>
               <Button variant="primary" size="cta" shape="rounded">
                 {openInspectorLabel}
@@ -247,7 +257,7 @@ function InspectorShell({
           </AnimatePresence>
         </Dialog.Root>
       ) : (
-        <div ref={inline} data-bt-part="inspector">
+        <div ref={inspectorRefs} data-bt-part="inspector">
           {inspector}
         </div>
       )}
@@ -356,6 +366,7 @@ function SidebarShell({
   topBar,
   panel,
   sidebarLabel = "Navigation",
+  skipLabel = "Skip to content",
   open,
   defaultOpen = false,
   onOpenChange,
@@ -460,13 +471,28 @@ function SidebarShell({
           data-layout={layout}
           data-sidebar={mode}
         >
+          <button
+            type="button"
+            className="bt-focus"
+            data-bt-part="skip"
+            onClick={() => {
+              page.current?.focus();
+            }}
+          >
+            {skipLabel}
+          </button>
           {/* Hidden under 640 rather than unmounted, so it still sees the page shown change for Recent. */}
           <div data-bt-part="sidebar" hidden={mode === "sheet"}>
             {sidebar}
           </div>
           <div data-bt-part="column">
             {hasTopBar ? <div data-bt-part="top">{topBar}</div> : null}
-            <div ref={page} data-bt-part="page" className="bt-scroll-fade">
+            <div
+              ref={page}
+              tabIndex={-1}
+              data-bt-part="page"
+              className="bt-scroll-fade"
+            >
               {children}
             </div>
           </div>
@@ -501,6 +527,7 @@ function SidebarShell({
  * A whole app screen. The default layout is an editor inside the app's background: the header and the
  * stage in one column and the inspector, full height, beside them, at most 1380px wide and centered; under
  * 840px the inspector moves into a sheet that rises from the bottom, opened by a button under the stage.
+ * Toasts and the other floating lanes keep clear of the header, the inspector and that button.
  *
  * `layout="sidebar"` is a dashboard: the sidebar beside a column holding the top bar and the page, each
  * scrolling on its own, the shell never scrolling. Measured on the shell's own width, the sidebar is full
@@ -510,8 +537,8 @@ function SidebarShell({
  * inside it arrive instantly, as app chrome does.
  *
  * @example
- * <AppShell header={<HeaderBar title="Launch card" />} inspector={<Inspector label="Card settings">…</Inspector>} inspectorLabel="Card settings">
- *   <Stage label="Card preview" size={size}>…</Stage>
+ * <AppShell header={<HeaderBar title="Gift card for Rosa" />} inspector={<Inspector label="Gift card settings">…</Inspector>} inspectorLabel="Gift card settings">
+ *   <Stage label="Gift card preview" size={size}>…</Stage>
  * </AppShell>
  * <AppShell layout="sidebar" sidebar={<Sidebar label="Main">…</Sidebar>} topBar={<TopBar />}>
  *   <AppPage header={<PageHeader title="Orders" />}>…</AppPage>

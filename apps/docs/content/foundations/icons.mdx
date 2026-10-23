@@ -1,0 +1,96 @@
+---
+title: Icons
+description: How buttery draws icons, at which sizes, and when an icon needs a label.
+section: foundations
+order: 70
+status: stable
+since: 0.2.0
+exports: [Arrow, Spinner]
+related: [components/icon-button, foundations/typography]
+---
+
+`Icon` draws an icon from `lucide-react` at one of buttery's sizes, with the stroke weight and color of the text around it. Use it for every icon, and give it a `label` when nothing next to it says what it means.
+
+## Sizes
+
+`size="sm"` (16px, the default) is for icons inside controls and beside text. `size="md"` (20px) is for icons that stand on their own, such as an empty state's.
+
+```tsx
+import type { ReactElement } from "react";
+import { Icon, Inline, Text } from "@buttery/core";
+import { Truck } from "lucide-react";
+
+export function ShippingNote(): ReactElement {
+  return (
+    <Inline gap={2} align="center">
+      <Icon icon={Truck} />
+      <Text variant="body-sm">Ships in two days</Text>
+    </Inline>
+  );
+}
+```
+
+## Labels
+
+An icon is hidden from screen readers unless it has a `label`, because the text beside it usually says the same thing. When an icon stands alone and means something, give it a label and it becomes an image named by it.
+
+<DoDont>
+<Do>
+
+```tsx
+import type { ReactElement } from "react";
+import { Icon } from "@buttery/core";
+import { TriangleAlert } from "lucide-react";
+
+export function PaymentFailed(): ReactElement {
+  return <Icon icon={TriangleAlert} label="Payment failed" />;
+}
+```
+
+An icon that means something on its own says what.
+
+</Do>
+<Dont>
+
+```tsx
+import type { ReactElement } from "react";
+import { Icon, Inline, Text } from "@buttery/core";
+import { Truck } from "lucide-react";
+
+export function Shipping(): ReactElement {
+  return (
+    <Inline gap={2} align="center">
+      <Icon icon={Truck} label="Shipping" />
+      <Text variant="body-sm">Shipping</Text>
+    </Inline>
+  );
+}
+```
+
+A label that repeats the text beside it is read twice.
+
+</Dont>
+</DoDont>
+
+> **Icon buttons.** A button that's only an icon is an `IconButton`, which takes a required `label` and shows it as a tooltip.
+
+## The arrow and the spinner
+
+Two drawn parts sit beside the icon set. Reach for them through `Button`'s props first, and on their own only inside a control of your own.
+
+<Cards>
+<Card title="Arrow">
+
+`Arrow` is the navigation arrow that `Button` and `ArrowLink` draw beside their label: a chevron, `direction="forward"` or `"back"`, that grows a stem into an arrow while the control holding it, marked `data-arrow`, is hovered or focused. Only transforms change, so the control never changes size. On a `Button`, it's the `arrow` prop.
+
+</Card>
+<Card title="Spinner">
+
+`Spinner` is the small turning ring a busy control shows over its label, and it holds still with reduced motion. On a `Button`, it's the `loading` prop, which keeps the button's size while it's busy.
+
+</Card>
+</Cards>
+
+## Icon
+
+<ComponentDocs of="Icon" />

@@ -17,4 +17,9 @@ export const meta: ComponentMeta = {
   related: ["Reveal", "Presence", "Grid"],
   a11y: "Items stay in the accessibility tree and in order while hidden. With reduced motion they show at once.",
   motion: "presence",
+  keyboard: [],
+  layout:
+    "It renders a div, or its child with asChild, so a Grid or Stack around it lays out the items. Waiting items are only transparent, never offset, so the group has its full size from the start. It has no hit area of its own.",
+  reducedMotion:
+    "The items show at once, without rising or fading in one after another.",
 };

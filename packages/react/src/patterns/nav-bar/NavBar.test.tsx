@@ -11,6 +11,7 @@ import {
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
+import type { ReactElement } from "react";
 import {
   afterEach,
   beforeEach,
@@ -43,16 +44,16 @@ function page(behavior: NavBarBehavior = "static", width = 1100): HTMLElement {
     >
       <NavBar
         behavior={behavior}
-        brand={<a href="#top">Card Studio</a>}
+        brand={<a href="#top">Deckhand</a>}
         actions={<Button variant="secondary">Sign in</Button>}
         data-testid="bar"
       >
         <MorphMenu.Item label="Product">
           <MorphMenu.Column title="Make">
             <MorphMenu.Entry
-              href="#cards"
-              title="Cards"
-              caption="Titles and finishes"
+              href="#slides"
+              title="Slides"
+              caption="Layouts and notes"
             />
           </MorphMenu.Column>
         </MorphMenu.Item>
@@ -92,10 +93,71 @@ describe("NavBar", () => {
     }
   });
 
+  function skipPage(): {
+    readonly skip: HTMLElement;
+    readonly brand: HTMLElement;
+  } {
+    render(
+      <>
+        <NavBar
+          skipTo="content"
+          brand={<a href="#top">Deckhand</a>}
+          actions={<Button variant="secondary">Sign in</Button>}
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+        </NavBar>
+        <main id="content" tabIndex={-1}>
+          <h1>Decks</h1>
+        </main>
+      </>,
+    );
+    return {
+      skip: screen.getByRole("link", { name: "Skip to content" }),
+      brand: screen.getByRole("link", { name: "Deckhand" }),
+    };
+  }
+
+  it("shows its link to the main content over the bar's start only while it has focus", () => {
+    const { skip, brand } = skipPage();
+    expect(skip.getAttribute("href")).toBe("#content");
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+    skip.focus();
+    expect(skip.getBoundingClientRect().width).toBeGreaterThan(48);
+    expect(skip.getBoundingClientRect().left).toBeCloseTo(
+      brand.getBoundingClientRect().left,
+      0,
+    );
+    brand.focus();
+    expect(skip.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+  });
+
+  // WebKit leaves links out of the tab order unless the system's keyboard setting puts them in.
+  it.skipIf(!navigator.userAgent.includes("Chrome/"))(
+    "puts its link to the main content first in the tab order",
+    async () => {
+      const { skip, brand } = skipPage();
+      await browser.keyboard("{Tab}");
+      expect(document.activeElement).toBe(skip);
+      await browser.keyboard("{Tab}");
+      expect(document.activeElement).toBe(brand);
+    },
+  );
+
+  it("names its skip link in the words it's given, and leaves it out without skipTo", () => {
+    render(
+      <>
+        <NavBar skipTo="content" skipLabel="Zum Inhalt" brand="Karten" />
+        <NavBar brand="Ohne" />
+      </>,
+    );
+    expect(screen.getAllByRole("link", { name: "Zum Inhalt" })).toHaveLength(1);
+    expect(screen.queryByRole("link", { name: "Skip to content" })).toBeNull();
+  });
+
   it("sits on the page container unless told not to", () => {
     const { rerender } = render(
       <div style={{ inlineSize: "1600px" }}>
-        <NavBar brand={<a href="#top">Card Studio</a>} data-testid="bar" />
+        <NavBar brand={<a href="#top">Deckhand</a>} data-testid="bar" />
       </div>,
     );
     const row = (): Element | null =>
@@ -104,7 +166,7 @@ describe("NavBar", () => {
     rerender(
       <div style={{ inlineSize: "1600px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           contained={false}
           data-testid="bar"
         />
@@ -157,6 +219,82 @@ describe("NavBar", () => {
     expect(Number(getComputedStyle(layer ?? scrim).zIndex)).toBeLessThan(20);
   });
 
+  it("blurs a sticky bar that follows it, such as a sub nav, with the rest of the page while a menu is open", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1200, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    render(
+      <div style={{ inlineSize: "1100px" }}>
+        <NavBar brand={<a href="#top">Deckhand</a>}>
+          <MorphMenu.Item label="Product">
+            <MorphMenu.Column title="Make">
+              <MorphMenu.Entry href="#slides" title="Slides" />
+            </MorphMenu.Column>
+          </MorphMenu.Item>
+        </NavBar>
+        <Sticky data-testid="follower">
+          <div style={{ blockSize: "48px", paddingInlineStart: "900px" }}>
+            Sections
+          </div>
+        </Sticky>
+      </div>,
+    );
+    const follower = screen.getByTestId("follower");
+    const box = follower.getBoundingClientRect();
+    const onTop = (): Element | null =>
+      document.elementFromPoint(box.right - 20, box.top + box.height / 2);
+    expect(follower.contains(onTop())).toBe(true);
+    await userEvent.click(screen.getByRole("button", { name: "Product" }));
+    await waitFor(() => {
+      expect(onTop()?.closest('[data-bt="Layer"]')).not.toBeNull();
+    });
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(follower.contains(onTop())).toBe(true);
+    });
+  });
+
+  it("keeps its pinned actions in the bar when it folds, just before the menu button", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1200, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    function Bar({ width }: { readonly width: number }): ReactElement {
+      return (
+        <div style={{ inlineSize: `${String(width)}px` }}>
+          <NavBar
+            brand={<a href="#top">Halfmoon</a>}
+            actions={<Button variant="secondary">Sign in</Button>}
+            pinned={<Button variant="secondary">Bag</Button>}
+          >
+            <MorphMenu.Link href="#coffee">Coffee</MorphMenu.Link>
+          </NavBar>
+        </div>
+      );
+    }
+    const { rerender } = render(<Bar width={1100} />);
+    expect(
+      screen.getByRole("button", { name: "Bag" }).getBoundingClientRect().left,
+    ).toBeGreaterThan(
+      screen.getByRole("button", { name: "Sign in" }).getBoundingClientRect()
+        .right,
+    );
+    rerender(<Bar width={400} />);
+    const menu = await screen.findByRole("button", { name: "Menu" });
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: "Sign in" })).toBeNull();
+    });
+    const bag = screen
+      .getByRole("button", { name: "Bag" })
+      .getBoundingClientRect();
+    const button = menu.getBoundingClientRect();
+    expect(button.left).toBeGreaterThan(bag.right);
+    expect(button.left - bag.right).toBeLessThanOrEqual(24);
+  });
+
   it("opens a menu's card 8px under the bar, leaving the brand, menus and actions uncovered", async () => {
     const { innerWidth, innerHeight } = window;
     await screenPage.viewport(1200, 800);
@@ -179,7 +317,7 @@ describe("NavBar", () => {
       row.getBoundingClientRect().bottom + 8,
     );
     for (const element of [
-      screen.getByRole("link", { name: "Card Studio" }),
+      screen.getByRole("link", { name: "Deckhand" }),
       screen.getByRole("button", { name: "Product" }),
       screen.getByRole("link", { name: "Pricing" }),
       screen.getByRole("button", { name: "Sign in" }),
@@ -224,6 +362,25 @@ describe("NavBar", () => {
     }
   });
 
+  it("opens its sheet at the window's end, no wider than a dialog, when the bar folds in a narrow column of a wide window", async () => {
+    const { innerWidth, innerHeight } = window;
+    await screenPage.viewport(1280, 800);
+    onTestFinished(async () => {
+      await screenPage.viewport(innerWidth, innerHeight);
+    });
+    page("static", 600);
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    const sheet = await screen.findByRole("dialog", { name: "Main" });
+    await waitFor(() => {
+      const box = sheet.getBoundingClientRect();
+      expect(box.width).toBeLessThanOrEqual(400);
+      expect(Math.round(document.documentElement.clientWidth - box.right)).toBe(
+        8,
+      );
+      expect(Math.round(box.top)).toBe(8);
+    });
+  });
+
   it("folds the menus and actions into a menu button under 640px, which opens them in a sheet", async () => {
     page("static", 600);
     expect(screen.queryByRole("button", { name: "Product" })).toBeNull();
@@ -231,7 +388,7 @@ describe("NavBar", () => {
     const sheet = await screen.findByRole("dialog", { name: "Main" });
     const section = within(sheet).getByRole("button", { name: "Product" });
     await userEvent.click(section);
-    expect(within(sheet).getByRole("link", { name: /Cards/ })).toBeTruthy();
+    expect(within(sheet).getByRole("link", { name: /Slides/ })).toBeTruthy();
     expect(within(sheet).getByRole("button", { name: "Sign in" })).toBeTruthy();
     await userEvent.keyboard("{Escape}");
     await waitFor(() => {
@@ -246,7 +403,7 @@ describe("NavBar", () => {
     await userEvent.click(
       within(sheet).getByRole("button", { name: "Product" }),
     );
-    await userEvent.click(within(sheet).getByRole("link", { name: /Cards/ }));
+    await userEvent.click(within(sheet).getByRole("link", { name: /Slides/ }));
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
@@ -262,7 +419,7 @@ describe("NavBar", () => {
     render(
       <div style={{ inlineSize: "600px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           actions={<a href="#start">Start free</a>}
         >
           <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
@@ -286,7 +443,7 @@ describe("NavBar", () => {
     await userEvent.click(screen.getByRole("button", { name: "Menu" }));
     sheet = await screen.findByRole("dialog", { name: "Main" });
     await userEvent.click(
-      within(sheet).getByRole("link", { name: "Card Studio" }),
+      within(sheet).getByRole("link", { name: "Deckhand" }),
     );
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
@@ -296,7 +453,7 @@ describe("NavBar", () => {
   it("leaves focus where a link chosen in its sheet moves it", async () => {
     render(
       <div style={{ inlineSize: "600px" }}>
-        <NavBar brand={<a href="#top">Card Studio</a>}>
+        <NavBar brand={<a href="#top">Deckhand</a>}>
           <MorphMenu.Link
             href="#features"
             onClick={(event) => {
@@ -325,10 +482,10 @@ describe("NavBar", () => {
   it("takes Tab past its last menu to what follows the bar, not to its hidden menu button", async () => {
     render(
       <div style={{ inlineSize: "1100px" }}>
-        <NavBar brand={<a href="#top">Card Studio</a>}>
+        <NavBar brand={<a href="#top">Deckhand</a>}>
           <MorphMenu.Item label="Guides">
             <MorphMenu.Column>
-              <MorphMenu.Entry href="#first" title="Your first card" />
+              <MorphMenu.Entry href="#first" title="Your first deck" />
             </MorphMenu.Column>
           </MorphMenu.Item>
         </NavBar>
@@ -337,11 +494,11 @@ describe("NavBar", () => {
     );
     const guides = screen.getByRole("button", { name: "Guides" });
     await userEvent.click(guides);
-    await screen.findByRole("link", { name: /Your first card/ });
+    await screen.findByRole("link", { name: /Your first deck/ });
     guides.focus();
     await browser.keyboard("{Tab}");
     expect(document.activeElement).toBe(
-      screen.getByRole("link", { name: /Your first card/ }),
+      screen.getByRole("link", { name: /Your first deck/ }),
     );
     await browser.keyboard("{Tab}");
     expect(document.activeElement).toBe(
@@ -359,14 +516,14 @@ describe("NavBar", () => {
     });
     await waitFor(() => {
       expect(document.activeElement).toBe(
-        screen.getByRole("link", { name: "Card Studio" }),
+        screen.getByRole("link", { name: "Deckhand" }),
       );
     });
   });
 
   it("stays out while keyboard focus is in an auto-hiding bar, and slides away once it leaves", async () => {
     const scroller = page("auto-hide");
-    const brand = screen.getByRole("link", { name: "Card Studio" });
+    const brand = screen.getByRole("link", { name: "Deckhand" });
     // A key press first makes the focus that follows keyboard focus; WebKit's Tab skips links, as Safari's does.
     await browser.keyboard("{Shift}");
     brand.focus();
@@ -400,7 +557,7 @@ describe("NavBar", () => {
         data-testid="scroller"
         style={{ inlineSize: "1100px", blockSize: "400px", overflowY: "auto" }}
       >
-        <NavBar behavior="auto-hide" brand={<a href="#top">Card Studio</a>}>
+        <NavBar behavior="auto-hide" brand={<a href="#top">Deckhand</a>}>
           <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
         </NavBar>
         <Sticky data-testid="follower">
@@ -439,7 +596,7 @@ describe("NavBar", () => {
     render(
       <div style={{ inlineSize: "700px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           actions={<Button>Start a long free trial now</Button>}
         >
           {["Product", "Templates", "Guides", "Company", "Community"].map(
@@ -458,11 +615,163 @@ describe("NavBar", () => {
     expect(screen.queryByRole("button", { name: "Templates" })).toBeNull();
   });
 
+  it("keeps a search in the bar, between the brand and the menu button, when its menus fold", () => {
+    render(
+      <div style={{ inlineSize: "600px" }}>
+        <NavBar
+          brand={<a href="#top">Deckhand</a>}
+          search={<input aria-label="Search the guides" />}
+          data-testid="bar"
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+        </NavBar>
+      </div>,
+    );
+    const search = screen.getByRole("textbox", { name: "Search the guides" });
+    const menu = screen.getByRole("button", { name: "Menu" });
+    expect(search.checkVisibility()).toBe(true);
+    expect(bar().contains(search)).toBe(true);
+    expect(search.getBoundingClientRect().right).toBeLessThanOrEqual(
+      menu.getBoundingClientRect().left,
+    );
+  });
+
+  it("draws the menu button's icon at its center, folded by its own width or by the container's", async () => {
+    for (const width of ["600px", "360px"]) {
+      const { unmount } = render(
+        <div style={{ inlineSize: width }}>
+          <NavBar
+            brand={<a href="#top">Deckhand</a>}
+            search={<input aria-label="Search the guides" />}
+          >
+            <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+          </NavBar>
+        </div>,
+      );
+      const menu = await screen.findByRole("button", { name: "Menu" });
+      const icon = menu.querySelector("svg");
+      if (!icon) throw new Error("The menu button has no icon.");
+      const box = menu.getBoundingClientRect();
+      const mark = icon.getBoundingClientRect();
+      expect(
+        Math.abs(mark.left + mark.width / 2 - (box.left + box.width / 2)),
+        width,
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(mark.top + mark.height / 2 - (box.top + box.height / 2)),
+        width,
+      ).toBeLessThanOrEqual(1);
+      unmount();
+    }
+  });
+
+  it("narrows its search rather than squeezing its menus, which never run under it", () => {
+    const labels = [
+      "Get started",
+      "Foundations",
+      "Layout",
+      "Motion",
+      "Components",
+      "Patterns",
+      "Guides",
+      "Tools",
+      "Resources",
+    ];
+    render(
+      <div style={{ inlineSize: "1400px" }}>
+        <NavBar
+          brand={<a href="#top">buttery</a>}
+          search={<input aria-label="Search the docs" />}
+          actions={<Button>Sign in</Button>}
+          contained={false}
+        >
+          {labels.map((label) => (
+            <MorphMenu.Item key={label} label={label}>
+              <MorphMenu.Column>
+                <MorphMenu.Entry href={`#${label}`} title={label} />
+              </MorphMenu.Column>
+            </MorphMenu.Item>
+          ))}
+        </NavBar>
+      </div>,
+    );
+    expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
+    const last = screen.getByRole("button", { name: "Resources" });
+    const search = screen
+      .getByRole("textbox", { name: "Search the docs" })
+      .closest('[data-bt-part="nav-bar-search"]');
+    expect(last.getBoundingClientRect().right).toBeLessThanOrEqual(
+      search?.getBoundingClientRect().left ?? 0,
+    );
+  });
+
+  it("gives a search with focus the menus' room, and puts them back once it lets go", async () => {
+    render(
+      <div style={{ inlineSize: "1100px" }}>
+        <NavBar
+          brand={<a href="#top">Deckhand</a>}
+          search={<input aria-label="Search the guides" />}
+          actions={<Button>Sign in</Button>}
+          contained={false}
+        >
+          <MorphMenu.Link href="#pricing">Pricing</MorphMenu.Link>
+          <MorphMenu.Link href="#guides">Guides</MorphMenu.Link>
+        </NavBar>
+      </div>,
+    );
+    const field = screen.getByRole("textbox", { name: "Search the guides" });
+    const part = field.closest('[data-bt-part="nav-bar-search"]');
+    const before = part?.getBoundingClientRect().width ?? 0;
+    await userEvent.click(field);
+    expect(
+      screen
+        .getByRole("link", { name: "Pricing", hidden: true })
+        .checkVisibility(),
+    ).toBe(false);
+    expect(part?.getBoundingClientRect().width).toBeGreaterThan(before);
+    await userEvent.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(
+      screen.getByRole("link", { name: "Pricing" }).checkVisibility(),
+    ).toBe(true);
+  });
+
+  it("narrows its search, at most 360px wide, before its menus fold", () => {
+    render(
+      <div style={{ inlineSize: "1000px" }}>
+        <NavBar
+          brand={<a href="#top">Deckhand</a>}
+          search={<input aria-label="Search the guides" />}
+          actions={<Button>Start a long free trial now</Button>}
+        >
+          {["Product", "Templates", "Guides"].map((label) => (
+            <MorphMenu.Item key={label} label={label}>
+              <MorphMenu.Column>
+                <MorphMenu.Entry href={`#${label}`} title={label} />
+              </MorphMenu.Column>
+            </MorphMenu.Item>
+          ))}
+        </NavBar>
+      </div>,
+    );
+    expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
+    const field = screen.getByRole("textbox", { name: "Search the guides" });
+    const width = field
+      .closest('[data-bt-part="nav-bar-search"]')
+      ?.getBoundingClientRect().width;
+    expect(width).toBeGreaterThanOrEqual(160);
+    expect(width).toBeLessThan(360);
+    const items = screen.getByRole("button", { name: "Guides" });
+    const search = field.closest('[data-bt-part="nav-bar-search"]');
+    expect(items.getBoundingClientRect().right).toBeLessThanOrEqual(
+      search?.getBoundingClientRect().left ?? 0,
+    );
+  });
+
   it("stays folded when it widens past 640px from a narrow start, if its menus still don't fit", async () => {
     render(
       <div data-testid="frame" style={{ inlineSize: "390px" }}>
         <NavBar
-          brand={<a href="#top">Card Studio</a>}
+          brand={<a href="#top">Deckhand</a>}
           actions={<Button>Start a long free trial now</Button>}
         >
           {["Product", "Templates", "Guides", "Company", "Community"].map(

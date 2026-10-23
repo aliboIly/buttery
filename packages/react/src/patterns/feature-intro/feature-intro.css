@@ -53,10 +53,15 @@
 
   .bt-feature-intro [data-bt-part="benefits"] > li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--bt-space-2);
     min-inline-size: 0;
     color: var(--bt-text-secondary);
+  }
+
+  /* As tall as a benefit's 20px line, which centers the icon on its first line however it wraps. */
+  .bt-feature-intro [data-bt-part="benefits"] > li > .bt-icon {
+    block-size: var(--bt-text-label-line);
   }
 
   .bt-feature-intro [data-bt-part="feature-intro-actions"] {

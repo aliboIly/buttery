@@ -4,7 +4,7 @@ import type { ComponentPropsWithRef, ReactElement, ReactNode } from "react";
 
 /** Props for `Inspector`. */
 export interface InspectorProps extends ComponentPropsWithRef<"div"> {
-  /** Names the panel for screen readers, such as "Card settings". */
+  /** Names the panel for screen readers, such as "Slide settings". */
   readonly label: string;
   /** What stays at the bottom while the sections scroll, such as `<Inspector.Footer>` with Copy and Export. */
   readonly footer?: ReactNode;
@@ -39,7 +39,7 @@ export interface InspectorSectionProps extends Omit<
   ComponentPropsWithRef<"section">,
   "title"
 > {
-  /** The section's heading, such as "Backdrop". */
+  /** The section's heading, such as "Background". */
   readonly title: string;
   /** Puts back the section's defaults. Given, the header shows a Reset action. */
   readonly onReset?: (() => void) | undefined;
@@ -204,7 +204,7 @@ export interface InspectorComponent {
  *
  * @example
  * <Inspector
- *   label="Card settings"
+ *   label="Slide settings"
  *   footer={
  *     <Inspector.Footer>
  *       <Button iconStart={Copy}>Copy</Button>
@@ -212,7 +212,7 @@ export interface InspectorComponent {
  *     </Inspector.Footer>
  *   }
  * >
- *   <Inspector.Section title="Card" onReset={resetCard} resettable={changed}>
+ *   <Inspector.Section title="Picture" onReset={resetPicture} resettable={changed}>
  *     <Inspector.Row label="Edge">
  *       <SegmentedControl label="Edge" options={edges} value={edge} onValueChange={setEdge} />
  *     </Inspector.Row>

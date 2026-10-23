@@ -17,4 +17,26 @@ export const meta: ComponentMeta = {
   related: ["Dialog", "FeatureIntro", "NotificationNudge", "Banner"],
   a11y: "A modal dialog named by its title; each section's subheading is an h3. Focus starts on Got it, which closes it, as do Escape, the close button and a press outside; the read-more link follows it. Shown by itself once per storageKey, then only from its trigger.",
   motion: "presence",
+  keyboard: [
+    {
+      keys: "Tab or Shift+Tab",
+      does: "Moves between Got it, the read-more link and the close button, staying inside the dialog",
+    },
+    {
+      keys: "Enter or Space",
+      does: "Presses the focused button; Got it, where focus starts, closes the dialog",
+    },
+    {
+      keys: "Enter",
+      does: "Follows the read-more link, closing the dialog when it goes to a page in the app",
+    },
+    {
+      keys: "Escape",
+      does: "Closes it, handing focus back to the trigger unless it opened by itself",
+    },
+  ],
+  layout:
+    "It's 880px wide at most (--bt-w-dialog-lg) and 16px inside the window, padded 32, with the copy and the media in two equal columns from 720px of dialog and the media on top under that; the copy wraps, and a dialog taller than the window scrolls inside. Got it is a 36px button, and the close button a 28px one in the top corner.",
+  reducedMotion:
+    "It and its scrim fade in and out in 100ms, without growing or rising.",
 };

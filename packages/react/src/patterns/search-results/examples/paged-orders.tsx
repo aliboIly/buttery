@@ -1,8 +1,8 @@
-import type { ExamplePlay } from "@buttery/core";
+import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import { SearchResults, matchesSearch } from "@buttery/react";
 import type { LocalSearchSource } from "@buttery/react";
 import { Receipt } from "lucide-react";
-import type { ReactElement } from "react";
 
 const ORDERS = Array.from({ length: 12 }, (_, index) => ({
   id: String(1040 + index),
@@ -36,6 +36,8 @@ export function PagedOrders(): ReactElement {
     />
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await see("12 results");

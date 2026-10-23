@@ -41,7 +41,7 @@ export interface StageProps extends Omit<
   ComponentPropsWithRef<"div">,
   "children"
 > {
-  /** Names the canvas for screen readers, such as "Card preview". */
+  /** Names the canvas for screen readers, such as "Slide preview". */
   readonly label: string;
   /** The canvas size in output pixels; the canvas shows at this shape, as large as fits. */
   readonly size: StageSize;
@@ -101,13 +101,13 @@ interface Drag {
 /**
  * The canvas an editor works on: the largest box of its shape that fits, at least 32px from the edges,
  * r12 with a card shadow. When its shape changes, it reshapes on `spring.smooth` and stays centered; content
- * that has to keep its own shape meanwhile, such as a card, spreads `useStageLayout`. In
+ * that has to keep its own shape meanwhile, such as a picture, spreads `useStageLayout`. In
  * crop mode its background fades out and eight handles appear on its frame a beat later; dragging one
  * resizes the canvas, its opposite edge mirroring the one held, and the canvas fits again when it's let go.
  * The width and height can also be typed, such as in a canvas `Select`'s footer.
  *
  * @example
- * <Stage label="Card preview" size={{ width: 1600, height: 900 }} background={gradientCss(lilac)} canvasRef={canvas}>
+ * <Stage label="Slide preview" size={{ width: 1600, height: 900 }} background={gradientCss(lilac)} canvasRef={canvas}>
  *   <TitleCard />
  * </Stage>
  */

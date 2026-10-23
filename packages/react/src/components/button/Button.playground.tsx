@@ -2,9 +2,20 @@ import { Download, Plus } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button } from "@buttery/react";
 import type { ButtonVariant } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "Button",
+  description:
+    "A button for actions: four variants, three sizes, a loading state, icons and a navigation arrow.",
+  order: 20,
+  status: "stable",
+  since: "0.4.0",
+};
 
 const VARIANTS: readonly ButtonVariant[] = [
   "primary",
@@ -24,7 +35,7 @@ function LoadingDemo(): ReactElement {
           setLoading(true);
         }}
       >
-        Export the card
+        Export orders
       </Button>
       <Button
         onClick={() => {
@@ -36,6 +47,32 @@ function LoadingDemo(): ReactElement {
     </Inline>
   );
 }
+
+export const live: LiveDemo = {
+  controls: {
+    variant: {
+      kind: "choice",
+      options: ["primary", "secondary", "soft", "ghost"],
+      initial: "primary",
+    },
+    size: { kind: "choice", options: ["sm", "md", "cta"], initial: "md" },
+    shape: { kind: "choice", options: ["pill", "rounded"], initial: "pill" },
+    loading: { kind: "toggle", initial: false },
+    disabled: { kind: "toggle", initial: false },
+    children: { kind: "text", initial: "Save changes" },
+  },
+  render: ({ variant, size, shape, loading, disabled, children }) => (
+    <Button
+      variant={demoChoice(variant, ["primary", "secondary", "soft", "ghost"])}
+      size={demoChoice(size, ["md", "sm", "cta"])}
+      shape={demoChoice(shape, ["pill", "rounded"])}
+      loading={loading === true}
+      disabled={disabled === true}
+    >
+      {String(children)}
+    </Button>
+  ),
+};
 
 export const demos: readonly DemoSection[] = [
   {
@@ -91,7 +128,7 @@ export const demos: readonly DemoSection[] = [
     title: "Icons",
     render: () => (
       <Inline gap={2} wrap>
-        <Button iconStart={Plus}>New card</Button>
+        <Button iconStart={Plus}>New coffee</Button>
         <Button variant="primary" iconStart={Download}>
           Download
         </Button>
@@ -119,6 +156,8 @@ export const demos: readonly DemoSection[] = [
   },
   {
     title: "Disabled",
+    description:
+      "Pass aria-disabled for an action that isn't available yet, such as Save before a form is complete or Back on a first step: the button looks like this and ignores presses but stays in the Tab order, so focus doesn't drop to the page when it turns off and screen readers still find it. Pass disabled only for an action that stays off for as long as the screen is open, such as one the person has no permission for.",
     render: () => (
       <Inline gap={2} wrap>
         {VARIANTS.map((variant) => (

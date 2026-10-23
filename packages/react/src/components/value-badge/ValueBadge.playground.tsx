@@ -1,8 +1,18 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { Button, ValueBadge } from "@buttery/react";
+
+export const page: DocsPage = {
+  section: "components/data-display",
+  title: "ValueBadge",
+  description:
+    "A small badge that shows a formatted value and keeps room for its longest value, so it never changes width.",
+  order: 160,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function StepDemo(): ReactElement {
   const [angle, setAngle] = useState(0);
@@ -20,6 +30,27 @@ function StepDemo(): ReactElement {
     </Inline>
   );
 }
+
+function reserveOf(value: string | number | boolean | undefined): string[] {
+  return String(value)
+    .split(",")
+    .map((part) => part.trim())
+    .filter((part) => part !== "");
+}
+
+export const live: LiveDemo = {
+  controls: {
+    children: { kind: "text", initial: "80%" },
+    reserve: { kind: "text", initial: "0%, 100%" },
+  },
+  render: ({ children, reserve }) => (
+    <ValueBadge reserve={reserveOf(reserve)}>{String(children)}</ValueBadge>
+  ),
+  code: ({ children, reserve }) =>
+    `<ValueBadge reserve={[${reserveOf(reserve)
+      .map((part) => `"${part}"`)
+      .join(", ")}]}>${String(children)}</ValueBadge>`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

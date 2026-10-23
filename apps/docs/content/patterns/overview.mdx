@@ -1,0 +1,246 @@
+---
+title: Overview
+description: An app's home page, with headline metrics, a chart, what needs attention and guidance for a new account.
+section: patterns
+order: 90
+status: new
+since: 0.8.0
+exports: [TimeEstimate, useDismissible]
+related:
+  [
+    components/metric-card,
+    components/stat-tabs,
+    components/setup-guide,
+    components/recommendation-card,
+  ]
+---
+
+An overview is an app's home page: headline numbers for the period, a chart behind one of them, the few things that need attention, and guidance while an account is new. Build it from `MetricCard`, `StatTabs`, the charts and `SetupGuide`; it adds no component of its own.
+
+## How it fits together
+
+<Cards columns={2}>
+<Card icon="monitor" title="Headline numbers">
+
+`MetricCard` shows one number with its change and a sparkline, and loads on its own.
+
+</Card>
+<Card icon="template" title="A chart behind them">
+
+`StatTabs` puts a few totals over one chart and switches the chart between them.
+
+</Card>
+<Card icon="book" title="What needs attention">
+
+`RecommendationCard` and `Banner` raise what needs a decision, each with an action and how long it takes, and are dismissed for good once closed.
+
+</Card>
+<Card icon="wrench" title="Guidance while it's new">
+
+`SetupGuide` floats at the bottom end until the account is set up, showing its progress and the next task.
+
+</Card>
+</Cards>
+
+Every block keeps its size while it loads, so the page doesn't shift as data arrives.
+
+Here is a whole overview: a banner, two metric cards for the week, a chart of daily totals under `StatTabs`, a tip, and a setup guide. The numbers are written into the file to keep it short; an app's would come from its data.
+
+```tsx title="src/pages/OverviewPage.tsx"
+import { useState } from "react";
+import type { ReactElement } from "react";
+import { Grid } from "@buttery/core";
+import {
+  AppPage,
+  Banner,
+  BarChart,
+  MetricCard,
+  PageHeader,
+  RecommendationCard,
+  SetupGuide,
+  StatTabs,
+} from "@buttery/react";
+import { Truck } from "lucide-react";
+
+const WEEK = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
+
+const dollars = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+const DAILY = [
+  { value: "orders", label: "Orders", values: [38, 42, 40, 47, 51, 63, 58] },
+  { value: "bags", label: "Bags", values: [61, 70, 66, 78, 84, 102, 95] },
+  { value: "refunds", label: "Refunds", values: [1, 0, 2, 0, 1, 1, 0] },
+] as const;
+
+function total(values: readonly number[]): number {
+  return values.reduce((sum, value) => sum + value, 0);
+}
+
+export function OverviewPage(): ReactElement {
+  const [metric, setMetric] = useState("orders");
+  const shown = DAILY.find((entry) => entry.value === metric) ?? DAILY[0];
+  return (
+    <AppPage
+      header={
+        <PageHeader
+          title="Overview"
+          description="How the roastery did this week, and what needs you."
+        />
+      }
+    >
+      <Banner
+        icon={Truck}
+        action={{ label: "Turn on pickup", href: "/settings/pickup" }}
+        estimate="2 min"
+        storageKey="overview-pickup"
+      >
+        Customers nearby can collect their coffee at the roastery.
+      </Banner>
+      <AppPage.Section title="This week">
+        <Grid columns={{ base: 1, md: 2 }} gap={4}>
+          <MetricCard
+            title="Sales"
+            value={dollars.format(8420)}
+            delta={0.12}
+            labels={WEEK}
+            series={[
+              {
+                key: "now",
+                label: "This week",
+                values: [980, 1040, 1010, 1190, 1260, 1540, 1400],
+              },
+              {
+                key: "before",
+                label: "Last week",
+                values: [900, 950, 980, 1050, 1120, 1380, 1140],
+                comparison: true,
+              },
+            ]}
+            formatValue={(value) => dollars.format(value)}
+            updated="Updated just now"
+            href="/payouts"
+          />
+          <MetricCard
+            title="New subscribers"
+            value="24"
+            delta={-0.04}
+            labels={WEEK}
+            series={[
+              {
+                key: "now",
+                label: "This week",
+                values: [2, 4, 3, 5, 3, 4, 3],
+              },
+              {
+                key: "before",
+                label: "Last week",
+                values: [3, 4, 4, 5, 4, 3, 2],
+                comparison: true,
+              },
+            ]}
+            updated="Updated just now"
+            href="/subscriptions"
+          />
+        </Grid>
+      </AppPage.Section>
+      <AppPage.Section title="Day by day">
+        <StatTabs
+          label="Daily numbers"
+          tabs={DAILY.map((entry) => ({
+            value: entry.value,
+            label: entry.label,
+            count: total(entry.values),
+          }))}
+          value={metric}
+          onValueChange={setMetric}
+        />
+        <BarChart
+          label={`${shown.label} each day`}
+          labels={WEEK}
+          labelsHeading="Day"
+          series={[
+            { key: shown.value, label: shown.label, values: shown.values },
+          ]}
+        />
+      </AppPage.Section>
+      <AppPage.Section title="Worth a look">
+        <RecommendationCard
+          title="Get an alert when green coffee runs low"
+          action={{ label: "Turn on alerts", href: "/settings/notifications" }}
+          estimate="2 min"
+          storageKey="overview-low-stock"
+        >
+          Nyeri is down to 180 kg, about nine days of roasting.
+        </RecommendationCard>
+      </AppPage.Section>
+      <SetupGuide
+        title="Get your shop ready"
+        tasks={[
+          { id: "coffee", title: "Add your first coffee", done: true },
+          { id: "shipping", title: "Set shipping rates", done: true },
+          {
+            id: "bank",
+            title: "Connect your bank",
+            action: { label: "Connect", href: "/settings/payouts" },
+          },
+        ]}
+        storageKey="overview-setup"
+      />
+    </AppPage>
+  );
+}
+```
+
+Three places show it working:
+
+- The [MetricCard examples](/components/metric-card) show the cards loading and changing period.
+- The [dashboard template](/templates/dashboard) opens on a smaller overview.
+- The roastery demo's [overview](/demos/roastery) is the full version, with a date range bar over its cards.
+
+See [MetricCard](/components/metric-card), [StatTabs](/components/stat-tabs) and [SetupGuide](/components/setup-guide) for each part.
+
+## Guidance of your own
+
+Two parts behind the guidance components are exported for guidance you build yourself.
+
+### TimeEstimate
+
+`TimeEstimate` says how long a task takes, with a 14px clock and the time in `caption`, read as "Takes about 1 min". `SetupGuide` and `RecommendationCard` show it beside their tasks.
+
+### useDismissible
+
+`useDismissible` is the state behind a part people can dismiss for good, as `Banner` and `RecommendationCard` are. When you call `dismiss()`:
+
+- The part fades where it is over `dur-fast`, then `dismissed` turns true and you render nothing.
+- Inside an `AppPage`, what's below then slides up into its place.
+- Focus in the part moves on to the next tab stop as it goes.
+- With a `storageKey`, the part stays gone on later visits.
+
+Spread its `motionProps` on the part's root, a `buttery.div`:
+
+```tsx title="src/RoastDayTip.tsx"
+import { X } from "lucide-react";
+import type { ReactElement } from "react";
+import { Inline, Text } from "@buttery/core";
+import { buttery, IconButton, useDismissible } from "@buttery/react";
+
+export function RoastDayTip(): ReactElement | null {
+  const { dismissed, dismiss, motionProps } = useDismissible({
+    kind: "tip",
+    storageKey: "roast-day",
+  });
+  if (dismissed) return null;
+  return (
+    <buttery.div {...motionProps}>
+      <Inline gap={2} align="center">
+        <Text variant="body">Roast days move to Thursday from next week.</Text>
+        <IconButton icon={X} label="Dismiss" onClick={dismiss} />
+      </Inline>
+    </buttery.div>
+  );
+}
+```

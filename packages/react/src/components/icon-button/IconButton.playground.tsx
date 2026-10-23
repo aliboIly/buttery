@@ -1,10 +1,29 @@
-import { Bell, HelpCircle, Redo2, Undo2, X } from "lucide-react";
+import {
+  Bell,
+  HelpCircle,
+  Plus,
+  Redo2,
+  Settings,
+  Undo2,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Inline } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import { demoChoice } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
 import { IconButton } from "@buttery/react";
 import { Grid3x3 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "components/actions",
+  title: "IconButton",
+  description:
+    "A square button that shows only an icon, named by a label that also appears as its tooltip.",
+  order: 50,
+  status: "stable",
+  since: "0.4.0",
+};
 
 function ToggleDemo(): ReactElement {
   const [on, setOn] = useState(false);
@@ -19,6 +38,35 @@ function ToggleDemo(): ReactElement {
     />
   );
 }
+
+const ICONS = { Settings, Bell, Plus, Undo2 } as const;
+
+const ICON_NAMES = ["Settings", "Bell", "Plus", "Undo2"] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    icon: { kind: "choice", options: ICON_NAMES, initial: "Settings" },
+    label: { kind: "text", initial: "Settings" },
+    variant: {
+      kind: "choice",
+      options: ["ghost", "primary"],
+      initial: "ghost",
+    },
+    size: { kind: "choice", options: ["md", "sm"], initial: "md" },
+    dot: { kind: "toggle", initial: false },
+  },
+  render: ({ icon, label, variant, size, dot }) => (
+    <IconButton
+      icon={ICONS[demoChoice(icon, ICON_NAMES)]}
+      label={String(label)}
+      variant={demoChoice(variant, ["ghost", "primary"])}
+      size={demoChoice(size, ["md", "sm"])}
+      dot={dot === true}
+    />
+  ),
+  code: ({ icon, label, variant, size, dot }) =>
+    `<IconButton icon={${demoChoice(icon, ICON_NAMES)}} label="${String(label)}" variant="${String(variant)}" size="${String(size)}"${dot === true ? " dot" : ""} />`,
+};
 
 export const demos: readonly DemoSection[] = [
   {

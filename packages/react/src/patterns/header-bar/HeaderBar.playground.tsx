@@ -1,10 +1,21 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { OverflowCluster, Stack } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage } from "@buttery/core";
 import { HeaderBar, IconButton, Select } from "@buttery/react";
 import type { SelectOption } from "@buttery/react";
 import { CircleHelp, Redo2, Trash2, Undo2 } from "lucide-react";
+
+export const page: DocsPage = {
+  section: "patterns",
+  title: "HeaderBar",
+  description:
+    "An app's top bar: its mark and title, then actions that fold into a More menu when there isn't room.",
+  order: 190,
+  status: "stable",
+  since: "0.6.0",
+  home: "patterns/inspector",
+};
 
 type Shape = "16:9" | "4:3" | "1:1";
 
@@ -33,10 +44,10 @@ function DemoMark(): ReactElement {
 function Editor(): ReactElement {
   const [shape, setShape] = useState<Shape>("16:9");
   return (
-    <HeaderBar mark={<DemoMark />} title="Launch card" dragRegion>
+    <HeaderBar mark={<DemoMark />} title="Quarterly review" dragRegion>
       <HeaderBar.Actions>
         <HeaderBar.Action
-          label="Crop"
+          label="Present"
           priority={2}
           onSelect={() => undefined}
         />

@@ -1,0 +1,131 @@
+---
+title: Testing
+description: expectButtery, the Playwright check that fails a page that overlaps, overflows or shifts, at every size you ask for.
+section: tools
+order: 40
+status: stable
+since: 0.2.0
+related: [guides/check-your-layout, layout/the-layout-contract]
+---
+
+`expectButtery` from `@buttery/test` checks a page in Playwright against buttery's layout contract, at each viewport, theme and density you give it, and fails with every problem it finds and how to fix it. Use it in an app's end-to-end tests, so a layout that breaks at one size can't ship.
+
+## A first test
+
+```ts title="e2e/layout.spec.ts"
+import { test } from "@playwright/test";
+import { expectButtery, quickMatrix } from "@buttery/test";
+
+test("the orders page is buttery", async ({ page }) => {
+  await page.goto("/orders");
+  await expectButtery(page, { ...quickMatrix, name: "orders" });
+});
+```
+
+`quickMatrix` checks a 390px phone and a 1280px desktop, in light and dark. `fullMatrix` adds 768, 960, 1440 and 1728px and the compact density; buttery runs it before each release.
+
+## Options
+
+The second argument takes these, and a matrix fills in the first three:
+
+<DocsTable
+  columns={["Option", "What it sets"]}
+  rows={[
+    [
+      "`viewports`",
+      "The sizes to check, each a `width` and a `height` in CSS pixels (default: the page's own viewport)",
+    ],
+    ["`themes`", '`"light"`, `"dark"` or both (default: `["light"]`)'],
+    [
+      "`densities`",
+      '`"comfortable"`, `"compact"` or both (default: `["comfortable"]`)',
+    ],
+    ["`rules`", "The checks to run, by name (default: every check)"],
+    [
+      "`name`",
+      "What the report calls the page, such as its route (default: its path and hash)",
+    ],
+    [
+      "`interactions`",
+      "Steps that drive the page, each followed by every check",
+    ],
+    [
+      "`settleTimeout`",
+      "How long to wait for buttery to report settled, in ms (default: `5000`)",
+    ],
+  ]}
+/>
+
+## What it checks
+
+Each check has a name. Pass a list of them as `rules` to run only those, such as `rules: ["overflow", "overlap"]`.
+
+<DocsTable
+  columns={["Rule", "What it catches"]}
+  rows={[
+    [
+      "`overlap`",
+      "Two elements that cover each other, outside the layers they belong in",
+    ],
+    [
+      "`overflow`",
+      "Content wider than its box, or a page that scrolls sideways",
+    ],
+    ["`clipping`", "Text cut off without an ellipsis"],
+    ["`viewport-fit`", "A floating surface that runs off the screen"],
+    [
+      "`target-size`",
+      "A press target smaller than 24 by 24, or a standalone button under 28 tall",
+    ],
+    ["`scale`", "A space or a control height that isn't on buttery's scale"],
+    [
+      "`reach`",
+      "Content no one can scroll to, such as a fixed box that runs past the window",
+    ],
+    ["`layering`", "A `z-index` that isn't one of the layer bands"],
+    ["`emphasis`", "More than one primary button in one region"],
+    [
+      "`crowding`",
+      "Text under other text with less than 2px between its descenders and the next line's capitals",
+    ],
+    [
+      "`wrapping`",
+      "A word broken across lines that would fit on one, or a short word in a column squeezed narrower than it",
+    ],
+    [
+      "`alignment`",
+      "Controls of one height side by side in a row that start at different heights",
+    ],
+    [
+      "`stability`",
+      "Something that moves after an interaction when it shouldn't",
+    ],
+    ["`accessibility`", "axe's accessibility rules"],
+  ]}
+/>
+
+## Interactions
+
+A page's open menus and toasts count too. Pass `interactions`, and each one drives the page; then every check runs on the state it leaves, and the stability check compares what moved.
+
+```ts
+await expectButtery(page, {
+  ...quickMatrix,
+  interactions: [
+    {
+      name: "open the export menu",
+      run: async (current) => {
+        await current.getByRole("button", { name: "Export" }).click();
+      },
+    },
+  ],
+});
+```
+
+Interactions run once, in order, at the first viewport, theme and density. An interaction that moves something on purpose, such as filtering a list's rows, lists the selectors of what moves in its `allowMove`. One whose state lasts, such as a form's errors, sets `acrossMatrix: true` to have that state checked at every viewport, theme and density.
+
+## When it fails
+
+A failed run prints each problem with the element, the rule, what it measured and a fix. The test's results also get `buttery-violations.json`, the problems as JSON, and an annotated screenshot for each viewport, theme and density where it found one.
+
+[Reading a report](/guides/check-your-layout#reading-a-report) shows a report and what to do with it.

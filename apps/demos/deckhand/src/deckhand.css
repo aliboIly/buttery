@@ -1,0 +1,718 @@
+.dh-root {
+  --bt-deckhand-thumb: calc(var(--bt-h-cta) + var(--bt-space-4));
+  --bt-deckhand-ring: var(--bt-focus-width);
+  --bt-deckhand-cell: 150px;
+
+  block-size: 100dvh;
+}
+
+/*
+ * The work area: the stage over the strip of slides, or over a grid of them when the area is tall. It's a
+ * flex column rather than a grid, since its own container query can't change its rows.
+ */
+.dh-work {
+  container: dh-work / size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-space-2);
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.dh-stage {
+  display: grid;
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.dh-stage[data-empty] {
+  place-items: center;
+  padding: var(--bt-space-8);
+}
+
+.dh-inspector-empty {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  padding: var(--bt-space-6);
+}
+
+/*
+ * A slide, sized from its box's shorter side, which is 1080 units: everything on it is a number of units, so
+ * a thumbnail, the stage, a presentation and the exported PNG all show the same slide.
+ */
+.dh-slide {
+  --bt-deckhand-unit: calc(100cqmin / 1080);
+  --bt-deckhand-box-pad: 56;
+  --bt-deckhand-stats-gap: 40;
+  --bt-deckhand-ems: 1;
+  --bt-deckhand-title: 88;
+  --bt-deckhand-title-line: 1.06;
+  --bt-deckhand-sub: 40;
+  --bt-deckhand-gap: 30;
+
+  container-type: size;
+  display: grid;
+  inline-size: 100%;
+  block-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: clip;
+  color: var(--bt-deckhand-ink);
+  text-align: start;
+}
+
+.dh-slide[data-painted] {
+  background: var(--bt-deckhand-fill);
+}
+
+.dh-slide[data-layout="points"] {
+  --bt-deckhand-title: 80;
+  --bt-deckhand-title-line: 1.1;
+  --bt-deckhand-sub: 30;
+  --bt-deckhand-gap: 48;
+}
+
+.dh-slide[data-layout="numbers"] {
+  --bt-deckhand-numbers-width: 952;
+  --bt-deckhand-title: 72;
+  --bt-deckhand-title-line: 1.1;
+  --bt-deckhand-sub: 30;
+  --bt-deckhand-gap: 56;
+}
+
+.dh-slide[data-layout="quote"] {
+  --bt-deckhand-sub: 30;
+  --bt-deckhand-gap: 40;
+}
+
+.dh-slide-room {
+  display: grid;
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding: calc(64 * var(--bt-deckhand-unit));
+}
+
+.dh-slide-room > * {
+  grid-area: 1 / 1;
+}
+
+/* The words never run wider than a square slide has room for, so changing the slide's shape never rewraps them. */
+.dh-slide-place {
+  display: grid;
+  inline-size: fit-content;
+  max-inline-size: calc(952 * var(--bt-deckhand-unit));
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.dh-slide[data-layout="numbers"] .dh-slide-place {
+  inline-size: calc(var(--bt-deckhand-numbers-width) * var(--bt-deckhand-unit));
+}
+
+.dh-slide-room[data-position$="left"] > .dh-slide-place {
+  justify-self: start;
+}
+
+.dh-slide-room:is(
+    [data-position="top"],
+    [data-position="center"],
+    [data-position="bottom"]
+  )
+  > .dh-slide-place {
+  justify-self: center;
+}
+
+.dh-slide-room[data-position$="right"] > .dh-slide-place {
+  justify-self: end;
+}
+
+.dh-slide-room[data-position^="top"] > .dh-slide-place {
+  align-self: start;
+}
+
+.dh-slide-room:is(
+    [data-position="left"],
+    [data-position="center"],
+    [data-position="right"]
+  )
+  > .dh-slide-place {
+  align-self: center;
+}
+
+.dh-slide-room[data-position^="bottom"] > .dh-slide-place {
+  align-self: end;
+}
+
+/* The box behind the words: invisible with no box, a light or dark card with one. */
+.dh-slide-box {
+  display: flex;
+  flex-direction: column;
+  gap: calc(
+    var(--bt-deckhand-gap) * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
+  );
+  min-inline-size: 0;
+  padding: calc(var(--bt-deckhand-box-pad) * var(--bt-deckhand-unit));
+  border-radius: calc(32 * var(--bt-deckhand-unit));
+  background-color: var(--bt-deckhand-box-fill);
+  box-shadow: 0 calc(var(--bt-deckhand-depth) * 32 * var(--bt-deckhand-unit))
+    calc(var(--bt-deckhand-depth) * 96 * var(--bt-deckhand-unit))
+    var(--bt-deckhand-shadow);
+  color: var(--bt-deckhand-ink);
+  overflow-wrap: break-word;
+  transition:
+    background-color
+      calc(
+        var(--bt-dur-reduced) + (var(--bt-dur-base) - var(--bt-dur-reduced)) *
+          var(--bt-motion)
+      )
+      var(--bt-ease-standard),
+    color
+      calc(
+        var(--bt-dur-reduced) + (var(--bt-dur-base) - var(--bt-dur-reduced)) *
+          var(--bt-motion)
+      )
+      var(--bt-ease-standard),
+    box-shadow
+      calc(
+        var(--bt-dur-reduced) + (var(--bt-dur-base) - var(--bt-dur-reduced)) *
+          var(--bt-motion)
+      )
+      var(--bt-ease-standard);
+}
+
+/* Without a box the words take the fill's ink, which changes with the fill in the same frame. */
+.dh-slide[data-box="none"] .dh-slide-box {
+  transition-property: background-color, box-shadow;
+}
+
+/* A slider drag sets the box on every frame, so it follows at once. */
+.dh-slide-box[data-live] {
+  transition: none;
+}
+
+.dh-slide[data-align="center"] .dh-slide-box {
+  align-items: center;
+  text-align: center;
+}
+
+.dh-slide[data-align="end"] .dh-slide-box {
+  align-items: end;
+  text-align: end;
+}
+
+.dh-slide [data-text]::before {
+  content: attr(data-text);
+}
+
+.dh-slide :is(.dh-title, .dh-subtitle, .dh-quote, .dh-cite) {
+  max-inline-size: 100%;
+}
+
+.dh-title {
+  font-size: calc(
+    var(--bt-deckhand-title) * var(--bt-deckhand-unit) *
+      var(--bt-deckhand-scale)
+  );
+  font-weight: var(--bt-text-title-weight);
+  line-height: var(--bt-deckhand-title-line);
+  letter-spacing: var(--bt-tracking-display);
+  text-wrap: balance;
+}
+
+.dh-subtitle,
+.dh-cite {
+  font-size: calc(
+    var(--bt-deckhand-sub) * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
+  );
+  line-height: 1.36;
+  text-wrap: balance;
+}
+
+.dh-cite {
+  font-weight: var(--bt-text-label-weight);
+}
+
+/* On a box the colors are known, so who said it can step back and still read at AA. */
+.dh-slide:not([data-box="none"]) .dh-cite {
+  opacity: 0.72;
+}
+
+.dh-points {
+  display: flex;
+  flex-direction: column;
+  gap: calc(20 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  min-inline-size: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dh-slide[data-align="center"] .dh-points {
+  align-items: center;
+}
+
+.dh-slide[data-align="end"] .dh-points {
+  align-items: end;
+}
+
+.dh-point {
+  --bt-deckhand-point: calc(
+    42 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
+  );
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: calc(var(--bt-deckhand-point) * 0.58);
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  font-size: var(--bt-deckhand-point);
+  line-height: 1.32;
+  text-align: start;
+  text-wrap: pretty;
+}
+
+/* The bullet sits in a box one line tall, so it centers on the point's first line. */
+.dh-bullet {
+  display: grid;
+  place-items: center;
+  block-size: calc(var(--bt-deckhand-point) * 1.32);
+}
+
+.dh-dot {
+  inline-size: calc(var(--bt-deckhand-point) * 0.32);
+  aspect-ratio: 1;
+  border-radius: calc(var(--bt-deckhand-point) * 0.08);
+  background-color: currentcolor;
+}
+
+.dh-stats {
+  display: grid;
+  grid-template-columns: repeat(var(--bt-deckhand-stats), minmax(0, 1fr));
+  gap: calc(var(--bt-deckhand-stats-gap) * var(--bt-deckhand-unit));
+  inline-size: 100%;
+}
+
+.dh-stat {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  min-inline-size: 0;
+}
+
+/*
+ * A number never breaks across lines. Every number on the slide sets at the layout's size, or smaller where
+ * the widest of them (its ems) wouldn't fit its column of the box: the box's width less its padding and the
+ * gaps, shared out, with a little to spare.
+ */
+.dh-stat-value {
+  font-size: min(
+    calc(136 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)),
+    calc(
+      (
+          var(--bt-deckhand-numbers-width) - 2 * var(--bt-deckhand-box-pad) -
+            (var(--bt-deckhand-stats) - 1) * var(--bt-deckhand-stats-gap)
+        ) /
+        var(--bt-deckhand-stats) / var(--bt-deckhand-ems) * 0.96 *
+        var(--bt-deckhand-unit)
+    )
+  );
+  font-weight: var(--bt-text-title-weight);
+  white-space: nowrap;
+  line-height: 1;
+  letter-spacing: var(--bt-tracking-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.dh-stat-label {
+  font-size: calc(32 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  line-height: 1.32;
+  text-wrap: balance;
+}
+
+.dh-quote {
+  font-size: calc(58 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  font-weight: var(--bt-text-label-weight);
+  line-height: 1.26;
+  letter-spacing: var(--bt-tracking-tight);
+  text-wrap: pretty;
+}
+
+/* Arrange mode: the box is framed and takes a drag; while it's dragged, the nine places it can land show. */
+.dh-slide[data-arranging] .dh-slide-box {
+  outline: var(--bt-deckhand-ring) solid var(--bt-accent);
+  outline-offset: var(--bt-focus-offset);
+  cursor: move;
+  touch-action: none;
+}
+
+.dh-slide-box[data-dh-box] {
+  user-select: none;
+}
+
+.dh-slide-spots {
+  display: grid;
+  grid-template: repeat(3, minmax(0, 1fr)) / repeat(3, minmax(0, 1fr));
+  pointer-events: none;
+}
+
+.dh-slide-spot {
+  inline-size: calc(20 * var(--bt-deckhand-unit));
+  aspect-ratio: 1;
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-accent);
+  opacity: 0.4;
+}
+
+.dh-slide-spot[data-current] {
+  opacity: 1;
+  scale: 1.6;
+}
+
+.dh-slide-spot:nth-child(3n + 1) {
+  justify-self: start;
+}
+
+.dh-slide-spot:nth-child(3n + 2) {
+  justify-self: center;
+}
+
+.dh-slide-spot:nth-child(3n) {
+  justify-self: end;
+}
+
+.dh-slide-spot:nth-child(-n + 3) {
+  align-self: start;
+}
+
+.dh-slide-spot:nth-child(n + 4):nth-child(-n + 6) {
+  align-self: center;
+}
+
+.dh-slide-spot:nth-child(n + 7) {
+  align-self: end;
+}
+
+/* The strip of slides under the stage: thumbnails that scroll sideways, then the button that adds one. */
+.dh-strip-frame,
+.dh-strip {
+  display: grid;
+  flex: none;
+  min-inline-size: 0;
+}
+
+/* As tall as a thumbnail with its padding, slides or none, so adding the first slide moves nothing. */
+.dh-strip-scroll {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-space-2);
+  min-inline-size: 0;
+  min-block-size: calc(var(--bt-deckhand-thumb) + var(--bt-space-4));
+  padding: var(--bt-space-1) var(--bt-space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: var(--bt-space-3);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--bt-text) var(--bt-space-3),
+    var(--bt-text) calc(100% - var(--bt-space-3)),
+    transparent
+  );
+}
+
+.dh-strip-list {
+  display: flex;
+  flex: none;
+  gap: var(--bt-space-1);
+  border-radius: var(--bt-r-md);
+}
+
+/* Focus stays on the list, so the picked slide wears the focus ring. */
+.dh-strip-list:focus-visible {
+  outline: none;
+}
+
+.dh-strip-list:focus-visible > [aria-selected="true"] {
+  outline: var(--bt-focus-width) solid var(--bt-accent);
+  outline-offset: var(--bt-focus-offset);
+}
+
+.dh-thumb {
+  --bt-shared-indicator-background: var(--bt-accent-subtle);
+  --bt-shared-indicator-shadow: inset 0 0 0 var(--bt-deckhand-ring)
+    var(--bt-accent);
+
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  gap: var(--bt-space-1);
+  padding: var(--bt-space-1);
+  border-radius: var(--bt-r-md);
+  touch-action: pan-x;
+  user-select: none;
+}
+
+@media (hover: hover) {
+  .dh-thumb:not([aria-selected="true"]):hover {
+    background-color: var(--bt-bg-item-hover);
+  }
+}
+
+.dh-thumb[data-dragging] {
+  z-index: var(--bt-z-raised);
+  cursor: grabbing;
+}
+
+.dh-thumb-number {
+  min-inline-size: 2ch;
+  color: var(--bt-text-secondary);
+  text-align: end;
+}
+
+.dh-thumb[aria-selected="true"] .dh-thumb-number {
+  color: var(--bt-accent-text);
+}
+
+.dh-thumb-frame {
+  display: grid;
+  block-size: var(--bt-deckhand-thumb);
+  aspect-ratio: var(--bt-deckhand-ratio);
+  overflow: clip;
+  border-radius: var(--bt-r-xs);
+  box-shadow: var(--bt-shadow-inset);
+}
+
+.dh-add-row,
+.dh-add-cell {
+  display: contents;
+}
+
+.dh-add-gutter {
+  display: none;
+  min-inline-size: 2ch;
+}
+
+/* As big as a thumbnail, so its edges line up with theirs. */
+.dh-add {
+  --bt-transition-hover: background-color var(--bt-dur-fast)
+    var(--bt-ease-standard);
+
+  display: grid;
+  flex: none;
+  place-content: center;
+  justify-items: center;
+  gap: var(--bt-space-1);
+  block-size: var(--bt-deckhand-thumb);
+  min-inline-size: calc(var(--bt-deckhand-thumb) * var(--bt-deckhand-ratio));
+  padding-inline: var(--bt-space-3);
+  border: 1px dashed var(--bt-ring-selected);
+  border-radius: var(--bt-r-xs);
+  background: none;
+  color: var(--bt-text-secondary);
+}
+
+@media (hover: hover) {
+  .dh-add:hover {
+    background-color: var(--bt-bg-control);
+    color: var(--bt-text);
+  }
+}
+
+.dh-add[data-state="open"] {
+  background-color: var(--bt-bg-control-active);
+}
+
+/*
+ * On a tall work area, as on a phone, the slide sits at the top at its own shape, as wide as the stage lets
+ * it be, and the slides fill the rest as a grid of bigger thumbnails that scrolls on its own. The grid no
+ * longer holds the floating lanes up, so its end keeps their height clear instead.
+ */
+@container dh-work (aspect-ratio < 0.9) {
+  .dh-stage {
+    flex: none;
+  }
+
+  /* The slide at the stage's full width plus the stage's 32px margin above and below it, up to 55% of the area. */
+  .dh-stage:not([data-empty]) {
+    block-size: min(
+      calc(
+        (100cqi - 2 * var(--bt-space-8)) / var(--bt-deckhand-ratio) + 2 *
+          var(--bt-space-8)
+      ),
+      55cqb
+    );
+  }
+
+  .dh-stage[data-empty] {
+    padding: var(--bt-space-6);
+  }
+
+  .dh-strip-frame {
+    display: contents;
+  }
+
+  /* Above the stage, so a slide shrinking to a wider shape slips under the grid rather than over it. */
+  .dh-strip {
+    z-index: var(--bt-z-raised);
+    flex: 1;
+    grid-template-rows: minmax(0, 1fr);
+    min-block-size: 0;
+  }
+
+  .dh-strip-scroll {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--bt-space-1);
+    min-block-size: 0;
+    padding: var(--bt-space-3) var(--bt-space-1)
+      calc(var(--bt-space-3) + var(--bt-lane-clearance, 0px));
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scroll-padding-block: var(--bt-space-3);
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      var(--bt-text) var(--bt-space-3),
+      var(--bt-text) calc(100% - var(--bt-space-3)),
+      transparent
+    );
+  }
+
+  /* The new slide button gets a row of the same columns, so it lines up with a thumbnail. */
+  .dh-strip-list,
+  .dh-add-row {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--bt-deckhand-cell)), 1fr)
+    );
+    align-items: start;
+    gap: var(--bt-space-1);
+  }
+
+  .dh-thumb,
+  .dh-add-cell {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--bt-space-1);
+    padding: var(--bt-space-1);
+    touch-action: pan-y;
+  }
+
+  .dh-add-gutter {
+    display: block;
+  }
+
+  .dh-thumb-frame {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .dh-add {
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: auto;
+    aspect-ratio: var(--bt-deckhand-ratio);
+  }
+}
+
+/* A big number's two fields: the number, then its wider caption. */
+.dh-stat-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--bt-space-2);
+}
+
+/* The presentation: the slide as large as the window allows on a dark room, with its controls under it. */
+.dh-present {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  block-size: 100%;
+  padding: var(--bt-space-6);
+}
+
+.dh-present-screen {
+  background-color: var(--bt-deckhand-screen);
+}
+
+/* Positioned, so it paints over the room's scrim, which sits first in the layer. */
+.dh-present-dialog {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--bt-space-4);
+  min-block-size: 0;
+  outline: none;
+}
+
+.dh-present-slides {
+  display: grid;
+  min-block-size: 0;
+}
+
+.dh-present-slide {
+  display: grid;
+  grid-area: 1 / 1;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: clip;
+}
+
+.dh-present-dialog[data-idle] {
+  cursor: none;
+}
+
+.dh-present-bar {
+  justify-self: center;
+  transition: opacity
+    calc(
+      var(--bt-dur-reduced) + (var(--bt-dur-base) - var(--bt-dur-reduced)) *
+        var(--bt-motion)
+    )
+    var(--bt-ease-standard);
+}
+
+.dh-present-dialog[data-idle] .dh-present-bar:not(:focus-within) {
+  opacity: 0;
+}
+
+.dh-present-count {
+  min-inline-size: 7ch;
+  text-align: center;
+}
+
+/* The tour's slide: a small slide in the deck's cover colors. */
+.dh-tour-slide {
+  display: grid;
+  gap: var(--bt-space-2);
+  inline-size: calc(var(--bt-space-32) + var(--bt-space-12));
+  aspect-ratio: 16 / 9;
+  align-content: end;
+  padding: var(--bt-space-3);
+  border-radius: var(--bt-r-sm);
+  background: var(--bt-deckhand-fill);
+  box-shadow: var(--bt-shadow-floating);
+  color: var(--bt-deckhand-ink);
+}
+
+.dh-tour-slide .bt-text {
+  color: inherit;
+}
+
+.dh-tour-swatch {
+  display: block;
+  inline-size: var(--bt-space-6);
+  aspect-ratio: 1;
+  border-radius: var(--bt-r-xs);
+  background: var(--bt-deckhand-fill);
+  box-shadow: var(--bt-shadow-inset);
+}
+
+.dh-tour-screen {
+  padding: var(--bt-space-3);
+  border-radius: var(--bt-r-md);
+  background-color: var(--bt-deckhand-screen);
+}

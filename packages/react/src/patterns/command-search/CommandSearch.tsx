@@ -13,7 +13,9 @@ import {
   useLayoutAnimation,
   useMergedRefs,
   useShortcut,
+  space,
   useStoredState,
+  widths,
 } from "@buttery/core";
 import { ChevronRight, Clock, Search, X } from "lucide-react";
 import { motion } from "motion/react";
@@ -72,6 +74,10 @@ export interface CommandSearchLabels {
   readonly resultCount: (count: number) => string;
   /** Announces how many filters it suggests while nothing has been found, such as "4 suggestions". */
   readonly suggestionCount: (count: number) => string;
+  /** Heads the results suggested while the field is empty. */
+  readonly suggestions: string;
+  /** Heads the better search offered when nothing is found. */
+  readonly didYouMean: string;
 }
 
 /** Props for `CommandSearch`. `ref` and other input props go to the input; `className` and `style` to the field. */
@@ -105,6 +111,21 @@ export interface CommandSearchProps extends Omit<
   readonly shortcut?: boolean | undefined;
   /** A line under "No results", such as a link to the help site. */
   readonly emptyHint?: ReactNode;
+  /** Results listed while the field is empty, after the recent searches, such as the pages most people want. */
+  readonly suggestions?: readonly SearchItem[] | undefined;
+  /**
+   * A better search for a query that found nothing, such as the closest word in the index, which the panel
+   * offers as a row under "No results" that runs it. Return `undefined` for none.
+   */
+  readonly didYouMean?:
+    ((query: SearchQuery) => string | undefined) | undefined;
+  /**
+   * Draws the highlighted result, or the first one, in a pane beside the rows whenever the window has room for
+   * it to the field's end, such as its description and a small demo. The pane is for the eye: it's inert, so
+   * focus stays in the field and screen readers hear the highlighted row.
+   */
+  readonly preview?:
+    ((item: SearchItem, query: SearchQuery) => ReactNode) | undefined;
   /** Its words, for another language or your own. */
   readonly labels?: Partial<CommandSearchLabels> | undefined;
 }
@@ -124,12 +145,42 @@ const LABELS: CommandSearchLabels = {
     count === 1 ? "1 result" : `${String(count)} results`,
   suggestionCount: (count) =>
     count === 1 ? "1 suggestion" : `${String(count)} suggestions`,
+  suggestions: "Suggestions",
+  didYouMean: "Did you mean",
 };
 
 const NO_FILTERS: readonly SearchFilter[] = [];
 const RECENT_LIMIT = 5;
 const GROUP_LIMIT = 5;
 const SUGGESTION_LIMIT = 6;
+
+/**
+ * The room above and below `field` for the panel, past its 8px offset and the window's 8px margin, in whole
+ * pixels: a panel that filled a fraction more would overflow by it, and Radix would flip it to the other side.
+ */
+function roomAround(field: HTMLElement): {
+  readonly above: number;
+  readonly below: number;
+} {
+  const rect = field.getBoundingClientRect();
+  const gap = space["2"] * 2;
+  return {
+    above: Math.floor(rect.top - gap),
+    below: Math.floor(
+      document.documentElement.clientHeight - rect.bottom - gap,
+    ),
+  };
+}
+
+const PREVIEW_WIDTH = widths.inspector.value;
+const NO_ITEMS: readonly SearchItem[] = [];
+
+/** The source the `suggestions` rows belong to, which never searches. */
+const SUGGESTED: LocalSearchSource = {
+  id: "suggestions",
+  label: LABELS.suggestions,
+  search: () => NO_ITEMS,
+};
 
 type PanelOption =
   | { readonly kind: "filter"; readonly filter: SearchFilter }
@@ -139,6 +190,7 @@ type PanelOption =
       readonly value: string;
     }
   | { readonly kind: "recent"; readonly search: string }
+  | { readonly kind: "correction"; readonly search: string }
   | {
       readonly kind: "item";
       readonly source: SearchSource;
@@ -181,6 +233,8 @@ function keyOf(option: PanelOption): string {
       return `value:${option.filter.key}:${option.value}`;
     case "recent":
       return `recent:${option.search}`;
+    case "correction":
+      return `correction:${option.search}`;
     case "item":
       return `item:${option.item.id}`;
     default: {
@@ -284,6 +338,9 @@ export function CommandSearch({
   storageKey,
   shortcut = true,
   emptyHint,
+  suggestions: suggested = NO_ITEMS,
+  didYouMean,
+  preview,
   labels,
   placeholder,
   className,
@@ -341,6 +398,11 @@ export function CommandSearch({
   const allResults = useRef<HTMLAnchorElement>(null);
   const heldHeight = useRef(0);
   const [panelWidth, setPanelWidth] = useState(0);
+  const [room, setRoom] = useState<{
+    readonly end: number;
+    readonly start: number;
+  }>({ end: 0, start: 0 });
+  const [side, setSide] = useState<"top" | "bottom">("bottom");
   const refs = useMergedRefs(ref, input);
   const baseId = useId();
   const listboxId = `${baseId}-listbox`;
@@ -432,6 +494,18 @@ export function CommandSearch({
       loading: false,
       found: 0,
     });
+  if (empty && suggested.length > 0)
+    groups.push({
+      id: "suggestions",
+      label: words.suggestions,
+      options: suggested.map((item) => ({
+        kind: "item",
+        source: SUGGESTED,
+        item,
+      })),
+      loading: false,
+      found: 0,
+    });
   if (!empty) {
     for (const source of sources) {
       const result = isRemote(source)
@@ -455,6 +529,16 @@ export function CommandSearch({
       });
     }
   }
+  const noResults = !empty && groups.length === 0;
+  const correction = noResults ? didYouMean?.(query) : undefined;
+  if (correction !== undefined && correction !== query.text.trim())
+    groups.push({
+      id: "correction",
+      label: words.didYouMean,
+      options: [{ kind: "correction", search: correction }],
+      loading: false,
+      found: 0,
+    });
   // A row's id comes from its group and what it is, so it stays with its row when another group's answer
   // arrives, and a highlight never moves onto a different result.
   const counted = new Map<string, number>();
@@ -483,7 +567,25 @@ export function CommandSearch({
     rows.some((row) => row.id === active.id)
       ? active.id
       : undefined;
-  const noResults = !empty && groups.length === 0;
+  const itemRows = rows.flatMap((row) =>
+    row.option?.kind === "item" ? [{ id: row.id, item: row.option.item }] : [],
+  );
+  const previewed =
+    preview === undefined
+      ? undefined
+      : (itemRows.find((row) => row.id === activeId) ?? itemRows[0])?.item;
+  // The pane goes past the field's end where the window has room for it, or else before its start.
+  const previewSide =
+    room.end >= panelWidth + PREVIEW_WIDTH
+      ? "end"
+      : room.start >= panelWidth + PREVIEW_WIDTH
+        ? "start"
+        : undefined;
+  const previewNode =
+    previewed !== undefined && previewSide !== undefined
+      ? preview?.(previewed, query)
+      : undefined;
+  const previewing = hasContent(previewNode);
   const panelOpen =
     focused &&
     !dismissed &&
@@ -522,15 +624,67 @@ export function CommandSearch({
   useLayoutEffect(() => {
     const element = field.current;
     if (!element || !panelOpen) return undefined;
-    setPanelWidth(element.offsetWidth);
-    const observer = new ResizeObserver(() => {
+    const measure = (): void => {
+      const rect = element.getBoundingClientRect();
+      const rtl = getComputedStyle(element).direction === "rtl";
       setPanelWidth(element.offsetWidth);
-    });
+      const width = document.documentElement.clientWidth;
+      setRoom(
+        rtl
+          ? { end: rect.right, start: width - rect.left }
+          : { end: width - rect.left, start: rect.right },
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
     observer.observe(element);
+    window.addEventListener("resize", measure);
     return () => {
       observer.disconnect();
+      window.removeEventListener("resize", measure);
     };
   }, [panelOpen]);
+
+  // The side is settled before the panel first paints: under the field where its least height fits or there's
+  // more room than above, else over it.
+  useLayoutEffect(() => {
+    const element = field.current;
+    if (!element || !panelOpen) return;
+    const least = Number.parseFloat(
+      getComputedStyle(element).getPropertyValue("--bt-command-search-min"),
+    );
+    const { above, below } = roomAround(element);
+    setSide(below >= least || below >= above ? "bottom" : "top");
+  }, [panelOpen]);
+
+  // Its height follows the room on that side, written straight onto it: Radix writes its own height variable
+  // while it delivers resize notifications, so a panel sized from that would resize in the middle of them.
+  useLayoutEffect(() => {
+    const element = field.current;
+    const panel = scroller.current?.parentElement;
+    if (!element || !panel || !panelOpen) return undefined;
+    const fit = (): void => {
+      const { above, below } = roomAround(element);
+      panel.style.setProperty(
+        "--bt-command-search-room",
+        `${String(Math.max(0, side === "bottom" ? below : above))}px`,
+      );
+    };
+    const scrolled = (event: Event): void => {
+      if (event.target instanceof Node && panel.contains(event.target)) return;
+      fit();
+    };
+    fit();
+    window.addEventListener("scroll", scrolled, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("resize", fit);
+    return () => {
+      window.removeEventListener("scroll", scrolled, { capture: true });
+      window.removeEventListener("resize", fit);
+    };
+  }, [panelOpen, side]);
 
   useLayoutEffect(() => {
     if (activeId === undefined) return;
@@ -595,6 +749,9 @@ export function CommandSearch({
           formatSearch(parseSearch(option.search, filters, { sent: true })),
         );
         return;
+      case "correction":
+        update(formatSearch({ filters: query.filters, text: option.search }));
+        return;
       case "item":
         remember();
         option.item.onSelect?.();
@@ -645,6 +802,15 @@ export function CommandSearch({
       case "Enter":
         if (!panelOpen) return;
         event.preventDefault();
+        if (
+          (event.metaKey || event.ctrlKey) &&
+          activeRow?.option?.kind === "item" &&
+          activeRow.option.item.href !== undefined
+        ) {
+          remember();
+          window.open(activeRow.option.item.href, "_blank", "noopener");
+          return;
+        }
         if (activeRow !== undefined) {
           document.getElementById(activeRow.id)?.click();
           return;
@@ -762,6 +928,20 @@ export function CommandSearch({
             </span>
           </div>
         );
+      case "correction":
+        return (
+          <div key={id} {...common}>
+            <Icon icon={Search} data-bt-part="option-icon" />
+            <span
+              className="bt-truncate"
+              data-bt-truncate=""
+              title={option.search}
+              data-bt-part="command-search-label"
+            >
+              {option.search}
+            </span>
+          </div>
+        );
       case "item": {
         const { item, source } = option;
         const content =
@@ -780,7 +960,10 @@ export function CommandSearch({
               >
                 {item.path?.map((part) => (
                   <span key={part} data-bt-part="command-search-path">
-                    <SearchHighlight text={part} query={query.text} />
+                    {/* One flex item, so the path's gap can't split a match from the rest of its word. */}
+                    <span>
+                      <SearchHighlight text={part} query={query.text} />
+                    </span>
                     <Icon
                       icon={ChevronRight}
                       data-bt-part="command-search-path-chevron"
@@ -1022,10 +1205,18 @@ export function CommandSearch({
         </motion.div>
       </Popover.Anchor>
       <Popover.Content
-        align="start"
+        side={side}
+        align={previewing && previewSide === "start" ? "end" : "start"}
         role="presentation"
         className="bt-command-search-panel"
-        style={panelWidth > 0 ? { inlineSize: `${String(panelWidth)}px` } : {}}
+        style={
+          panelWidth > 0
+            ? {
+                inlineSize: `${String(previewing ? panelWidth + PREVIEW_WIDTH : panelWidth)}px`,
+              }
+            : {}
+        }
+        data-preview={previewing ? previewSide : undefined}
         onOpenAutoFocus={(event) => {
           event.preventDefault();
         }}
@@ -1053,6 +1244,31 @@ export function CommandSearch({
         }}
       >
         <div ref={scroller} data-bt-part="scroll">
+          {noResults ? (
+            <div data-bt-part="command-search-empty">
+              <Icon icon={Search} data-bt-part="empty-icon" />
+              <p
+                className="bt-text"
+                data-role="label"
+                data-bt-part="empty-title"
+              >
+                {words.noResults(
+                  query.text.trim() === ""
+                    ? tokens.join(" ")
+                    : query.text.trim(),
+                )}
+              </p>
+              {hasContent(emptyHint) ? (
+                <p
+                  className="bt-text"
+                  data-role="body-sm"
+                  data-bt-part="empty-hint"
+                >
+                  {emptyHint}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
           <div
             role="listbox"
             id={listboxId}
@@ -1094,31 +1310,6 @@ export function CommandSearch({
               </div>
             ))}
           </div>
-          {noResults ? (
-            <div data-bt-part="command-search-empty">
-              <Icon icon={Search} data-bt-part="empty-icon" />
-              <p
-                className="bt-text"
-                data-role="label"
-                data-bt-part="empty-title"
-              >
-                {words.noResults(
-                  query.text.trim() === ""
-                    ? tokens.join(" ")
-                    : query.text.trim(),
-                )}
-              </p>
-              {hasContent(emptyHint) ? (
-                <p
-                  className="bt-text"
-                  data-role="body-sm"
-                  data-bt-part="empty-hint"
-                >
-                  {emptyHint}
-                </p>
-              ) : null}
-            </div>
-          ) : null}
         </div>
         {empty ? (
           filtersHref === undefined ? null : (
@@ -1149,6 +1340,11 @@ export function CommandSearch({
             </a>
           </div>
         )}
+        {previewing ? (
+          <div inert data-bt-part="command-search-preview">
+            {previewNode}
+          </div>
+        ) : null}
       </Popover.Content>
     </Popover>
   );

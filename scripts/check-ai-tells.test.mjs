@@ -171,4 +171,19 @@ describe("findTells", () => {
       rules(await findTells("docs/BRAND.md", "Made with Claude.")),
     ).toEqual(["agent-name"]);
   });
+
+  it("checks the prose of the docs and the site's pages, but not the agent rules", async () => {
+    const list = "- **Fast:** yes\n- **Small:** yes\n";
+    for (const path of [
+      "docs/LAYOUT_RULES.md",
+      "apps/docs/content/guides/accessibility.mdx",
+      "apps/docs/content/whats-new/0.9.0.md",
+      "ROADMAP.md",
+    ]) {
+      expect(rules(await findTells(path, list)), path).toEqual([
+        "bold-label-list",
+      ]);
+    }
+    expect(await findTells("AGENTS.md", list)).toEqual([]);
+  });
 });

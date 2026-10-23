@@ -16,4 +16,12 @@ export const meta: ComponentMeta = {
   related: ["Sidebar", "ChoiceDialog", "AppPage", "PageHeader"],
   a11y: "Each section is a region named by its heading, an h2 by default, holding a list of links. Each link is named by the page's title and its line.",
   motion: "none",
+  keyboard: [
+    {
+      keys: "Enter",
+      does: "Follows the focused link, through onNavigate when it's given",
+    },
+  ],
+  layout:
+    "It fills its parent's width, sections 32px apart, each a title-md heading over a grid of links: three columns from 1024px of its own width, two from 640, one under that. Each link is a block, r12 and padded 12, with a 32px icon tile beside its title and a line that wraps, and the whole block is the hit area.",
 };

@@ -1,0 +1,37 @@
+---
+title: Plans
+description: Plans side by side, with a billing period and a volume over cards whose rows line up.
+section: patterns
+order: 60
+status: new
+since: 0.8.0
+related: [components/segmented-control, components/select]
+---
+
+The plans pattern compares an app's plans side by side: a billing period and a volume as one control group over plan cards, each with an optional ribbon, its price, a full-width action and what it adds to the plan before. Use `PlanComparison` on a pricing or billing page.
+
+## The parts
+
+<Cards columns={3}>
+<Card icon="wrench" title="The plan options">
+
+`periods`, a `SegmentedControl`, and `volumes`, a `Select`, as one control group over the cards.
+
+</Card>
+<Card icon="package" title="The plan cards">
+
+`plans`, cheapest first, each with an optional `ribbon`, its `price`, a full-width `action` and its `features`.
+
+</Card>
+<Card icon="blocks" title="Other plans">
+
+`more` holds other plans under the cards, each a `PlanComparison.Option`, two to a row from 640px.
+
+</Card>
+</Cards>
+
+The cards share their rows through subgrid, so prices, actions and lists line up across plans of any length. They sit side by side from 900px of room and stack under that.
+
+## PlanComparison
+
+<ComponentDocs of="PlanComparison" />

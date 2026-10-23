@@ -205,12 +205,12 @@ describe("component contract", () => {
           : [];
         expect(
           examples.length,
-          `${name} needs 2–4 examples in examples/`,
+          `${name} needs 2–6 examples in examples/`,
         ).toBeGreaterThanOrEqual(2);
         expect(
           examples.length,
-          `${name} has more than 4 examples`,
-        ).toBeLessThanOrEqual(4);
+          `${name} has more than 6 examples`,
+        ).toBeLessThanOrEqual(6);
         for (const example of examples) {
           const source = readFileSync(
             join(folder, "examples", example),
@@ -252,6 +252,23 @@ describe("component contract", () => {
           meta.a11y.length,
           `${name}.meta.ts: describe keyboard and screen-reader behavior`,
         ).toBeGreaterThan(10);
+      });
+
+      it("names what to use in its meta and examples, not the phase it was built in", () => {
+        const examples = existsSync(join(folder, "examples"))
+          ? readdirSync(join(folder, "examples"))
+              .filter((file) => file.endsWith(".tsx"))
+              .map((file) => `examples/${file}`)
+          : [];
+        const phases = [`${name}.meta.ts`, ...examples].flatMap((file) =>
+          (read(file).match(/\bPhase \d[\d.]*\w*/g) ?? []).map(
+            (phase) => `${file}: ${phase}`,
+          ),
+        );
+        expect(
+          phases,
+          `${name} names a build phase: ${phases.join(", ")}. Fix: name the component to use, which exists now.`,
+        ).toEqual([]);
       });
 
       it("uses only what a user can import", () => {

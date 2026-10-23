@@ -31,6 +31,23 @@
     isolation: isolate;
   }
 
+  /* While more of the table lies past the end edge, that edge fades, so a table scrolled on a phone shows it scrolls. */
+  .bt-data-table > [data-bt-part="scroll"][data-more-aside] {
+    mask-image: linear-gradient(
+      to left,
+      transparent,
+      var(--bt-text) var(--bt-space-8)
+    );
+  }
+
+  .bt-data-table > [data-bt-part="scroll"][data-more-aside]:dir(rtl) {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--bt-text) var(--bt-space-8)
+    );
+  }
+
   .bt-data-table > [data-bt-part="scroll"]:focus-visible {
     outline: var(--bt-focus-width) solid var(--bt-accent);
     outline-offset: calc(var(--bt-focus-width) * -1);
@@ -251,7 +268,7 @@
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--bt-space-1) var(--bt-space-4);
-    padding: var(--bt-space-4);
+    padding: var(--bt-space-4) var(--bt-space-3);
   }
 
   .bt-data-table [data-bt-part="no-results"] > .bt-text[data-role="label"] {

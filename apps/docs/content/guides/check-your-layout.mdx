@@ -1,0 +1,50 @@
+---
+title: Check your layout
+description: Catching overlaps, overflow and layout shift while you work and in your tests.
+section: guides
+order: 50
+status: stable
+since: 0.2.0
+related: [tools/testing, layout/the-layout-contract]
+---
+
+buttery checks layout in two places: `LayoutGuard` while you work, and `expectButtery` in your tests. Use both, so a layout problem shows up the moment you make it and can't come back once it's fixed.
+
+## While you work
+
+In a Vite development build, `ButteryProvider` turns on `LayoutGuard`. It outlines in red anything that breaks a layout rule, such as an overlap, an overflow or a space off the scale, and logs each problem to the console as `[buttery:LayoutGuard]` with how to fix it.
+
+<DocsTable
+  columns={["Shortcut", "What it does"]}
+  rows={[
+    [
+      "⌥⇧L (Option+Shift+L, or Alt+Shift+L off a Mac)",
+      "Hides and shows the outlines",
+    ],
+    ["⌥⇧G", "Shows and hides the 12-column page grid"],
+  ]}
+/>
+
+Production builds never include it, and `layoutGuard={false}` on `ButteryProvider` leaves it out in development too.
+
+> **Resize as you go.** Narrow the window from wide to a phone's width as you work: most layout problems only show at some widths.
+
+## In your tests
+
+`expectButtery` runs the same checks and more in Playwright, at every width, theme and density you give it. Start with `quickMatrix` in every test, and run `fullMatrix` before a release. [Testing](/tools/testing) has its options and every check it runs.
+
+## Reading a report
+
+A failed check prints each problem with its rule, the element as a selector, what it measured and a fix:
+
+```text
+buttery found 1 layout problem:
+
+✗ orders at 390x844, light, comfortable, chromium
+  overflow      html: the page scrolls sideways by 51px
+                Fix: Something is wider than the viewport; fix the overflow violations above, or let the widest element shrink.
+```
+
+`pnpm test:layout --reporter=json`, buttery's own runner, prints the problems it finds as JSON, for a script or a coding agent to work through.
+
+> **Fix the cause, not the symptom.** A component that overflows needs room, or `min-width: 0` so it can shrink, never a hidden overflow. `Stack`, `Inline` and `Grid` give every child `min-width: 0`, so lay it out in one of them, or give it a column of its own in a `Grid`.

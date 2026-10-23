@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import {
+  demoChoice,
   Inline,
   Popover,
   Pressable,
@@ -7,7 +8,17 @@ import {
   Surface,
   Text,
 } from "@buttery/core";
-import type { DemoSection } from "@buttery/core";
+import type { DemoSection, DocsPage, LiveDemo } from "@buttery/core";
+
+export const page: DocsPage = {
+  section: "components/overlays",
+  title: "Popover",
+  description:
+    "A floating panel anchored to a trigger, on the floating surface in the dropdown layer.",
+  order: 100,
+  status: "stable",
+  since: "0.2.0",
+};
 
 function Trigger({ label }: { readonly label: string }): ReactElement {
   return (
@@ -20,6 +31,60 @@ function Trigger({ label }: { readonly label: string }): ReactElement {
     </Surface>
   );
 }
+
+const ALIGNS = ["center", "start", "end"] as const;
+
+export const live: LiveDemo = {
+  controls: {
+    align: { kind: "choice", options: ALIGNS, initial: "center" },
+    disabled: { kind: "toggle", initial: false },
+    children: { kind: "text", initial: "Bag size" },
+  },
+  render: ({ align, disabled, children }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return (
+      <Inline justify={edge}>
+        <Popover>
+          <Surface asChild level="raised" padX={4} padY={2} radius="full">
+            <Popover.Trigger asChild disabled={disabled === true}>
+              <Pressable>
+                <Text variant="button">{String(children)}</Text>
+              </Pressable>
+            </Popover.Trigger>
+          </Surface>
+          <Popover.Content align={edge} aria-label="Bag size">
+            <Stack gap={1} padX={2} padY={1}>
+              <Text variant="label">250 g</Text>
+              <Text variant="caption">About 16 cups of pour-over</Text>
+            </Stack>
+          </Popover.Content>
+        </Popover>
+      </Inline>
+    );
+  },
+  code: ({ align, disabled, children }) => {
+    const edge = demoChoice(align, ALIGNS);
+    return [
+      `<Inline justify="${edge}">`,
+      "  <Popover>",
+      '    <Surface asChild level="raised" padX={4} padY={2} radius="full">',
+      `      <Popover.Trigger asChild${disabled === true ? " disabled" : ""}>`,
+      "        <Pressable>",
+      `          <Text variant="button">${String(children)}</Text>`,
+      "        </Pressable>",
+      "      </Popover.Trigger>",
+      "    </Surface>",
+      `    <Popover.Content align="${edge}" aria-label="Bag size">`,
+      "      <Stack gap={1} padX={2} padY={1}>",
+      '        <Text variant="label">250 g</Text>',
+      '        <Text variant="caption">About 16 cups of pour-over</Text>',
+      "      </Stack>",
+      "    </Popover.Content>",
+      "  </Popover>",
+      "</Inline>",
+    ].join("\n");
+  },
+};
 
 export const demos: readonly DemoSection[] = [
   {
@@ -67,8 +132,8 @@ export const demos: readonly DemoSection[] = [
         <Trigger label="Products" />
         <Popover.Content scrim="blur" align="start" aria-label="Products">
           <Stack gap={1} padX={2} padY={1}>
-            <Text variant="menu">Card Studio</Text>
-            <Text variant="menu">Templates</Text>
+            <Text variant="menu">Coffee</Text>
+            <Text variant="menu">Subscriptions</Text>
           </Stack>
         </Popover.Content>
       </Popover>

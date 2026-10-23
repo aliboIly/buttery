@@ -15,4 +15,7 @@ export const meta: ComponentMeta = {
   related: ["Portal", "Scrim", "Popover", "FloatingLanes"],
   a11y: "No role of its own. The layer's content keeps its own semantics; focus management belongs to the component inside (Popover, Dialog).",
   motion: "none",
+  keyboard: [],
+  layout:
+    "Its container covers the window at its band's z-index, --bt-z-<band>, and lets presses through, so only the elements inside it take them; it has no size or hit area of its own. A layer opened inside another whose band is no higher mounts in that layer's container and stacks above it by order alone.",
 };

@@ -1,4 +1,6 @@
-import type { ExamplePlay } from "@buttery/core";
+import { useState } from "react";
+import type { ReactElement } from "react";
+import type { ExampleKind, ExamplePlay } from "@buttery/core";
 import {
   Breadcrumbs,
   Button,
@@ -6,10 +8,8 @@ import {
   SettingsPage,
   SettingsSection,
 } from "@buttery/react";
-import { useState } from "react";
-import type { ReactElement } from "react";
 
-/** A narrow settings page of rows, each turned on or off by its action. */
+/** A narrow settings page whose one row is turned on or off by its action. */
 export function NotificationPreferences(): ReactElement {
   const [lowStock, setLowStock] = useState(false);
   return (
@@ -41,6 +41,8 @@ export function NotificationPreferences(): ReactElement {
     </SettingsPage>
   );
 }
+
+export const kind: ExampleKind = "basic";
 
 export const play: ExamplePlay = async ({ press, see }) => {
   await press("button", "Turn on");
