@@ -34,6 +34,7 @@
   }
 
   .bt-auth-flow [data-bt-part="auth-flow-terms"],
+  .bt-auth-flow [data-bt-part="auth-flow-hint"],
   .bt-auth-flow [data-bt-part="countdown"] {
     text-align: center;
   }

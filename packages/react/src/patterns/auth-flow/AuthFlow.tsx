@@ -327,7 +327,7 @@ export function AuthFlow<Session>({
           }
           labels={{ verifying: words.verifying, success: words.success }}
         />
-        {hint === undefined ? null : <div data-bt-part="hint">{hint}</div>}
+        {hint === undefined ? null : <div data-bt-part="auth-flow-hint">{hint}</div>}
         <Stack gap={2}>
           <div data-bt-part="resend">
             {flow.resendIn > 0 ? (

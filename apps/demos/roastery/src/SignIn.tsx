@@ -29,8 +29,8 @@ export function SignIn({
             "Enter your email or phone number and we'll send you a code to get into the roastery.",
         }}
         hint={
-          <Text variant="body-sm" tone="secondary" asChild>
-            <p className="rs-demo-code">{`Demo code: ${DEMO_CODE}`}</p>
+          <Text variant="body-sm" tone="secondary">
+            {`Demo code: ${DEMO_CODE}`}
           </Text>
         }
         onRequestCode={async () => {

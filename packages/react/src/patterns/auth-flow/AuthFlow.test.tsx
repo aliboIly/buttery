@@ -173,6 +173,13 @@ describe("AuthFlow", () => {
     expect(onRequestCode).toHaveBeenCalledTimes(2);
   });
 
+  it("centers its hint under the code field, as it does the countdown", async () => {
+    render(<Flow hint={<span>Demo code: 246810</span>} />);
+    await toCodeStep();
+    const hint = screen.getByText("Demo code: 246810");
+    expect(getComputedStyle(hint).textAlign).toBe("center");
+  });
+
   it("goes back with the field still filled in, by its button and by Escape", async () => {
     render(<Flow />);
     await toCodeStep();
