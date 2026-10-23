@@ -526,6 +526,65 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
       acrossMatrix: true,
     },
   ],
+  sheet: [
+    {
+      name: "open the live demo's sheet at the window's end",
+      run: async (page: Page) => {
+        await page
+          .getByRole("button", { name: "Tomorrow's roast", exact: true })
+          .first()
+          .click();
+        await page.getByRole("dialog", { name: "Tomorrow's roast" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "open the sheet that's a drawer on a phone and a side panel from 640px",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", {
+            name: "Open tomorrow's roast",
+            exact: true,
+          }),
+        );
+        await page.getByRole("dialog", { name: "Tomorrow's roast" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "open the drawer from the bottom",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", { name: "From the bottom", exact: true }),
+        );
+        await page.getByRole("dialog", { name: "Tomorrow's roast" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
+    {
+      name: "open the widest sheet",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", { name: "Large", exact: true }),
+        );
+        await page.getByRole("dialog", { name: "Tomorrow's roast" }).waitFor();
+      },
+    },
+    escape,
+    {
+      name: "open the cart example's bag",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", { name: "Bag, 3 bags", exact: true }),
+        );
+        await page.getByRole("dialog", { name: "Your bag" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
   "form-dialog": [opensDialog("Add a backup email")],
   "consequence-dialog": [opensDialog("Try Roaster")],
   "fullscreen-dialog": [opensDialog("Set up the roastery")],

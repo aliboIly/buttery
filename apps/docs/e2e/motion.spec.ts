@@ -501,6 +501,108 @@ test.describe("full motion", () => {
     );
   });
 
+  test("a sheet slides in from beyond its edge on spring.smooth over a scrim that fades in over dur-base, and both leave over dur-fast", async ({
+    page,
+  }) => {
+    await page.goto("/components/sheet?chrome=0&motion=full");
+    const trigger = page
+      .getByRole("button", { name: "Tomorrow's roast", exact: true })
+      .first();
+    await trigger.focus();
+    await startSampling(page, '[data-bt="Sheet"]');
+    await page.keyboard.press("Enter");
+    const enter = await finishSampling(page, 700);
+    const lefts = trace(enter, (reading) => reading.left);
+    const last = enter.frames.at(-1)?.elements[0];
+    if (!last) throw new Error("The sheet never opened.");
+    const outside = last.left + last.width + 8;
+    const sliding = expectSpring(
+      "sheet sliding in",
+      progress(lefts, outside, last.left),
+      "smooth",
+    );
+    expect(sliding.start).toBeLessThanOrEqual(START_MAX);
+    expect(lefts[0]?.value ?? 0).toBeGreaterThan(last.left + last.width / 2);
+    for (const { elements } of enter.frames)
+      for (const reading of elements) expect(reading.opacity).toBe(1);
+    await startSampling(page, '[data-bt="Sheet"]');
+    await page.keyboard.press("Escape");
+    const exit = await finishSampling(page, 400);
+    await expect(trigger).toBeFocused();
+    const leaving = expectTween(
+      "sheet sliding out",
+      progress(
+        trace(exit, (reading) => reading.left),
+        last.left,
+        outside,
+      ),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+    expectGoneSoonAfter(exit, leaving.start + DURATIONS.fast);
+
+    await startSampling(page, '[data-bt-part="scrim"]');
+    await page.keyboard.press("Enter");
+    const dim = await finishSampling(page, 500);
+    const dimming = expectTween(
+      "scrim fading in",
+      progress(trace(dim, opacity), 0, 1),
+      EASE_OUT,
+      DURATIONS.base,
+    );
+    expect(dimming.start).toBeLessThanOrEqual(START_MAX);
+    await startSampling(page, '[data-bt-part="scrim"]');
+    await page.keyboard.press("Escape");
+    const clear = await finishSampling(page, 400);
+    expectTween(
+      "scrim fading out",
+      progress(trace(clear, opacity), 1, 0),
+      EASE_IN,
+      DURATIONS.fast,
+    );
+  });
+
+  test("a drawer follows a drag down in the frame it moves, and springs back on spring.smooth when let go short of closing", async ({
+    page,
+  }) => {
+    await page.goto("/components/sheet?chrome=0&motion=full");
+    await page
+      .getByRole("button", { name: "From the bottom", exact: true })
+      .first()
+      .click();
+    const drawer = page.getByRole("dialog", { name: "Tomorrow's roast" });
+    await drawer.waitFor();
+    await page.waitForFunction(() =>
+      document.documentElement.hasAttribute("data-bt-settled"),
+    );
+    const rest = await drawer.boundingBox();
+    if (!rest) throw new Error("The drawer isn't on the page.");
+    const { x, y } = await centerOf(
+      drawer.locator('[data-bt-part="sheet-handle"]'),
+    );
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await startSampling(page, '[data-bt="Sheet"]');
+    await page.mouse.move(x, y + 40);
+    const held = await finishSampling(page, 150);
+    const pulled = progress(
+      trace(held, (reading) => reading.top),
+      rest.y,
+      rest.y + 40,
+    );
+    expect(framesBetween(pulled)).toBe(0);
+    expect(pulled.at(-1)?.value).toBeCloseTo(1, 3);
+    await startSampling(page, '[data-bt="Sheet"]');
+    await page.mouse.up();
+    const back = await finishSampling(page, 600);
+    expectSpring(
+      "drawer springing back",
+      travelled(back, (reading) => reading.top),
+      "smooth",
+    );
+    await expect(drawer).toBeVisible();
+  });
+
   test("an onboarding's shared card travels to its next place on spring.smooth", async ({
     page,
   }) => {
@@ -1019,6 +1121,43 @@ test.describe("reduced motion", () => {
       LINEAR,
       DURATIONS.reduced,
     );
+  });
+
+  test("a sheet and its scrim fade in and out where it rests in 100ms", async ({
+    page,
+  }) => {
+    await page.goto("/components/sheet?chrome=0&motion=reduced");
+    const trigger = page
+      .getByRole("button", { name: "Tomorrow's roast", exact: true })
+      .first();
+    await trigger.focus();
+    for (const selector of ['[data-bt="Sheet"]', '[data-bt-part="scrim"]']) {
+      await startSampling(page, selector);
+      await page.keyboard.press("Enter");
+      const enter = await finishSampling(page, 300);
+      expectTween(
+        `${selector} fading in`,
+        progress(trace(enter, opacity), 0, 1),
+        LINEAR,
+        DURATIONS.reduced,
+      );
+      const lefts = new Set(
+        trace(enter, (reading) => Math.round(reading.left)).map(
+          ({ value }) => value,
+        ),
+      );
+      expect(lefts.size).toBe(1);
+      await startSampling(page, selector);
+      await page.keyboard.press("Escape");
+      const exit = await finishSampling(page, 300);
+      expectTween(
+        `${selector} fading out`,
+        progress(trace(exit, opacity), 1, 0),
+        LINEAR,
+        DURATIONS.reduced,
+      );
+      await expect(trigger).toBeFocused();
+    }
   });
 
   test("an expandable card's dialog fades in place in 100ms", async ({
