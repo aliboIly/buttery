@@ -7,17 +7,15 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 Kept up to date as items finish.
 
 **Now**, finishing Phase 7's open items:
-- In progress: a modular catalog component, with the shop's coffees rebuilt on it
-- Up next in this phase: style options (`variant`, `size`, `layout`) for the main controls, badges and page patterns
-- Then the Phase 7 gate (`pnpm check` and the full layout matrix), `v0.9.0` and its release, and the phase report
+- In progress: style options (`variant`, `size`, `layout`) for the main controls, badges and page patterns
+- Then the Phase 7 gate (`pnpm check` and the full layout matrix), `v0.9.0` and its release, the first npm publish of `@butteryui/core`, `react`, `test` and `lint` at 0.9.0, and the phase report
 
-Done since the last update: a right-click `ContextMenu` that also opens from the keyboard, on Deckhand's slides; a `Sheet` (a side panel on a laptop, a drawer on a phone) with the shop's bag on it and `/bag` and `/checkout` pages; an `Accordion` and an `Faq` pattern with the shop's questions on them; `NavBar`'s pinned actions; `OverflowCluster` refitting when its gap or size changes; Deckhand's big numbers kept to one line; core and react built one module per file for npm. Earlier: the docs went live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` are GitHub releases.
+Done since the last update: a modular `Catalog` (search, filters, sort and paging; grid, list and rows; four card looks and three sizes), with the shop's coffees rebuilt on it; the packages renamed to the `@butteryui` npm scope (`@buttery` belongs to another project) and set up to publish; a right-click `ContextMenu` that also opens from the keyboard, on Deckhand's slides; a `Sheet` (a side panel on a laptop, a drawer on a phone) with the shop's bag on it and `/bag` and `/checkout` pages; an `Accordion` and an `Faq` pattern with the shop's questions on them; `NavBar`'s pinned actions; `OverflowCluster` refitting when its gap or size changes; Deckhand's big numbers kept to one line. Earlier: the docs went live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` are GitHub releases.
 
 **Next**, in order:
-1. `@butteryui/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
-2. npm, as `@butteryui/*` (`@buttery` belongs to another project; the `butteryui` org is set up): the repo renamed as soon as the open work above has merged, then `@butteryui/core`, `react`, `test` and `lint` published as 0.9.0; `@butteryui/mcp` and `create-buttery` follow when they're built. A rehearsal already packed the four packages and built a fresh app from them
-3. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
-4. Everything else that's left: the rest of 1.0 below, and the follow-ups the demos turned up
+1. `@butteryui/mcp`: designed from the research, built, tested on both protocol versions, measured with an evaluation that compares agents with and without it, and published
+2. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
+3. Everything else that's left: the rest of 1.0 below, including the command line tool and `create-buttery` on npm, and the follow-ups the demos turned up
 
 ---
 
@@ -110,6 +108,7 @@ Done since the last update: a right-click `ContextMenu` that also opens from the
 - [x] `Sheet`, a side panel on a laptop and a drawer on a phone, with the shop's bag on it and pages of its own for the bag and checkout
 - [x] `Accordion` and the `Faq` pattern (groups, a search, deep links, three layouts), with the shop's questions on them
 - [x] `ContextMenu`, a right-click menu that also opens from the keyboard, with Deckhand's slide actions on it
+- [x] `Catalog`, a catalog built from parts (a toolbar with search, filters, sort and a layout switch; grid, list and rows; cards in four looks and three sizes), with `CatalogPage` and the shop's coffees on it
 - [ ] GitHub releases: `v0.1.0` to `v0.9.0` tagged, each with its notes from What's new, and a workflow that publishes the release for each `v*` tag pushed
 - [x] The docs deployed to GitHub Pages, at https://aliboily.github.io/buttery/
 
