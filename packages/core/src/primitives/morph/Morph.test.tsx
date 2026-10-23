@@ -85,6 +85,17 @@ describe("Morph", () => {
     );
   });
 
+  it("clips only its height while it moves, so a focus ring past its sides still shows", async () => {
+    const { rerender } = render(<Panel tall={false} />);
+    await measured(40);
+    rerender(<Panel tall />);
+    await nextFrames(2);
+    const morph = screen.getByTestId("morph");
+    expect(morph.hasAttribute("data-animating")).toBe(true);
+    expect(getComputedStyle(morph).overflowY).toBe("clip");
+    expect(getComputedStyle(morph).overflowX).toBe("visible");
+  });
+
   it("changes height at once when the container is resized", async () => {
     const { rerender } = render(
       <div style={{ inlineSize: "200px" }}>

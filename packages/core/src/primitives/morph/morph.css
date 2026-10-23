@@ -3,8 +3,10 @@
     min-inline-size: 0;
   }
 
+  /* Only its height moves, so only that is clipped; a focus ring past its sides still shows. */
   .bt-morph[data-animating] {
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: clip;
   }
 
   .bt-morph > [data-bt-part="content"] {
