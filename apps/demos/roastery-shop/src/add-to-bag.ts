@@ -30,15 +30,15 @@ export function useAddToBag(): {
     addCoffee: (choice) => {
       setBag((current) => addCoffee(current, choice));
       announce(
-        `Added a ${sizeLabel(choice.size)} bag of ${coffeeOf(choice.coffee).name}.`,
+        `${coffeeOf(choice.coffee).name}, ${sizeLabel(choice.size)}, is in your bag.`,
       );
     },
     addPlan: (plan) => {
       setBag((current) => setPlan(current, plan));
       announce(
         plan.recipient === null
-          ? "Your subscription is in the bag."
-          : `The gift for ${firstName(plan.recipient.name)} is in the bag.`,
+          ? "The subscription is in your bag."
+          : `The gift for ${firstName(plan.recipient.name)} is in your bag.`,
       );
     },
   };

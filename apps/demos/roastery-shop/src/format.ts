@@ -23,3 +23,8 @@ export function dollars(amount: number): string {
 export function bags(count: number): string {
   return `${String(count)} ${count === 1 ? "bag" : "bags"}`;
 }
+
+/** "1 item" or "3 items", for what the shopping bag holds. */
+export function items(count: number): string {
+  return `${String(count)} ${count === 1 ? "item" : "items"}`;
+}

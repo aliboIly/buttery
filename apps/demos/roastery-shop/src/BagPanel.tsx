@@ -261,7 +261,7 @@ function BagStep({
     <>
       <Dialog.Text
         title="Your bag"
-        body={`${bags(count)}, roasted the morning after you order.`}
+        body={`${bags(count)} of coffee, roasted the morning after you order.`}
       />
       <Dialog.Body>
         <ul role="list" className="shop-lines" aria-label="In your bag">

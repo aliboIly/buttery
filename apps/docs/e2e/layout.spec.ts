@@ -252,7 +252,7 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           .getByRole("button", { name: "Add to bag · $19.00", exact: true })
           .click();
         await page
-          .getByText("Added a 12 oz bag of Guji.", { exact: true })
+          .getByText("Guji, 12 oz, is in your bag.", { exact: true })
           .first()
           .waitFor();
       },

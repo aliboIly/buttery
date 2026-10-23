@@ -7,7 +7,7 @@ import { Shelf } from "./BagArt.tsx";
 import type { RoastFilter } from "./Coffees.tsx";
 import { GUIDES, THIS_WEEK, coffeeOf } from "./data.ts";
 import type { GuideId } from "./data.ts";
-import { bags } from "./format.ts";
+import { items } from "./format.ts";
 import { HalfmoonMark } from "./HalfmoonMark.tsx";
 import { jump } from "./jump.ts";
 import { useLink } from "./router.tsx";
@@ -27,7 +27,7 @@ function BagButton({
   readonly compact?: boolean;
   readonly onOpen: () => void;
 }): ReactElement {
-  const name = `Bag, ${bags(count)}`;
+  const name = `Bag, ${items(count)}`;
   const amount = <span className="shop-count">{count}</span>;
   if (compact)
     return (

@@ -34,14 +34,14 @@ test("adding a coffee updates the bag's count and the bag, which a reload keeps"
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
   const bag = bagButton(page);
-  await expect(bag).toHaveAccessibleName("Bag, 0 bags");
+  await expect(bag).toHaveAccessibleName("Bag, 0 items");
 
   await page
     .getByRole("button", { name: "Add to bag · $19.00", exact: true })
     .click();
-  await expect(bag).toHaveAccessibleName("Bag, 1 bag");
+  await expect(bag).toHaveAccessibleName("Bag, 1 item");
   await expect(
-    page.getByText("Added a 12 oz bag of Guji.", { exact: true }),
+    page.getByText("Guji, 12 oz, is in your bag.", { exact: true }),
   ).toBeVisible();
 
   await bag.click();
@@ -51,7 +51,7 @@ test("adding a coffee updates the bag's count and the bag, which a reload keeps"
     .getByRole("button", { name: "One bag more of Guji, 12 oz" })
     .click();
   await expect(
-    dialog.getByText("2 bags, roasted the morning after you order.", {
+    dialog.getByText("2 bags of coffee, roasted the morning after you order.", {
       exact: true,
     }),
   ).toBeVisible();
@@ -59,10 +59,10 @@ test("adding a coffee updates the bag's count and the bag, which a reload keeps"
     dialog.getByText("Add $2.00 more for free shipping.", { exact: true }),
   ).toBeVisible();
   await page.keyboard.press("Escape");
-  await expect(bag).toHaveAccessibleName("Bag, 2 bags");
+  await expect(bag).toHaveAccessibleName("Bag, 2 items");
 
   await page.reload();
-  await expect(bag).toHaveAccessibleName("Bag, 2 bags");
+  await expect(bag).toHaveAccessibleName("Bag, 2 items");
 });
 
 test("the bag checks out in place, through shipping and payment, and starts again empty", async ({
@@ -108,7 +108,7 @@ test("the bag checks out in place, through shipping and payment, and starts agai
     page.getByRole("dialog", { name: "Thanks, your order is in" }),
   ).toContainText("Order HM-10482 goes into tomorrow morning's roast");
   await page.getByRole("button", { name: "Done" }).click();
-  await expect(bagButton(page)).toHaveAccessibleName("Bag, 0 bags");
+  await expect(bagButton(page)).toHaveAccessibleName("Bag, 0 items");
 });
 
 test("a subscription's price follows how many bags and which coffee", async ({
@@ -151,7 +151,7 @@ test("a gift asks for who it's for, taking focus to what's missing", async ({
   await builder.getByLabel("Their email").fill("sam@example.com");
   await add.click();
   await expect(
-    page.getByText("The gift for Sam is in the bag.", { exact: true }),
+    page.getByText("The gift for Sam is in your bag.", { exact: true }),
   ).toBeVisible();
 });
 
