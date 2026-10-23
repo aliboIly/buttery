@@ -274,6 +274,45 @@ describe("FloatingLanes", () => {
     });
   });
 
+  it("lifts the lanes above a tall obstacle across the window's whole width, as a drawer is, rather than moving them in past it", async () => {
+    const [width, height] = [window.innerWidth, window.innerHeight];
+    onTestFinished(async () => {
+      await page.viewport(width, height);
+    });
+    await page.viewport(1200, 800);
+    function Drawer(): ReactElement {
+      const obstacle = useFloatingObstacle();
+      return (
+        <div
+          ref={obstacle}
+          data-testid="drawer"
+          style={{
+            position: "fixed",
+            insetInline: 0,
+            insetBlockEnd: 0,
+            blockSize: "600px",
+          }}
+        />
+      );
+    }
+    render(
+      <>
+        <FloatingLanes />
+        <Drawer />
+        <FloatingLanes.Item lane="bottom-end">
+          <Toast>Setup guide</Toast>
+        </FloatingLanes.Item>
+      </>,
+    );
+    const drawer = screen.getByTestId("drawer").getBoundingClientRect();
+    await waitFor(() => {
+      const guide = screen.getByText("Setup guide").getBoundingClientRect();
+      expect(drawer.top - guide.bottom).toBe(8);
+    });
+    const guide = screen.getByText("Setup guide").getBoundingClientRect();
+    expect(1200 - guide.right).toBe(24);
+  });
+
   it("takes in an obstacle that mounts inside a ResizeObserver callback without a ResizeObserver loop", async () => {
     const loops: string[] = [];
     const onError = (event: ErrorEvent): void => {

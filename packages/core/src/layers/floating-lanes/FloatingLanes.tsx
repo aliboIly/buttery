@@ -41,7 +41,8 @@ function laneRef(
 /**
  * How far in from the window's end edge the lanes keep, past any obstacle at least half the window's
  * height that meets that edge, such as a docked side panel, or stands in the window's end half, such as
- * an editor's inspector in from the edge of a centered app.
+ * an editor's inspector in from the edge of a centered app. An obstacle across the whole width doesn't
+ * count.
  */
 function endInset(blockers: readonly HTMLElement[]): number {
   const width = document.documentElement.clientWidth;
@@ -50,6 +51,8 @@ function endInset(blockers: readonly HTMLElement[]): number {
   for (const blocker of blockers) {
     const rect = blocker.getBoundingClientRect();
     if (rect.width === 0 || rect.height < window.innerHeight / 2) continue;
+    // One across the whole width, such as a drawer, leaves no room beside it, so the lanes rise above it.
+    if (rect.left <= 1 && rect.right >= width - 1) continue;
     const atEnd = rtl
       ? rect.left <= 1 || rect.right <= width / 2
       : rect.right >= width - 1 || rect.left >= width / 2;
@@ -288,7 +291,8 @@ export interface FloatingLanesComponent {
  * Items stack with an 8px gap, never grow wider than their lane, keep clear of sticky headers and footers,
  * and move out of the way of registered obstacles: up from one at the bottom, and in from the end past one
  * at least half the window's height that meets the end edge or stands in the window's end half, such as
- * a docked side panel or an editor's inspector. When the bottom lanes
+ * a docked side panel or an editor's inspector, but not one across the whole width, such as a drawer, which
+ * they rise above. When the bottom lanes
  * would touch, in a narrow window,
  * the center lane moves above the end lane as one column. It publishes how far the bottom lanes reach,
  * plus 8px, as `--bt-lane-clearance` on `<html>`, for scroll areas to add at their end. `ButteryProvider`
