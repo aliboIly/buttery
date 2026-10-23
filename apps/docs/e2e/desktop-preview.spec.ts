@@ -58,3 +58,51 @@ test("an example that keeps itself narrower than its frame isn't drawn smaller",
   await expect(open).toBeVisible();
   expect((await open.boundingBox())?.height).toBeGreaterThanOrEqual(28);
 });
+
+test("an app shell in a scaled preview resizes through every size, theme and density without a ResizeObserver loop", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const scope = window as Window & { loops?: string[] };
+    scope.loops = [];
+    window.addEventListener("error", (event) => {
+      if (event.message.includes("ResizeObserver loop")) {
+        scope.loops?.push(`${String(innerWidth)}x${String(innerHeight)}`);
+      }
+    });
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/patterns/app-shell");
+  await expect(page.locator('[data-bt="AppShell"]').first()).toBeVisible();
+  for (const [width, height] of [
+    [390, 844],
+    [768, 1024],
+    [960, 640],
+    [1280, 800],
+    [1440, 900],
+  ] as const) {
+    for (const colorScheme of ["light", "dark"] as const) {
+      for (const density of ["comfortable", "compact"]) {
+        await page.setViewportSize({ width, height });
+        await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+        await page.evaluate((value) => {
+          document.documentElement.setAttribute("data-bt-density", value);
+        }, density);
+        await page.evaluate(
+          () =>
+            new Promise((resolve) => {
+              requestAnimationFrame(() => {
+                requestAnimationFrame(resolve);
+              });
+            }),
+        );
+      }
+    }
+  }
+  await page.waitForTimeout(300);
+  expect(
+    await page.evaluate(
+      () => (window as Window & { loops?: string[] }).loops ?? [],
+    ),
+  ).toEqual([]);
+});

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import type { CssVariables } from "@butteryui/core";
 import { desktopScale } from "./desktop-scale.ts";
@@ -46,10 +47,20 @@ export function DesktopPreview({
       );
     };
     measure();
-    const observer = new ResizeObserver(measure);
+    // Measured and committed at the start of the next frame: a component inside that commits from its own
+    // observer with flushSync, as AppShell does, would otherwise commit this preview's new size while the
+    // browser delivers resize notifications.
+    let pending = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(pending);
+      pending = requestAnimationFrame(() => {
+        flushSync(measure);
+      });
+    });
     observer.observe(outer);
     observer.observe(inner);
     return () => {
+      cancelAnimationFrame(pending);
       observer.disconnect();
     };
   }, []);
