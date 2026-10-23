@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { PointerEvent, ReactElement } from "react";
+import type { CSSProperties, PointerEvent, ReactElement } from "react";
 import { flushSync } from "react-dom";
 import { isApplePlatform, useShortcut } from "@buttery/core";
 import {
@@ -421,6 +421,12 @@ export function Deckhand(): ReactElement {
     },
   };
 
+  const { width, height } = SLIDE_SIZES[deck.size];
+  const workStyle: CSSProperties &
+    Readonly<Record<"--bt-deckhand-ratio", string>> = {
+    "--bt-deckhand-ratio": String(width / height),
+  };
+
   const atDefault =
     slide !== null && slide.position === LAYOUT_DEFAULTS[slide.layout].position;
 
@@ -487,7 +493,7 @@ export function Deckhand(): ReactElement {
           )
         }
       >
-        <div className="dh-work">
+        <div className="dh-work" style={workStyle}>
           <div
             ref={stageArea}
             className="dh-stage"

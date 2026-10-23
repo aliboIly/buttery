@@ -468,6 +468,56 @@ test("the strip moves the picked slide with Alt and an arrow, and a drag moves i
   );
 });
 
+test("on a phone the slides fill a grid under the slide, where Up and Down move a row and a drag crosses rows", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/demos/deckhand?chrome=0");
+  await page.getByTestId("stage-slide").waitFor();
+  await settled(page);
+  const canvas = await page.locator(CANVAS).boundingBox();
+  const grid = await page.getByTestId("slide-strip").boundingBox();
+  const first = await slide(page, 1).boundingBox();
+  const second = await slide(page, 2).boundingBox();
+  const third = await slide(page, 3).boundingBox();
+  if (!canvas || !grid || !first || !second || !third)
+    throw new Error("The editor isn't on the page.");
+  expect(grid.y - (canvas.y + canvas.height)).toBeGreaterThan(0);
+  expect(grid.y - (canvas.y + canvas.height)).toBeLessThanOrEqual(48);
+  expect(second.y).toBeCloseTo(first.y, 0);
+  expect(second.x).toBeGreaterThanOrEqual(first.x + first.width);
+  expect(third.x).toBeCloseTo(first.x, 0);
+  expect(third.y).toBeGreaterThanOrEqual(first.y + first.height);
+
+  await slide(page, 1).click();
+  await page.keyboard.press("ArrowDown");
+  await expect(slide(page, 3)).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("ArrowRight");
+  await expect(slide(page, 4)).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("ArrowUp");
+  await expect(slide(page, 2)).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("Alt+ArrowDown");
+  await expect(slide(page, 4)).toHaveAccessibleName(
+    "Slide 4: Roasted Monday, poured by Friday",
+  );
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await expect(slide(page, 2)).toHaveAccessibleName(
+    "Slide 2: Roasted Monday, poured by Friday",
+  );
+  await settled(page);
+
+  const from = await centerOf(slide(page, 1));
+  const to = await centerOf(slide(page, 4));
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(to.x, to.y, { steps: 12 });
+  await page.mouse.up();
+  await expect(slide(page, 4)).toHaveAccessibleName(
+    "Slide 4: Halfmoon Roastery for your café",
+  );
+  await expect(slide(page, 4)).toHaveAttribute("aria-selected", "true");
+});
+
 test("dragging the words lands them on the nearest place, and Cancel puts them back", async ({
   page,
 }) => {

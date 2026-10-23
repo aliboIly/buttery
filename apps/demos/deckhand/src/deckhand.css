@@ -1,14 +1,19 @@
 .dh-root {
   --bt-deckhand-thumb: calc(var(--bt-h-cta) + var(--bt-space-4));
   --bt-deckhand-ring: var(--bt-focus-width);
+  --bt-deckhand-cell: 150px;
 
   block-size: 100dvh;
 }
 
-/* The work area: the stage over the strip of slides. */
+/*
+ * The work area: the stage over the strip of slides, or over a grid of them when the area is tall. It's a
+ * flex column rather than a grid, since its own container query can't change its rows.
+ */
 .dh-work {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  container: dh-work / size;
+  display: flex;
+  flex-direction: column;
   gap: var(--bt-space-2);
   min-inline-size: 0;
   min-block-size: 0;
@@ -16,6 +21,7 @@
 
 .dh-stage {
   display: grid;
+  flex: 1;
   min-inline-size: 0;
   min-block-size: 0;
 }
@@ -368,8 +374,10 @@
 }
 
 /* The strip of slides under the stage: thumbnails that scroll sideways, then the button that adds one. */
+.dh-strip-frame,
 .dh-strip {
   display: grid;
+  flex: none;
   min-inline-size: 0;
 }
 
@@ -455,6 +463,16 @@
   box-shadow: var(--bt-shadow-inset);
 }
 
+.dh-add-row,
+.dh-add-cell {
+  display: contents;
+}
+
+.dh-add-gutter {
+  display: none;
+  min-inline-size: 2ch;
+}
+
 /* As big as a thumbnail, so its edges line up with theirs. */
 .dh-add {
   --bt-transition-hover: background-color var(--bt-dur-fast)
@@ -483,6 +501,102 @@
 
 .dh-add[data-state="open"] {
   background-color: var(--bt-bg-control-active);
+}
+
+/*
+ * On a tall work area, as on a phone, the slide sits at the top at its own shape, as wide as the stage lets
+ * it be, and the slides fill the rest as a grid of bigger thumbnails that scrolls on its own. The grid no
+ * longer holds the floating lanes up, so its end keeps their height clear instead.
+ */
+@container dh-work (aspect-ratio < 0.9) {
+  .dh-stage {
+    flex: none;
+  }
+
+  /* The slide at the stage's full width plus the stage's 32px margin above and below it, up to 55% of the area. */
+  .dh-stage:not([data-empty]) {
+    block-size: min(
+      calc(
+        (100cqi - 2 * var(--bt-space-8)) / var(--bt-deckhand-ratio) + 2 *
+          var(--bt-space-8)
+      ),
+      55cqb
+    );
+  }
+
+  .dh-stage[data-empty] {
+    padding: var(--bt-space-6);
+  }
+
+  .dh-strip-frame {
+    display: contents;
+  }
+
+  /* Above the stage, so a slide shrinking to a wider shape slips under the grid rather than over it. */
+  .dh-strip {
+    z-index: var(--bt-z-raised);
+    flex: 1;
+    grid-template-rows: minmax(0, 1fr);
+    min-block-size: 0;
+  }
+
+  .dh-strip-scroll {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--bt-space-1);
+    min-block-size: 0;
+    padding: var(--bt-space-3) var(--bt-space-1)
+      calc(var(--bt-space-3) + var(--bt-lane-clearance, 0px));
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scroll-padding-block: var(--bt-space-3);
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      var(--bt-text) var(--bt-space-3),
+      var(--bt-text) calc(100% - var(--bt-space-3)),
+      transparent
+    );
+  }
+
+  /* The new slide button gets a row of the same columns, so it lines up with a thumbnail. */
+  .dh-strip-list,
+  .dh-add-row {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--bt-deckhand-cell)), 1fr)
+    );
+    align-items: start;
+    gap: var(--bt-space-1);
+  }
+
+  .dh-thumb,
+  .dh-add-cell {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--bt-space-1);
+    padding: var(--bt-space-1);
+    touch-action: pan-y;
+  }
+
+  .dh-add-gutter {
+    display: block;
+  }
+
+  .dh-thumb-frame {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .dh-add {
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: auto;
+    aspect-ratio: var(--bt-deckhand-ratio);
+  }
 }
 
 /* A big number's two fields: the number, then its wider caption. */
