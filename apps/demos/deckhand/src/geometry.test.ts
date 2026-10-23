@@ -6,6 +6,7 @@ import { SAMPLE_DECK } from "./deck.ts";
 import type { Slide } from "./deck.ts";
 import { fileName } from "./export.ts";
 import {
+  emWidth,
   INK_DARK,
   INK_LIGHT,
   anchorAt,
@@ -89,5 +90,22 @@ describe("fileName", () => {
   it("names the image after the deck and the slide's number", () => {
     expect(fileName("Halfmoon for cafés", 3)).toBe("halfmoon-for-cafes-3.png");
     expect(fileName("  ", 1)).toBe("slide-1.png");
+  });
+});
+
+describe("emWidth", () => {
+  it("never falls short of what a number measures in the big-number font", () => {
+    for (const [text, measured] of [
+      ["40%", 2.29],
+      ["48h", 1.9],
+      ["$12k", 2.51],
+      ["1,200", 2.85],
+      ["99.9%", 3.21],
+    ] as const)
+      expect(emWidth(text), text).toBeGreaterThanOrEqual(measured);
+  });
+
+  it("counts plain digits at their tabular width", () => {
+    expect(emWidth("12")).toBeCloseTo(1.3);
   });
 });

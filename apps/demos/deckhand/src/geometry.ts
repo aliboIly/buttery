@@ -135,3 +135,20 @@ function pullOf(share: number): Pull {
 export function nearestAnchor(across: number, down: number): Anchor {
   return anchorAt(pullOf(across), pullOf(down));
 }
+
+/** How wide a character sets in the big-number font, in ems: the widest its kind runs, so a fit never falls short. */
+function characterWidth(character: string): number {
+  if (/\d/u.test(character)) return 0.65;
+  if (/[%@&MWmw]/u.test(character)) return 1;
+  if (/[\s.,:;'’!|]/u.test(character)) return 0.3;
+  if (/\p{Lu}/u.test(character)) return 0.8;
+  if (/\p{Ll}/u.test(character)) return 0.65;
+  return 0.75;
+}
+
+/** How wide `text` sets in the big-number font, in ems, at most: what a stat's number is sized to fit by. */
+export function emWidth(text: string): number {
+  let width = 0;
+  for (const character of text) width += characterWidth(character);
+  return width;
+}

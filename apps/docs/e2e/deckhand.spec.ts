@@ -601,6 +601,46 @@ test("the deck keeps its changes across a reload", async ({ page }) => {
   ).toHaveAccessibleName("Slide size, Square · 1:1");
 });
 
+test("a slide's big numbers each stay on one line inside their column, at every slide size", async ({
+  page,
+}) => {
+  await open(page);
+  await page.getByRole("button", { name: "New slide", exact: true }).click();
+  await page
+    .getByRole("menuitem", { name: "Big numbers", exact: true })
+    .click();
+  await settled(page);
+  for (const size of [
+    "Wide · 16:9",
+    "Standard · 4:3",
+    "Square · 1:1",
+    "Portrait · 4:5",
+  ]) {
+    await page.getByRole("combobox", { name: /^Slide size/ }).click();
+    await page.getByRole("option", { name: size }).click();
+    await settled(page);
+    const numbers = page.getByTestId("stage-slide").locator(".dh-stat-value");
+    await expect(numbers).toHaveCount(3);
+    for (const number of await numbers.all()) {
+      const fit = await number.evaluate((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const tops = new Set(
+          [...range.getClientRects()].map((rect) => Math.round(rect.top)),
+        );
+        return {
+          lines: tops.size,
+          overflow: Math.max(0, element.scrollWidth - element.clientWidth),
+        };
+      });
+      expect(fit, `${size}, ${(await number.textContent()) ?? ""}`).toEqual({
+        lines: 1,
+        overflow: 0,
+      });
+    }
+  }
+});
+
 test("present plays the deck full-window, moving with the keyboard and leaving with Escape", async ({
   page,
 }) => {

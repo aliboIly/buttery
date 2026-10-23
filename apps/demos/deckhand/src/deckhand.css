@@ -44,6 +44,9 @@
  */
 .dh-slide {
   --bt-deckhand-unit: calc(100cqmin / 1080);
+  --bt-deckhand-box-pad: 56;
+  --bt-deckhand-stats-gap: 40;
+  --bt-deckhand-ems: 1;
   --bt-deckhand-title: 88;
   --bt-deckhand-title-line: 1.06;
   --bt-deckhand-sub: 40;
@@ -72,6 +75,7 @@
 }
 
 .dh-slide[data-layout="numbers"] {
+  --bt-deckhand-numbers-width: 952;
   --bt-deckhand-title: 72;
   --bt-deckhand-title-line: 1.1;
   --bt-deckhand-sub: 30;
@@ -104,7 +108,7 @@
 }
 
 .dh-slide[data-layout="numbers"] .dh-slide-place {
-  inline-size: calc(952 * var(--bt-deckhand-unit));
+  inline-size: calc(var(--bt-deckhand-numbers-width) * var(--bt-deckhand-unit));
 }
 
 .dh-slide-room[data-position$="left"] > .dh-slide-place {
@@ -149,7 +153,7 @@
     var(--bt-deckhand-gap) * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)
   );
   min-inline-size: 0;
-  padding: calc(56 * var(--bt-deckhand-unit));
+  padding: calc(var(--bt-deckhand-box-pad) * var(--bt-deckhand-unit));
   border-radius: calc(32 * var(--bt-deckhand-unit));
   background-color: var(--bt-deckhand-box-fill);
   box-shadow: 0 calc(var(--bt-deckhand-depth) * 32 * var(--bt-deckhand-unit))
@@ -285,7 +289,7 @@
 .dh-stats {
   display: grid;
   grid-template-columns: repeat(var(--bt-deckhand-stats), minmax(0, 1fr));
-  gap: calc(40 * var(--bt-deckhand-unit));
+  gap: calc(var(--bt-deckhand-stats-gap) * var(--bt-deckhand-unit));
   inline-size: 100%;
 }
 
@@ -296,9 +300,25 @@
   min-inline-size: 0;
 }
 
+/*
+ * A number never breaks across lines. Every number on the slide sets at the layout's size, or smaller where
+ * the widest of them (its ems) wouldn't fit its column of the box: the box's width less its padding and the
+ * gaps, shared out, with a little to spare.
+ */
 .dh-stat-value {
-  font-size: calc(136 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale));
+  font-size: min(
+    calc(136 * var(--bt-deckhand-unit) * var(--bt-deckhand-scale)),
+    calc(
+      (
+          var(--bt-deckhand-numbers-width) - 2 * var(--bt-deckhand-box-pad) -
+            (var(--bt-deckhand-stats) - 1) * var(--bt-deckhand-stats-gap)
+        ) /
+        var(--bt-deckhand-stats) / var(--bt-deckhand-ems) * 0.96 *
+        var(--bt-deckhand-unit)
+    )
+  );
   font-weight: var(--bt-text-title-weight);
+  white-space: nowrap;
   line-height: 1;
   letter-spacing: var(--bt-tracking-display);
   font-variant-numeric: tabular-nums;

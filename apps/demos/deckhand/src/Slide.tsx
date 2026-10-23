@@ -9,7 +9,7 @@ import { anchors, buttery, useStageLayout } from "@buttery/react";
 import type { Anchor } from "@buttery/react";
 import { SLIDE_SIZES, hasStat, pointsOf } from "./deck.ts";
 import type { Slide, SlideSize } from "./deck.ts";
-import { SHADOW, boxLook, fillCss } from "./geometry.ts";
+import { SHADOW, boxLook, emWidth, fillCss } from "./geometry.ts";
 
 /** The slide's own variables, read by its stylesheet. */
 type SlideVariables = Readonly<Record<`--bt-deckhand-${string}`, string>>;
@@ -32,6 +32,13 @@ function slideStyle(
     "--bt-deckhand-stats": String(
       Math.max(1, slide.stats.filter(hasStat).length),
     ),
+  };
+}
+
+/** The widest of a slide's numbers in ems, which sizes all of them to fit their columns alike. */
+function statsStyle(values: readonly string[]): CSSProperties & SlideVariables {
+  return {
+    "--bt-deckhand-ems": String(Math.max(1, ...values.map(emWidth))),
   };
 }
 
@@ -114,7 +121,10 @@ function SlideWords({
         <>
           {title}
           {stats.length === 0 ? null : (
-            <div className="dh-stats">
+            <div
+              className="dh-stats"
+              style={statsStyle(stats.map(({ stat }) => stat.value))}
+            >
               {stats.map(({ stat, index }) => (
                 <div key={index} className="dh-stat">
                   <p
