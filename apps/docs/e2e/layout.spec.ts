@@ -1167,6 +1167,28 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     },
     escape,
     {
+      name: "open the soft box's list",
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page
+            .getByRole("combobox", {
+              name: "Canvas shape, soft, Wide · 16:9",
+              exact: true,
+            })
+            .first(),
+        );
+        await page
+          .getByRole("listbox", { name: "Canvas shape, soft" })
+          .waitFor();
+      },
+    },
+    escape,
+    {
+      name: "draw the live demo as a soft box",
+      allowMove: ["main"],
+      run: liveControls({ variant: "soft" }),
+    },
+    {
       name: "open the list with width and height fields",
       run: async (page: Page) => {
         await page
@@ -1177,6 +1199,45 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           .nth(1)
           .click();
       },
+    },
+  ],
+  "text-field": [
+    {
+      name: "draw the live demo small and soft",
+      allowMove: ["main"],
+      run: liveControls({ size: "sm", variant: "soft" }),
+    },
+  ],
+  "segmented-control": [
+    {
+      name: "draw the live demo large, filling its row",
+      allowMove: ["main"],
+      run: liveControls({ size: "lg", layout: "fill" }),
+    },
+  ],
+  tabs: [
+    {
+      name: "draw the live demo's tabs as pills",
+      allowMove: ["main"],
+      run: liveControls({ variant: "pills" }),
+    },
+    {
+      name: "draw the live demo's tabs boxed",
+      allowMove: ["main"],
+      run: liveControls({ variant: "boxed" }),
+    },
+  ],
+  "icon-button": [
+    {
+      name: "draw the live demo large and outlined",
+      allowMove: ["main"],
+      run: liveControls({ variant: "outline", size: "lg" }),
+    },
+  ],
+  "status-badge": [
+    {
+      name: "draw the live demo solid",
+      run: liveControls({ variant: "solid" }),
     },
   ],
   "sign-in-form": [
