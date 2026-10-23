@@ -5,6 +5,7 @@ import { useMotionPreference } from "../motion/preference.ts";
 import type { MotionElementProps } from "../motion/props.ts";
 import { presencePresets, reducedPresence } from "../motion/presets.ts";
 import { useAnimationTracking } from "../motion/use-animation-tracking.ts";
+import { space } from "../tokens/space.ts";
 
 /**
  * How a menu or popover arrives: `"grow"` from 97% on the side of its trigger with a fade, or `"instant"`,
@@ -64,6 +65,48 @@ export function FloatingMotion({
       style={{ ...style, transformOrigin: `var(${origin})` }}
     />
   );
+}
+
+/**
+ * Keeps a floating panel that opens beside its anchor 8px inside the window's sides, as a ref: a context menu
+ * or a submenu in a window too narrow for it on either side, where Radix leaves it hanging past the edge. It
+ * slides the panel sideways over its anchor with `translate` each time Radix places it, and returns what
+ * stops watching.
+ *
+ * @example
+ * <motion.div ref={keepInWindow} className="bt-surface bt-menu">…</motion.div>
+ */
+export function keepInWindow(
+  panel: HTMLElement | null,
+): (() => void) | undefined {
+  const wrapper = panel?.parentElement;
+  if (!panel || !wrapper) return undefined;
+  const fit = (): void => {
+    const box = wrapper.getBoundingClientRect();
+    const edge = space["2"];
+    const past = box.right - (window.innerWidth - edge);
+    const shift =
+      box.left - Math.max(past, 0) < edge
+        ? edge - box.left
+        : -Math.max(past, 0);
+    panel.style.translate = shift === 0 ? "" : `${String(shift)}px 0px`;
+  };
+  // Radix places the panel by writing its wrapper's style, on opening and as the window moves.
+  const placed = new MutationObserver(fit);
+  placed.observe(wrapper, { attributes: true, attributeFilter: ["style"] });
+  fit();
+  return () => {
+    placed.disconnect();
+  };
+}
+
+/**
+ * Whether focus is in a floating panel or in a layer opened from it, such as a menu's submenu, which renders
+ * inside the panel's own layer: what a closing menu checks before it hands focus back to its trigger.
+ */
+export function holdsFocus(panel: HTMLElement | null): boolean {
+  const layer = panel?.closest("[data-bt-layer]") ?? panel;
+  return layer?.contains(document.activeElement) === true;
 }
 
 /**

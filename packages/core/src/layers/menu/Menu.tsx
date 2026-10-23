@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import { DropdownMenu, VisuallyHidden } from "radix-ui";
 import {
   createContext,
@@ -19,6 +19,7 @@ import type {
 import { useControllableState } from "../../hooks/use-controllable-state.ts";
 import type { Shortcut } from "../../hooks/use-shortcut.ts";
 import { useMotionPreference } from "../../motion/preference.ts";
+import type { MotionElementProps } from "../../motion/props.ts";
 import { reducedPresence } from "../../motion/presets.ts";
 import { fadeOut } from "../../motion/transitions.ts";
 import { useAnimationTracking } from "../../motion/use-animation-tracking.ts";
@@ -33,14 +34,83 @@ import {
 import { durations, easingCurves, timing } from "../../tokens/motion.ts";
 import { space } from "../../tokens/space.ts";
 import { cx } from "../../utils/cx.ts";
+import { warnOnce } from "../../utils/dev.ts";
+import { lastInput } from "../../utils/focus-history.ts";
 import { useMergedRefs } from "../../utils/merge-refs.ts";
 import {
   FloatingMotion,
   focusMovedOn,
+  holdsFocus,
+  keepInWindow,
   useFloatingEntrance,
 } from "../floating-motion.tsx";
 import type { FloatingEntrance } from "../floating-motion.tsx";
 import { Layer } from "../layer/Layer.tsx";
+
+/**
+ * The Radix menu the parts (`Menu.Item`, `Menu.Sub` and the rest) render through: Radix's `DropdownMenu`
+ * inside a `Menu`, its `ContextMenu` inside a `ContextMenu`.
+ */
+export type MenuPrimitives = Pick<
+  typeof DropdownMenu,
+  | "Item"
+  | "CheckboxItem"
+  | "RadioGroup"
+  | "RadioItem"
+  | "ItemIndicator"
+  | "Group"
+  | "Label"
+  | "Separator"
+  | "Sub"
+  | "SubTrigger"
+  | "SubContent"
+>;
+
+/**
+ * Which Radix menu the parts render through, `DropdownMenu` unless set. A menu built on another Radix menu,
+ * as `ContextMenu` is, sets it around its content so the same parts work in it.
+ */
+export const MenuPrimitivesContext: Context<MenuPrimitives> =
+  createContext<MenuPrimitives>(DropdownMenu);
+
+/** A shortcut an item answers while its menu is closed: its keys, and what choosing the item does. */
+export interface MenuItemShortcut {
+  /** The keys, written as `useShortcut` takes them, such as `"mod+d"`. */
+  readonly shortcut: Shortcut;
+  /** Does what choosing the item does. */
+  readonly run: (event: KeyboardEvent) => void;
+}
+
+/** Takes an item's shortcut while its menu is closed, and gives back what lets it go again. */
+export type MenuShortcutRegistry = (entry: MenuItemShortcut) => () => void;
+
+/**
+ * Set around a closed menu's parts, which then draw nothing and hand their items' shortcuts to it: how a
+ * `ContextMenu` keeps its items' shortcuts working in its trigger while the menu isn't open.
+ */
+export const MenuShortcutsContext: Context<MenuShortcutRegistry | null> =
+  createContext<MenuShortcutRegistry | null>(null);
+
+function ShortcutBinding({ shortcut, run }: MenuItemShortcut): null {
+  const register = use(MenuShortcutsContext);
+  const latest = useRef(run);
+
+  useEffect(() => {
+    latest.current = run;
+  });
+
+  useEffect(() => {
+    if (!register) return undefined;
+    return register({
+      shortcut,
+      run: (event) => {
+        latest.current(event);
+      },
+    });
+  }, [register, shortcut]);
+
+  return null;
+}
 
 interface MenuState {
   readonly open: boolean;
@@ -135,10 +205,7 @@ function MenuRoot({
   useLayoutEffect(() => {
     if (isOpen) {
       outside.current = false;
-    } else if (
-      !outside.current &&
-      content.current?.contains(document.activeElement)
-    ) {
+    } else if (!outside.current && holdsFocus(content.current)) {
       trigger.current?.focus();
     }
   }, [isOpen]);
@@ -157,9 +224,11 @@ function MenuRoot({
         },
       }}
     >
-      <DropdownMenu.Root open={isOpen} onOpenChange={setOpen} modal={false}>
-        {children}
-      </DropdownMenu.Root>
+      <MenuPrimitivesContext value={DropdownMenu}>
+        <DropdownMenu.Root open={isOpen} onOpenChange={setOpen} modal={false}>
+          {children}
+        </DropdownMenu.Root>
+      </MenuPrimitivesContext>
     </MenuContext>
   );
 }
@@ -255,8 +324,9 @@ export interface MenuItemProps extends Omit<
   /** A small element before the label in place of an icon, such as a 20px `Avatar` or `InitialsTile`. */
   readonly media?: ReactNode;
   /**
-   * Its keyboard shortcut, written as `useShortcut` takes it, such as `"n"`: shown at the item's end and
-   * announced through `aria-keyshortcuts`. Bind it with `useShortcut`.
+   * Its keyboard shortcut, written as `useShortcut` takes it, such as `"mod+d"`: shown at the item's end and
+   * announced through `aria-keyshortcuts`. In a `ContextMenu` the shortcut also runs `onSelect` while focus is
+   * in the trigger and the menu is closed; in a `Menu`, bind it with `useShortcut`.
    */
   readonly shortcut?: Shortcut | undefined;
   /** Draws an accent dot at the item's end for something new behind it; its name says so too. */
@@ -280,11 +350,21 @@ export function MenuItem({
   className,
   children,
   ...rest
-}: MenuItemProps): ReactElement {
+}: MenuItemProps): ReactElement | null {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
   const apple = useApplePlatform();
+  if (shortcuts) {
+    const { disabled, onSelect } = rest;
+    return shortcut === undefined ||
+      disabled === true ||
+      onSelect === undefined ? null : (
+      <ShortcutBinding shortcut={shortcut} run={onSelect} />
+    );
+  }
   const text = typeof children === "string" ? children : undefined;
   return (
-    <DropdownMenu.Item
+    <Radix.Item
       aria-keyshortcuts={
         shortcut === undefined ? undefined : ariaKeyShortcuts(shortcut, apple)
       }
@@ -318,7 +398,114 @@ export function MenuItem({
           data-bt-part="shortcut"
         />
       )}
-    </DropdownMenu.Item>
+    </Radix.Item>
+  );
+}
+
+/** Props for `Menu.CheckboxItem`. */
+export interface MenuCheckboxItemProps extends Omit<
+  ComponentPropsWithRef<typeof DropdownMenu.CheckboxItem>,
+  "asChild" | "checked" | "onCheckedChange"
+> {
+  /** Whether it's on. Pair with `onCheckedChange` to control it. */
+  readonly checked?: boolean | undefined;
+  /**
+   * Whether it starts on when uncontrolled. Defaults to `false`. An uncontrolled item starts from it each time
+   * its menu opens, so keep `checked` in state to remember a choice.
+   */
+  readonly defaultChecked?: boolean | undefined;
+  /** Called with whether it's on once it's chosen. */
+  readonly onCheckedChange?: ((checked: boolean) => void) | undefined;
+  /** An icon before the label. */
+  readonly icon?: ComponentType<IconComponentProps> | undefined;
+  /**
+   * Its keyboard shortcut, shown at its end and announced through `aria-keyshortcuts`. In a `ContextMenu` the
+   * shortcut also turns it on or off while focus is in the trigger and the menu is closed, which needs
+   * `checked`; in a `Menu`, bind it with `useShortcut`.
+   */
+  readonly shortcut?: Shortcut | undefined;
+  /** What it turns on or off, such as "Show the grid". Long labels truncate. */
+  readonly children: ReactNode;
+}
+
+/**
+ * Something on or off, such as showing a grid: choosing it flips it and the menu closes, and while it's on
+ * a 16px check shows at its end.
+ */
+export function MenuCheckboxItem({
+  checked,
+  defaultChecked = false,
+  onCheckedChange,
+  icon,
+  shortcut,
+  className,
+  children,
+  ...rest
+}: MenuCheckboxItemProps): ReactElement | null {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
+  const apple = useApplePlatform();
+  const [on, setOn] = useControllableState({
+    value: checked,
+    defaultValue: defaultChecked,
+    onChange: onCheckedChange,
+  });
+  const text = typeof children === "string" ? children : undefined;
+  const unheld =
+    shortcuts !== null && shortcut !== undefined && checked === undefined;
+
+  useEffect(() => {
+    if (!unheld) return;
+    warnOnce(
+      "Menu",
+      `The checkbox item${text === undefined ? "" : ` "${text}"`} has a shortcut but keeps its own checked state, which starts again each time the menu opens, so the shortcut and the menu can disagree. Fix: keep it in state and pass checked and onCheckedChange.`,
+    );
+  }, [unheld, text]);
+
+  if (shortcuts) {
+    return shortcut === undefined || rest.disabled === true ? null : (
+      <ShortcutBinding
+        shortcut={shortcut}
+        run={() => {
+          setOn(!on);
+        }}
+      />
+    );
+  }
+  return (
+    <Radix.CheckboxItem
+      aria-keyshortcuts={
+        shortcut === undefined ? undefined : ariaKeyShortcuts(shortcut, apple)
+      }
+      {...rest}
+      checked={on}
+      onCheckedChange={setOn}
+      className={cx("bt-text", className)}
+      data-role="menu"
+      data-bt-part="menu-item"
+    >
+      {icon ? <Icon icon={icon} /> : null}
+      <span
+        className="bt-truncate"
+        data-bt-truncate=""
+        data-bt-part="label"
+        title={text}
+      >
+        {children}
+      </span>
+      {shortcut === undefined ? null : (
+        <Kbd
+          keys={shortcutKeys(shortcut)}
+          aria-hidden="true"
+          data-bt-part="shortcut"
+        />
+      )}
+      <span data-bt-part="check">
+        <Radix.ItemIndicator>
+          <Icon icon={Check} />
+        </Radix.ItemIndicator>
+      </span>
+    </Radix.CheckboxItem>
   );
 }
 
@@ -381,8 +568,11 @@ export type MenuSeparatorProps = Omit<
 >;
 
 /** A line between groups of actions, with 6px above and below it. */
-export function MenuSeparator(props: MenuSeparatorProps): ReactElement {
-  return <DropdownMenu.Separator {...props} data-bt-part="menu-separator" />;
+export function MenuSeparator(props: MenuSeparatorProps): ReactElement | null {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
+  if (shortcuts) return null;
+  return <Radix.Separator {...props} data-bt-part="menu-separator" />;
 }
 
 /** Props for `Menu.Group`. */
@@ -400,25 +590,28 @@ export function MenuGroup({
   children,
   ...rest
 }: MenuGroupProps): ReactElement {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
   const labelId = useId();
+  if (shortcuts) return <>{children}</>;
   return (
-    <DropdownMenu.Group
+    <Radix.Group
       aria-labelledby={label === undefined ? undefined : labelId}
       {...rest}
       data-bt-part="menu-group"
     >
       {label === undefined ? null : (
-        <DropdownMenu.Label
+        <Radix.Label
           id={labelId}
           className="bt-text"
           data-role="caption"
           data-bt-part="menu-group-label"
         >
           {label}
-        </DropdownMenu.Label>
+        </Radix.Label>
       )}
       {children}
-    </DropdownMenu.Group>
+    </Radix.Group>
   );
 }
 
@@ -429,7 +622,10 @@ export interface MenuRadioGroupProps extends Omit<
 > {
   /** The chosen item's value. Pair with `onValueChange` to control it. */
   readonly value?: string | undefined;
-  /** The value chosen at first when uncontrolled. */
+  /**
+   * The value chosen at first when uncontrolled. An uncontrolled group starts from it each time its menu
+   * opens, so keep `value` in state to remember a choice.
+   */
   readonly defaultValue?: string | undefined;
   /** Called with the value of the item chosen. */
   readonly onValueChange?: ((value: string) => void) | undefined;
@@ -446,14 +642,17 @@ export function MenuRadioGroup({
   children,
   ...rest
 }: MenuRadioGroupProps): ReactElement {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
   const [chosen, setChosen] = useControllableState({
     value,
     defaultValue: defaultValue ?? "",
     onChange: onValueChange,
   });
   const labelId = useId();
+  if (shortcuts) return <>{children}</>;
   return (
-    <DropdownMenu.RadioGroup
+    <Radix.RadioGroup
       aria-labelledby={label === undefined ? undefined : labelId}
       {...rest}
       value={chosen}
@@ -461,17 +660,17 @@ export function MenuRadioGroup({
       data-bt-part="menu-group"
     >
       {label === undefined ? null : (
-        <DropdownMenu.Label
+        <Radix.Label
           id={labelId}
           className="bt-text"
           data-role="caption"
           data-bt-part="menu-group-label"
         >
           {label}
-        </DropdownMenu.Label>
+        </Radix.Label>
       )}
       {children}
-    </DropdownMenu.RadioGroup>
+    </Radix.RadioGroup>
   );
 }
 
@@ -495,9 +694,12 @@ export function MenuRadioItem({
   className,
   children,
   ...rest
-}: MenuRadioItemProps): ReactElement {
+}: MenuRadioItemProps): ReactElement | null {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
+  if (shortcuts) return null;
   return (
-    <DropdownMenu.RadioItem
+    <Radix.RadioItem
       {...rest}
       className={cx("bt-text", className)}
       data-role="menu"
@@ -514,11 +716,11 @@ export function MenuRadioItem({
         {children}
       </span>
       <span data-bt-part="check">
-        <DropdownMenu.ItemIndicator>
+        <Radix.ItemIndicator>
           <Icon icon={Check} />
-        </DropdownMenu.ItemIndicator>
+        </Radix.ItemIndicator>
       </span>
-    </DropdownMenu.RadioItem>
+    </Radix.RadioItem>
   );
 }
 
@@ -560,6 +762,8 @@ export function MenuSub({
   onOpenChange,
   children,
 }: MenuSubProps): ReactElement {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
   const [isOpen, setOpen] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
@@ -567,9 +771,13 @@ export function MenuSub({
   });
   return (
     <SubContext value={{ open: isOpen, setOpen }}>
-      <DropdownMenu.Sub open={isOpen} onOpenChange={setOpen}>
-        {children}
-      </DropdownMenu.Sub>
+      {shortcuts ? (
+        children
+      ) : (
+        <Radix.Sub open={isOpen} onOpenChange={setOpen}>
+          {children}
+        </Radix.Sub>
+      )}
     </SubContext>
   );
 }
@@ -597,7 +805,9 @@ export function MenuSubTrigger({
   onPointerMove,
   onPointerLeave,
   ...rest
-}: MenuSubTriggerProps): ReactElement {
+}: MenuSubTriggerProps): ReactElement | null {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
   const sub = useSub("SubTrigger");
   const timer = useRef(0);
   const cancel = (): void => {
@@ -607,8 +817,9 @@ export function MenuSubTrigger({
 
   useEffect(() => cancel, []);
 
+  if (shortcuts) return null;
   return (
-    <DropdownMenu.SubTrigger
+    <Radix.SubTrigger
       {...rest}
       className={cx("bt-text", className)}
       data-role="menu"
@@ -643,7 +854,7 @@ export function MenuSubTrigger({
       <span data-bt-part="chevron">
         <Icon icon={Chevron} />
       </span>
-    </DropdownMenu.SubTrigger>
+    </Radix.SubTrigger>
   );
 }
 
@@ -659,6 +870,58 @@ const subFadeIn = {
 };
 
 /**
+ * The submenu's surface: it fades in and out, and while it leaves it's inert, so a pointer leaving its items
+ * as it fades can't pull focus into it.
+ */
+function SubPanel({
+  className,
+  ref,
+  ...rest
+}: MotionElementProps<"div">): ReactElement {
+  const reduced = useMotionPreference() === "reduced";
+  const tracking = useAnimationTracking();
+  const present = useIsPresent();
+  const panel = useRef<HTMLDivElement>(null);
+  const refs = useMergedRefs(ref, panel);
+  const left = useRef(false);
+
+  useLayoutEffect(() => keepInWindow(panel.current), []);
+
+  // Opened again with ArrowRight while it was still fading out, it's the same element, which Radix tried to
+  // focus while it was still inert.
+  useLayoutEffect(() => {
+    if (!present) {
+      left.current = true;
+      return;
+    }
+    if (!left.current) return;
+    left.current = false;
+    if (lastInput() === "keyboard") panel.current?.focus();
+  }, [present]);
+
+  return (
+    <motion.div
+      {...rest}
+      {...tracking}
+      ref={refs}
+      inert={!present}
+      initial={reduced ? reducedPresence.initial : { opacity: 0 }}
+      animate={
+        reduced
+          ? reducedPresence.animate
+          : { opacity: 1, transition: subFadeIn }
+      }
+      exit={
+        reduced ? reducedPresence.exit : { opacity: 0, transition: fadeOut }
+      }
+      className={cx("bt-surface bt-menu", className)}
+      data-level="floating"
+      data-bt="Menu"
+    />
+  );
+}
+
+/**
  * The submenu's list, beside its trigger with its first item level with it, on the floating surface. It
  * fades in over `dur-fast` and out as quickly.
  */
@@ -667,14 +930,15 @@ export function MenuSubContent({
   children,
   ...rest
 }: MenuSubContentProps): ReactElement {
+  const shortcuts = use(MenuShortcutsContext);
+  const Radix = use(MenuPrimitivesContext);
   const sub = useSub("SubContent");
-  const reduced = useMotionPreference() === "reduced";
-  const tracking = useAnimationTracking();
+  if (shortcuts) return <>{children}</>;
   return (
     <AnimatePresence>
       {sub.open ? (
         <Layer band="dropdown" key="submenu">
-          <DropdownMenu.SubContent
+          <Radix.SubContent
             {...rest}
             forceMount
             asChild
@@ -682,26 +946,8 @@ export function MenuSubContent({
             alignOffset={-space["1.5"]}
             collisionPadding={space["2"]}
           >
-            <motion.div
-              {...tracking}
-              initial={reduced ? reducedPresence.initial : { opacity: 0 }}
-              animate={
-                reduced
-                  ? reducedPresence.animate
-                  : { opacity: 1, transition: subFadeIn }
-              }
-              exit={
-                reduced
-                  ? reducedPresence.exit
-                  : { opacity: 0, transition: fadeOut }
-              }
-              className={cx("bt-surface bt-menu", className)}
-              data-level="floating"
-              data-bt="Menu"
-            >
-              {children}
-            </motion.div>
-          </DropdownMenu.SubContent>
+            <SubPanel className={className}>{children}</SubPanel>
+          </Radix.SubContent>
         </Layer>
       ) : null}
     </AnimatePresence>
@@ -717,6 +963,8 @@ export interface MenuComponent {
   readonly Content: typeof MenuContent;
   /** One action. */
   readonly Item: typeof MenuItem;
+  /** Something on or off. */
+  readonly CheckboxItem: typeof MenuCheckboxItem;
   /** An item that's a link. */
   readonly Link: typeof MenuLink;
   /** A line between groups. */
@@ -756,6 +1004,7 @@ export const Menu: MenuComponent = Object.assign(MenuRoot, {
   Trigger: MenuTrigger,
   Content: MenuContent,
   Item: MenuItem,
+  CheckboxItem: MenuCheckboxItem,
   Link: MenuLink,
   Separator: MenuSeparator,
   Group: MenuGroup,

@@ -317,6 +317,50 @@ describe("Menu", () => {
     expect(onValueChange).toHaveBeenCalledWith("name");
   });
 
+  it("turns a checkbox item on and off, with a check at its end while it's on", async () => {
+    function View(): ReactElement {
+      const [grid, setGrid] = useState(true);
+      return (
+        <>
+          <output>{grid ? "Grid shown" : "Grid hidden"}</output>
+          <Menu>
+            <Menu.Trigger>View</Menu.Trigger>
+            <Menu.Content>
+              <Menu.CheckboxItem
+                shortcut="mod+'"
+                checked={grid}
+                onCheckedChange={setGrid}
+              >
+                Show the grid
+              </Menu.CheckboxItem>
+            </Menu.Content>
+          </Menu>
+        </>
+      );
+    }
+    render(<View />);
+    await userEvent.click(screen.getByRole("button", { name: "View" }));
+    const item = await screen.findByRole("menuitemcheckbox", {
+      name: "Show the grid",
+    });
+    expect(item.getAttribute("aria-checked")).toBe("true");
+    expect(item.querySelector('[data-bt-part="check"] svg')).not.toBeNull();
+    expect(item.getAttribute("aria-keyshortcuts")).toMatch(
+      /^(Meta|Control)\+'$/,
+    );
+    const keys = item.querySelector<HTMLElement>('[data-bt-part="shortcut"]');
+    const check = item.querySelector<HTMLElement>('[data-bt-part="check"]');
+    expect(check?.offsetLeft).toBeGreaterThan(keys?.offsetLeft ?? 0);
+    await userEvent.click(item);
+    expect(screen.getByText("Grid hidden")).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", { name: "View" }));
+    expect(
+      (
+        await screen.findByRole("menuitemcheckbox", { name: "Show the grid" })
+      ).getAttribute("aria-checked"),
+    ).toBe("false");
+  });
+
   it("can be controlled", async () => {
     function Controlled(): ReactElement {
       const [open, setOpen] = useState(false);
@@ -531,9 +575,31 @@ describe("Menu", () => {
     );
     await userEvent.keyboard("{Enter}");
     expect(onSwitch).toHaveBeenCalledWith("Harbor Beans");
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Workspace" }),
+    );
+    expect(submenu.inert).toBe(true);
     await waitFor(() => {
       expect(screen.queryByRole("menu")).toBeNull();
     });
+  });
+
+  it("slides a submenu with no room beside its menu back 8px inside the window", async () => {
+    render(
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Workspaces />
+      </div>,
+    );
+    expect(window.innerWidth).toBeLessThan(3 * 200);
+    await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+    screen.getByRole("menuitem", { name: "Switch workspace" }).focus();
+    await userEvent.keyboard("{ArrowRight}");
+    const [, submenu] = await screen.findAllByRole("menu");
+    if (!submenu) throw new Error("No submenu.");
+    await settled();
+    const box = submenu.getBoundingClientRect();
+    expect(box.left).toBeGreaterThanOrEqual(8);
+    expect(box.right).toBeLessThanOrEqual(window.innerWidth - 8);
   });
 
   it("opens a submenu once the pointer has rested on its item for 40ms", async () => {
