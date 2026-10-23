@@ -41,6 +41,7 @@
 @import "./patterns/app-shell/app-shell.css";
 @import "./components/color-picker/color-picker.css";
 @import "./components/dialog/dialog.css";
+@import "./components/sheet/sheet.css";
 @import "./components/page-dots/page-dots.css";
 @import "./patterns/onboarding/onboarding.css";
 @import "./patterns/page/page.css";

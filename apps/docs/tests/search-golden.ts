@@ -14,7 +14,10 @@ export const searchGolden: readonly GoldenQuery[] = [
   { query: "modal", expect: ["/components/dialog"] },
   { query: "popup", expect: ["/components/dialog", "/components/popover"] },
   { query: "dropdown", expect: ["/components/menu", "/components/select"] },
-  { query: "drawer", expect: ["/components/side-panel"] },
+  {
+    query: "drawer",
+    expect: ["/components/sheet", "/components/side-panel"],
+  },
   { query: "snackbar", expect: ["/components/toaster"] },
   { query: "spinner", expect: ["/components/loading-pill"] },
   {

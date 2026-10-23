@@ -1,0 +1,263 @@
+/* How much of the slide in a sheet has left, 1 outside the window and 0 at rest; Motion animates it. */
+@property --bt-sheet-shift {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer bt.components {
+  .bt-sheet {
+    --bt-sheet-width: var(--bt-w-dialog);
+    --bt-sheet-close-center: var(--bt-space-6);
+    --bt-sheet-handle-width: 36px;
+    --bt-sheet-handle-thickness: 4px;
+    --bt-sheet-direction: 1;
+
+    position: relative;
+    display: flex;
+    flex: var(--bt-sheet-grow) 1 auto;
+    flex-direction: column;
+    justify-content: space-between;
+    inline-size: var(--bt-sheet-span, var(--bt-sheet-width));
+    max-inline-size: 100%;
+    min-block-size: 0;
+    padding: 0;
+    overflow: clip;
+    outline: none;
+    translate: calc(
+        var(--bt-sheet-shift) * var(--bt-sheet-from-x) *
+          var(--bt-sheet-direction) * (100% + var(--bt-space-2))
+      )
+      calc(
+        var(--bt-sheet-shift) * var(--bt-sheet-from-y) *
+          (100% + var(--bt-space-2))
+      );
+  }
+
+  .bt-sheet:dir(rtl) {
+    --bt-sheet-direction: -1;
+  }
+
+  .bt-sheet[data-size="md"] {
+    --bt-sheet-width: var(--bt-w-dialog-md);
+  }
+
+  .bt-sheet[data-size="lg"] {
+    --bt-sheet-width: var(--bt-w-dialog-lg);
+  }
+
+  /* The scrim and the frame render in the modal layer, away from the sheet, so they carry their own classes. */
+  .bt-sheet-scrim[data-bt-part="scrim"] {
+    position: absolute;
+    inset: 0;
+  }
+
+  /*
+   * Fills the modal layer, the window, so the side follows the window's width; a press on it is a press
+   * outside. It clips the sheet sliding in from beyond the window's edge without becoming a scroll
+   * container, which focus moving into the sheet mid-slide would scroll.
+   */
+  .bt-sheet-frame[data-bt-part="frame"] {
+    container: bt-sheet / inline-size;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
+    block-size: 100%;
+    overflow: clip;
+  }
+
+  /*
+   * Where the sheet rests, 8px inside the window: across both rows, as tall as the window, at the end or
+   * start, and in the row at the foot, as tall as the sheet's content up to the window less 64px, at the
+   * bottom. Floating lanes keep clear of it.
+   */
+  .bt-sheet-slot[data-bt-part="sheet-slot"] {
+    display: flex;
+    flex-direction: column;
+    grid-row: var(--bt-sheet-row);
+    justify-self: var(--bt-sheet-justify);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    min-block-size: 0;
+    max-block-size: var(--bt-sheet-cap);
+    padding: var(--bt-space-2);
+  }
+
+  /* Each side sets where the slot sits, how the sheet in it sizes and the edge it slides from. */
+  .bt-sheet-slot[data-side="end"],
+  .bt-sheet-slot[data-side="start"] {
+    --bt-sheet-row: 1 / -1;
+    --bt-sheet-cap: none;
+    --bt-sheet-span: initial;
+    --bt-sheet-grow: 1;
+    --bt-sheet-from-y: 0;
+    --bt-sheet-header-top: var(--bt-space-6);
+    --bt-sheet-handle: none;
+    --bt-sheet-touch: auto;
+  }
+
+  .bt-sheet-slot[data-side="end"] {
+    --bt-sheet-justify: end;
+    --bt-sheet-from-x: 1;
+  }
+
+  .bt-sheet-slot[data-side="start"] {
+    --bt-sheet-justify: start;
+    --bt-sheet-from-x: -1;
+  }
+
+  .bt-sheet-slot[data-side="bottom"] {
+    --bt-sheet-justify: stretch;
+    --bt-sheet-row: 2;
+    --bt-sheet-cap: calc(100dvh - var(--bt-space-12));
+    --bt-sheet-span: 100%;
+    --bt-sheet-grow: 0;
+    --bt-sheet-from-x: 0;
+    --bt-sheet-from-y: 1;
+    --bt-sheet-header-top: 0;
+    --bt-sheet-handle: flex;
+    --bt-sheet-touch: none;
+  }
+
+  @container bt-sheet (width >= 640px) {
+    .bt-sheet-slot[data-side-md="end"],
+    .bt-sheet-slot[data-side-md="start"] {
+      --bt-sheet-row: 1 / -1;
+      --bt-sheet-cap: none;
+      --bt-sheet-span: initial;
+      --bt-sheet-grow: 1;
+      --bt-sheet-from-y: 0;
+      --bt-sheet-header-top: var(--bt-space-6);
+      --bt-sheet-handle: none;
+      --bt-sheet-touch: auto;
+    }
+
+    .bt-sheet-slot[data-side-md="end"] {
+      --bt-sheet-justify: end;
+      --bt-sheet-from-x: 1;
+    }
+
+    .bt-sheet-slot[data-side-md="start"] {
+      --bt-sheet-justify: start;
+      --bt-sheet-from-x: -1;
+    }
+
+    .bt-sheet-slot[data-side-md="bottom"] {
+      --bt-sheet-justify: stretch;
+      --bt-sheet-row: 2;
+      --bt-sheet-cap: calc(100dvh - var(--bt-space-12));
+      --bt-sheet-span: 100%;
+      --bt-sheet-grow: 0;
+      --bt-sheet-from-x: 0;
+      --bt-sheet-from-y: 1;
+      --bt-sheet-header-top: 0;
+      --bt-sheet-handle: flex;
+      --bt-sheet-touch: none;
+    }
+  }
+
+  @container bt-sheet (width >= 1024px) {
+    .bt-sheet-slot[data-side-lg="end"],
+    .bt-sheet-slot[data-side-lg="start"] {
+      --bt-sheet-row: 1 / -1;
+      --bt-sheet-cap: none;
+      --bt-sheet-span: initial;
+      --bt-sheet-grow: 1;
+      --bt-sheet-from-y: 0;
+      --bt-sheet-header-top: var(--bt-space-6);
+      --bt-sheet-handle: none;
+      --bt-sheet-touch: auto;
+    }
+
+    .bt-sheet-slot[data-side-lg="end"] {
+      --bt-sheet-justify: end;
+      --bt-sheet-from-x: 1;
+    }
+
+    .bt-sheet-slot[data-side-lg="start"] {
+      --bt-sheet-justify: start;
+      --bt-sheet-from-x: -1;
+    }
+
+    .bt-sheet-slot[data-side-lg="bottom"] {
+      --bt-sheet-justify: stretch;
+      --bt-sheet-row: 2;
+      --bt-sheet-cap: calc(100dvh - var(--bt-space-12));
+      --bt-sheet-span: 100%;
+      --bt-sheet-grow: 0;
+      --bt-sheet-from-x: 0;
+      --bt-sheet-from-y: 1;
+      --bt-sheet-header-top: 0;
+      --bt-sheet-handle: flex;
+      --bt-sheet-touch: none;
+    }
+  }
+
+  /* A drawer's handle: a 24px strip across its top, which a drag down by it, or by the header, closes. */
+  .bt-sheet > [data-bt-part="sheet-handle"] {
+    display: var(--bt-sheet-handle);
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    block-size: var(--bt-space-6);
+    touch-action: none;
+  }
+
+  .bt-sheet > [data-bt-part="sheet-handle"]::before {
+    inline-size: var(--bt-sheet-handle-width);
+    block-size: var(--bt-sheet-handle-thickness);
+    border-radius: var(--bt-r-full);
+    background-color: var(--bt-ring-selected);
+    content: "";
+  }
+
+  /* Centered 24px from the top and end edges, beside the handle in a drawer. */
+  .bt-sheet > [data-bt-part="close"] {
+    position: absolute;
+    inset-block-start: calc(var(--bt-sheet-close-center) - var(--bt-h-sm) / 2);
+    inset-inline-end: calc(var(--bt-sheet-close-center) - var(--bt-h-sm) / 2);
+  }
+
+  /* The parts work directly in the sheet or inside a form that wraps them. */
+  .bt-sheet > form {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: space-between;
+    min-block-size: 0;
+  }
+
+  .bt-sheet-header {
+    flex: none;
+    padding: var(--bt-sheet-header-top) var(--bt-space-6) 0;
+    touch-action: var(--bt-sheet-touch);
+  }
+
+  /* The title keeps 10px clear of the close button. */
+  .bt-sheet[data-closable] .bt-sheet-header {
+    padding-inline-end: calc(var(--bt-sheet-close-center) + var(--bt-space-6));
+  }
+
+  .bt-sheet-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--bt-space-4);
+    min-inline-size: 0;
+    min-block-size: 0;
+    padding: var(--bt-space-5) var(--bt-space-6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .bt-sheet-footer {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: var(--bt-space-3);
+    min-inline-size: 0;
+    padding: var(--bt-space-4) var(--bt-space-6) var(--bt-space-6);
+    border-block-start: 1px solid var(--bt-border);
+  }
+}
