@@ -155,7 +155,7 @@ function OverflowClusterRoot({
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [lineup]);
+  }, [lineup, gap, size]);
 
   const overflowed = entries.filter((entry) => hidden.has(entry.id));
   const choices = overflowed.filter(

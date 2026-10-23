@@ -212,6 +212,77 @@ describe("OverflowCluster", () => {
     );
   });
 
+  it("fits its row again when its gap or its size changes, its More button inside", async () => {
+    function Cluster({
+      gap,
+      itemWidth,
+    }: {
+      readonly gap: 1 | 3;
+      readonly itemWidth: number;
+    }): ReactElement {
+      return (
+        <div style={{ display: "flex", inlineSize: "300px" }}>
+          <OverflowCluster gap={gap} moreLabel="More actions">
+            {ACTIONS.map(({ label, priority }) => (
+              <OverflowCluster.Item
+                key={label}
+                priority={priority}
+                menuItem={{ label, onSelect: () => undefined }}
+              >
+                <button
+                  type="button"
+                  style={{
+                    inlineSize: `${String(itemWidth)}px`,
+                    blockSize: "36px",
+                  }}
+                >
+                  {label}
+                </button>
+              </OverflowCluster.Item>
+            ))}
+          </OverflowCluster>
+        </div>
+      );
+    }
+    const cluster = (): HTMLElement => {
+      const element = document.querySelector<HTMLElement>(
+        '[data-bt="OverflowCluster"]',
+      );
+      if (!element) throw new Error("No cluster.");
+      return element;
+    };
+    const fits = (): void => {
+      const box = cluster().getBoundingClientRect();
+      for (const child of cluster().children) {
+        if (getComputedStyle(child).visibility === "hidden") continue;
+        expect(child.getBoundingClientRect().right).toBeLessThanOrEqual(
+          box.right + 0.5,
+        );
+      }
+    };
+    const shown = (): number =>
+      ACTIONS.filter(({ label }) =>
+        screen.queryByRole("button", { name: label }),
+      ).length;
+    const { rerender } = render(<Cluster gap={1} itemWidth={68} />);
+    await waitFor(() => {
+      expect(shown()).toBe(4);
+    });
+    rerender(<Cluster gap={3} itemWidth={68} />);
+    await waitFor(fits);
+    expect(shown()).toBeLessThan(4);
+    rerender(<Cluster gap={1} itemWidth={68} />);
+    await waitFor(() => {
+      expect(shown()).toBe(4);
+    });
+    rerender(<Cluster gap={1} itemWidth={120} />);
+    await waitFor(fits);
+    rerender(<Cluster gap={1} itemWidth={68} />);
+    await waitFor(() => {
+      expect(shown()).toBe(4);
+    });
+  });
+
   it("brings items back as the row grows", async () => {
     const { rerender } = render(<Toolbar width={150} onSelect={vi.fn()} />);
     await waitFor(() => {
