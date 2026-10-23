@@ -179,6 +179,30 @@ describe("ButteryProvider", () => {
     ).toEqual(["reduced", "full"]);
   });
 
+  it("gives a nested provider the settings it doesn't set from the provider around it", () => {
+    stubMatchMedia([]);
+    function Motion(): ReactElement {
+      return <output aria-label="motion">{useMotionPreference()}</output>;
+    }
+    render(
+      <ButteryProvider
+        colorScheme="dark"
+        density="compact"
+        platform="desktop"
+        reducedMotion="always"
+      >
+        <ButteryProvider>
+          <Probe />
+          <Motion />
+        </ButteryProvider>
+      </ButteryProvider>,
+    );
+    expect(screen.getByRole("status", { name: "Settings" }).textContent).toBe(
+      "dark compact desktop true",
+    );
+    expect(screen.getByLabelText("motion").textContent).toBe("reduced");
+  });
+
   it("detects the desktop app", () => {
     Object.defineProperty(window, "__TAURI_INTERNALS__", {
       value: {},

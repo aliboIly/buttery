@@ -42,13 +42,16 @@ export interface ButteryProviderProps {
   readonly children?: ReactNode;
   /** A theme from `createTheme`, applied on top of buttery's defaults. */
   readonly theme?: ButteryTheme;
-  /** Light, dark, or follow the OS. Defaults to `"system"`. */
+  /** Light, dark, or follow the OS. Defaults to the enclosing provider's, or `"system"` in the outermost one. */
   readonly colorScheme?: ColorSchemePreference;
-  /** Control heights. Defaults to the theme's density, then `"comfortable"`. */
+  /** Control heights. Defaults to the theme's density, then the enclosing provider's, then `"comfortable"`. */
   readonly density?: Density;
-  /** Detected from the environment unless set: `"desktop"` inside Tauri, otherwise `"web"`. */
+  /**
+   * Defaults to the enclosing provider's, or in the outermost one to what the environment says: `"desktop"`
+   * inside Tauri, otherwise `"web"`.
+   */
   readonly platform?: Platform;
-  /** Whether to reduce motion. Defaults to `"user"`, which follows the OS. */
+  /** Whether to reduce motion. Defaults to the enclosing provider's, or `"user"`, following the OS, in the outermost one. */
   readonly reducedMotion?: ReducedMotionPreference;
   /**
    * Show the `LayoutGuard` overlay (⌥⇧L) in development. Defaults to `true`. It's never included in
@@ -132,15 +135,15 @@ function useRootVariables(variables: CssVariables, enabled: boolean): void {
  * Applies buttery's theme, density, platform and motion settings. The outermost provider writes them onto
  * `<html>` so portals and scrollbars follow, hosts the floating lanes, toasts and confetti, reports when
  * animations have settled, and shows `LayoutGuard` in development. A nested provider scopes its settings
- * to its subtree.
+ * to its subtree, and takes any it doesn't set from the provider around it.
  */
 export function ButteryProvider({
   children,
   theme,
-  colorScheme = "system",
+  colorScheme,
   density,
   platform,
-  reducedMotion = "user",
+  reducedMotion,
   layoutGuard = true,
   toaster,
 }: ButteryProviderProps): ReactElement {
@@ -155,13 +158,21 @@ export function ButteryProvider({
     () => "web" as const,
   );
 
+  const systemScheme: ColorScheme = prefersDark ? "dark" : "light";
   const resolvedScheme: ColorScheme =
-    colorScheme === "system" ? (prefersDark ? "dark" : "light") : colorScheme;
-  const resolvedDensity = density ?? theme?.density ?? "comfortable";
-  const resolvedPlatform = platform ?? detectedPlatform;
+    colorScheme === undefined
+      ? (parent?.colorScheme ?? systemScheme)
+      : colorScheme === "system"
+        ? systemScheme
+        : colorScheme;
+  const resolvedDensity =
+    density ?? theme?.density ?? parent?.density ?? "comfortable";
+  const resolvedPlatform = platform ?? parent?.platform ?? detectedPlatform;
   const resolvedMotion =
-    reducedMotion === "always" ||
-    (reducedMotion === "user" && prefersReducedMotion);
+    reducedMotion === undefined
+      ? (parent?.reducedMotion ?? prefersReducedMotion)
+      : reducedMotion === "always" ||
+        (reducedMotion === "user" && prefersReducedMotion);
 
   const value = useMemo(
     (): ButteryContextValue => ({
