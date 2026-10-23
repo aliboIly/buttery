@@ -1,4 +1,4 @@
-import { Receipt, Undo2 } from "lucide-react";
+import { Banknote, Receipt, Undo2 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import { Grid, Inline, Pressable, Stack, Surface, Text } from "@buttery/core";
@@ -66,6 +66,7 @@ export function OrderRows(): ReactElement {
               </ContextMenu.Trigger>
               <ContextMenu.Content aria-label={`Order ${String(order.number)}`}>
                 <ContextMenu.CheckboxItem
+                  icon={Banknote}
                   shortcut="p"
                   checked={order.paid}
                   onCheckedChange={(paid) => {

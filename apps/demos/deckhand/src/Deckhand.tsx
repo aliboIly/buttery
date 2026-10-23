@@ -701,7 +701,6 @@ export function Deckhand(): ReactElement {
                       </ContextMenu.RadioGroup>
                       <ContextMenu.Separator />
                       <ContextMenu.Item
-                        icon={RotateCcw}
                         disabled={!lookChanged(slide)}
                         onSelect={() => {
                           change(`reset-look:${slide.id}`, (current) => ({

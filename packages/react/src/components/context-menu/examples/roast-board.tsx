@@ -1,4 +1,4 @@
-import { Pin, Plus, Trash2 } from "lucide-react";
+import { Flame, Pin, Plus, Scale, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import {
@@ -99,7 +99,9 @@ export function RoastBoard(): ReactElement {
                   </ContextMenu.Trigger>
                   <ContextMenu.Content aria-label={batch.coffee}>
                     <ContextMenu.Sub>
-                      <ContextMenu.SubTrigger>Status</ContextMenu.SubTrigger>
+                      <ContextMenu.SubTrigger icon={Flame}>
+                        Status
+                      </ContextMenu.SubTrigger>
                       <ContextMenu.SubContent>
                         <ContextMenu.RadioGroup
                           value={batch.status}
@@ -163,6 +165,7 @@ export function RoastBoard(): ReactElement {
           Add a batch
         </ContextMenu.Item>
         <ContextMenu.CheckboxItem
+          icon={Scale}
           checked={weights}
           onCheckedChange={setWeights}
         >
