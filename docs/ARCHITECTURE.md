@@ -25,7 +25,7 @@ Targets: web apps and desktop apps (Tauri v2 wraps the same web code).
 | Tests | Vitest + Testing Library (`@testing-library/react`, `@testing-library/user-event`): pure logic in Node, components in browser mode (`@vitest/browser-playwright`, Chromium and WebKit). Playwright in Chromium **and WebKit** for app smoke tests, layout, visual and a11y (`@axe-core/playwright`). Smoke tests start a fresh server for each app on its dev port + 1000, and Playwright runs under `node --conditions=@butteryui/source` so tests use workspace sources without a build |
 | Formatting / lint | Prettier, ESLint 10 (typescript-eslint, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`, `@eslint/js`, `globals`), stylelint |
 | Tooling | `@types/node` for configs and scripts |
-| Agent tooling | `@modelcontextprotocol/sdk` (for `@butteryui/mcp`) |
+| Agent tooling | `@modelcontextprotocol/server` 2.3.1, pinned (for `@butteryui/mcp`), with `@modelcontextprotocol/client` 2.3.1 for its tests |
 | Releases | Changesets |
 | Docs site (Phase 7, `apps/docs` only) | `@mdx-js/rollup`, `shiki` and `minisearch` if they're needed (or a small search index of buttery's own), and the smallest maintained static prerenderer, each logged in DECISIONS when chosen (`docs/DOCS_SITE.md`) |
 

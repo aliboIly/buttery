@@ -247,6 +247,9 @@ importers:
 
   .:
     devDependencies:
+      '@butteryui/test':
+        specifier: workspace:*
+        version: link:packages/test
       '@changesets/cli':
         specifier: ^3.0.3
         version: 3.0.3
