@@ -155,6 +155,47 @@ test("a gift asks for who it's for, taking focus to what's missing", async ({
   ).toBeVisible();
 });
 
+test("sign-in changes in place to creating an account or resetting a password", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await page.getByRole("link", { name: "Sign in", exact: true }).click();
+
+  await page
+    .getByRole("dialog", { name: "Sign in" })
+    .getByRole("link", { name: "Forgot your password?" })
+    .click();
+  const reset = page.getByRole("form", { name: "Reset your password" });
+  await expect(reset.getByLabel("Email")).toBeFocused();
+  await reset.getByLabel("Email").fill("ines@example.com");
+  await reset.getByRole("button", { name: "Email me a link" }).click();
+  await expect(
+    page.getByText("We sent a link to ines@example.com.", { exact: true }),
+  ).toBeVisible();
+  await expect(reset).toBeHidden();
+
+  await page.getByRole("link", { name: "Sign in", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Sign in" })
+    .getByRole("link", { name: "Create an account" })
+    .click();
+  const signUp = page.getByRole("form", {
+    name: "Create your Halfmoon account",
+  });
+  await expect(signUp.getByLabel("Name")).toBeFocused();
+  await signUp.getByLabel("Name").fill("Ines Vale");
+  await signUp.getByLabel("Email").fill("ines@example.com");
+  await signUp.getByLabel("Password", { exact: true }).fill("halfmoon7");
+  await signUp.getByRole("button", { name: "Create account" }).click();
+  await expect(
+    page.getByText("Welcome to Halfmoon, Ines.", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Account", exact: true }),
+  ).toBeVisible();
+});
+
 test("puts the page between the bars and the footer in a main landmark, which the bar's skip link reaches", async ({
   page,
   browserName,

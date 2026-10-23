@@ -367,6 +367,48 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           .waitFor();
       },
     },
+    {
+      name: "sign in from the bar's sheet",
+      run: async (page: Page) => {
+        await page.getByRole("button", { name: "Menu", exact: true }).click();
+        await page
+          .getByRole("dialog", { name: "Main" })
+          .getByRole("link", { name: "Sign in", exact: true })
+          .click();
+        await page.getByRole("dialog", { name: "Sign in" }).waitFor();
+      },
+    },
+    {
+      name: "ask to create an account instead",
+      allowMove: ['[role="dialog"]'],
+      run: async (page: Page) => {
+        await page
+          .getByRole("dialog", { name: "Sign in" })
+          .getByRole("link", { name: "Create an account" })
+          .click();
+        await page.getByRole("dialog", { name: "Create an account" }).waitFor();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "go back to sign in and ask to reset the password",
+      allowMove: ['[role="dialog"]'],
+      run: async (page: Page) => {
+        await page
+          .getByRole("dialog", { name: "Create an account" })
+          .getByRole("link", { name: "Sign in", exact: true })
+          .click();
+        await page
+          .getByRole("dialog", { name: "Sign in" })
+          .getByRole("link", { name: "Forgot your password?" })
+          .click();
+        await page
+          .getByRole("dialog", { name: "Reset your password" })
+          .waitFor();
+      },
+      acrossMatrix: true,
+    },
+    escape,
   ],
   "app-shell": [
     {
@@ -1116,6 +1158,41 @@ test("demos/roastery-shop is buttery on a wide window, through its menus, sign-i
         name: "open the sign-in dialog",
         run: async (target: Page) => {
           await target
+            .getByRole("link", { name: "Sign in", exact: true })
+            .click();
+          await target.getByRole("dialog", { name: "Sign in" }).waitFor();
+        },
+      },
+      {
+        name: "ask to create an account instead",
+        allowMove: ['[role="dialog"]'],
+        run: async (target: Page) => {
+          await target
+            .getByRole("dialog", { name: "Sign in" })
+            .getByRole("link", { name: "Create an account" })
+            .click();
+          await target
+            .getByRole("dialog", { name: "Create an account" })
+            .waitFor();
+        },
+      },
+      {
+        name: "create an account with nothing filled in, which lists what's missing",
+        allowMove: ['[role="dialog"]'],
+        run: async (target: Page) => {
+          await target
+            .getByRole("dialog", { name: "Create an account" })
+            .getByRole("button", { name: "Create account", exact: true })
+            .click();
+          await target.getByText("There's a problem").waitFor();
+        },
+      },
+      {
+        name: "go back to sign in",
+        allowMove: ['[role="dialog"]'],
+        run: async (target: Page) => {
+          await target
+            .getByRole("dialog", { name: "Create an account" })
             .getByRole("link", { name: "Sign in", exact: true })
             .click();
           await target.getByRole("dialog", { name: "Sign in" }).waitFor();
