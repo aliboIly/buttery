@@ -18,7 +18,7 @@ Done since the last update: the docs are live at https://aliboily.github.io/butt
 
 **Next**, in order:
 1. `@buttery/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
-2. npm: buttery's packages published as `@butteryui/*` (`@buttery` belongs to another project): renamed across the repo as soon as the open work above has merged, then published with a publish workflow alongside the MCP server, which `npx` installs from npm
+2. npm, as `@butteryui/*` (`@buttery` belongs to another project; the `butteryui` org is set up): the repo renamed as soon as the open work above has merged, then `@butteryui/core`, `react`, `test` and `lint` published as 0.9.0; `@butteryui/mcp` and `create-buttery` follow when they're built. A rehearsal already packed the four packages and built a fresh app from them
 3. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
 4. Everything else that's left: the rest of 1.0 below, and the follow-ups the demos turned up
 
@@ -125,7 +125,7 @@ Done since the last update: the docs are live at https://aliboily.github.io/butt
 - [ ] `@buttery/mcp`, an MCP server with `scaffold_page`, `scaffold_component` and `search_docs` (on the docs search's index), and configs for the common coding agents (`docs/DX_AND_AI.md`)
 - [ ] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed
 - [ ] A passwordless sign-in pattern: an identifier field (email or phone), a one-time code field, an `AuthFlow` with a headless `useOtpFlow` hook, a docs page, `buttery add page sign-in`, and a sign-in screen in the dashboard template and the roastery demo
-- [ ] The `@butteryui` npm org claimed and the first publish (the scope is chosen: `@buttery` belongs to another project)
+- [ ] The first publish to npm, as `@butteryui/*` (the org is claimed; `@buttery` belongs to another project)
 
 ## Later (ideas, not commitments)
 - [ ] More patterns: command palette (⌘K), file browser, chat
