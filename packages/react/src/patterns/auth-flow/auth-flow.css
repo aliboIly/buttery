@@ -1,14 +1,13 @@
 @layer bt.patterns {
   /*
-   * A narrow column centered across the page, with room above it that shrinks with a short window, so with
-   * a phone's keyboard up the field and the button are still above it.
+   * A narrow column centered across the page. The room above it stays small enough that with a phone's
+   * keyboard up, the field and the button are still above it.
    */
   .bt-auth-flow {
     display: flex;
     justify-content: center;
     min-inline-size: 0;
-    padding-block: clamp(var(--bt-space-6), 10dvh, var(--bt-space-24))
-      var(--bt-space-8);
+    padding-block: var(--bt-space-16) var(--bt-space-8);
     padding-inline: var(--bt-space-5);
   }
 
