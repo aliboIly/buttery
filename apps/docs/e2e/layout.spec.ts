@@ -68,6 +68,22 @@ function shopBag(page: Page): Locator {
     .or(page.getByRole("button", { name: /^Bag, / }));
 }
 
+/** What opening, searching or switching the Halfmoon shop's questions moves: them, what follows and the pill. */
+const SHOP_BELOW_QUESTIONS = [
+  "#questions",
+  "#questions ~ *",
+  '[data-bt="Footer"]',
+  PILL,
+];
+
+/** Scrolls a field to the middle of the window, clear of the floating lanes at its foot, and types into it. */
+async function fillInMiddle(target: Locator, text: string): Promise<void> {
+  await target.evaluate((element) => {
+    element.scrollIntoView({ block: "center" });
+  });
+  await target.fill(text);
+}
+
 /** What a change to the Halfmoon shop's coffees moves: the cards, everything after them and the pill. */
 const SHOP_BELOW_COFFEES = [
   "#coffees",
@@ -330,12 +346,48 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
     },
     {
       name: "open a question",
-      allowMove: ["#questions", "#questions ~ *", '[data-bt="Footer"]', PILL],
+      allowMove: SHOP_BELOW_QUESTIONS,
       run: async (page: Page) => {
         await pressInMiddle(
           page.getByRole("button", { name: "How much is shipping?" }),
         );
       },
+      acrossMatrix: true,
+    },
+    {
+      name: "search the questions",
+      allowMove: SHOP_BELOW_QUESTIONS,
+      run: async (page: Page) => {
+        await fillInMiddle(
+          page.getByRole("searchbox", { name: "Search questions" }),
+          "subscription",
+        );
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "search for what no question answers",
+      allowMove: SHOP_BELOW_QUESTIONS,
+      run: async (page: Page) => {
+        await fillInMiddle(
+          page.getByRole("searchbox", { name: "Search questions" }),
+          "oat milk",
+        );
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "show every question again and switch to the subscription questions",
+      allowMove: SHOP_BELOW_QUESTIONS,
+      run: async (page: Page) => {
+        await pressInMiddle(
+          page.getByRole("button", { name: "Show all questions" }),
+        );
+        await pressInMiddle(
+          page.getByRole("tab", { name: "Subscriptions", exact: true }),
+        );
+      },
+      acrossMatrix: true,
     },
     {
       name: "send the letter's form empty, which shows its error",
@@ -559,6 +611,86 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
           .first()
           .click();
         await page.getByRole("dialog").waitFor();
+      },
+      acrossMatrix: true,
+    },
+  ],
+  accordion: [
+    {
+      name: "open every item in the demo with icons and avatars",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        const demo = page.getByRole("region", {
+          name: "Accordion variants and states",
+        });
+        for (const name of [
+          /^Subscription/,
+          /^Shipping address/,
+          /^Payment/,
+          /^Rosa Alvarez/,
+        ])
+          await demo.getByRole("button", { name }).click();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "open another question in the live demo, which closes the first",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        await page
+          .getByTestId("live-demo")
+          .getByRole("button", {
+            name: "What if I don't like a coffee?",
+            exact: true,
+          })
+          .click();
+      },
+      acrossMatrix: true,
+    },
+  ],
+  faq: [
+    {
+      name: "open a question in the live demo",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        await page
+          .getByTestId("live-demo")
+          .getByRole("button", { name: "How much is shipping?", exact: true })
+          .click();
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "search the live demo's questions",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        await page
+          .getByTestId("live-demo")
+          .getByRole("searchbox", { name: "Search questions" })
+          .fill("subscription");
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "search for what no question answers",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        await page
+          .getByTestId("live-demo")
+          .getByRole("searchbox", { name: "Search questions" })
+          .fill("oat milk");
+      },
+      acrossMatrix: true,
+    },
+    {
+      name: "show every question again and switch to the subscription questions",
+      allowMove: ["main"],
+      run: async (page: Page) => {
+        const demo = page.getByTestId("live-demo");
+        await demo.getByRole("button", { name: "Show all questions" }).click();
+        await demo
+          .getByRole("tab", { name: "Subscriptions", exact: true })
+          .click();
       },
       acrossMatrix: true,
     },

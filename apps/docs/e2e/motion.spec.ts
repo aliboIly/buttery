@@ -2525,3 +2525,166 @@ test.describe("App chrome (MOTION_SPEC §3)", () => {
     expect(transitionsOf(run, "background-color")).toEqual([]);
   });
 });
+
+test.describe("Accordion on its docs page (MOTION_SPEC §3)", () => {
+  test.beforeEach(async ({ page }) => {
+    await installSampler(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
+  });
+
+  /**
+   * Opens the Accordion page and marks the live demo's item `name` for sampling: its panel's `Morph`, the
+   * content inside it and its chevron. The demo opens one item at a time and starts with its first open.
+   */
+  async function markItem(
+    page: Page,
+    motion: "full" | "reduced",
+    name: string,
+  ): Promise<Locator> {
+    await page.goto(`/components/accordion?chrome=0&motion=${motion}`);
+    await page.getByRole("heading", { level: 1 }).waitFor();
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
+    const demo = page.getByTestId("live-demo");
+    await demo.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    const trigger = demo.getByRole("button", { name, exact: true });
+    await trigger.evaluate((element) => {
+      const item = element.closest('[data-bt-part="accordion-item"]');
+      item
+        ?.querySelector('[data-bt="Morph"]')
+        ?.setAttribute("data-sampled-panel", "");
+      item
+        ?.querySelector('[data-bt-part="accordion-chevron"]')
+        ?.setAttribute("data-sampled-chevron", "");
+    });
+    return trigger;
+  }
+
+  const PANEL = "[data-sampled-panel]";
+  const VIEW = `${PANEL} > [data-bt-part="content"] > [data-bt-part="view"]`;
+  const CHEVRON = "[data-sampled-chevron]";
+
+  /** How far the chevron has turned, from 0 (pointing down) to 1 (turned over), read from its transform. */
+  function turn(reading: Reading): number {
+    return Math.acos(Math.max(-1, Math.min(1, reading.scale))) / Math.PI;
+  }
+
+  test("an item opens on spring.smooth while its chevron turns over with it and its answer fades in over dur-fast", async ({
+    page,
+  }) => {
+    const trigger = await markItem(page, "full", "How much is shipping?");
+    const run = await sampleClickOn(
+      page,
+      trigger,
+      `${CHEVRON}, ${PANEL}, ${VIEW}`,
+      700,
+    );
+    const [chevron, panel] = run.before.elements.map((reading) => reading.id);
+    if (chevron === undefined || panel === undefined)
+      throw new Error("The item's chevron and panel weren't there.");
+    const heights = traceOf(run, panel, (reading) => reading.height);
+    const open = heights.at(-1)?.value ?? 0;
+    expect(open).toBeGreaterThan(30);
+    const height = expectSpring(
+      "accordion opening",
+      progress(heights, 0, open),
+      "smooth",
+    );
+    const turning = expectSpringCurve(
+      "accordion chevron turning over",
+      progress(traceOf(run, chevron, turn), 0, 1),
+      "smooth",
+    );
+    expect(Math.abs(turning.start - height.start)).toBeLessThanOrEqual(FRAME);
+    const view = elementIds(run).find(
+      (id) =>
+        id !== chevron && id !== panel && id !== run.before.elements[2]?.id,
+    );
+    if (view === undefined) throw new Error("The answer never showed.");
+    expectTween(
+      "accordion answer fading in",
+      progress(traceOf(run, view, opacity), 0, 1),
+      EASE_STANDARD,
+      DURATIONS.fast,
+    );
+  });
+
+  test("an item closes on spring.smooth, its answer fading out over dur-fast, faster than the height", async ({
+    page,
+  }) => {
+    const trigger = await markItem(page, "full", "When will my coffee arrive?");
+    const run = await sampleClickOn(
+      page,
+      trigger,
+      `${CHEVRON}, ${PANEL}, ${VIEW}`,
+      700,
+    );
+    const [chevron, panel, view] = run.before.elements.map(
+      (reading) => reading.id,
+    );
+    if (chevron === undefined || panel === undefined || view === undefined)
+      throw new Error(
+        "The open item's chevron, panel and answer weren't there.",
+      );
+    const heights = traceOf(run, panel, (reading) => reading.height);
+    const open = run.before.elements[1]?.height ?? 0;
+    expect(open).toBeGreaterThan(30);
+    expect(heights.at(-1)?.value).toBe(0);
+    const height = expectSpring(
+      "accordion closing",
+      progress(heights, open, 0),
+      "smooth",
+    );
+    expectSpringCurve(
+      "accordion chevron turning back",
+      progress(traceOf(run, chevron, turn), 1, 0),
+      "smooth",
+    );
+    const fading = expectTween(
+      "accordion answer fading out",
+      progress(traceOf(run, view, opacity), 1, 0),
+      EASE_STANDARD,
+      DURATIONS.fast,
+    );
+    const due = height.start + springSettle(SPRINGS.smooth);
+    report(
+      `accordion closing: the answer has faded ${ms(due - (fading.start + DURATIONS.fast))} before the height is 95% closed`,
+    );
+    expect(fading.start + DURATIONS.fast).toBeLessThan(due);
+    expectGoneSoonAfter(run, fading.start + DURATIONS.fast, view);
+  });
+
+  test("with reduced motion an item opens at once, its chevron turned over at once and its answer faded in over 100ms", async ({
+    page,
+  }) => {
+    const trigger = await markItem(page, "reduced", "How much is shipping?");
+    const run = await sampleClickOn(
+      page,
+      trigger,
+      `${CHEVRON}, ${PANEL}, ${VIEW}`,
+      400,
+    );
+    const [chevron, panel, closed] = run.before.elements.map(
+      (reading) => reading.id,
+    );
+    if (chevron === undefined || panel === undefined)
+      throw new Error("The item's chevron and panel weren't there.");
+    const heights = traceOf(run, panel, (reading) => reading.height);
+    const open = heights.at(-1)?.value ?? 0;
+    expect(open).toBeGreaterThan(30);
+    expectInstant(progress(heights, 0, open));
+    expectInstant(progress(traceOf(run, chevron, turn), 0, 1));
+    const view = elementIds(run).find(
+      (id) => id !== chevron && id !== panel && id !== closed,
+    );
+    if (view === undefined) throw new Error("The answer never showed.");
+    expectTween(
+      "accordion answer fading in",
+      progress(traceOf(run, view, opacity), 0, 1),
+      LINEAR,
+      DURATIONS.reduced,
+    );
+  });
+});
