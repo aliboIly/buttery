@@ -14,7 +14,7 @@ export const page: DocsPage = {
   since: "0.9.0",
 };
 
-const SIDES = ["end", "start", "bottom", "responsive"] as const;
+const SIDES = ["end", "start", "bottom", "by width"] as const;
 const SIZES = ["sm", "md", "lg"] as const;
 
 type DemoSide = (typeof SIDES)[number];
@@ -26,11 +26,11 @@ const WIDTHS: Readonly<Record<SheetSize, string>> = {
 };
 
 function sideOf(side: DemoSide): SheetSide | ResponsiveSheetSide {
-  return side === "responsive" ? { base: "bottom", md: "end" } : side;
+  return side === "by width" ? { base: "bottom", md: "end" } : side;
 }
 
 function sideCode(side: DemoSide): string {
-  return side === "responsive"
+  return side === "by width"
     ? 'side={{ base: "bottom", md: "end" }}'
     : `side="${side}"`;
 }
@@ -44,7 +44,7 @@ function where(side: DemoSide, size: SheetSize): string {
       return `Slides in at the window's start, ${width}px wide.`;
     case "bottom":
       return "Rises from the bottom, as wide as the window and as tall as its content.";
-    case "responsive":
+    case "by width":
       return `Rises from the bottom under 640px of window, and slides in at the end, ${width}px wide, from 640px.`;
     default: {
       const unknown: never = side;

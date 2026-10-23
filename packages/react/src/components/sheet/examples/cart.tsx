@@ -9,8 +9,7 @@ interface Line {
   readonly id: string;
   readonly name: string;
   readonly grind: string;
-  /** In cents. */
-  readonly price: number;
+  readonly cents: number;
   readonly quantity: number;
 }
 
@@ -19,14 +18,14 @@ const LINES: readonly Line[] = [
     id: "guji",
     name: "Guji, 12 oz",
     grind: "Whole bean",
-    price: 1900,
+    cents: 1900,
     quantity: 1,
   },
   {
     id: "huila",
     name: "Huila, 12 oz",
     grind: "Ground for drip",
-    price: 1700,
+    cents: 1700,
     quantity: 2,
   },
 ];
@@ -49,7 +48,7 @@ export function CartSheet(): ReactElement {
   const [lines, setLines] = useState(LINES);
   const count = lines.reduce((sum, line) => sum + line.quantity, 0);
   const subtotal = lines.reduce(
-    (sum, line) => sum + line.price * line.quantity,
+    (sum, line) => sum + line.cents * line.quantity,
     0,
   );
   const change = (id: string, quantity: number): void => {
@@ -87,7 +86,7 @@ export function CartSheet(): ReactElement {
                       <Stack gap={1}>
                         <Text variant="label">{line.name}</Text>
                         <Text variant="body-sm" tone="secondary">
-                          {`${line.grind} · ${price(line.price)} each`}
+                          {`${line.grind} · ${price(line.cents)} each`}
                         </Text>
                       </Stack>
                       <Inline gap={1}>
@@ -124,7 +123,7 @@ export function CartSheet(): ReactElement {
                       </Inline>
                     </Stack>
                     <Text variant="label" tabular>
-                      {price(line.price * line.quantity)}
+                      {price(line.cents * line.quantity)}
                     </Text>
                   </Inline>
                 </li>
