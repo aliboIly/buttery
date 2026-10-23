@@ -1,10 +1,5 @@
 @layer bt.components {
   .bt-identifier-field {
-    --bt-identifier-field-gap: var(--bt-space-2);
-
-    display: flex;
-    align-items: center;
-    gap: var(--bt-identifier-field-gap);
     min-inline-size: 0;
   }
 }
