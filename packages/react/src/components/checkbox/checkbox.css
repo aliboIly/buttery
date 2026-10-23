@@ -1,19 +1,34 @@
 @layer bt.components {
   .bt-checkbox {
     --bt-checkbox-size: 18px;
+    --bt-checkbox-size-sm: 14px;
     --bt-checkbox-mark: 12px;
+    --bt-checkbox-mark-sm: 10px;
     --bt-checkbox-hit: 24px;
     --bt-checkbox-line: 1px;
     --bt-checkbox-stroke: 3;
+    --bt-checkbox-radius: var(--bt-r-xs);
+    --bt-checkbox-gap: var(--bt-space-2);
 
     gap: var(--bt-space-1_5);
+  }
+
+  .bt-checkbox[data-size="sm"] {
+    --bt-checkbox-size: var(--bt-checkbox-size-sm);
+    --bt-checkbox-mark: var(--bt-checkbox-mark-sm);
+    --bt-checkbox-radius: var(--bt-r-kbd);
+    --bt-checkbox-gap: var(--bt-space-1_5);
   }
 
   .bt-checkbox > [data-bt-part="row"] {
     display: flex;
     align-items: center;
-    gap: var(--bt-space-2);
+    gap: var(--bt-checkbox-gap);
     min-inline-size: 0;
+  }
+
+  .bt-checkbox[data-size="sm"] > [data-bt-part="row"] > [data-bt-part="label"] {
+    color: var(--bt-text);
   }
 
   .bt-checkbox > [data-bt-part="row"] > [data-bt-part="check"] {
@@ -25,7 +40,7 @@
     block-size: var(--bt-checkbox-size);
     padding: 0;
     border: var(--bt-checkbox-line) solid var(--bt-control-border);
-    border-radius: var(--bt-r-xs);
+    border-radius: var(--bt-checkbox-radius);
     background-color: var(--bt-bg-surface);
     color: var(--bt-on-primary);
     scroll-margin-block-start: calc(
@@ -86,6 +101,8 @@
   }
 
   .bt-checkbox > :is([data-bt-part="hint"], [data-bt-part="error"]) {
-    padding-inline-start: calc(var(--bt-checkbox-size) + var(--bt-space-2));
+    padding-inline-start: calc(
+      var(--bt-checkbox-size) + var(--bt-checkbox-gap)
+    );
   }
 }

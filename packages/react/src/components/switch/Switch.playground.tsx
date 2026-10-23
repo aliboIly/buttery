@@ -1,4 +1,4 @@
-import { Stack } from "@butteryui/core";
+import { demoChoice, Stack } from "@butteryui/core";
 import type { DemoSection, DocsPage, LiveDemo } from "@butteryui/core";
 import { Switch } from "@butteryui/react";
 
@@ -19,14 +19,16 @@ export const live: LiveDemo = {
       kind: "text",
       initial: "Text on the gift card lines up as you drag it.",
     },
+    size: { kind: "choice", options: ["md", "sm"], initial: "md" },
     defaultChecked: { kind: "toggle", initial: true },
     disabled: { kind: "toggle", initial: false },
   },
-  render: ({ label, hint, defaultChecked, disabled }) => (
+  render: ({ label, hint, size, defaultChecked, disabled }) => (
     <Switch
       key={String(defaultChecked)}
       label={String(label)}
       hint={String(hint)}
+      size={demoChoice(size, ["md", "sm"])}
       defaultChecked={defaultChecked === true}
       disabled={disabled === true}
     />
@@ -48,6 +50,23 @@ export const demos: readonly DemoSection[] = [
         />
         <Switch label="Share with the team" disabled />
         <Switch label="Keep a backup" disabled defaultChecked />
+      </Stack>
+    ),
+  },
+  {
+    title: "Sizes",
+    description:
+      "md, the default, is a 32×20 track beside a label-role label; sm is a 26×16 track beside 13px words, for a dense list. Both keep a 24px target.",
+    render: () => (
+      <Stack gap={4}>
+        <Switch label="Email me each order" defaultChecked />
+        <Switch
+          label="Email me each refund"
+          hint="As they're issued."
+          size="sm"
+          defaultChecked
+        />
+        <Switch label="Email me each payout" size="sm" />
       </Stack>
     ),
   },

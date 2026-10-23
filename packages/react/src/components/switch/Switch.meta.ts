@@ -7,6 +7,7 @@ export const meta: ComponentMeta = {
     "A switch that turns a setting on or off at once, with its label beside it.",
   useWhen: [
     "A setting that takes effect as soon as it's flipped: snap to grid, dark previews, sync",
+    'A dense list of settings, such as a table\'s notification options, with size="sm"',
   ],
   avoidWhen: [
     "A choice in a form that waits for Submit: use Checkbox",
@@ -17,6 +18,6 @@ export const meta: ComponentMeta = {
   motion: "indicator",
   keyboard: [{ keys: "Space or Enter", does: "Turns it on or off" }],
   layout:
-    "The track is 32px wide and --bt-h-badge (20px) tall, with a hit area 24px tall, and its label sits 8px after it; a press on the label flips it too. The label and the hint wrap rather than truncate, and the hint lines up under the label.",
+    'The track is 32px wide and --bt-h-badge (20px, 18 compact) tall, with a hit area 24px tall, and its label sits 8px after it; at size="sm" the track is 26px wide and 4px under the badge height (16, 14 compact), its 13px label 6px after it, its hit area still 24px tall. A press on the label flips it too. The label and the hint wrap rather than truncate, and the hint lines up under the label.',
   reducedMotion: "The thumb lands at its new end at once instead of sliding.",
 };

@@ -1,17 +1,28 @@
 @layer bt.components {
   .bt-radio-card-group {
     --bt-radio-card-group-radio: 18px;
+    --bt-radio-card-group-radio-sm: 14px;
     --bt-radio-card-group-dot: 6px;
+    --bt-radio-card-group-dot-sm: 4px;
     --bt-radio-card-group-hit: 24px;
     --bt-radio-card-group-line: 1px;
+    --bt-radio-card-group-gap: var(--bt-space-2);
     --bt-radio-card-group-indent: calc(
-      var(--bt-radio-card-group-radio) + var(--bt-space-2)
+      var(--bt-radio-card-group-radio) + var(--bt-radio-card-group-gap)
     );
 
     display: flex;
     flex-direction: column;
     gap: var(--bt-space-3);
     min-inline-size: 0;
+  }
+
+  .bt-radio-card-group[data-size="sm"] {
+    --bt-radio-card-group-radio: var(--bt-radio-card-group-radio-sm);
+    --bt-radio-card-group-dot: var(--bt-radio-card-group-dot-sm);
+    --bt-radio-card-group-gap: var(--bt-space-1_5);
+
+    gap: var(--bt-space-2);
   }
 
   .bt-radio-card-group > [data-bt-part="option"] {
@@ -23,7 +34,7 @@
   .bt-radio-card-group [data-bt-part="radio-card-group-row"] {
     display: flex;
     align-items: center;
-    gap: var(--bt-space-2);
+    gap: var(--bt-radio-card-group-gap);
     min-inline-size: 0;
   }
 

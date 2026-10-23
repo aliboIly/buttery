@@ -32,6 +32,11 @@ export interface CheckboxProps extends Omit<
   /** What it submits in a form while ticked. Defaults to `"on"`. */
   readonly value?: string | undefined;
   /**
+   * `"md"` (the default), an 18px box beside a `label`-role label, or `"sm"`, a 14px box beside 13px words, for
+   * dense lists and tables. Its target stays 24px either way.
+   */
+  readonly size?: "sm" | "md" | undefined;
+  /**
    * Whether a new error is read out as it appears. Defaults to `true`; turn it off when an error summary
    * that takes focus reads the errors instead.
    */
@@ -40,7 +45,8 @@ export interface CheckboxProps extends Omit<
 
 /**
  * A box to tick for one yes-or-no choice, with its label beside it: remember me, agree to the terms, show
- * the grid. Space ticks it from the keyboard; the label takes presses too.
+ * the grid. Space ticks it from the keyboard; the label takes presses too. `size="sm"` draws a smaller box for
+ * dense lists.
  *
  * @example
  * <Checkbox label="Keep me signed in" checked={remember} onCheckedChange={(next) => setRemember(next === true)} />
@@ -54,6 +60,7 @@ export function Checkbox({
   defaultChecked,
   onCheckedChange,
   announceError = true,
+  size = "md",
   id,
   className,
   style,
@@ -78,6 +85,7 @@ export function Checkbox({
       className={cx("bt-checkbox bt-form-field", className)}
       style={style}
       data-bt="Checkbox"
+      data-size={size}
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
     >
@@ -106,7 +114,7 @@ export function Checkbox({
           <label
             htmlFor={ids.control}
             className="bt-text"
-            data-role="label"
+            data-role={size === "sm" ? "control" : "label"}
             data-bt-part="label"
           >
             {label}

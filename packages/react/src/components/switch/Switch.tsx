@@ -27,11 +27,17 @@ export interface SwitchProps extends Omit<
   readonly onCheckedChange?: ((checked: boolean) => void) | undefined;
   /** What it submits in a form while it's on. Defaults to `"on"`. */
   readonly value?: string | undefined;
+  /**
+   * `"md"` (the default), a 32×20 track beside a `label`-role label, or `"sm"`, a 26×16 track beside 13px words,
+   * for dense lists such as a table's settings. Its target stays 24px tall either way.
+   */
+  readonly size?: "sm" | "md" | undefined;
 }
 
 /**
- * A switch for a setting that takes effect at once, with its label beside it. Its thumb slides on
- * `spring.snappy` and jumps with reduced motion. For a choice that waits for a Save, use `Checkbox`.
+ * A switch for a setting that takes effect at once, with its label beside it, at `md` or a smaller `sm`. Its
+ * thumb slides on `spring.snappy` and jumps with reduced motion. For a choice that waits for a Save, use
+ * `Checkbox`.
  *
  * @example
  * <Switch label="Snap to the grid" checked={snap} onCheckedChange={setSnap} />
@@ -42,6 +48,7 @@ export function Switch({
   checked,
   defaultChecked,
   onCheckedChange,
+  size = "md",
   id,
   className,
   style,
@@ -67,6 +74,7 @@ export function Switch({
       className={cx("bt-switch bt-form-field", className)}
       style={style}
       data-bt="Switch"
+      data-size={size}
       data-disabled={disabled ? "" : undefined}
     >
       <div data-bt-part="row">
@@ -93,7 +101,7 @@ export function Switch({
         <label
           htmlFor={ids.control}
           className="bt-text"
-          data-role="label"
+          data-role={size === "sm" ? "control" : "label"}
           data-bt-part="label"
         >
           {label}

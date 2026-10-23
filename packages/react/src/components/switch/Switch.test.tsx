@@ -96,6 +96,45 @@ describe("Switch", () => {
     expect(hit?.getBoundingClientRect().height).toBe(24);
   });
 
+  it("draws a 26×16 track with a 12px thumb at sm, 14 tall in compact, its target still 24px, beside 13px words that flip it", async () => {
+    render(
+      <ButteryProvider layoutGuard={false} reducedMotion="always">
+        <Switch label="Snap to the grid" size="sm" />
+        <div data-bt-density="compact">
+          <Switch label="Show rulers" size="sm" />
+        </div>
+      </ButteryProvider>,
+    );
+    const track = screen.getByRole("switch", { name: "Snap to the grid" });
+    const compact = screen.getByRole("switch", { name: "Show rulers" });
+    const knob = track.querySelector<HTMLElement>('[data-bt-part="thumb"]');
+    const words = screen.getByText("Snap to the grid");
+    expect(track.getBoundingClientRect().width).toBe(26);
+    expect(track.getBoundingClientRect().height).toBe(16);
+    expect(compact.getBoundingClientRect().height).toBe(14);
+    expect(knob?.getBoundingClientRect().height).toBe(12);
+    expect(
+      track.querySelector("[data-bt-hit]")?.getBoundingClientRect().height,
+    ).toBe(24);
+    expect(getComputedStyle(words).fontSize).toBe("13px");
+    expect(
+      Math.round(
+        words.getBoundingClientRect().left -
+          track.getBoundingClientRect().right,
+      ),
+    ).toBe(6);
+    await userEvent.click(words);
+    expect(track.getAttribute("aria-checked")).toBe("true");
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(
+      Math.round(
+        track.getBoundingClientRect().right -
+          (knob?.getBoundingClientRect().right ?? 0),
+      ),
+    ).toBe(2);
+  });
+
   it("draws its thumb 3:1 against its track while off, in light and dark, with no shadow to lean on", () => {
     for (const colorScheme of ["light", "dark"] as const) {
       render(

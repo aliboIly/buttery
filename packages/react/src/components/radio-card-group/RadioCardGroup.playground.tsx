@@ -96,15 +96,21 @@ export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "Renewal screening" },
     options: { kind: "choice", options: SETS, initial: "with a detail" },
+    size: { kind: "choice", options: ["md", "sm"], initial: "md" },
   },
-  render: ({ label, options }) => {
+  render: ({ label, options, size }) => {
     const set = demoChoice(options, SETS);
     return (
-      <RadioCardGroup key={set} label={String(label)} options={OPTIONS[set]} />
+      <RadioCardGroup
+        key={set}
+        label={String(label)}
+        options={OPTIONS[set]}
+        size={demoChoice(size, ["md", "sm"])}
+      />
     );
   },
-  code: ({ label, options }) => `<RadioCardGroup
-  label="${String(label)}"
+  code: ({ label, options, size }) => `<RadioCardGroup
+  label="${String(label)}"${size === "sm" ? '\n  size="sm"' : ""}
   options={[
 ${CODE[demoChoice(options, SETS)]}
   ]}
@@ -139,6 +145,30 @@ export const demos: readonly DemoSection[] = [
               />
             ),
           },
+        ]}
+      />
+    ),
+  },
+  {
+    title: "Small",
+    description:
+      'size="sm": 14px radios beside 13px names, options 8 apart, for a dense panel. Each radio keeps a 24px target.',
+    render: () => (
+      <RadioCardGroup
+        label="Pickup reminders"
+        size="sm"
+        options={[
+          {
+            value: "day",
+            label: "The day before",
+            description: "Sent at 9 in the morning.",
+          },
+          {
+            value: "hour",
+            label: "An hour before",
+            description: "Sent as a text message.",
+          },
+          { value: "none", label: "No reminder" },
         ]}
       />
     ),

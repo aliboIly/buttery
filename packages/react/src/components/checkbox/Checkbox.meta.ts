@@ -7,6 +7,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "Remember me, agree to the terms, email me tips: one choice in a form",
     "A choice that waits for Save, or one of several that can each be on",
+    'A dense list or a filter menu, with size="sm"',
   ],
   avoidWhen: [
     "A setting that takes effect at once: use Switch",
@@ -17,5 +18,5 @@ export const meta: ComponentMeta = {
   motion: "none",
   keyboard: [{ keys: "Space", does: "Ticks or unticks it" }],
   layout:
-    "An 18px box with a 24px target, its label 8px beside it on the same row; a long label wraps onto more lines, and a hint or an error sits under the row. The field takes the width it's given, and the label takes presses as well as the box.",
+    'An 18px box with a 24px target, its label 8px beside it on the same row, or at size="sm" a 14px box with 5px corners and its 13px label 6px beside it, the target still 24px; a long label wraps onto more lines, and a hint or an error sits under the row. The field takes the width it\'s given, and the label takes presses as well as the box.',
 };

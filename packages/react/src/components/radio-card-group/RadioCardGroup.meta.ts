@@ -8,6 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "Two to five ways to set something, each needing a sentence to explain, often in a dialog",
     "A choice where one option needs a detail of its own, such as how many renewals to screen",
+    'A dense panel or a narrow dialog, with size="sm"',
   ],
   avoidWhen: [
     "Short options without explanations: use SegmentedControl",
@@ -29,7 +30,7 @@ export const meta: ComponentMeta = {
     { keys: "Space", does: "Chooses the option with focus" },
   ],
   layout:
-    "It fills its container, its options stacked 12px apart. Each radio is 18px with a 24px target, its label 8px after it and wrapping, and the line and any detail under it line up with the label. A chosen option's detail opens under its line.",
+    'It fills its container, its options stacked 12px apart. Each radio is 18px with a 24px target, its label 8px after it and wrapping, and the line and any detail under it line up with the label. At size="sm" the options are 8px apart and each radio is 14px with a 24px target, its 13px label 6px after it. A chosen option\'s detail opens under its line.',
   reducedMotion:
     "A chosen option's detail opens and closes at once, its height jumping, while its content fades in over 100ms.",
 };

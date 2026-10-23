@@ -13,6 +13,13 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
+/** Where an element's words start, past any padding before them. */
+function textStart(element: Element): number {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return range.getBoundingClientRect().left;
+}
+
 const OPTIONS = [
   {
     value: "all",
@@ -142,6 +149,43 @@ describe("RadioCardGroup", () => {
       .getByText("Renewals after that go through without a check.")
       .getBoundingClientRect();
     expect(field.getBoundingClientRect().top - line.bottom).toBe(8);
+  });
+
+  it("draws 14px radios with a 4px dot beside 13px names at sm, options 8 apart, each target still 24px, chosen by the arrow keys", async () => {
+    render(
+      <div style={{ inlineSize: "480px" }}>
+        <RadioCardGroup label="Renewal screening" options={OPTIONS} size="sm" />
+      </div>,
+    );
+    const radio = screen.getByRole("radio", { name: "Screen every renewal" });
+    const dot = radio.querySelector<HTMLElement>(
+      '[data-bt-part="radio-card-group-dot"]',
+    );
+    const name = screen.getByText("Screen every renewal");
+    const line = screen.getByText("Every renewal waits for a fraud check.");
+    expect(radio.getBoundingClientRect().width).toBe(14);
+    expect(radio.getBoundingClientRect().height).toBe(14);
+    expect(dot?.getBoundingClientRect().width).toBe(4);
+    expect(getComputedStyle(name).fontSize).toBe("13px");
+    expect(textStart(line)).toBe(textStart(name));
+    const hit = radio.querySelector('[data-bt-part="radio-card-group-hit"]');
+    expect(hit?.getBoundingClientRect().width).toBe(24);
+    expect(hit?.getBoundingClientRect().height).toBe(24);
+    const [first, second] = [
+      ...document.querySelectorAll<HTMLElement>(
+        '.bt-radio-card-group > [data-bt-part="option"]',
+      ),
+    ].map((option) => option.getBoundingClientRect());
+    if (!first || !second) throw new Error("No options.");
+    expect(second.top - first.bottom).toBe(8);
+    radio.focus();
+    await userEvent.keyboard("{ArrowDown>}");
+    await userEvent.keyboard("{/ArrowDown}");
+    const some = screen.getByRole("radio", {
+      name: "Screen the first renewals only",
+    });
+    expect(document.activeElement).toBe(some);
+    expect(some.getAttribute("aria-checked")).toBe("true");
   });
 
   it("fades a detail out as another option is chosen, rather than dropping it at once", async () => {

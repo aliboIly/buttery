@@ -24,22 +24,24 @@ export const live: LiveDemo = {
   controls: {
     label: { kind: "text", initial: "Keep me signed in" },
     defaultChecked: { kind: "choice", options: STARTS, initial: "false" },
+    size: { kind: "choice", options: ["md", "sm"], initial: "md" },
     disabled: { kind: "toggle", initial: false },
     error: { kind: "text", initial: "" },
   },
-  render: ({ label, defaultChecked, disabled, error }) => {
+  render: ({ label, defaultChecked, size, disabled, error }) => {
     const start = demoChoice(defaultChecked, STARTS);
     return (
       <Checkbox
         key={start}
         label={String(label)}
         defaultChecked={TICKED[start]}
+        size={demoChoice(size, ["md", "sm"])}
         disabled={disabled === true}
         error={String(error)}
       />
     );
   },
-  code: ({ label, defaultChecked, disabled, error }) => {
+  code: ({ label, defaultChecked, size, disabled, error }) => {
     const start = demoChoice(defaultChecked, STARTS);
     const ticked =
       start === "true"
@@ -50,6 +52,7 @@ export const live: LiveDemo = {
     const parts = [
       `label="${String(label)}"`,
       ...(ticked === "" ? [] : [ticked.trim()]),
+      ...(size === "sm" ? ['size="sm"'] : []),
       ...(disabled === true ? ["disabled"] : []),
       ...(String(error) === "" ? [] : [`error="${String(error)}"`]),
     ];
@@ -76,6 +79,28 @@ export const demos: readonly DemoSection[] = [
           error="Agree to the terms to make an account."
         />
         <Checkbox label="Sync to the cloud" disabled />
+      </Stack>
+    ),
+  },
+  {
+    title: "Sizes",
+    description:
+      "md, the default, is an 18px box beside a label-role label; sm is a 14px box beside 13px words, for a dense list. Both keep a 24px target.",
+    render: () => (
+      <Stack gap={4}>
+        <Checkbox label="Print packing slips" defaultChecked />
+        <Checkbox
+          label="Print gift notes"
+          hint="On the slip, under the order."
+          size="sm"
+          defaultChecked
+        />
+        <Checkbox label="Print return labels" size="sm" />
+        <Checkbox
+          label="Print customs forms"
+          size="sm"
+          error="Add a customs number in Shipping first."
+        />
       </Stack>
     ),
   },

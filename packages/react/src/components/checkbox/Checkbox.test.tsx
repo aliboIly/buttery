@@ -4,10 +4,26 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent as realInput } from "vitest/browser";
 import { Checkbox } from "./Checkbox.tsx";
 
 afterEach(cleanup);
+
+/** Where an element's words start, past any padding before them. */
+function textStart(element: Element): number {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return range.getBoundingClientRect().left;
+}
+
+function colorOf(variable: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${variable})`;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).color;
+  probe.remove();
+  return color;
+}
 
 describe("Checkbox", () => {
   it("stamps its class and data-bt on the field, and its ref on the box", () => {
@@ -50,6 +66,43 @@ describe("Checkbox", () => {
     const hit = box.querySelector("[data-bt-hit]");
     expect(hit?.getBoundingClientRect().height).toBe(24);
     expect(hit?.getBoundingClientRect().width).toBe(24);
+  });
+
+  it("draws a 14px box with 5px corners beside 13px words at sm, its target still 24px, ticked from its words and Space", async () => {
+    const change = vi.fn();
+    render(
+      <Checkbox
+        label="Show the grid"
+        hint="Snaps as you drag"
+        size="sm"
+        onCheckedChange={change}
+      />,
+    );
+    const box = screen.getByRole("checkbox");
+    const root = box.closest<HTMLElement>('[data-bt="Checkbox"]');
+    const words = root?.querySelector<HTMLElement>('[data-bt-part="label"]');
+    const hint = root?.querySelector<HTMLElement>('[data-bt-part="hint"]');
+    if (!root || !words || !hint) throw new Error("No checkbox parts.");
+    expect(root.dataset["size"]).toBe("sm");
+    expect(box.getBoundingClientRect().width).toBe(14);
+    expect(box.getBoundingClientRect().height).toBe(14);
+    expect(getComputedStyle(box).borderTopLeftRadius).toBe("5px");
+    expect(getComputedStyle(words).fontSize).toBe("13px");
+    expect(getComputedStyle(words).color).toBe(colorOf("--bt-text"));
+    expect(
+      Math.round(
+        words.getBoundingClientRect().left - box.getBoundingClientRect().right,
+      ),
+    ).toBe(6);
+    expect(textStart(hint)).toBe(textStart(words));
+    const hit = box.querySelector("[data-bt-hit]");
+    expect(hit?.getBoundingClientRect().width).toBe(24);
+    expect(hit?.getBoundingClientRect().height).toBe(24);
+    await realInput.click(words);
+    expect(change).toHaveBeenLastCalledWith(true);
+    box.focus();
+    await realInput.keyboard(" ");
+    expect(change).toHaveBeenLastCalledWith(false);
   });
 
   it("centers its error's icon on the error's first line", () => {

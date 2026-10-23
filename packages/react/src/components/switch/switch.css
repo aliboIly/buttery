@@ -1,17 +1,31 @@
 @layer bt.components {
   .bt-switch {
     --bt-switch-width: 32px;
+    --bt-switch-width-sm: 26px;
     --bt-switch-hit: 24px;
     --bt-switch-line: 1px;
+    --bt-switch-height: var(--bt-h-badge);
+    --bt-switch-gap: var(--bt-space-2);
 
     gap: var(--bt-space-1_5);
+  }
+
+  /* 4px under the badge height, so the small track still follows density. */
+  .bt-switch[data-size="sm"] {
+    --bt-switch-width: var(--bt-switch-width-sm);
+    --bt-switch-height: calc(var(--bt-h-badge) - var(--bt-space-1));
+    --bt-switch-gap: var(--bt-space-1_5);
   }
 
   .bt-switch > [data-bt-part="row"] {
     display: flex;
     align-items: center;
-    gap: var(--bt-space-2);
+    gap: var(--bt-switch-gap);
     min-inline-size: 0;
+  }
+
+  .bt-switch[data-size="sm"] > [data-bt-part="row"] > [data-bt-part="label"] {
+    color: var(--bt-text);
   }
 
   /* The thumb moves by flex alignment, and Motion's layout animation carries it there on spring.snappy. */
@@ -22,7 +36,7 @@
     align-items: center;
     justify-content: flex-start;
     inline-size: var(--bt-switch-width);
-    block-size: var(--bt-h-badge);
+    block-size: var(--bt-switch-height);
     padding: 0 var(--bt-space-0_5);
     border: 0;
     border-radius: var(--bt-r-full);
@@ -43,8 +57,8 @@
     > [data-bt-part="track"]
     > [data-bt-part="thumb"] {
     display: block;
-    inline-size: calc(var(--bt-h-badge) - 2 * var(--bt-space-0_5));
-    block-size: calc(var(--bt-h-badge) - 2 * var(--bt-space-0_5));
+    inline-size: calc(var(--bt-switch-height) - 2 * var(--bt-space-0_5));
+    block-size: calc(var(--bt-switch-height) - 2 * var(--bt-space-0_5));
     border-radius: var(--bt-r-full);
     background-color: var(--bt-control-border);
   }
@@ -75,12 +89,12 @@
     > [data-bt-part="track"]
     > [data-bt-part="hit"] {
     position: absolute;
-    inset-block: calc((var(--bt-h-badge) - var(--bt-switch-hit)) / 2);
+    inset-block: calc((var(--bt-switch-height) - var(--bt-switch-hit)) / 2);
     inset-inline: 0;
   }
 
   .bt-switch > [data-bt-part="hint"] {
-    padding-inline-start: calc(var(--bt-switch-width) + var(--bt-space-2));
+    padding-inline-start: calc(var(--bt-switch-width) + var(--bt-switch-gap));
   }
 
   /* Forced colors drop shadows and flatten backgrounds, which would leave nothing of the switch: draw it in system colors. */

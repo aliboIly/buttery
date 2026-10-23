@@ -34,11 +34,17 @@ export interface RadioCardGroupProps<
   readonly defaultValue?: Value | undefined;
   /** Called with an option's value when it's chosen. */
   readonly onValueChange?: ((value: Value) => void) | undefined;
+  /**
+   * `"md"` (the default), 18px radios beside `label`-role names, options 12 apart, or `"sm"`, 14px radios beside
+   * 13px names, options 8 apart, for a dense panel. Each radio's target stays 24px either way.
+   */
+  readonly size?: "sm" | "md" | undefined;
 }
 
 /**
  * A choice of one among a few options, each an 18px radio beside its name in `label`, a line about it in
- * `body-sm` and `text-secondary` under the name, 12 between options. A chosen option's `detail` opens
+ * `body-sm` and `text-secondary` under the name, 12 between options; `size="sm"` draws 14px radios beside
+ * 13px names, 8 apart. A chosen option's `detail` opens
  * under its line through `Morph` (`spring.snappy` open, `dur-fast` closed), lined up with the name. Arrow
  * keys move between the options and choose as they go, as a radio group does.
  *
@@ -59,6 +65,7 @@ export function RadioCardGroup<Value extends string = string>({
   value,
   defaultValue,
   onValueChange,
+  size = "md",
   className,
   ...rest
 }: RadioCardGroupProps<Value>): ReactElement {
@@ -82,6 +89,7 @@ export function RadioCardGroup<Value extends string = string>({
       }}
       className={cx("bt-radio-card-group", className)}
       data-bt="RadioCardGroup"
+      data-size={size}
     >
       {options.map((option, index) => {
         const itemId = `${id}-${String(index)}`;
@@ -114,7 +122,7 @@ export function RadioCardGroup<Value extends string = string>({
               <label
                 htmlFor={itemId}
                 className="bt-text"
-                data-role="label"
+                data-role={size === "sm" ? "control" : "label"}
                 data-bt-part="radio-card-group-label"
               >
                 {option.label}
