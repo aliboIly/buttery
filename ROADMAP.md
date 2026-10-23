@@ -18,8 +18,9 @@ Done since the last update: the docs are live at https://aliboily.github.io/butt
 
 **Next**, in order:
 1. `@buttery/mcp`: designed from the research, built, tested on both protocol versions, and measured with an evaluation that compares agents with and without it
-2. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
-3. Everything else that's left: the rest of 1.0 below, and the follow-ups the demos turned up
+2. npm: buttery's packages published under a scope of its own (`@buttery` belongs to another project), renamed across the repo once the scope is chosen, with a publish workflow; it lands with the MCP server, which `npx` installs from npm
+3. The sign-in flow: an identifier field, a one-time code field, an `AuthFlow` pattern with a `useOtpFlow` hook, its docs page, `buttery add page sign-in`, and sign-in screens in the dashboard template and the roastery demo
+4. Everything else that's left: the rest of 1.0 below, and the follow-ups the demos turned up
 
 ---
 
