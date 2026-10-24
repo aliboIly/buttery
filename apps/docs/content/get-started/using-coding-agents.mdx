@@ -15,7 +15,7 @@ buttery is built so coding agents get its rules right the first time: one vocabu
 <Cards>
 <Card icon="file" title="AGENTS.md">
 
-At a project's root, it tells agents which docs to read, the rules that are never broken (tokens only, flow layout, the component contract, the motion rules) and the commands that check their work. Agents that read `CLAUDE.md` find it imported from there.
+At a project's root, it tells agents which docs to read, the rules that are never broken (tokens only, flow layout, the component contract, the motion rules) and the commands that check their work. Agents that read `CLAUDE.md` find it imported from there. An app made with `create-buttery` has one, and `buttery init` adds buttery's section to an app's own.
 
 </Card>
 <Card icon="wrench" title="The make-it-buttery skill">
@@ -30,7 +30,7 @@ Each page of this site is Markdown at its address plus `.md`, and `llms.txt` lis
 </Card>
 <Card icon="bot" title="An MCP server">
 
-`@butteryui/mcp` answers an agent's questions about components and tokens for the version the project uses, starts pages from their patterns, and lints and checks what it builds. [MCP server](/tools/mcp-server) sets it up.
+`@butteryui/mcp` answers an agent's questions about components and tokens for the version the project uses, starts pages from their patterns, and lints and checks what it builds. `create-buttery` and `buttery init` add it to each common agent's config, and [MCP server](/tools/mcp-server) sets it up by hand.
 
 </Card>
 </Cards>
@@ -39,7 +39,7 @@ Each page of this site is Markdown at its address plus `.md`, and `llms.txt` lis
 
 When something's wrong, the checks say what and how to fix it:
 
-- `expectButtery` reports each layout problem with the element, the rule, the measurement and a fix, and `pnpm test:layout --reporter=json` writes them as JSON for an agent to read.
+- `expectButtery` reports each layout problem with the element, the rule, the measurement and a fix, and `buttery check --json` writes them as JSON for an agent to read, on any page of the running app.
 - Components warn in development with the fix in the message, such as a dialog without a name.
 - buttery's stylelint config names the token to use instead of a raw value.
 

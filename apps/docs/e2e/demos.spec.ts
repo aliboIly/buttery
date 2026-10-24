@@ -61,7 +61,7 @@ test("the demos page shows each demo with its picture, what it uses and the comm
       card.getByRole("link", { name: "View source", exact: true }),
     ).toHaveAttribute("href", new RegExp(`/apps/demos/${demo.route}$`));
     await expect(
-      card.getByText(`pnpm new-app my-app --template ${demo.template}`),
+      card.getByText(`npx create-buttery my-app --template ${demo.template}`),
     ).toBeVisible();
   }
 });

@@ -1,16 +1,42 @@
 ---
 title: Installation
-description: Adding buttery to an app from npm, the five commands from a clone to a new app, and what an app on buttery is made of.
+description: Starting a new app with create-buttery, adding buttery to an app you have with buttery init, working in buttery's repository, and what an app on buttery is made of.
 section: get-started
 order: 20
 status: beta
 since: 0.9.0
-related: [get-started/quick-start, templates/blank, get-started/desktop-apps]
+related:
+  [
+    get-started/quick-start,
+    tools/command-line,
+    templates/blank,
+    get-started/desktop-apps,
+  ]
 ---
 
-There are two ways in. An app you already have adds buttery's packages from npm. A new app starts as a copy of the starter in buttery's repository, which is public on GitHub: a clone, an install and one command give you an app on the web and in a desktop window, in about five minutes.
+There are three ways in. `create-buttery` starts a new app in any folder, from one of four templates. `buttery init` adds buttery to a React app you have. And buttery's repository, which is public on GitHub, has the starter, the templates and the demos side by side, for working on buttery itself.
+
+## Start a new app
+
+```bash
+npx create-buttery my-app
+cd my-app
+npm run dev
+```
+
+`create-buttery` makes `my-app` in the folder you're in from the blank template and installs it with the package manager that ran it, so `pnpm create buttery my-app` installs with pnpm. `--template dashboard`, `editor` or `marketing` starts from another [template](/templates/blank), and `--desktop` adds the Tauri shell, so the app also opens as a desktop window. It needs Node 22 or later.
+
+The app comes with buttery's lint configs, Playwright and `@butteryui/test` with its own specs, the `buttery` command, and what coding agents read. [Command line](/tools/command-line) has everything the command does.
 
 ## Add it to an app you have
+
+```bash
+npx buttery init
+```
+
+`init` adds buttery's packages to the app and installs them, imports `@butteryui/core/styles.css` and `@butteryui/react/styles.css` at its entry and wraps it in `ButteryProvider`, writes buttery's ESLint and stylelint configs when the app has none, and gives coding agents an `AGENTS.md` section, the skill and the MCP server. What it can't do for certain it lists, with how. `npx buttery doctor` then checks the setup and says how to fix what isn't right.
+
+To do the same by hand:
 
 ```sh
 pnpm add @butteryui/core @butteryui/react lucide-react
@@ -19,7 +45,11 @@ pnpm add -D @butteryui/test @butteryui/lint
 
 Import `@butteryui/core/styles.css` and `@butteryui/react/styles.css` once at the app's entry and wrap it in `ButteryProvider`, as the starter's entry under [What's in the app](#what-s-in-the-app) does. The app needs React 19; `@butteryui/test` runs in Playwright, and `@butteryui/lint` plugs into ESLint 9 and stylelint 16.
 
-## What you need
+## Work in buttery's repository
+
+A clone, an install and one command give you an app on the web and in a desktop window, in about five minutes.
+
+### What you need
 
 <Cards columns={3}>
 <Card icon="node" title="Node 22.18 or later">
@@ -40,8 +70,6 @@ To clone the repository. It's public, so you don't need an account or a key.
 </Cards>
 
 For the desktop app you also need Rust, through `rustup`, and on macOS the Xcode Command Line Tools (`xcode-select --install`), which Tauri v2 builds with.
-
-## Create an app
 
 <Steps>
 <Step>

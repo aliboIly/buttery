@@ -20,19 +20,15 @@ The blank template is buttery's starter app: the provider, the styles, the bundl
 <Steps>
 <Step>
 
-### Copy the template
+### Make the app
 
 ```bash
-pnpm new-app my-app --template blank
+npx create-buttery my-app --template blank --desktop
 ```
 
-This works inside the buttery repository today. It copies `apps/starter` to `apps/my-app`, gives the copy its name and the next free port, adds it to the root `tsconfig.json` and installs it. `blank` is the default, so `pnpm new-app my-app` does the same.
+`create-buttery` makes `my-app` in the folder you're in, named after the folder, and installs it with the package manager that ran it. `blank` is the default, so `--template blank` can be left out. `--desktop` adds the Tauri shell, so the app also opens as a desktop window.
 
-Once `create-buttery` is published, this starts the same app in any folder:
-
-```bash
-npx create-buttery my-app --template blank
-```
+Inside the buttery repository, `pnpm new-app my-app --template blank` copies `apps/starter` to `apps/my-app` instead, with the next free port, and adds it to the root `tsconfig.json`.
 
 </Step>
 <Step>
@@ -40,7 +36,8 @@ npx create-buttery my-app --template blank
 ### Start it
 
 ```bash
-pnpm --filter my-app dev
+cd my-app
+npm run dev
 ```
 
 Open the address it prints.
@@ -51,7 +48,7 @@ Open the address it prints.
 ### Open it as a desktop app
 
 ```bash
-pnpm --filter my-app tauri dev
+npm run tauri dev
 ```
 
 The same app opens in a window of its own.

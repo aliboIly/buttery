@@ -94,9 +94,9 @@ test("the landing page says under its command where the command runs, linking In
 }) => {
   await page.goto("/");
   const command = page.locator(".docs-copy-line", {
-    hasText: "pnpm new-app my-app",
+    hasText: "npx create-buttery my-app",
   });
-  const note = page.getByText(/^Run it in a clone of the buttery repository/);
+  const note = page.getByText(/^It makes the app in the folder you're in/);
   await expect(note).toBeVisible();
   const [above, below] = await Promise.all([
     command.boundingBox(),

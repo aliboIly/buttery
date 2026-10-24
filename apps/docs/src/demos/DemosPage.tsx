@@ -104,7 +104,7 @@ function DemoCard({
               </p>
             </Text>
             <CopyLine
-              text={`pnpm new-app my-app --template ${demo.template}`}
+              text={`npx create-buttery my-app --template ${demo.template}`}
               label="Copy the command"
             />
           </Stack>

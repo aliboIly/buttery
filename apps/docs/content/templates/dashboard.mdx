@@ -29,19 +29,15 @@ The dashboard template is a small web app for running a shop: a sidebar of pages
 <Steps>
 <Step>
 
-### Copy the template
-
-```bash
-pnpm new-app my-app --template dashboard
-```
-
-This works inside the buttery repository today. It copies `apps/templates/dashboard` to `apps/my-app`, gives the copy its name, which also replaces "buttery dashboard" in the sidebar, and the next free port, then installs it.
-
-Once `create-buttery` is published, this starts the same app in any folder:
+### Make the app
 
 ```bash
 npx create-buttery my-app --template dashboard
 ```
+
+`create-buttery` makes `my-app` in the folder you're in and installs it with the package manager that ran it. The app takes the folder's name, which also replaces "buttery dashboard" in the sidebar.
+
+Inside the buttery repository, `pnpm new-app my-app --template dashboard` copies `apps/templates/dashboard` to `apps/my-app` instead, with the next free port.
 
 </Step>
 <Step>
@@ -49,10 +45,11 @@ npx create-buttery my-app --template dashboard
 ### Start it
 
 ```bash
-pnpm --filter my-app dev
+cd my-app
+npm run dev
 ```
 
-Open the address it prints. The template is a web app: for a desktop app, start from [blank](/templates/blank), which has the Tauri shell.
+Open the address it prints. The template is a web app; `--desktop` adds the Tauri shell to it, as it does to any template.
 
 </Step>
 </Steps>

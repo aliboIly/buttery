@@ -5,10 +5,16 @@ section: guides
 order: 50
 status: stable
 since: 0.2.0
-related: [tools/testing, layout/the-layout-contract]
+related:
+  [
+    tools/command-line,
+    tools/testing,
+    layout/the-layout-contract,
+    guides/make-an-existing-app-buttery,
+  ]
 ---
 
-buttery checks layout in two places: `LayoutGuard` while you work, and `expectButtery` in your tests. Use both, so a layout problem shows up the moment you make it and can't come back once it's fixed.
+buttery checks layout in three places: `LayoutGuard` while you work, `buttery check` on the running app, and `expectButtery` in your tests. Use them together, so a layout problem shows up the moment you make it and can't come back once it's fixed.
 
 ## While you work
 
@@ -29,6 +35,14 @@ Production builds never include it, and `layoutGuard={false}` on `ButteryProvide
 
 > **Resize as you go.** Narrow the window from wide to a phone's width as you work: most layout problems only show at some widths.
 
+## On the running app
+
+```bash
+npx buttery check / /settings
+```
+
+`buttery check` runs the checks `expectButtery` runs on each page you name, at 390 and 1280 wide, light and dark, starting the app's dev server when it isn't running. `--full` checks every width, both densities and WebKit too. [Command line](/tools/command-line) has its options.
+
 ## In your tests
 
 `expectButtery` runs the same checks and more in Playwright, at every width, theme and density you give it. Start with `quickMatrix` in every test, and run `fullMatrix` before a release. [Testing](/tools/testing) has its options and every check it runs.
@@ -45,6 +59,6 @@ buttery found 1 layout problem:
                 Fix: Something is wider than the viewport; fix the overflow violations above, or let the widest element shrink.
 ```
 
-`pnpm test:layout --reporter=json`, buttery's own runner, prints the problems it finds as JSON, for a script or a coding agent to work through.
+`buttery check --json` prints the problems it finds as JSON, for a script or a coding agent to work through, as `pnpm test:layout --reporter=json` does in buttery's own repository.
 
 > **Fix the cause, not the symptom.** A component that overflows needs room, or `min-width: 0` so it can shrink, never a hidden overflow. `Stack`, `Inline` and `Grid` give every child `min-width: 0`, so lay it out in one of them, or give it a column of its own in a `Grid`.

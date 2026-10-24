@@ -19,19 +19,15 @@ The marketing template is a one-page site: a sticky bar whose links scroll to th
 <Steps>
 <Step>
 
-### Copy the template
-
-```bash
-pnpm new-app my-app --template marketing
-```
-
-This works inside the buttery repository today. It copies `apps/templates/marketing` to `apps/my-app`, gives the copy its name, which also replaces "buttery site" in the bar and the footer, and the next free port, then installs it.
-
-Once `create-buttery` is published, this starts the same app in any folder:
+### Make the app
 
 ```bash
 npx create-buttery my-app --template marketing
 ```
+
+`create-buttery` makes `my-app` in the folder you're in and installs it with the package manager that ran it. The app takes the folder's name, which also replaces "buttery site" in the bar and the footer.
+
+Inside the buttery repository, `pnpm new-app my-app --template marketing` copies `apps/templates/marketing` to `apps/my-app` instead, with the next free port.
 
 </Step>
 <Step>
@@ -39,7 +35,8 @@ npx create-buttery my-app --template marketing
 ### Start it
 
 ```bash
-pnpm --filter my-app dev
+cd my-app
+npm run dev
 ```
 
 Open the address it prints.

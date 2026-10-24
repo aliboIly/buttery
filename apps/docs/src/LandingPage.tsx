@@ -43,8 +43,8 @@ export interface ExploreSection {
   readonly unit: string;
 }
 
-/** The command that starts a new app today; `create-buttery` takes its place once it's published. */
-const NEW_APP = "pnpm new-app my-app";
+/** The command that starts a new app in any folder. */
+const NEW_APP = "npx create-buttery my-app";
 
 const STARTS: readonly {
   readonly icon: LucideIcon;
@@ -56,21 +56,21 @@ const STARTS: readonly {
   {
     icon: Package,
     title: "A new app",
-    text: `\`${NEW_APP}\` copies the starter with the provider, the styles and the layout checks already in place, for the web and the desktop.`,
+    text: `\`${NEW_APP}\` starts one from a template, with the provider, the styles, the lint configs and the layout checks already in place, for the web and the desktop.`,
     href: siteHref("/get-started/installation"),
     link: "Installation",
   },
   {
     icon: Wrench,
     title: "An existing app",
-    text: "Add the provider and the styles, then move one screen at a time onto buttery's components, from the top down, with the layout check watching.",
+    text: "`npx buttery init` adds the packages, the provider and the styles, then move one screen at a time onto buttery's components, with the layout check watching.",
     href: siteHref("/guides/make-an-existing-app-buttery"),
     link: "Make an existing app buttery",
   },
   {
     icon: Bot,
     title: "With a coding agent",
-    text: "`AGENTS.md` and the make-it-buttery skill give an agent the rules, and every check says how to fix what it finds.",
+    text: "`AGENTS.md`, the skill and the MCP server give an agent the rules and buttery's components, and every check says how to fix what it finds.",
     href: siteHref("/get-started/using-coding-agents"),
     link: "Using coding agents",
   },
@@ -199,15 +199,14 @@ export function LandingPage({
             <Stack gap={1} align="center" className="docs-landing-command">
               <CopyLine text={NEW_APP} label="Copy the command" />
               <Text variant="caption" tone="secondary">
-                Run it in a clone of the buttery repository until buttery is on
-                npm.{" "}
+                It makes the app in the folder you're in.{" "}
                 <a
                   href={siteHref("/get-started/installation")}
                   className="docs-link bt-focus"
                 >
                   Installation
                 </a>{" "}
-                has the steps.
+                has the other ways in.
               </Text>
             </Stack>
           </>

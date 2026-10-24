@@ -17,7 +17,11 @@ This guide moves an existing React app onto buttery without a rewrite: wire up t
 
 ### Wire it up
 
-Import buttery's two stylesheets at the app's entry and wrap the app in `ButteryProvider`:
+```bash
+npx buttery init
+```
+
+`buttery init` does this step for you, with buttery's lint configs and what coding agents read, and `npx buttery doctor` checks the result. By hand, import buttery's two stylesheets at the app's entry and wrap the app in `ButteryProvider`:
 
 ```tsx title="src/main.tsx"
 import "@butteryui/core/styles.css";

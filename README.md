@@ -18,7 +18,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 
 Wrap an app in buttery and it gets the tokens, type, surfaces, motion and layout rules written up in [`docs/`](docs), plus checks that fail when something overlaps, overflows or drifts off the scale. People and coding agents work from the same small vocabulary, and a wrong value fails type-checking instead of shipping.
 
-The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place, and `@butteryui/core`, `@butteryui/react`, `@butteryui/test`, `@butteryui/lint` and `@butteryui/mcp`, the MCP server for coding agents, are on npm. The command line tool comes next, on the way to 1.0. [ROADMAP.md](ROADMAP.md) shows where things stand.
+The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place, and buttery's packages are on npm: `@butteryui/core`, `@butteryui/react`, `@butteryui/test`, `@butteryui/lint`, `@butteryui/mcp`, the MCP server for coding agents, and `@butteryui/cli`, the `buttery` command, with `create-buttery`. [ROADMAP.md](ROADMAP.md) shows where things stand on the way to 1.0.
 
 ## What's in it
 
@@ -142,7 +142,13 @@ Springs land at once, fades take 100ms, loops hold still and confetti stays off.
 
 ## A quick look
 
-Add the packages to a React 19 app:
+Start a new app from a template:
+
+```sh
+npx create-buttery my-app --template dashboard
+```
+
+Or add buttery to a React 19 app you have with `npx buttery init`, which does the wiring below for you. By hand, add the packages:
 
 ```sh
 pnpm add @butteryui/core @butteryui/react
@@ -210,6 +216,7 @@ With Tailwind v4, import the bridge after Tailwind and keep `@butteryui/core/sty
 | `pnpm --filter demo-roastery dev` | Runs a demo on its own (`demo-roastery`, `demo-roastery-shop` and `demo-deckhand`) |
 | `pnpm demos:previews` | Retakes the demos' pictures for the docs site's demos page |
 | `pnpm new-app <name> --template <template>` | Copies a template to `apps/<name>`: `blank` (the starter, the default), `dashboard`, `editor` or `marketing` |
+| `pnpm test:apps` | Makes an app from each template outside the repository, from packed tarballs, and runs its checks and `buttery check` on it |
 
 ## Repo layout
 
@@ -219,7 +226,8 @@ With Tailwind v4, import the bridge after Tailwind and keep `@butteryui/core/sty
 | `packages/react` | `ButteryProvider`, the components and patterns, `celebrate` and the `buttery` factory |
 | `packages/test` | `expectButtery()`: layout, accessibility and stability checks for Playwright |
 | `packages/lint` | ESLint and stylelint rules that keep values on tokens and positioning owned |
-| `packages/cli`, `packages/mcp` | The command line tool and the MCP server, coming in 1.0 |
+| `packages/cli`, `packages/create-buttery` | The `buttery` command, which starts, extends, checks and sets up apps, and `create-buttery`, which runs its `create` |
+| `packages/mcp` | The MCP server, which answers coding agents' questions about buttery and checks their work |
 | `apps/docs` | The docs site: a page for every component with its demos and examples; the layout checks run against it |
 | `apps/starter` | The blank template for new apps, with a Tauri v2 shell |
 | `apps/templates` | The dashboard, editor and marketing templates, web apps built from the patterns |
