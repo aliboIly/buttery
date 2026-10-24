@@ -46,7 +46,8 @@ This app is built with buttery, a React design system: tokens, layout primitives
 
 ### Before you change UI
 - Look a component up before you use it: the \`buttery\` MCP server answers with \`buttery_search\` and \`buttery_get\`, and \`buttery_scaffold\` starts a whole page. Without it, the docs are at ${docs}, every page also as Markdown at its path plus \`.md\`.
-- Start a page with \`npx buttery add page <kind>\` and a component of your own with \`npx buttery create component <Name> --purpose "…"\`.
+- Start a page with \`npx buttery add page <kind>\`.
+- Start a component of your own with \`npx buttery create component <Name> --purpose "…"\` and build it from buttery's public parts: \`Control\` for a control's height, \`Pressable\` for what people press, \`SharedIndicator\` for a highlight that slides, \`variants()\` for typed looks and \`useControllableState\` for a value that's controlled or not. Give it a class of its own; \`data-bt\` belongs to buttery's components.
 - Follow \`.claude/skills/make-it-buttery/SKILL.md\` for any screen you build or restyle.
 
 ### Rules

@@ -2,6 +2,36 @@
 
 How buttery checks that coding agents build well with it, run by run. Anything that trips an agent becomes a better API, example, warning or doc (DX_AND_AI §6).
 
+## 0.11.0: the command line, second run (2026-10-24)
+
+The first run's next steps: an app with everything a new app gets, an agent that can run the layout check, the custom component task, and the transcripts kept.
+
+### Setup
+- Agent: Claude Code 2.1.309, headless (`claude -p`), with `claude-sonnet-5-5`. No web access; it could edit files, run `pnpm typecheck`, `pnpm lint`, `pnpm build`, `ls` and any `npx buttery` command, and call the MCP server. The whole transcript of each run is kept.
+- Apps: made with `create-buttery` from the blank template, from packed 0.11.0 tarballs, outside the repository. Each had what every new app gets: `AGENTS.md` with buttery's section, `CLAUDE.md` importing it, the make-it-buttery skill, `@butteryui/mcp` in `.mcp.json`, and the `buttery` command, so `npx buttery check` could start the app's dev server.
+- Two tasks:
+  - the filtered table page from the first run, word for word;
+  - a component of its own: a star rating for reviews, one to five, by pointer or keyboard, with a preview on hover and a value a form can read, built to look and behave like one of buttery's, and used on the first screen in a review form that says thanks.
+- Scored with typecheck, lint, a production build, `buttery check --json` on the first screen and on any component preview, in Chromium and WebKit, at 390 and 1280 in light and dark, and screenshots.
+
+### Results
+
+| Task | Turns | Time | Cost | Typecheck, lint, build | Layout problems | Checked its own layout | Built with |
+|---|---|---|---|---|---|---|---|
+| Filtered table | 12 | 37s | $0.22 | pass | 0 | yes, once, clean | `AppPage`, `PageHeader`, `DataTable`, `FilterBar` and `FilterPill`, `SearchField`, `StatusBadge` |
+| Star rating | 33 | 92s | $0.38 | pass | 0, on the form and the component's preview | yes, both pages, clean | `buttery create component`; `AppPage`, `PageHeader`, `Field`, `TextArea`, `Callout`, `Button`, `Icon` |
+
+### What it found
+- Both agents ran `npx buttery check` on their own work before they finished, which the first run's agents couldn't do, and both came back clean; scored in both engines afterwards, so did their apps.
+- Both loaded the make-it-buttery skill and made one search and one get on the MCP server.
+- The component agent started from `buttery create component`, kept its preview page and spec, and rewrote the spec to test pointer, hover and keyboard. It couldn't run the spec here, since the run allowed only the commands above.
+- Its rating was a real radio group: roving focus, arrow keys, Home and End, a hover preview, a hidden input for forms, and buttery's focus and press classes. It wasn't built from the public parts buttery's own components use: it wrote its controlled state by hand rather than with `useControllableState`, drew plain buttons rather than `Pressable` in a `Control`, and marked its component with `data-bt`, buttery's own attribute.
+- Its first CSS guessed a height token that doesn't exist, `--bt-h-md` with a 32px fallback, and it found the real one, `--bt-h-control`, by searching the installed CSS. buttery's stylelint config would have let the guess through: it checks raw values, not whether a `--bt-*` name in a `var()` is a token.
+
+### Fixed
+- `AGENTS.md`'s buttery section and the skill now name the public parts for a component of an app's own (`Control`, `Pressable`, `SharedIndicator`, `variants()` and `useControllableState`) and say that `data-bt` is buttery's.
+- Next: stylelint flags a `--bt-*` name that isn't a token, with the nearest one, and the next run tries the agents this machine doesn't have.
+
 ## 0.10.0: the MCP server, first run (2026-10-23)
 
 A small run before 0.10.0, to see whether `@butteryui/mcp` changes what an agent builds. The full evaluation, with the command line tool, more tasks and more agents, comes with 1.0.
