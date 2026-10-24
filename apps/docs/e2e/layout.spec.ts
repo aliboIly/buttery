@@ -1327,7 +1327,8 @@ const interactions: Readonly<Record<string, readonly ButteryInteraction[]>> = {
   ],
 };
 
-test.describe.configure({ timeout: 300_000 });
+/** The full matrix checks a page in several times the conditions, so a long page gets the time for them. */
+test.describe.configure({ timeout: quick ? 300_000 : 900_000 });
 
 // Pages load at the matrix's first size, as on a phone, with ResizeObserver loops counted from the start.
 test.beforeEach(async ({ page }) => {
