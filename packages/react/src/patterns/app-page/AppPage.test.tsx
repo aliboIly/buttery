@@ -3,6 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import type { ReactElement, ReactNode } from "react";
+import { OverflowCluster } from "@butteryui/core";
 import { afterEach, describe, expect, it, onTestFinished } from "vitest";
 import { AppShell } from "../app-shell/AppShell.tsx";
 import { AppPage } from "./AppPage.tsx";
@@ -242,6 +243,46 @@ describe("AppPage", () => {
           .getBoundingClientRect().top,
       ).toBeGreaterThanOrEqual(box("main").bottom);
     }
+  });
+
+  it("lets an OverflowCluster in a section's actions unfold again when the page widens", async () => {
+    inShell(
+      400,
+      <AppPage header={<h1>Plants</h1>}>
+        <AppPage.Section
+          title="In the greenhouse"
+          actions={
+            <OverflowCluster justify="end" moreLabel="More plant actions">
+              {[
+                "Water every plant in the greenhouse",
+                "Print a label for every pot",
+                "Add a plant to the greenhouse",
+              ].map((label) => (
+                <OverflowCluster.Item
+                  key={label}
+                  menuItem={{ label, onSelect: () => undefined }}
+                >
+                  <button type="button">{label}</button>
+                </OverflowCluster.Item>
+              ))}
+            </OverflowCluster>
+          }
+        >
+          <p>Rows</p>
+        </AppPage.Section>
+      </AppPage>,
+    );
+    const shown = (): number =>
+      document.querySelectorAll(
+        '[data-bt="OverflowCluster"] [data-bt-part="item"]:not([hidden])',
+      ).length;
+    await expect.poll(shown).toBeLessThan(3);
+    const frame = document.querySelector<HTMLElement>(
+      '[data-bt="AppShell"]',
+    )?.parentElement;
+    if (!frame) throw new Error("No frame.");
+    frame.style.inlineSize = "1280px";
+    await expect.poll(shown).toBe(3);
   });
 
   it("gives a section a description with no heading, and tops its own head's row only when it has one", () => {

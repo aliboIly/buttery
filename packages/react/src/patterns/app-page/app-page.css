@@ -137,6 +137,22 @@
     gap: var(--bt-space-2);
   }
 
+  /* An OverflowCluster folds to the width it's given, so its slot takes all the heading leaves. */
+  .bt-app-page-section
+    [data-bt-part="section-actions"]:has(> .bt-overflow-cluster) {
+    flex: 1 1 0;
+    justify-content: flex-end;
+    min-inline-size: var(--bt-h-button);
+  }
+
+  .bt-app-page-section
+    > [data-bt-part="section-head"]:has(
+      > [data-bt-part="section-actions"] > .bt-overflow-cluster
+    )
+    > [data-bt-part="section-titles"] {
+    flex: 0 1 auto;
+  }
+
   .bt-app-page[data-fill] {
     block-size: 100%;
     min-block-size: 0;
