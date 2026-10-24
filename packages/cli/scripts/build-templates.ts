@@ -131,6 +131,8 @@ function buildTemplates(found: Versions): void {
     join(root, "apps/starter/src-tauri"),
     join(dist, "desktop", "src-tauri"),
   );
+  mkdirSync(join(dist, "skill"), { recursive: true });
+  writeFileSync(join(dist, "skill", "SKILL.md"), skill);
 }
 
 function exampleFile(component: string, example: string): string {
@@ -167,6 +169,7 @@ function buildPages(): void {
 const found = versions();
 rmSync(join(dist, "templates"), { recursive: true, force: true });
 rmSync(join(dist, "desktop"), { recursive: true, force: true });
+rmSync(join(dist, "skill"), { recursive: true, force: true });
 mkdirSync(dist, { recursive: true });
 buildTemplates(found);
 buildPages();

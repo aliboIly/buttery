@@ -1,3 +1,5 @@
+import { AGENT_CONFIGS, butteryGuide } from "./agent-files.ts";
+
 /** A template's name. */
 export type TemplateName = "blank" | "dashboard" | "editor" | "marketing";
 
@@ -228,39 +230,9 @@ playwright-report
 src-tauri/target
 `;
 
-const CLAUDE_MD = `@AGENTS.md
-`;
-
-const MCP_JSON = `${JSON.stringify(
-  {
-    mcpServers: {
-      buttery: { type: "stdio", command: "npx", args: ["buttery-mcp"] },
-    },
-  },
-  null,
-  2,
-)}\n`;
-
 /** Instructions for the coding agents that work in an app made from a template. */
 export function agentsFile(title: string, docs: string): string {
-  return `# ${title}
-
-This app is built with buttery, a React design system: tokens, layout primitives, components and patterns, with checks that fail when something overlaps, overflows or drifts off the scale. Build with it, not around it.
-
-## Before you change UI
-- Look a component up before you use it: the \`buttery\` MCP server in \`.mcp.json\` answers with \`buttery_search\` and \`buttery_get\`, and \`buttery_scaffold\` starts a whole page. Without it, the docs are at ${docs}, every page also as Markdown at its path plus \`.md\`.
-- Follow \`.claude/skills/make-it-buttery/SKILL.md\` for any screen you build or restyle.
-
-## Rules
-1. Tokens only: colors, sizes, radii, shadows, durations and z-indexes come from \`var(--bt-*)\`, or from a spacing step on a primitive (\`gap={3}\`, \`pad={4}\`).
-2. Lay things out with \`Stack\`, \`Inline\` and \`Grid\` and a gap: no outer margins, no negative margins, no \`position: absolute\` or \`fixed\` in app code.
-3. Overlays only through buttery's layers: \`Menu\`, \`Select\`, \`Popover\`, \`Dialog\`, \`Sheet\`, \`toast()\`.
-4. Text through \`Text\` with a role, icons through \`Icon\`, and buttery's components before hand-made controls.
-
-## Checks
-- \`npm run typecheck\` and \`npm run lint\` (buttery's lint configs flag raw values, stray positioning and \`transition: all\`).
-- \`npx buttery check\` runs the layout checks on the running app at 390 and 1280, light and dark, and says how to fix what it finds; \`--json\` for a machine.
-`;
+  return `# ${title}\n\n${butteryGuide(docs)}`;
 }
 
 /** A template's README, for the app made from it. */
@@ -292,6 +264,6 @@ export const APP_FILES: Readonly<Record<string, string>> = {
   "stylelint.config.mjs": STYLELINT_CONFIG,
   "playwright.config.ts": PLAYWRIGHT_CONFIG,
   _gitignore: GITIGNORE,
-  "CLAUDE.md": CLAUDE_MD,
-  ".mcp.json": MCP_JSON,
+  "CLAUDE.md": "@AGENTS.md\n",
+  ...AGENT_CONFIGS,
 };
