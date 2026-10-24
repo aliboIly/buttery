@@ -1,5 +1,6 @@
 import { createContext, use, useEffect, useMemo, useRef } from "react";
 import type { Context } from "react";
+import { useMotionPreference } from "./preference.ts";
 import { trackAnimation } from "./settle.ts";
 
 /** Whether animations here count toward buttery's settled flag. `Loop` turns it off for its content. */
@@ -32,7 +33,15 @@ interface Releases {
  */
 export function useAnimationTracking(): AnimationTracking {
   const tracked = use(AnimationTrackingContext);
+  const reduced = useMotionPreference() === "reduced";
   const releases = useRef<Releases>({ values: null, layout: null });
+
+  // Reduced motion turns layout animation off, and Motion drops one that's running without reporting its end.
+  useEffect(() => {
+    if (!reduced) return;
+    releases.current.layout?.();
+    releases.current.layout = null;
+  }, [reduced]);
 
   useEffect(
     () => () => {
