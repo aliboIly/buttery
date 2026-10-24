@@ -11,8 +11,16 @@ import {
   targetsFrom,
 } from "./check.ts";
 import type { CheckMatrix, Engine } from "./check.ts";
+import {
+  PATTERN_PAGES,
+  addAppFrame,
+  addPage,
+  isPatternName,
+  readPages,
+} from "./add.ts";
 import { createApp } from "./create.ts";
 import { packageManagerFrom, runScript } from "./package-manager.ts";
+import { PLACEMENTS, isPageKind } from "./pages.ts";
 import { projectRoot } from "./project.ts";
 import { TEMPLATE_NAMES, isTemplateName } from "./templates.ts";
 
@@ -21,7 +29,10 @@ const HELP = `buttery: start an app on buttery, add to it, and check it.
   buttery create <folder> [--template ${TEMPLATE_NAMES.join("|")}] [--desktop] [--no-install]
       A new app from a template, named after its folder. --desktop adds the Tauri shell.
   buttery add page <kind> [--name <Name>]
-      A page from buttery's patterns, such as table, detail or sign-in.
+      A page from buttery's patterns, such as table, detail or sign-in, in src/pages; a
+      dashboard app gets its route and sidebar item too. buttery add page lists the kinds.
+  buttery add <pattern>
+      A screen from a pattern: ${["app-shell", ...Object.keys(PATTERN_PAGES)].join(", ")}.
   buttery create component <Name>
       A component of your own, built from buttery's public parts.
   buttery check [page…] [--json] [--full] [--engine chromium|webkit]
@@ -39,6 +50,8 @@ const HELP = `buttery: start an app on buttery, add to it, and check it.
 
 Exits 1 when a check finds problems, and 2 when a command can't run, saying how to fix it.
 `;
+
+const DIST = fileURLToPath(new URL(".", import.meta.url));
 
 function ownVersion(): string {
   const manifest: unknown = JSON.parse(
@@ -80,7 +93,7 @@ function create(args: readonly string[]): void {
     install: !values["no-install"],
     manager,
     cwd: process.cwd(),
-    dist: fileURLToPath(new URL(".", import.meta.url)),
+    dist: DIST,
     tarballs: process.env["BUTTERY_TARBALLS"],
   });
   const steps = [
@@ -137,6 +150,94 @@ async function check(args: readonly string[]): Promise<number> {
   return result.violations.length === 0 ? 0 : 1;
 }
 
+function appRoot(): string {
+  const root = projectRoot(process.cwd());
+  if (root === null) {
+    throw new Error(
+      "There's no package.json here or in a folder above, so there's no app to add to. Fix: run it in the app's folder.",
+    );
+  }
+  return root;
+}
+
+function pageKinds(): string {
+  const lines = [
+    "The pages buttery add page writes, each from its pattern's whole-page example:",
+    "",
+  ];
+  for (const [kind, page] of readPages(DIST)) {
+    lines.push(`  ${kind.padEnd(16)}${page.what} (${page.component})`);
+  }
+  lines.push(
+    "",
+    "Name it with --name, such as buttery add page table --name Customers.",
+  );
+  return `${lines.join("\n")}\n`;
+}
+
+function addedPage(kind: string, name: string | undefined): void {
+  if (!isPageKind(kind)) {
+    throw new Error(
+      `There's no page called "${kind}". Fix: run buttery add page for the list.`,
+    );
+  }
+  const added = addPage({ root: appRoot(), dist: DIST, kind, name });
+  const { names } = added;
+  const lines = [
+    `Added ${names.file}: ${added.template.what}, from ${added.template.component}.`,
+    added.wired
+      ? `It's at ${names.route} in src/App.tsx, ${PLACEMENTS[kind].kind === "screen" ? "on a screen of its own" : "with an item in the sidebar"}.`
+      : `Render <${names.component} /> where the app shows its pages, such as at ${names.route}.`,
+    ...added.missing.map(
+      (name) =>
+        `It imports ${name}, which the app doesn't have yet: npm install ${name}`,
+    ),
+    `Check it with npx buttery check ${names.route}.`,
+  ];
+  process.stdout.write(`${lines.join("\n")}\n`);
+}
+
+function add(args: readonly string[]): void {
+  const { values, positionals } = parseArgs({
+    args: [...args],
+    allowPositionals: true,
+    options: {
+      name: { type: "string" },
+      help: { type: "boolean", short: "h" },
+    },
+  });
+  const [what, kind] = positionals;
+  if (what === "page") {
+    if (kind === undefined || values.help === true) {
+      process.stdout.write(pageKinds());
+      return;
+    }
+    addedPage(kind, values.name);
+    return;
+  }
+  if (what === undefined || !isPatternName(what)) {
+    throw new Error(
+      `${what === undefined ? "Name what to add" : `There's no pattern called "${what}"`}. Fix: buttery add page <kind>, or buttery add with one of ${["app-shell", ...Object.keys(PATTERN_PAGES)].join(", ")}.`,
+    );
+  }
+  if (what !== "app-shell") {
+    addedPage(PATTERN_PAGES[what], values.name);
+    return;
+  }
+  const frame = addAppFrame(appRoot());
+  process.stdout.write(
+    [
+      `Added ${frame.file}: a sidebar beside a top bar, around the page that's open.`,
+      "Render the app's pages inside it, as <AppFrame path={path}>{page}</AppFrame>, and list them in its sidebar.",
+      ...frame.missing.map(
+        (name) =>
+          `It imports ${name}, which the app doesn't have yet: npm install ${name}`,
+      ),
+      "",
+    ].join("\n"),
+  );
+}
+
 async function run(argv: readonly string[]): Promise<number> {
   const [command, ...rest] = argv;
   switch (command) {
@@ -155,6 +256,9 @@ async function run(argv: readonly string[]): Promise<number> {
       return 0;
     case "check":
       return check(rest);
+    case "add":
+      add(rest);
+      return 0;
     default:
       throw new Error(
         `There's no command called "${command}". Fix: run buttery --help for the list.`,
