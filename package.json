@@ -13,7 +13,7 @@
     "tokens": "pnpm --filter @butteryui/core tokens",
     "typecheck": "node node_modules/typescript-native/bin/tsc -b",
     "lint": "eslint . --max-warnings=0",
-    "lint:css": "stylelint \"**/*.css\" --max-warnings=0 --allow-empty-input",
+    "lint:css": "stylelint \"**/*.css\" --config stylelint.config.mjs --max-warnings=0 --allow-empty-input",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
