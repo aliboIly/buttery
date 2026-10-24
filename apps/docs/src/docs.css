@@ -359,6 +359,7 @@
 
 /* The file a block of code belongs in, named in the code face where its language would be. */
 .docs-code-title {
+  min-inline-size: 0;
   font-family: var(--bt-font-mono);
   color: var(--bt-text);
 }

@@ -38,7 +38,12 @@ function CodeBar({
           {language}
         </Text>
       ) : (
-        <Text variant="caption" className="docs-code-title">
+        <Text
+          variant="caption"
+          className="docs-code-title"
+          truncate
+          title={title}
+        >
           {title}
         </Text>
       )}
