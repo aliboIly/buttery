@@ -111,7 +111,7 @@ function StepView({
   const side = (step === "identify" ? -TRAVEL : TRAVEL) * (rtl ? -1 : 1);
   return (
     <motion.div
-      {...(reduced ? {} : tracking)}
+      {...tracking}
       data-bt-part="step"
       initial={reduced ? false : { x: side }}
       animate={{ x: 0 }}

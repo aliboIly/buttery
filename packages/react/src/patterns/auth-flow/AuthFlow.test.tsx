@@ -257,6 +257,35 @@ describe("AuthFlow", () => {
     await screen.findAllByText("You're signed in");
   });
 
+  it("lets the page settle when reduced motion turns on while a step slides in", async () => {
+    function Switchable({ reduced }: { readonly reduced: boolean }) {
+      return (
+        <ButteryProvider
+          layoutGuard={false}
+          reducedMotion={reduced ? "always" : "never"}
+        >
+          <AuthFlow<string>
+            onRequestCode={() => ({ ok: true })}
+            onVerify={() => ({ ok: false, reason: "wrong" })}
+          />
+        </ButteryProvider>
+      );
+    }
+    const { rerender } = render(<Switchable reduced={false} />);
+    await browser.type(identifier(), "rosa@halfmoon.coffee");
+    await browser.click(continueButton());
+    await screen.findByRole("heading", { name: "Check your email" });
+    rerender(<Switchable reduced />);
+    await waitFor(
+      () => {
+        expect(document.documentElement.hasAttribute("data-bt-settled")).toBe(
+          true,
+        );
+      },
+      { timeout: 2000 },
+    );
+  });
+
   it("swaps the steps without sliding them with reduced motion", async () => {
     render(
       <ButteryProvider layoutGuard={false} reducedMotion="always">
