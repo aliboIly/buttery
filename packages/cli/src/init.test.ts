@@ -125,7 +125,7 @@ createRoot(document.getElementById("root")!).render(
     expect(result.todo).toContain(
       'Add buttery\'s rules to eslint.config.js: import { butteryEslintConfig } from "@butteryui/lint/eslint", then ...butteryEslintConfig() at the end of the exported list.',
     );
-    expect(result.todo.join("\n")).not.toContain(" eslint typescript-eslint");
+    expect(initApp(options(root)).todo).toEqual(result.todo);
   });
 
   it("says how to start a React app when the folder isn't one", () => {

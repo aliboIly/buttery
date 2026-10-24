@@ -1,12 +1,6 @@
 import { spawnSync } from "node:child_process";
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  writeFileSync,
-} from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import process from "node:process";
 import {
   AGENT_CONFIGS,
@@ -15,6 +9,7 @@ import {
   withGuide,
   withServer,
 } from "./agent-files.ts";
+import { pointAtTarballs } from "./create.ts";
 import type { PackageManager } from "./package-manager.ts";
 import { readJson } from "./project.ts";
 import {
@@ -84,15 +79,6 @@ function installCommand(
   const verb = manager === "npm" ? "install" : "add";
   const flag = dev ? [manager === "bun" ? "-d" : "-D"] : [];
   return [manager, verb, ...flag, ...names];
-}
-
-function tarballFor(tarballs: string, name: string): string | null {
-  const short = name.replace("@butteryui/", "");
-  const file = readdirSync(tarballs).find(
-    (entry) =>
-      entry.startsWith(`butteryui-${short}-`) && entry.endsWith(".tgz"),
-  );
-  return file === undefined ? null : `file:${join(resolve(tarballs), file)}`;
 }
 
 /** `source`, an entry module, with buttery's styles imported at the top. */
@@ -170,22 +156,20 @@ export function initApp(options: InitOptions): InitResult {
 
   const eslint = firstExisting(root, ESLINT_CONFIGS);
   const stylelint = firstExisting(root, STYLELINT_CONFIGS);
-  const tools = [
-    ...(eslint === null ? ["eslint", "typescript-eslint"] : []),
-    ...(stylelint === null ? ["stylelint"] : []),
-  ];
   const wanted = (names: readonly string[]): readonly string[] =>
     names.filter((name) => !listed.has(name));
   const dependencies = wanted(DEPENDENCIES);
-  const devDependencies = wanted([...DEV_DEPENDENCIES, ...tools]);
-  const spec = (name: string): string => {
-    if (!name.startsWith("@butteryui/")) return name;
-    const tarball =
-      options.tarballs === undefined
-        ? null
-        : tarballFor(options.tarballs, name);
-    return tarball ?? `${name}@^${options.version}`;
-  };
+  const devDependencies = wanted([
+    ...DEV_DEPENDENCIES,
+    "eslint",
+    "typescript-eslint",
+    "stylelint",
+  ]);
+  const spec = (name: string): string =>
+    name.startsWith("@butteryui/") ? `${name}@^${options.version}` : name;
+  if (options.tarballs !== undefined) {
+    pointAtTarballs(root, options.tarballs, options.manager);
+  }
   for (const [dev, names] of [
     [false, dependencies],
     [true, devDependencies],

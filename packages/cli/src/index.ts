@@ -131,7 +131,7 @@ function create(args: readonly string[]): void {
     runScript(manager, "dev"),
   ];
   process.stdout.write(
-    `\nMade ${created.name} from the ${values.template} template.\n\n${steps.map((step) => `  ${step}`).join("\n")}\n\nThen check its layout with \`npx buttery check\`, and add pages with \`npx buttery add page <kind>\`.\n`,
+    `\nMade ${created.name} from the ${values.template} template.\n\n${steps.map((step) => `  ${step}`).join("\n")}\n\nThen check its layout with npx buttery check, and add pages with npx buttery add page <kind>.\n`,
   );
 }
 
