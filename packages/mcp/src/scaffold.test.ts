@@ -34,9 +34,7 @@ describe("buttery_scaffold", () => {
       /^## A settings page on buttery \d+\.\d+\.\d+: one group of settings/,
     );
     expect(text).toContain("```tsx\nimport");
-    expect(text).toMatch(
-      /Save it as a file of its own, such as src\/pages\/\w+\.tsx/,
-    );
+    expect(text).toMatch(/Save it as src\/pages\/\w+Page\.tsx and route to it/);
     expect(text).toMatch(/buttery_get\(\{"ids":\["component\//);
     expect(text).toContain('"component/SettingsPage"');
     expect(text).toContain("buttery_check_layout(");

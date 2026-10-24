@@ -12,6 +12,12 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { build } from "vite";
 import { shownSource } from "../apps/docs/vite/example-source.ts";
+import {
+  exportedName,
+  pageCode,
+  pageNames,
+} from "../packages/mcp/src/page-code.ts";
+import { PAGE_FRAMES, PAGE_KINDS } from "../packages/mcp/src/scaffold.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const starter = join(root, "apps/starter");
@@ -25,10 +31,39 @@ function run(command, args) {
   execFileSync(command, args, { cwd: root, stdio: "inherit" });
 }
 
+/** Each page `buttery add page` and `buttery_scaffold` write, from its pattern's example, as `[kind, code]`. */
+export function scaffoldedPages() {
+  return Object.entries(PAGE_KINDS).map(
+    ([kind, [component, example, what]]) => {
+      const [meta] = globSync(`packages/*/src/**/${component}.meta.ts`, {
+        cwd: root,
+      });
+      if (meta === undefined) throw new Error(`No ${component}.meta.ts.`);
+      const source = shownSource(
+        readFileSync(
+          join(root, dirname(meta), "examples", `${example}.tsx`),
+          "utf8",
+        ),
+      );
+      const names = pageNames(exportedName(source));
+      return [
+        kind,
+        pageCode(source, {
+          frame: PAGE_FRAMES[kind],
+          component: names.component,
+          title: names.label,
+          what,
+        }),
+      ];
+    },
+  );
+}
+
 /**
- * Pastes every example into the starter as the docs show it, as someone copying it from them would, then type-checks and
- * builds the starter with all of them, so each one works in a fresh app on its own. Fails on an example
- * that imports anything a fresh app doesn't have.
+ * Pastes every example into the starter as the docs show it, as someone copying it from them would, and
+ * every page the command line and the MCP server scaffold from them, then type-checks and builds the
+ * starter with all of them, so each one works in a fresh app on its own. Fails on an example that imports
+ * anything a fresh app doesn't have.
  */
 export async function checkExamplesBuild() {
   rmSync(target, { recursive: true, force: true });
@@ -50,11 +85,17 @@ export async function checkExamplesBuild() {
     writeFileSync(join(target, name), shownSource(source));
     imports.push(`import * as example${String(index)} from "./${name}";`);
   }
+  const pages = scaffoldedPages();
+  for (const [index, [kind, code]] of pages.entries()) {
+    writeFileSync(join(target, `page-${kind}.tsx`), code);
+    imports.push(`import * as page${String(index)} from "./page-${kind}.tsx";`);
+  }
   writeFileSync(
     join(target, "index.ts"),
-    `${imports.join("\n")}\n\nexport const examples = [${files
-      .map((_, index) => `example${String(index)}`)
-      .join(", ")}];\n`,
+    `${imports.join("\n")}\n\nexport const examples = [${[
+      ...files.map((_, index) => `example${String(index)}`),
+      ...pages.map((_, index) => `page${String(index)}`),
+    ].join(", ")}];\n`,
   );
   if (problems.length > 0) return problems;
   try {
@@ -91,6 +132,6 @@ if (isMain) {
   if (problems.length > 0) process.exitCode = 1;
   else
     process.stdout.write(
-      "Every example builds when pasted into a fresh starter.\n",
+      "Every example, and every page scaffolded from one, builds when pasted into a fresh starter.\n",
     );
 }

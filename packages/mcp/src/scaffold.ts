@@ -1,4 +1,6 @@
 import type { ComponentEntry, ExampleEntry, Knowledge } from "./knowledge.ts";
+import { exportedName, pageCode, pageNames } from "./page-code.ts";
+import type { PageFrame } from "./page-code.ts";
 
 /** One of the pages `buttery_scaffold` starts. */
 export type PageKind =
@@ -28,8 +30,8 @@ export const PAGE_KINDS: Readonly<
   Record<PageKind, readonly [component: string, example: string, what: string]>
 > = {
   table: [
-    "AppPage",
-    "orders-page",
+    "DataTable",
+    "orders-table",
     "a list of records in a table, with its header and actions",
   ],
   detail: [
@@ -93,6 +95,29 @@ export const PAGE_KINDS: Readonly<
   faq: ["Faq", "coffee-page", "questions and answers"],
 };
 
+/**
+ * How each kind's example becomes a page: as it is when it's a whole page already, inside an `AppPage`
+ * in an app's shell, or in a section of a `Page` on a screen of its own.
+ */
+export const PAGE_FRAMES: Readonly<Record<PageKind, PageFrame>> = {
+  table: "whole",
+  detail: "whole",
+  overview: "titled",
+  settings: "whole",
+  "settings-index": "titled",
+  catalog: "whole",
+  plans: "app-page",
+  "search-results": "whole",
+  empty: "whole",
+  "feature-intro": "titled",
+  "sign-in": "whole",
+  "sign-up": "screen",
+  onboarding: "screen",
+  landing: "whole",
+  article: "reading",
+  faq: "reading",
+};
+
 /** Every page kind, in the order the tool lists them. */
 export const PAGE_KIND_NAMES: readonly PageKind[] = Object.keys(
   PAGE_KINDS,
@@ -132,10 +157,6 @@ export function importedComponents(code: string): string[] {
       .map((name) => name.trim().split(/\s+as\s+/)[0] ?? "")
       .filter((name) => /^[A-Z]/.test(name)),
   );
-}
-
-function exportName(code: string): string {
-  return /export function (\w+)/.exec(code)?.[1] ?? "Page";
 }
 
 /** A scaffold as Markdown: the file to save, where, and what to do next. */
@@ -184,15 +205,21 @@ export function scaffold(
   }
   const { component, example } = pageSource(knowledge, request.page);
   const [, , what] = PAGE_KINDS[request.page];
-  const name = exportName(example.code);
-  const used = [...new Set(importedComponents(example.code))];
+  const names = pageNames(exportedName(example.code));
+  const code = pageCode(example.code, {
+    frame: PAGE_FRAMES[request.page],
+    component: names.component,
+    title: names.label,
+    what,
+  });
+  const used = [...new Set(importedComponents(code))];
   return [
     `## A ${request.page} page on buttery ${knowledge.version}: ${what}`,
     "",
-    `From ${component.name}'s example "${example.title.toLowerCase()}". Save it as a file of its own, such as src/pages/${name}.tsx, and route to it. It compiles as it is in an app with @butteryui/core and @butteryui/react; its words and data are examples to replace with yours.`,
+    `From ${component.name}'s example "${example.title.toLowerCase()}". Save it as ${names.file} and route to it. It compiles as it is in an app with @butteryui/core and @butteryui/react; its words and data are examples to replace with yours.`,
     "",
     "```tsx",
-    example.code.trimEnd(),
+    code.trimEnd(),
     "```",
     "",
     `It's built from ${used.join(", ")}. Their props in one call: buttery_get(${JSON.stringify({ ids: used.map((entry) => `component/${entry}`) })})`,
