@@ -1,5 +1,6 @@
 import { createContext, use, useEffect, useMemo, useRef } from "react";
 import type { Context } from "react";
+import { spring } from "../tokens/motion.ts";
 import { useMotionPreference } from "./preference.ts";
 import { trackAnimation } from "./settle.ts";
 
@@ -21,6 +22,15 @@ export interface AnimationTracking {
   readonly onLayoutAnimationComplete: () => void;
 }
 
+/** The longest a layout animation runs, in ms: twice the visual duration of the longest spring. */
+const LAYOUT_LIMIT =
+  2000 *
+  Math.max(
+    ...Object.values(spring).map((value) =>
+      "visualDuration" in value ? value.visualDuration : 0,
+    ),
+  );
+
 interface Releases {
   values: (() => void) | null;
   layout: (() => void) | null;
@@ -36,11 +46,17 @@ export function useAnimationTracking(): AnimationTracking {
   const reduced = useMotionPreference() === "reduced";
   const releases = useRef<Releases>({ values: null, layout: null });
 
-  // Reduced motion turns layout animation off, and Motion drops one that's running without reporting its end.
+  // Reduced motion turns layout animation off. Motion finishes one that's running in some engines and drops it
+  // without reporting its end in others, so a hold that outlives the longest layout animation lets go.
   useEffect(() => {
-    if (!reduced) return;
-    releases.current.layout?.();
-    releases.current.layout = null;
+    if (!reduced) return undefined;
+    const timer = window.setTimeout(() => {
+      releases.current.layout?.();
+      releases.current.layout = null;
+    }, LAYOUT_LIMIT);
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, [reduced]);
 
   useEffect(

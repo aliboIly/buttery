@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { MotionPreferenceContext } from "./preference.ts";
 import type { MotionPreference } from "./preference.ts";
 import { isSettled, publishSettled } from "./settle.ts";
@@ -21,7 +21,11 @@ describe("useAnimationTracking", () => {
     expect(isSettled()).toBe(true);
   });
 
-  it("lets go of a layout animation that reduced motion turns off half way, which Motion never reports ending", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function tracked() {
     publishSettled();
     let preference: MotionPreference = "full";
     const wrapper = ({ children }: { readonly children: ReactNode }) => (
@@ -29,14 +33,35 @@ describe("useAnimationTracking", () => {
         {children}
       </MotionPreferenceContext>
     );
-    const { result, rerender, unmount } = renderHook(
-      () => useAnimationTracking(),
-      { wrapper },
-    );
+    const hook = renderHook(() => useAnimationTracking(), { wrapper });
+    return {
+      ...hook,
+      reduce: () => {
+        preference = "reduced";
+        hook.rerender();
+      },
+    };
+  }
+
+  it("waits for a layout animation that reduced motion turns off half way to report its end", () => {
+    vi.useFakeTimers();
+    const { result, reduce, unmount } = tracked();
     result.current.onLayoutAnimationStart();
+    reduce();
     expect(isSettled()).toBe(false);
-    preference = "reduced";
-    rerender();
+    result.current.onLayoutAnimationComplete();
+    expect(isSettled()).toBe(true);
+    unmount();
+  });
+
+  it("lets go of one that never reports its end once the longest layout animation would have ended", () => {
+    vi.useFakeTimers();
+    const { result, reduce, unmount } = tracked();
+    result.current.onLayoutAnimationStart();
+    reduce();
+    vi.advanceTimersByTime(800);
+    expect(isSettled()).toBe(false);
+    vi.advanceTimersByTime(200);
     expect(isSettled()).toBe(true);
     unmount();
   });
