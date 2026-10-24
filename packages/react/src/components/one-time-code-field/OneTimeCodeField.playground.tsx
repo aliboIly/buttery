@@ -17,11 +17,11 @@ const VARIANTS = ["outline", "soft"] as const;
 
 export const live: LiveDemo = {
   controls: {
-    status: { kind: "choice", options: [...STATUSES], initial: "idle" },
+    message: { kind: "text", initial: "The code works for 10 minutes." },
     variant: { kind: "choice", options: [...VARIANTS], initial: "outline" },
     length: { kind: "number", initial: 6, min: 4, max: 8 },
-    message: { kind: "text", initial: "The code works for 10 minutes." },
     hideLabel: { kind: "toggle", initial: false },
+    status: { kind: "choice", options: [...STATUSES], initial: "idle" },
   },
   render: ({ status, variant, length, message, hideLabel }) => (
     <OneTimeCodeField
