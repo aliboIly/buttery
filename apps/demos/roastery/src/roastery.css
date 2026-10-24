@@ -2,8 +2,12 @@
   block-size: 100dvh;
 }
 
-/* The sign-in screen fills the window on the app's background, the column centered in it. */
-.rs-sign-in {
+/*
+ * The sign-in screen fills the window on the app's background, the column centered in it, as does the
+ * background shown until the browser knows who's signed in.
+ */
+.rs-sign-in,
+.rs-session {
   min-block-size: 100dvh;
   background-color: var(--bt-bg-app);
 }

@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
 import { Roastery } from "./Roastery.tsx";
 import { Router } from "./router.tsx";
@@ -25,9 +26,26 @@ export const routes: readonly string[] = [
   "/search",
 ];
 
-/** The dashboard for someone signed in, and the sign-in screen for anyone else. */
+function subscribeToNothing(): () => void {
+  return () => undefined;
+}
+
+/** True once the page runs in a browser that has read its stored session; false in a build and while it hydrates. */
+function useInBrowser(): boolean {
+  return useSyncExternalStore(
+    subscribeToNothing,
+    () => true,
+    () => false,
+  );
+}
+
+/**
+ * The dashboard for someone signed in, and the sign-in screen for anyone else. A build can't know which, so
+ * until the browser has read the session the page shows only its background, rather than the wrong screen.
+ */
 function SignedIn(): ReactElement {
   const [session, setSession] = useSession();
+  if (!useInBrowser()) return <div className="rs-session" />;
   return session === null ? <SignIn onSignedIn={setSession} /> : <Roastery />;
 }
 

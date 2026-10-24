@@ -98,13 +98,13 @@ describe("pnpm docs:build", () => {
     expect(
       readFileSync(join(out, "demos/roastery-shop/bag/index.html"), "utf8"),
     ).toMatch(/<h1[^>]*>Your bag is empty<\/h1>/);
-    // The roastery opens on its sign-in screen for anyone who hasn't signed in, as a build has.
-    expect(
-      readFileSync(
-        join(out, "demos/roastery/settings/notifications/index.html"),
-        "utf8",
-      ),
-    ).toMatch(/<h1[^>]*>Sign in or create an account<\/h1>/);
+    // Whether the roastery shows its sign-in screen or a page depends on a session only the browser has.
+    const gated = readFileSync(
+      join(out, "demos/roastery/settings/notifications/index.html"),
+      "utf8",
+    );
+    expect(gated).toContain('class="rs-session"');
+    expect(gated).not.toMatch(/<h1/);
     for (const template of templates) {
       expect(
         existsSync(join(out, "templates", template.name, "preview/index.html")),
