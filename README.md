@@ -18,7 +18,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 
 Wrap an app in buttery and it gets the tokens, type, surfaces, motion and layout rules written up in [`docs/`](docs), plus checks that fail when something overlaps, overflows or drifts off the scale. People and coding agents work from the same small vocabulary, and a wrong value fails type-checking instead of shipping.
 
-The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place, and `@butteryui/core`, `@butteryui/react`, `@butteryui/test` and `@butteryui/lint` are on npm. The command line tool and the MCP server come next, on the way to 1.0. [ROADMAP.md](ROADMAP.md) shows where things stand.
+The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place, and `@butteryui/core`, `@butteryui/react`, `@butteryui/test`, `@butteryui/lint` and `@butteryui/mcp`, the MCP server for coding agents, are on npm. The command line tool comes next, on the way to 1.0. [ROADMAP.md](ROADMAP.md) shows where things stand.
 
 ## What's in it
 
