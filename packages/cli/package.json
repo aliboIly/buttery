@@ -1,7 +1,6 @@
 {
   "name": "@butteryui/cli",
   "version": "0.10.0",
-  "private": true,
   "description": "buttery's command line: start an app from a template, add pages and components, check the layout, and set buttery up in an app you have.",
   "license": "MIT",
   "homepage": "https://aliboily.github.io/buttery/tools/command-line",

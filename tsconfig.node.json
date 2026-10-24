@@ -50,6 +50,9 @@
     },
     {
       "path": "./packages/cli"
+    },
+    {
+      "path": "./packages/create-buttery"
     }
   ]
 }

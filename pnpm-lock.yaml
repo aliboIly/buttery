@@ -746,6 +746,19 @@ importers:
         specifier: 'catalog:'
         version: 0.23.1(typescript@6.0.3)
 
+  packages/create-buttery:
+    dependencies:
+      '@butteryui/cli':
+        specifier: workspace:*
+        version: link:../cli
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.5
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.1(typescript@6.0.3)
+
   packages/lint:
     devDependencies:
       eslint:
