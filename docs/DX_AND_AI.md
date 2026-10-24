@@ -15,14 +15,14 @@ buttery should be **the easiest correct way to build UI** — for a developer in
 
 | Tool | What it does |
 |---|---|
-| `npx create-buttery my-app --template blank\|dashboard\|editor\|marketing` | New Vite + React (+ optional Tauri) app, fully wired, with agent files. `dashboard` starts from the App kit (sidebar shell, overview, a table page, settings), `editor` from the inspector shell, `marketing` from the page patterns. Each passes `buttery check` with zero edits. Until it's published, `pnpm new-app my-app --template <name>` makes the same apps inside the buttery repository, from `apps/starter` (`blank`) and `apps/templates/<name>`. |
-| `npx buttery init` | Adds buttery to an existing React app: packages, provider, styles, font, lint config, `AGENTS.md` section, `CLAUDE.md` import, skill. Idempotent. |
-| `buttery add <pattern>` | Scaffolds a screen from a pattern (`app-shell`, `settings`, `onboarding`, `marketing-page`, `article`). |
-| `buttery add page table\|detail\|overview\|settings\|empty\|feature-intro` | Adds an App kit page to a dashboard app: a filtered table, a detail page with a right rail, an overview of metric cards and charts, a settings index, an empty state, a feature intro. Each passes `buttery check` with zero edits. |
-| `buttery create component <Name>` | Scaffolds your own component the way `pnpm new-component` does in this repo: a folder with the component built on public parts only, its CSS on tokens, tests, a playground demo and examples, so it comes out buttery and passes the same checks. |
-| `buttery doctor` | Verifies setup (provider, styles, font, React version, lint, Tauri config) and prints exact fixes. |
-| `buttery check [url]` | Runs `expectButtery` against a running app across the matrix. `--json` for machines. |
-| `buttery migrate` | Codemods for breaking changes between versions. |
+| `npx create-buttery my-app --template blank\|dashboard\|editor\|marketing` | New Vite + React (+ Tauri with `--desktop`) app in any folder, fully wired, with lint configs, Playwright specs, agent files and the MCP server in each agent's config. `dashboard` starts from the App kit with a page of every kind `add page` writes, `editor` from the inspector shell, `marketing` from the page patterns. Each passes its own specs and `buttery check` with zero edits (`pnpm test:apps`). Inside the buttery repository, `pnpm new-app my-app --template <name>` makes the same apps in `apps/`, from `apps/starter` (`blank`) and `apps/templates/<name>`. |
+| `npx buttery init` | Adds buttery to an existing React app: packages, provider, styles (with the font), lint configs, `AGENTS.md` section, `CLAUDE.md` import, skill and MCP configs. Idempotent; lists what it can't do for certain. |
+| `buttery add <pattern>` | A screen by its pattern's name: `settings`, `onboarding`, `marketing-page` and `article` are the matching pages; `app-shell` writes `src/AppFrame.tsx`, a sidebar and top bar to render pages in. |
+| `buttery add page <kind> [--name]` | Writes a page from its pattern's whole-page example, framed in the page grammar (`table`, `detail`, `overview`, `settings`, `settings-index`, `catalog`, `plans`, `search-results`, `empty`, `feature-intro`, `sign-in`, `sign-up`, `onboarding`, `landing`, `article`, `faq`), to `src/pages`, and wires it into a dashboard app's routes, page switch and sidebar. Each passes `buttery check` with zero edits. |
+| `buttery create component <Name> --purpose "…"` | Scaffolds your own component in `src/components/<Name>`: built on public parts only (`Slot`, `variants()`), its CSS on tokens, examples, a preview page the dev server serves, and a Playwright spec that runs `expectButtery` on it. |
+| `buttery doctor` | Verifies setup (React version, packages at one version, styles at the entry and imported once, provider, network fonts, lint, Tauri window, what `check` needs, agent files) and prints exact fixes. |
+| `buttery check [page…]` | Runs `@butteryui/test`'s checks on pages of the running app, starting its dev server when needed: 390 and 1280, light and dark, in Chromium; `--full` for every width, both densities and WebKit; `--json` for machines. Exits 1 on findings. |
+| `buttery migrate` | Codemods for breaking changes between versions; none so far. |
 | Playground = docs | Per component: live demo, props table generated from types, examples, do/don't, a11y and motion notes, search. |
 | JSDoc | Every component and prop: what, when, default, `@example`. Shows up in editor hovers. |
 | VS Code | Recommended extensions, `--bt-*` autocomplete, snippets (`btshell`, `btsection`, `btrow`, `btbento`…), tasks for dev/check. |
@@ -42,7 +42,7 @@ Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from th
 - `AGENTS.md` is the single source of truth (Codex, Cursor, Copilot and others read it natively).
 - `CLAUDE.md` contains `@AGENTS.md` plus Claude-specific notes (Claude Code skips `AGENTS.md` when a `CLAUDE.md` exists, so the import is required).
 - `.gemini/settings.json` sets `"context": { "fileName": ["AGENTS.md", "GEMINI.md"] }` so Gemini CLI loads it.
-- `buttery init` writes the same setup into consuming apps (appending a delimited "buttery" section to an existing `AGENTS.md`, never overwriting it).
+- `buttery init` writes the same setup into consuming apps (a delimited "buttery" section in an existing `AGENTS.md`, replaced in place on later runs and never overwriting the rest, the `CLAUDE.md` import, the skill, and the MCP server in each agent's config), and `create-buttery` gives every new app the same files.
 
 ### 2. Knowledge shipped in the packages (readable from `node_modules`)
 - `llms.txt` (index with one line per doc/component) and `llms-full.txt` (everything concatenated) — in `@butteryui/core` and on the docs site.

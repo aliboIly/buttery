@@ -48,7 +48,8 @@ buttery/
 │  ├─ react/   @butteryui/react    # components + patterns, built only on core; ships manifest.json + examples
 │  ├─ test/    @butteryui/test     # expectButtery() Playwright checks (human + JSON reports)
 │  ├─ lint/    @butteryui/lint     # stylelint + eslint configs
-│  ├─ cli/     buttery CLI       # `npx create-buttery`, `buttery init | add | create | doctor | check`
+│  ├─ cli/     @butteryui/cli      # the `buttery` command: create | add | create component | check | doctor | init | migrate; ships the templates
+│  ├─ create-buttery/ create-buttery # `npx create-buttery`, which runs `buttery create`
 │  └─ mcp/     @butteryui/mcp      # MCP server so any agent can query components, tokens and run layout checks
 ├─ apps/
 │  ├─ docs/                      # the docs site: every component × state × theme × density; serves the demos; Playwright target
@@ -233,8 +234,8 @@ pnpm --filter my-app tauri dev   # desktop
 pnpm new-app my-shop --template dashboard   # copies apps/templates/dashboard instead: a web app
 ```
 `--template` takes `blank` (the default), `dashboard`, `editor` or `marketing`. The three besides `blank` are web apps built from the patterns, without the starter's desktop shell.
-Outside the monorepo (after publishing): `npx create-buttery my-app`, or `npx buttery init` in an existing React app (adds packages, provider, styles, lint config, agent instructions and the skill).
+Outside the monorepo: `npx create-buttery my-app --template <template>` makes the same apps in any folder, from templates the command line ships (`@butteryui/cli` builds them from `apps/starter` and `apps/templates` with real versions, its own configs and every agent's files), or `npx buttery init` in an existing React app (adds packages, provider, styles, lint config, agent instructions, the skill and the MCP server). `pnpm test:apps` makes each template from packed tarballs outside the repository and runs its checks.
 
 ## Publishing
 
-Packages publish under the `@butteryui` npm scope, since `@buttery` and the unscoped `buttery` belong to other projects; `create-buttery` is free and stays unscoped. `@butteryui/core`, `@butteryui/react`, `@butteryui/test` and `@butteryui/lint` publish together at one version, with `pnpm publish`, which turns `workspace:*` into that version. `@butteryui/mcp` and `@butteryui/cli` stay `private` until they're built. From Phase 8 the packages also ship their docs (`@butteryui/core/docs/*.md`), `llms.txt`, and `manifest.json` so agents in consuming apps can read them from `node_modules`.
+Packages publish under the `@butteryui` npm scope, since `@buttery` and the unscoped `buttery` belong to other projects; `create-buttery` is free and stays unscoped. `@butteryui/core`, `@butteryui/react`, `@butteryui/test`, `@butteryui/lint`, `@butteryui/mcp`, `@butteryui/cli` and `create-buttery` publish together at one version, as tarballs `pnpm pack` makes, which turns `workspace:` and `catalog:` into real versions, checked in a fresh app before `npm publish`. From Phase 8 the packages also ship their docs (`@butteryui/core/docs/*.md`), `llms.txt`, and `manifest.json` so agents in consuming apps can read them from `node_modules`.

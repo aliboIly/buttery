@@ -7,15 +7,16 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 Kept up to date as items finish.
 
 **Now**, Phase 8:
-- `v0.10.0` is out: `@butteryui/mcp`, the MCP server for coding agents, and the passwordless sign-in flow (`AuthFlow`, `IdentifierField`, `OneTimeCodeField` and `useOtpFlow`, with sign-in screens in the roastery demo and the dashboard template), with `core`, `react`, `test` and `lint` at 0.10.0
-- A first agent evaluation ran with and without the MCP server and found a real bug, now fixed (`docs/AGENT_EVAL.md`)
+- The command line tool is built, for `v0.11.0`: `create-buttery` with the four templates, `buttery add page` with every kind and `create component`, `buttery check`, `doctor`, `init` and `migrate`. `pnpm test:apps` makes every template outside the repository from packed tarballs and passes their checks and `buttery check` with no edits, and the dashboard template has a page of every kind
+- `v0.10.0` is out: `@butteryui/mcp`, the MCP server for coding agents, and the passwordless sign-in flow, with `core`, `react`, `test` and `lint` at 0.10.0
 
 Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the nav bar's menus fold late while their full-page blur scrim fades.
 
 **Next**, in order:
-1. The command line tool: `create-buttery`, `init`, `add page` (with `sign-in`), `create component`, `check`, `doctor` and `migrate`
-2. The next agent evaluation, with the dev server allowed, the custom component task and more agents
-3. The follow-ups: the nav bar's blur in WebKit, and the ones the demos turned up
+1. Publish `v0.11.0`, with the command line's docs
+2. The guides: "Build an app in 15 minutes" and "Build your own buttery component"
+3. The next agent evaluation, with the dev server allowed, the custom component task and more agents
+4. The follow-ups: the nav bar's blur in WebKit, and the ones the demos turned up
 
 ---
 
@@ -119,8 +120,8 @@ Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the na
 - [ ] `manifest.json`, `tokens.json`, `llms.txt`, and the docs and examples shipped in the packages, generated with the MCP server's resources from the docs site's content
 - [ ] Development warnings that say how to fix what they find, and VS Code snippets
 - [x] Public kit: components use only what apps can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition` and `variants()`), enforced by the contract test
-- [ ] The command line tool: `create-buttery` with `--template blank`, `dashboard`, `editor` or `marketing`; `init`; `add`, with `add page` for each page the dashboard template has (`table`, `detail`, `overview`, `settings`, `settings-index`, `catalog`, `plans`, `search-results`, `empty`, `feature-intro` and `sign-in`); `create component`; `doctor`; `check`; and `migrate`
-- [ ] Any app: `LayoutGuard`, `buttery check` and the lint configs work on an app's own code, and every template and `add page` passes `buttery check` with no edits
+- [x] The command line tool: `create-buttery` with `--template blank`, `dashboard`, `editor` or `marketing`; `init`; `add`, with `add page` for each page the dashboard template has (`table`, `detail`, `overview`, `settings`, `settings-index`, `catalog`, `plans`, `search-results`, `empty`, `feature-intro` and `sign-in`); `create component`; `doctor`; `check`; and `migrate`
+- [x] Any app: `LayoutGuard`, `buttery check` and the lint configs work on an app's own code, and every template and `add page` passes `buttery check` with no edits
 - [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper), and Tools pages for the command line tool and the MCP server with real output
 - [x] `@butteryui/mcp`, an MCP server with five read-only tools (search on the docs search's index, get, page scaffolding, lint, and a layout check), and configs for the common coding agents (`docs/DX_AND_AI.md`); component scaffolding comes with the command line tool's `create component`
 - [ ] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed (a first run, with and without the MCP server, is in `docs/AGENT_EVAL.md`)
