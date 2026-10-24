@@ -43,7 +43,8 @@ export interface Created {
 
 const NAME = /^[a-z0-9][a-z0-9._-]*$/;
 
-function readVersions(dist: string): Versions {
+/** The versions the templates' dependencies take, which the command line was built with. */
+export function readVersions(dist: string): Versions {
   const found = readJson(join(dist, "versions.json"));
   const record = (value: unknown): Record<string, string> =>
     typeof value === "object" && value !== null
@@ -109,7 +110,11 @@ function addDesktop(
   });
 }
 
-function pointAtTarballs(
+/**
+ * Points the app at packed `@butteryui/*` tarballs instead of the published packages: overrides in
+ * `pnpm-workspace.yaml` for pnpm, in `package.json` for the others. For testing a release before it's out.
+ */
+export function pointAtTarballs(
   folder: string,
   tarballs: string,
   manager: PackageManager,

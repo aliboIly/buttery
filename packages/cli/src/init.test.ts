@@ -30,7 +30,18 @@ function folder(files: Readonly<Record<string, string>>): string {
 function options(root: string): InitOptions {
   return {
     root,
-    dist: folder({ "skill/SKILL.md": "# Make it buttery\n" }),
+    dist: folder({
+      "skill/SKILL.md": "# Make it buttery\n",
+      "versions.json": JSON.stringify({
+        buttery: "0.11.0",
+        catalog: { "@playwright/test": "^1.64.1" },
+        tools: {
+          eslint: "^10.13.0",
+          stylelint: "^17.16.0",
+          "typescript-eslint": "^8.71.1",
+        },
+      }),
+    }),
     version: "0.11.0",
     manager: "npm",
     install: false,
@@ -83,10 +94,10 @@ createRoot(document.getElementById("root")!).render(
     const root = viteApp();
     const first = initApp(options(root));
     expect(first.changed).toEqual([
+      "package.json",
       "src/main.tsx",
       "eslint.config.js",
       "stylelint.config.mjs",
-      "package.json",
       "AGENTS.md",
       "CLAUDE.md",
       ".claude/skills/make-it-buttery/SKILL.md",
@@ -97,13 +108,24 @@ createRoot(document.getElementById("root")!).render(
       ".vscode/mcp.json",
     ]);
     expect(first.todo).toEqual([
-      "Install the packages: npm install @butteryui/core@^0.11.0 @butteryui/react@^0.11.0",
-      "Install the packages: npm install -D @butteryui/cli@^0.11.0 @butteryui/lint@^0.11.0 @butteryui/mcp@^0.11.0 @butteryui/test@^0.11.0 @playwright/test eslint typescript-eslint stylelint",
+      "Install what package.json lists: npm install",
     ]);
     const manifest: unknown = JSON.parse(
       readFileSync(join(root, "package.json"), "utf8"),
     );
     expect(manifest).toMatchObject({
+      dependencies: {
+        "@butteryui/core": "^0.11.0",
+        "@butteryui/react": "^0.11.0",
+        react: "^19.3.1",
+      },
+      devDependencies: {
+        "@butteryui/cli": "^0.11.0",
+        "@playwright/test": "^1.64.1",
+        eslint: "^10.13.0",
+        stylelint: "^17.16.0",
+        "typescript-eslint": "^8.71.1",
+      },
       scripts: {
         lint: 'eslint . && stylelint "src/**/*.css" --allow-empty-input',
         check: "buttery check",

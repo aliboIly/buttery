@@ -9,15 +9,16 @@ import {
   withGuide,
   withServer,
 } from "./agent-files.ts";
-import { pointAtTarballs } from "./create.ts";
+import { pointAtTarballs, readVersions } from "./create.ts";
 import type { PackageManager } from "./package-manager.ts";
-import { readJson } from "./project.ts";
+import { readJson, writeJson } from "./project.ts";
 import {
   ESLINT_CONFIGS,
   STYLE_IMPORTS,
   STYLELINT_CONFIGS,
   entryFile,
   firstExisting,
+  installedVersion,
   listedDependencies,
 } from "./setup.ts";
 
@@ -56,6 +57,8 @@ const DEV_DEPENDENCIES = [
   "@playwright/test",
 ];
 
+const LINT_TOOLS = ["eslint", "typescript-eslint", "stylelint"];
+
 const ESLINT_CONFIG = `import tseslint from "typescript-eslint";
 import { butteryEslintConfig } from "@butteryui/lint/eslint";
 
@@ -70,16 +73,6 @@ const STYLELINT_CONFIG = `import { butteryStylelintConfig } from "@butteryui/lin
 
 export default butteryStylelintConfig();
 `;
-
-function installCommand(
-  manager: PackageManager,
-  dev: boolean,
-  names: readonly string[],
-): readonly string[] {
-  const verb = manager === "npm" ? "install" : "add";
-  const flag = dev ? [manager === "bun" ? "-d" : "-D"] : [];
-  return [manager, verb, ...flag, ...names];
-}
 
 /** `source`, an entry module, with buttery's styles imported at the top. */
 export function withStyles(source: string): string {
@@ -159,37 +152,65 @@ export function initApp(options: InitOptions): InitResult {
   const wanted = (names: readonly string[]): readonly string[] =>
     names.filter((name) => !listed.has(name));
   const dependencies = wanted(DEPENDENCIES);
-  const devDependencies = wanted([
-    ...DEV_DEPENDENCIES,
-    "eslint",
-    "typescript-eslint",
-    "stylelint",
-  ]);
-  const spec = (name: string): string =>
-    name.startsWith("@butteryui/") ? `${name}@^${options.version}` : name;
-  if (options.tarballs !== undefined) {
-    pointAtTarballs(root, options.tarballs, options.manager);
-  }
-  for (const [dev, names] of [
-    [false, dependencies],
-    [true, devDependencies],
-  ] as const) {
-    if (names.length === 0) continue;
-    const command = installCommand(options.manager, dev, names.map(spec));
-    if (!options.install) {
-      todo.push(`Install the packages: ${command.join(" ")}`);
-      continue;
-    }
-    const [program = "npm", ...args] = command;
-    const result = spawnSync(program, args, {
-      cwd: root,
-      stdio: "inherit",
-      shell: process.platform === "win32",
-    });
-    if (result.status !== 0) {
-      throw new Error(
-        `${command.join(" ")} failed. Fix: run it yourself, then npx buttery init again.`,
+  const devDependencies = wanted([...DEV_DEPENDENCIES, ...LINT_TOOLS]);
+  const versions = readVersions(options.dist);
+  const range = (name: string): string =>
+    name.startsWith("@butteryui/")
+      ? `^${options.version}`
+      : (versions.tools[name] ?? versions.catalog[name] ?? "latest");
+  if (dependencies.length > 0 || devDependencies.length > 0) {
+    const manifest = readJson(join(root, "package.json"));
+    const listedIn = (field: string): Record<string, string> => {
+      const value = manifest[field];
+      return typeof value === "object" && value !== null
+        ? Object.fromEntries(
+            Object.entries(value).filter(
+              (entry): entry is [string, string] =>
+                typeof entry[1] === "string",
+            ),
+          )
+        : {};
+    };
+    const added = (
+      field: string,
+      names: readonly string[],
+    ): Record<string, string> =>
+      Object.fromEntries(
+        [
+          ...Object.entries(listedIn(field)),
+          ...names.map((name): [string, string] => [name, range(name)]),
+        ].sort(([a], [b]) => a.localeCompare(b)),
       );
+    writeJson(join(root, "package.json"), {
+      ...manifest,
+      dependencies: added("dependencies", dependencies),
+      devDependencies: added("devDependencies", devDependencies),
+    });
+    changed.push("package.json");
+  }
+  const uninstalled = [
+    ...DEPENDENCIES,
+    ...DEV_DEPENDENCIES,
+    ...LINT_TOOLS,
+  ].filter((name) => installedVersion(root, name) === null);
+  if (uninstalled.length > 0) {
+    if (options.tarballs !== undefined) {
+      pointAtTarballs(root, options.tarballs, options.manager);
+    }
+    const command = `${options.manager} install`;
+    if (options.install) {
+      const result = spawnSync(options.manager, ["install"], {
+        cwd: root,
+        stdio: "inherit",
+        shell: process.platform === "win32",
+      });
+      if (result.status !== 0) {
+        throw new Error(
+          `${command} failed. Fix: run it yourself, then npx buttery doctor.`,
+        );
+      }
+    } else {
+      todo.push(`Install what package.json lists: ${command}`);
     }
   }
 
@@ -276,7 +297,7 @@ export function initApp(options: InitOptions): InitResult {
   }
   return {
     changed,
-    installed: options.install ? [...dependencies, ...devDependencies] : [],
+    installed: options.install ? uninstalled : [],
     todo,
   };
 }
