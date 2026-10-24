@@ -178,14 +178,28 @@ test("Reset demo forgets what the demo saved and nothing else, and it opens as o
     .getByRole("button", { name: "Reset demo", exact: true })
     .click();
   await expect(
-    page.getByRole("dialog", { name: "Roasts plan themselves now" }),
+    page.getByRole("heading", { name: "Sign in or create an account" }),
   ).toBeVisible();
   const stored = await page.evaluate(() => ({
+    session: localStorage.getItem("roastery:session"),
     pickup: localStorage.getItem("roastery:pickup"),
     other: localStorage.getItem("someone-else"),
     tour: localStorage.getItem("buttery:onboarding:deckhand"),
   }));
-  expect(stored).toEqual({ pickup: null, other: "kept", tour: "done" });
+  expect(stored).toEqual({
+    session: null,
+    pickup: null,
+    other: "kept",
+    tour: "done",
+  });
+  await page
+    .getByRole("textbox", { name: "Email or phone number" })
+    .fill("rosa@halfmoon.coffee");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("textbox", { name: "One-time code" }).fill("123456");
+  await expect(
+    page.getByRole("dialog", { name: "Roasts plan themselves now" }),
+  ).toBeVisible();
 });
 
 /** Where each demo's own controls are that never scroll, which the pill must keep clear of. */
