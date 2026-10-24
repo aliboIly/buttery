@@ -21,6 +21,7 @@
     "test:e2e:rest": "node scripts/e2e.mjs rest",
     "test:e2e:timing": "node scripts/e2e.mjs timing",
     "test:layout": "node scripts/test-layout.mjs",
+    "test:apps": "node scripts/test-apps.mjs",
     "check:private": "node scripts/check-private-paths.mjs",
     "check:tells": "node scripts/check-ai-tells.mjs",
     "check:docs": "node scripts/docs-check.mjs",
