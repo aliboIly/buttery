@@ -1,5 +1,7 @@
-/** The version the site documents. */
-export const DOCS_VERSION = "0.9.0";
+import corePackage from "@butteryui/core/package.json" with { type: "json" };
+
+/** The version the docs describe: the packages', which release together. */
+export const DOCS_VERSION: string = corePackage.version;
 
 /** Where buttery's source lives. */
 export const SOURCE_URL = "https://github.com/aliboIly/buttery";
