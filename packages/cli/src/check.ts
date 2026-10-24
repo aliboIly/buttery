@@ -91,13 +91,14 @@ const START_LIMIT = 60_000;
 
 function stopGroup(child: ChildProcess): void {
   const { pid } = child;
-  if (pid === undefined || child.exitCode !== null) return;
+  if (pid === undefined) return;
   if (process.platform === "win32") {
     spawnSync("taskkill", ["/pid", String(pid), "/t", "/f"], {
       stdio: "ignore",
     });
     return;
   }
+  // The whole group: npm may have exited and left the server it started running.
   try {
     process.kill(-pid, "SIGTERM");
   } catch {
