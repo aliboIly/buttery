@@ -42,7 +42,16 @@ createRoot(root).render(<ButteryProvider><App /></ButteryProvider>);
 
 describe("buttery doctor", () => {
   it("finds nothing to fix in an app that's set up", () => {
-    const findings = diagnose(app(GOOD));
+    const findings = diagnose(
+      app({
+        ...GOOD,
+        "src/components/OrderCard/preview.html":
+          '<script type="module" src="./preview.tsx"></script>',
+        "src/components/OrderCard/preview.tsx": `import "@butteryui/core/styles.css";
+import "@butteryui/react/styles.css";
+`,
+      }),
+    );
     expect(findings.filter((finding) => finding.kind !== "ok")).toEqual([]);
     expect(formatFindings(findings)).toMatch(
       /^✓ React 19\.3\.1\n✓ @butteryui\/core, @butteryui\/react, @butteryui\/test at 0\.10\.1\n[\s\S]*\nbuttery is set up here\.$/,

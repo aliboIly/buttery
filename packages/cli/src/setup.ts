@@ -58,6 +58,35 @@ export function installedVersion(root: string, name: string): string | null {
   }
 }
 
+const BUILT =
+  /(?:^|\/)(?:node_modules|dist|test-results|playwright-report|src-tauri)(?:\/|$)/;
+
+/**
+ * Every module an HTML page of the app loads as its entry, such as `src/main.tsx` for `index.html` and a
+ * component's preview script for its preview page, each of which imports the styles itself.
+ */
+export function htmlEntries(root: string): ReadonlySet<string> {
+  const entries = new Set<string>();
+  for (const page of globSync("**/*.html", {
+    cwd: root,
+    exclude: (path) => BUILT.test(path),
+  })) {
+    const html = readFileSync(join(root, page), "utf8");
+    for (const match of html.matchAll(
+      /<script\b[^>]*\btype="module"[^>]*\bsrc="([^"]+)"/g,
+    )) {
+      const source = match[1] ?? "";
+      if (/^[a-z]+:/i.test(source)) continue;
+      entries.add(
+        source.startsWith("/")
+          ? source.slice(1)
+          : join(dirname(page), source).replaceAll("\\", "/"),
+      );
+    }
+  }
+  return entries;
+}
+
 /** Every dependency the app's `package.json` lists, of any kind. */
 export function listedDependencies(root: string): ReadonlySet<string> {
   const manifest = readJson(join(root, "package.json"));

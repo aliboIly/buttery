@@ -9,6 +9,7 @@ import {
   STYLELINT_CONFIGS,
   entryFile,
   firstExisting,
+  htmlEntries,
   installedVersion,
   sourceFiles,
 } from "./setup.ts";
@@ -126,9 +127,13 @@ function styles(root: string, entry: string | null): Finding[] {
       what: `${entry} imports buttery's styles, which bring the Inter font`,
     });
   }
+  const entries = htmlEntries(root);
   for (const sheet of STYLE_IMPORTS) {
     const elsewhere = sourceFiles(root).filter(
-      (file) => file !== entry && importsOf(text(root, file)).includes(sheet),
+      (file) =>
+        file !== entry &&
+        !entries.has(file) &&
+        importsOf(text(root, file)).includes(sheet),
     );
     if (elsewhere.length > 0) {
       findings.push({
