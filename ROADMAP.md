@@ -14,7 +14,7 @@ Kept up to date as items finish.
 Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the nav bar's menus fold late while their full-page blur scrim fades.
 
 **Next**, in order:
-1. The follow-ups: stylelint flagging a `--bt-*` name that isn't a token, links to the docs in development warnings, an `OverflowCluster` that can't grow staying folded, the nav bar's blur in WebKit, and the ones the demos turned up
+1. The follow-ups: the nav bar's blur in WebKit, and the ones the demos turned up (stylelint now flags a `--bt-*` name that isn't a token, development warnings link to the docs, and an `OverflowCluster` in a section's actions folds and unfolds, for the next release)
 2. The agent evaluation with the other agents DX_AND_AI names, once they're installed here, and then `v1.0`, which closes Phase 8
 
 ---
@@ -117,7 +117,7 @@ Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the na
 > buttery on npm, a command line tool that starts, extends and checks apps, and an MCP server so coding agents can look components up instead of guessing.
 
 - [ ] `manifest.json`, `tokens.json`, `llms.txt`, and the docs and examples shipped in the packages, generated with the MCP server's resources from the docs site's content
-- [ ] Development warnings that say how to fix what they find, and VS Code snippets
+- [x] Development warnings that say how to fix what they find, and VS Code snippets
 - [x] Public kit: components use only what apps can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition` and `variants()`), enforced by the contract test
 - [x] The command line tool: `create-buttery` with `--template blank`, `dashboard`, `editor` or `marketing`; `init`; `add`, with `add page` for each page the dashboard template has (`table`, `detail`, `overview`, `settings`, `settings-index`, `catalog`, `plans`, `search-results`, `empty`, `feature-intro` and `sign-in`); `create component`; `doctor`; `check`; and `migrate`
 - [x] Any app: `LayoutGuard`, `buttery check` and the lint configs work on an app's own code, and every template and `add page` passes `buttery check` with no edits

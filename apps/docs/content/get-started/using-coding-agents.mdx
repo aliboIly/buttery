@@ -40,7 +40,7 @@ Each page of this site is Markdown at its address plus `.md`, and `llms.txt` lis
 When something's wrong, the checks say what and how to fix it:
 
 - `expectButtery` reports each layout problem with the element, the rule, the measurement and a fix, and `buttery check --json` writes them as JSON for an agent to read, on any page of the running app.
-- Components warn in development with the fix in the message, such as a dialog without a name.
+- Components warn in development with the fix in the message and a link to their docs, such as a dialog without a name.
 - buttery's stylelint config names the token to use instead of a raw value.
 
 This is one problem as `expectButtery` writes it, a link too small to tap on a phone:
