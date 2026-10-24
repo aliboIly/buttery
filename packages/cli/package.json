@@ -1,8 +1,39 @@
 {
   "name": "@butteryui/cli",
-  "version": "0.0.0",
+  "version": "0.10.0",
   "private": true,
-  "description": "The buttery command line: create, init, add, doctor, check.",
+  "description": "buttery's command line: start an app from a template, add pages and components, check the layout, and set buttery up in an app you have.",
   "license": "MIT",
-  "type": "module"
+  "homepage": "https://aliboily.github.io/buttery/tools/command-line",
+  "bugs": {
+    "url": "https://github.com/aliboIly/buttery/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aliboIly/buttery.git",
+    "directory": "packages/cli"
+  },
+  "keywords": [
+    "design-system",
+    "react",
+    "cli",
+    "scaffolding"
+  ],
+  "type": "module",
+  "bin": {
+    "buttery": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsdown && node scripts/build-templates.ts"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsdown": "catalog:"
+  }
 }

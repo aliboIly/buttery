@@ -27,6 +27,9 @@
       "path": "./packages/mcp"
     },
     {
+      "path": "./packages/cli"
+    },
+    {
       "path": "./tsconfig.node.json"
     }
   ]

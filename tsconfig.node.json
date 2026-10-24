@@ -47,6 +47,9 @@
     },
     {
       "path": "./packages/mcp"
+    },
+    {
+      "path": "./packages/cli"
     }
   ]
 }
