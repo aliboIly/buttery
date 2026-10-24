@@ -12,6 +12,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { shownSource } from "../../../apps/docs/vite/example-source.ts";
 import { PAGE_KINDS } from "../../mcp/src/scaffold.ts";
+import { DOCS_SITE as DOCS } from "../src/agent-files.ts";
 import {
   APP_FILES,
   TEMPLATE_NAMES,
@@ -22,7 +23,6 @@ import {
 } from "../src/templates.ts";
 import type { Versions } from "../src/templates.ts";
 
-const DOCS = "https://aliboily.github.io/buttery";
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const dist = fileURLToPath(new URL("../dist", import.meta.url));
 

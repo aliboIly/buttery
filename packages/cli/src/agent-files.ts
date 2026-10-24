@@ -1,3 +1,6 @@
+/** buttery's docs site, which an app's agent files and README point to. */
+export const DOCS_SITE = "https://aliboily.github.io/buttery";
+
 /** The MCP server's entry in each agent's config: `npx`, which finds the copy installed in the app. */
 const SERVER = { command: "npx", args: ["-y", "@butteryui/mcp"] };
 

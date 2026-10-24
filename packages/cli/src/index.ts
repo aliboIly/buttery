@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { DOCS_SITE } from "./agent-files.ts";
 import {
   FULL_MATRIX,
   QUICK_MATRIX,
@@ -20,9 +21,13 @@ import {
 } from "./add.ts";
 import { createComponent } from "./component.ts";
 import { createApp } from "./create.ts";
+import { diagnose, formatFindings } from "./doctor.ts";
+import { initApp } from "./init.ts";
+import { migrationsBetween } from "./migrate.ts";
 import { packageManagerFrom, runScript } from "./package-manager.ts";
 import { PLACEMENTS, isPageKind } from "./pages.ts";
 import { projectRoot } from "./project.ts";
+import { installedVersion } from "./setup.ts";
 import { TEMPLATE_NAMES, isTemplateName } from "./templates.ts";
 
 const HELP = `buttery: start an app on buttery, add to it, and check it.
@@ -43,10 +48,11 @@ const HELP = `buttery: start an app on buttery, add to it, and check it.
       Starts the dev server when a page is a path and the app isn't running.
   buttery doctor
       Checks the app is set up for buttery and says how to fix what isn't.
-  buttery init
-      Sets buttery up in a React app you have.
-  buttery migrate
-      Updates code for a new version of buttery.
+  buttery init [--no-install]
+      Sets buttery up in a React app you have: the packages, styles and provider, lint configs,
+      and what coding agents read. Running it again changes nothing that's set up.
+  buttery migrate [--to <version>]
+      Updates the app's code for a newer buttery, where a release asks for changes.
 
   buttery --version
 
@@ -261,6 +267,73 @@ function add(args: readonly string[]): void {
   );
 }
 
+function init(args: readonly string[]): void {
+  const { values } = parseArgs({
+    args: [...args],
+    options: { "no-install": { type: "boolean", default: false } },
+  });
+  const root = appRoot();
+  const result = initApp({
+    root,
+    dist: DIST,
+    version: ownVersion(),
+    manager: packageManagerFrom(process.env["npm_config_user_agent"]),
+    install: !values["no-install"],
+    docs: DOCS_SITE,
+    tarballs: process.env["BUTTERY_TARBALLS"],
+  });
+  if (
+    result.changed.length === 0 &&
+    result.installed.length === 0 &&
+    result.todo.length === 0
+  ) {
+    process.stdout.write("buttery is already set up here.\n");
+    return;
+  }
+  const lines = [
+    ...(result.installed.length > 0
+      ? [`Installed ${result.installed.join(", ")}.`]
+      : []),
+    ...(result.changed.length > 0
+      ? ["Changed:", ...result.changed.map((file) => `  ${file}`)]
+      : []),
+    ...(result.todo.length > 0
+      ? ["Still to do:", ...result.todo.map((step) => `  ${step}`)]
+      : []),
+    "",
+    "Then check the setup with npx buttery doctor.",
+  ];
+  process.stdout.write(`${lines.join("\n")}\n`);
+}
+
+function migrate(args: readonly string[]): void {
+  const { values } = parseArgs({
+    args: [...args],
+    options: { to: { type: "string" } },
+  });
+  const root = appRoot();
+  const from = installedVersion(root, "@butteryui/core");
+  if (from === null) {
+    throw new Error(
+      "@butteryui/core isn't installed here, so there's nothing to migrate. Fix: run it in the app's folder, after npm install.",
+    );
+  }
+  const to = values.to ?? ownVersion();
+  const migrations = migrationsBetween(from, to);
+  if (migrations.length === 0) {
+    process.stdout.write(
+      `Nothing to migrate: no release from ${from} to ${to} changes an app's code.\n`,
+    );
+    return;
+  }
+  for (const migration of migrations) {
+    const files = migration.run(root);
+    process.stdout.write(
+      `${migration.version}: ${migration.what}${files.length > 0 ? ` (${files.join(", ")})` : ""}\n`,
+    );
+  }
+}
+
 async function run(argv: readonly string[]): Promise<number> {
   const [command, ...rest] = argv;
   switch (command) {
@@ -281,6 +354,17 @@ async function run(argv: readonly string[]): Promise<number> {
       return check(rest);
     case "add":
       add(rest);
+      return 0;
+    case "doctor": {
+      const findings = diagnose(appRoot());
+      process.stdout.write(`${formatFindings(findings)}\n`);
+      return findings.some((finding) => finding.kind === "problem") ? 1 : 0;
+    }
+    case "init":
+      init(rest);
+      return 0;
+    case "migrate":
+      migrate(rest);
       return 0;
     default:
       throw new Error(
