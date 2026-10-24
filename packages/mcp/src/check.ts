@@ -20,11 +20,12 @@ const HEIGHTS: Readonly<Record<CheckWidth, number>> = {
 /** The most violations one call returns, after merging the same one across conditions. */
 export const VIOLATION_LIMIT = 30;
 
-/** What to check: a page of a running app, at some widths and themes, in one engine. */
+/** What to check: a page of a running app, at some widths, themes and densities, in one engine. */
 export interface CheckRequest {
   readonly url: string;
   readonly viewports?: readonly CheckWidth[] | undefined;
   readonly themes?: readonly ("light" | "dark")[] | undefined;
+  readonly densities?: readonly ("comfortable" | "compact")[] | undefined;
   readonly engine?: "chromium" | "webkit" | undefined;
 }
 
@@ -55,12 +56,15 @@ export interface CheckReport {
 /** A check that can't run as asked, with what to do about it. */
 export class CheckRequestError extends Error {}
 
-interface Reported {
+/** A problem as `checkButtery` reports it: once for each page and condition it showed in. */
+export interface ReportedViolation {
   readonly rule: string;
   readonly a: string;
   readonly b?: string;
+  readonly px?: number;
   readonly message: string;
   readonly fix: string;
+  readonly page: string;
   readonly viewport: string;
   readonly theme: string;
   readonly density: string;
@@ -96,8 +100,9 @@ type CheckButtery = (
     readonly name: string;
     readonly viewports: readonly { width: number; height: number }[];
     readonly themes: readonly ("light" | "dark")[];
+    readonly densities: readonly ("comfortable" | "compact")[];
   },
-) => Promise<readonly Reported[]>;
+) => Promise<readonly ReportedViolation[]>;
 
 const LOOPBACK = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
@@ -155,7 +160,9 @@ function member(module: unknown, name: string): unknown {
 }
 
 /** The same violation found in several conditions, as one entry listing them. */
-export function merged(reported: readonly Reported[]): MergedViolation[] {
+export function merged(
+  reported: readonly ReportedViolation[],
+): MergedViolation[] {
   const byKey = new Map<
     string,
     { entry: MergedViolation; conditions: string[] }
@@ -191,24 +198,18 @@ export function merged(reported: readonly Reported[]): MergedViolation[] {
   return [...byKey.values()].map(({ entry }) => entry);
 }
 
-/**
- * Opens `request.url` in the project's Playwright and runs `@butteryui/test`'s `checkButtery` on it at each
- * width and theme, in comfortable density, returning each problem once with the conditions it showed in.
- */
-export async function checkLayout(
+async function reported(
   root: string | null,
+  url: URL,
   request: CheckRequest,
-  allowedOrigins: readonly string[],
-): Promise<CheckReport> {
-  const url = checkedUrl(request.url, allowedOrigins);
+): Promise<readonly ReportedViolation[]> {
   if (root === null) {
     throw new CheckRequestError(
-      "No project was found, so there's no Playwright to check with. Fix: start the server in the app's folder or pass --project <dir>.",
+      "No project was found, so there's no Playwright to check with. Fix: run the check in the app's folder, or start the MCP server with --project <dir>.",
     );
   }
   const engineName = request.engine ?? "chromium";
   const widths = request.viewports ?? [390, 1280];
-  const themes = request.themes ?? ["light"];
   let engine: unknown;
   let checkButtery: unknown;
   try {
@@ -220,7 +221,7 @@ export async function checkLayout(
         ? (error.message.split("\n")[0] ?? "")
         : String(error);
     throw new CheckRequestError(
-      `buttery_check_layout runs @butteryui/test's checks in the project's Playwright, and loading them failed (${reason}). Fix: npm install --save-dev @playwright/test @butteryui/test, then npx playwright install ${engineName}.`,
+      `The layout check runs @butteryui/test's checks in the project's Playwright, and loading them failed (${reason}). Fix: npm install --save-dev @playwright/test @butteryui/test, then npx playwright install ${engineName}.`,
     );
   }
   if (typeof checkButtery !== "function") {
@@ -255,27 +256,58 @@ export async function checkLayout(
         `No app answered at ${url.href}. Fix: start it (npm run dev) and pass the address it prints.`,
       );
     }
-    const reported = await (checkButtery as CheckButtery)(page, {
+    return await (checkButtery as CheckButtery)(page, {
       name: url.pathname,
       viewports: widths.map((width) => ({ width, height: HEIGHTS[width] })),
-      themes,
+      themes: request.themes ?? ["light"],
+      densities: request.densities ?? ["comfortable"],
     });
-    const violations = merged(reported);
-    const byRule: Record<string, number> = {};
-    for (const violation of violations) {
-      byRule[violation.rule] = (byRule[violation.rule] ?? 0) + 1;
-    }
-    return {
-      summary: {
-        url: url.href,
-        conditions: widths.length * themes.length,
-        violations: violations.length,
-        byRule,
-      },
-      violations: violations.slice(0, VIOLATION_LIMIT),
-      truncated: violations.length > VIOLATION_LIMIT,
-    };
   } finally {
     await browser.close();
   }
+}
+
+/**
+ * Opens `request.url` in the project's Playwright and runs `@butteryui/test`'s `checkButtery` on it at each
+ * width, theme and density, returning every problem once for each condition it showed in, as `buttery check
+ * --json` prints them.
+ */
+export async function reportedViolations(
+  root: string | null,
+  request: CheckRequest,
+  allowedOrigins: readonly string[],
+): Promise<readonly ReportedViolation[]> {
+  return reported(root, checkedUrl(request.url, allowedOrigins), request);
+}
+
+/**
+ * Opens `request.url` in the project's Playwright and runs `@butteryui/test`'s `checkButtery` on it at each
+ * width, theme and density, comfortable only unless asked, returning each problem once with the conditions
+ * it showed in.
+ */
+export async function checkLayout(
+  root: string | null,
+  request: CheckRequest,
+  allowedOrigins: readonly string[],
+): Promise<CheckReport> {
+  const url = checkedUrl(request.url, allowedOrigins);
+  const violations = merged(await reported(root, url, request));
+  const byRule: Record<string, number> = {};
+  for (const violation of violations) {
+    byRule[violation.rule] = (byRule[violation.rule] ?? 0) + 1;
+  }
+  const conditions =
+    (request.viewports ?? [390, 1280]).length *
+    (request.themes ?? ["light"]).length *
+    (request.densities ?? ["comfortable"]).length;
+  return {
+    summary: {
+      url: url.href,
+      conditions,
+      violations: violations.length,
+      byRule,
+    },
+    violations: violations.slice(0, VIOLATION_LIMIT),
+    truncated: violations.length > VIOLATION_LIMIT,
+  };
 }

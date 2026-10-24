@@ -33,6 +33,7 @@ describe("buttery_check_layout", () => {
     const base = {
       rule: "scale",
       a: '[data-bt="Row"]',
+      page: "/",
       fix: "Use a spacing step.",
       theme: "light",
       density: "comfortable",

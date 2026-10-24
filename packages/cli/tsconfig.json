@@ -10,6 +10,6 @@
     "tsBuildInfoFile": "./.tsbuild/tsconfig.tsbuildinfo",
     "types": ["node"]
   },
-  "include": ["src"],
+  "include": ["src", "../mcp/src/check.ts"],
   "exclude": ["src/**/*.test.ts"]
 }

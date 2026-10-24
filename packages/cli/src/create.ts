@@ -10,6 +10,7 @@ import {
 } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import type { PackageManager } from "./package-manager.ts";
+import { readJson, writeJson } from "./project.ts";
 import { withDesktop } from "./templates.ts";
 import type { TemplateName, Versions } from "./templates.ts";
 
@@ -41,18 +42,6 @@ export interface Created {
 }
 
 const NAME = /^[a-z0-9][a-z0-9._-]*$/;
-
-function readJson(path: string): Record<string, unknown> {
-  const value: unknown = JSON.parse(readFileSync(path, "utf8"));
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    throw new Error(`${path} isn't a JSON object.`);
-  }
-  return Object.fromEntries(Object.entries(value));
-}
-
-function writeJson(path: string, value: unknown): void {
-  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
-}
 
 function readVersions(dist: string): Versions {
   const found = readJson(join(dist, "versions.json"));
