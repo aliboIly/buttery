@@ -1,6 +1,7 @@
 import stylelint from "stylelint";
 import type { Plugin, Rule } from "stylelint";
 import { tailwindProblem } from "../tailwind.ts";
+import { butteryNames, nearestNames } from "./known-names.ts";
 import { scanValue } from "./scan-value.ts";
 import {
   BORDER_WIDTH_PROPERTIES,
@@ -254,6 +255,35 @@ const tailwindTokens = createRule({
   },
 });
 
+function listed(items: readonly string[]): string {
+  if (items.length <= 1) return items.join("");
+  return `${items.slice(0, -1).join(", ")} or ${items.at(-1) ?? ""}`;
+}
+
+const knownToken = createRule({
+  name: "known-token",
+  check(root, complain) {
+    const known = butteryNames(process.cwd());
+    if (known === null) return;
+    const own = new Set<string>();
+    root.walkDecls((declaration) => {
+      if (declaration.prop.startsWith("--bt-")) own.add(declaration.prop);
+    });
+    root.walkDecls((declaration) => {
+      for (const [, name] of declaration.value.matchAll(
+        /var\(\s*(--bt-[\w-]+)/g,
+      )) {
+        if (name === undefined || known.has(name) || own.has(name)) continue;
+        complain(
+          declaration,
+          `${name} isn't one of buttery's tokens or a variable this file declares. Use one that is, such as ${listed(nearestNames(name, known))}.`,
+          name,
+        );
+      }
+    });
+  },
+});
+
 const RULES = [
   noRawColor,
   zIndexToken,
@@ -261,6 +291,7 @@ const RULES = [
   positionOwned,
   rawLength,
   tailwindTokens,
+  knownToken,
 ];
 
 /** buttery's stylelint rules, as plugins. */

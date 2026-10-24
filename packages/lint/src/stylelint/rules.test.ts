@@ -162,3 +162,35 @@ describe("scanValue", () => {
     ]);
   });
 });
+
+describe("buttery/known-token", () => {
+  // Built at run time, so the rule doesn't find these names in this file's own source.
+  const guessed = ["--bt", "h", "md"].join("-");
+  const misspelled = ["--bt", "txet"].join("-");
+
+  it("rejects a var() of a name buttery and the project don't have, naming the nearest", async () => {
+    const { results } = await stylelint.lint({
+      code: `.a { block-size: var(${guessed}, 32px); color: var(${misspelled}); }`,
+      codeFilename: APP,
+      config: butteryStylelintConfig(),
+    });
+    const messages = (results[0]?.warnings ?? [])
+      .filter((warning) => warning.rule === "buttery/known-token")
+      .map((warning) => warning.text);
+    expect(messages).toHaveLength(2);
+    expect(messages[0]).toMatch(
+      new RegExp(
+        `^${guessed} isn't one of buttery's tokens or a variable this file declares\\. Use one that is, such as .*--bt-h-sm`,
+      ),
+    );
+    expect(messages[1]).toContain("such as --bt-text,");
+  });
+
+  it("accepts tokens, buttery's own variables and the file's", async () => {
+    expect(
+      await lint(
+        ".a { --bt-a-gap: var(--bt-space-2); gap: var(--bt-a-gap); color: var(--bt-text); min-inline-size: var(--bt-overflow-cluster-more-size); }",
+      ),
+    ).toEqual([]);
+  });
+});
