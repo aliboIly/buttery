@@ -307,7 +307,7 @@ describe("Dialog", () => {
     );
     await screen.findByRole("dialog");
     expect(warn).toHaveBeenCalledWith(
-      '[buttery:Dialog] A dialog has no name, so screen readers announce it as just "dialog". Fix: put a <Dialog.Text title="…" /> in it, or pass label="…" to Dialog.Content.',
+      '[buttery:Dialog] A dialog has no name, so screen readers announce it as just "dialog". Fix: put a <Dialog.Text title="…" /> in it, or pass label="…" to Dialog.Content. Docs: https://aliboily.github.io/buttery/search?q=Dialog',
     );
   });
 
@@ -325,7 +325,7 @@ describe("Dialog", () => {
     );
     await screen.findByRole("dialog");
     expect(warn).toHaveBeenCalledWith(
-      "[buttery:Dialog] A dialog has both a Dialog.Text body and a Dialog.Description, and screen readers read only one of them. Fix: put the description in Dialog.Text's body, or move the body into the Dialog.Description.",
+      "[buttery:Dialog] A dialog has both a Dialog.Text body and a Dialog.Description, and screen readers read only one of them. Fix: put the description in Dialog.Text's body, or move the body into the Dialog.Description. Docs: https://aliboily.github.io/buttery/search?q=Dialog",
     );
   });
 
@@ -340,7 +340,7 @@ describe("Dialog", () => {
     );
     await screen.findByRole("dialog");
     expect(warn).toHaveBeenCalledWith(
-      "[buttery:Dialog] A dialog has a Dialog.Text body and a description prop, and screen readers read only one of them. Fix: drop the description prop, or the body.",
+      "[buttery:Dialog] A dialog has a Dialog.Text body and a description prop, and screen readers read only one of them. Fix: drop the description prop, or the body. Docs: https://aliboily.github.io/buttery/search?q=Dialog",
     );
   });
 

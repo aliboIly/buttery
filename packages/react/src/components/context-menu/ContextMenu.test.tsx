@@ -1017,7 +1017,7 @@ describe("ContextMenu", () => {
     );
     expect(warn).toHaveBeenCalledWith(
       expect.stringMatching(
-        /^\[buttery:Menu\] The checkbox item "Show the grid" has a shortcut but keeps its own checked state.* Fix: keep it in state and pass checked and onCheckedChange\.$/,
+        /^\[buttery:Menu\] The checkbox item "Show the grid" has a shortcut but keeps its own checked state.* Fix: keep it in state and pass checked and onCheckedChange\. Docs: https:\/\/aliboily\.github\.io\/buttery\/search\?q=Menu$/,
       ),
     );
   });

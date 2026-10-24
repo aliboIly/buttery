@@ -516,7 +516,7 @@ describe("Toaster", () => {
     show("Card deleted");
     await pause(10);
     expect(warn).toHaveBeenCalledWith(
-      "[buttery:Toaster] toast() ran with no <Toaster /> mounted, so nothing showed. Fix: wrap the app in <ButteryProvider>, which mounts one, or render <Toaster /> once near the root.",
+      "[buttery:Toaster] toast() ran with no <Toaster /> mounted, so nothing showed. Fix: wrap the app in <ButteryProvider>, which mounts one, or render <Toaster /> once near the root. Docs: https://aliboily.github.io/buttery/search?q=Toaster",
     );
   });
 
@@ -525,7 +525,7 @@ describe("Toaster", () => {
     renderApp();
     show("Card deleted", { action: { ...undo, altText: " " } });
     expect(warn).toHaveBeenCalledWith(
-      '[buttery:Toaster] The "Undo" action in a toast has no altText, so screen readers hear the message without a way to act on it. Fix: describe another way to do the same, such as "Undo with Command Z".',
+      '[buttery:Toaster] The "Undo" action in a toast has no altText, so screen readers hear the message without a way to act on it. Fix: describe another way to do the same, such as "Undo with Command Z". Docs: https://aliboily.github.io/buttery/search?q=Toaster',
     );
     expect(screen.getByRole("button", { name: "Undo" })).toBeTruthy();
   });

@@ -933,7 +933,7 @@ describe("DataTable size compact", () => {
       />,
     );
     expect(warn).toHaveBeenCalledWith(
-      '[buttery:DataTable] The "Recent orders" table is size="compact", which leaves out pagination, so its later pages can\'t be reached. Fix: use size="default" for a table people page through, or show every row without pagination.',
+      '[buttery:DataTable] The "Recent orders" table is size="compact", which leaves out pagination, so its later pages can\'t be reached. Fix: use size="default" for a table people page through, or show every row without pagination. Docs: https://aliboily.github.io/buttery/search?q=DataTable',
     );
     warn.mockRestore();
   });

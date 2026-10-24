@@ -8,13 +8,15 @@ export const isDevelopment: boolean =
 
 const warned = new Set<string>();
 
+const DOCS = "https://aliboily.github.io/buttery";
+
 /**
- * Logs a development warning as `[buttery:<component>] <message>`, once per message. The message names
- * the problem and ends with `Fix: …`.
+ * Logs a development warning as `[buttery:<component>] <message> Docs: <link>`, once per message. The
+ * message names the problem and ends with `Fix: …`; the link searches buttery's docs for `component`.
  */
 export function warnOnce(component: string, message: string): void {
   if (!isDevelopment) return;
-  const text = `[buttery:${component}] ${message}`;
+  const text = `[buttery:${component}] ${message} Docs: ${DOCS}/search?q=${encodeURIComponent(component)}`;
   if (warned.has(text)) return;
   warned.add(text);
   console.warn(text);

@@ -40,7 +40,7 @@ describe("variants", () => {
     const loose = badge as (values: Record<string, string>) => unknown;
     loose({ tone: "loud" });
     expect(warn).toHaveBeenCalledWith(
-      '[buttery:variants] "loud" isn\'t a tone of my-badge. Fix: use one of "neutral", "success", "danger".',
+      '[buttery:variants] "loud" isn\'t a tone of my-badge. Fix: use one of "neutral", "success", "danger". Docs: https://aliboily.github.io/buttery/search?q=variants',
     );
   });
 });

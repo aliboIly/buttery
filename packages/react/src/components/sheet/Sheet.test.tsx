@@ -214,7 +214,7 @@ describe("Sheet", () => {
     );
     await screen.findByRole("dialog");
     expect(warn).toHaveBeenCalledWith(
-      '[buttery:Sheet] A sheet has no name, so screen readers announce it as just "dialog". Fix: put a <Sheet.Header title="…" /> in it, or pass label="…" to Sheet.Content.',
+      '[buttery:Sheet] A sheet has no name, so screen readers announce it as just "dialog". Fix: put a <Sheet.Header title="…" /> in it, or pass label="…" to Sheet.Content. Docs: https://aliboily.github.io/buttery/search?q=Sheet',
     );
   });
 

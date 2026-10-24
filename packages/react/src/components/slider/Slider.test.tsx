@@ -279,7 +279,7 @@ describe("Slider", () => {
       />,
     );
     expect(warn).toHaveBeenCalledWith(
-      '[buttery:Slider] The "Rotation" slider is controlled without resetValue or defaultValue, so double-click and Backspace reset it to its minimum, -180. Fix: pass the value it should go back to, such as resetValue={0}.',
+      '[buttery:Slider] The "Rotation" slider is controlled without resetValue or defaultValue, so double-click and Backspace reset it to its minimum, -180. Fix: pass the value it should go back to, such as resetValue={0}. Docs: https://aliboily.github.io/buttery/search?q=Slider',
     );
   });
 
