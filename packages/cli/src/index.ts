@@ -18,6 +18,7 @@ import {
   isPatternName,
   readPages,
 } from "./add.ts";
+import { createComponent } from "./component.ts";
 import { createApp } from "./create.ts";
 import { packageManagerFrom, runScript } from "./package-manager.ts";
 import { PLACEMENTS, isPageKind } from "./pages.ts";
@@ -33,8 +34,9 @@ const HELP = `buttery: start an app on buttery, add to it, and check it.
       dashboard app gets its route and sidebar item too. buttery add page lists the kinds.
   buttery add <pattern>
       A screen from a pattern: ${["app-shell", ...Object.keys(PATTERN_PAGES)].join(", ")}.
-  buttery create component <Name>
-      A component of your own, built from buttery's public parts.
+  buttery create component <Name> --purpose "<what it's for>"
+      A component of your own in src/components, on buttery's public parts and tokens, with
+      examples, a preview page and a spec that runs the layout checks on it.
   buttery check [page…] [--json] [--full] [--engine chromium|webkit]
       The layout checks on each page, a path such as /settings or an address, at 390 and
       1280, light and dark, in Chromium; --full adds every width, compact density and WebKit.
@@ -72,8 +74,29 @@ function create(args: readonly string[]): void {
       template: { type: "string", default: "blank" },
       desktop: { type: "boolean", default: false },
       "no-install": { type: "boolean", default: false },
+      purpose: { type: "string", default: "" },
     },
   });
+  if (positionals[0] === "component") {
+    const [, name] = positionals;
+    if (name === undefined) {
+      throw new Error(
+        'Name the component. Fix: buttery create component OrderCard --purpose "One order, as a card."',
+      );
+    }
+    const made = createComponent(appRoot(), name, values.purpose);
+    process.stdout.write(
+      [
+        `Made ${name}:`,
+        ...made.files.map((file) => `  ${file}`),
+        "",
+        `See it at ${made.preview} on the dev server, check it with npx buttery check ${made.preview},`,
+        `and run its spec with npx playwright test ${made.spec}.`,
+        "",
+      ].join("\n"),
+    );
+    return;
+  }
   const [directory] = positionals;
   if (directory === undefined) {
     throw new Error(
