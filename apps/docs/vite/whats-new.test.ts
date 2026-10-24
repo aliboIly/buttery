@@ -65,7 +65,7 @@ describe("What's new", () => {
   it("reads every release on the site newest first", () => {
     const versions = releasesIn(root).map((release) => release.version);
     expect(versions).toEqual([...versions].sort((a, b) => newestFirst(a, b)));
-    expect(versions[0]).toBe("0.10.0");
+    expect(versions[0]).toBe("0.11.0");
   });
 
   it("orders versions part by part, so 0.10.0 is newer than 0.9.0 and a patch sits between its neighbours", () => {
