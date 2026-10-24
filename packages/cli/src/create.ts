@@ -142,7 +142,23 @@ export function pointAtTarballs(
     return;
   }
   const manifest = readJson(join(folder, "package.json"));
-  writeJson(join(folder, "package.json"), { ...manifest, overrides });
+  // npm refuses an override that differs from a direct dependency's own range.
+  const pointed = (field: string): Record<string, unknown> | undefined => {
+    const listed = manifest[field];
+    if (typeof listed !== "object" || listed === null) return undefined;
+    return Object.fromEntries(
+      Object.entries(listed).map(([name, range]: [string, unknown]) => [
+        name,
+        overrides[name] ?? range,
+      ]),
+    );
+  };
+  writeJson(join(folder, "package.json"), {
+    ...manifest,
+    dependencies: pointed("dependencies"),
+    devDependencies: pointed("devDependencies"),
+    overrides,
+  });
 }
 
 /** Copies a template into a new folder, names the app after it, and installs its packages. */

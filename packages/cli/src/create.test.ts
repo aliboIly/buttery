@@ -27,7 +27,12 @@ beforeEach(() => {
   );
   write(
     "dist/templates/dashboard/package.json",
-    JSON.stringify({ name: "buttery-app", scripts: {}, devDependencies: {} }),
+    JSON.stringify({
+      name: "buttery-app",
+      scripts: {},
+      dependencies: { "@butteryui/react": "^0.11.0", react: "^19.3.1" },
+      devDependencies: {},
+    }),
   );
   write(
     "dist/templates/dashboard/index.html",
@@ -129,10 +134,10 @@ describe("createApp", () => {
         tarballs: join(root, "tarballs"),
       }),
     );
+    const react = `file:${join(root, "tarballs/butteryui-react-0.11.0.tgz")}`;
     expect(JSON.parse(read("other-shop/package.json"))).toMatchObject({
-      overrides: {
-        "@butteryui/react": `file:${join(root, "tarballs/butteryui-react-0.11.0.tgz")}`,
-      },
+      dependencies: { "@butteryui/react": react, react: "^19.3.1" },
+      overrides: { "@butteryui/react": react },
     });
   });
 
