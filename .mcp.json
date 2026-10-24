@@ -3,9 +3,7 @@
     "buttery": {
       "type": "stdio",
       "command": "node",
-      "args": [
-        "packages/mcp/dist/index.js"
-      ]
+      "args": ["packages/mcp/dist/index.js"]
     }
   }
 }
