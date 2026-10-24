@@ -1,0 +1,288 @@
+---
+title: Build an app in 15 minutes
+description: "From npx create-buttery to a shop's back office with a page of its own, checked at a phone's width and a laptop's, in light and dark."
+section: guides
+order: 10
+status: beta
+since: 0.11.0
+related:
+  [
+    get-started/installation,
+    tools/command-line,
+    templates/dashboard,
+    guides/check-your-layout,
+  ]
+---
+
+This guide starts an app for a plant shop from the dashboard template, gives it a page of its own for the plants, checks its layout, catches a mistake on purpose and fixes it the way buttery's page grammar does, then runs the app's own tests. Every output below is what the commands printed when this guide was written.
+
+## Make the app
+
+```bash
+npx create-buttery plant-shop --template dashboard
+```
+
+```text
+Made plant-shop from the dashboard template.
+
+  cd plant-shop
+  npm run dev
+
+Then check its layout with npx buttery check, and add pages with npx buttery add page <kind>.
+```
+
+Run `npm run dev` in `plant-shop` and open the address it prints. The app is a back office with a sidebar of pages: an overview of the week, orders with a page for each, products, returns, subscriptions, settings, and a search in the top bar. In development `LayoutGuard` watches every screen and outlines in red anything that overlaps or overflows; there's nothing to outline yet.
+
+## Add a page
+
+```bash
+npx buttery add page table --name Plants
+```
+
+```text
+Added src/pages/PlantsPage.tsx: a list of records in a table, with its header and actions, from DataTable.
+It's at /plants in src/App.tsx, with an item in the sidebar.
+Check it with npx buttery check /plants.
+```
+
+The page is in the sidebar already. It starts as an orders table, from `DataTable`'s example, with the example's own data. Replace the data with the shop's plants, keeping the shape:
+
+```tsx title="src/pages/PlantsPage.tsx"
+interface Plant {
+  readonly id: string;
+  readonly name: string;
+  readonly light: "Bright" | "Shade";
+  readonly stock: number;
+  readonly price: number;
+}
+
+const PLANTS: readonly Plant[] = [
+  {
+    id: "P-101",
+    name: "Fiddle-leaf fig",
+    light: "Bright",
+    stock: 4,
+    price: 48,
+  },
+  { id: "P-102", name: "Snake plant", light: "Shade", stock: 12, price: 22 },
+  { id: "P-103", name: "Golden pothos", light: "Shade", stock: 0, price: 16 },
+  {
+    id: "P-104",
+    name: "Bird of paradise",
+    light: "Bright",
+    stock: 2,
+    price: 64,
+  },
+];
+
+const COLUMNS: readonly DataTableColumn<Plant>[] = [
+  {
+    id: "id",
+    header: "Plant",
+    cell: (plant) => <DataTable.Id value={plant.id} />,
+  },
+  {
+    id: "name",
+    header: "Name",
+    minWidth: "md",
+    grow: 2,
+    sortable: true,
+    cell: (plant) => plant.name,
+  },
+  {
+    id: "stock",
+    header: "Stock",
+    skeleton: "badge",
+    cell: (plant) => (
+      <StatusBadge tone={plant.stock > 0 ? "success" : "warning"}>
+        {plant.stock > 0 ? `${String(plant.stock)} left` : "Sold out"}
+      </StatusBadge>
+    ),
+  },
+  { id: "light", header: "Light", cell: (plant) => plant.light },
+  {
+    id: "price",
+    header: "Price",
+    minWidth: "md",
+    align: "end",
+    sortable: true,
+    cell: (plant) => <DataTable.Amount value={plant.price} currency="USD" />,
+  },
+];
+
+function sorted(
+  plants: readonly Plant[],
+  sort: DataTableSort | null,
+): readonly Plant[] {
+  if (sort === null) return plants;
+  const sign = sort.direction === "ascending" ? 1 : -1;
+  return [...plants].sort((a, b) =>
+    sort.column === "price"
+      ? (a.price - b.price) * sign
+      : a.name.localeCompare(b.name) * sign,
+  );
+}
+```
+
+Then give the page its own words: the title "Plants", the section "In the greenhouse", the table's label and row names, and a menu on each row to restock or retire the plant. The next step shows them.
+
+## Check it
+
+```bash
+npx buttery check / /plants
+```
+
+```text
+Checked / and /plants at 390 and 1280, light and dark, comfortable, in chromium.
+
+buttery found no layout problems.
+```
+
+`buttery check` started the dev server, opened both pages at a phone's width and a laptop's, in light and dark, ran the checks `expectButtery` runs, and stopped the server again.
+
+## Make a mistake on purpose
+
+Put three buttons in the section's header, beside its title, importing `Inline` from `@butteryui/core` and `Button` from `@butteryui/react`:
+
+```tsx
+actions={
+  <Inline gap={2}>
+    <Button>Water all</Button>
+    <Button>Print labels</Button>
+    <Button variant="primary">Add a plant</Button>
+  </Inline>
+}
+```
+
+```text
+Checked /plants at 390 and 1280, light and dark, comfortable, in chromium.
+
+✗ /plants
+  overflow      [data-bt-part="section-head"]: content overflows its width by 2.5px
+                Fix: Give it room, let it shrink (min-width: 0 comes with Stack, Inline and Grid), wrap the text, or truncate it with <Text truncate>.
+                In 390x844 light comfortable chromium and 390x844 dark comfortable chromium.
+
+buttery found 1 layout problem.
+```
+
+At 1280 they fit; at 390 they push the header past the page's edge. buttery's page grammar has a rule for this: a section gets one action, its most important, and actions for the whole page go in the page's header, where `PageHeader.Action`s fold into a "…" menu when there isn't room for them all. So "Add a plant" stays in the section, and watering and labels move up:
+
+```tsx title="src/pages/PlantsPage.tsx"
+/** The shop's plants in a table, sorted by name or price, each with a menu to restock or retire it. */
+export function PlantsPage(): ReactElement {
+  const [sort, setSort] = useState<DataTableSort | null>(null);
+  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+  const [note, setNote] = useState("Nothing changed yet");
+  return (
+    <AppPage
+      header={
+        <PageHeader
+          title="Plants"
+          description="Everything the shop grows and sells."
+          actions={
+            <>
+              <PageHeader.Action
+                label="Water all"
+                icon={Droplets}
+                onSelect={() => {
+                  setNote("Watered every plant");
+                }}
+              />
+              <PageHeader.Action
+                label="Print labels"
+                icon={Printer}
+                onSelect={() => {
+                  setNote("Sent the labels to the printer");
+                }}
+              />
+            </>
+          }
+        />
+      }
+    >
+      <AppPage.Section
+        title="In the greenhouse"
+        description={`${String(selected.size)} selected · ${note}`}
+        actions={
+          <Button
+            variant="primary"
+            onClick={() => {
+              setNote("Started a new plant");
+            }}
+          >
+            Add a plant
+          </Button>
+        }
+      >
+        <DataTable
+          label="Plants"
+          columns={COLUMNS}
+          rows={sorted(PLANTS, sort)}
+          rowKey={(plant) => plant.id}
+          rowLabel={(plant) => plant.name}
+          selectable
+          selected={selected}
+          onSelectedChange={setSelected}
+          sort={sort}
+          onSortChange={setSort}
+          rowActions={(plant) => (
+            <>
+              <Menu.Item
+                onSelect={() => {
+                  setNote(`Ordered more ${plant.name}`);
+                }}
+              >
+                Restock
+              </Menu.Item>
+              <Menu.Item
+                tone="danger"
+                onSelect={() => {
+                  setNote(`Retired ${plant.name}`);
+                }}
+              >
+                Retire
+              </Menu.Item>
+            </>
+          )}
+        />
+      </AppPage.Section>
+    </AppPage>
+  );
+}
+```
+
+```text
+Checked / and /plants at 390 and 1280, light and dark, comfortable, in chromium.
+
+buttery found no layout problems.
+```
+
+## Test it
+
+The app's own Playwright specs came with the template. Add the new page to the ones that run `expectButtery`, with the other pages in `e2e/layout.spec.ts`:
+
+```ts title="e2e/layout.spec.ts"
+  { path: "/plants", interactions: [] },
+```
+
+Then run the app's checks:
+
+```bash
+npm run typecheck
+npm run lint
+npm run test:e2e
+```
+
+Its lines for the new page, in both engines, and the total:
+
+```text
+  ✓  38 [chromium] › e2e/layout.spec.ts:178:3 › the dashboard's /plants is buttery (1.9s)
+  ✓  41 [webkit] › e2e/layout.spec.ts:178:3 › the dashboard's /plants is buttery (2.0s)
+  54 passed (35.8s)
+```
+
+The specs open each page in Chromium and WebKit, and run the layout checks again with the template's menus, dialogs and sign-in opened along the way.
+
+## Keep going with a coding agent
+
+The app came with what coding agents read: `AGENTS.md` with buttery's rules and checks, `CLAUDE.md` importing it, the make-it-buttery skill, and buttery's [MCP server](/tools/mcp-server) in each common agent's config. Open the folder in your agent and ask for the next page, such as "add a page for each plant, linked from the table". It can look the components up, start the page from its pattern with `buttery add page detail`, and run `buttery check` on what it built.

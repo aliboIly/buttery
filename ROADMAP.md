@@ -13,10 +13,9 @@ Kept up to date as items finish.
 Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the nav bar's menus fold late while their full-page blur scrim fades.
 
 **Next**, in order:
-1. Publish `v0.11.0`, with the command line's docs
-2. The guides: "Build an app in 15 minutes" and "Build your own buttery component"
-3. The next agent evaluation, with the dev server allowed, the custom component task and more agents
-4. The follow-ups: the nav bar's blur in WebKit, and the ones the demos turned up
+1. Publish `v0.11.0`, with the command line's docs and the guides "Build an app in 15 minutes" and "Build your own buttery component"
+2. The next agent evaluation, with the dev server allowed, the custom component task and more agents
+3. The follow-ups: the nav bar's blur in WebKit, an `OverflowCluster` that can't grow staying folded, and the ones the demos turned up
 
 ---
 
@@ -122,7 +121,7 @@ Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the na
 - [x] Public kit: components use only what apps can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition` and `variants()`), enforced by the contract test
 - [x] The command line tool: `create-buttery` with `--template blank`, `dashboard`, `editor` or `marketing`; `init`; `add`, with `add page` for each page the dashboard template has (`table`, `detail`, `overview`, `settings`, `settings-index`, `catalog`, `plans`, `search-results`, `empty`, `feature-intro` and `sign-in`); `create component`; `doctor`; `check`; and `migrate`
 - [x] Any app: `LayoutGuard`, `buttery check` and the lint configs work on an app's own code, and every template and `add page` passes `buttery check` with no edits
-- [ ] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper), and Tools pages for the command line tool and the MCP server with real output
+- [x] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper), and Tools pages for the command line tool and the MCP server with real output
 - [x] `@butteryui/mcp`, an MCP server with five read-only tools (search on the docs search's index, get, page scaffolding, lint, and a layout check), and configs for the common coding agents (`docs/DX_AND_AI.md`); component scaffolding comes with the command line tool's `create component`
 - [ ] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed (a first run, with and without the MCP server, is in `docs/AGENT_EVAL.md`)
 - [x] A passwordless sign-in pattern: `IdentifierField` (email or phone), `OneTimeCodeField`, an `AuthFlow` with a headless `useOtpFlow` hook, the Authentication page, and sign-in screens in the dashboard template and the roastery demo (`buttery add page sign-in` comes with the command line tool)
