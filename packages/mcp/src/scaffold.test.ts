@@ -42,6 +42,8 @@ describe("buttery_scaffold", () => {
 
   it("gives the commands and setup for a new app", () => {
     const text = scaffold(knowledge, { kind: "app" });
+    expect(text).toContain("npx create-buttery my-app --template dashboard");
+    expect(text).toContain("`npx buttery init`");
     expect(text).toContain("pnpm new-app my-app --template dashboard");
     expect(text).toContain("npm install @butteryui/core @butteryui/react");
     expect(text).toContain("- dashboard: ");

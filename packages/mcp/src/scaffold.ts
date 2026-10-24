@@ -174,17 +174,18 @@ export function scaffold(
     return [
       `## A new app on buttery ${knowledge.version}`,
       "",
-      "In buttery's repository, copy a template into apps/<name> and install it:",
+      "In any folder, start one from a template; it comes with the lint configs, Playwright specs, AGENTS.md and this MCP server in each agent's config:",
       "",
       "```bash",
-      "pnpm new-app my-app --template dashboard",
-      "pnpm --filter my-app dev",
+      "npx create-buttery my-app --template dashboard",
+      "cd my-app",
+      "npm run dev",
       "```",
       "",
       "Templates:",
       ...templates,
       "",
-      "In an app you have, install the packages and wrap it once:",
+      "In an app you have, `npx buttery init` adds the packages, imports the styles, wraps the app in ButteryProvider and sets up the lint configs and agent files. By hand:",
       "",
       "```bash",
       "npm install @butteryui/core @butteryui/react",
@@ -200,7 +201,9 @@ export function scaffold(
       "}",
       "```",
       "",
-      `Next: buttery_scaffold({"kind":"page","page":"table"}) for a first page. Docs: ${knowledge.site}/get-started/installation`,
+      "Inside buttery's repository, `pnpm new-app my-app --template dashboard` makes the same app in apps/my-app.",
+      "",
+      `Next: \`npx buttery add page table --name Orders\` or buttery_scaffold({"kind":"page","page":"table"}) for a first page. Docs: ${knowledge.site}/get-started/installation`,
     ].join("\n");
   }
   const { component, example } = pageSource(knowledge, request.page);
