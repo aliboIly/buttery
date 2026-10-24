@@ -3,6 +3,7 @@ import "../../styles.css";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { Stack } from "@butteryui/core";
 import { page, userEvent as browser } from "vitest/browser";
 import { ButteryProvider } from "../../provider/ButteryProvider.tsx";
 import { AuthFlow } from "./AuthFlow.tsx";
@@ -279,6 +280,26 @@ describe("AuthFlow", () => {
     expect(button.bottom).toBeLessThanOrEqual(508);
     expect(identifier().getBoundingClientRect().top).toBeGreaterThanOrEqual(0);
     await page.viewport(1280, 800);
+  });
+
+  it("keeps its full column when a parent centers it, as a centered Stack does", async () => {
+    await page.viewport(1280, 800);
+    render(
+      <ButteryProvider layoutGuard={false} reducedMotion="never">
+        <Stack align="center" justify="center">
+          <AuthFlow<string>
+            onRequestCode={() => ({ ok: true })}
+            onVerify={() => ({ ok: false, reason: "wrong" })}
+          />
+        </Stack>
+      </ButteryProvider>,
+    );
+    const column = identifier().closest('[data-bt-part="column"]');
+    if (!column) throw new Error("No column.");
+    expect(column.getBoundingClientRect().width).toBe(360);
+    const box = identifier().closest('[data-bt-part="box"]');
+    if (!box) throw new Error("No field box.");
+    expect(box.scrollWidth).toBeLessThanOrEqual(box.clientWidth);
   });
 
   it("leaves a step more room above it from 640px wide, the same for both steps", async () => {
