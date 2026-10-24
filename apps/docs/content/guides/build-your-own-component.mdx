@@ -1,0 +1,315 @@
+---
+title: Build your own buttery component
+description: "Building a Stepper in an app from buttery's public parts, Control, Pressable, SharedIndicator, variants() and useControllableState, so it looks, moves and checks like one of buttery's own."
+section: guides
+order: 20
+status: beta
+since: 0.11.0
+related:
+  [tools/command-line, motion/presets, components/control, components/pressable]
+---
+
+buttery's own components are built from parts an app can import too: `Control` for a control's height, `Pressable` for something people press, `SharedIndicator` for a highlight that slides, `variants()` for typed looks and `useControllableState` for a value that's controlled or not. This guide builds a `Stepper` from them in an app, steps in one track with a highlight that slides to the one picked, and checks it the way buttery checks its own.
+
+## Start it
+
+```bash
+npx buttery create component Stepper --purpose "Steps in one track, the current one marked by a highlight that slides to it."
+```
+
+```text
+Made Stepper:
+  src/components/Stepper/Stepper.tsx
+  src/components/Stepper/stepper.css
+  src/components/Stepper/Stepper.examples.tsx
+  src/components/Stepper/preview.html
+  src/components/Stepper/preview.tsx
+  e2e/stepper.spec.ts
+
+See it at /src/components/Stepper/preview.html on the dev server, check it with npx buttery check /src/components/Stepper/preview.html,
+and run its spec with npx playwright test e2e/stepper.spec.ts.
+```
+
+The scaffold is a component on `Slot` and `variants()` with a `tone` to start from. The Stepper replaces it.
+
+## The parts
+
+<DocsTable
+  columns={["Part", "What it gives the Stepper"]}
+  rows={[
+    [
+      "`useControllableState`",
+      "The current step from one line, controlled with `value` and `onValueChange`, or kept inside from `defaultValue`",
+    ],
+    [
+      "`SharedIndicator`",
+      "The highlight that slides to the current step on `spring.snappy`, and moves there at once with reduced motion",
+    ],
+    [
+      "`Control`",
+      "A height from the height tokens with padding to match, and `data-bt-control`, so the layout checks hold it to the scale",
+    ],
+    [
+      "`Pressable`",
+      "A `button` with buttery's press feedback and focus ring, which never submits a form",
+    ],
+    [
+      "`variants()`",
+      "A typed `size` prop, set as `data-size` for the CSS to read",
+    ],
+  ]}
+/>
+
+## The component
+
+```tsx title="src/components/Stepper/Stepper.tsx"
+import type { ComponentPropsWithRef, ReactElement } from "react";
+import {
+  Control,
+  Pressable,
+  SharedIndicator,
+  useControllableState,
+  variants,
+} from "@butteryui/core";
+import type { VariantProps } from "@butteryui/core";
+import "./stepper.css";
+
+const stepper = variants("stepper", { size: ["sm", "md"] }, { size: "md" });
+
+/** Props for `Stepper`. */
+export interface StepperProps
+  extends
+    Omit<ComponentPropsWithRef<"ol">, "defaultValue">,
+    VariantProps<typeof stepper> {
+  /** The steps, in order, by name. */
+  readonly steps: readonly string[];
+  /** The current step's index. Pair with `onValueChange`. */
+  readonly value?: number | undefined;
+  /** The step to start on when uncontrolled. Defaults to the first. */
+  readonly defaultValue?: number | undefined;
+  /** Called with the index of the step someone picks. */
+  readonly onValueChange?: ((value: number) => void) | undefined;
+  /** Names the list for screen readers. Defaults to `"Steps"`. */
+  readonly label?: string | undefined;
+}
+
+/**
+ * Steps in one track, numbered, with the current one marked by a highlight that slides to the step
+ * someone picks.
+ *
+ * @example
+ * <Stepper steps={["Cart", "Address", "Payment"]} value={step} onValueChange={setStep} />
+ */
+export function Stepper({
+  steps,
+  value,
+  defaultValue = 0,
+  onValueChange,
+  label = "Steps",
+  size,
+  className,
+  ...rest
+}: StepperProps): ReactElement {
+  const [current, setCurrent] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
+  return (
+    <ol aria-label={label} {...rest} {...stepper({ size }, className)}>
+      <SharedIndicator.Group>
+        {steps.map((step, index) => (
+          <li key={step}>
+            <SharedIndicator active={index === current} asChild>
+              <Control size={size === "sm" ? "sm" : "control"} asChild>
+                <Pressable
+                  aria-current={index === current ? "step" : undefined}
+                  onClick={() => {
+                    setCurrent(index);
+                  }}
+                >
+                  <span data-part="number">{String(index + 1)}</span>
+                  <span data-part="name">{step}</span>
+                </Pressable>
+              </Control>
+            </SharedIndicator>
+          </li>
+        ))}
+      </SharedIndicator.Group>
+    </ol>
+  );
+}
+```
+
+`SharedIndicator`, `Control` and `Pressable` each take `asChild`, so all three land on the one `button` a step is: the indicator measures it, the control sizes it and the pressable makes it press and focus. The current step says so with `aria-current="step"`, and `label` names the list, so a screen reader says which steps these are before it reads each one.
+
+## Its styles
+
+```css title="src/components/Stepper/stepper.css"
+.stepper {
+  display: flex;
+  gap: var(--bt-space-1);
+  padding: var(--bt-space-1);
+  min-inline-size: 0;
+  border-radius: var(--bt-r-full);
+  background-color: var(--bt-bg-control);
+  list-style: none;
+}
+
+.stepper > li {
+  display: flex;
+  min-inline-size: 0;
+}
+
+.stepper [data-bt-control] {
+  border-radius: var(--bt-r-full);
+}
+
+.stepper [data-part="number"] {
+  color: var(--bt-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.stepper [aria-current="step"] [data-part="number"] {
+  color: var(--bt-text);
+}
+
+.stepper [data-part="name"] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+```
+
+The highlight takes the corners of the step it's on, so the steps take the track's full radius and the highlight's corners stay concentric with the track's; without that rule it's a square box in a round track. Every value is a token, so buttery's stylelint config passes it. A length no token holds would go in a `--bt-stepper-*` variable in the file's first rule, the one place the config allows a raw value. Nothing sets a margin on the Stepper itself, so whatever holds it spaces it with a gap.
+
+## Examples and the preview
+
+```tsx title="src/components/Stepper/Stepper.examples.tsx"
+import { useState } from "react";
+import type { ReactElement } from "react";
+import { Stack, Text } from "@butteryui/core";
+import { Stepper } from "./Stepper.tsx";
+
+const CHECKOUT = ["Bag", "Delivery", "Payment"] as const;
+
+/** A checkout's steps, the page under them following the one picked. */
+export function CheckoutSteps(): ReactElement {
+  const [step, setStep] = useState(0);
+  return (
+    <Stack gap={3} align="start">
+      <Stepper
+        label="Checkout"
+        steps={CHECKOUT}
+        value={step}
+        onValueChange={setStep}
+      />
+      <Text variant="body">{`Now on ${CHECKOUT[step] ?? ""}.`}</Text>
+    </Stack>
+  );
+}
+
+/** The small size, starting on its second step and keeping its own place. */
+export function SmallSteps(): ReactElement {
+  return (
+    <Stepper
+      size="sm"
+      label="Setup"
+      steps={["Account", "Shop", "Launch"]}
+      defaultValue={1}
+    />
+  );
+}
+```
+
+The preview page renders the examples. Its script imports them, so show these two in place of the scaffold's:
+
+```tsx title="src/components/Stepper/preview.tsx"
+import "@butteryui/core/styles.css";
+import "@butteryui/react/styles.css";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Stack } from "@butteryui/core";
+import { ButteryProvider, Page, Section } from "@butteryui/react";
+import { CheckoutSteps, SmallSteps } from "./Stepper.examples.tsx";
+
+const container = document.getElementById("root");
+if (!container) throw new Error("preview.html needs a #root element.");
+
+createRoot(container).render(
+  <StrictMode>
+    <ButteryProvider>
+      <Page asChild>
+        <main>
+          <Section size="sm" title="Stepper">
+            <Stack gap={6} align="start">
+              <CheckoutSteps />
+              <SmallSteps />
+            </Stack>
+          </Section>
+        </main>
+      </Page>
+    </ButteryProvider>
+  </StrictMode>,
+);
+```
+
+## Check it
+
+```bash
+npx buttery check /src/components/Stepper/preview.html
+```
+
+```text
+Checked /src/components/Stepper/preview.html at 390 and 1280, light and dark, comfortable, in chromium.
+
+buttery found no layout problems.
+```
+
+The spec `create component` wrote runs `expectButtery` on the preview in Chromium and WebKit. Add a test of what the Stepper does:
+
+```ts title="e2e/stepper.spec.ts"
+import { expect, test } from "@playwright/test";
+import { expectButtery, quickMatrix } from "@butteryui/test";
+
+const PREVIEW = "/src/components/Stepper/preview.html";
+
+test("Stepper's examples are buttery", async ({ page }) => {
+  await page.goto(PREVIEW);
+  await expectButtery(page, { ...quickMatrix, name: "Stepper" });
+});
+
+test("Stepper marks the step someone picks as the current one", async ({
+  page,
+}) => {
+  await page.goto(PREVIEW);
+  const checkout = page.getByRole("list", { name: "Checkout" });
+  await expect(checkout.getByRole("button", { name: "1 Bag" })).toHaveAttribute(
+    "aria-current",
+    "step",
+  );
+  await checkout.getByRole("button", { name: "3 Payment" }).click();
+  await expect(
+    checkout.getByRole("button", { name: "3 Payment" }),
+  ).toHaveAttribute("aria-current", "step");
+  await expect(page.getByText("Now on Payment.")).toBeVisible();
+  const delivery = checkout.getByRole("button", { name: "2 Delivery" });
+  await delivery.focus();
+  await page.keyboard.press("Enter");
+  await expect(delivery).toHaveAttribute("aria-current", "step");
+});
+```
+
+```text
+$ npx playwright test e2e/stepper.spec.ts
+  ✓  2 [chromium] › e2e/stepper.spec.ts:6:1 › Stepper's examples are buttery (1.2s)
+  ✓  3 [chromium] › e2e/stepper.spec.ts:11:1 › Stepper marks the step someone picks as the current one (209ms)
+  ✓  1 [webkit] › e2e/stepper.spec.ts:6:1 › Stepper's examples are buttery (1.5s)
+  ✓  4 [webkit] › e2e/stepper.spec.ts:11:1 › Stepper marks the step someone picks as the current one (296ms)
+
+  4 passed (2.5s)
+```
+
+## What makes it buttery
+
+It takes a `ref` and passes every other prop to its list, it works controlled and uncontrolled, every value is a token, its height comes from `Control`, it moves by `SharedIndicator`'s spring and stands still with reduced motion, each step is a button the keyboard reaches with Tab and presses with Enter or Space, and nothing about it sets an outer margin. The layout checks, the lint configs and its spec keep it that way as it changes.
