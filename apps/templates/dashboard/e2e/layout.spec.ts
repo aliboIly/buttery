@@ -47,13 +47,32 @@ const newOrder: ButteryInteraction = {
   acrossMatrix: true,
 };
 
+const searchTote: ButteryInteraction = {
+  name: "search for tote in the top bar",
+  run: async (page: Page) => {
+    const field = page.getByRole("combobox", {
+      name: "Search orders and products",
+    });
+    await field.fill("tote");
+    await page.getByRole("listbox").waitFor();
+  },
+};
+
 const screens: readonly {
   readonly path: string;
   readonly interactions: readonly ButteryInteraction[];
 }[] = [
   {
     path: "/",
-    interactions: [openWorkspaceMenu, escape, closeSheet, newOrder, escape],
+    interactions: [
+      openWorkspaceMenu,
+      escape,
+      closeSheet,
+      newOrder,
+      escape,
+      searchTote,
+      escape,
+    ],
   },
   {
     path: "/orders",
@@ -78,7 +97,52 @@ const screens: readonly {
     ],
   },
   {
-    path: "/settings",
+    path: "/orders/1048",
+    interactions: [
+      {
+        name: "mark the order as shipped",
+        run: async (page: Page) => {
+          await page.getByRole("button", { name: "Mark as shipped" }).click();
+          await page
+            .getByRole("button", { name: "Send a return label" })
+            .waitFor();
+        },
+      },
+    ],
+  },
+  {
+    path: "/products",
+    interactions: [
+      {
+        name: "show the kitchen's products",
+        run: async (page: Page) => {
+          await page
+            .getByRole("link", { name: "Kitchen", exact: true })
+            .click();
+          await page
+            .getByRole("link", { name: "Walnut serving board" })
+            .waitFor();
+        },
+      },
+    ],
+  },
+  { path: "/subscriptions", interactions: [] },
+  { path: "/returns", interactions: [] },
+  { path: "/search?q=tote", interactions: [] },
+  { path: "/settings", interactions: [] },
+  {
+    path: "/settings/plan",
+    interactions: [
+      {
+        name: "show the yearly prices",
+        run: async (page: Page) => {
+          await page.getByRole("radio", { name: "Yearly" }).click();
+        },
+      },
+    ],
+  },
+  {
+    path: "/settings/shop",
     interactions: [
       {
         name: "change the shop's name, showing Save and Cancel",

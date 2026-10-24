@@ -97,6 +97,73 @@ export const ORDERS: readonly Order[] = [
   },
 ];
 
+/** The kinds of things the shop sells. */
+export type ProductCategory = "bags" | "kitchen" | "home";
+
+/** One product in the shop. */
+export interface Product {
+  readonly id: string;
+  readonly name: string;
+  readonly category: ProductCategory;
+  readonly description: string;
+  /** What it costs, in dollars. */
+  readonly price: number;
+  /** How many are left. */
+  readonly stock: number;
+}
+
+/** Made-up products, the ones the orders are for. */
+export const PRODUCTS: readonly Product[] = [
+  {
+    id: "linen-tote",
+    name: "Linen tote",
+    category: "bags",
+    description: "Washed linen on a canvas base, with a pocket inside.",
+    price: 38,
+    stock: 14,
+  },
+  {
+    id: "market-bag",
+    name: "Market bag",
+    category: "bags",
+    description: "Cotton net that folds into its own pouch.",
+    price: 22,
+    stock: 3,
+  },
+  {
+    id: "stoneware-mugs",
+    name: "Stoneware mug, set of two",
+    category: "kitchen",
+    description: "Speckled glaze, twelve ounces, fine in the dishwasher.",
+    price: 54,
+    stock: 9,
+  },
+  {
+    id: "walnut-board",
+    name: "Walnut serving board",
+    category: "kitchen",
+    description: "One piece of oiled walnut with a hole to hang it by.",
+    price: 72,
+    stock: 6,
+  },
+  {
+    id: "beeswax-candles",
+    name: "Beeswax candles, pack of six",
+    category: "home",
+    description: "Dipped by hand, about eight hours each.",
+    price: 24,
+    stock: 31,
+  },
+  {
+    id: "wool-throw",
+    name: "Wool throw",
+    category: "home",
+    description: "Lambswool in a herringbone weave, 50 by 70 inches.",
+    price: 120,
+    stock: 2,
+  },
+];
+
 /** The last seven days, oldest first, for the overview's charts. */
 export const WEEK = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
 

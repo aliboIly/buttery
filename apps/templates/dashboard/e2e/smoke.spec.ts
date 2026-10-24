@@ -14,7 +14,13 @@ function watchConsole(page: Page): string[] {
 for (const [path, title] of [
   ["/", "Overview"],
   ["/orders", "Orders"],
+  ["/orders/1048", "Order 1048"],
+  ["/products", "Products"],
+  ["/subscriptions", "Subscriptions"],
+  ["/returns", "Returns"],
   ["/settings", "Settings"],
+  ["/settings/shop", "Shop details"],
+  ["/settings/plan", "Plan"],
   ["/sign-in", "Sign in or create an account"],
 ] as const) {
   test(`renders ${path} with the bundled font and no console errors`, async ({

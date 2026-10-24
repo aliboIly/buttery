@@ -1,72 +1,40 @@
-import { useState } from "react";
 import type { ReactElement } from "react";
-import {
-  Button,
-  SettingRow,
-  SettingsPage as SettingsLayout,
-  SettingsSection,
-  TextField,
-  toast,
-} from "@butteryui/react";
+import { AppPage, PageHeader, SettingsIndex } from "@butteryui/react";
+import { CreditCard, Store } from "lucide-react";
+import { useLink } from "../router.tsx";
 
-/** The shop's settings: its details, saved as a form, and the emails it sends, each turned on or off. */
+/** Every group of settings, each setting opening its own page. */
 export function SettingsPage(): ReactElement {
-  const [saved, setSaved] = useState({
-    name: "My shop",
-    email: "hello@shop.example",
-  });
-  const [name, setName] = useState(saved.name);
-  const [email, setEmail] = useState(saved.email);
-  const [orderEmails, setOrderEmails] = useState(true);
+  const link = useLink();
   return (
-    <SettingsLayout
-      title="Settings"
-      description="The shop's details, and the emails it sends."
+    <AppPage
+      header={
+        <PageHeader
+          title="Settings"
+          description="The shop's details, its emails and its plan."
+        />
+      }
     >
-      <SettingsSection
-        title="Shop details"
-        description="Customers see these on receipts."
-        dirty={name !== saved.name || email !== saved.email}
-        onSave={() => {
-          setSaved({ name, email });
-          toast.success("The shop's details are saved.");
-        }}
-        onCancel={() => {
-          setName(saved.name);
-          setEmail(saved.email);
-        }}
-      >
-        <TextField label="Shop name" value={name} onValueChange={setName} />
-        <TextField
-          label="Contact email"
-          type="email"
-          value={email}
-          onValueChange={setEmail}
-        />
-      </SettingsSection>
-      <SettingsSection
-        title="Notifications"
-        description="What the shop emails you about."
-        divider
-      >
-        <SettingRow
-          title="New orders"
-          state={
-            orderEmails ? "An email for every new order." : "Off. No emails."
-          }
-          action={
-            <Button
-              size="sm"
-              variant={orderEmails ? "soft" : "primary"}
-              onClick={() => {
-                setOrderEmails((on) => !on);
-              }}
-            >
-              {orderEmails ? "Turn off" : "Turn on"}
-            </Button>
-          }
-        />
-      </SettingsSection>
-    </SettingsLayout>
+      <AppPage.Section>
+        <SettingsIndex>
+          <SettingsIndex.Section title="Your shop">
+            <SettingsIndex.Link
+              icon={Store}
+              title="Shop details"
+              description="The name and email customers see, and the emails the shop sends you."
+              href={link("/settings/shop")}
+            />
+          </SettingsIndex.Section>
+          <SettingsIndex.Section title="Money">
+            <SettingsIndex.Link
+              icon={CreditCard}
+              title="Plan"
+              description="What the shop pays each month or year, and what each plan adds."
+              href={link("/settings/plan")}
+            />
+          </SettingsIndex.Section>
+        </SettingsIndex>
+      </AppPage.Section>
+    </AppPage>
   );
 }

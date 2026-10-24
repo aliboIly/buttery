@@ -19,9 +19,9 @@ describe("buttery add page", () => {
     });
     expect(wired).not.toBeNull();
     expect(wired).toContain(
-      'import { CustomersPage } from "./pages/CustomersPage.tsx";\nimport { OrdersPage } from "./pages/OrdersPage.tsx";',
+      'import { CustomersPage } from "./pages/CustomersPage.tsx";\nimport { OrderPage } from "./pages/OrderPage.tsx";',
     );
-    expect(wired).toMatch(/"\/sign-in",\n {2}"\/customers",\n\];/);
+    expect(wired).toMatch(/"\/sign-in",\n {2}"\/customers",\n/);
     expect(wired).toContain(
       '    case "/customers":\n      return <CustomersPage />;\n    default:\n      return <NotFoundPage />;',
     );

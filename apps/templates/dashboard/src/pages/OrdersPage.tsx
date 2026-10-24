@@ -12,23 +12,12 @@ import {
   matchesSearch,
   toast,
 } from "@butteryui/react";
-import type {
-  DataTableColumn,
-  DataTableSort,
-  StatusTone,
-} from "@butteryui/react";
+import type { DataTableColumn, DataTableSort } from "@butteryui/react";
 import { Download } from "lucide-react";
 import { shortDate } from "../data.ts";
 import type { Order, OrderStatus } from "../data.ts";
-
-const STATUSES: Readonly<
-  Record<OrderStatus, { readonly label: string; readonly tone: StatusTone }>
-> = {
-  unpaid: { label: "Unpaid", tone: "warning" },
-  paid: { label: "Paid", tone: "info" },
-  shipped: { label: "Shipped", tone: "success" },
-  refunded: { label: "Refunded", tone: "danger" },
-};
+import { useLink } from "../router.tsx";
+import { STATUSES } from "../status.ts";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All" },
@@ -41,54 +30,62 @@ const STATUS_OPTIONS = [
   label: string;
 }[];
 
-const COLUMNS: readonly DataTableColumn<Order>[] = [
-  {
-    id: "order",
-    header: "Order",
-    cell: (order) => <DataTable.Id value={order.id} />,
-    minWidth: "sm",
-  },
-  {
-    id: "customer",
-    header: "Customer",
-    cell: (order) => order.customer,
-    minWidth: "md",
-    grow: 2,
-  },
-  {
-    id: "item",
-    header: "Item",
-    cell: (order) => order.item,
-    minWidth: "md",
-    grow: 2,
-  },
-  {
-    id: "amount",
-    header: "Amount",
-    cell: (order) => <DataTable.Amount value={order.amount} currency="USD" />,
-    minWidth: "sm",
-    align: "end",
-    sortable: true,
-  },
-  {
-    id: "status",
-    header: "Status",
-    cell: (order) => (
-      <StatusBadge tone={STATUSES[order.status].tone}>
-        {STATUSES[order.status].label}
-      </StatusBadge>
-    ),
-    minWidth: "sm",
-    skeleton: "badge",
-  },
-  {
-    id: "placed",
-    header: "Placed",
-    cell: (order) => shortDate(order.placed),
-    minWidth: "sm",
-    sortable: true,
-  },
-];
+function columns(
+  link: (path: string) => string,
+): readonly DataTableColumn<Order>[] {
+  return [
+    {
+      id: "order",
+      header: "Order",
+      cell: (order) => (
+        <DataTable.Link href={link(`/orders/${order.id}`)}>
+          {order.id}
+        </DataTable.Link>
+      ),
+      minWidth: "sm",
+    },
+    {
+      id: "customer",
+      header: "Customer",
+      cell: (order) => order.customer,
+      minWidth: "md",
+      grow: 2,
+    },
+    {
+      id: "item",
+      header: "Item",
+      cell: (order) => order.item,
+      minWidth: "md",
+      grow: 2,
+    },
+    {
+      id: "amount",
+      header: "Amount",
+      cell: (order) => <DataTable.Amount value={order.amount} currency="USD" />,
+      minWidth: "sm",
+      align: "end",
+      sortable: true,
+    },
+    {
+      id: "status",
+      header: "Status",
+      cell: (order) => (
+        <StatusBadge tone={STATUSES[order.status].tone}>
+          {STATUSES[order.status].label}
+        </StatusBadge>
+      ),
+      minWidth: "sm",
+      skeleton: "badge",
+    },
+    {
+      id: "placed",
+      header: "Placed",
+      cell: (order) => shortDate(order.placed),
+      minWidth: "sm",
+      sortable: true,
+    },
+  ];
+}
 
 function compare(sort: DataTableSort | null): (a: Order, b: Order) => number {
   const direction = sort?.direction === "ascending" ? 1 : -1;
@@ -108,6 +105,7 @@ export function OrdersPage({
 }: {
   readonly orders: readonly Order[];
 }): ReactElement {
+  const link = useLink();
   const [status, setStatus] = useState<OrderStatus | undefined>(undefined);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<DataTableSort | null>({
@@ -183,7 +181,7 @@ export function OrdersPage({
         </FilterBar>
         <DataTable<Order>
           label="Orders"
-          columns={COLUMNS}
+          columns={columns(link)}
           rows={shown}
           rowKey={(order) => order.id}
           rowLabel={(order) => `Order ${order.id}`}

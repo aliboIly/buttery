@@ -1,6 +1,6 @@
 ---
 title: Dashboard
-description: A web app with a sidebar, an overview of the week's numbers, a table of orders with filters, settings and a sign-in screen, made from the App kit.
+description: A web app with a sidebar, an overview of the week's numbers, a table of orders with a page for each, products, search, settings with a plan page, and a sign-in screen, made from the App kit.
 section: templates
 order: 20
 status: new
@@ -10,6 +10,9 @@ related:
     patterns/app-shell,
     patterns/overview,
     patterns/data-table-page,
+    patterns/detail-page,
+    patterns/catalog-page,
+    patterns/search-and-results,
     patterns/settings-pages,
     patterns/authentication,
   ]
@@ -17,7 +20,7 @@ related:
 
 import { TemplatePreview } from "../../src/templates/TemplatePreview.tsx";
 
-The dashboard template is a small web app for running something: a sidebar of pages beside a top bar, an overview of metric cards and a chart, a table page with filters, a settings page, and a sign-in screen that the account menu's Sign out leads to. Use it for an admin, a back office or any app whose screens are pages of numbers, lists and settings.
+The dashboard template is a small web app for running a shop: a sidebar of pages beside a top bar with a search, an overview of metric cards and a chart, a table of orders with filters and a page for each order, products by category, search results, a page with nothing in it yet, a feature to turn on, settings with a plan page under them, and a sign-in screen that the account menu's Sign out leads to. It has a page of every kind `buttery add page` writes for an app's shell. Use it for an admin, a back office or any app whose screens are pages of numbers, lists and settings.
 
 <TemplatePreview name="dashboard" />
 
@@ -61,7 +64,7 @@ Open the address it prints. The template is a web app: for a desktop app, start 
   rows={[
     [
       "`src/App.tsx`",
-      "The shell: `AppShell` with a `Sidebar`, an `AccountMenu` and a `TopBar` whose New order button opens a dialog, and the page the address names",
+      "The shell: `AppShell` with a `Sidebar`, an `AccountMenu` and a `TopBar` with a `CommandSearch` and a New order button that opens a dialog, and the page the address names",
     ],
     [
       "`src/pages/OverviewPage.tsx`",
@@ -72,8 +75,36 @@ Open the address it prints. The template is a web app: for a desktop app, start 
       "A `DataTable` of orders, sorted by a column, with a status filter and a search in a `FilterBar`",
     ],
     [
+      "`src/pages/OrderPage.tsx`",
+      "A `DetailPage` for one order, its next step at the top of the aside, under breadcrumbs back to the orders",
+    ],
+    [
+      "`src/pages/ProductsPage.tsx`",
+      "A `CatalogPage` of products, one category at a time",
+    ],
+    [
+      "`src/pages/SearchPage.tsx`",
+      "`SearchResults` for what the top bar's search found, orders first",
+    ],
+    [
+      "`src/pages/ReturnsPage.tsx`",
+      "An `EmptyState` in a page with no returns yet",
+    ],
+    [
+      "`src/pages/SubscriptionsPage.tsx`",
+      "A `FeatureIntro` for subscriptions, before they're turned on",
+    ],
+    [
       "`src/pages/SettingsPage.tsx`",
+      "A `SettingsIndex` of every setting, each opening its own page",
+    ],
+    [
+      "`src/pages/ShopSettingsPage.tsx`",
       "A `SettingsPage` with a form section that saves and a `SettingRow` that turns emails on and off",
+    ],
+    [
+      "`src/pages/PlanPage.tsx`",
+      "A `PlanComparison` of the two plans, monthly or yearly, with the shop's own marked",
     ],
     [
       "`src/pages/SignInPage.tsx`",
@@ -89,8 +120,13 @@ Open the address it prints. The template is a web app: for a desktop app, start 
     ],
     [
       "`src/data.ts`",
-      "Made-up orders and numbers, and the helpers that format them",
+      "Made-up orders, products and numbers, and the helpers that format them",
     ],
+    [
+      "`src/search.ts`",
+      "What the top bar's search and the search page look through: the orders and the products",
+    ],
+    ["`src/status.ts`", "How each order status reads, and its badge's tone"],
     ["`src/app.css`", "Makes the app as tall as the window"],
     ["`src/router.tsx`", "The router every template has; see Routing below"],
     [
@@ -112,7 +148,7 @@ Open the address it prints. The template is a web app: for a desktop app, start 
   ]}
 />
 
-It's made from these patterns: the [app shell](/patterns/app-shell), an [overview](/patterns/overview), a [data table page](/patterns/data-table-page), a [settings page](/patterns/settings-pages) and [authentication](/patterns/authentication).
+It's made from these patterns: the [app shell](/patterns/app-shell), an [overview](/patterns/overview), a [data table page](/patterns/data-table-page), a [detail page](/patterns/detail-page), a [catalog page](/patterns/catalog-page), [search and results](/patterns/search-and-results), [settings pages](/patterns/settings-pages), [plans](/patterns/plans) and [authentication](/patterns/authentication).
 
 ## The overview screen
 
@@ -232,6 +268,8 @@ Each template has a small router of its own in `src/router.tsx`, with no depende
     ],
   ]}
 />
+
+An order's page answers at its own path, such as `/orders/1048`, and the search page reads what to look for from the query, such as `/search?q=tote`.
 
 An app served under a path of its own takes it as `base`, and every link and deep link keeps that start. The docs site shows this template at `/templates/dashboard/preview` with:
 
