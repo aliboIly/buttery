@@ -6,18 +6,16 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 
 Kept up to date as items finish.
 
-**Now**, finishing Phase 7's gate:
-- `v0.9.0` is out: `@butteryui/core`, `react`, `test` and `lint` are on npm, built and checked in a fresh app first, and the release is on GitHub
-- Left for the gate: two failures in `pnpm check` that were already on `main` (a ResizeObserver loop while the app shell page's inspector sheet opens, and the nav bar's menu folding about 80ms late), the full layout matrix, and the phase report
+**Now**, Phase 8:
+- `v0.10.0` is out: `@butteryui/mcp`, the MCP server for coding agents, and the passwordless sign-in flow (`AuthFlow`, `IdentifierField`, `OneTimeCodeField` and `useOtpFlow`, with sign-in screens in the roastery demo and the dashboard template), with `core`, `react`, `test` and `lint` at 0.10.0
+- A first agent evaluation ran with and without the MCP server and found a real bug, now fixed (`docs/AGENT_EVAL.md`)
 
-Started alongside, on their own branches: `@butteryui/mcp` works end to end, with five read-only tools (search, get, scaffold, lint, and a layout check that runs `checkButtery`), both protocol versions, its tests, a real agent connection and its docs page. The sign-in flow is built too: `IdentifierField`, `OneTimeCodeField`, `AuthFlow` and the `useOtpFlow` hook, an Authentication page, and sign-in screens in the roastery demo and the dashboard template. Both ship in 0.10.0.
-
-Done since the last update: style options across the components (`variant`, `size`, `shape` and `layout` on fields, tabs, segmented controls, badges, icon buttons, avatars, cards, metric cards, stat strips, empty states, tables, footers and the nav bar), each defaulting to the look it had; `pnpm check` now builds the packages and checks every file their exports name; a spinner that no longer reaches past its box mid-turn, and a `Morph` that clips only its height while it moves. Earlier: a modular `Catalog`, the `@butteryui` scope, `ContextMenu`, `Sheet`, `Accordion` and `Faq`, the docs live at https://aliboily.github.io/buttery/, and `v0.1.0` to `v0.8.0` as GitHub releases.
+Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the nav bar's menus fold late while their full-page blur scrim fades.
 
 **Next**, in order:
-1. `@butteryui/mcp`: the evaluation that compares agents with and without it, and its fixes
-2. 0.10.0 on npm: the MCP server and the sign-in flow
-3. Everything else that's left: the rest of 1.0 below, including the command line tool (with `buttery add page sign-in`) and `create-buttery` on npm, and the follow-ups the demos turned up
+1. The command line tool: `create-buttery`, `init`, `add page` (with `sign-in`), `create component`, `check`, `doctor` and `migrate`
+2. The next agent evaluation, with the dev server allowed, the custom component task and more agents
+3. The follow-ups: the nav bar's blur in WebKit, and the ones the demos turned up
 
 ---
 
