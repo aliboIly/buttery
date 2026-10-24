@@ -1,9 +1,24 @@
 {
   "name": "@butteryui/mcp",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.10.0",
   "description": "An MCP server that answers questions about buttery's components, tokens and layout rules.",
   "license": "MIT",
+  "homepage": "https://aliboily.github.io/buttery/tools/mcp-server",
+  "bugs": {
+    "url": "https://github.com/aliboIly/buttery/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aliboIly/buttery.git",
+    "directory": "packages/mcp"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "design-system",
+    "react",
+    "coding-agents"
+  ],
   "type": "module",
   "bin": {
     "buttery-mcp": "./dist/index.js"
@@ -25,5 +40,8 @@
     "@modelcontextprotocol/client": "2.3.1",
     "@types/node": "catalog:",
     "tsdown": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
