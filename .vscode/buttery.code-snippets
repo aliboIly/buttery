@@ -1,0 +1,174 @@
+{
+  "buttery page": {
+    "scope": "typescriptreact",
+    "prefix": "bt-page",
+    "description": "A page in the page grammar: an AppPage with a header and a section",
+    "body": [
+      "import type { ReactElement } from \"react\";",
+      "import { AppPage, PageHeader } from \"@butteryui/react\";",
+      "",
+      "/** ${2:What the page is for.} */",
+      "export function ${1:Name}Page(): ReactElement {",
+      "  return (",
+      "    <AppPage",
+      "      header={",
+      "        <PageHeader",
+      "          title=\"${3:Title}\"",
+      "          description=\"${4:One line on what it's for.}\"",
+      "        />",
+      "      }",
+      "    >",
+      "      <AppPage.Section title=\"${5:Section}\">$0</AppPage.Section>",
+      "    </AppPage>",
+      "  );",
+      "}"
+    ]
+  },
+  "buttery component": {
+    "scope": "typescriptreact",
+    "prefix": "bt-component",
+    "description": "A component of your own on buttery's public parts: a ref, its own class and a typed variant",
+    "body": [
+      "import type { ComponentPropsWithRef, ReactElement } from \"react\";",
+      "import { Slot, variants } from \"@butteryui/core\";",
+      "import type { VariantProps } from \"@butteryui/core\";",
+      "",
+      "const ${2:recipe} = variants(",
+      "  \"${3:class-name}\",",
+      "  { tone: [\"neutral\", \"accent\"] },",
+      "  { tone: \"neutral\" },",
+      ");",
+      "",
+      "/** Props for `${1:Name}`. */",
+      "export interface ${1}Props",
+      "  extends ComponentPropsWithRef<\"div\">,",
+      "    VariantProps<typeof ${2}> {",
+      "  /** Render the single child element instead of a `div`, with ${1}'s props merged onto it. */",
+      "  readonly asChild?: boolean | undefined;",
+      "}",
+      "",
+      "/** ${4:What it's for.} */",
+      "export function ${1}({",
+      "  tone,",
+      "  asChild = false,",
+      "  className,",
+      "  ...rest",
+      "}: ${1}Props): ReactElement {",
+      "  const Root = asChild ? Slot : \"div\";",
+      "  return <Root {...rest} {...${2}({ tone }, className)} />;",
+      "}"
+    ]
+  },
+  "buttery stack": {
+    "scope": "typescriptreact",
+    "prefix": "bt-stack",
+    "description": "Children in a column, a spacing step apart",
+    "body": ["<Stack gap={${1|3,1,2,4,6,8|}}>", "  $0", "</Stack>"]
+  },
+  "buttery inline": {
+    "scope": "typescriptreact",
+    "prefix": "bt-inline",
+    "description": "Children in a row, a spacing step apart",
+    "body": [
+      "<Inline gap={${1|2,1,3,4|}} align=\"center\">",
+      "  $0",
+      "</Inline>"
+    ]
+  },
+  "buttery grid": {
+    "scope": "typescriptreact",
+    "prefix": "bt-grid",
+    "description": "Equal columns that drop to one on a phone",
+    "body": [
+      "<Grid columns={{ base: 1, md: ${1|2,3,4|} }} gap={4}>",
+      "  $0",
+      "</Grid>"
+    ]
+  },
+  "buttery surface": {
+    "scope": "typescriptreact",
+    "prefix": "bt-surface",
+    "description": "A surface level with concentric corners",
+    "body": [
+      "<Surface level=\"${1|card,section,panel|}\" pad={4} radius=\"auto\">",
+      "  $0",
+      "</Surface>"
+    ]
+  },
+  "buttery text": {
+    "scope": "typescriptreact",
+    "prefix": "bt-text",
+    "description": "Text in one of buttery's roles",
+    "body": [
+      "<Text variant=\"${1|body,body-sm,body-lg,title,title-lg,caption,label|}\">$0</Text>"
+    ]
+  },
+  "buttery button": {
+    "scope": "typescriptreact",
+    "prefix": "bt-button",
+    "description": "A button: one primary per region",
+    "body": [
+      "<Button",
+      "  variant=\"${1|secondary,primary,soft,ghost|}\"",
+      "  onClick={() => {",
+      "    $2",
+      "  }}",
+      ">",
+      "  ${3:Label}",
+      "</Button>"
+    ]
+  },
+  "buttery dialog": {
+    "scope": "typescriptreact",
+    "prefix": "bt-dialog",
+    "description": "A dialog with its trigger, its words and its two choices",
+    "body": [
+      "<Dialog>",
+      "  <Dialog.Trigger asChild>",
+      "    <Button variant=\"soft\">${1:Open}</Button>",
+      "  </Dialog.Trigger>",
+      "  <Dialog.Content>",
+      "    <Dialog.Text title=\"${2:Title}\" body=\"${3:One line on what happens.}\" />",
+      "    <Dialog.Actions>",
+      "      <Dialog.Close asChild>",
+      "        <Button variant=\"soft\" size=\"cta\" shape=\"rounded\">",
+      "          ${4:Cancel}",
+      "        </Button>",
+      "      </Dialog.Close>",
+      "      <Dialog.Close asChild>",
+      "        <Button variant=\"primary\" size=\"cta\" shape=\"rounded\">",
+      "          ${5:Confirm}",
+      "        </Button>",
+      "      </Dialog.Close>",
+      "    </Dialog.Actions>",
+      "  </Dialog.Content>",
+      "</Dialog>"
+    ]
+  },
+  "buttery toast": {
+    "scope": "typescriptreact,typescript",
+    "prefix": "bt-toast",
+    "description": "A toast that says what just happened",
+    "body": ["toast.success(\"${1:Saved.}\");"]
+  },
+  "buttery space": {
+    "scope": "css",
+    "prefix": "bt-space",
+    "description": "A spacing step",
+    "body": ["var(--bt-space-${1|2,1,3,4,6,8|})"]
+  },
+  "buttery radius": {
+    "scope": "css",
+    "prefix": "bt-radius",
+    "description": "A corner radius",
+    "body": ["var(--bt-r-${1|md,sm,lg,xl,full|})"]
+  },
+  "buttery color": {
+    "scope": "css",
+    "prefix": "bt-color",
+    "description": "A color token for text, a background or a border",
+    "body": [
+      "var(--bt-${1|text,text-secondary,bg-surface,bg-app,bg-control,border,accent-text|})"
+    ]
+  }
+}

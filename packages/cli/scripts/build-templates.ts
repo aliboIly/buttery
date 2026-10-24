@@ -102,6 +102,10 @@ function buildTemplates(found: Versions): void {
     join(root, ".claude/skills/make-it-buttery/SKILL.md"),
     "utf8",
   );
+  const snippets = readFileSync(
+    join(root, ".vscode/buttery.code-snippets"),
+    "utf8",
+  );
   for (const name of TEMPLATE_NAMES) {
     const from = join(root, TEMPLATE_SOURCES[name]);
     const to = join(dist, "templates", name);
@@ -117,6 +121,7 @@ function buildTemplates(found: Versions): void {
       "AGENTS.md": agentsFile(title, DOCS),
       "README.md": readmeFile(title, name, DOCS),
       ".claude/skills/make-it-buttery/SKILL.md": skill,
+      ".vscode/buttery.code-snippets": snippets,
     };
     for (const [path, text] of Object.entries(files)) {
       mkdirSync(dirname(join(to, path)), { recursive: true });
@@ -133,6 +138,7 @@ function buildTemplates(found: Versions): void {
   );
   mkdirSync(join(dist, "skill"), { recursive: true });
   writeFileSync(join(dist, "skill", "SKILL.md"), skill);
+  writeFileSync(join(dist, "skill", "buttery.code-snippets"), snippets);
 }
 
 function exampleFile(component: string, example: string): string {

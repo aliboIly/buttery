@@ -55,7 +55,7 @@ Then check its layout with npx buttery check, and add pages with npx buttery add
   ]}
 />
 
-Every app comes with buttery's lint configs, Playwright with `@butteryui/test` and specs of its own, an `AGENTS.md` and `CLAUDE.md`, the make-it-buttery skill, and the [MCP server](/tools/mcp-server) in each common coding agent's config. `--desktop` adds the Tauri shell, so the app also opens as a desktop window, and `--no-install` leaves installing to you.
+Every app comes with buttery's lint configs, Playwright with `@butteryui/test` and specs of its own, VS Code snippets (`bt-page`, `bt-component`, `bt-stack` and the rest), an `AGENTS.md` and `CLAUDE.md`, the make-it-buttery skill, and the [MCP server](/tools/mcp-server) in each common coding agent's config. `--desktop` adds the Tauri shell, so the app also opens as a desktop window, and `--no-install` leaves installing to you.
 
 ## Add a page
 
@@ -195,7 +195,7 @@ By default it checks at 390 and 1280 wide, light and dark, in comfortable densit
 npx buttery init
 ```
 
-`init` installs buttery's packages with the app's package manager, imports the styles and wraps the app in `ButteryProvider` at its entry, writes buttery's ESLint and stylelint configs when the app has none, adds `lint` and `check` scripts, and gives coding agents what they read: a section in `AGENTS.md` between `<!-- buttery:start -->` and `<!-- buttery:end -->`, the `@AGENTS.md` import in `CLAUDE.md`, the skill, and the MCP server in each agent's config, added to any config the app already has. What it can't do for certain, such as adding buttery's rules to an ESLint config of the app's own, it lists with how. Run again, it changes nothing:
+`init` installs buttery's packages with the app's package manager, imports the styles and wraps the app in `ButteryProvider` at its entry, writes buttery's ESLint and stylelint configs when the app has none, adds `lint` and `check` scripts and buttery's VS Code snippets, and gives coding agents what they read: a section in `AGENTS.md` between `<!-- buttery:start -->` and `<!-- buttery:end -->`, the `@AGENTS.md` import in `CLAUDE.md`, the skill, and the MCP server in each agent's config, added to any config the app already has. What it can't do for certain, such as adding buttery's rules to an ESLint config of the app's own, it lists with how. Run again, it changes nothing:
 
 ```text
 buttery is already set up here.

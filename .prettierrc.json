@@ -1,1 +1,3 @@
-{}
+{
+  "overrides": [{ "files": "*.code-snippets", "options": { "parser": "json" } }]
+}

@@ -32,6 +32,7 @@ function options(root: string): InitOptions {
     root,
     dist: folder({
       "skill/SKILL.md": "# Make it buttery\n",
+      "skill/buttery.code-snippets": "{}\n",
       "versions.json": JSON.stringify({
         buttery: "0.11.0",
         catalog: { "@playwright/test": "^1.64.1" },
@@ -101,6 +102,7 @@ createRoot(document.getElementById("root")!).render(
       "AGENTS.md",
       "CLAUDE.md",
       ".claude/skills/make-it-buttery/SKILL.md",
+      ".vscode/buttery.code-snippets",
       ".mcp.json",
       ".codex/config.toml",
       ".gemini/settings.json",

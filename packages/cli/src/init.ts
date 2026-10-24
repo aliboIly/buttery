@@ -133,8 +133,8 @@ function update(
 
 /**
  * Sets buttery up in a React app: its packages, the styles and the provider at the entry, buttery's lint
- * configs, and what coding agents read (an `AGENTS.md` section, the `CLAUDE.md` import, the skill and the
- * MCP server in each agent's config). Running it again changes nothing that's already set up.
+ * configs, buttery's VS Code snippets, and what coding agents read (an `AGENTS.md` section, the `CLAUDE.md`
+ * import, the skill and the MCP server in each agent's config). Running it again changes nothing that's already set up.
  */
 export function initApp(options: InitOptions): InitResult {
   const { root } = options;
@@ -278,7 +278,13 @@ export function initApp(options: InitOptions): InitResult {
   );
   update(root, "CLAUDE.md", withAgentsImport, changed);
   const skill = readFileSync(join(options.dist, "skill", "SKILL.md"), "utf8");
+  const snippets = readFileSync(
+    join(options.dist, "skill", "buttery.code-snippets"),
+    "utf8",
+  );
   update(root, ".claude/skills/make-it-buttery/SKILL.md", () => skill, changed);
+  update(root, ".vscode/buttery.code-snippets", () => snippets, changed);
+
   for (const file of Object.keys(AGENT_CONFIGS)) {
     const merged = update(
       root,
