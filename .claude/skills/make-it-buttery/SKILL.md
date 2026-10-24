@@ -10,7 +10,7 @@ Goal: the result should look like it was designed with buttery from day one, pas
 Works for any coding agent: Claude Code loads this as a skill; Codex, Gemini CLI and others are pointed here by `AGENTS.md`.
 
 ## 1. Read the system (first time in a session)
-- `docs/DESIGN_SPEC.md`, `docs/MOTION_SPEC.md`, `docs/LAYOUT_RULES.md` — in the buttery repo, or `node_modules/@butteryui/core/docs/` in an app (shipped from Phase 8).
+- `docs/DESIGN_SPEC.md`, `docs/MOTION_SPEC.md`, `docs/LAYOUT_RULES.md` in the buttery repo; in an app, the same rules on the docs site's Foundations, Layout and Motion pages, each also as Markdown at its path plus `.md`.
 - What exists: the `@butteryui/mcp` tools if connected (`buttery_search`, then `buttery_get` with every id you need in one call, and `buttery_scaffold` to start a whole page from its pattern); otherwise each docs page as Markdown, listed in `llms.txt` (on the docs site, or under `pnpm dev` in the buttery repo at `/llms.txt` and `/components/<name>.md`); otherwise the component folders themselves: each has a `Name.meta.ts` (what it's for, when not to use it, related components) and `examples/` you can copy. Layout primitives, layers (`Menu`, `Popover`, `Layer`, `Sticky`, `FloatingLanes`), `Text` and `Icon` come from `@butteryui/core`; components and patterns from `@butteryui/react`. Reuse before you build.
 
 ## 2. Inventory the UI
@@ -22,7 +22,7 @@ For the screen or component in scope, list:
 - **Risks**: things that can overlap, overflow, wrap or jitter (long labels, changing numbers, many toolbar actions, fixed-position elements).
 
 ## 3. Map to buttery (top-down, reuse first)
-1. Whole screen → a pattern if one fits: `AppShell`, `Page` + `SplitHero`/`Bento`/`ArticleLayout`, `Onboarding`, `EmptyState`, `SignInForm`/`SignUpForm`. A list or table page is `AppPage` + `PageHeader` + `DataTable`, with `FilterBar` over the table for its search and filters; inside `AppShell layout="sidebar"` when the app has navigation, on its own when it doesn't.
+1. Whole screen → a pattern if one fits: `AppShell`, `Page` + `SplitHero`/`Bento`/`ArticleLayout`, `Onboarding`, `EmptyState`, `SignInForm`/`SignUpForm`. A list or table page is `AppPage` + `PageHeader` + `DataTable`, with `FilterBar` over the table for its search and filters; inside `AppShell layout="sidebar"` when the app has navigation, on its own when it doesn't. In an app, `npx buttery add page <kind>` writes a page of each kind to start from, and wires it into a dashboard app's routes and sidebar.
 2. Regions → `Surface` levels (`panel → section → card`, `radius="auto"` for concentric corners) and layout primitives (`Stack`, `Inline` with `uniform` for equal buttons, `Grid`, `Center`, `Divider`, `FitBox`, `OverflowCluster`). Spacing props take spacing steps: `gap={3}`, `pad={4}`, `padX="0.5"`. Text goes through `Text` with a role (`variant="title"`, `asChild` for headings); icons through `Icon`.
 3. Controls → buttery components (`Button`, `SegmentedControl`, `Slider`, `Menu`/`Select`, `SwatchGrid`, …). Never restyle a native control by hand if a component exists. Forms: `TextField`/`PasswordField`/`TextArea` (label above, `hint`, `error`; pass `type`, `autoComplete`, `inputMode`), `Checkbox` for a choice that waits for submit, `Switch` for one that takes effect at once, `Field` to label anything else, `Callout` for an error summary or a note. Text blocks (title, body, caption) → `TextStack`.
 4. Anything custom/third-party → wrap with `buttery(Component, recipe)` or `<buttery.div surface=… press …>`; plain HTML → recipe classes (`.bt-surface[data-level]`, `.bt-press`, `.bt-focus`).
@@ -52,13 +52,13 @@ Check it with reduced motion on: final states must still render correctly.
 - Mark intentional overlaps (artwork on a stage) with `data-bt-allow-overlap`.
 
 ## 6. Verify — don't skip
-1. `pnpm check` (lint + stylelint catch raw values, z-index, negative margins, stray positioning; the quick layout matrix runs on every page).
-2. `pnpm test:layout --reporter=json` in the buttery repo, or `await expectButtery(page, { ...fullMatrix, name })` from `@butteryui/test` in an app's Playwright tests (or the MCP `buttery_check_layout` tool on the running page, and `buttery_lint` on the files you changed). For an app inside the buttery repo, its own specs run with `node scripts/e2e.mjs rest apps/<app>/e2e`. Check every state, not just the first paint: pass `interactions` that open each menu, dialog, toast and empty state (every check runs on the state each one leaves), and list what an interaction moves on purpose, such as filtered rows, in its `allowMove`. Fix each JSON violation at the root; the `fix` field says how.
+1. `pnpm check` in the buttery repo; `npm run lint` and `npm run typecheck` in an app (lint and stylelint catch raw values, z-index, negative margins, stray positioning; in the repo, the quick layout matrix runs on every page).
+2. `pnpm test:layout --reporter=json` in the buttery repo; in an app, `npx buttery check <paths> --json` (add `--full` for the whole matrix) or `await expectButtery(page, { ...fullMatrix, name })` from `@butteryui/test` in its Playwright tests (or the MCP `buttery_check_layout` tool on the running page, and `buttery_lint` on the files you changed). For an app inside the buttery repo, its own specs run with `node scripts/e2e.mjs rest apps/<app>/e2e`. Check every state, not just the first paint: pass `interactions` that open each menu, dialog, toast and empty state (every check runs on the state each one leaves), and list what an interaction moves on purpose, such as filtered rows, in its `allowMove`. Fix each JSON violation at the root; the `fix` field says how.
 3. In a Vite dev build `LayoutGuard` is already on: resize from widest to 390px and watch for red outlines and `[buttery:LayoutGuard]` warnings in the console. `⌥⇧L` hides the outlines, `⌥⇧G` shows the page grid.
 4. Screenshot before/after (light + dark). If the repo has a local `reference/` folder (it's never committed), compare against it; `reference/README.md` says which captures show the look and which show layout and motion behavior.
 5. Report: what changed, any tokens added, any rule you had to bend and why.
 
-New components start from `pnpm new-component <Name> --purpose "…"`; `pnpm check` fails until the folder is complete (manifest entry, tests, demos, 2–6 examples).
+New components start from `pnpm new-component <Name> --purpose "…"`; `pnpm check` fails until the folder is complete (manifest entry, tests, demos, 2–6 examples). In an app, `npx buttery create component <Name> --purpose "…"` starts one on buttery's public parts, with a preview page and a spec that runs `expectButtery` on it.
 
 ## Buttery checklist (all must be true)
 - [ ] Every color, size, radius, shadow, duration and z-index is a token.
