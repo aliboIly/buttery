@@ -8,6 +8,7 @@ import { checkDocs } from "./docs-check.mjs";
 import { docsBase, sitePath } from "../apps/docs/src/base.ts";
 import {
   componentSources,
+  llmsFullText,
   llmsText,
   pageMarkdown,
 } from "../apps/docs/vite/markdown.ts";
@@ -47,14 +48,14 @@ function write(file, contents) {
 /**
  * Builds the docs site into `apps/docs/dist`: the app, then every public route prerendered with React's own
  * server renderer into its own `index.html`, the demos and the template previews with the pages inside them
- * among them, each page's Markdown at its path plus `.md`, `llms.txt`, a `sitemap.xml`, a `404.html` for
- * addresses nothing was written for, such as a demo's customer, and a `.nojekyll` so GitHub Pages serves
- * the files as they are. Each section's own address, such as `/foundations`, is written as the page it
- * opens, naming that page as canonical, and left out of the sitemap. Development-only routes under `/lab`
- * aren't written. `base` is the path the site is served under, `BUTTERY_DOCS_BASE` or `/`: every link,
+ * among them, each page's Markdown at its path plus `.md`, `llms.txt`, `llms-full.txt`, a `sitemap.xml`, a
+ * `404.html` for addresses nothing was written for, such as a demo's customer, and a `.nojekyll` so GitHub
+ * Pages serves the files as they are. Each section's own address, such as `/foundations`, is written as the
+ * page it opens, naming that page as canonical, and left out of the sitemap. Development-only routes under
+ * `/lab` aren't written. `base` is the path the site is served under, `BUTTERY_DOCS_BASE` or `/`: every link,
  * asset and address the build writes is under it, and the sitemap's and the canonical links' absolute
- * addresses are the origin of `siteUrl`, `DOCS_URL`, with the base after it. It runs the docs check first
- * and builds nothing while that finds a problem, such as an export with no page or a broken link.
+ * addresses are the origin of `siteUrl`, `DOCS_URL`, with the base after it. It runs the docs check first and
+ * builds nothing while that finds a problem, such as an export with no page or a broken link.
  */
 export async function buildDocs({
   out = join(app, "dist"),
@@ -122,6 +123,7 @@ export async function buildDocs({
     if (markdown !== null) write(join(out, `${route}.md`), markdown);
   }
   write(join(out, "llms.txt"), llmsText(root, components, base));
+  write(join(out, "llms-full.txt"), llmsFullText(root, components, base));
   // A static host serves 404.html for any address it has no file for, and the app draws that address itself.
   write(join(out, "404.html"), template);
   // Without it, GitHub Pages runs a site published from a branch through Jekyll, which skips files whose names start with "_" and turns the .md pages into HTML.
@@ -147,6 +149,6 @@ const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
   const routes = await buildDocs();
   process.stdout.write(
-    `Wrote ${String(routes.length)} pages, their Markdown, llms.txt, sitemap.xml and 404.html to apps/docs/dist, to be served under ${docsBase(process.env["BUTTERY_DOCS_BASE"])}.\n`,
+    `Wrote ${String(routes.length)} pages, their Markdown, llms.txt, llms-full.txt, sitemap.xml and 404.html to apps/docs/dist, to be served under ${docsBase(process.env["BUTTERY_DOCS_BASE"])}.\n`,
   );
 }

@@ -13,6 +13,8 @@ import {
   componentHref,
   componentSources,
   contentRoutesIn,
+  listedRoutesIn,
+  llmsFullText,
   llmsText,
   markdownRequests,
   missingMarkdown,
@@ -341,6 +343,26 @@ describe("the site as Markdown", () => {
     );
   });
 
+  it("writes every page llms.txt lists into llms-full.txt as its Markdown, in llms.txt's order, with the demos last", () => {
+    const text = llmsText(root, components);
+    const full = llmsFullText(root, components);
+    const routes = [...text.matchAll(/^- \[[^\]]+\]\(\/([^)]+)\.md\)/gm)].map(
+      ([, route]) => route ?? "",
+    );
+    expect(routes).toEqual(listedRoutesIn(root, components));
+    expect(full.startsWith("# buttery\n\n> A React design system")).toBe(true);
+    let after = 0;
+    for (const route of routes) {
+      const at = full.indexOf(
+        `\n\n---\n\n${(pageMarkdown(root, route, components) ?? "").trim()}\n\n---\n\n`,
+        after,
+      );
+      expect(at, route).toBeGreaterThanOrEqual(after);
+      after = at;
+    }
+    expect(full.slice(full.lastIndexOf("\n---\n"))).toContain("\n## Demos\n");
+  });
+
   it("lists the demos page and each demo in llms.txt", () => {
     expect(listedUnder(llmsText(root, components), "Demos")).toEqual([
       "/demos",
@@ -444,7 +466,7 @@ describe("the site as Markdown under a base", () => {
     expect(linksOutside(text, base)).toEqual([]);
   });
 
-  it("answers each page's Markdown and llms.txt at their addresses under the base", () => {
+  it("answers each page's Markdown, llms.txt and llms-full.txt at their addresses under the base", () => {
     const handle = markdownRequests(root, (path) => path === "/notes.md", base);
     expect(ask(handle, "/buttery/get-started/installation.md")).toEqual({
       status: 200,
@@ -463,6 +485,12 @@ describe("the site as Markdown under a base", () => {
     expect(bodyOf(handle, "/buttery/llms.txt")).toContain(
       "(/buttery/components/button.md)",
     );
+    expect(ask(handle, "/buttery/llms-full.txt").type).toBe(
+      "text/plain; charset=utf-8",
+    );
+    expect(
+      linksOutside(bodyOf(handle, "/buttery/llms-full.txt") ?? "", base),
+    ).toEqual([]);
     expect(ask(handle, "/buttery/get-started/instalation.md").status).toBe(404);
     expect(ask(handle, "/buttery/notes.md").passed).toBe(true);
     expect(ask(handle, "/get-started/installation.md").passed).toBe(true);

@@ -137,10 +137,13 @@ describe("pnpm docs:build under a base", () => {
     expect(problems).toEqual([]);
   });
 
-  it("links llms.txt and every page's Markdown under the base, each link reaching a file", () => {
+  it("links llms.txt, llms-full.txt and every page's Markdown under the base, each link reaching a file", () => {
     const llms = readFileSync(join(out, "llms.txt"), "utf8");
     expect(llms).toContain("(/buttery/components/button.md)");
     expect(llms).toContain("(/buttery/get-started/introduction.md)");
+    expect(readFileSync(join(out, "llms-full.txt"), "utf8")).toContain(
+      "\n# Button\n",
+    );
     const button = readFileSync(join(out, "components/button.md"), "utf8");
     expect(button).toContain(
       "[Button › Demo](/buttery/components/button#demo)",
@@ -149,7 +152,11 @@ describe("pnpm docs:build under a base", () => {
       readFileSync(join(out, "foundations/palettes.md"), "utf8"),
     ).toContain("[color tokens](/buttery/foundations/colors)");
     const problems = [];
-    for (const file of ["llms.txt", ...globSync("**/*.md", { cwd: out })]) {
+    for (const file of [
+      "llms.txt",
+      "llms-full.txt",
+      ...globSync("**/*.md", { cwd: out }),
+    ]) {
       for (const href of markdownLinks(readFileSync(join(out, file), "utf8"))) {
         if (!href.startsWith(BASE) || !reaches(href))
           problems.push(`${file}: ${href}`);

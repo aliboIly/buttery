@@ -910,25 +910,35 @@ export function pageMarkdown(
     : null;
 }
 
-/** A page as `llms.txt` lists it: where it sits in the nav, and its link line. */
+/** A page as `llms.txt` lists it: where it sits in the nav, its link's text and what it's for. */
 interface ListedPage {
   readonly section: string;
   readonly order: number;
   readonly title: string;
-  readonly line: string;
+  /** Its path from the site's root without the leading slash, such as `"components/button"`. */
+  readonly route: string;
+  /** Its link's text: a written page's title, or a component's name. */
+  readonly label: string;
+  readonly description: string;
 }
 
+/** A heading of `llms.txt`, such as "Components › Actions", and its pages in the nav's order. */
+interface ListedSection {
+  readonly heading: string;
+  readonly pages: readonly ListedPage[];
+}
+
+const LLMS_SUMMARY =
+  "> A React design system and layout and motion framework for web and desktop apps: tokens, components, patterns and checks that keep an app buttery.";
+
 /**
- * `llms.txt`: what buttery is, and every page of the site with a link to its Markdown, under the nav's
- * sections in the nav's order, and the components under their groups' names, such as "Components › Actions";
- * then the demos, which are apps, by their own addresses. Its links are under `base`, the path the site is
- * served under.
+ * Every page with Markdown, written pages and components' own pages, under the nav's sections in the nav's
+ * order, and the components under their groups' names, such as "Components › Actions".
  */
-export function llmsText(
+function listedSections(
   root: string,
-  components: readonly ComponentSource[] = componentSources(root),
-  base = "/",
-): string {
+  components: readonly ComponentSource[],
+): ListedSection[] {
   const pages: ListedPage[] = [
     ...contentRoutesIn(root).map((route) => {
       const { block } = splitFrontmatter(
@@ -936,13 +946,14 @@ export function llmsText(
       );
       const data = block === null ? {} : parseFrontmatter(block, route);
       const title = typeof data["title"] === "string" ? data["title"] : route;
-      const description =
-        typeof data["description"] === "string" ? data["description"] : "";
       return {
         section: typeof data["section"] === "string" ? data["section"] : "",
         order: typeof data["order"] === "number" ? data["order"] : 0,
         title,
-        line: `- [${title}](${sitePath(`/${route}.md`, base)}): ${description}`,
+        route,
+        label: title,
+        description:
+          typeof data["description"] === "string" ? data["description"] : "",
       };
     }),
     ...components
@@ -951,28 +962,41 @@ export function llmsText(
         section: component.section,
         order: component.order,
         title: component.title,
-        line: `- [${component.name}](${sitePath(markdownHref(componentHref(component)), base)}): ${textOf(component.meta["purpose"])}`,
+        route: componentHref(component).slice(1),
+        label: component.name,
+        description: textOf(component.meta["purpose"]),
       })),
   ];
-  const listing = (heading: string, section: string): string[] => {
+  const listing = (heading: string, section: string): ListedSection[] => {
     const listed = pages
       .filter((page) => page.section === section)
       .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
-    return listed.length === 0
-      ? []
-      : [`## ${heading}`, "", ...listed.map((page) => page.line), ""];
+    return listed.length === 0 ? [] : [{ heading, pages: listed }];
   };
-  return `${[
-    "# buttery",
-    "",
-    "> A React design system and layout and motion framework for web and desktop apps: tokens, components, patterns and checks that keep an app buttery.",
-    "",
-    ...SECTIONS.flatMap((section) => [
-      ...listing(section.title, section.root),
-      ...(section.groups ?? []).flatMap((group) =>
-        listing(`${section.title} › ${group.title}`, group.section),
-      ),
-    ]),
+  return SECTIONS.flatMap((section) => [
+    ...listing(section.title, section.root),
+    ...(section.groups ?? []).flatMap((group) =>
+      listing(`${section.title} › ${group.title}`, group.section),
+    ),
+  ]);
+}
+
+/**
+ * Every page `llms.txt` lists, written pages and components' own pages, by its path from the site's root
+ * without the leading slash, such as `"components/button"`, in its order.
+ */
+export function listedRoutesIn(
+  root: string,
+  components: readonly ComponentSource[] = componentSources(root),
+): string[] {
+  return listedSections(root, components).flatMap(({ pages }) =>
+    pages.map((page) => page.route),
+  );
+}
+
+/** The last section of `llms.txt` and `llms-full.txt`: the demos, which are apps, by their own addresses. */
+function demosListing(base: string): string[] {
+  return [
     "## Demos",
     "",
     `- [Demos](${sitePath("/demos", base)}): Small apps made only from buttery's components, each one a template with its own content, that open as sites of their own.`,
@@ -980,9 +1004,69 @@ export function llmsText(
       (demo) =>
         `- [${demo.title}](${sitePath(`/demos/${demo.route}`, base)}): ${demo.description} It's built on the ${demo.template} template, and its source is in \`apps/demos/${demo.route}\`.`,
     ),
+  ];
+}
+
+/**
+ * `llms.txt`: what buttery is, and every page of the site with a link to its Markdown, under the nav's
+ * sections in the nav's order, and the components under their groups' names, such as "Components › Actions";
+ * then the demos, which are apps, by their own addresses. Its links are under `base`, the path the site is
+ * served under, and `note`, when there is one, follows the summary.
+ */
+export function llmsText(
+  root: string,
+  components: readonly ComponentSource[] = componentSources(root),
+  base = "/",
+  note = "",
+): string {
+  return `${[
+    "# buttery",
+    "",
+    LLMS_SUMMARY,
+    "",
+    ...(note === "" ? [] : [note, ""]),
+    ...listedSections(root, components).flatMap(({ heading, pages }) => [
+      `## ${heading}`,
+      "",
+      ...pages.map(
+        (page) =>
+          `- [${page.label}](${sitePath(`/${page.route}.md`, base)}): ${page.description}`,
+      ),
+      "",
+    ]),
+    ...demosListing(base),
   ]
     .join("\n")
     .trim()}\n`;
+}
+
+/**
+ * `llms-full.txt`: what buttery is, then the Markdown of every page `llms.txt` lists, in its order, each
+ * after a rule, and the demos last. Its links are under `base`, and `note`, when there is one, follows the
+ * summary.
+ */
+export function llmsFullText(
+  root: string,
+  components: readonly ComponentSource[] = componentSources(root),
+  base = "/",
+  note = "",
+): string {
+  const written = listedSections(root, components).flatMap(({ pages }) =>
+    pages.map((page) => {
+      const markdown = pageMarkdown(root, page.route, components, base);
+      if (markdown === null) {
+        throw new Error(
+          `llms.txt lists /${page.route}, which has no Markdown. Fix: give the page an .mdx file or a component's playground.`,
+        );
+      }
+      return markdown.trim();
+    }),
+  );
+  return `${[
+    ["# buttery", LLMS_SUMMARY, ...(note === "" ? [] : [note])].join("\n\n"),
+    ...written,
+    demosListing(base).join("\n"),
+  ].join("\n\n---\n\n")}\n`;
 }
 
 /** The parts of a request the Markdown middlewares read. */
@@ -1025,10 +1109,10 @@ function notFound(
 }
 
 /**
- * Answers `llms.txt` and each page's Markdown at its path plus `.md`, under `base`, written from the
- * repository on each request, and 404 for a `.md` address that's no page's and isn't a file `served` says
- * the server has, given its path from the site's root. Anything else, and any address outside the base,
- * goes on to `next`.
+ * Answers `llms.txt`, `llms-full.txt` and each page's Markdown at its path plus `.md`, under `base`, written
+ * from the repository on each request, and 404 for a `.md` address that's no page's and isn't a file
+ * `served` says the server has, given its path from the site's root. Anything else, and any address outside
+ * the base, goes on to `next`.
  */
 export function markdownRequests(
   root: string,
@@ -1044,13 +1128,20 @@ export function markdownRequests(
     const markdown =
       path === "/llms.txt"
         ? llmsText(root, componentSources(root), base)
-        : path.endsWith(".md")
-          ? pageMarkdown(root, path.slice(1, -3), componentSources(root), base)
-          : null;
+        : path === "/llms-full.txt"
+          ? llmsFullText(root, componentSources(root), base)
+          : path.endsWith(".md")
+            ? pageMarkdown(
+                root,
+                path.slice(1, -3),
+                componentSources(root),
+                base,
+              )
+            : null;
     if (markdown !== null) {
       response.setHeader(
         "Content-Type",
-        path === "/llms.txt"
+        path.endsWith(".txt")
           ? "text/plain; charset=utf-8"
           : "text/markdown; charset=utf-8",
       );
@@ -1081,10 +1172,10 @@ export function missingMarkdown(out: string, base = "/"): MarkdownMiddleware {
 }
 
 /**
- * Serves every page as Markdown at its path plus `.md`, and `llms.txt`, from the dev server under its base,
- * written from the repository on each request so they follow the pages as they change; the static build
- * writes the same files. Both answer 404 for a `.md` address no page has, the static build when
- * `vite preview` serves it.
+ * Serves every page as Markdown at its path plus `.md`, `llms.txt` and `llms-full.txt`, from the dev server
+ * under its base, written from the repository on each request so they follow the pages as they change; the
+ * static build writes the same files. Both answer 404 for a `.md` address no page has, the static build
+ * when `vite preview` serves it.
  */
 export function butteryMarkdown(root: string): Plugin {
   return {
