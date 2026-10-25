@@ -65,4 +65,16 @@ describe("useAnimationTracking", () => {
     expect(isSettled()).toBe(true);
     unmount();
   });
+
+  it("lets go of its own animation that reduced motion cut short without reporting its end", () => {
+    vi.useFakeTimers();
+    const { result, reduce, unmount } = tracked();
+    result.current.onAnimationStart();
+    reduce();
+    vi.advanceTimersByTime(800);
+    expect(isSettled()).toBe(false);
+    vi.advanceTimersByTime(200);
+    expect(isSettled()).toBe(true);
+    unmount();
+  });
 });

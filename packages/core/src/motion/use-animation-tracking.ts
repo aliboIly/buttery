@@ -22,8 +22,8 @@ export interface AnimationTracking {
   readonly onLayoutAnimationComplete: () => void;
 }
 
-/** The longest a layout animation runs, in ms: twice the visual duration of the longest spring. */
-const LAYOUT_LIMIT =
+/** The longest a buttery animation runs, in ms: twice the visual duration of the longest spring. */
+const ANIMATION_LIMIT =
   2000 *
   Math.max(
     ...Object.values(spring).map((value) =>
@@ -46,14 +46,16 @@ export function useAnimationTracking(): AnimationTracking {
   const reduced = useMotionPreference() === "reduced";
   const releases = useRef<Releases>({ values: null, layout: null });
 
-  // Reduced motion turns layout animation off. Motion finishes one that's running in some engines and drops it
-  // without reporting its end in others, so a hold that outlives the longest layout animation lets go.
+  // Reduced motion turns layout animation off and cuts the component's own animations short. Motion finishes
+  // a running one in some engines and drops it without reporting its end in others, so a hold that outlives
+  // the longest animation lets go of whatever is still held.
   useEffect(() => {
     if (!reduced) return undefined;
     const timer = window.setTimeout(() => {
+      releases.current.values?.();
       releases.current.layout?.();
-      releases.current.layout = null;
-    }, LAYOUT_LIMIT);
+      releases.current = { values: null, layout: null };
+    }, ANIMATION_LIMIT);
     return () => {
       window.clearTimeout(timer);
     };
