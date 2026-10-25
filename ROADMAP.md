@@ -7,16 +7,15 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 Kept up to date as items finish.
 
 **Now**, Phase 8:
-- The command line tool is built, for `v0.11.0`: `create-buttery` with the four templates, `buttery add page` with every kind and `create component`, `buttery check`, `doctor`, `init` and `migrate`. `pnpm test:apps` makes every template outside the repository from packed tarballs and passes their checks and `buttery check` with no edits, and the dashboard template has a page of every kind
+- `v0.11.0` is out, with all seven packages on npm: the command line tool, `create-buttery` with the four templates, `buttery add page` with every kind and `create component`, `buttery check`, `doctor`, `init` and `migrate`. `pnpm test:apps` makes every template outside the repository from packed tarballs and passes their checks and `buttery check` with no edits, and the dashboard template has a page of every kind
 - A second agent evaluation ran on apps made with `create-buttery`: both agents checked their own layout with `buttery check` before finishing, and both apps passed in Chromium and WebKit (`docs/AGENT_EVAL.md`)
-- `v0.10.0` is out: `@butteryui/mcp`, the MCP server for coding agents, and the passwordless sign-in flow, with `core`, `react`, `test` and `lint` at 0.10.0
+- The docs shipped in the packages, so an agent reads the installed version's docs from `node_modules`, offline
 
 Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the nav bar's menus fold late while their full-page blur scrim fades.
 
 **Next**, in order:
-1. Publish `v0.11.0`, with the command line's docs and the guides "Build an app in 15 minutes" and "Build your own buttery component"
-2. The follow-ups: stylelint flagging a `--bt-*` name that isn't a token, links to the docs in development warnings, an `OverflowCluster` that can't grow staying folded, the nav bar's blur in WebKit, and the ones the demos turned up
-3. The agent evaluation with the other agents DX_AND_AI names, once they're installed here
+1. The follow-ups: stylelint flagging a `--bt-*` name that isn't a token, links to the docs in development warnings, an `OverflowCluster` that can't grow staying folded, the nav bar's blur in WebKit, and the ones the demos turned up
+2. The agent evaluation with the other agents DX_AND_AI names, once they're installed here, and then `v1.0`, which closes Phase 8
 
 ---
 
