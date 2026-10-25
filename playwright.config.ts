@@ -50,6 +50,18 @@ const apps = APP_FOLDERS.flatMap((folder) =>
     : [],
 );
 
+const sharedPort = apps.find((app, index) =>
+  apps.slice(0, index).some((other) => other.port === app.port),
+);
+if (sharedPort) {
+  const sharing = apps
+    .filter((app) => app.port === sharedPort.port)
+    .map((app) => app.dir);
+  throw new Error(
+    `${sharing.join(" and ")} both have config.port ${String(sharedPort.port)}, so their test servers would collide. Fix: give each app its own port in its package.json, or move a folder that isn't one of this repository's apps out of apps/.`,
+  );
+}
+
 const browsers = [
   { name: "chromium", device: devices["Desktop Chrome"] },
   { name: "webkit", device: devices["Desktop Safari"] },
