@@ -4,6 +4,7 @@ const CARD_PAGES = [
   "/patterns/plans",
   "/patterns/forms",
   "/layout/the-layout-contract",
+  "/get-started/using-coding-agents",
 ];
 
 for (const width of [768, 960, 1280]) {

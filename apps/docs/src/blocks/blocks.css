@@ -117,7 +117,9 @@
   color: var(--bt-accent-text);
 }
 
+/* The body takes the card's width whatever its longest chip, so a chip too long for it can't widen every line. */
 .docs-card-body {
+  align-self: stretch;
   min-inline-size: 0;
 }
 
