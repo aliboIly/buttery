@@ -143,9 +143,9 @@ function checkApp(name, app, routes, { e2e, clean = true }) {
 }
 
 /**
- * Whether the packages installed in `app` ship their docs: `llms.txt`, `llms-full.txt` and every page in
- * `@butteryui/core`, each link between them reaching its file, and each example `@butteryui/react`'s
- * `manifest.json` names, with the MCP server's knowledge beside it.
+ * Whether the packages installed in `app` ship their docs: `llms.txt`, `llms-full.txt`, `tokens.json` and
+ * every page in `@butteryui/core`, each link between them reaching its file, and each example
+ * `@butteryui/react`'s `manifest.json` names, with the MCP server's knowledge beside it.
  */
 function shippedDocs(app) {
   const core = join(app, "node_modules/@butteryui/core/dist");
@@ -153,6 +153,7 @@ function shippedDocs(app) {
   const missing = [
     join(core, "llms.txt"),
     join(core, "llms-full.txt"),
+    join(core, "tokens.json"),
     join(react, "manifest.json"),
     join(react, "knowledge.json"),
   ]
