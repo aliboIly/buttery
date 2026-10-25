@@ -60,9 +60,10 @@ export interface LayoutGuardProps {
 /**
  * The development overlay that keeps layouts honest. It re-checks overlap, overflow and off-scale spacing
  * once the page has been quiet for 300ms (at least once a second while it keeps changing) and buttery's
- * animations have settled, a rule or two per frame so a check never holds up what the page is doing,
- * outlines offenders in red with a label, and logs each new set of problems to the console in the same JSON
- * format `expectButtery` uses. ⌥⇧L toggles the outlines and ⌥⇧G a 12-column page grid, except while typing
+ * animations have settled, a rule or two per frame so a check doesn't hold up what the page is doing (a
+ * change between its frames starts it over, unless a second of changes forced it), outlines offenders in
+ * red with a label, and logs each new set of problems to the console in the same JSON format
+ * `expectButtery` uses. ⌥⇧L toggles the outlines and ⌥⇧G a 12-column page grid, except while typing
  * in a field. `ButteryProvider` mounts it in development builds.
  *
  * @example
@@ -100,13 +101,19 @@ export function LayoutGuard({
     let timer = 0;
     let frame = 0;
     let burstStart: number | null = null;
+    let forced = false;
+    let dirty = false;
     let lastReport = "";
     const observer = new MutationObserver((records) => {
       if (records.every((record) => isInsideGuard(record.target))) return;
       schedule();
     });
     const finish = (violations: readonly LayoutViolation[]): void => {
-      observer.takeRecords();
+      forced = false;
+      if (dirty) {
+        dirty = false;
+        schedule();
+      }
       const serialized = JSON.stringify(violations);
       if (serialized !== lastReport) {
         lastReport = serialized;
@@ -128,14 +135,18 @@ export function LayoutGuard({
       );
     };
     // Each slice runs after a rendered frame: components adapt to size changes in ResizeObserver callbacks,
-    // which run with the frame, and a check before them would report a state that never paints. A change
-    // between slices cancels the check through schedule, so a report never mixes two states of the page.
+    // which run with the frame, and a check before them would report a state that never paints.
     const afterFrame = (work: () => void): void => {
       frame = requestAnimationFrame(() => {
         timer = window.setTimeout(work, 0);
       });
     };
     const check = (from: number, found: readonly LayoutViolation[]): void => {
+      if (!isSettled()) {
+        forced = false;
+        schedule();
+        return;
+      }
       const start = performance.now();
       let index = from;
       let violations = found;
@@ -160,16 +171,21 @@ export function LayoutGuard({
       }
     };
     const run = (): void => {
+      forced =
+        burstStart !== null &&
+        performance.now() - burstStart >= MAX_WAIT_MS - 1;
       burstStart = null;
-      if (!isSettled()) {
-        schedule();
-        return;
-      }
       afterFrame(() => {
         check(0, []);
       });
     };
+    // A change cancels a check in progress and starts the wait over, except a check that a second of changes
+    // forced, which runs to its end and then checks again.
     function schedule(): void {
+      if (forced) {
+        dirty = true;
+        return;
+      }
       const now = performance.now();
       burstStart ??= now;
       cancelAnimationFrame(frame);

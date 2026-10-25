@@ -18,6 +18,18 @@ const OVERLAPPING = `
   </div>`;
 
 let page: HTMLDivElement;
+const realCheck = vi.mocked(runLayoutChecks).getMockImplementation();
+if (!realCheck) throw new Error("runLayoutChecks isn't mocked");
+
+/** Makes each rule cost a whole slice, so every frame runs one of the seven. */
+function sliceEachRule(): ReturnType<typeof vi.mocked<typeof runLayoutChecks>> {
+  const run = vi.mocked(runLayoutChecks);
+  run.mockImplementation((options) => {
+    vi.advanceTimersByTime(10);
+    return realCheck(options);
+  });
+  return run;
+}
 
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "performance"] });
@@ -31,6 +43,7 @@ afterEach(() => {
   page.remove();
   vi.useRealTimers();
   vi.restoreAllMocks();
+  vi.mocked(runLayoutChecks).mockImplementation(realCheck);
 });
 
 function marks(): NodeListOf<Element> {
@@ -125,14 +138,7 @@ describe("LayoutGuard", () => {
 
   it("checks a rule or two per frame, and starts over when the page changes between frames", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const run = vi.mocked(runLayoutChecks);
-    const original = run.getMockImplementation();
-    if (!original) throw new Error("runLayoutChecks isn't mocked");
-    run.mockImplementation((options) => {
-      // Each rule costs a whole slice, so every frame runs one of the seven.
-      vi.advanceTimersByTime(10);
-      return original(options);
-    });
+    const run = sliceEachRule();
     render(<LayoutGuard />);
     await runGuard();
     expect(run).toHaveBeenCalledTimes(1);
@@ -151,7 +157,43 @@ describe("LayoutGuard", () => {
     expect(run).toHaveBeenCalledTimes(9);
     expect(marks()).toHaveLength(1);
     expect(warn).toHaveBeenCalledOnce();
-    run.mockImplementation(original);
+  });
+
+  it("finishes a check that a second of changes forced, whatever changes while it runs", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const run = sliceEachRule();
+    render(<LayoutGuard />);
+    for (let elapsed = 0; elapsed < 1000; elapsed += 100) {
+      await act(async () => {
+        page.dataset["frame"] = String(elapsed);
+        await Promise.resolve();
+        vi.advanceTimersByTime(100);
+      });
+    }
+    for (let slice = 0; slice < 7; slice += 1) {
+      await act(async () => {
+        page.dataset["frame"] = `slice ${String(slice)}`;
+        await Promise.resolve();
+      });
+      await runGuard(0);
+    }
+    expect(run).toHaveBeenCalledTimes(7);
+    expect(marks()).toHaveLength(1);
+  });
+
+  it("waits between frames for buttery's animations to settle, then starts over", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const run = sliceEachRule();
+    render(<LayoutGuard />);
+    await runGuard();
+    expect(run).toHaveBeenCalledTimes(1);
+    const finish = trackAnimation();
+    await runGuard(0);
+    expect(run).toHaveBeenCalledTimes(1);
+    finish();
+    await runGuard();
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(marks()).toHaveLength(0);
   });
 
   it("waits for buttery's animations to settle", async () => {
