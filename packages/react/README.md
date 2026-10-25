@@ -31,7 +31,7 @@ export function App(): ReactElement {
 }
 ```
 
-Every component has a page with live examples on [the docs site](https://aliboily.github.io/buttery/components/overview), and each page is Markdown at its address plus `.md`, for coding agents.
+Every component has a page with live examples on [the docs site](https://aliboily.github.io/buttery/components/overview), and each page is Markdown at its address plus `.md`, for coding agents. The package describes its version too: `dist/manifest.json` lists every component with its import, props, parts and examples, and each example is a file under `dist/examples/<Component>/` to copy.
 
 ## License
 

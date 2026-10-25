@@ -176,7 +176,7 @@ export function loadKnowledge(
   const installed = installedVersion(projectRoot);
   if (projectRoot !== null) {
     const shipped = readJson(
-      join(projectRoot, "node_modules/@butteryui/react/knowledge.json"),
+      join(projectRoot, "node_modules/@butteryui/react/dist/knowledge.json"),
     );
     if (isKnowledge(shipped)) {
       return { knowledge: shipped, source: "project", installed };
