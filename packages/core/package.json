@@ -53,6 +53,7 @@
     },
     "./llms.txt": "./dist/llms.txt",
     "./llms-full.txt": "./dist/llms-full.txt",
+    "./dist/docs/*": "./dist/docs/*",
     "./package.json": "./package.json"
   },
   "files": [

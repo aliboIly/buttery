@@ -44,6 +44,20 @@ describe("publishedTargets", () => {
 });
 
 describe("missingTargets", () => {
+  it("counts a pattern as built when it matches a file, such as a docs page", () => {
+    const manifest = {
+      name: "@butteryui/core",
+      exports: { "./dist/docs/*": "./dist/docs/*" },
+    };
+    expect(
+      missingTargets(fixture(manifest, ["dist/docs/components/button.md"])),
+    ).toEqual([]);
+    rmSync(dir, { recursive: true, force: true });
+    expect(missingTargets(fixture(manifest, ["dist/index.js"]))).toEqual([
+      "@butteryui/core: ./dist/docs/*",
+    ]);
+  });
+
   it("names the targets the build didn't write, such as .js when it wrote .mjs", () => {
     const root = fixture(
       {

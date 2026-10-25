@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, globSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -23,12 +23,21 @@ export function publishedTargets(manifest) {
   return targets;
 }
 
-/** The published targets of the package in `dir` that don't exist, as `name: target` lines. */
+/**
+ * The published targets of the package in `dir` that don't exist, as `name: target` lines; a pattern such as
+ * `./dist/docs/*` has to match a file.
+ */
 export function missingTargets(dir) {
   const manifest = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
   if (manifest.private === true) return [];
   return publishedTargets(manifest)
-    .filter((target) => !existsSync(join(dir, target)))
+    .filter((target) =>
+      target.includes("*")
+        ? globSync(target.replace(/^\.\//, "").replace(/\*/g, "**/*"), {
+            cwd: dir,
+          }).length === 0
+        : !existsSync(join(dir, target)),
+    )
     .map((target) => `${String(manifest.name)}: ${target}`);
 }
 
