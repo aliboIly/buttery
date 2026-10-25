@@ -52,7 +52,7 @@ const READ_ONLY = {
 export function instructionsFor(knowledge: Knowledge): string {
   return [
     `buttery is the React design system this project builds its UI with (these docs: @butteryui/react ${knowledge.version}).`,
-    "Before writing or changing UI, call buttery_search for the component, pattern or page to start from, then buttery_get with every id you need in one call for exact props and a working example.",
+    "Before writing or changing UI, call buttery_search for the component, pattern or page to start from, then buttery_get with every id you need in one call for exact props and a working example, or buttery_scaffold for a whole page.",
     "After editing, run buttery_lint on the changed files and buttery_check_layout on the running app, and fix what they report.",
     'Props take tokens (gap={4}, never "16px"). Lay out with Stack, Inline or Grid and a gap; no outer or negative margins, no absolute positioning, one primary button per region.',
     "Not for non-UI code.",

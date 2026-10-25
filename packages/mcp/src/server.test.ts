@@ -67,6 +67,15 @@ describe.each([
     await client.close();
   });
 
+  it("names every tool in its instructions, within 800 characters", async () => {
+    const client = await connect();
+    const instructions = client.getInstructions() ?? "";
+    expect(instructions.length).toBeLessThan(800);
+    for (const tool of (await client.listTools()).tools)
+      expect(instructions).toContain(tool.name);
+    await client.close();
+  });
+
   it("lists its tools in one order every time, each read-only with an object input schema", async () => {
     const client = await connect();
     const first = await client.listTools();
