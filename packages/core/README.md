@@ -35,7 +35,7 @@ What else it exports:
 - `@butteryui/core/layout`: the layout checks behind `LayoutGuard` and `@butteryui/test`.
 - `@butteryui/core/tokens.json` and `@butteryui/core/tailwind.css`: the tokens for other tools.
 
-The tokens, the layout rules and every primitive are on [the docs site](https://aliboily.github.io/buttery/).
+The tokens, the layout rules and every primitive are on [the docs site](https://aliboily.github.io/buttery/). The package carries the same docs for its version, for coding agents and anyone offline: `dist/llms.txt` lists every page, each a Markdown file under `dist/docs/`, and `dist/llms-full.txt` holds them all in one file.
 
 ## License
 

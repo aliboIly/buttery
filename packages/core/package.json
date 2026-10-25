@@ -51,13 +51,15 @@
       "@butteryui/source": "./src/tokens/tokens.json",
       "default": "./dist/tokens.json"
     },
+    "./llms.txt": "./dist/llms.txt",
+    "./llms-full.txt": "./dist/llms-full.txt",
     "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown && node scripts/build-css.ts",
+    "build": "tsdown && node scripts/build-css.ts && node scripts/build-docs.ts",
     "tokens": "node scripts/generate-tokens.ts"
   },
   "dependencies": {
