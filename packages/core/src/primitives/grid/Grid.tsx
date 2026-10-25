@@ -1,7 +1,10 @@
-import { Slot } from "../../utils/slot.tsx";
+import { useEffect, useRef } from "react";
 import type { ComponentPropsWithRef, CSSProperties, ReactElement } from "react";
 import type { CssVariables } from "../../theme/create-theme.ts";
 import { cx } from "../../utils/cx.ts";
+import { isDevelopment, warnOnce } from "../../utils/dev.ts";
+import { useMergedRefs } from "../../utils/merge-refs.ts";
+import { Slot } from "../../utils/slot.tsx";
 import type { FlowAlign } from "../flow.ts";
 import { spacingAttributes } from "../spacing.ts";
 import type { SpacingProps } from "../spacing.ts";
@@ -38,7 +41,8 @@ export interface GridProps extends ComponentPropsWithRef<"div">, SpacingProps {
 /**
  * Equal columns with a gap from the spacing scale. Every column can shrink to zero, so one long item never
  * widens its column. Give `columns` an object to change them with the space: `{ base: 1, md: 3 }` stacks
- * on a phone and makes three columns from 640px of the nearest size container (a `Page`, a panel).
+ * on a phone and makes three columns from 640px of the nearest size container (a `Page`, an `AppPage`, a
+ * panel). With no size container above it the columns can't change, which development builds warn about.
  *
  * @example
  * <Grid columns={3} gap={4}>
@@ -57,6 +61,7 @@ export function Grid({
   asChild = false,
   className,
   style,
+  ref,
   ...rest
 }: GridProps): ReactElement {
   const Root = asChild ? Slot : "div";
@@ -65,6 +70,18 @@ export function Grid({
   const base = steps.base ?? 1;
   const md = steps.md ?? base;
   const lg = steps.lg ?? md;
+  const element = useRef<HTMLDivElement>(null);
+  const refs = useMergedRefs(ref, element);
+  const responsive = md !== base || lg !== md;
+
+  useEffect(() => {
+    if (!isDevelopment || !responsive || hasSizeContainer(element.current))
+      return;
+    warnOnce(
+      "Grid",
+      `columns={${JSON.stringify({ base, md, lg })}} can't change with the space: nothing above this grid is a size container, so it keeps ${String(base)} column${base === 1 ? "" : "s"} at every width. Fix: put the grid in a Page, an AppPage or a panel such as ExpandableCard, or give an element above it container-type: inline-size.`,
+    );
+  }, [responsive, base, md, lg]);
   const merged: CSSProperties & CssVariables = {
     ...style,
     "--bt-grid-columns-base": String(base),
@@ -74,6 +91,7 @@ export function Grid({
   return (
     <Root
       {...rest}
+      ref={refs}
       className={cx("bt-grid", className)}
       style={merged}
       data-bt="Grid"
@@ -81,4 +99,16 @@ export function Grid({
       {...spacingAttributes({ gap, pad, padX, padY })}
     />
   );
+}
+
+function hasSizeContainer(element: HTMLElement | null): boolean {
+  for (
+    let node = element?.parentElement ?? null;
+    node;
+    node = node.parentElement
+  ) {
+    const type = getComputedStyle(node).containerType;
+    if (type !== "" && type !== "normal") return true;
+  }
+  return false;
 }

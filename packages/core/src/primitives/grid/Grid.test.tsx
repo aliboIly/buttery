@@ -1,9 +1,12 @@
 import "../../styles/index.css";
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Grid } from "./Grid.tsx";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 describe("Grid", () => {
   it("splits the width into equal columns", () => {
@@ -20,6 +23,23 @@ describe("Grid", () => {
       expect(screen.getByTestId(id).getBoundingClientRect().width).toBe(100);
     }
     expect(getComputedStyle(screen.getByTestId("grid")).columnGap).toBe("16px");
+  });
+
+  it("warns when responsive columns have no size container to change with", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    render(
+      <div style={{ containerType: "inline-size" }}>
+        <Grid columns={{ base: 1, md: 3 }} />
+      </div>,
+    );
+    expect(warn).not.toHaveBeenCalled();
+    render(<Grid columns={{ base: 1, md: 3 }} />);
+    expect(warn).toHaveBeenCalledOnce();
+    expect(String(warn.mock.calls[0]?.[0])).toContain(
+      '[buttery:Grid] columns={{"base":1,"md":3,"lg":3}} can\'t change with the space',
+    );
+    render(<Grid columns={2} />);
+    expect(warn).toHaveBeenCalledOnce();
   });
 
   it("keeps the caller's style next to its column count", () => {

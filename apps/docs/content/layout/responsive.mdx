@@ -13,7 +13,7 @@ A responsive buttery component changes its layout by the width of the container 
 
 ## Containers
 
-`Page`, `AppShell`'s column and the patterns that change their own layout, such as `SplitHero` or `Bento`, are size containers. `Grid`'s `columns` and the display type step at 640px and 1024px of the nearest one.
+`Page`, `AppPage`, `AppShell`'s column and the patterns that change their own layout, such as `SplitHero` or `Bento`, are size containers; `Container`, `Surface` and `Stack` aren't. `Grid`'s `columns` and the display type step at 640px and 1024px of the nearest one, so a responsive grid needs one above it, and development builds warn when it has none.
 
 Your own component can query them too:
 
