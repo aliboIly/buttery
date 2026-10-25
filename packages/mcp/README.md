@@ -38,6 +38,8 @@ startup_timeout_sec = 30
 tool_timeout_sec = 180
 ```
 
+Codex reads a project's `.codex/config.toml` once you've trusted the folder, which it asks about the first time it runs there; `--ignore-user-config` leaves the project's servers out too.
+
 Gemini CLI, in `.gemini/settings.json`:
 
 ```json

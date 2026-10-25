@@ -6,16 +6,13 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 
 Kept up to date as items finish.
 
-**Now**, Phase 8:
-- `v0.11.0` is out, with all seven packages on npm: the command line tool, `create-buttery` with the four templates, `buttery add page` with every kind and `create component`, `buttery check`, `doctor`, `init` and `migrate`. `pnpm test:apps` makes every template outside the repository from packed tarballs and passes their checks and `buttery check` with no edits, and the dashboard template has a page of every kind
-- A second agent evaluation ran on apps made with `create-buttery`: both agents checked their own layout with `buttery check` before finishing, and both apps passed in Chromium and WebKit (`docs/AGENT_EVAL.md`)
-- The docs ship in the packages, for the next release: every page as Markdown with `llms.txt` and `llms-full.txt` in `@butteryui/core`, and `manifest.json`, the examples as files and the MCP server's knowledge in `@butteryui/react`, so an agent reads the installed version's docs from `node_modules`, with no network
+**Now**, `v1.0.0`, which closes Phase 8 and the roadmap below:
+- Every page of the docs, the manifest, the examples and what the MCP server answers from ship inside the packages, so an agent reads the installed version's docs from `node_modules`, offline
+- The agent evaluation ran all seven tasks with two coding agents on apps made with `create-buttery`; every app passed its checks in both engines, and what the run turned up is fixed: a layout check under load no longer waits on an animation that reduced motion cut short, a responsive `Grid` warns when nothing above it is a size container, and a `Select`'s docs say a `Field` shows its label
+- The development layout guard checks a rule or two per frame, which is what made the nav bar's menus fold late in WebKit, Phase 7's known issue; the overlap rule is seven times cheaper
+- Stylelint flags a `--bt-*` name that isn't a token, development warnings link to the docs, and an `OverflowCluster` in a section's actions folds and unfolds with the page
 
-Phase 7 is closed with `v0.9.0`. Its one known issue, the nav bar's menus folding late in WebKit, turned out to be the development layout guard's check holding the main thread, not the blur; the guard now checks a rule or two per frame, and the overlap rule is seven times cheaper.
-
-**Next**, in order:
-1. The follow-ups, done for the next release: stylelint flags a `--bt-*` name that isn't a token, development warnings link to the docs, an `OverflowCluster` in a section's actions folds and unfolds, and the late fold above
-2. The agent evaluation with the other agents DX_AND_AI names, once they're installed here, and then `v1.0`, which closes Phase 8
+**Next**: the evaluation's run with the third coding agent once it's installed here, then the ideas under Later as they're asked for.
 
 ---
 
@@ -123,7 +120,7 @@ Phase 7 is closed with `v0.9.0`. Its one known issue, the nav bar's menus foldin
 - [x] Any app: `LayoutGuard`, `buttery check` and the lint configs work on an app's own code, and every template and `add page` passes `buttery check` with no edits
 - [x] Guides: "Build an app in 15 minutes" and "Build your own buttery component" (a Stepper), and Tools pages for the command line tool and the MCP server with real output
 - [x] `@butteryui/mcp`, an MCP server with five read-only tools (search on the docs search's index, get, page scaffolding, lint, and a layout check), and configs for the common coding agents (`docs/DX_AND_AI.md`); component scaffolding comes with the command line tool's `create component`
-- [ ] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed (a first run, with and without the MCP server, is in `docs/AGENT_EVAL.md`)
+- [x] An agent evaluation, including a filtered table page and a custom component, with its top issues fixed: three runs in `docs/AGENT_EVAL.md`, the last with all seven tasks and two agents (the third agent's run waits for it to be installed here)
 - [x] A passwordless sign-in pattern: `IdentifierField` (email or phone), `OneTimeCodeField`, an `AuthFlow` with a headless `useOtpFlow` hook, the Authentication page, and sign-in screens in the dashboard template and the roastery demo (`buttery add page sign-in` comes with the command line tool)
 - [x] The first publish to npm: `@butteryui/core`, `react`, `test` and `lint` at 0.9.0 (`@buttery` belongs to another project)
 

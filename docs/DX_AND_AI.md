@@ -73,6 +73,7 @@ What the clients do decides the shapes (checked against each one's docs and sour
 - Claude Code drops text blocks when a result has structured content, Gemini CLI reads only text, and the Copilot CLI sends both. So search, get and scaffold return Markdown only, and lint and the layout check return JSON whose text block is exactly the serialized structured content, with object-root output schemas for 2025 clients.
 - Claude Code and Codex load tools on demand and first show only tool names and the server's instructions, so the names explain themselves and the instructions (under 800 characters, the first 512 standing alone) carry the order to use them in.
 - No client renders MCP Apps usefully for this, and the model can't see one, so there's no in-chat preview tool.
+- Codex reads a project's `.codex/config.toml` only once the folder is trusted (it asks on its first run there), and `--ignore-user-config` drops the project's servers along with the user's. Claude Code loads `buttery_search` and `buttery_get` at once and defers the other three until the model looks them up, so the instructions name all five.
 
 There's no planning tool: with no model behind the server, a plan would repeat what search and get return. A request for a login or sign-up screen finds its pattern through search instead, tested by the golden queries ("login form" and "sign in" put `SignInForm` first).
 
