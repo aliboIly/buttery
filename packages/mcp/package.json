@@ -1,6 +1,6 @@
 {
   "name": "@butteryui/mcp",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "description": "An MCP server that answers questions about buttery's components, tokens and layout rules.",
   "license": "MIT",
   "homepage": "https://aliboily.github.io/buttery/tools/mcp-server",

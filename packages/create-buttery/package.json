@@ -1,6 +1,6 @@
 {
   "name": "create-buttery",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "description": "Start an app on buttery from a template: npm create buttery my-app.",
   "license": "MIT",
   "homepage": "https://aliboily.github.io/buttery/tools/command-line",

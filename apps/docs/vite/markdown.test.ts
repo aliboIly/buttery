@@ -226,9 +226,9 @@ describe("the site as Markdown", () => {
       pageMarkdown(root, "get-started/introduction", components) ?? "";
     expect(markdown).not.toMatch(/<\/?(?:Feature|FeatureGrid)\b/);
     expect(markdown).toContain("### Tokens and themes");
-    expect(markdown).toContain("## New in 0.11");
+    expect(markdown).toContain("## New in 1.0");
     expect(markdown).toContain(
-      "[Release notes for 0.11.0](/resources/whats-new#release-0-11-0)",
+      "[Release notes for 1.0.0](/resources/whats-new#release-1-0-0)",
     );
     expect(markdown).toMatch(
       /^1\. \[Installation\]\(\/get-started\/installation\): /m,
