@@ -223,9 +223,12 @@ describe("examples", () => {
   for (const { name, play, Example } of played) {
     it(name, async () => {
       const logged = [vi.spyOn(console, "error"), vi.spyOn(console, "warn")];
+      // A page's column is a size container, as the docs' example frames are.
       render(
         <ButteryProvider>
-          <Example />
+          <div style={{ containerType: "inline-size" }}>
+            <Example />
+          </div>
         </ButteryProvider>,
       );
       expectHeadingsInOrder(name);

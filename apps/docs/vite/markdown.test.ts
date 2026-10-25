@@ -246,18 +246,23 @@ describe("the site as Markdown", () => {
     expect(markdown).not.toMatch(/<\/?(?:Rules|Rule|DoDont|Do|Dont)\b/);
   });
 
-  it("writes the Roadmap out from ROADMAP.md: the release being built with its boxes, and the shipped ones linking to their notes", () => {
+  it("writes the Roadmap out from ROADMAP.md: a release being built with its boxes, and the shipped ones linking to their notes", () => {
     const markdown = pageMarkdown(root, "resources/roadmap", components) ?? "";
     const { releases } = roadmapIn(root);
     const building = releases.find((release) => release.stage === "now");
     const shipped = releases.filter((release) => release.stage === "shipped");
     const newest = shipped.at(-1);
-    if (!building || !newest)
-      throw new Error("ROADMAP.md has no release in progress or none shipped.");
-    expect(markdown).toContain(
-      `## Now: ${building.version}, ${building.title}`,
-    );
-    expect(markdown).toMatch(/^- \[[ x]\] /m);
+    if (!newest) throw new Error("ROADMAP.md has no release shipped.");
+    if (building) {
+      expect(markdown).toContain(
+        `## Now: ${building.version}, ${building.title}`,
+      );
+      expect(markdown).toMatch(/^- \[[ x]\] /m);
+    } else {
+      expect(markdown).not.toContain("## Now");
+      expect(markdown).not.toMatch(/^- \[ \] /m);
+    }
+    expect(markdown).toContain("## Shipped");
     expect(markdown).toContain(
       `(/resources/whats-new#release-${newest.version.replaceAll(".", "-")})`,
     );

@@ -117,21 +117,27 @@ test("a component page says what its status means and links the notes of the rel
   ).toBeInViewport();
 });
 
-test("the Roadmap shows the release being built with its items from ROADMAP.md, and each shipped release", async ({
+test("the Roadmap shows a release being built with its items from ROADMAP.md, and each shipped release", async ({
   page,
 }) => {
   const building = roadmap.releases.find((release) => release.stage === "now");
-  if (!building) throw new Error("ROADMAP.md has no release in progress.");
-  const done = building.items.filter((item) => item.done).length;
   await page.goto("/resources/roadmap");
   const now = page.getByRole("region", { name: "Now" });
-  await expect(
-    now.getByRole("heading", { level: 3, name: building.title }),
-  ).toBeVisible();
-  await expect(
-    now.getByRole("progressbar", { name: `${building.version} done so far` }),
-  ).toHaveAttribute("aria-valuenow", String(done));
-  await expect(now.getByRole("listitem")).toHaveCount(building.items.length);
+  if (building) {
+    const done = building.items.filter((item) => item.done).length;
+    await expect(
+      now.getByRole("heading", { level: 3, name: building.title }),
+    ).toBeVisible();
+    await expect(
+      now.getByRole("progressbar", {
+        name: `${building.version} done so far`,
+      }),
+    ).toHaveAttribute("aria-valuenow", String(done));
+    await expect(now.getByRole("listitem")).toHaveCount(building.items.length);
+  } else {
+    await expect(now).toHaveCount(0);
+    await expect(page.getByRole("progressbar")).toHaveCount(0);
+  }
   const shipped = page.getByRole("region", { name: "Shipped" });
   await expect(shipped.getByRole("heading", { level: 3 })).toHaveCount(
     roadmap.releases.filter((release) => release.stage === "shipped").length,
