@@ -73,15 +73,16 @@ export function Grid({
   const element = useRef<HTMLDivElement>(null);
   const refs = useMergedRefs(ref, element);
   const responsive = md !== base || lg !== md;
+  const given = JSON.stringify(columns);
 
   useEffect(() => {
     if (!isDevelopment || !responsive || hasSizeContainer(element.current))
       return;
     warnOnce(
       "Grid",
-      `columns={${JSON.stringify({ base, md, lg })}} can't change with the space: nothing above this grid is a size container, so it keeps ${String(base)} column${base === 1 ? "" : "s"} at every width. Fix: put the grid in a Page, an AppPage or a panel such as ExpandableCard, or give an element above it container-type: inline-size.`,
+      `columns={${given}} can't change with the space: nothing above this grid is a size container, so it keeps ${String(base)} column${base === 1 ? "" : "s"} at every width. Fix: put the grid in a Page, an AppPage, a Sheet or a panel such as ExpandableCard, or give an element above it container-type: inline-size.`,
     );
-  }, [responsive, base, md, lg]);
+  }, [responsive, given, base]);
   const merged: CSSProperties & CssVariables = {
     ...style,
     "--bt-grid-columns-base": String(base),
@@ -107,8 +108,12 @@ function hasSizeContainer(element: HTMLElement | null): boolean {
     node;
     node = node.parentElement
   ) {
-    const type = getComputedStyle(node).containerType;
-    if (type !== "" && type !== "normal") return true;
+    const type: unknown = getComputedStyle(node).containerType;
+    if (
+      typeof type === "string" &&
+      type.split(" ").some((part) => part === "size" || part === "inline-size")
+    )
+      return true;
   }
   return false;
 }

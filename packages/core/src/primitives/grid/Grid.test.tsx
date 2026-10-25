@@ -36,7 +36,7 @@ describe("Grid", () => {
     render(<Grid columns={{ base: 1, md: 3 }} />);
     expect(warn).toHaveBeenCalledOnce();
     expect(String(warn.mock.calls[0]?.[0])).toContain(
-      '[buttery:Grid] columns={{"base":1,"md":3,"lg":3}} can\'t change with the space',
+      '[buttery:Grid] columns={{"base":1,"md":3}} can\'t change with the space',
     );
     render(<Grid columns={2} />);
     expect(warn).toHaveBeenCalledOnce();
