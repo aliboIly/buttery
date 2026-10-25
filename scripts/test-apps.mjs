@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import {
+  existsSync,
+  globSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -8,17 +10,18 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 /**
  * The command line's acceptance run, outside the repository and from packed tarballs: an app from each
- * template (the marketing one through create-buttery) passes its own typecheck, lint, build and e2e specs
- * and `buttery check` on every route, unchanged; the dashboard does again with every kind of page and a
- * component of its own added; and a plain React app passes `buttery doctor`, typecheck, lint and build
- * after `buttery init`, and `buttery check` reports on its plain markup. `--templates=blank,dashboard` picks templates (`none` for only the plain app), and `--full` checks the full
- * matrix.
+ * template (the marketing one through create-buttery) passes its own typecheck, lint, build and e2e specs and
+ * `buttery check` on every route, unchanged; the dashboard does again with every kind of page and a component
+ * of its own added; and a plain React app passes `buttery doctor`, typecheck, lint and build after
+ * `buttery init`, the packages it installed ship their docs and examples, and `buttery check` reports on its
+ * plain markup. `--templates=blank,dashboard` picks templates (`none` for only the plain app), and `--full`
+ * checks the full matrix.
  */
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -137,6 +140,52 @@ function checkApp(name, app, routes, { e2e, clean = true }) {
     { ok: ran, output: checked.output },
   );
   for (const problem of found) process.stdout.write(`    ${problem}\n`);
+}
+
+/**
+ * Whether the packages installed in `app` ship their docs: `llms.txt`, `llms-full.txt` and every page in
+ * `@butteryui/core`, each link between them reaching its file, and each example `@butteryui/react`'s
+ * `manifest.json` names, with the MCP server's knowledge beside it.
+ */
+function shippedDocs(app) {
+  const core = join(app, "node_modules/@butteryui/core/dist");
+  const react = join(app, "node_modules/@butteryui/react/dist");
+  const missing = [
+    join(core, "llms.txt"),
+    join(core, "llms-full.txt"),
+    join(react, "manifest.json"),
+    join(react, "knowledge.json"),
+  ]
+    .filter((file) => !existsSync(file))
+    .map((file) => `no ${relative(app, file)}`);
+  const pages = globSync("docs/**/*.md", { cwd: core });
+  for (const file of ["llms.txt", "llms-full.txt", ...pages]) {
+    if (!existsSync(join(core, file))) continue;
+    for (const [, href = ""] of readFileSync(join(core, file), "utf8").matchAll(
+      /\]\(([^)\s#]+)(?:#[^)\s]*)?\)/g,
+    )) {
+      if (
+        !/^[a-z]+:/.test(href) &&
+        !existsSync(join(core, dirname(file), href))
+      ) {
+        missing.push(`${file} links to ${href}, which isn't there`);
+      }
+    }
+  }
+  const examples = existsSync(join(react, "manifest.json"))
+    ? JSON.parse(
+        readFileSync(join(react, "manifest.json"), "utf8"),
+      ).components.flatMap((component) =>
+        component.examples.map((example) => example.file),
+      )
+    : [];
+  for (const file of examples) {
+    if (!existsSync(join(react, file))) missing.push(`no ${file}`);
+  }
+  return {
+    ok: missing.length === 0 && pages.length > 0 && examples.length > 0,
+    output: `${String(pages.length)} pages and ${String(examples.length)} examples.\n${missing.join("\n")}`,
+  };
 }
 
 if (
@@ -291,6 +340,11 @@ if (
     "plain-react",
     "buttery doctor",
     run(process.execPath, [cli, "doctor"], plain),
+  );
+  step(
+    "plain-react",
+    "its packages ship their docs, manifest.json and examples",
+    shippedDocs(plain),
   );
   step(
     "plain-react",
