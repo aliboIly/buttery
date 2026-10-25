@@ -33,7 +33,10 @@ export interface SelectProps<Value extends string = string> extends Omit<
   ComponentPropsWithRef<"button">,
   "value" | "defaultValue" | "onChange" | "children"
 > {
-  /** What the value is, such as "Canvas shape". It names the trigger, the list and the footer. */
+  /**
+   * What the value is, such as "Canvas shape". It names the trigger, the list and the footer for screen
+   * readers and isn't shown; a `Field` around the select shows its label above the box.
+   */
   readonly label: string;
   /** The choices, in order. */
   readonly options: readonly SelectOption<Value>[];

@@ -8,7 +8,7 @@ export const meta: ComponentMeta = {
   useWhen: [
     "A value a control shows and keeps, picked from a list: a canvas shape, an export format",
     "A list of presets with a custom value beside them, through footer",
-    'A form field, with variant="outline", or variant="soft" beside soft text fields',
+    'A form field: inside a Field, which shows the label (label alone names it for screen readers), with variant="outline", or variant="soft" beside soft text fields',
   ],
   avoidWhen: [
     "Two to four options that fit side by side: use SegmentedControl",
