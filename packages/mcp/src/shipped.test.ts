@@ -42,6 +42,21 @@ describe("links in the docs the packages ship", () => {
     ).toBe("- [Button](docs/components/button.md): A button.");
   });
 
+  it("point at the live page for a link to the page they're in, which only the live page can show, and skip code", () => {
+    expect(
+      shippedLinks(
+        "[Button › Demo](/components/button#demo) beside [IconButton](/components/icon-button)",
+        "docs/components",
+        shipped,
+        "components/button",
+      ),
+    ).toBe(
+      `[Button › Demo](${SITE}/components/button#demo) beside [IconButton](${SITE}/components/icon-button)`,
+    );
+    const code = "```md\n[Button](/components/button)\n```";
+    expect(shippedLinks(code, ".", shipped)).toBe(code);
+  });
+
   it("point at the docs site for anything else from the site's root, and leave other links alone", () => {
     expect(
       shippedLinks(
@@ -74,10 +89,9 @@ describe("what @butteryui/core ships for agents", () => {
     );
     for (const [path, contents] of files) {
       for (const link of fileLinks(contents)) {
-        expect(
-          files.has(posix.join(posix.dirname(path), link)),
-          `${path} links to ${link}`,
-        ).toBe(true);
+        const target = posix.join(posix.dirname(path), link);
+        expect(files.has(target), `${path} links to ${link}`).toBe(true);
+        expect(target, `${path} links to itself`).not.toBe(path);
       }
     }
   });
@@ -85,6 +99,10 @@ describe("what @butteryui/core ships for agents", () => {
   it("puts every page in llms-full.txt, its links from beside llms.txt, and names the version there and in llms.txt", () => {
     const full = files.get("llms-full.txt") ?? "";
     expect(full).toContain("\n# Button\n");
+    expect(full).toContain(`[Button › Demo](${SITE}/components/button#demo)`);
+    expect(files.get("docs/components/button.md")).toContain(
+      `[Button › Demo](${SITE}/components/button#demo)`,
+    );
     expect(full).toContain("(docs/components/icon-button.md)");
     expect(files.get("docs/components/button.md")).toContain(
       "(icon-button.md)",

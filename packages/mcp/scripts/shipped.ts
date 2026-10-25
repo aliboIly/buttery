@@ -68,20 +68,30 @@ export interface Manifest {
 /**
  * `markdown`, written with links from the site's root, with each link to a page in `shipped` pointing at
  * that page's file under `docs/`, relative to `from`, the folder the Markdown is written in, and every
- * other link from the site's root, such as a demo's, at the docs site.
+ * other link from the site's root at the docs site: a demo's, and one to `page`, the page the Markdown is,
+ * which points at what only the live page has, such as its demo. Code blocks are left as they are.
  */
 export function shippedLinks(
   markdown: string,
   from: string,
   shipped: ReadonlySet<string>,
+  page?: string,
 ): string {
-  return markdown.replace(/\]\((\/(?!\/)[^)\s]*)\)/g, (_, href: string) => {
-    const [path = "", anchor] = href.split("#");
-    const route = path.slice(1).replace(/\.md$/, "");
-    if (!shipped.has(route)) return `](${SITE}${href})`;
-    const file = posix.relative(from, `docs/${route}.md`);
-    return `](${file}${anchor === undefined ? "" : `#${anchor}`})`;
-  });
+  let fenced = false;
+  return markdown
+    .split("\n")
+    .map((line) => {
+      if (line.startsWith("```")) fenced = !fenced;
+      if (fenced || line.startsWith("```")) return line;
+      return line.replace(/\]\((\/(?!\/)[^)\s]*)\)/g, (_, href: string) => {
+        const [path = "", anchor] = href.split("#");
+        const route = path.slice(1).replace(/\.md$/, "");
+        if (route === page || !shipped.has(route)) return `](${SITE}${href})`;
+        const file = posix.relative(from, `docs/${route}.md`);
+        return `](${file}${anchor === undefined ? "" : `#${anchor}`})`;
+      });
+    })
+    .join("\n");
 }
 
 /**
@@ -102,7 +112,10 @@ export function coreFiles(root: string, version: string): Map<string, string> {
         `llms.txt lists /${route}, which has no Markdown. Fix: give the page an .mdx file or a component's playground.`,
       );
     }
-    files.set(file, shippedLinks(markdown, posix.dirname(file), shipped));
+    files.set(
+      file,
+      shippedLinks(markdown, posix.dirname(file), shipped, route),
+    );
   }
   files.set(
     "llms.txt",
@@ -125,6 +138,7 @@ export function coreFiles(root: string, version: string): Map<string, string> {
         components,
         "/",
         `These are the docs of buttery ${version}, the version installed here, every page in one file. \`llms.txt\` beside it lists them, and each is a Markdown file under \`docs/\`.`,
+        (markdown, route) => shippedLinks(markdown, ".", shipped, route),
       ),
       ".",
       shipped,

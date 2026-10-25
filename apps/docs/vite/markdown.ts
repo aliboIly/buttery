@@ -16,7 +16,7 @@ import {
 } from "./frontmatter.ts";
 import { listed, screensByDemo } from "../src/demo-sentence.ts";
 import { SECTIONS } from "../src/nav.ts";
-import { demoPages, templates } from "../src/routes.ts";
+import { demoPages, SOURCE_URL, templates } from "../src/routes.ts";
 import { demoUsesIn } from "./demo-uses.ts";
 import { exportDocsFor, propsTablesIn, typeTablesIn } from "./props.ts";
 import type { PropDoc } from "./props.ts";
@@ -1002,7 +1002,7 @@ function demosListing(base: string): string[] {
     `- [Demos](${sitePath("/demos", base)}): Small apps made only from buttery's components, each one a template with its own content, that open as sites of their own.`,
     ...demoPages.map(
       (demo) =>
-        `- [${demo.title}](${sitePath(`/demos/${demo.route}`, base)}): ${demo.description} It's built on the ${demo.template} template, and its source is in \`apps/demos/${demo.route}\`.`,
+        `- [${demo.title}](${sitePath(`/demos/${demo.route}`, base)}): ${demo.description} It's built on the ${demo.template} template, and its source is [\`apps/demos/${demo.route}\`](${SOURCE_URL}/tree/main/apps/demos/${demo.route}) in buttery's repository.`,
     ),
   ];
 }
@@ -1042,14 +1042,16 @@ export function llmsText(
 
 /**
  * `llms-full.txt`: what buttery is, then the Markdown of every page `llms.txt` lists, in its order, each
- * after a rule, and the demos last. Its links are under `base`, and `note`, when there is one, follows the
- * summary.
+ * after a rule and passed through `eachPage` with its route, and the demos last. Its links are under
+ * `base`, and `note`, when there is one, follows the summary.
  */
 export function llmsFullText(
   root: string,
   components: readonly ComponentSource[] = componentSources(root),
   base = "/",
   note = "",
+  eachPage: (markdown: string, route: string) => string = (markdown) =>
+    markdown,
 ): string {
   const written = listedSections(root, components).flatMap(({ pages }) =>
     pages.map((page) => {
@@ -1059,7 +1061,7 @@ export function llmsFullText(
           `llms.txt lists /${page.route}, which has no Markdown. Fix: give the page an .mdx file or a component's playground.`,
         );
       }
-      return markdown.trim();
+      return eachPage(markdown.trim(), page.route);
     }),
   );
   return `${[
