@@ -25,7 +25,9 @@ At a project's root, it tells agents which docs to read, the rules that are neve
 </Card>
 <Card icon="book" title="Every page as Markdown">
 
-Each page of this site is Markdown at its address plus `.md`, and `llms.txt` lists them all in the sidebar's order. A component's page gives an agent its props, examples and rules in one file.
+Each page of this site is Markdown at its address plus `.md`, `llms.txt` lists them all in the sidebar's order, and `llms-full.txt` holds every page in one file. A component's page gives an agent its props, examples and rules in one file.
+
+The packages ship the same docs for the version an app has installed, so an agent reads them with no network: `@butteryui/core/dist/llms.txt` lists every page, each a Markdown file under `dist/docs/`, and `@butteryui/react/dist/manifest.json` gives each component's import, props and examples, the examples as files under `dist/examples/`.
 
 </Card>
 <Card icon="bot" title="An MCP server">

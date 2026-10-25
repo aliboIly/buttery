@@ -9,7 +9,7 @@ Kept up to date as items finish.
 **Now**, Phase 8:
 - `v0.11.0` is out, with all seven packages on npm: the command line tool, `create-buttery` with the four templates, `buttery add page` with every kind and `create component`, `buttery check`, `doctor`, `init` and `migrate`. `pnpm test:apps` makes every template outside the repository from packed tarballs and passes their checks and `buttery check` with no edits, and the dashboard template has a page of every kind
 - A second agent evaluation ran on apps made with `create-buttery`: both agents checked their own layout with `buttery check` before finishing, and both apps passed in Chromium and WebKit (`docs/AGENT_EVAL.md`)
-- The docs shipped in the packages, so an agent reads the installed version's docs from `node_modules`, offline
+- The docs ship in the packages, for the next release: every page as Markdown with `llms.txt` and `llms-full.txt` in `@butteryui/core`, and `manifest.json`, the examples as files and the MCP server's knowledge in `@butteryui/react`, so an agent reads the installed version's docs from `node_modules`, with no network
 
 Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the nav bar's menus fold late while their full-page blur scrim fades.
 
@@ -116,7 +116,7 @@ Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the na
 ## v1.0 — Developer and agent experience (Phase 8)
 > buttery on npm, a command line tool that starts, extends and checks apps, and an MCP server so coding agents can look components up instead of guessing.
 
-- [ ] `manifest.json`, `tokens.json`, `llms.txt`, and the docs and examples shipped in the packages, generated with the MCP server's resources from the docs site's content
+- [x] `manifest.json`, `tokens.json`, `llms.txt` and `llms-full.txt`, and the docs and examples shipped in the packages, generated with the MCP server's knowledge from the docs site's content
 - [x] Development warnings that say how to fix what they find, and VS Code snippets
 - [x] Public kit: components use only what apps can import (`Surface`, `Pressable`, `Field`, `Control`, `SharedIndicator`, `Presence`, `Morph`, the layers, `useControllableState`, `useButteryTransition` and `variants()`), enforced by the contract test
 - [x] The command line tool: `create-buttery` with `--template blank`, `dashboard`, `editor` or `marketing`; `init`; `add`, with `add page` for each page the dashboard template has (`table`, `detail`, `overview`, `settings`, `settings-index`, `catalog`, `plans`, `search-results`, `empty`, `feature-intro` and `sign-in`); `create component`; `doctor`; `check`; and `migrate`

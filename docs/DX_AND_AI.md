@@ -45,11 +45,15 @@ Two guides ship with the docs: "Build an app in 15 minutes" (a dashboard from th
 - `buttery init` writes the same setup into consuming apps (a delimited "buttery" section in an existing `AGENTS.md`, replaced in place on later runs and never overwriting the rest, the `CLAUDE.md` import, the skill, and the MCP server in each agent's config), and `create-buttery` gives every new app the same files.
 
 ### 2. Knowledge shipped in the packages (readable from `node_modules`)
-- `llms.txt` (index with one line per doc/component) and `llms-full.txt` (everything concatenated) — in `@butteryui/core` and on the docs site.
-- `manifest.json` (generated at build from types + JSDoc): every primitive/component/pattern → purpose, use when / don't use when, props (type, default, required, allowed token values), compound parts, examples, related components, a11y notes, motion class.
-- `tokens.json` — every token with its value per theme and density and what it's for.
-- `examples/` — 2–6 canonical, copy-pasteable snippets per component. Agents copy examples more reliably than they follow prose.
-- `docs/*.md` — the specs themselves.
+An agent in an app reads the docs of the version it has installed, with no network: Codex's sandbox has none by default. The builds write these from the docs site's own sources (`packages/mcp/scripts/shipped.ts`, beside the MCP server's knowledge), so the packages, the site and the server agree for each version:
+- `@butteryui/core/dist/llms.txt` (every page, a line each, linking to its Markdown) and `dist/llms-full.txt` (every page in one file), also at the docs site's root.
+- `@butteryui/core/dist/docs/<path>.md`: every page of the docs site as Markdown, the Foundations, Layout and Motion pages carrying the specs' rules for app builders. Links between pages reach their files, so the docs read offline; a demo's link goes to the docs site.
+- `@butteryui/core/dist/tokens.json`: every token with its value per theme and density and what it's for.
+- `@butteryui/react/dist/manifest.json`: every primitive, layer, component and pattern, with the line that imports it, its purpose, use when and don't use when, props per part (type, default, required), related components, accessibility, keyboard, motion and layout notes, its page on the site and as Markdown, and its examples; plus the values each token and literal-union type its props take allows.
+- `@butteryui/react/dist/examples/<Component>/<example>.tsx`: its 2–6 canonical examples, as their pages show them. Agents copy examples more reliably than they follow prose.
+- `@butteryui/react/dist/knowledge.json`: what the MCP server answers from, so it answers for the version installed.
+
+`pnpm test:apps` checks that the packages an app installs carry all of it, every link between the pages reaching its file.
 
 ### 3. `@butteryui/mcp` — MCP server
 Any MCP-capable agent can look buttery up instead of guessing. Five read-only tools, in this order:

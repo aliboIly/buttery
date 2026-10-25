@@ -184,7 +184,7 @@ The brand, then the docs shell and nav generation, then the existing pages moved
 
 ## Phase 8
 
-`llms.txt`, `llms-full.txt`, `manifest.json` and the MCP server's resources are generated from the same docs content, so the site and agents share one source; `llms.txt` links to the pages' `.md` versions. The MCP server's `search_docs` tool uses the docs search's index. The Tools pages document the CLI and the MCP server with real output.
+`llms.txt`, `llms-full.txt`, `manifest.json` and the MCP server's resources are generated from the same docs content, so the site and agents share one source; `llms.txt` links to the pages' `.md` versions, and `llms-full.txt` holds every page it lists, in its order. The site serves both at its root, and `@butteryui/core` ships them with every page as a file under `dist/docs/`, its links between pages relative so they read offline. The MCP server's `search_docs` tool uses the docs search's index. The Tools pages document the CLI and the MCP server with real output.
 
 ## Until Phase 7
 
