@@ -3,6 +3,9 @@
   "version": "0.11.0",
   "description": "ESLint and stylelint configs that enforce buttery's tokens and layout rules.",
   "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "keywords": [
     "eslint",
     "stylelint",
