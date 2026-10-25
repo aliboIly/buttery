@@ -11,10 +11,10 @@ Kept up to date as items finish.
 - A second agent evaluation ran on apps made with `create-buttery`: both agents checked their own layout with `buttery check` before finishing, and both apps passed in Chromium and WebKit (`docs/AGENT_EVAL.md`)
 - The docs ship in the packages, for the next release: every page as Markdown with `llms.txt` and `llms-full.txt` in `@butteryui/core`, and `manifest.json`, the examples as files and the MCP server's knowledge in `@butteryui/react`, so an agent reads the installed version's docs from `node_modules`, with no network
 
-Phase 7 is closed with `v0.9.0`. One known issue from its gate: in WebKit the nav bar's menus fold late while their full-page blur scrim fades.
+Phase 7 is closed with `v0.9.0`. Its one known issue, the nav bar's menus folding late in WebKit, turned out to be the development layout guard's check holding the main thread, not the blur; the guard now checks a rule or two per frame, and the overlap rule is seven times cheaper
 
 **Next**, in order:
-1. The follow-ups: the nav bar's blur in WebKit, and the ones the demos turned up (stylelint now flags a `--bt-*` name that isn't a token, development warnings link to the docs, and an `OverflowCluster` in a section's actions folds and unfolds, for the next release)
+1. The follow-ups, done for the next release: stylelint flags a `--bt-*` name that isn't a token, development warnings link to the docs, an `OverflowCluster` in a section's actions folds and unfolds, and the late fold above
 2. The agent evaluation with the other agents DX_AND_AI names, once they're installed here, and then `v1.0`, which closes Phase 8
 
 ---

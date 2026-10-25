@@ -2,7 +2,14 @@ import "../styles/index.css";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { trackAnimation } from "../motion/settle.ts";
+import type * as Checks from "./checks.ts";
+import { runLayoutChecks } from "./checks.ts";
 import { LayoutGuard } from "./LayoutGuard.tsx";
+
+vi.mock("./checks.ts", async (importOriginal) => {
+  const actual = await importOriginal<typeof Checks>();
+  return { ...actual, runLayoutChecks: vi.fn(actual.runLayoutChecks) };
+});
 
 const OVERLAPPING = `
   <div style="position: relative; block-size: 80px">
@@ -114,6 +121,37 @@ describe("LayoutGuard", () => {
     fit.disconnect();
     expect(warn).not.toHaveBeenCalled();
     expect(marks()).toHaveLength(0);
+  });
+
+  it("checks a rule or two per frame, and starts over when the page changes between frames", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const run = vi.mocked(runLayoutChecks);
+    const original = run.getMockImplementation();
+    if (!original) throw new Error("runLayoutChecks isn't mocked");
+    run.mockImplementation((options) => {
+      // Each rule costs a whole slice, so every frame runs one of the seven.
+      vi.advanceTimersByTime(10);
+      return original(options);
+    });
+    render(<LayoutGuard />);
+    await runGuard();
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(marks()).toHaveLength(0);
+    await runGuard(0);
+    expect(run).toHaveBeenCalledTimes(2);
+    await act(async () => {
+      page.dataset["frame"] = "changed";
+      await Promise.resolve();
+    });
+    await runGuard(0);
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(warn).not.toHaveBeenCalled();
+    for (let slice = 0; slice < 7; slice += 1)
+      await runGuard(slice === 0 ? 300 : 0);
+    expect(run).toHaveBeenCalledTimes(9);
+    expect(marks()).toHaveLength(1);
+    expect(warn).toHaveBeenCalledOnce();
+    run.mockImplementation(original);
   });
 
   it("waits for buttery's animations to settle", async () => {
