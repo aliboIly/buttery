@@ -7,7 +7,7 @@ buttery should be **the easiest correct way to build UI** — for a developer in
 2. One vocabulary. The same prop names everywhere (`value`/`defaultValue`/`onValueChange`, `checked`/`defaultChecked`/`onCheckedChange` for something on or off, `open`/`defaultOpen`/`onOpenChange`, `size`, `variant`, `disabled`, `label`, `asChild`). No synonyms, no per-component dialects. Predictable APIs are what make agents reliable.
 3. Wrong is a type error. Spacing, sizes, surfaces, motion presets and variants are string/number unions of tokens, so a bad value fails `tsc` before anyone sees it.
 4. Errors teach. Every dev warning names the problem, the fix and a docs link, in one line:
-   `[buttery:IconButton] needs a "label" (tooltip + screen readers). Fix: <IconButton label="Undo" …/> → docs/icon-button#label`
+   `[buttery:Dialog] A dialog has no name, so screen readers announce it as just "dialog". Fix: put a <Dialog.Text title="…" /> in it, or pass label="…" to Dialog.Content. Docs: https://aliboily.github.io/buttery/search?q=Dialog`
 5. Machine-readable everything. Anything a human reads in the docs, an agent can read as structured data.
 6. Checks close the loop. Layout/motion/a11y problems come back as JSON with a suggested fix, so an agent can fix its own work without a human pointing at screenshots.
 
