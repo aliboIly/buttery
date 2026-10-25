@@ -1,6 +1,10 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import stylelint from "stylelint";
 import { describe, expect, it } from "vitest";
 import { butteryStylelintConfig, scanValue } from "./index.ts";
+import { isSkipped } from "./known-names.ts";
 
 const APP = "/repo/apps/demo/src/page.css";
 const TOKENS = "/repo/packages/core/src/tokens/tokens.css";
@@ -180,10 +184,58 @@ describe("buttery/known-token", () => {
     expect(messages).toHaveLength(2);
     expect(messages[0]).toMatch(
       new RegExp(
-        `^${guessed} isn't one of buttery's tokens or a variable this file declares\\. Use one that is, such as .*--bt-h-sm`,
+        `^${guessed} isn't one of buttery's tokens or a variable the project declares or sets\\. Use one that is, such as .*--bt-h-sm`,
       ),
     );
     expect(messages[1]).toContain("such as --bt-text,");
+  });
+
+  it("finds an app from the file it lints, and a var() reading a name in the app's script doesn't make it one", async () => {
+    const app = mkdtempSync(join(tmpdir(), "buttery-known-token-"));
+    const write = (path: string, text: string): void => {
+      mkdirSync(dirname(join(app, path)), { recursive: true });
+      writeFileSync(join(app, path), text);
+    };
+    try {
+      write("package.json", '{ "name": "plant-shop", "private": true }');
+      write(
+        "node_modules/@butteryui/core/package.json",
+        '{ "name": "@butteryui/core", "version": "1.0.0" }',
+      );
+      write(
+        "node_modules/@butteryui/core/dist/styles.css",
+        ":root { --bt-text: #111; --bt-h-sm: 28px; } .x { gap: var(--bt-space-9); }",
+      );
+      write(
+        "src/App.tsx",
+        `export const style = { blockSize: "var(${guessed})", ["--bt-plant-gap"]: "8px" };`,
+      );
+      const page = join(app, "src/page.css");
+      const complaints = async (): Promise<string[]> => {
+        const { results } = await stylelint.lint({
+          code: `.a { block-size: var(${guessed}); gap: var(--bt-plant-gap); color: var(--bt-text); padding: var(--bt-space-9); }`,
+          codeFilename: page,
+          config: butteryStylelintConfig(),
+        });
+        return (results[0]?.warnings ?? [])
+          .filter((warning) => warning.rule === "buttery/known-token")
+          .map((warning) => warning.text.split(" ")[0] ?? "");
+      };
+      expect(await complaints()).toEqual([guessed, "--bt-space-9"]);
+      write("src/sizes.css", `:root { ${guessed}: 32px; }`);
+      // A name the last scan didn't have sends the rule back to the files once that scan is 250ms old.
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      expect(await complaints()).toEqual(["--bt-space-9"]);
+    } finally {
+      rmSync(app, { recursive: true, force: true });
+    }
+  });
+
+  it("skips builds, installs and reports in a project's paths, with either separator", () => {
+    expect(isSkipped("node_modules/a/b.css")).toBe(true);
+    expect(isSkipped("apps\\shop\\dist\\styles.css")).toBe(true);
+    expect(isSkipped("src-tauri\\target\\debug\\a.js")).toBe(true);
+    expect(isSkipped("src/distance/a.css")).toBe(false);
   });
 
   it("accepts tokens, buttery's own variables and the file's", async () => {

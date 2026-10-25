@@ -2,13 +2,30 @@ import { existsSync, globSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 
-// A name cut short at a template literal, such as `--bt-h-${size}`, isn't one.
-const NAME = /--bt-[\w-]+/g;
+/** A name a stylesheet declares, as a property (`--bt-card-gap:`) or with `@property`. */
+const DECLARED = /@property\s+(--bt-[\w-]+)|(--bt-[\w-]+)\s*:/g;
 
+/** A name script writes anywhere but inside a `var()`, such as an inline style's key or `setProperty`'s name. */
+const WRITTEN = /(?<!var\(\s*)--bt-[\w-]+/g;
+
+const SKIPPED =
+  /(?:^|\/)(?:node_modules|dist|\.tsbuild|test-results|playwright-report|target|reference)(?:\/|$)/;
+
+/** Whether the project's name scan skips `path`, a path from the project's folder: builds, installs and reports. */
+export function isSkipped(path: string): boolean {
+  return SKIPPED.test(path.replaceAll("\\", "/"));
+}
+
+/** The `--bt-*` names `files` declare or write: declared in stylesheets, written in script. */
 function namesIn(files: readonly string[]): Set<string> {
   const names = new Set<string>();
   for (const file of files) {
-    for (const [name] of readFileSync(file, "utf8").matchAll(NAME)) {
+    const text = readFileSync(file, "utf8");
+    for (const match of text.matchAll(
+      file.endsWith(".css") ? DECLARED : WRITTEN,
+    )) {
+      const name = match[1] ?? match[2] ?? match[0];
+      // A name cut short at a template literal, such as `--bt-h-${size}`, isn't one.
       if (!name.endsWith("-")) names.add(name);
     }
   }
@@ -28,52 +45,63 @@ function installedFiles(root: string, name: string): readonly string[] {
   }
 }
 
-const SKIPPED =
-  /(?:^|\/)(?:node_modules|dist|\.tsbuild|test-results|playwright-report|target|reference)(?:\/|$)/;
-
-const DECLARED = /(--bt-[\w-]+)\s*:/g;
-
-/** The `--bt-*` names a project's own files declare in CSS or write from script, such as inline styles. */
-function projectNames(root: string): Set<string> {
-  const names = new Set<string>();
-  for (const file of globSync("**/*.{css,ts,tsx,js,jsx,mjs}", {
+/** The project's own stylesheets and scripts, without its builds, installs, reports and tests. */
+function projectFiles(root: string): readonly string[] {
+  return globSync("**/*.{css,ts,tsx,js,jsx,mjs}", {
     cwd: root,
-    exclude: (path) => SKIPPED.test(path),
-  })) {
-    const text = readFileSync(join(root, file), "utf8");
-    const pattern = file.endsWith(".css") ? DECLARED : NAME;
-    for (const match of text.matchAll(pattern)) {
-      const name = match[1] ?? match[0];
-      if (!name.endsWith("-")) names.add(name);
-    }
-  }
-  return names;
+    exclude: (path) => isSkipped(path) || /\.test\.[jt]sx?$/.test(path),
+  }).map((file) => join(root, file));
 }
 
-const found = new Map<string, ReadonlySet<string> | null>();
+/**
+ * The folder that decides which names a stylesheet at `file` may read: buttery's repository when `file` is
+ * in it, else the nearest folder above it with a `package.json`, else `fallback`.
+ */
+export function projectRootOf(
+  file: string | undefined,
+  fallback: string,
+): string {
+  if (file === undefined) return fallback;
+  let nearest: string | null = null;
+  for (let folder = dirname(file); ; folder = dirname(folder)) {
+    if (existsSync(join(folder, "packages/core/src/tokens"))) return folder;
+    if (nearest === null && existsSync(join(folder, "package.json")))
+      nearest = folder;
+    if (dirname(folder) === folder) return nearest ?? fallback;
+  }
+}
+
+const scans = new Map<
+  string,
+  { readonly names: ReadonlySet<string> | null; readonly at: number }
+>();
 
 /**
- * Every `--bt-*` name a `var()` may read in the project at `root`: what buttery declares, reads or sets from
- * script (this repository's package sources when `root` is buttery's repository, otherwise the
- * `@butteryui/core` and `@butteryui/react` builds `root` resolves), and what the project's own files declare
- * in CSS or write from script. Null when buttery can't be found, so nothing is checked.
+ * Every `--bt-*` name a `var()` may read in the project at `root`: what buttery declares in its stylesheets
+ * or writes from script (this repository's sources when `root` is buttery's repository, else the
+ * `@butteryui/core` and `@butteryui/react` builds `root` resolves), and what the project's own stylesheets
+ * declare and its scripts write, such as an inline style. A `var()` reading a name doesn't make it one.
+ * Null when buttery can't be found, so nothing is checked. A scan is kept for `maxAge` milliseconds.
  */
-export function butteryNames(root: string): ReadonlySet<string> | null {
-  const cached = found.get(root);
-  if (cached !== undefined) return cached;
-  const files = existsSync(join(root, "packages/core/src/tokens"))
-    ? globSync("packages/*/src/**/*.{css,ts,tsx}", { cwd: root }).map((file) =>
-        join(root, file),
-      )
+export function butteryNames(
+  root: string,
+  maxAge = 30_000,
+): ReadonlySet<string> | null {
+  const scan = scans.get(root);
+  if (scan !== undefined && performance.now() - scan.at < maxAge)
+    return scan.names;
+  const repository = existsSync(join(root, "packages/core/src/tokens"));
+  const installed = repository
+    ? []
     : [
         ...installedFiles(root, "@butteryui/core"),
         ...installedFiles(root, "@butteryui/react"),
       ];
   const names =
-    files.length === 0
-      ? null
-      : new Set([...namesIn(files), ...projectNames(root)]);
-  found.set(root, names);
+    repository || installed.length > 0
+      ? namesIn([...installed, ...projectFiles(root)])
+      : null;
+  scans.set(root, { names, at: performance.now() });
   return names;
 }
 

@@ -1,7 +1,7 @@
 import stylelint from "stylelint";
 import type { Plugin, Rule } from "stylelint";
 import { tailwindProblem } from "../tailwind.ts";
-import { butteryNames, nearestNames } from "./known-names.ts";
+import { butteryNames, nearestNames, projectRootOf } from "./known-names.ts";
 import { scanValue } from "./scan-value.ts";
 import {
   BORDER_WIDTH_PROPERTIES,
@@ -263,20 +263,28 @@ function listed(items: readonly string[]): string {
 const knownToken = createRule({
   name: "known-token",
   check(root, complain) {
-    const known = butteryNames(process.cwd());
-    if (known === null) return;
+    const project = projectRootOf(root.source?.input.file, process.cwd());
+    const scanned = butteryNames(project);
+    if (scanned === null) return;
+    let known = scanned;
     const own = new Set<string>();
     root.walkDecls((declaration) => {
       if (declaration.prop.startsWith("--bt-")) own.add(declaration.prop);
+    });
+    root.walkAtRules("property", (atRule) => {
+      own.add(atRule.params.trim());
     });
     root.walkDecls((declaration) => {
       for (const [, name] of declaration.value.matchAll(
         /var\(\s*(--bt-[\w-]+)/g,
       )) {
-        if (name === undefined || known.has(name) || own.has(name)) continue;
+        if (name === undefined || own.has(name)) continue;
+        // Another file may have declared it since the last scan, as one open in an editor does.
+        if (!known.has(name)) known = butteryNames(project, 250) ?? known;
+        if (known.has(name)) continue;
         complain(
           declaration,
-          `${name} isn't one of buttery's tokens or a variable this file declares. Use one that is, such as ${listed(nearestNames(name, known))}.`,
+          `${name} isn't one of buttery's tokens or a variable the project declares or sets. Use one that is, such as ${listed(nearestNames(name, known))}.`,
           name,
         );
       }
