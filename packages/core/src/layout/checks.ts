@@ -89,6 +89,8 @@ export function createLayoutToolkit(): LayoutToolkit {
     readonly box: Box;
     readonly layer: Element | null;
     readonly partOwner: Element | null;
+    /** Inside a `data-bt-allow-overlap` container, where overlapping is intended. */
+    readonly allowed: boolean;
   }
 
   interface ScrollOffset {
@@ -376,6 +378,10 @@ export function createLayoutToolkit(): LayoutToolkit {
     return element.closest("[data-bt-layer], .bt-sticky, [data-bt-float]");
   }
 
+  function overlapAllowed(element: Element): boolean {
+    return element.closest("[data-bt-allow-overlap]") !== null;
+  }
+
   /** The component owning the part `element` sits in, or `null` when its nearest marker is a component. */
   function partOwnerOf(element: Element): Element | null {
     for (let node: Element | null = element; node; node = node.parentElement) {
@@ -520,15 +526,23 @@ export function createLayoutToolkit(): LayoutToolkit {
           box,
           layer: layerOf(element),
           partOwner: partOwnerOf(element),
+          allowed: overlapAllowed(element),
         });
       }
       for (const run of runs) {
         const layer = layerOf(run.parent);
         const partOwner = partOwnerOf(run.parent);
+        const allowed = overlapAllowed(run.parent);
         for (const line of lineBoxes(run)) {
           const box = visibleBox(run.parent, line, true);
           if (box)
-            measured.push({ element: run.parent, box, layer, partOwner });
+            measured.push({
+              element: run.parent,
+              box,
+              layer,
+              partOwner,
+              allowed,
+            });
         }
       }
       measured.sort((a, b) => a.box.left - b.box.left);
@@ -540,7 +554,15 @@ export function createLayoutToolkit(): LayoutToolkit {
           const b = measured[j];
           if (!b) continue;
           if (b.box.left >= a.box.right) break;
-          if (a.layer !== b.layer) continue;
+          // The sweep pairs every box sharing a column, so the geometry goes first and the tree walks last.
+          const width =
+            Math.min(a.box.right, b.box.right) -
+            Math.max(a.box.left, b.box.left);
+          const height =
+            Math.min(a.box.bottom, b.box.bottom) -
+            Math.max(a.box.top, b.box.top);
+          if (width <= 1 || height <= 1) continue;
+          if (a.layer !== b.layer || a.allowed || b.allowed) continue;
           if (a.element.contains(b.element) || b.element.contains(a.element))
             continue;
           if (
@@ -549,19 +571,6 @@ export function createLayoutToolkit(): LayoutToolkit {
           ) {
             continue;
           }
-          if (
-            a.element.closest("[data-bt-allow-overlap]") ||
-            b.element.closest("[data-bt-allow-overlap]")
-          ) {
-            continue;
-          }
-          const width =
-            Math.min(a.box.right, b.box.right) -
-            Math.max(a.box.left, b.box.left);
-          const height =
-            Math.min(a.box.bottom, b.box.bottom) -
-            Math.max(a.box.top, b.box.top);
-          if (width <= 1 || height <= 1) continue;
           const first = selectorFor(a.element);
           const second = selectorFor(b.element);
           const key = [first, second].sort().join("|");
