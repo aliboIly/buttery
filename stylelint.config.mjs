@@ -5,6 +5,7 @@ export default {
   ignoreFiles: [
     "**/dist/**",
     "**/.tsbuild/**",
+    "notes/**",
     "**/coverage/**",
     "playwright-report/**",
     "test-results/**",
