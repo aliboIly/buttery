@@ -18,8 +18,9 @@ const OVERLAPPING = `
   </div>`;
 
 let page: HTMLDivElement;
-const realCheck = vi.mocked(runLayoutChecks).getMockImplementation();
-if (!realCheck) throw new Error("runLayoutChecks isn't mocked");
+const mocked = vi.mocked(runLayoutChecks).getMockImplementation();
+if (!mocked) throw new Error("runLayoutChecks isn't mocked");
+const realCheck: typeof runLayoutChecks = mocked;
 
 /** Makes each rule cost a whole slice, so every frame runs one of the seven. */
 function sliceEachRule(): ReturnType<typeof vi.mocked<typeof runLayoutChecks>> {
