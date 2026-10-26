@@ -5,7 +5,7 @@ buttery is a React design system + layout/motion framework for web and desktop (
 
 ## Read before any work
 - `ROADMAP.md` — where the project is; what's next
-- `docs/BUILD_PLAN.md` — phases and acceptance criteria
+- `docs/BUILD_PLAN.md` — the phases that built 1.0, with their acceptance criteria
 - `docs/ARCHITECTURE.md` — packages, layers, APIs, component contract
 - `docs/DESIGN_SPEC.md` — tokens and measured component specs (the look)
 - `docs/MOTION_SPEC.md` — motion rules, tokens, measured timings
@@ -18,7 +18,7 @@ buttery is a React design system + layout/motion framework for web and desktop (
 ## Non-negotiables
 1. **Tokens only.** No raw colors, sizes, radii, shadows, durations or z-indexes outside `packages/core/src/tokens/`, except component-scoped `--bt-<component>-*` variables declared at the top of a component's CSS. If no token fits, use the nearest one or add a token and log why in `docs/DECISIONS.md`.
 2. **Layout rules are law.** Follow all 13 rules in `docs/LAYOUT_RULES.md` §1: flow layout with `gap`; no outer margins on components; no negative margins; absolute/fixed/sticky only in layer primitives and component-internal parts; heights from tokens; `min-width: 0`; declared truncation; container queries; `OverflowCluster` instead of wrapping.
-3. **Component contract.** Every component follows `docs/ARCHITECTURE.md` → "Component contract": accepts `ref` as a prop, controlled + uncontrolled, one shared prop vocabulary, `data-bt*` attributes, JSDoc on every export and prop, keyboard + screen reader, works with motion off, no outer margin. Create components with `pnpm new-component <Name>` once it exists.
+3. **Component contract.** Every component follows `docs/ARCHITECTURE.md` → "Component contract": accepts `ref` as a prop, controlled + uncontrolled, one shared prop vocabulary, `data-bt*` attributes, JSDoc on every export and prop, keyboard + screen reader, works with motion off, no outer margin. Create components with `pnpm new-component <Name>`.
 4. **Motion rules.** Direct manipulation is instant; discrete changes use `spring.smooth`; indicators use `spring.snappy`; one surface morphs instead of closing and reopening; exits faster than entrances; reduced motion via `useButteryTransition`. Animate only transform, opacity, color, shadow, filter and backdrop-filter. Layout changes go through Motion `layout`, spread from `useLayoutAnimation` (or `buttery.div layout`) so reduced motion turns it off; the two sanctioned size animations are `Morph`'s height and the `MorphMenu` viewport's size and position. No `transition: all`.
 5. **buttery has its own identity.** References are inspiration. Never copy the reference products' branding, names, logos, icons, illustrations, copy or brand gradients. The repo is public: `reference/` and `PROMPTS.md` stay local and untracked, and tracked files never name the reference products or quote their UI copy (describe patterns generically and write original example copy). buttery's logo is the 🧈 character, set in text: in the docs' header, the favicons and the README, where each platform draws its own butter. Never ship Apple's (or any vendor's) emoji artwork as an image or bundle an emoji font. Demo apps are original.
 6. **Accessibility is part of done.** Radix for behavior, visible `:focus-visible` ring, AA contrast for active text, hit areas ≥ 24×24 (standalone buttons ≥ 28 tall), full keyboard support.
@@ -50,24 +50,24 @@ The code should read like a strong senior TypeScript/React engineer wrote it by 
 - **Enforced:** `scripts/check-ai-tells.mjs` runs in `pnpm check` and in a `commit-msg` hook. It fails on attribution, agent tool names outside the paths above, banned phrases, narrating, change-log or reader-addressed comments, banners, emoji in comments, TODOs without an issue link, and commented-out code (JSDoc `@example` blocks are skipped). Its prose-style checks cover the public-facing text: the README, `ROADMAP.md`, `docs/`, the docs site's pages, package docs, changesets and commit messages. 🧈 is fine in text. A `pre-commit` hook and `pnpm check` also fail if anything under `reference/`, or `PROMPTS.md`, is tracked, and, where the local list `reference/.private-names` exists, if a tracked file names a reference product.
 
 ## How to work
-- Work **one phase at a time** from `docs/BUILD_PLAN.md`; tick items in `ROADMAP.md` as they land. At the end of each phase, stop, show screenshots and a short summary, and wait for the go-ahead.
+- Work **one release at a time** from the Now / Next list at the top of `ROADMAP.md` (the phases that built 1.0 are in `docs/BUILD_PLAN.md`); tick items in `ROADMAP.md` as they land. At the end of a release's work, stop, show screenshots and a short summary, and wait for the go-ahead.
 - Before saying anything is done:
-  1. `pnpm check` is green. From Phase 2 on it includes `expectButtery` on every playground page (with the chrome and the overlays their tests open), the starter, at 390 and 1280, light and dark, comfortable density, in Chromium and WebKit.
-  2. At every phase stop, `pnpm test:layout` (`expectButtery` across the full viewport × theme × density matrix, Chromium and WebKit) is green. Use `--reporter=json` and fix every violation at the root.
+  1. `pnpm check` is green. It includes `expectButtery` on every docs page (with the chrome and the overlays their tests open) and the starter, at 390 and 1280, light and dark, comfortable density, in Chromium and WebKit.
+  2. At every release stop, `pnpm test:layout` (`expectButtery` across the full viewport × theme × density matrix, Chromium and WebKit) is green. Use `--reporter=json` and fix every violation at the root.
   3. You took screenshots and compared them with the relevant `reference/` images. List visible differences honestly; never claim a match you didn't check.
-  4. At every phase stop, you also did a short manual pass in the real desktop app (`pnpm --filter starter tauri dev`). Playwright's WebKit is its own build, not the system WebKit the app runs in.
+  4. At every release stop, you also did a short manual pass in the real desktop app (`pnpm --filter starter tauri dev`). Playwright's WebKit is its own build, not the system WebKit the app runs in.
 - When a spec is ambiguous or two docs conflict: pick the option that best honors `docs/LAYOUT_RULES.md`, log it in `docs/DECISIONS.md`, and mention it in your summary. Ask only when the choice is expensive to undo.
 - Keep docs current: if an API, token or rule changes, update its doc in the same change.
 - Prefer small, composable primitives over big configurable components. A one-off style usually means a missing primitive or token.
-- Commits: small and focused, conventional prefixes (`feat(core):`, `fix(react):`, `docs:`), one phase item per commit where practical, following "Authorship and no AI tells" above.
+- Commits: small and focused, conventional prefixes (`feat(core):`, `fix(react):`, `docs:`), one roadmap item per commit where practical, following "Authorship and no AI tells" above.
 
 ## Commands
 - `pnpm dev` — the docs site (`apps/docs`), where every component has its page
 - `pnpm build` — all packages and apps
 - `pnpm check` — authorship and private-path checks, typecheck, lint, stylelint, format check, the docs check (`pnpm check:docs`), the examples build (`pnpm check:examples`), the packages' build and the files their exports name (`pnpm check:packages`), unit and browser tests, app smoke tests, and `expectButtery` on every docs page and the starter at 390 and 1280
-- `pnpm test:layout` — `expectButtery` across the full matrix (from Phase 2)
+- `pnpm test:layout` — `expectButtery` across the full matrix
 - `pnpm test:apps` — the command line's acceptance run: an app from each template, outside the repo and from packed tarballs, passing its own checks and `buttery check`, the dashboard again with every `add page` kind and a `create component`, and a plain React app after `buttery init`
-- `pnpm new-component <Name>` — scaffold a compliant component (from Phase 2)
+- `pnpm new-component <Name>` — scaffold a compliant component
 - `pnpm new-app <name> [--template blank|dashboard|editor|marketing]` — new app from a template: `apps/starter` for `blank` (the default), `apps/templates/<template>` for the others
 - `pnpm --filter starter tauri dev` — desktop app
 - `pnpm --filter demo-<name> dev` — a demo on its own (`roastery`, `roastery-shop`, `deckhand`); the docs site serves them at `/demos/<name>`

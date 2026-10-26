@@ -1,12 +1,12 @@
 # 🧈 buttery — the docs site
 
-The playground becomes buttery's docs website: where a developer or a coding agent goes to learn buttery, find a component, copy an example and build an app. It's organized in a sensible order, and it's a showcase of buttery's own look, motion and layout. It's built only from buttery components (`NavBar`, `CommandSearch`, `Tabs`, `SidePanel` and the rest), with no other UI library.
+`apps/docs` is buttery's docs website: where a developer or a coding agent goes to learn buttery, find a component, copy an example and build an app. It's organized in a sensible order, and it's a showcase of buttery's own look, motion and layout. It's built only from buttery components (`NavBar`, `CommandSearch`, `Tabs`, `SidePanel` and the rest), with no other UI library.
 
-It's built in Phase 7, where "docs inside the playground" already lives (`docs/BUILD_PLAN.md`). Until then the playground keeps its current structure; see "Until Phase 7" at the end.
+It was built in Phase 7 (`docs/BUILD_PLAN.md`) and this is its spec, kept current with it.
 
 ## Structure
 
-- `apps/playground` is renamed `apps/docs`. Its public routes are what the site ships.
+- `apps/docs` is the site. Its public routes are what it ships.
 - `/lab` holds internal pages: layout fixtures, the matrix targets, the compare pages and the timing tests. The nav never links to it, production builds leave it out, and Playwright still uses it.
 - Content lives in `apps/docs/content/<section>/<page>.mdx`, or `.tsx` for a heavy demo. Each page starts with frontmatter: `title`, `description`, `section`, `order`, `status` (`new`, `beta`, `stable` or `deprecated`), `since` (the version it arrived in) and `related`.
 - The nav is generated from that frontmatter and never maintained by hand. A check in `pnpm check` fails if a page is missing metadata, if two pages in a section share an `order`, or if an internal link is broken.
@@ -123,13 +123,13 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 - A page-scale component, one whose layout changes at desktop widths, such as `AppShell`, `AppPage` and the page templates, exports `width = "desktop"` (typed `DemoWidth`) from its `*.playground.tsx`. From 640px of frame its live demo, variants and examples lay out at an app page's width, 1280, scaled down to fit as a template's preview is, and stay live; in a narrower frame, or for an example that keeps itself narrower than its frame, such as a phone-sized screen, they lay out at their own size.
 - A live demo's prop controls really change the component. The check compares the demo's frame and the layers its overlays portal to, so a control that changes only a menu, popover or tooltip counts while the overlay is open: put a control that opens it first, as Menu's `open` does.
 - Each example exports `play`, a small script that drives it, such as pressing Next and seeing the step change, or moving a slider with the arrow keys. It's an async function given a few role-and-name actions (`press`, `hover`, `focus`, `type`, `key` and `see`), typed `ExamplePlay` in `@butteryui/core`, so example files need no testing library. `hover` rests the pointer on an element and `focus` gives it keyboard focus, either of which opens a tooltip; use `focus` rather than Tab to reach a button, which WebKit focuses neither on a click nor on Tab. `key` holds its key down for two frames, as a person does, so the arrow keys pick options in a radio group such as `SegmentedControl`. `see` waits for text a sighted person can see: text only screen readers get, such as a chart's data table, doesn't count, so a play opens a tooltip before it sees what the tooltip says.
-- The Phase 7 gate checks every example: typecheck and lint; it renders in Chromium and WebKit with no console errors or warnings; its play script runs; axe passes; `expectButtery` passes on its frame in light, dark, compact and reduced motion; each prop control changes what renders; and a copy test pastes it into a fresh starter app and builds it.
+- `pnpm check` checks every example: typecheck and lint; it renders in Chromium and WebKit with no console errors or warnings; its play script runs; axe passes; `expectButtery` passes on its frame in light, dark, compact and reduced motion; each prop control changes what renders; and a copy test pastes it into a fresh starter app and builds it.
 - `packages/core/src/examples.test.tsx` and `packages/react/src/examples.test.tsx` run the plays, one test per example, each starting without the toasts or confetti the one before left. A test is named for its example's folder and file, such as `slider/opacity-row`, so `pnpm vitest run --project browser packages/react/src/examples.test.tsx -t "slider/"` runs one folder's.
 - Coverage checks fail the build when an export from `@butteryui/react` has no docs page, an exported prop has no JSDoc, a page links to a route or heading that doesn't exist, or a component page has fewer than the required examples.
 
 ## Writing
 
-`docs/WRITING.md` (written in Phase 7) holds these rules, and every page follows them.
+`docs/WRITING.md` holds these rules, and every page follows them.
 
 - The first sentence says what the thing is and the second says when to use it. Then comes code.
 - Plain English: short sentences, second person, present tense, active voice. A term is defined where it first appears. One idea per paragraph. No filler or marketing words; the prose rules of `scripts/check-ai-tells.mjs` apply to the docs content.
@@ -159,37 +159,23 @@ No pictures of components, no buttons that do nothing, no TODOs and no "imagine 
 - Each demo is its template plus demo content, so templates stay small and the demos prove the templates hold up.
 - Pattern and component pages link to the exact demo screen that uses them, such as "See it in the roastery demo's settings". A part of every screen of a demo, such as the roastery's shell, links to the demo itself, and only when no screen of it uses the component.
 - `pnpm docs:build` builds the docs and every demo into one static output, and each demo also runs on its own with `pnpm --filter demo-<name> dev`. A node test checks that each demo keeps its template's entry, router, Vite config, tsconfig and `index.html`, apart from its name.
-- Each demo passes the full matrix, runs its end-to-end flows from earlier phases, and logs no console errors.
+- Each demo passes the full matrix, runs its end-to-end flows, and logs no console errors.
 
 ## Build and deploy
 
 - `pnpm docs:build` writes prerendered HTML for every public route, the demos and a `sitemap.xml` into `apps/docs/dist`, with each page's Markdown at its path plus `.md` and `llms.txt`. The demos and the template previews come with the pages inside them, from the paths each app's package exports as `routes`, and a `404.html` lets the app draw any other address, such as a demo's customer page. It renders each route with React's own `react-dom/server` and the app takes over in the browser. Each section's own address is written as the page it opens, naming that page as canonical, and left out of the sitemap. A `.md` address no page has gets a 404: from the dev server's Markdown middleware, from `vite preview` serving the build, and from a static host, which serves `404.html` with that status. It also writes an empty `.nojekyll`, so GitHub Pages never runs the files through Jekyll. It runs the docs check first and builds nothing while the check finds a problem.
 - The site can be served under a path rather than a domain's root. `BUTTERY_DOCS_BASE` (default `/`, such as `/buttery/`) is Vite's `base` for `apps/docs` and the base of everything the build writes. The source, the MDX content and the route data write every address from the site's root, such as `/components/button`, and `sitePath` in `apps/docs/src/base.ts` puts it under the base where it's rendered or written: through `siteHref` in the browser, which reads `import.meta.env.BASE_URL`, and with the base passed in for the Markdown, `llms.txt` and the sitemap. The router reads a route from the path under the base, and the demos and template previews get their routers' `base` under it. The sitemap and the canonical links are `DOCS_URL`'s origin plus the base; a `DOCS_URL` whose path isn't the base stops the build and says how to fix it. Development and the tests run at `/`; `BUTTERY_DOCS_BASE=/buttery/ pnpm --filter docs preview` serves a build made with that base. With a base, a link in a live example (`data-docs-example`) that points outside it, such as a sidebar's `/orders`, does nothing when clicked.
-- Approved if they're needed: `@mdx-js/rollup`, `shiki` and `minisearch`. For static prerendering, use the smallest maintained option and log the choice in `docs/DECISIONS.md`.
+- Its dependencies beyond buttery's own: `@mdx-js/rollup` for the written pages, `shiki` for code and `minisearch` for search. `pnpm docs:build` prerenders every page with `react-dom/server` from a Vite server build (DECISIONS, 2026-10-22).
 - The site is deployed to GitHub Pages, at https://aliboily.github.io/buttery/, by `.github/workflows/docs.yml` on each push to `main` (or run by hand). It builds with `BUTTERY_DOCS_BASE=/buttery/` and `DOCS_URL=https://aliboily.github.io/buttery`, from a full clone so each page's "Last updated" date comes from git, and deploys `apps/docs/dist`. GitHub Pages serves the root `404.html` for any address under `/buttery/` without a file, and the app draws that address. Pages has to be turned on in the repository's settings, with GitHub Actions as its source.
 
-## Order of work in Phase 7
-
-The brand, then the docs shell and nav generation, then the existing pages moved into the structure (Get started, Foundations, Layout and Motion first), then component pages with working examples and their checks, then Patterns, Templates and Guides, then the demos split into their own sites, then search with its golden queries, then the Markdown versions with the comprehension and agent tests, then the landing page, and last the full matrix and a reviewer who reads the site cold as a new user and answers "could you build an app from this?".
-
-## Where today's playground pages go
-
-| Today | On the site |
-|---|---|
-| A component page (a `*.meta.ts` with its `*.playground.tsx` and `examples/`) | Its component page, in the group the table above gives it |
-| Tokens, Surfaces, Levels, Palettes, Text stacks | Foundations (Colors, Elevation, Palettes, Typography and the rest) |
-| Motion | Motion |
-| Card Studio, the Card Studio site, Halfmoon Roastery | Their own apps in `apps/demos/<name>/`, served at `/demos/<name>/`, built on the `editor`, `marketing` and `dashboard` templates, whose pages link to them. Deckhand and the Halfmoon shop have since replaced Card Studio and its site. |
-| Compare, and the routes only tests visit | `/lab` |
-
-## Phase 8
+## What agents read
 
 `llms.txt`, `llms-full.txt`, `manifest.json` and the MCP server's resources are generated from the same docs content, so the site and agents share one source; `llms.txt` links to the pages' `.md` versions, and `llms-full.txt` holds every page it lists, in its order. The site serves both at its root, and `@butteryui/core` ships them with every page as a file under `dist/docs/`, its links between pages relative so they read offline. The MCP server's `search_docs` tool uses the docs search's index. The Tools pages document the CLI and the MCP server with real output.
 
-## Until Phase 7
+## New pages
 
-Three habits keep the move mechanical. Nothing that exists is moved or restructured before Phase 7.
+Three habits keep the site consistent.
 
-- Every new playground page carries page metadata: `section`, `title`, `description`, `order`, `status` and `since`. A new component's `*.playground.tsx` exports it as `page`, next to its `demos`.
+- Every new page carries page metadata: `section`, `title`, `description`, `order`, `status` and `since`. A new component's `*.playground.tsx` exports it as `page`, next to its `demos`.
 - Test fixtures, pages broken on purpose and anything that reads `reference/` go under `/lab`.
 - Every new example follows the rules under "Examples": a real, complete file with its imports, real state and a one-line caption, and a play script.

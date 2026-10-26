@@ -1,5 +1,7 @@
 # 🧈 buttery — Build Plan
 
+All of it shipped: `v1.0.0` closed Phase 8 on 2026-10-26. This is the plan as it was followed; work after 1.0 runs from the Now / Next list at the top of `ROADMAP.md`.
+
 Phases 0–8, with 4.5 (forms and text) and 6B (the App kit) between them. Each ends with a **hard stop**: the agent shows screenshots + a short summary and waits for the go-ahead. Guardrails (Phase 2) come *before* components, so every component after is checked automatically. `ROADMAP.md` mirrors these phases as checkboxes — tick them as items land.
 
 Definition of done for every phase:

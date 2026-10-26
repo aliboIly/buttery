@@ -9,7 +9,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 [Docs](https://aliboily.github.io/buttery/) · [Get started](https://aliboily.github.io/buttery/get-started/introduction) · [Components](https://aliboily.github.io/buttery/components/overview) · [Roadmap](ROADMAP.md)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-e8b64a?style=flat-square)](LICENSE)
-[![Status: early](https://img.shields.io/badge/status-early-6b6b6b?style=flat-square)](ROADMAP.md)
+[![npm](https://img.shields.io/npm/v/@butteryui/core?style=flat-square&label=npm&color=e8b64a)](https://www.npmjs.com/package/@butteryui/core)
 ![React 19](https://img.shields.io/badge/React-19-2862e0?style=flat-square)
 ![TypeScript 7](https://img.shields.io/badge/TypeScript-7-2862e0?style=flat-square)
 ![Tauri v2](https://img.shields.io/badge/Tauri-v2-2862e0?style=flat-square)
@@ -18,7 +18,7 @@ A React design system, with layout and motion rules to match, for web apps and T
 
 Wrap an app in buttery and it gets the tokens, type, surfaces, motion and layout rules written up in [`docs/`](docs), plus checks that fail when something overlaps, overflows or drifts off the scale. People and coding agents work from the same small vocabulary, and a wrong value fails type-checking instead of shipping.
 
-The tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site are in place, and buttery's packages are on npm: `@butteryui/core`, `@butteryui/react`, `@butteryui/test`, `@butteryui/lint`, `@butteryui/mcp`, the MCP server for coding agents, and `@butteryui/cli`, the `buttery` command, with `create-buttery`. [ROADMAP.md](ROADMAP.md) shows where things stand on the way to 1.0.
+buttery 1.0 is out: the tokens, primitives, layers, motion, over a hundred components and patterns, four templates and the docs site, as seven packages on npm: `@butteryui/core`, `@butteryui/react`, `@butteryui/test`, `@butteryui/lint`, `@butteryui/mcp`, the MCP server for coding agents, and `@butteryui/cli`, the `buttery` command, with `create-buttery`. [ROADMAP.md](ROADMAP.md) lists what each release brought and the ideas after 1.0.
 
 ## What's in it
 
@@ -88,7 +88,7 @@ A Tailwind v4 bridge maps the tokens to utilities such as `bg-surface`, `rounded
 
 ### Agents
 
-Coding agents get the rules people get: `AGENTS.md`, the make-it-buttery skill, and `tokens.json` with every value and what it's for.
+Coding agents get the rules people get: `AGENTS.md`, the make-it-buttery skill, the docs and `manifest.json` shipped inside the packages, and an MCP server that answers from them and checks the result.
 
 </td>
 </tr>
@@ -209,7 +209,7 @@ With Tailwind v4, import the bridge after Tailwind and keep `@butteryui/core/sty
 | `pnpm dev` | Runs the docs site, with a page for every component |
 | `pnpm build` | Builds every package and app |
 | `pnpm tokens` | Regenerates the CSS, JSON and Tailwind files from the token source |
-| `pnpm check` | Authorship and private-path checks, typecheck, lint, stylelint, format check, the packages' build, unit, browser and smoke tests, and layout checks on every playground page and the starter at 390 and 1280 |
+| `pnpm check` | Authorship and private-path checks, typecheck, lint, stylelint, format check, the docs check, the examples build, the packages' build, unit, browser and smoke tests, and layout checks on every docs page and the starter at 390 and 1280 |
 | `pnpm test:layout` | Layout checks across the full viewport, theme and density matrix; `--reporter=json` prints one report |
 | `pnpm new-component <Name> --purpose "…"` | Scaffolds a component folder that passes the contract once it's filled in |
 | `pnpm --filter starter tauri dev` | Runs the starter as a desktop app |
@@ -243,8 +243,12 @@ With Tailwind v4, import the bridge after Tailwind and keep `@butteryui/core/sty
 | [Motion spec](docs/MOTION_SPEC.md) | Motion rules, tokens and timings |
 | [Layout rules](docs/LAYOUT_RULES.md) | The no-overlap, sizing and uniformity rules and how they're checked |
 | [Developer and agent experience](docs/DX_AND_AI.md) | What buttery gives people and coding agents |
-| [Build plan](docs/BUILD_PLAN.md) | Phases and acceptance criteria |
+| [Build plan](docs/BUILD_PLAN.md) | The phases that built 1.0 and their acceptance criteria |
 | [Decisions](docs/DECISIONS.md) | Judgment calls and the reasons for them |
+| [Docs site](docs/DOCS_SITE.md) | How the docs site is organized, written and checked |
+| [Writing](docs/WRITING.md) | How the docs are written |
+| [Brand](docs/BRAND.md) | The name, the 🧈 logo and the voice |
+| [Agent evaluation](docs/AGENT_EVAL.md) | How coding agents did on the same tasks, run by run, and what each run changed |
 
 ## Contributing
 
