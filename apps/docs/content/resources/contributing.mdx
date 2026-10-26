@@ -109,21 +109,35 @@ git commit -m "fix(core): keep a Morph's height while its content swaps"
 <Steps>
 <Step>
 
-### Write its notes
+### Set the version and write its notes
 
-Add `apps/docs/content/whats-new/<version>.md` with the release's `version`, `date`, `title`, a one-sentence `summary`, the `examples` that show it, and two or three highlights. The docs check holds every field.
+Put the new version in every `packages/*/package.json`, and add `apps/docs/content/whats-new/<version>.md` with the release's `version`, `date`, `title`, a one-sentence `summary`, the `examples` that show it, and two or three highlights. The docs check holds every field.
 
 </Step>
 <Step>
 
-### Tag it and push the tag
+### Prove the packages from their tarballs
 
 ```bash
-git tag -a v1.0.0 -m "v1.0.0: Developer and agent experience"
-git push origin v1.0.0
+pnpm check
+pnpm test:layout
+pnpm test:apps
 ```
 
-The release workflow publishes the GitHub release from the tag, with the same notes as What's new and a link to them.
+`pnpm test:apps` packs every package and makes an app from each template outside the repository from those tarballs; they're the files to publish, so a published package is one a fresh app has already passed with.
+
+</Step>
+<Step>
+
+### Publish, then tag
+
+```bash
+npm publish butteryui-core-1.1.0.tgz --access public
+git tag -a v1.1.0 -m "v1.1.0: What it brings"
+git push origin main v1.1.0
+```
+
+One `npm publish` per tarball. The release workflow publishes the GitHub release from the tag, with the same notes as What's new and a link to them, and the push to `main` deploys this site.
 
 </Step>
 </Steps>
