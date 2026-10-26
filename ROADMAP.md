@@ -6,7 +6,7 @@ Tick boxes as work lands (agents do this too). Details and acceptance criteria p
 
 Kept up to date as items finish.
 
-**Now**, `v1.0.0`, which closes Phase 8 and the roadmap below:
+**Now**: `v1.0.0` is out, with all seven packages on npm. It closes Phase 8 and the roadmap below:
 - Every page of the docs, the manifest, the examples and what the MCP server answers from ship inside the packages, so an agent reads the installed version's docs from `node_modules`, offline
 - The agent evaluation ran all seven tasks with two coding agents on apps made with `create-buttery`; every app passed its checks in both engines, and what the run turned up is fixed: a layout check under load no longer waits on an animation that reduced motion cut short, a responsive `Grid` warns when nothing above it is a size container, and a `Select`'s docs say a `Field` shows its label
 - The development layout guard checks a rule or two per frame; its whole check landing on one frame is what made the nav bar's menus fold late in WebKit, Phase 7's known issue. The overlap rule is seven times cheaper
